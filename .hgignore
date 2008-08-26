@@ -1,0 +1,9 @@
+\.rej$
+\.chg\..*$
+\.orig\..*$
+\.orig$
+\.conflict\~$
+PuffinPlot.zip
+PuffinPlot.app
+dist/
+build/
