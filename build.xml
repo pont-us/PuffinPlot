@@ -31,7 +31,7 @@
         
         <exec executable="scp" resultproperty="scp.result">
             <arg file="${ant.project.name}.zip"/>
-            <arg value="ou094147:~" />
+            <arg value="ou094053:~" />
         </exec>
         
         <exec executable="scp" resultproperty="scp.result">
