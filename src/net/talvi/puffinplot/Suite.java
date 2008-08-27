@@ -149,6 +149,14 @@ public class Suite implements Iterable<Datum> {
         return result;
     }
     
+    
+    /*
+     * Note that this may return an empty suite, in which case various things
+     * can break. We can't just throw an exception if the suite's empty,
+     * because then we lose the load warnings (which will probably explain
+     * to the user *why* the suite's empty and are thus quite important). 
+     * 
+     **/
     public Suite(File[] files) throws IOException {
         assert(files.length > 0);
         if (files.length == 1) suiteName = files[0].getName();
@@ -162,27 +170,40 @@ public class Suite implements Iterable<Datum> {
         String line;
         TreeSet<Double> depthSet = new TreeSet<Double>();
         TreeSet<String> nameSet = new TreeSet<String>();
+        final int MAX_WARNINGS_PER_FILE = 3;
         
         // TODO: throw exceptions when loading fails, or when no samples in file!
         
         for (File file: files) {
+            int warningsThisFile = 0;
             FileType fileType = FileType.guessFromName(file);
             switch (fileType) {
             case TWOGEE: {
-                LineNumberReader reader = new LineNumberReader(new FileReader(file));
+                LineNumberReader reader =
+                        new LineNumberReader(new FileReader(file));
                 Fields fields = new Fields(reader.readLine());
                 if (fields.areAllUnknown()) {
-                    loadWarnings.add(file.getName() + " doesn't look like a 2G file. " +
+                    loadWarnings.add(file.getName() +
+                            " doesn't look like a 2G file. " +
                             "Ignoring it.");
                 } else {
-                try {
-                while ((line = reader.readLine()) != null) 
-                    addLine2G(line, fields.fields, depthSet, nameSet);
-                } catch (IllegalArgumentException e) {
-                    loadWarnings.add(e.getMessage()+
-                            " at line "+reader.getLineNumber()+
-                            " in file "+file.getName()+" -- ignoring this line.");
-                }
+                    while ((line = reader.readLine()) != null) {
+                        try {
+                            addLine2G(line, fields.fields, depthSet, nameSet);
+                        } catch (IllegalArgumentException e) {
+                            loadWarnings.add(e.getMessage() +
+                                    " at line " + reader.getLineNumber() +
+                                    " in file " + file.getName() +
+                                    " -- ignoring this line.");
+                            if (++warningsThisFile > MAX_WARNINGS_PER_FILE) {
+                                loadWarnings.add("Too many errors in "+
+                                        file.getName() +
+                                        "-- aborting load at line "+
+                                        reader.getLineNumber());
+                                break;
+                            }
+                        }
+                    }
                 reader.close();
                 if (fields.unknown.size() > 0) {
                     loadWarnings.add(
@@ -213,9 +234,6 @@ public class Suite implements Iterable<Datum> {
             }
         }
         
-        if (depthSet.size()==0 && nameSet.size()==0) {
-            throw new IOException("There was no data in the selected files.");
-        }
         loadWarnings = Collections.unmodifiableList(loadWarnings);
         depths = depthSet.toArray(depths);
         names = nameSet.toArray(names);

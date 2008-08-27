@@ -7,11 +7,16 @@ import java.awt.print.PageFormat;
 import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 import net.talvi.puffinplot.data.Correction;
@@ -100,6 +105,26 @@ public class PuffinApp {
     }
 
     public static void main(String[] args) {
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+
+            public void uncaughtException(Thread thread, Throwable exception) {
+                final String ERROR_FILE = "PUFFIN-ERROR.txt";
+                errorDialog("Serious error",
+                        "A major error occurred. Please tell Pont.\n" +
+                        "I will try to write the details "+
+                        "to a file called PUFFIN-ERROR.txt");
+                File f = new File(System.getProperty("user.home"), "PUFFIN-ERROR.txt");
+                try {
+                    PrintWriter w = new PrintWriter(new FileWriter(f));
+                    exception.printStackTrace(w);
+                    w.close();
+                } catch (IOException ex) {
+                    exception.printStackTrace();
+                    ex.printStackTrace();
+                }
+                
+            }
+        });
         new PuffinApp();
     }
     
@@ -115,13 +140,9 @@ public class PuffinApp {
         if (files.length == 0) return;
 
         try {
-            Suite suite;
-            suites.add(suite = new Suite(files));
-            if (suites.size() == 1) {
-                currentSuiteIndex = 0; // FIXME
-                mainWindow.suiteChanged(getCurrentSuite());                
-            }
-            for (FileOpenedListener fol: fileOpenedListeners) fol.fileOpened();
+            Suite suite = new Suite(files);
+            for (FileOpenedListener fol : fileOpenedListeners)
+                fol.fileOpened();
             List<String> warnings = suite.getLoadWarnings();
             if (warnings.size() > 0) {
                 StringBuilder sb =
@@ -132,6 +153,18 @@ public class PuffinApp {
                 }
                 errorDialog("Errors during file loading", sb.toString());
             }
+            
+            if (suite.getNumSamples() == 0) {
+                errorDialog("Error during file loading",
+                        "The selected file(s) contained no readable data.");
+            } else {
+                suites.add(suite);
+                if (suites.size() == 1) {
+                    currentSuiteIndex = 0; // FIXME
+                    mainWindow.suiteChanged(getCurrentSuite());
+                }
+            }
+
         } catch (FileNotFoundException e) {
             errorDialog("File not found", e.getMessage());
         } catch (IOException e) {
@@ -140,7 +173,7 @@ public class PuffinApp {
 
     }
     
-    public void errorDialog(String title, String message) {
+    public static void errorDialog(String title, String message) {
         JOptionPane.showMessageDialog
         (app.mainWindow, message, title, JOptionPane.ERROR_MESSAGE);
     }

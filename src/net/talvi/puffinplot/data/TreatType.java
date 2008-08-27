@@ -15,19 +15,21 @@ public enum TreatType {
         namePattern = null;
     }
     
-	private TreatType(String name) {
-	    namePattern = Pattern.compile(name, Pattern.CASE_INSENSITIVE);
+    private TreatType(String name) {
+        namePattern = Pattern.compile(name, Pattern.CASE_INSENSITIVE);
     }
     
     private boolean matches(String name) {
-        return namePattern.matcher(name).find();
+        return namePattern != null
+                ? namePattern.matcher(name).find()
+                : false;
     }
     
-	static TreatType fromString(String s) {
-        for (TreatType tt: TreatType.values())
+    static TreatType fromString(String s) {
+        for (TreatType tt : TreatType.values())
             if (tt.matches(s)) return tt;
         return UNKNOWN;
-	}
+    }
     
     public String getAxisLabel() {
         switch (this) {
