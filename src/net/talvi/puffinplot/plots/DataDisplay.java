@@ -7,7 +7,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 import javax.swing.BoxLayout;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -20,7 +19,6 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 import net.talvi.puffinplot.PlotParams;
-import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.PcaValues;

@@ -1,7 +1,5 @@
 package net.talvi.puffinplot;
 
-// import groovy.ui.Console;
-
 import java.awt.event.ActionEvent;
 import java.awt.print.PageFormat;
 import java.awt.print.PrinterJob;
@@ -10,13 +8,10 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 import net.talvi.puffinplot.data.Correction;
@@ -31,7 +26,8 @@ public class PuffinApp {
     List<Suite> suites;
     public MainWindow mainWindow;
     private int currentSuiteIndex;
-    private PageFormat currentPageFormat = PrinterJob.getPrinterJob().defaultPage();
+    private PageFormat currentPageFormat =
+            PrinterJob.getPrinterJob().defaultPage();
 
     public static boolean MAC_OS_X = (System.getProperty("os.name").
             toLowerCase().startsWith("mac os x"));
@@ -72,36 +68,13 @@ public class PuffinApp {
         System.setProperty("com.apple.mrj.application.apple.menu.about.name", "PuffinPlot");
 
         prefs = new Prefs();
-        
         actions = new PuffinActions(this);
-
         tableWindow = new TableWindow();
         mainWindow = new MainWindow();
-
-        // currentSample = new ArrayList<Datum>();
         suites = new ArrayList<Suite>();
         if (MAC_OS_X) createAppleEventListener();
-        // openFiles(new File("/home/pont/work/analysis/puffinplot/zplot.txt"));
-        // openFiles(new File("/home/pont/TAN051319A.DAT"));
         mainWindow.setVisible(true);
         
-//         Console console = new Console();
-//        console.run();
-
-                //        try {
-//            SwingUtilities.invokeAndWait(new Runnable() {
-//                public void run() {
-//                    System.setProperty("sun.awt.exception.handler",
-//                            PuffinExceptionHandler.class.getName());
-//                }
-//            });
-//        } catch (InterruptedException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        } catch (InvocationTargetException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
     }
 
     public static void main(String[] args) {

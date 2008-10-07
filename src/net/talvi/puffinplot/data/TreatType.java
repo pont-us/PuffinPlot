@@ -3,7 +3,7 @@ package net.talvi.puffinplot.data;
 import java.util.regex.Pattern;
 
 public enum TreatType {
-	NONE("none"),
+    NONE("none"),
     DEGAUSS("degauss"),
     IRM("irm"),
     THERMAL("thermal"),

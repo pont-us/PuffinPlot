@@ -2,7 +2,6 @@ package net.talvi.puffinplot;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
@@ -17,10 +16,7 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
-import java.util.zip.DataFormatException;
 
-import javax.management.ImmutableDescriptor;
-import javax.swing.JOptionPane;
 
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.MeasType;

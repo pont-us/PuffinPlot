@@ -221,7 +221,7 @@ public class Datum {
     public double getDemagLevel() {
         switch (treatType) {
         case NONE: return 0;
-        case DEGAUSS: return afx;
+        case DEGAUSS: return afx>0?afx : afy>0?afy : afz;
         case THERMAL: return temp;
         default: throw new IllegalArgumentException("unhandled treatment type");
         // NONE, DEGAUSS, IRM, THERMAL, UNKNOWN;
