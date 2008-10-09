@@ -43,10 +43,17 @@ public class PcaValuesTest {
     public void testCalculate() {
         System.out.println("calculate");
         
+        /* Not the most rigorous of tests. Ideally I would like to
+         * tweak Lisa Tauxe's Python code to produce corresponding results,
+         * and check its output against PcaValues's on a slightly
+         * larger, noisier dataset (the current dataset doesn't test
+         * MAD calculation very well, for example). But this will have to
+         * do for now.
+         */
         double[][] coords = 
-        {{1,1,-1},
-         {1,1,0},
-         {1,1,1}};
+        {{3,3,2},
+         {2,2,1},
+         {1,1,0}};
         
         ArrayList<Point> points = new ArrayList(coords.length);
         for (double[] coord: coords)
@@ -56,16 +63,21 @@ public class PcaValuesTest {
         
         PcaValues anchored = PcaValues.calculate(points, Point.ORIGIN);
         PcaValues unanchored = PcaValues.calculate(points, centreOfMass);
-        
-        System.out.println("Anchored: "+anchored);
-        System.out.println("Unnchored: " + unanchored);
 
+        /* Declination worked out by hand, other values from
+         * Tauxe's programs, modified to allow anchoring to origin
+         * and reporting both MAD values. In retrospect MAD1==0 is obvious
+         * since of course three points on a line plus any one other point
+         * will be coplanar!
+         */
         assertEquals(Math.PI/4, anchored.dec, 1e-6);
-        assertEquals(0, anchored.inc, 1e-6);
-        assertEquals(0, anchored.mad1, 1e-6);
-        assertEquals(30, anchored.mad3, 1e-6);
-        assertEquals(0, unanchored.dec, 1e-6);
-        assertEquals(Math.PI/2, unanchored.inc, 1e-6);
+        assertEquals(Math.toRadians(22.266), anchored.inc, 0.01);
+        assertEquals(0, anchored.mad1, 0.01);
+        assertEquals(6.06, anchored.mad3, 0.01);
+        
+        // These values worked out by hand.
+        assertEquals(Math.atan(1/Math.sqrt(2)), unanchored.inc, 1e-6);
+        assertEquals(Math.PI/4, unanchored.dec, 1e-6);
         assertEquals(0, unanchored.mad1, 1e-6);
         assertEquals(0, unanchored.mad3, 1e-6);
     }

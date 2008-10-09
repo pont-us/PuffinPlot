@@ -33,13 +33,20 @@
             <arg file="${ant.project.name}.zip"/>
             <arg value="ou094053:~" />
         </exec>
+        <echo message="scp hemulen: ${scp.result}" />
         
         <exec executable="scp" resultproperty="scp.result">
             <arg file="${ant.project.name}.zip"/>
             <arg value="feather:/puysegur/scratch/" />
         </exec>
-   
-        <echo message="scp: ${scp.result}" />
+        <echo message="scp feather: ${scp.result}" />
+        
+        <exec executable="scp" resultproperty="scp.result">
+            <arg file="${ant.project.name}.zip"/>
+            <arg value="lumi:www.talvi.net/public_html/" />
+        </exec>
+        <echo message="scp lumi: ${scp.result}" />
+        
     </target>
     
     

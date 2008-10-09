@@ -107,12 +107,12 @@ public class PcaValues {
     }
     
     public String getDecInc() {
-        return String.format("dec %3.1f / inc %3.1f",
+        return String.format("dec %3.3f / inc %3.3f",
                 toDegrees(dec), toDegrees(inc));
     }
     
     public String getMads() {
-        return String.format("mad1 %3.1f / mad3 %3.1f",
+        return String.format("mad1 %3.3f / mad3 %3.3f",
                 mad1, mad3);
     }
     

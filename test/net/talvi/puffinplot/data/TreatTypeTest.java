@@ -40,22 +40,10 @@ public class TreatTypeTest {
     @Test
     public void testValues() {
         System.out.println("values");
-        TreatType[] expResult = null;
+        TreatType[] expResult = {TreatType.NONE, TreatType.DEGAUSS,
+                TreatType.IRM, TreatType.THERMAL, TreatType.UNKNOWN};
         TreatType[] result = TreatType.values();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    @Test
-    public void testValueOf() {
-        System.out.println("valueOf");
-        String name = "";
-        TreatType expResult = null;
-        TreatType result = TreatType.valueOf(name);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     @Test
@@ -74,12 +62,24 @@ public class TreatTypeTest {
     @Test
     public void testGetAxisLabel() {
         System.out.println("getAxisLabel");
-        TreatType instance = null;
-        String expResult = "";
-        String result = instance.getAxisLabel();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
+        for (TreatType t: TreatType.values()) {
+            String label = t.getAxisLabel();
+            switch (t) {
+            case NONE: assertEquals("No demagnetization", label);
+                break;
+            case DEGAUSS: assertEquals("AF strength (mT)", label);
+                break;
+            case IRM: assertEquals("IRM", label);
+                break;
+            case THERMAL: assertEquals("Temperature (°C)", label);
+                break;
+            case UNKNOWN: assertEquals("unknown units", label);
+                break;
+            default: fail("No test for axis label "+label);
+                break;
+            }
+        }
     }
 
 }

@@ -6,33 +6,35 @@ import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
+import static java.lang.Double.NaN;
 
 public class Datum {
 
     private static final double sensorLengthX = 4.628,
      sensorLengthY = 4.404,
      sensorLengthZ = 6.280,
-     defaultCoreArea = 4.0; // can be overridden by Area field in file
+     defaultCoreArea = 4.0, // can be overridden by Area field in file
+     defaultVolume = 10.8; // can be overridden by Volume field in file
 
     private String sampleId;
     private MeasType measType;
     private TreatType treatType;
-    private double afx, afy, afz;
-    private double temp;
-    private double decUc, incUc, decSc, incSc, decFc, incFc;
-    private double intensity;
-    private double magSus = Double.NaN; // default to "not mag sus" if no such field
-    private double sampAz, sampDip, formAz, formDip;
-    private double magDev;
-    private double xCorr, yCorr, zCorr;
-    private double xDrift, yDrift, zDrift;    
-    private double xMean, yMean, zMean;
-    private double depth;
-    private double irmGauss, armGauss;
-    private double xbkg1, xbkg2, ybkg1, ybkg2, zbkg1, zbkg2;
+    private double afx=NaN, afy=NaN, afz=NaN;
+    private double temp=NaN;
+    private double decUc, incUc=NaN, decSc=NaN, incSc=NaN, decFc=NaN, incFc=NaN;
+    private double intensity=NaN;
+    private double magSus=NaN; // default to "not mag sus" if no such field
+    private double sampAz=NaN, sampDip=NaN, formAz=NaN, formDip=NaN;
+    private double magDev=NaN;
+    private double xCorr=NaN, yCorr=NaN, zCorr=NaN;
+    private double xDrift=NaN, yDrift=NaN, zDrift=NaN;    
+    private double xMean=NaN, yMean=NaN, zMean=NaN;
+    private double depth=NaN;
+    private double irmGauss=NaN, armGauss=NaN;
+    private double xbkg1=NaN, xbkg2=NaN, ybkg1=NaN, ybkg2=NaN, zbkg1=NaN, zbkg2=NaN;
     private ArmAxis armAxis;
     private final Point uc, sc, fc;
-    private double volume;
+    private double volume = defaultVolume;
     private double area = defaultCoreArea;
     private int runNumber = -1;
     private String timeStamp = null;
@@ -238,49 +240,50 @@ public class Datum {
     
     public Object getValue(TwoGeeField field) {
         switch (field) {
-            case AFX: return afx;
-            case AFY: return afy;
-            case AFZ: return afz;
-            case TEMP: return temp;
-            case DECUC: return decUc;
-            case INCUC: return incUc;
-            case DECSC: return decSc;
-            case INCSC: return incSc;
-            case DECFC: return decFc;
-            case INCFC: return incFc;
-            case INTENSITY: return intensity;
-            case MSCORR: return magSus;
-            case SAMPLEAZ: return sampAz;
-            case SAMPLEDIP: return sampDip;
-            case FORMAZ: return formAz;
-            case FORMDIP: return formDip;
-            case XMEAN: return xMean;
-            case YMEAN: return yMean;
-            case ZMEAN: return zMean;
-            case MAGDEV: return magDev;
-            case XCORR: return xCorr;
-            case YCORR: return yCorr;
-            case ZCORR: return zCorr;
-            case XDRIFT: return xDrift;
-            case YDRIFT: return yDrift;
-            case ZDRIFT: return zDrift;
-            case DEPTH: return depth;
-            case IRMGAUSS: return irmGauss;
-            case ARMGAUSS: return armGauss;
-            case VOLUME: return volume;
-            case XBKG1: return xbkg1;
-            case XBKG2: return xbkg2;
-            case YBKG1: return ybkg1;
-            case YBKG2: return ybkg2;
-            case ZBKG1: return zbkg1;
-            case ZBKG2: return zbkg2;
-            case SAMPLEID: return sampleId;
-            case MEASTYPE: return measType;
-            case TREATMENT: return treatType;
-            case ARMAXIS: return armAxis;
-            case TIMESTAMP: return timeStamp;
-            case RUNNUMBER: return runNumber;
-            default: throw new IllegalArgumentException("Unknown field "+field);
+        case AFX: return afx;
+        case AFY: return afy;
+        case AFZ: return afz;
+        case TEMP: return temp;
+        case DECUC: return decUc;
+        case INCUC: return incUc;
+        case DECSC: return decSc;
+        case INCSC: return incSc;
+        case DECFC: return decFc;
+        case INCFC: return incFc;
+        case INTENSITY: return intensity;
+        case MSCORR: return magSus;
+        case SAMPLEAZ: return sampAz;
+        case SAMPLEDIP: return sampDip;
+        case FORMAZ: return formAz;
+        case FORMDIP: return formDip;
+        case XMEAN: return xMean;
+        case YMEAN: return yMean;
+        case ZMEAN: return zMean;
+        case MAGDEV: return magDev;
+        case XCORR: return xCorr;
+        case YCORR: return yCorr;
+        case ZCORR: return zCorr;
+        case XDRIFT: return xDrift;
+        case YDRIFT: return yDrift;
+        case ZDRIFT: return zDrift;
+        case DEPTH: return depth;
+        case IRMGAUSS: return irmGauss;
+        case ARMGAUSS: return armGauss;
+        case VOLUME: return volume;
+        case XBKG1: return xbkg1;
+        case XBKG2: return xbkg2;
+        case YBKG1: return ybkg1;
+        case YBKG2: return ybkg2;
+        case ZBKG1: return zbkg1;
+        case ZBKG2: return zbkg2;
+        case SAMPLEID: return sampleId;
+        case MEASTYPE: return measType;
+        case TREATMENT: return treatType;
+        case ARMAXIS: return armAxis;
+        case TIMESTAMP: return timeStamp;
+        case RUNNUMBER: return runNumber;
+        case AREA: return area;
+        default: throw new IllegalArgumentException("Unknown field "+field);
         }
     }
 }
