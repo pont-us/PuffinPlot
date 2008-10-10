@@ -92,18 +92,6 @@ public class PuffinActions {
             pf.setOrientation(PageFormat.LANDSCAPE);
             job.setPrintable(app.mainWindow.graphDisplay,
                     app.getCurrentPageFormat());
-            // PageFormat pf = job.pageDialog(job.defaultPage());
-
-            // NB must explicitly request orientation to work around
-            // Java bug -- see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6633656 ,
-            // https://bugs.launchpad.net/ubuntu/+source/cupsys/+bug/156191
-
-            // Oops, even this doesn't help. Ah well, it works as long
-            // as a default orientation is set in the CUPS setup.
-            PrintRequestAttributeSet aset = new HashPrintRequestAttributeSet();
-            aset.add(OrientationRequested.LANDSCAPE);
-            aset.add(new Copies(1));
-            aset.add(new JobName("PuffinPlot", null));
 
             PrintService[] services =
                     PrinterJob.lookupPrintServices();
@@ -112,9 +100,12 @@ public class PuffinActions {
                 System.out.println("selected printer " + services[0].getName());
                 try {
                     job.setPrintService(services[0]);
-                    // job.pageDialog(aset);
-                    if (job.printDialog(aset)) {
-                        job.print(aset);
+                    /* Note: if we pass an attribute set to printDialog(),
+                     * it forces the use of a cross-platform Swing print
+                     * dialog rather than the default native one.
+                    */
+                    if (job.printDialog()) {
+                        job.print();
                     }
                 } catch (PrinterException pe) {
                     System.err.println(pe);
