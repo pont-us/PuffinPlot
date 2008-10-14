@@ -75,7 +75,7 @@ public class ZplotAxes {
         scale = Math.min(xScale, yScale);
         
         xOffset = plotArea.getMinX() - extDataArea.getMinX() * scale;
-        yOffset = plotArea.getMinY() - extDataArea.getMinY() * scale;
+        yOffset = plotArea.getMaxY() + extDataArea.getMinY() * scale;
     }
 
     public double getScale() {
@@ -91,7 +91,8 @@ public class ZplotAxes {
     }
     
     public void draw(Graphics2D g) {
-        for (PlotAxis a: axes) a.draw(g, scale);
+        for (PlotAxis a: axes) a.draw(g, scale, (int)getXOffset(),
+                (int) (getYOffset()) );
     }
 
     public double getXOffset() {

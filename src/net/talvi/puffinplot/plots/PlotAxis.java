@@ -120,7 +120,7 @@ class PlotAxis {
         g.setTransform(old);
     }
     
-    public void draw(Graphics2D g, double scale) {
+    public void draw(Graphics2D g, double scale, int xOrig, int yOrig) {
         int x = 0, y = 0;
         double t = 5;
         switch (direction) {
@@ -132,13 +132,15 @@ class PlotAxis {
 
         for (int i=1; i<=numSteps; i++) {
             double pos = i*getStepSize()*scale;
-            g.draw(new Line2D.Double(x*pos+y*t, y*pos+x*t, x*pos-y*t, y*pos-x*t));
+            g.draw(new Line2D.Double(xOrig+x*pos+y*t, yOrig+y*pos+x*t,
+                    xOrig+x*pos-y*t, yOrig+y*pos-x*t));
         }
+        
         double xLen = x*getLength()*scale;
         double yLen = y*getLength()*scale;
-        g.draw(new Line2D.Double(0,0,xLen,yLen));
+        g.draw(new Line2D.Double(xOrig, yOrig, xOrig+xLen, yOrig+yLen));
         if (getLength()!=0) putText(g, new AttributedString(String.format("%3.1f", getNormalizedLength())),
-                xLen, yLen, direction.labelPos(), 0, 5);
+                xOrig+xLen, yOrig+yLen, direction.labelPos(), 0, 5);
         if (label != null) {
             String text = label;
             if (normalizationFactor != 0) {
@@ -147,15 +149,15 @@ class PlotAxis {
                 AttributedString as = new AttributedString(text+exponent);
                 as.addAttribute(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUPER,
                         text.length(), text.length()+exponent.length());
-                putText(g, as, xLen/2, yLen/2, direction.labelPos(), direction.labelRot(), 15);
+                putText(g, as, xOrig+xLen/2, yOrig+yLen/2, direction.labelPos(), direction.labelRot(), 15);
             } else {
-                putText(g, new AttributedString(text), xLen/2, yLen/2, direction.labelPos(),
+                putText(g, new AttributedString(text), xOrig+xLen/2, yOrig+yLen/2, direction.labelPos(),
                         direction.labelRot(), 15);
             }
         }
         
         if (endLabel != null) {
-            putText(g, new AttributedString(endLabel), xLen, yLen, direction, 0, 8);
+            putText(g, new AttributedString(endLabel), xOrig+xLen, yOrig+yLen, direction, 0, 8);
         }
     }
 

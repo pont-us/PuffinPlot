@@ -109,23 +109,23 @@ public class DataDisplay extends Plot {
     public void paint(Graphics g1) {
         super.paint(g1);
         Graphics2D g = (Graphics2D) g1;
-        g.setRenderingHints(Plot.renderingHints);
-        Sample sample = params.getSample();
-        if (sample==null) return;
+//        g.setRenderingHints(Plot.renderingHints);
+//        Sample sample = params.getSample();
+//        if (sample==null) return;
+//        
+//        String line = null;
+//        switch (params.getMeasType()) {
+//        case DISCRETE: line = "Sample " + sample.getName();
+//            break;
+//        case CONTINUOUS: line = "Depth " + sample.getDepth();
+//            break;
+//        }
+//        line = line + " / correction " + params.getCorrection();
+//        summaryLine.setText(line);
         
-        String line = null;
-        switch (params.getMeasType()) {
-        case DISCRETE: line = "Sample " + sample.getName();
-            break;
-        case CONTINUOUS: line = "Depth " + sample.getDepth();
-            break;
-        }
-        line = line + " / correction " + params.getCorrection();
-        summaryLine.setText(line);
-        
-        PcaValues pca = sample.getPca();
-        if (pca != null) pcaLine.setText("PCA: "+pca.getDecInc()+" "+pca.getMads());
-        else pcaLine.setText("");
+//        PcaValues pca = sample.getPca();
+//        if (pca != null) pcaLine.setText("PCA: "+pca.getDecInc()+" "+pca.getMads());
+//        else pcaLine.setText("");
 
     }    
 }

@@ -9,6 +9,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.util.List;
 
+import net.talvi.puffinplot.GraphDisplay;
 import net.talvi.puffinplot.PlotParams;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Datum;
@@ -24,66 +25,54 @@ public class EqAreaPlot extends Plot {
     private static int incTickNum = 9;
     private static float incTickLength = decTickLength;
     private static int margin = 10;
+    private PlotParams params;
+    private GraphDisplay parent;
 
-    public EqAreaPlot(PlotParams params) {
+    public EqAreaPlot(PlotParams params, GraphDisplay parent) {
         super(params);
-        withLines = true;
-    }
-    
-    private int diameter() {
-        // return Math.min(getSize().width, getSize().height) - margin*2;
-        return Math.min(getVirtualWidth(), getVirtualHeight()) - margin*2;
+        this.params = params;
+        this.parent = parent;
+       // withLines = true;
     }
     
     void paintAxes(Graphics2D g) {
+
+    }
+
+    public void paint(Graphics2D g, int xOrig, int yOrig, int xSize, int ySize) {
+              
+        int minDim = Math.min(xSize, ySize);
+        int xo = xOrig + (xSize / 2);
+        int yo = yOrig + (ySize / 2);
+        
+       Sample sample = params.getSample();
+       if (sample==null) return; 
+        int radius = minDim / 2;
+        
         g.setColor(Color.BLACK);
-        int radius = diameter() / 2;
-        g.drawArc(-radius, -radius, diameter(), diameter(), 0, 360);
+
+        g.drawArc(xo-radius, yo-radius, radius*2, radius*2, 0, 360);
         for (int theta=0; theta<360; theta += decTickStep) {
             double x = (Math.cos(Math.toRadians(theta)) * radius);
             double y = (Math.sin(Math.toRadians(theta)) * radius);
-            g.drawLine((int) x, (int) y,
-                        (int) (x * (1f - decTickLength)),
-                        (int) (y * (1f - decTickLength)));
+            g.drawLine((int) (xo + x), (int) (yo + y),
+                        (int) (xo + x * (1f - decTickLength)),
+                        (int) (yo + y * (1f - decTickLength)));
         }
+        
         int l = (int) (radius * incTickLength / 2);
         for (int i=0; i<incTickNum; i++) {
             int x = (int) ((i * radius) / incTickNum);
-            g.drawLine(x, -l, x, l);
+            g.drawLine(xo + x, yo - l, xo + x, yo + l);
+            // What the hell does this do?
         }
-        g.drawLine(-l, 0, l, 0);
-    }
-    
-    @Override
-    protected int getVirtualWidth() { return 1000; }
-    
-    @Override
-    protected int getVirtualHeight() { return 1000; }
-    
-    @Override
-    public void paint(Graphics g1) {
-        Graphics2D g = (Graphics2D) g1;
-        g.setRenderingHints(renderingHints);
-        
-        double minDim = Math.min(getWidth(), getHeight());
-        
-        transform = AffineTransform.getScaleInstance
-                (minDim / getVirtualWidth(),
-                (minDim / getVirtualHeight()));
-        transform.concatenate(AffineTransform.getTranslateInstance(getVirtualWidth()/2,
-                getVirtualHeight()/2));
-        g.transform(transform);
-        
-        clearPoints();
-        Sample sample = params.getSample();
-        if (sample==null) return; 
-        
-        paintAxes(g);
+        g.drawLine(xo-l, yo, xo+l, yo);
+       
         List<Datum> data = sample.getData();
         Correction correction = params.getCorrection();
         boolean first = true;
         for (Datum d: data) {
-            int radius = diameter() / 2;
+
             Point p = d.getPoint(correction).normalize();
 
             double h2 = p.x*p.x + p.y*p.y;
@@ -97,9 +86,8 @@ public class EqAreaPlot extends Plot {
              * to take account of AWT Y-coordinates running top-to-bottom rather
              * than bottom-to-top (let x''' = x'' = y, y''' = -y'' = -x).
              */
-            addPoint(d, radius*(p.y)*L, radius*(-p.x)*L, p.z>0, first);
+            parent.addPoint(d, xo + radius*(p.y)*L, yo + radius*(-p.x)*L, p.z>0, first);
             first = false;
         }
-        drawPoints(g);
     }
 }

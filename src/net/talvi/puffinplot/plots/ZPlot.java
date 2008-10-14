@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import net.talvi.puffinplot.GraphDisplay;
 import net.talvi.puffinplot.PlotParams;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.Correction;
@@ -30,10 +31,13 @@ public class ZPlot extends Plot {
 
     static int margin = 50;
     static double majorTickLen = 0.05;
+    private PlotParams params;
+    private GraphDisplay parent;
     
-    public ZPlot(PlotParams params) {
-        super(params);
-        withLines = true;
+    public ZPlot(PlotParams params, GraphDisplay parent) {
+        this.params = params;
+        this.parent = parent;
+        // withLines = true;
     }
     
     private static Rectangle2D extent(List<Datum> sample, Correction corr,
@@ -58,12 +62,11 @@ public class ZPlot extends Plot {
         g.setClip(oldClip);
     }
     
-    @Override
-    public void paint(Graphics g1) {
-        Graphics2D g = (Graphics2D) g1;
-        g.setRenderingHints(renderingHints);
+    public void paint(Graphics2D g, int xOffs, int yOffs, int xSize, int ySize) {
 
-        clearPoints();
+        g.drawRect(xOffs, yOffs, xSize, ySize);
+
+        
         Sample sample = params.getSample();
         if (sample==null) return;
         
@@ -77,21 +80,17 @@ public class ZPlot extends Plot {
         Rectangle2D extent2 = extent(data, correction, vVs, MeasurementAxis.MINUSZ);
 
         ZplotAxes axes = new ZplotAxes(extent1.createUnion(extent2),
-                new Rectangle2D.Double(margin, margin,
-                        getSize().width-2*margin, getSize().height-2*margin),
+                new Rectangle2D.Double(xOffs, yOffs, xSize, ySize),
                         vVs);
         
-        transform = AffineTransform.getTranslateInstance
-        (axes.getXOffset(), getSize().height - axes.getYOffset());
-        g.transform(transform);
-        
         axes.draw(g);
+        
         
         boolean first = true;
         for (Datum d: data) {
             double x = d.getPoint(correction).y * axes.getScale();
             double y = - d.getPoint(correction).x * axes.getScale();
-            addPoint(d, x, y, true, first);
+            parent.addPoint(d, axes.getXOffset() + x, axes.getYOffset() + y, true, first);
             first = false;
         }
         breakLine();
@@ -99,7 +98,7 @@ public class ZPlot extends Plot {
         for (Datum d: data) {
             double x = d.getPoint(correction).getComponent(vVs) * axes.getScale();
             double y = - d.getPoint(correction).getComponent(MeasurementAxis.MINUSZ) * axes.getScale();
-            addPoint(d, x, y, false, first);
+            parent.addPoint(d, axes.getXOffset() + x, axes.getYOffset() + y, false, first);
             first = false;
         }
         drawPoints(g);
@@ -108,7 +107,7 @@ public class ZPlot extends Plot {
         if (pca != null) {
             double x1 = pca.origin.y * axes.getScale();
             double y1 = - pca.origin.x * axes.getScale();
-            drawLine(g, x1, y1, pca.dec, axes, Color.BLUE);
+            drawLine(g, xOffs + x1, yOffs + ySize + y1, pca.dec, axes, Color.BLUE);
             double x2 = pca.origin.getComponent(vVs) * axes.getScale();
             double y2 = - pca.origin.getComponent(MeasurementAxis.MINUSZ) * axes.getScale();
             
@@ -124,7 +123,7 @@ public class ZPlot extends Plot {
                     break;
                 case H: incCorr = pca.inc; break;
             }
-            drawLine(g, x2, y2, Math.PI/2 + incCorr, axes, Color.BLUE);
+            drawLine(g, xOffs + x2, yOffs + ySize + y2, Math.PI/2 + incCorr, axes, Color.BLUE);
         }
     }
 }
