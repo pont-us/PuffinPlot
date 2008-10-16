@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.util.List;
 
 import net.talvi.puffinplot.GraphDisplay;
@@ -86,7 +87,9 @@ public class EqAreaPlot extends Plot {
              * to take account of AWT Y-coordinates running top-to-bottom rather
              * than bottom-to-top (let x''' = x'' = y, y''' = -y'' = -x).
              */
-            parent.addPoint(d, xo + radius*(p.y)*L, yo + radius*(-p.x)*L, p.z>0, first);
+            parent.addPoint(d,
+                    new Point2D.Double(xo + radius*(p.y)*L, yo + radius*(-p.x)*L), 
+                    p.z>0, first, !first);
             first = false;
         }
     }

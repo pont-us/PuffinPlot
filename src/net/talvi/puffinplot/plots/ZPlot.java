@@ -10,6 +10,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Collections;
 import java.util.Comparator;
@@ -64,9 +65,6 @@ public class ZPlot extends Plot {
     
     public void paint(Graphics2D g, int xOffs, int yOffs, int xSize, int ySize) {
 
-        g.drawRect(xOffs, yOffs, xSize, ySize);
-
-        
         Sample sample = params.getSample();
         if (sample==null) return;
         
@@ -85,20 +83,22 @@ public class ZPlot extends Plot {
         
         axes.draw(g);
         
-        
         boolean first = true;
         for (Datum d: data) {
             double x = d.getPoint(correction).y * axes.getScale();
             double y = - d.getPoint(correction).x * axes.getScale();
-            parent.addPoint(d, axes.getXOffset() + x, axes.getYOffset() + y, true, first);
+            parent.addPoint(d, new Point2D.Double(axes.getXOffset() + x, axes.getYOffset() + y)
+                    , true, first, !first);
             first = false;
         }
         breakLine();
+        
         first = true;
         for (Datum d: data) {
             double x = d.getPoint(correction).getComponent(vVs) * axes.getScale();
             double y = - d.getPoint(correction).getComponent(MeasurementAxis.MINUSZ) * axes.getScale();
-            parent.addPoint(d, axes.getXOffset() + x, axes.getYOffset() + y, false, first);
+            parent.addPoint(d, new Point2D.Double(axes.getXOffset() + x, axes.getYOffset() + y),
+                    false, first, !first);
             first = false;
         }
         drawPoints(g);
@@ -107,10 +107,10 @@ public class ZPlot extends Plot {
         if (pca != null) {
             double x1 = pca.origin.y * axes.getScale();
             double y1 = - pca.origin.x * axes.getScale();
-            drawLine(g, xOffs + x1, yOffs + ySize + y1, pca.dec, axes, Color.BLUE);
+            drawLine(g, axes.getXOffset() + x1, axes.getYOffset() + y1, pca.dec, axes, Color.BLUE);
+            
             double x2 = pca.origin.getComponent(vVs) * axes.getScale();
             double y2 = - pca.origin.getComponent(MeasurementAxis.MINUSZ) * axes.getScale();
-            
             double incCorr = 0;
             switch (vVs) {
                 // We don't necessarily want the actual line of inclination; we
@@ -123,7 +123,7 @@ public class ZPlot extends Plot {
                     break;
                 case H: incCorr = pca.inc; break;
             }
-            drawLine(g, xOffs + x2, yOffs + ySize + y2, Math.PI/2 + incCorr, axes, Color.BLUE);
+            drawLine(g, axes.getXOffset() + x2, axes.getYOffset() + y2, Math.PI/2 + incCorr, axes, Color.BLUE);
         }
     }
 }

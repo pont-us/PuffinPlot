@@ -1,5 +1,6 @@
 package net.talvi.puffinplot.plots;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
@@ -29,17 +30,8 @@ public class DemagPlot extends Plot {
         if (sample==null) return;
         List<Datum> data = sample.getData();
         if (data.size() == 0) return;
-        
-        
-        // transform = AffineTransform.getTranslateInstance(margin, getHeight()-margin);
-//        transform = (AffineTransform.getScaleInstance
-//                (((double) getWidth()) / getVirtualWidth(),
-//                ((double) getHeight()) / getVirtualHeight()));
-//        transform.concatenate(AffineTransform.getTranslateInstance(margin, getVirtualHeight()-margin));
-//        g.transform(transform);
-
-        // clearPoints();
-        
+         
+        g.setColor(Color.BLACK);
         double maxIntens = 0;
         double maxDemag = 0;
         for (Datum d: data) {
@@ -60,9 +52,12 @@ public class DemagPlot extends Plot {
         vAxis.draw(g, vScale, xOffs, yOffs+ySize);
         hAxis.draw(g, hScale, xOffs, yOffs+ySize);
         
-        for (Datum d: data)
+        boolean first = true;
+        for (Datum d: data) {
             parent.addPoint(d, new Point2D.Double(xOffs + d.getDemagLevel() * hScale,
-                    yOffs+ySize - d.getIntensity() * vScale), true, false);
+                    yOffs+ySize - d.getIntensity() * vScale), true, false, !first);
+            first = false;
+        }
         drawPoints(g);
     }
 

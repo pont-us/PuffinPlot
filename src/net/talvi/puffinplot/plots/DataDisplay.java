@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 import javax.swing.BoxLayout;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -24,11 +25,12 @@ import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.PcaValues;
 import net.talvi.puffinplot.data.Sample;
 
-public class DataDisplay extends Plot {
+public class DataDisplay extends JComponent {
 
     private static final long serialVersionUID = 1L;
     private JLabel summaryLine;
     private JLabel pcaLine;
+    public JPanel p;
     
     
     class MyRenderer extends DefaultTableCellRenderer {
@@ -44,7 +46,6 @@ public class DataDisplay extends Plot {
     }
     
     public DataDisplay(final PlotParams params) {
-        super(params);
         setOpaque(false);
         setMaximumSize(new Dimension(1200, 800));
         setPreferredSize(new Dimension(1200, 800));
@@ -92,7 +93,7 @@ public class DataDisplay extends Plot {
         pcaLine = new JLabel();
         add(summaryLine);
         add(pcaLine);
-        JPanel p = new JPanel();
+        p = new JPanel();
         add(p);
         p.setLayout(new BorderLayout());
         JTableHeader h = table.getTableHeader();

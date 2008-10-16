@@ -36,8 +36,8 @@ public class Suite implements Iterable<Datum> {
     private MeasType measType;
     private String currentName;
     private String suiteName;
-    private static final Pattern whitespacePattern =
-            Pattern.compile("^\\w*$");
+    private static final Pattern emptyLine = Pattern.compile("^\\s*$");
+    private static final Pattern whitespace = Pattern.compile("\\s+");
     private List<String> loadWarnings = new LinkedList<String>();
 
     public Iterator<Datum> iterator() {
@@ -102,7 +102,7 @@ public class Suite implements Iterable<Datum> {
     
     private void addLine2G(String line, List<TwoGeeField> fields,
             Set<Double> depthSet, Set<String> nameSet) {
-        if (!whitespacePattern.matcher(line).matches()) {
+        if (!emptyLine.matcher(line).matches()) {
             Datum d = new Datum(line, fields);
             if (measType == MeasType.UNSET)
                 measType = d.getMeasType();
@@ -123,9 +123,8 @@ public class Suite implements Iterable<Datum> {
     }
     
     private void addLineZplot(String line, Set<Double> depthSet, Set<String> nameSet) {
-        if (measType == MeasType.UNSET) measType = MeasType.CONTINUOUS;
-        Datum d = new Datum(line, measType, TreatType.DEGAUSS);
-        // XXX must ask or guess measurement/treatment type here
+        Datum d = new Datum(line);
+        if (measType == MeasType.UNSET) measType = d.getMeasType();
         if (d.getMeasType() != measType) {
             throw new Error("Can't mix long core and discrete measurements.");
         }
@@ -173,7 +172,7 @@ public class Suite implements Iterable<Datum> {
         for (File file: files) {
             int warningsThisFile = 0;
             FileType fileType = FileType.guessFromName(file);
-            switch (fileType) {
+            fileTypeSwitch: switch (fileType) {
             case TWOGEE: {
                 LineNumberReader reader =
                         new LineNumberReader(new FileReader(file));
@@ -213,7 +212,26 @@ public class Suite implements Iterable<Datum> {
 
             case ZPLOT: {
                 BufferedReader reader = new BufferedReader(new FileReader(file));
-                for (int i=0; i<7; i++) reader.readLine();     // skip the header fields
+                for (int i=0; i<6; i++) reader.readLine();     // skip the header fields
+                String[] headers = whitespace.split(reader.readLine());
+                
+                if (headers.length != 7) {
+                    loadWarnings.add("Wrong number of header fields in Zplot file "+file.getName()+
+                            ": expected 7, got "+headers.length);
+                    reader.close();
+                    break;
+                }
+                String[] expectedHeaders = 
+                {"Sample", "Project", "Demag", "Declin", "Inclin", "Intens", "Operation"};
+                for (int i=0; i<expectedHeaders.length; i++) {
+                    if (!expectedHeaders[i].equals(headers[i])) {
+                        loadWarnings.add("Unknown header field "+headers[i]+" in file "+
+                                file.getName()+" -- aborting load.");
+                        reader.close();
+                        break fileTypeSwitch;
+                    }
+                }
+                
                 while ((line = reader.readLine()) != null)
                     addLineZplot(line, depthSet, nameSet);
                 reader.close();

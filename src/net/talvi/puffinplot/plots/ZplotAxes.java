@@ -83,9 +83,10 @@ public class ZplotAxes {
     }
     
     public Rectangle getBounds() {
+        // x, y, width, height
         return new Rectangle(
-                (int) (-axes[2].getLength() * scale),
-                (int) (-axes[3].getLength() * scale),
+                (int) (xOffset - axes[2].getLength() * scale),
+                (int) (yOffset - axes[3].getLength() * scale),
                 (int) ((axes[0].getLength() + axes[2].getLength()) * scale),
                 (int) ((axes[1].getLength() + axes[3].getLength()) * scale));
     }

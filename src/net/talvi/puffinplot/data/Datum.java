@@ -42,6 +42,7 @@ public class Datum {
     public boolean selected = false;
     
     private final static Pattern delimPattern = Pattern.compile("\\t");
+    private final static Pattern numberPattern = Pattern.compile("\\d+(\\.\\d+)?");
 
     private static class NaScanner {
         
@@ -79,21 +80,42 @@ public class Datum {
         }
     }
     
-    public Datum(String zPlotLine, MeasType measType, TreatType treatType) {
+    public Datum(String zPlotLine) {
         Scanner s = new Scanner(zPlotLine);
         s.useLocale(Locale.ENGLISH); // don't want to be using commas as decimal separators...
         s.useDelimiter(delimPattern); // might have spaces within fields
-        depth = s.nextDouble();
-        sampleId = s.next();
-        afx = afy = afz = s.nextDouble();
+        
+        String depthOrSample = s.next();
+        measType = (numberPattern.matcher(depthOrSample).matches())
+                ? MeasType.CONTINUOUS
+                : MeasType.DISCRETE;
+        switch (measType) {
+        case CONTINUOUS: depth = Double.parseDouble(depthOrSample);
+            break;
+        case DISCRETE: sampleId = depthOrSample;
+            break;
+        default: throw new Error("Can't happen.");
+        }
+        String project = s.next();
+        double afOrThermalDemag = s.nextDouble();
         decUc = s.nextDouble();
         incUc = s.nextDouble();
         intensity = s.nextDouble();
+        String operation = s.next();
         magSus = Double.NaN;
         uc = Point.fromPolarDegrees(intensity, incUc, decUc);
         fc = sc = uc;
-        this.measType = measType; 
-        this.treatType = treatType;
+        treatType = TreatType.DEGAUSS;
+        if (project.toLowerCase().contains("therm") ||
+                operation.toLowerCase().contains("therm"))
+            treatType = TreatType.THERMAL;
+        switch (treatType) {
+        case DEGAUSS: afx = afy = afz = afOrThermalDemag;
+        break;
+        case THERMAL: temp = afOrThermalDemag;
+        break;
+        default: throw new Error("Can't happen.");
+        }
     }
     
     public Datum(String line, List<TwoGeeField> fields) {
