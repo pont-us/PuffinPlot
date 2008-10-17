@@ -3,11 +3,17 @@ package net.talvi.puffinplot.data;
 import static java.lang.Math.PI;
 import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
+import static java.lang.Math.acos;
+import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.toDegrees;
 import static java.lang.Math.toRadians;
 import Jama.Matrix;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 public class Point {
 
@@ -188,5 +194,27 @@ public class Point {
 
     public double decDegrees() {
         return toDegrees(decRadians());
+    }
+    
+    private static double vectorSumLength(Collection<Point> points) {
+        double xs=0, ys=0, zs=0;
+        for (Point p: points) {
+            xs += p.x;
+            ys += p.y;
+            zs += p.z;
+        }
+        return sqrt(xs*xs + ys*ys + zs*zs);
+    }
+    
+    public static double a95(Collection<Point> points) {
+        int N = points.size();
+        List<Point> normPoints = new ArrayList<Point>(N);
+        Iterator<Point> pIter = points.iterator();
+        for (Point p: points) normPoints.add(p.normalize());
+        double R = Point.vectorSumLength(normPoints);
+        double k = (N-1)/(N-R);
+        double p = 0.05;
+        double a95 = acos( 1 - ((N-R)/R) * (pow(1/p,1/(N-1))-1) );
+        return toDegrees(a95);
     }
 }

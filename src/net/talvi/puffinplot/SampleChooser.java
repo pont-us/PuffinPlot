@@ -57,7 +57,7 @@ public class SampleChooser extends JPanel {
     public Sample[] getSelectedSamples() {
         Object[] names = sampleList.getSelectedValues();
         Sample[] samples = new Sample[names.length];
-        Suite suite = PuffinApp.app.getCurrentSuite();
+        Suite suite = PuffinApp.getApp().getCurrentSuite();
         for (int i=0; i<names.length; i++)
             samples[i] = suite.getSampleByName((String) names[i]);
         return samples;
@@ -69,11 +69,10 @@ public class SampleChooser extends JPanel {
             setAlignmentY(0);
             addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
-                JList source = (JList) e.getSource();
                 if (getSelectedValue() != null)
-                    PuffinApp.app.getCurrentSuite().
+                    PuffinApp.getApp().getCurrentSuite().
                             setCurrentName((String) getSelectedValue());
-                PuffinApp.app.mainWindow.repaint(100);
+                    PuffinApp.getApp().mainWindow.repaint(100);
             }
             });
         }
@@ -102,8 +101,8 @@ public class SampleChooser extends JPanel {
             setSnapToTicks(true);
             addChangeListener(new ChangeListener() {
                 public void stateChanged(ChangeEvent e) {
-                    PuffinApp.app.getCurrentSuite().setCurrentDepthIndex(getValue());
-                    PuffinApp.app.mainWindow.repaint(100);
+                    PuffinApp.getApp().getCurrentSuite().setCurrentDepthIndex(getValue());
+                    PuffinApp.getApp().mainWindow.repaint(100);
                 }
             });
         }

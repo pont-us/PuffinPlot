@@ -38,7 +38,7 @@ public class GraphDisplay extends JPanel implements Printable {
 
     private static final long serialVersionUID = -5730958004698337302L;
     JPanel leftPanel;
-    private PlotParams params;
+    private transient PlotParams params;
     private Sample[] samples = null;
     private int printPageIndex = -1;
     private ZPlot zPlot;
@@ -65,7 +65,7 @@ public class GraphDisplay extends JPanel implements Printable {
         }
     }
  
-    private class PlotPoint {
+    private static class PlotPoint {
 
         private final Shape shape;
         private final Shape highlight;
@@ -110,20 +110,20 @@ public class GraphDisplay extends JPanel implements Printable {
 
             public Sample getSample() {
                 return samples==null
-                       ? PuffinApp.app.getCurrentSample()
+                       ? PuffinApp.getApp().getCurrentSample()
                         : samples[printPageIndex];
             }
 
             public Correction getCorrection() {
-                return PuffinApp.app.currentCorrection();
+                return PuffinApp.getApp().currentCorrection();
             }
 
             public MeasurementAxis getAxis() {
-                return PuffinApp.app.mainWindow.controlPanel.getAxis();
+                return PuffinApp.getApp().mainWindow.controlPanel.getAxis();
             }
 
             public MeasType getMeasType() {
-                return PuffinApp.app.getCurrentSuite().getMeasType();
+                return PuffinApp.getApp().getCurrentSuite().getMeasType();
             }
             
         };
@@ -196,14 +196,14 @@ public class GraphDisplay extends JPanel implements Printable {
                 if (s.shape.contains(antiZoom.transform(e.getPoint(), null))) {
                     s.datum.toggleSel();
                 }
-                PuffinApp.app.mainWindow.graphDisplay.repaint();
+                PuffinApp.getApp().mainWindow.graphDisplay.repaint();
             }
         }
     }
 
     public int print(Graphics graphics, PageFormat pf, int pageIndex) throws PrinterException {
         pf.setOrientation(PageFormat.LANDSCAPE);
-        if (samples == null) samples = PuffinApp.app.getSelectedSamples();
+        if (samples == null) samples = PuffinApp.getApp().getSelectedSamples();
         if (pageIndex >= samples.length) {
             samples = null; // we've finished printing
             return NO_SUCH_PAGE;

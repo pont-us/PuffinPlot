@@ -30,14 +30,26 @@ public class PcaValues {
 
     private static int[] order(double[] x) {
         class Pair implements Comparable<Pair> {
-            int index;
-            double value;
+            private final int index;
+            private final double value;
             Pair(int index, double value) {
                 this.index = index;
                 this.value = value;
             }            
             public int compareTo(Pair p) {
                 return Double.compare(p.value, value);
+            }
+            @Override
+            public boolean equals(Object o) {
+                return (o==null)
+                        ? false
+                        : (o instanceof Pair)
+                        ? (compareTo((Pair) o)==0)
+                        : false;
+            }
+            public int hashCode() {
+                assert false : "hashCode not designed";
+                return 42; // any arbitrary constant will do 
             }
         }
         

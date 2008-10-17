@@ -38,8 +38,8 @@ public class ControlPanel extends JPanel
         add(coreBox = new JComboBox(new String[] {"no samples loaded"}));
         add(correctionBox = new CorrectionBox());
         add(vVsBox = new VVsBox());
-        add(new JButton(PuffinApp.app.actions.pca));
-        PuffinApp.app.addFileOpenedListener(this);
+        add(new JButton(PuffinApp.getApp().actions.pca));
+        PuffinApp.getApp().addFileOpenedListener(this);
         coreBox.addActionListener(this);
         
         int modifierKey = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
@@ -49,7 +49,7 @@ public class ControlPanel extends JPanel
     
     void updateCoreBox() {
         coreBox.removeAllItems();
-        for (Suite suite: PuffinApp.app.suites) {
+        for (Suite suite: PuffinApp.getApp().suites) {
             coreBox.addItem(suite.getName());
         }
     }
@@ -60,7 +60,7 @@ public class ControlPanel extends JPanel
 
     public void actionPerformed(ActionEvent e) {
         int index = coreBox.getSelectedIndex();
-        if (index > -1) PuffinApp.app.setCurrentSuite(index);        
+        if (index > -1) PuffinApp.getApp().setCurrentSuite(index);        
     }
     
     public MeasurementAxis getAxis() {
@@ -115,6 +115,6 @@ public class ControlPanel extends JPanel
     }
 
     public void itemStateChanged(ItemEvent e) {
-        PuffinApp.app.mainWindow.repaint();
+        PuffinApp.getApp().mainWindow.repaint();
     }
 }

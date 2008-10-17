@@ -48,7 +48,7 @@ public class Suite implements Iterable<Datum> {
         return loadWarnings;
     }
     
-    private class Fields {
+    private static class Fields {
         List<TwoGeeField> fields;
         List<String> unknown;
 
@@ -172,46 +172,54 @@ public class Suite implements Iterable<Datum> {
         for (File file: files) {
             int warningsThisFile = 0;
             FileType fileType = FileType.guessFromName(file);
+            LineNumberReader reader = null;
             fileTypeSwitch: switch (fileType) {
-            case TWOGEE: {
-                LineNumberReader reader =
-                        new LineNumberReader(new FileReader(file));
-                Fields fields = new Fields(reader.readLine());
-                if (fields.areAllUnknown()) {
-                    loadWarnings.add(file.getName() +
-                            " doesn't look like a 2G file. " +
-                            "Ignoring it.");
-                } else {
-                    while ((line = reader.readLine()) != null) {
-                        try {
-                            addLine2G(line, fields.fields, depthSet, nameSet);
-                        } catch (IllegalArgumentException e) {
-                            loadWarnings.add(e.getMessage() +
-                                    " at line " + reader.getLineNumber() +
-                                    " in file " + file.getName() +
-                                    " -- ignoring this line.");
-                            if (++warningsThisFile > MAX_WARNINGS_PER_FILE) {
-                                loadWarnings.add("Too many errors in "+
-                                        file.getName() +
-                                        "-- aborting load at line "+
-                                        reader.getLineNumber());
-                                break;
+            case TWOGEE: 
+                try {
+                    reader = new LineNumberReader(new FileReader(file));
+                    String fieldsLine = reader.readLine();
+                    if (fieldsLine == null) {
+                        loadWarnings.add(file.getName()+" is empty.");
+                        break;
+                    }
+                    Fields fields = new Fields(fieldsLine);
+                    if (fields.areAllUnknown()) {
+                        loadWarnings.add(file.getName() +
+                                " doesn't look like a 2G file. " +
+                                "Ignoring it.");
+                    } else {
+                        while ((line = reader.readLine()) != null) {
+                            try {
+                                addLine2G(line, fields.fields, depthSet, nameSet);
+                            } catch (IllegalArgumentException e) {
+                                loadWarnings.add(e.getMessage() +
+                                        " at line " + reader.getLineNumber() +
+                                        " in file " + file.getName() +
+                                        " -- ignoring this line.");
+                                if (++warningsThisFile > MAX_WARNINGS_PER_FILE) {
+                                    loadWarnings.add("Too many errors in " +
+                                            file.getName() +
+                                            "-- aborting load at line " +
+                                            reader.getLineNumber());
+                                    break;
+                                }
                             }
                         }
                     }
-                reader.close();
-                if (fields.unknown.size() > 0) {
-                    loadWarnings.add(
-                            "I didn't recognize the following field names,\n"+
-                            "so I'm ignoring them:\n"+
-                            fields.unknown);
-                }
+                    if (fields.unknown.size() > 0) {
+                        loadWarnings.add(
+                                "I didn't recognize the following field names,\n" +
+                                "so I'm ignoring them:\n" +
+                                fields.unknown);
+                    }
+                } finally {
+                    if (reader != null) reader.close();
                 }
                 break;
-            }
 
-            case ZPLOT: {
-                BufferedReader reader = new BufferedReader(new FileReader(file));
+            case ZPLOT:
+                try {
+                reader = new LineNumberReader(new FileReader(file));
                 for (int i=0; i<6; i++) reader.readLine();     // skip the header fields
                 String[] headers = whitespace.split(reader.readLine());
                 
@@ -234,8 +242,10 @@ public class Suite implements Iterable<Datum> {
                 
                 while ((line = reader.readLine()) != null)
                     addLineZplot(line, depthSet, nameSet);
-                reader.close();
-                break; }
+                } finally {
+                    if (reader != null) reader.close();
+                }
+                break;
 
             case PUFFINPLOT:
                 loadWarnings.add("Can't load PuffinPlot files yet: ignoring "+file.getName());

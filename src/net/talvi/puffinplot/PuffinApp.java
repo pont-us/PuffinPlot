@@ -19,7 +19,11 @@ import net.talvi.puffinplot.data.Sample;
 
 public class PuffinApp {
 
-    public static PuffinApp app;
+    private static PuffinApp app;
+
+    public static PuffinApp getApp() {
+        return app;
+    }
     final PuffinActions actions;
     private List<FileOpenedListener> fileOpenedListeners =
         new LinkedList<FileOpenedListener>();
@@ -28,8 +32,7 @@ public class PuffinApp {
     private int currentSuiteIndex;
     private PageFormat currentPageFormat =
             PrinterJob.getPrinterJob().defaultPage();
-
-    public static boolean MAC_OS_X = (System.getProperty("os.name").
+    public static final boolean MAC_OS_X = (System.getProperty("os.name").
             toLowerCase().startsWith("mac os x"));
     private TableWindow tableWindow;
     private Prefs prefs;
@@ -38,7 +41,7 @@ public class PuffinApp {
         return prefs;
     }
     
-    public class Prefs {
+    public static class Prefs {
         private boolean axisScaleLocked;
         private boolean pcaAnchored;
 
@@ -148,7 +151,7 @@ public class PuffinApp {
     
     public static void errorDialog(String title, String message) {
         JOptionPane.showMessageDialog
-        (app.mainWindow, message, title, JOptionPane.ERROR_MESSAGE);
+        (getApp().mainWindow, message, title, JOptionPane.ERROR_MESSAGE);
     }
     
     @SuppressWarnings("unchecked")

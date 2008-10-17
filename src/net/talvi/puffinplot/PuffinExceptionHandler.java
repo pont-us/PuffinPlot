@@ -8,7 +8,7 @@ public class PuffinExceptionHandler {
 	public PuffinExceptionHandler() {}
 	
 	public void handle(Throwable t) {
-		PuffinApp.app.errorDialog("PuffinPlot error", t.toString());
+		PuffinApp.getApp().errorDialog("PuffinPlot error", t.toString());
 		System.exit(1);
 	}
 }

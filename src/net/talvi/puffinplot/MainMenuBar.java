@@ -27,7 +27,7 @@ public class MainMenuBar extends JMenuBar {
     public MainMenuBar() {
         JMenu fileMenu = new JMenu("File");
 
-        PuffinActions actions = PuffinApp.app.actions;
+        PuffinActions actions = PuffinApp.getApp().actions;
         MenuItemDef[] fileItems = {
             new MenuItemDef(actions.open, 'O', 0, true),
             new MenuItemDef(actions.pageSetup, 'P', InputEvent.SHIFT_MASK, true),
@@ -39,20 +39,20 @@ public class MainMenuBar extends JMenuBar {
         for (MenuItemDef def: fileItems) def.addToMenu(fileMenu);
         
         JMenu plotMenu = new JMenu("Plot");
-        JMenuItem doPcaItem = new JMenuItem(PuffinApp.app.actions.pca);
+        JMenuItem doPcaItem = new JMenuItem(PuffinApp.getApp().actions.pca);
         doPcaItem.setAccelerator(KeyStroke.getKeyStroke('R', modifierKey, false));
         plotMenu.add(doPcaItem);
         final JCheckBoxMenuItem pcaItem = new JCheckBoxMenuItem("Anchor PCA")
         {
             @Override
             public boolean getState() {
-                return PuffinApp.app.getPrefs().isPcaAnchored();
+                return PuffinApp.getApp().getPrefs().isPcaAnchored();
             }
         };
         plotMenu.add(pcaItem);
         pcaItem.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent event) {
-                PuffinApp.app.getPrefs().setPcaAnchored(!PuffinApp.app.getPrefs().isPcaAnchored());
+                PuffinApp.getApp().getPrefs().setPcaAnchored(!PuffinApp.getApp().getPrefs().isPcaAnchored());
             }
         });
         
@@ -72,10 +72,10 @@ public class MainMenuBar extends JMenuBar {
             super("Data table");
             addItemListener(new ItemListener() {
                 public void itemStateChanged(ItemEvent arg0) {
-                PuffinApp.app.getTableWindow().setVisible(DataTableItem.super.isSelected());
+                    PuffinApp.getApp().getTableWindow().setVisible(DataTableItem.super.isSelected());
                 }
             });
-            PuffinApp.app.getTableWindow().addWindowListener(new WindowAdapter() {
+            PuffinApp.getApp().getTableWindow().addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent e) {
                     setSelected(false); }
@@ -84,8 +84,8 @@ public class MainMenuBar extends JMenuBar {
             
             @Override
             public boolean isSelected() {
-                return PuffinApp.app != null && PuffinApp.app.getTableWindow() != null
-                        ? PuffinApp.app.getTableWindow().isVisible()
+                return PuffinApp.getApp() != null && PuffinApp.getApp().getTableWindow() != null
+                        ? PuffinApp.getApp().getTableWindow().isVisible()
                         : false;
             }
         @Override

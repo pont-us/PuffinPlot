@@ -64,10 +64,10 @@ public class MainWindow extends JFrame {
         repaint();
     }
     
-    class CloseListener extends WindowAdapter {
+    static class CloseListener extends WindowAdapter {
         @Override
         public void windowClosing(WindowEvent e) {
-            PuffinApp.app.actions.quit.
+            PuffinApp.getApp().actions.quit.
             actionPerformed(new ActionEvent(this, 0, "window close"));
         }
     }

@@ -29,9 +29,9 @@ public class TableWindow extends JFrame {
         }
           
         public int getRowCount() {
-            if (PuffinApp.app != null &&
-                    PuffinApp.app.getCurrentSample() != null)
-                return PuffinApp.app.getCurrentSample().getNumData();
+            if (PuffinApp.getApp() != null &&
+                    PuffinApp.getApp().getCurrentSample() != null)
+                return PuffinApp.getApp().getCurrentSample().getNumData();
             else return 0;
         }
 
@@ -42,7 +42,7 @@ public class TableWindow extends JFrame {
 
         public Object getValueAt(int row, int col) {
             try {
-                Datum d = PuffinApp.app.getCurrentSample().getDatum(row);
+                Datum d = PuffinApp.getApp().getCurrentSample().getDatum(row);
                 return d.getValue(TwoGeeField.values()[col]);
             } catch (NullPointerException e) {
                 throw new RuntimeException("row " + row + " col " + col, e);

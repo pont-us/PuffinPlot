@@ -49,13 +49,13 @@ public class Sample {
 
     public void doPca() {
         LinkedList<Point> points = new LinkedList<Point>();
-        for (Datum d: data) if (d.selected) points.add(d.getPoint(PuffinApp.app.currentCorrection()));
+        for (Datum d: data) if (d.selected) points.add(d.getPoint(PuffinApp.getApp().currentCorrection()));
         if (points.size() < 2)
-            PuffinApp.app.errorDialog("PCA error", "You must select at least two points in order "+
+            PuffinApp.getApp().errorDialog("PCA error", "You must select at least two points in order "+
                     "to perform PCA.");
         else
             pca = PcaValues.calculate(points, 
-                    PuffinApp.app.getPrefs().isPcaAnchored()
+                    PuffinApp.getApp().getPrefs().isPcaAnchored()
                     ? Point.ORIGIN
                     : Point.centreOfMass(points));
     }

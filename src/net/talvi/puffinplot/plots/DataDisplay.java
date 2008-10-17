@@ -33,7 +33,7 @@ public class DataDisplay extends JComponent {
     public JPanel p;
     
     
-    class MyRenderer extends DefaultTableCellRenderer {
+    private static class MyRenderer extends DefaultTableCellRenderer {
 
         private static final long serialVersionUID = 1L;
 
@@ -70,8 +70,8 @@ public class DataDisplay extends JComponent {
                 case 1: return d.getPoint(corr).decDegrees();
                 case 2: return d.getPoint(corr).incDegrees();
                 case 3: return d.getIntensity() * 1e7;
+                default: return -1;
                 }
-                return new Integer(row*col);
                 }
         };
         JTable table = new JTable(dataModel);
@@ -109,7 +109,8 @@ public class DataDisplay extends JComponent {
     @Override
     public void paint(Graphics g1) {
         super.paint(g1);
-        Graphics2D g = (Graphics2D) g1;
+        // XXX move this to Zplot
+//      Graphics2D g = (Graphics2D) g1;
 //        g.setRenderingHints(Plot.renderingHints);
 //        Sample sample = params.getSample();
 //        if (sample==null) return;

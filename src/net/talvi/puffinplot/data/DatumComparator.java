@@ -1,11 +1,12 @@
 package net.talvi.puffinplot.data;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
-public class DatumComparator implements Comparator<Datum> {
+public class DatumComparator implements Comparator<Datum>, Serializable {
 
-	MeasurementAxis axis;
-	Correction corr;
+	private final MeasurementAxis axis;
+	private final Correction corr;
 	
 	public DatumComparator(MeasurementAxis axis, Correction corr) {
 		this.axis = axis;
