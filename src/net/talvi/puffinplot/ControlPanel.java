@@ -39,6 +39,7 @@ public class ControlPanel extends JPanel
         add(correctionBox = new CorrectionBox());
         add(vVsBox = new VVsBox());
         add(new JButton(PuffinApp.getApp().actions.pca));
+        add(new JButton(PuffinApp.getApp().actions.fisher));
         PuffinApp.getApp().addFileOpenedListener(this);
         coreBox.addActionListener(this);
         

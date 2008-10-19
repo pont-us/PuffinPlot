@@ -65,9 +65,15 @@ public class PuffinActions {
     };
     
     public final Action pca = new AbstractAction("PCA") {
-
         public void actionPerformed(ActionEvent e) {
             app.getCurrentSample().doPca();
+            app.mainWindow.repaint();
+        }
+    };
+    
+    public final Action fisher = new AbstractAction("Fisher") {
+        public void actionPerformed(ActionEvent e) {
+            app.getCurrentSample().doFisher();
             app.mainWindow.repaint();
         }
     };

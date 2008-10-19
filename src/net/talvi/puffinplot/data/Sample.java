@@ -8,18 +8,21 @@ import net.talvi.puffinplot.PuffinApp;
 
 public class Sample {
     
-    private List<Datum> data;
-    private double depth;
-    private String name;
+    private final List<Datum> data;
+    private final double depth;
+    private final String name;
     private PcaValues pca = null;
+    private FisherValues fisher = null;
 
     public Sample(double depth) {
         this.depth = depth;
+        this.name = null;
         this.data = new ArrayList<Datum>();
     }
 
     public Sample(String name) {
         this.name = name;
+        this.depth = Double.NaN;
         this.data = new ArrayList<Datum>();
     }
     
@@ -46,12 +49,28 @@ public class Sample {
     public PcaValues getPca() {
         return pca;
     }
+    
+    public List<Point> getSelectedPoints() {
+        LinkedList<Point> points = new LinkedList<Point>();
+        for (Datum d: data)
+            if (d.selected)
+                points.add(d.getPoint(PuffinApp.getApp().currentCorrection()));
+        return points;
+    }
+    
+    public void doFisher() {
+        List<Point> points = getSelectedPoints();
+        if (points.size() < 2)
+            PuffinApp.errorDialog("Fisher error", "You must select at least two points in order " +
+                    "to calculate Fisher statistics.");
+        else
+            fisher = FisherValues.calculate(points);
+    }
 
     public void doPca() {
-        LinkedList<Point> points = new LinkedList<Point>();
-        for (Datum d: data) if (d.selected) points.add(d.getPoint(PuffinApp.getApp().currentCorrection()));
+        List<Point> points = getSelectedPoints();
         if (points.size() < 2)
-            PuffinApp.getApp().errorDialog("PCA error", "You must select at least two points in order "+
+            PuffinApp.errorDialog("PCA error", "You must select at least two points in order "+
                     "to perform PCA.");
         else
             pca = PcaValues.calculate(points, 
@@ -62,5 +81,9 @@ public class Sample {
 
     public String getName() {
         return name;
+    }
+
+    public FisherValues getFisher() {
+        return fisher;
     }
 }

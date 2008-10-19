@@ -55,6 +55,9 @@ public class MainMenuBar extends JMenuBar {
                 PuffinApp.getApp().getPrefs().setPcaAnchored(!PuffinApp.getApp().getPrefs().isPcaAnchored());
             }
         });
+        JMenuItem doFisherItem = new JMenuItem(PuffinApp.getApp().actions.fisher);
+        doFisherItem.setAccelerator(KeyStroke.getKeyStroke('F', modifierKey, false));
+        plotMenu.add(doFisherItem);
         
         // plotMenu.add(new JCheckBoxMenuItem("Lock axis scale"));
         

@@ -14,6 +14,7 @@ import net.talvi.puffinplot.GraphDisplay;
 import net.talvi.puffinplot.PlotParams;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Datum;
+import net.talvi.puffinplot.data.FisherValues;
 import net.talvi.puffinplot.data.Point;
 import net.talvi.puffinplot.data.Sample;
 
@@ -65,9 +66,11 @@ public class EqAreaPlot extends Plot {
         for (int i=0; i<incTickNum; i++) {
             int x = (int) ((i * radius) / incTickNum);
             g.drawLine(xo + x, yo - l, xo + x, yo + l);
-            // What the hell does this do?
+            // draws inclination ticks
         }
         g.drawLine(xo-l, yo, xo+l, yo);
+        // a line crossing the last inclination tick to make
+        // a cross at the centre of the plot
        
         List<Datum> data = sample.getData();
         Correction correction = params.getCorrection();
@@ -91,6 +94,16 @@ public class EqAreaPlot extends Plot {
                     new Point2D.Double(xo + radius*(p.y)*L, yo + radius*(-p.x)*L), 
                     p.z>0, first, !first);
             first = false;
+        }
+        
+        FisherValues fish = sample.getFisher();
+        if (fish != null) {
+            g.drawString(
+                    String.format("dec:%.1f inc:%.1f",
+                    fish.getMeanDirection().decDegrees(),
+                    fish.getMeanDirection().incDegrees()), xOrig, yOrig);
+            g.drawString(String.format("α95:%.1f",fish.getA95()), xOrig, yOrig + 15);
+            g.drawString(String.format("k:%.1f",fish.getK()), xOrig, yOrig + 30);
         }
     }
 }
