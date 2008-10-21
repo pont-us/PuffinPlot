@@ -26,6 +26,20 @@ public class Sample {
         this.data = new ArrayList<Datum>();
     }
     
+    public void clear() {
+        pca = null;
+        fisher = null;
+        selectNone();
+    }
+    
+    public void selectAll() {
+        for (Datum d : data) d.selected = true;
+    }
+    
+    public void selectNone() {
+        for (Datum d : data) d.selected = false;
+    }
+    
     public List<Datum> getData() {
         return data;
     }

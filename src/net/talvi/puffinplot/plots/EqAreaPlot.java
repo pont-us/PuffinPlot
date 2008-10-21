@@ -99,7 +99,7 @@ public class EqAreaPlot extends Plot {
         FisherValues fish = sample.getFisher();
         if (fish != null) {
             g.drawString(
-                    String.format("dec:%.1f inc:%.1f",
+                    String.format("D:%.1f I:%.1f",
                     fish.getMeanDirection().decDegrees(),
                     fish.getMeanDirection().incDegrees()), xOrig, yOrig);
             g.drawString(String.format("α95:%.1f",fish.getA95()), xOrig, yOrig + 15);

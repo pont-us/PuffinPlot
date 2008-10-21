@@ -70,16 +70,16 @@ public class PcaValuesTest {
          * since of course three points on a line plus any one other point
          * will be coplanar!
          */
-        assertEquals(Math.PI/4, anchored.dec, 1e-6);
-        assertEquals(Math.toRadians(22.266), anchored.inc, 0.01);
-        assertEquals(0, anchored.mad1, 0.01);
-        assertEquals(6.06, anchored.mad3, 0.01);
+        assertEquals(Math.PI/4,anchored.getDec(), 1e-6);
+        assertEquals(Math.toRadians(22.266),anchored.getInc(), 0.01);
+        assertEquals(0,anchored.getMad1(), 0.01);
+        assertEquals(6.06,anchored.getMad3(), 0.01);
         
         // These values worked out by hand.
-        assertEquals(Math.atan(1/Math.sqrt(2)), unanchored.inc, 1e-6);
-        assertEquals(Math.PI/4, unanchored.dec, 1e-6);
-        assertEquals(0, unanchored.mad1, 1e-6);
-        assertEquals(0, unanchored.mad3, 1e-6);
+        assertEquals(Math.atan(1/Math.sqrt(2)),unanchored.getInc(), 1e-6);
+        assertEquals(Math.PI/4,unanchored.getDec(), 1e-6);
+        assertEquals(0,unanchored.getMad1(), 1e-6);
+        assertEquals(0,unanchored.getMad3(), 1e-6);
     }
 
 }

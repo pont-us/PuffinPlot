@@ -27,7 +27,7 @@ public class FisherValues {
         double k = (N-1)/(N-R);
         double p = 0.05;
         double a95 = Math.toDegrees(acos( 1 - ((N-R)/R) * (pow(1/p,1/(N-1))-1) ));
-        return new FisherValues(a95, k, Point.meanDirection(points));
+        return new FisherValues(a95, k, Point.meanDirection(normPoints));
     }
     
     public double getA95() {

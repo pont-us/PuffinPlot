@@ -24,10 +24,16 @@ public class MainMenuBar extends JMenuBar {
     private static final int modifierKey =
             Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
     
+    private void addSimpleItem(JMenu menu, Action action, char key) {
+        JMenuItem item = new JMenuItem(action);
+        menu.add(item);
+        item.setAccelerator(KeyStroke.getKeyStroke(key, modifierKey, false));
+    }
+    
     public MainMenuBar() {
-        JMenu fileMenu = new JMenu("File");
+        final JMenu fileMenu = new JMenu("File");
+        final PuffinActions actions = PuffinApp.getApp().actions;
 
-        PuffinActions actions = PuffinApp.getApp().actions;
         MenuItemDef[] fileItems = {
             new MenuItemDef(actions.open, 'O', 0, true),
             new MenuItemDef(actions.pageSetup, 'P', InputEvent.SHIFT_MASK, true),
@@ -38,35 +44,39 @@ public class MainMenuBar extends JMenuBar {
         
         for (MenuItemDef def: fileItems) def.addToMenu(fileMenu);
         
-        JMenu plotMenu = new JMenu("Plot");
-        JMenuItem doPcaItem = new JMenuItem(PuffinApp.getApp().actions.pca);
-        doPcaItem.setAccelerator(KeyStroke.getKeyStroke('R', modifierKey, false));
-        plotMenu.add(doPcaItem);
-        final JCheckBoxMenuItem pcaItem = new JCheckBoxMenuItem("Anchor PCA")
+        JMenu editMenu = new JMenu("Edit");
+        addSimpleItem(editMenu, actions.selectAll, 'S');
+        // Can't use ctrl-A, it's already "select all samples in this suite"
+        
+        JMenu calcMenu = new JMenu("Calculate");
+        addSimpleItem(calcMenu, actions.pca, 'R');
+        
+        final JCheckBoxMenuItem anchorItem = new JCheckBoxMenuItem("Anchor PCA")
         {
             @Override
             public boolean getState() {
                 return PuffinApp.getApp().getPrefs().isPcaAnchored();
             }
         };
-        plotMenu.add(pcaItem);
-        pcaItem.addChangeListener(new ChangeListener() {
+        calcMenu.add(anchorItem);
+        anchorItem.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent event) {
                 PuffinApp.getApp().getPrefs().setPcaAnchored(!PuffinApp.getApp().getPrefs().isPcaAnchored());
             }
         });
-        JMenuItem doFisherItem = new JMenuItem(PuffinApp.getApp().actions.fisher);
-        doFisherItem.setAccelerator(KeyStroke.getKeyStroke('F', modifierKey, false));
-        plotMenu.add(doFisherItem);
         
-        // plotMenu.add(new JCheckBoxMenuItem("Lock axis scale"));
+        addSimpleItem(calcMenu, actions.fisher, 'F');
+        addSimpleItem(calcMenu, actions.clear, 'Z');
+        
+        // calcMenu.add(new JCheckBoxMenuItem("Lock axis scale"));
         
         JMenu windowMenu = new JMenu("Window");
         final JCheckBoxMenuItem dt = new DataTableItem();
         windowMenu.add(dt);
         
         add(fileMenu);
-        add(plotMenu);
+        add(editMenu);
+        add(calcMenu);
         add(windowMenu);
     }
     

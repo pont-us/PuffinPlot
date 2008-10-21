@@ -38,7 +38,7 @@ public class MainWindow extends JFrame {
         jsp.setMaximumSize(new Dimension(1000,700));
         mainPanel.add(jsp);
         mainPanel.add(welcomeMessage =
-                new JLabel("Welcome to PuffinPlot. You can anchor your PCAs using the Plot menu."), BorderLayout.NORTH);
+                new JLabel("Welcome to PuffinPlot."), BorderLayout.NORTH);
         graphDisplay.setVisible(false);
         mainPanel.add(sampleChooser = new SampleChooser(), BorderLayout.WEST);
         Container cp = getContentPane();

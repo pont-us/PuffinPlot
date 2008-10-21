@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.swing.JLabel;
 import net.talvi.puffinplot.GraphDisplay;
 import net.talvi.puffinplot.PlotParams;
 import net.talvi.puffinplot.PuffinApp;
@@ -34,6 +35,8 @@ public class ZPlot extends Plot {
     static double majorTickLen = 0.05;
     private PlotParams params;
     private GraphDisplay parent;
+    private JLabel summaryLine;
+    private JLabel pcaLine;
     
     public ZPlot(PlotParams params, GraphDisplay parent) {
         this.params = params;
@@ -105,25 +108,39 @@ public class ZPlot extends Plot {
         
         final PcaValues pca = sample.getPca();
         if (pca != null) {
-            double x1 = pca.origin.y * axes.getScale();
-            double y1 = - pca.origin.x * axes.getScale();
-            drawLine(g, axes.getXOffset() + x1, axes.getYOffset() + y1, pca.dec, axes, Color.BLUE);
+            double x1 = pca.getOrigin().y * axes.getScale();
+            double y1 = - pca.getOrigin().x * axes.getScale();
+            drawLine(g, axes.getXOffset() + x1, axes.getYOffset() + y1,pca.getDecRadians(), axes, Color.BLUE);
             
-            double x2 = pca.origin.getComponent(vVs) * axes.getScale();
-            double y2 = - pca.origin.getComponent(MeasurementAxis.MINUSZ) * axes.getScale();
+            double x2 = pca.getOrigin().getComponent(vVs) * axes.getScale();
+            double y2 = - pca.getOrigin().getComponent(MeasurementAxis.MINUSZ) * axes.getScale();
             double incCorr = 0;
             switch (vVs) {
                 // We don't necessarily want the actual line of inclination; we
                 // want the projection of that line onto the appropriate plane.
                 case X:
-                    incCorr = atan(sin(pca.inc) / (cos(pca.inc) * cos(pca.dec)));
+                    incCorr = atan(sin(pca.getIncRadians()) / (cos(pca.getIncRadians()) * cos(pca.getDecRadians())));
                     break;
                 case Y:
-                    incCorr = atan(sin(pca.inc) / (cos(pca.inc) * sin(pca.dec)));
+                    incCorr = atan(sin(pca.getIncRadians()) / (cos(pca.getIncRadians()) * sin(pca.getDecRadians())));
                     break;
-                case H: incCorr = pca.inc; break;
+                case H: incCorr = pca.getIncRadians(); break;
             }
             drawLine(g, axes.getXOffset() + x2, axes.getYOffset() + y2, Math.PI/2 + incCorr, axes, Color.BLUE);
+            g.setColor(Color.BLACK);
+            g.drawString(String.format("D:%.1f I:%.1f MAD1:%.1f MAD3:%.1f",
+                    pca.getDecDegrees(), pca.getIncDegrees(), pca.getMad1(), pca.getMad3()),
+                    xOffs, yOffs-30);
         }
+        
+        String line = null;
+        switch (params.getMeasType()) {
+        case DISCRETE: line = "Sample: " + sample.getName();
+            break;
+        case CONTINUOUS: line = "Depth: " + sample.getDepth();
+            break;
+        }
+        line = line + ", Correction: " + params.getCorrection();
+        g.drawString(line, 20, 20);
     }
 }

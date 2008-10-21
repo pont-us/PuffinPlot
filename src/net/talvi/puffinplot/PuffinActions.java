@@ -78,6 +78,20 @@ public class PuffinActions {
         }
     };
     
+    public final Action clear = new AbstractAction("Clear") {
+        public void actionPerformed(ActionEvent e) {
+            app.getCurrentSample().clear();
+            app.mainWindow.repaint();
+        }
+    };
+    
+    public final Action selectAll = new AbstractAction("Select all") {
+        public void actionPerformed(ActionEvent e) {
+            app.getCurrentSample().selectAll();
+            app.mainWindow.repaint();
+        }
+    };
+    
     public final Action prefs = new AbstractAction("Preferences…") {
 
         public void actionPerformed(ActionEvent e) {

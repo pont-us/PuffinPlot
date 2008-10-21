@@ -12,12 +12,11 @@ import Jama.EigenvalueDecomposition;
 import Jama.Matrix;
 
 public class PcaValues {
-
-    public final double inc;
-    public final double dec;
-    public final double mad1;
-    public final double mad3;
-    public final Point origin;
+    private final double inc;
+    private final double dec;
+    private final double mad1;
+    private final double mad3;
+    private final Point origin;
     
     private PcaValues(double inc, double dec, double mad1, double mad3, Point origin) {
         super();
@@ -112,20 +111,33 @@ public class PcaValues {
         
         return new PcaValues(inc, dec, mad1, mad3, origin);
     }
-    
-    @Override
-    public String toString() {
-        return getDecInc() + " / "+ getMads();
+
+    public double getIncRadians() {
+        return inc;
+    }
+
+    public double getDecRadians() {
+        return dec;
     }
     
-    public String getDecInc() {
-        return String.format("dec %3.3f / inc %3.3f",
-                toDegrees(dec), toDegrees(inc));
+    public double getIncDegrees() {
+        return toDegrees(getIncRadians());
     }
-    
-    public String getMads() {
-        return String.format("mad1 %3.3f / mad3 %3.3f",
-                mad1, mad3);
+
+    public double getDecDegrees() {
+        return toDegrees(getDecRadians());
+    }
+
+    public double getMad1() {
+        return mad1;
+    }
+
+    public double getMad3() {
+        return mad3;
+    }
+
+    public Point getOrigin() {
+        return origin;
     }
     
     

@@ -28,8 +28,6 @@ import net.talvi.puffinplot.data.Sample;
 public class DataDisplay extends JComponent {
 
     private static final long serialVersionUID = 1L;
-    private JLabel summaryLine;
-    private JLabel pcaLine;
     public JPanel p;
     
     
@@ -86,13 +84,9 @@ public class DataDisplay extends JComponent {
         {
             TableColumn column = table.getColumnModel().getColumn(i);
             column.setHeaderRenderer(new MyRenderer());
-            column.setHeaderValue(i==0 ? "temp." : i==1 ? "dec." : i==2 ? "inc." : "int. e-7");
+            column.setHeaderValue(i==0 ? "demag." : i==1 ? "dec." : i==2 ? "inc." : "int. e-7");
         }
         
-        summaryLine = new JLabel();
-        pcaLine = new JLabel();
-        add(summaryLine);
-        add(pcaLine);
         p = new JPanel();
         add(p);
         p.setLayout(new BorderLayout());
@@ -109,25 +103,7 @@ public class DataDisplay extends JComponent {
     @Override
     public void paint(Graphics g1) {
         super.paint(g1);
-        // XXX move this to Zplot
-//      Graphics2D g = (Graphics2D) g1;
-//        g.setRenderingHints(Plot.renderingHints);
-//        Sample sample = params.getSample();
-//        if (sample==null) return;
-//        
-//        String line = null;
-//        switch (params.getMeasType()) {
-//        case DISCRETE: line = "Sample " + sample.getName();
-//            break;
-//        case CONTINUOUS: line = "Depth " + sample.getDepth();
-//            break;
-//        }
-//        line = line + " / correction " + params.getCorrection();
-//        summaryLine.setText(line);
-        
-//        PcaValues pca = sample.getPca();
-//        if (pca != null) pcaLine.setText("PCA: "+pca.getDecInc()+" "+pca.getMads());
-//        else pcaLine.setText("");
+
 
     }    
 }
