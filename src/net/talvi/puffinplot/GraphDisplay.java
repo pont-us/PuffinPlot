@@ -104,31 +104,26 @@ public class GraphDisplay extends JPanel implements Printable {
         addMouseMotionListener(mouseListener);
     }
     
-    public volatile boolean alreadyTransformed = false;
     @Override
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
         AffineTransform savedTransform = g2.getTransform();
         g2.transform(zoomTransform);
-        alreadyTransformed = true;
-        super.paint(g); // draws background and any components
+        super.paint(g2); // draws background and any components
         g2.setRenderingHints(renderingHints);
         g2.setPaint(Color.BLACK);
         g2.setPaintMode();
-        for (Plot plot: plots) {
-            plot.draw(g2);
-        }
+        for (Plot plot: plots) plot.draw(g2);
 
         Plot draggee = mouseListener.getDraggingPlot();
         if (draggee != null)
         for (Plot plot : plots) {
             g2.setPaint(plot==draggee ? Color.RED: Color.CYAN);
-            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .1f));
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .2f));
             g2.fill(plot.getDimensions());
         }
         
         g2.setTransform(savedTransform);
-        alreadyTransformed = false;
     }
 
     public AffineTransform getAntiZoom() {
@@ -177,9 +172,12 @@ public class GraphDisplay extends JPanel implements Printable {
                 if (plot.getDimensions().contains(startPoint))
                     draggingPlot = plot;
             if (getDraggingPlot() != null) {
-                startDimensions = (Rectangle2D) getDraggingPlot().getDimensions().clone();
-                double relX = (startPoint.getX() - startDimensions.getMinX()) / startDimensions.getWidth();
-                double relY = (startPoint.getY() - startDimensions.getMinY()) / startDimensions.getHeight();
+                startDimensions =
+                        (Rectangle2D) getDraggingPlot().getDimensions().clone();
+                double relX = (startPoint.getX() - startDimensions.getMinX())
+                        / startDimensions.getWidth();
+                double relY = (startPoint.getY() - startDimensions.getMinY())
+                        / startDimensions.getHeight();
                 int sidesTmp = 0;
                 if (relX < 0.2) sidesTmp |= LEFT;
                 if (relX > 0.8) sidesTmp |= RIGHT;

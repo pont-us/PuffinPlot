@@ -127,7 +127,8 @@ public class SampleChooser extends JPanel {
         samplePane.setVisible(list);
     }
 
-    public void setSuite(Suite suite) {
+    public void updateSuite() {
+        Suite suite = PuffinApp.getApp().getCurrentSuite();
         switch (suite.getMeasType()) {
             case CONTINUOUS:
                 depthSlider.setForSuite(suite);
@@ -135,6 +136,7 @@ public class SampleChooser extends JPanel {
                 break;
             case DISCRETE:
                 sampleList.setListData(suite.getNameArray());
+                sampleList.setSelectedIndex(0);
                 setVisibility(false, true);
                 break;
             default:

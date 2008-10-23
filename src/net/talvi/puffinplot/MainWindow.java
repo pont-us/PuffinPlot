@@ -56,8 +56,9 @@ public class MainWindow extends JFrame {
 //          });
     }
     
-    void suiteChanged(Suite newSuite) {
-        sampleChooser.setSuite(newSuite);
+    void suitesChanged() {
+        sampleChooser.updateSuite();
+        controlPanel.updateSuites();
         graphDisplay.setVisible(true);
         welcomeMessage.setVisible(false);
         repaint();

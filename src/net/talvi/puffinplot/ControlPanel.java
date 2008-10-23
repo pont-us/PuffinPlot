@@ -18,11 +18,11 @@ import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.MeasurementAxis;
 
 public class ControlPanel extends JPanel 
-        implements FileOpenedListener, ActionListener, ItemListener {
+   implements ActionListener, ItemListener {
 
     private static final long serialVersionUID = 1L;
 
-    JComboBox coreBox;
+    JComboBox suiteBox;
     private CorrectionBox correctionBox;
     VVsBox vVsBox;
     // private JButton pcaButton;
@@ -35,34 +35,41 @@ public class ControlPanel extends JPanel
     
     public ControlPanel() {
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-        add(coreBox = new JComboBox(new String[] {"no samples loaded"}));
+        add(suiteBox = new JComboBox(new String[] {"no samples loaded"}));
         add(correctionBox = new CorrectionBox());
         add(vVsBox = new VVsBox());
         add(new JButton(PuffinApp.getApp().actions.pca));
         add(new JButton(PuffinApp.getApp().actions.fisher));
         add(new JButton(PuffinApp.getApp().actions.clear));
-        PuffinApp.getApp().addFileOpenedListener(this);
-        coreBox.addActionListener(this);
+        suiteBox.addActionListener(this);
         
         int modifierKey = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
         getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke('E', modifierKey), "toggle-zplot");
         getActionMap().put("toggle-zplot", toggleZplotAction);
     }
-    
-    void updateCoreBox() {
-        coreBox.removeAllItems();
-        for (Suite suite: PuffinApp.getApp().suites) {
-            coreBox.addItem(suite.getName());
-        }
-    }
 
-    public void fileOpened() {
-        updateCoreBox();
+    private volatile boolean updatingSuites = false;
+    void updateSuites() {
+        updatingSuites = true;
+        suiteBox.removeAllItems();
+        for (Suite suite: PuffinApp.getApp().suites) {
+            suiteBox.addItem(suite);
+        }
+        updatingSuites = false;
+        Suite currentSuite = PuffinApp.getApp().getCurrentSuite();
+        suiteBox.setSelectedItem(currentSuite);
     }
 
     public void actionPerformed(ActionEvent e) {
-        int index = coreBox.getSelectedIndex();
-        if (index > -1) PuffinApp.getApp().setCurrentSuite(index);        
+        /* No way to tell if this was a user click or the box being
+         * rebuilt, so we have to use this ugly variable to avoid spurious
+         * changes.
+         * 
+         */
+        if (!updatingSuites) {
+            int index = suiteBox.getSelectedIndex();
+            if (index > -1) PuffinApp.getApp().setCurrentSuite(index);
+        }
     }
     
     public MeasurementAxis getAxis() {

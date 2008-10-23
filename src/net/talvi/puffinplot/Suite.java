@@ -320,5 +320,9 @@ public class Suite implements Iterable<Datum> {
     public String[] getNameArray() {
         return names;
     }
-
+    
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

@@ -25,8 +25,6 @@ public class PuffinApp {
         return app;
     }
     final PuffinActions actions;
-    private List<FileOpenedListener> fileOpenedListeners =
-        new LinkedList<FileOpenedListener>();
     List<Suite> suites;
     public MainWindow mainWindow;
     private int currentSuiteIndex;
@@ -117,8 +115,6 @@ public class PuffinApp {
 
         try {
             Suite suite = new Suite(files);
-            for (FileOpenedListener fol : fileOpenedListeners)
-                fol.fileOpened();
             List<String> warnings = suite.getLoadWarnings();
             if (warnings.size() > 0) {
                 StringBuilder sb =
@@ -135,18 +131,16 @@ public class PuffinApp {
                         "The selected file(s) contained no readable data.");
             } else {
                 suites.add(suite);
-                if (suites.size() == 1) {
-                    currentSuiteIndex = 0; // FIXME
-                    mainWindow.suiteChanged(getCurrentSuite());
-                }
             }
-
+            if (suites.size() > 0) {
+                currentSuiteIndex = suites.size()-1;
+                mainWindow.suitesChanged();
+            }
         } catch (FileNotFoundException e) {
             errorDialog("File not found", e.getMessage());
         } catch (IOException e) {
             errorDialog("Error reading file", e.getMessage());
         }
-
     }
     
     public static void errorDialog(String title, String message) {
@@ -186,18 +180,10 @@ public class PuffinApp {
     public Sample[] getSelectedSamples() {
         return mainWindow.sampleChooser.getSelectedSamples();
     }
-    
-    public void addFileOpenedListener(FileOpenedListener fol) {
-        fileOpenedListeners.add(fol);
-    }
-    
-    public void removeFileOpenedListener(FileOpenedListener fol) {
-        fileOpenedListeners.remove(fol);
-    }
 
     public void setCurrentSuite(int selectedIndex) {
         currentSuiteIndex = selectedIndex;
-        if (getCurrentSuite() != null) mainWindow.suiteChanged(getCurrentSuite());
+        if (getCurrentSuite() != null) mainWindow.suitesChanged();
     }
     
     public void quit() {
