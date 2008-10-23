@@ -12,7 +12,6 @@ import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.Point;
 import net.talvi.puffinplot.data.Sample;
 
-
 public class DataTable extends Plot {
 
     private final int xSpacing = 80;
@@ -54,7 +53,4 @@ public class DataTable extends Plot {
             yPos += ySpacing;
         }
     }
-
-    
-    
 }

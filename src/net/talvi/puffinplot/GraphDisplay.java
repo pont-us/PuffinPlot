@@ -5,12 +5,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.RenderingHints;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -28,7 +26,6 @@ import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;
-import net.talvi.puffinplot.plots.DataDisplay;
 import net.talvi.puffinplot.plots.DataTable;
 import net.talvi.puffinplot.plots.DemagPlot;
 import net.talvi.puffinplot.plots.EqAreaPlot;
@@ -43,7 +40,6 @@ public class GraphDisplay extends JPanel implements Printable {
     private Sample[] samples = null;
     private int printPageIndex = -1;
     private List<Plot> plots;
-    private DataDisplay dataDisplay;
     public static final RenderingHints renderingHints = new PRenderingHints();
     public AffineTransform zoomTransform;
     private final GdMouseListener mouseListener; 
@@ -63,8 +59,7 @@ public class GraphDisplay extends JPanel implements Printable {
             // KEY_TEXT_LCD_CONTRAST left at default.
         }
     }
- 
-        
+         
     GraphDisplay() {
         
         params = new PlotParams() {
@@ -99,11 +94,6 @@ public class GraphDisplay extends JPanel implements Printable {
         plots.add(new ZPlot(this, params, new Rectangle2D.Double(100, 100, 500, 400)));
         plots.add(new DemagPlot(this, params, new Rectangle2D.Double(100, 550, 300, 200)));
         plots.add(new DataTable(this, params, new Rectangle2D.Double(600, 500, 400, 400)));
-        
-//        dataDisplay = new DataDisplay(params);
-//        add(dataDisplay);
-//        dataDisplay.setLocation(600, 500);
-//        dataDisplay.setSize(400, 400);
         
         setOpaque(true);
         setBackground(Color.WHITE);
@@ -152,6 +142,10 @@ public class GraphDisplay extends JPanel implements Printable {
             }
         }
     
+    /**
+     * We can't use a MouseAdapter because it crashes OS X Java with a 
+     * ClassCastException. No idea why.
+     */
     private class GdMouseListener 
     implements MouseListener, MouseMotionListener {
         private Point2D startPoint;
@@ -166,12 +160,6 @@ public class GraphDisplay extends JPanel implements Printable {
             for (Plot plot: plots)
                 if (plot.getDimensions().contains(position))
                     plot.mouseClicked(position);
-//            if (dataDisplay.getBounds().contains(position)) {
-//                PuffinApp.getApp().mainWindow.setTitle("YES");
-//                dataDisplay.processMouseEventPublic(e);
-//            } else {
-//                PuffinApp.getApp().mainWindow.setTitle("NO");
-//            }
             repaint();
         }
         
@@ -183,13 +171,6 @@ public class GraphDisplay extends JPanel implements Printable {
         
         @Override
         public void mousePressed(MouseEvent e) {
-//                       final Point2D position = getAntiZoom().transform(e.getPoint(), null);
-//                        if (dataDisplay.getBounds().contains(position)) {
-//                PuffinApp.getApp().mainWindow.setTitle("YES");
-//                dataDisplay.processMouseEventPublic(e);
-//            } else {
-//                PuffinApp.getApp().mainWindow.setTitle("NO");
-//            }
             startPoint = getAntiZoom().transform(e.getPoint(), null);
             draggingPlot = null;
             for (Plot plot : plots)
@@ -234,15 +215,12 @@ public class GraphDisplay extends JPanel implements Printable {
         }
 
         public void mouseEntered(MouseEvent arg0) {
-
         }
 
         public void mouseExited(MouseEvent arg0) {
-
         }
 
         public void mouseMoved(MouseEvent arg0) {
-
         }
     }
 
@@ -255,7 +233,6 @@ public class GraphDisplay extends JPanel implements Printable {
         }
         printPageIndex = pageIndex;
         setDoubleBuffered(false);
-        // dataDisplay.setDoubleBuffered(false);
         Graphics2D g2 = (Graphics2D) graphics;
         g2.translate(pf.getImageableX(), pf.getImageableY());
         //double xScale = pf.getImageableWidth() / getWidth();
@@ -265,7 +242,6 @@ public class GraphDisplay extends JPanel implements Printable {
         for (Plot plot: plots) plot.draw(g2);
         printChildren(graphics);
         setDoubleBuffered(true);
-        // dataDisplay.setDoubleBuffered(true);
         return PAGE_EXISTS;
     }
 
