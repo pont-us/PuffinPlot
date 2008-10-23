@@ -5,10 +5,8 @@ import static java.lang.Math.sin;
 import static java.lang.Math.atan;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -16,10 +14,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.swing.JLabel;
 import net.talvi.puffinplot.GraphDisplay;
 import net.talvi.puffinplot.PlotParams;
-import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.DatumComparator;
@@ -29,21 +25,10 @@ import net.talvi.puffinplot.data.Sample;
 
 public class ZPlot extends Plot {
 
-    private static final long serialVersionUID = 1L;
-
-    static int margin = 50;
-    static double majorTickLen = 0.05;
-    private PlotParams params;
-    private GraphDisplay parent;
-    private JLabel summaryLine;
-    private JLabel pcaLine;
-    
-    public ZPlot(PlotParams params, GraphDisplay parent) {
-        this.params = params;
-        this.parent = parent;
-        // withLines = true;
+    public ZPlot(GraphDisplay parent, PlotParams params, Rectangle2D dimensions) {
+        super(parent, params, dimensions);
     }
-    
+
     private static Rectangle2D extent(List<Datum> sample, Correction corr,
             MeasurementAxis axis1, MeasurementAxis axis2) {
         Comparator<Datum> xComp = new DatumComparator(axis1, corr);
@@ -66,7 +51,7 @@ public class ZPlot extends Plot {
         g.setClip(oldClip);
     }
     
-    public void paint(Graphics2D g, int xOffs, int yOffs, int xSize, int ySize) {
+    public void draw(Graphics2D g) {
 
         Sample sample = params.getSample();
         if (sample==null) return;
@@ -74,37 +59,36 @@ public class ZPlot extends Plot {
         List<Datum> data = sample.getData();
         if (data.size() == 0) return;
         
+        clearPoints();
         Correction correction = params.getCorrection();
         MeasurementAxis vVs = params.getAxis();
         
         Rectangle2D extent1 = extent(data, correction, MeasurementAxis.Y, MeasurementAxis.X);
         Rectangle2D extent2 = extent(data, correction, vVs, MeasurementAxis.MINUSZ);
 
-        ZplotAxes axes = new ZplotAxes(extent1.createUnion(extent2),
-                new Rectangle2D.Double(xOffs, yOffs, xSize, ySize),
-                        vVs);
+        ZplotAxes axes = new ZplotAxes(extent1.createUnion(extent2),getDimensions(),
+                vVs);
         
+        g.setColor(Color.BLACK);
         axes.draw(g);
         
         boolean first = true;
         for (Datum d: data) {
             double x = d.getPoint(correction).y * axes.getScale();
             double y = - d.getPoint(correction).x * axes.getScale();
-            parent.addPoint(d, new Point2D.Double(axes.getXOffset() + x, axes.getYOffset() + y)
+            addPoint(d, new Point2D.Double(axes.getXOffset() + x, axes.getYOffset() + y)
                     , true, first, !first);
             first = false;
         }
-        breakLine();
         
         first = true;
         for (Datum d: data) {
             double x = d.getPoint(correction).getComponent(vVs) * axes.getScale();
             double y = - d.getPoint(correction).getComponent(MeasurementAxis.MINUSZ) * axes.getScale();
-            parent.addPoint(d, new Point2D.Double(axes.getXOffset() + x, axes.getYOffset() + y),
+            addPoint(d, new Point2D.Double(axes.getXOffset() + x, axes.getYOffset() + y),
                     false, first, !first);
             first = false;
         }
-        drawPoints(g);
         
         final PcaValues pca = sample.getPca();
         if (pca != null) {
@@ -130,8 +114,10 @@ public class ZPlot extends Plot {
             g.setColor(Color.BLACK);
             g.drawString(String.format("D:%.1f I:%.1f MAD1:%.1f MAD3:%.1f",
                     pca.getDecDegrees(), pca.getIncDegrees(), pca.getMad1(), pca.getMad3()),
-                    xOffs, yOffs-30);
+                    (int) getDimensions().getMinX(), (int) (getDimensions().getMinY()-30));
         }
+        g.setRenderingHints(parent.renderingHints);
+        drawPoints(g);
         
         String line = null;
         switch (params.getMeasType()) {

@@ -21,7 +21,6 @@ public class MainWindow extends JFrame {
     public final ControlPanel controlPanel;
     private JScrollPane jsp;
     SampleChooser sampleChooser;
-
     private JLabel welcomeMessage;
     
     public MainWindow() {

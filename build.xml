@@ -29,6 +29,10 @@
             <arg value="${ant.project.name}.app" />
         </exec>
         
+        </target>
+        
+        <target name="upload">
+        
         <exec executable="scp" resultproperty="scp.result">
             <arg file="${ant.project.name}.zip"/>
             <arg value="ou094053:~" />

@@ -1,13 +1,11 @@
 package net.talvi.puffinplot.plots;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.List;
 
-import javax.swing.JComponent;
 import net.talvi.puffinplot.GraphDisplay;
 import net.talvi.puffinplot.PlotParams;
 import net.talvi.puffinplot.data.Datum;
@@ -15,22 +13,19 @@ import net.talvi.puffinplot.data.Sample;
 
 public class DemagPlot extends Plot {
 
-    private static final long serialVersionUID = 1L;
-    private static int margin = 40;
-    private GraphDisplay parent;
-    private PlotParams params;
-    
-    public DemagPlot(PlotParams params, GraphDisplay parent) {
-        this.params = params;
-        this.parent = parent;
+    public DemagPlot(GraphDisplay parent, PlotParams params, Rectangle2D dimensions) {
+        super(parent, params, dimensions);
     }
-    
-    public void paint(Graphics2D g, int xOffs, int yOffs, int xSize, int ySize) {
+
+    public void draw(Graphics2D g) {
+        clearPoints();
         Sample sample = params.getSample();
         if (sample==null) return;
         List<Datum> data = sample.getData();
         if (data.size() == 0) return;
-         
+
+        Rectangle2D dim = getDimensions();
+        
         g.setColor(Color.BLACK);
         double maxIntens = 0;
         double maxDemag = 0;
@@ -46,20 +41,18 @@ public class DemagPlot extends Plot {
                 PlotAxis.saneStepSize(maxDemag),
                 sample.getDatum(sample.getNumData()-1).getTreatType().getAxisLabel(), null);
         
-        double hScale = xSize / hAxis.getLength();
-        double vScale = ySize / vAxis.getLength();
+        double hScale = dim.getWidth() / hAxis.getLength();
+        double vScale = dim.getHeight() / vAxis.getLength();
         
-        vAxis.draw(g, vScale, xOffs, yOffs+ySize);
-        hAxis.draw(g, hScale, xOffs, yOffs+ySize);
+        vAxis.draw(g, vScale, (int)dim.getMinX(), (int)dim.getMaxY());
+        hAxis.draw(g, hScale, (int)dim.getMinX(), (int)dim.getMaxY());
         
         boolean first = true;
         for (Datum d: data) {
-            parent.addPoint(d, new Point2D.Double(xOffs + d.getDemagLevel() * hScale,
-                    yOffs+ySize - d.getIntensity() * vScale), true, false, !first);
+            addPoint(d, new Point2D.Double(dim.getMinX() + d.getDemagLevel() * hScale,
+                    dim.getMaxY() - d.getIntensity() * vScale), true, false, !first);
             first = false;
         }
         drawPoints(g);
     }
-
-    
 }

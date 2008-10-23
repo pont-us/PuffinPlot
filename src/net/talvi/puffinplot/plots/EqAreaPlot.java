@@ -8,6 +8,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import net.talvi.puffinplot.GraphDisplay;
@@ -20,35 +21,24 @@ import net.talvi.puffinplot.data.Sample;
 
 public class EqAreaPlot extends Plot {
 
-    private static final long serialVersionUID = 1L;
+    private static final int decTickStep = 10;
+    private static final float decTickLength = 0.03f; // as fraction of radius
+    private static final int incTickNum = 9;
+    private static final float incTickLength = decTickLength;
 
-    private static int decTickStep = 10;
-    private static float decTickLength = 0.03f; // as fraction of radius
-    private static int incTickNum = 9;
-    private static float incTickLength = decTickLength;
-    private static int margin = 10;
-    private PlotParams params;
-    private GraphDisplay parent;
-
-    public EqAreaPlot(PlotParams params, GraphDisplay parent) {
-        super(params);
-        this.params = params;
-        this.parent = parent;
-       // withLines = true;
-    }
-    
-    void paintAxes(Graphics2D g) {
-
+    public EqAreaPlot(GraphDisplay parent, PlotParams params, Rectangle2D dimensions) {
+        super(parent, params, dimensions);
     }
 
-    public void paint(Graphics2D g, int xOrig, int yOrig, int xSize, int ySize) {
+    public void draw(Graphics2D g) {
               
-        int minDim = Math.min(xSize, ySize);
-        int xo = xOrig + (xSize / 2);
-        int yo = yOrig + (ySize / 2);
+        int minDim = (int) Math.min(getDimensions().getWidth(), getDimensions().getHeight());
+        int xo = (int) getDimensions().getCenterX();
+        int yo = (int) getDimensions().getCenterY();
         
-       Sample sample = params.getSample();
-       if (sample==null) return; 
+        clearPoints();
+        Sample sample = params.getSample();
+        if (sample == null) return;
         int radius = minDim / 2;
         
         g.setColor(Color.BLACK);
@@ -90,14 +80,17 @@ public class EqAreaPlot extends Plot {
              * to take account of AWT Y-coordinates running top-to-bottom rather
              * than bottom-to-top (let x''' = x'' = y, y''' = -y'' = -x).
              */
-            parent.addPoint(d,
+            addPoint(d,
                     new Point2D.Double(xo + radius*(p.y)*L, yo + radius*(-p.x)*L), 
                     p.z>0, first, !first);
             first = false;
         }
+        drawPoints(g);
         
         FisherValues fish = sample.getFisher();
         if (fish != null) {
+            float xOrig = (float) getDimensions().getMinX();
+            float yOrig = (float) getDimensions().getMinY();
             g.drawString(
                     String.format("D:%.1f I:%.1f",
                     fish.getMeanDirection().decDegrees(),

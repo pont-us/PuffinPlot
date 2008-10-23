@@ -1,19 +1,20 @@
 package net.talvi.puffinplot;
 
-import java.awt.BasicStroke;
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.RenderingHints;
-import java.awt.Shape;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Line2D;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -24,11 +25,11 @@ import java.util.logging.Logger;
 import javax.swing.JPanel;
 
 import net.talvi.puffinplot.data.Correction;
-import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.plots.DataDisplay;
+import net.talvi.puffinplot.plots.DataTable;
 import net.talvi.puffinplot.plots.DemagPlot;
 import net.talvi.puffinplot.plots.EqAreaPlot;
 import net.talvi.puffinplot.plots.Plot;
@@ -41,13 +42,11 @@ public class GraphDisplay extends JPanel implements Printable {
     private transient PlotParams params;
     private Sample[] samples = null;
     private int printPageIndex = -1;
-    private ZPlot zPlot;
-    private EqAreaPlot eaPlot;
-    private DemagPlot demagPlot;
+    private List<Plot> plots;
     private DataDisplay dataDisplay;
-    private static final RenderingHints renderingHints = new PRenderingHints();
-    List<PlotPoint> points = new LinkedList<PlotPoint>();
-    private AffineTransform zoomTransform;
+    public static final RenderingHints renderingHints = new PRenderingHints();
+    public AffineTransform zoomTransform;
+    private final GdMouseListener mouseListener; 
     
     static class PRenderingHints extends RenderingHints {
         PRenderingHints() {
@@ -65,44 +64,6 @@ public class GraphDisplay extends JPanel implements Printable {
         }
     }
  
-    private static class PlotPoint {
-
-        private final Shape shape;
-        private final Shape highlight;
-        private final Datum datum;
-        private final boolean filled;
-        private final boolean lineToHere;
-        private final boolean special;
-        private final Point2D centre;
-        private static final double highlightSize = 1.6;
-        private static final double plotPointSize = 5;
-
-        PlotPoint(Datum datum, Point2D centre,
-                boolean filled, boolean lineToHere, boolean special) {
-            double size = (plotPointSize / 2);
-            this.centre = centre;
-            this.datum = datum;
-            shape = new Rectangle2D.Double(centre.getX() - size, centre.getY() - size, 2 * size, 2 * size);
-            double hs = highlightSize;
-            highlight = new Rectangle2D.Double(centre.getX() - size * hs, centre.getY() - size * hs,
-                    2 * size * hs, 2 * size * hs);
-            this.filled = filled;
-            this.lineToHere = lineToHere;
-            this.special = special;
-        }
-
-        void draw(Graphics2D g) {
-            g.setColor(datum.selected ? Color.RED: Color.BLACK);
-            g.setStroke(new BasicStroke());
-            g.draw(shape);
-            if (special) g.draw(highlight);
-            if (filled) g.fill(shape);
-        }
-
-        public Point2D getCentre() {
-            return centre;
-        }
-    }
         
     GraphDisplay() {
         
@@ -133,71 +94,155 @@ public class GraphDisplay extends JPanel implements Printable {
         zoomTransform = AffineTransform.getScaleInstance(1.0, 1.0);
 
         setLayout(null);
-        eaPlot = new EqAreaPlot(params, this);
-        zPlot = new ZPlot(params, this);
-        demagPlot = new DemagPlot(params, this);
-        dataDisplay = new DataDisplay(params);
-        add(dataDisplay);
-        dataDisplay.setLocation(600, 500);
-        dataDisplay.setSize(400, 400);
+        plots = new LinkedList<Plot>();
+        plots.add(new EqAreaPlot(this, params, new Rectangle2D.Double(700, 100, 300, 300)));
+        plots.add(new ZPlot(this, params, new Rectangle2D.Double(100, 100, 500, 400)));
+        plots.add(new DemagPlot(this, params, new Rectangle2D.Double(100, 550, 300, 200)));
+        plots.add(new DataTable(this, params, new Rectangle2D.Double(600, 500, 400, 400)));
+        
+//        dataDisplay = new DataDisplay(params);
+//        add(dataDisplay);
+//        dataDisplay.setLocation(600, 500);
+//        dataDisplay.setSize(400, 400);
         
         setOpaque(true);
         setBackground(Color.WHITE);
         setVisible(true);
         
-        addMouseListener(new GdMouseListener());
+        mouseListener = new GdMouseListener();
+        addMouseListener(mouseListener);
+        addMouseMotionListener(mouseListener);
     }
     
+    public volatile boolean alreadyTransformed = false;
     @Override
     public void paint(Graphics g) {
-        super.paint(g); // draws background
-
         Graphics2D g2 = (Graphics2D) g;
-        
         AffineTransform savedTransform = g2.getTransform();
         g2.transform(zoomTransform);
-        drawGraphs(g2);
-        g2.setTransform(savedTransform);
-    }
-    
-    private void drawGraphs(Graphics2D g2) {
-                g2.setRenderingHints(renderingHints);
-        points.clear();
-        zPlot.paint(g2, 100, 100, 500, 400);
-        demagPlot.paint(g2, 100, 550, 300, 200);
-        eaPlot.paint(g2, 700, 100, 300, 300);
-        
-        Point2D prev = null;
-        for (int i=0; i<points.size(); i++) {
-            points.get(i).draw(g2);
-            if (i > 0 && points.get(i).lineToHere) {
-                g2.setColor(Color.BLACK);
-                g2.draw(new Line2D.Double(prev, points.get(i).centre));
-            }
-            prev = points.get(i).centre;
+        alreadyTransformed = true;
+        super.paint(g); // draws background and any components
+        g2.setRenderingHints(renderingHints);
+        g2.setPaint(Color.BLACK);
+        g2.setPaintMode();
+        for (Plot plot: plots) {
+            plot.draw(g2);
         }
-        for (PlotPoint s: points) s.draw(g2);
-    }
-    
 
-    private class GdMouseListener extends MouseAdapter {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            AffineTransform antiZoom;
+        Plot draggee = mouseListener.getDraggingPlot();
+        if (draggee != null)
+        for (Plot plot : plots) {
+            g2.setPaint(plot==draggee ? Color.RED: Color.CYAN);
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .1f));
+            g2.fill(plot.getDimensions());
+        }
+        
+        g2.setTransform(savedTransform);
+        alreadyTransformed = false;
+    }
+
+    public AffineTransform getAntiZoom() {
             try {
-                antiZoom = zoomTransform.createInverse();
+                return zoomTransform.createInverse();
             } catch (NoninvertibleTransformException ex) {
                 Logger.getLogger(GraphDisplay.class.getName()).log(Level.SEVERE, null, ex);
                 // This is a "can't-happen" so rethrowing an error is appropriate.
                 // It will be caught by the default handler.
                 throw new Error(ex);
             }
-            for (PlotPoint s : points) {
-                if (s.shape.contains(antiZoom.transform(e.getPoint(), null))) {
-                    s.datum.toggleSel();
-                }
-                PuffinApp.getApp().mainWindow.graphDisplay.repaint();
+        }
+    
+    private class GdMouseListener 
+    implements MouseListener, MouseMotionListener {
+        private Point2D startPoint;
+        private Rectangle2D startDimensions;
+        private Plot draggingPlot;
+        private static final int LEFT=1, TOP=2, RIGHT=4, BOTTOM=8, ALLSIDES=15;
+        private int sides;
+        
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            final Point2D position = getAntiZoom().transform(e.getPoint(), null);
+            for (Plot plot: plots)
+                if (plot.getDimensions().contains(position))
+                    plot.mouseClicked(position);
+//            if (dataDisplay.getBounds().contains(position)) {
+//                PuffinApp.getApp().mainWindow.setTitle("YES");
+//                dataDisplay.processMouseEventPublic(e);
+//            } else {
+//                PuffinApp.getApp().mainWindow.setTitle("NO");
+//            }
+            repaint();
+        }
+        
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            draggingPlot = null;
+            repaint();
+        }
+        
+        @Override
+        public void mousePressed(MouseEvent e) {
+//                       final Point2D position = getAntiZoom().transform(e.getPoint(), null);
+//                        if (dataDisplay.getBounds().contains(position)) {
+//                PuffinApp.getApp().mainWindow.setTitle("YES");
+//                dataDisplay.processMouseEventPublic(e);
+//            } else {
+//                PuffinApp.getApp().mainWindow.setTitle("NO");
+//            }
+            startPoint = getAntiZoom().transform(e.getPoint(), null);
+            draggingPlot = null;
+            for (Plot plot : plots)
+                if (plot.getDimensions().contains(startPoint))
+                    draggingPlot = plot;
+            if (getDraggingPlot() != null) {
+                startDimensions = (Rectangle2D) getDraggingPlot().getDimensions().clone();
+                double relX = (startPoint.getX() - startDimensions.getMinX()) / startDimensions.getWidth();
+                double relY = (startPoint.getY() - startDimensions.getMinY()) / startDimensions.getHeight();
+                int sidesTmp = 0;
+                if (relX < 0.2) sidesTmp |= LEFT;
+                if (relX > 0.8) sidesTmp |= RIGHT;
+                if (relY < 0.2) sidesTmp |= TOP;
+                if (relY > 0.8) sidesTmp |= BOTTOM;
+                if (sidesTmp==0) sidesTmp = ALLSIDES;
+                sides = sidesTmp;
             }
+        }
+        
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            if (getDraggingPlot() != null) {
+                Point2D thisPoint = getAntiZoom().transform(e.getPoint(), null);
+                double dx = thisPoint.getX() - startPoint.getX();
+                double dy = thisPoint.getY() - startPoint.getY();
+                double x0 = startDimensions.getMinX();
+                double x1 = startDimensions.getMaxX();
+                double y0 = startDimensions.getMinY();
+                double y1 = startDimensions.getMaxY();
+                if ((sides & LEFT)!=0) x0+=dx;
+                if ((sides & TOP)!=0) y0+=dy;
+                if ((sides & RIGHT)!=0) x1+=dx;
+                if ((sides & BOTTOM)!=0) y1+=dy;
+                Rectangle2D newDims = new Rectangle2D.Double(x0, y0, x1-x0, y1-y0);
+                getDraggingPlot().setDimensions(newDims);
+                repaint();
+            }
+        }
+
+        public Plot getDraggingPlot() {
+            return draggingPlot;
+        }
+
+        public void mouseEntered(MouseEvent arg0) {
+
+        }
+
+        public void mouseExited(MouseEvent arg0) {
+
+        }
+
+        public void mouseMoved(MouseEvent arg0) {
+
         }
     }
 
@@ -210,23 +255,18 @@ public class GraphDisplay extends JPanel implements Printable {
         }
         printPageIndex = pageIndex;
         setDoubleBuffered(false);
-        dataDisplay.setDoubleBuffered(false);
-        dataDisplay.p.setDoubleBuffered(false);
+        // dataDisplay.setDoubleBuffered(false);
         Graphics2D g2 = (Graphics2D) graphics;
         g2.translate(pf.getImageableX(), pf.getImageableY());
         //double xScale = pf.getImageableWidth() / getWidth();
         //double yScale = pf.getImageableHeight() / getHeight();
         //double scale = Math.min(xScale, yScale);
         g2.scale(0.5, 0.5);
-        drawGraphs(g2);
+        for (Plot plot: plots) plot.draw(g2);
         printChildren(graphics);
         setDoubleBuffered(true);
-        dataDisplay.setDoubleBuffered(true);
-        dataDisplay.p.setDoubleBuffered(true);
+        // dataDisplay.setDoubleBuffered(true);
         return PAGE_EXISTS;
     }
-    
-    public void addPoint(Datum d, Point2D p, boolean filled, boolean special, boolean line) {
-        points.add(new PlotPoint(d, p, filled, line, special));
-    }
+
 }
