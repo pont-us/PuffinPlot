@@ -26,7 +26,7 @@ public class PuffinApp {
     }
     final PuffinActions actions;
     List<Suite> suites;
-    public MainWindow mainWindow;
+    private MainWindow mainWindow;
     private int currentSuiteIndex;
     private PageFormat currentPageFormat =
             PrinterJob.getPrinterJob().defaultPage();
@@ -37,6 +37,10 @@ public class PuffinApp {
 
     public Prefs getPrefs() {
         return prefs;
+    }
+
+    public MainWindow getMainWindow() {
+        return mainWindow;
     }
     
     public static class Prefs {
@@ -103,7 +107,7 @@ public class PuffinApp {
     }
     
     public Correction currentCorrection() {
-        return mainWindow.controlPanel.getCorrection();
+        return getMainWindow().controlPanel.getCorrection();
     }
     
     public void openFiles(File f) {
@@ -134,7 +138,7 @@ public class PuffinApp {
             }
             if (suites.size() > 0) {
                 currentSuiteIndex = suites.size()-1;
-                mainWindow.suitesChanged();
+                getMainWindow().suitesChanged();
             }
         } catch (FileNotFoundException e) {
             errorDialog("File not found", e.getMessage());
@@ -145,7 +149,7 @@ public class PuffinApp {
     
     public static void errorDialog(String title, String message) {
         JOptionPane.showMessageDialog
-        (getApp().mainWindow, message, title, JOptionPane.ERROR_MESSAGE);
+        (getApp().getMainWindow(), message, title, JOptionPane.ERROR_MESSAGE);
     }
     
     @SuppressWarnings("unchecked")
@@ -178,12 +182,12 @@ public class PuffinApp {
     
     // Only works for discrete, of course.
     public Sample[] getSelectedSamples() {
-        return mainWindow.sampleChooser.getSelectedSamples();
+        return getMainWindow().sampleChooser.getSelectedSamples();
     }
 
     public void setCurrentSuite(int selectedIndex) {
         currentSuiteIndex = selectedIndex;
-        if (getCurrentSuite() != null) mainWindow.suitesChanged();
+        if (getCurrentSuite() != null) getMainWindow().suitesChanged();
     }
     
     public void quit() {

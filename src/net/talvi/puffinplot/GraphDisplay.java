@@ -42,7 +42,17 @@ public class GraphDisplay extends JPanel implements Printable {
     private List<Plot> plots;
     public static final RenderingHints renderingHints = new PRenderingHints();
     public AffineTransform zoomTransform;
-    private final GdMouseListener mouseListener; 
+    private final GdMouseListener mouseListener;
+    private final int dragMargin = 32;
+    private boolean dragPlotMode = false;
+
+    public boolean isDragPlotMode() {
+        return dragPlotMode;
+    }
+
+    public void setDragPlotMode(boolean dragPlotMode) {
+        this.dragPlotMode = dragPlotMode;
+    }
     
     static class PRenderingHints extends RenderingHints {
         PRenderingHints() {
@@ -75,7 +85,7 @@ public class GraphDisplay extends JPanel implements Printable {
             }
 
             public MeasurementAxis getAxis() {
-                return PuffinApp.getApp().mainWindow.controlPanel.getAxis();
+                return PuffinApp.getApp().getMainWindow().controlPanel.getAxis();
             }
 
             public MeasType getMeasType() {
@@ -115,12 +125,17 @@ public class GraphDisplay extends JPanel implements Printable {
         g2.setPaintMode();
         for (Plot plot: plots) plot.draw(g2);
 
-        Plot draggee = mouseListener.getDraggingPlot();
-        if (draggee != null)
-        for (Plot plot : plots) {
-            g2.setPaint(plot==draggee ? Color.RED: Color.CYAN);
-            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .2f));
-            g2.fill(plot.getDimensions());
+        if (isDragPlotMode()) {
+            for (Plot plot : plots) {
+                g2.setPaint(Color.ORANGE);
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .2f));
+                Rectangle2D d = plot.getDimensions();
+                g2.fill(d);
+                g2.fill(new Rectangle2D.Double(d.getMinX(), d.getMinY(), dragMargin, d.getHeight()));
+                g2.fill(new Rectangle2D.Double(d.getMaxX() - dragMargin, d.getMinY(), dragMargin, d.getHeight()));
+                g2.fill(new Rectangle2D.Double(d.getMinX(), d.getMinY(), d.getWidth(), dragMargin));
+                g2.fill(new Rectangle2D.Double(d.getMinX(), d.getMaxY() - dragMargin, d.getWidth(), dragMargin));
+            }
         }
         
         g2.setTransform(savedTransform);
@@ -166,23 +181,22 @@ public class GraphDisplay extends JPanel implements Printable {
         
         @Override
         public void mousePressed(MouseEvent e) {
-            startPoint = getAntiZoom().transform(e.getPoint(), null);
             draggingPlot = null;
+            if (!isDragPlotMode()) return;            
+            startPoint = getAntiZoom().transform(e.getPoint(), null);
             for (Plot plot : plots)
                 if (plot.getDimensions().contains(startPoint))
                     draggingPlot = plot;
             if (getDraggingPlot() != null) {
                 startDimensions =
                         (Rectangle2D) getDraggingPlot().getDimensions().clone();
-                double relX = (startPoint.getX() - startDimensions.getMinX())
-                        / startDimensions.getWidth();
-                double relY = (startPoint.getY() - startDimensions.getMinY())
-                        / startDimensions.getHeight();
+                double relX = (startPoint.getX() - startDimensions.getMinX());
+                double relY = (startPoint.getY() - startDimensions.getMinY());
                 int sidesTmp = 0;
-                if (relX < 0.2) sidesTmp |= LEFT;
-                if (relX > 0.8) sidesTmp |= RIGHT;
-                if (relY < 0.2) sidesTmp |= TOP;
-                if (relY > 0.8) sidesTmp |= BOTTOM;
+                if (relX < dragMargin) sidesTmp |= LEFT;
+                if (relX > startDimensions.getWidth() - dragMargin) sidesTmp |= RIGHT;
+                if (relY < dragMargin) sidesTmp |= TOP;
+                if (relY > startDimensions.getHeight() - dragMargin) sidesTmp |= BOTTOM;
                 if (sidesTmp==0) sidesTmp = ALLSIDES;
                 sides = sidesTmp;
             }
@@ -190,7 +204,7 @@ public class GraphDisplay extends JPanel implements Printable {
         
         @Override
         public void mouseDragged(MouseEvent e) {
-            if (getDraggingPlot() != null) {
+            if (isDragPlotMode() && getDraggingPlot() != null) {
                 Point2D thisPoint = getAntiZoom().transform(e.getPoint(), null);
                 double dx = thisPoint.getX() - startPoint.getX();
                 double dy = thisPoint.getY() - startPoint.getY();
@@ -202,7 +216,15 @@ public class GraphDisplay extends JPanel implements Printable {
                 if ((sides & TOP)!=0) y0+=dy;
                 if ((sides & RIGHT)!=0) x1+=dx;
                 if ((sides & BOTTOM)!=0) y1+=dy;
-                Rectangle2D newDims = new Rectangle2D.Double(x0, y0, x1-x0, y1-y0);
+                if (x1-x0 < 3*dragMargin) {
+                    x0 = getDraggingPlot().getDimensions().getMinX();
+                    x1 = getDraggingPlot().getDimensions().getMaxX();
+                } 
+                if (y1-y0 < 3*dragMargin) {
+                    y0 = getDraggingPlot().getDimensions().getMinY();
+                    y1 = getDraggingPlot().getDimensions().getMaxY();
+                }
+                    Rectangle2D newDims = new Rectangle2D.Double(x0, y0, x1 - x0, y1 - y0);
                 getDraggingPlot().setDimensions(newDims);
                 repaint();
             }

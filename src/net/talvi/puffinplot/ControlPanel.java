@@ -124,6 +124,6 @@ public class ControlPanel extends JPanel
     }
 
     public void itemStateChanged(ItemEvent e) {
-        PuffinApp.getApp().mainWindow.repaint();
+        PuffinApp.getApp().getMainWindow().repaint();
     }
 }

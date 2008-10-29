@@ -1,6 +1,8 @@
 package net.talvi.puffinplot;
 
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 
 import java.awt.event.ItemEvent;
@@ -15,6 +17,7 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import net.talvi.puffinplot.PuffinApp.Prefs;
 
 public class MainMenuBar extends JMenuBar {
 
@@ -47,6 +50,28 @@ public class MainMenuBar extends JMenuBar {
         JMenu editMenu = new JMenu("Edit");
         addSimpleItem(editMenu, actions.selectAll, 'S');
         // Can't use ctrl-A, it's already "select all samples in this suite"
+        final JCheckBoxMenuItem movePlotsItem = new JCheckBoxMenuItem("Move plots")
+        {
+            @Override
+            public boolean isSelected() {
+                try {
+                    return PuffinApp.getApp().getMainWindow().graphDisplay.isDragPlotMode();
+                } catch (NullPointerException e) {
+                    return false;
+                }
+            }
+        };
+        editMenu.add(movePlotsItem);
+        movePlotsItem.addActionListener(
+                new ActionListener() {
+      public void actionPerformed(ActionEvent event) {
+
+                GraphDisplay gd = PuffinApp.getApp().getMainWindow().graphDisplay;
+                gd.setDragPlotMode(!gd.isDragPlotMode());
+                gd.repaint();
+
+      } }
+        );
         
         JMenu calcMenu = new JMenu("Calculate");
         addSimpleItem(calcMenu, actions.pca, 'R');
@@ -61,7 +86,8 @@ public class MainMenuBar extends JMenuBar {
         calcMenu.add(anchorItem);
         anchorItem.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent event) {
-                PuffinApp.getApp().getPrefs().setPcaAnchored(!PuffinApp.getApp().getPrefs().isPcaAnchored());
+                Prefs prefs = PuffinApp.getApp().getPrefs();
+                prefs.setPcaAnchored(!prefs.isPcaAnchored());
             }
         });
         

@@ -23,8 +23,10 @@ public class DataTable extends Plot {
         super(parent, params, dimensions);
     }
     
-    private void writeLine(Graphics2D g, float yPos, List<String> values) {
-        float xPos = 0;
+    private void writeLine(Graphics2D g, float yPos, boolean selected, List<String> values) {
+        if (selected) g.drawString("‣", (float) getDimensions().getMinX(),
+                (float) (getDimensions().getMinY() + yPos));
+        float xPos = 10;
         for (String s: values) {
             g.drawString(s, (float) (getDimensions().getMinX() + xPos),
                     (float) (getDimensions().getMinY() + yPos));
@@ -40,7 +42,7 @@ public class DataTable extends Plot {
         List<Datum> data = sample.getData();
         if (data.size() == 0) return;
 
-        writeLine(g, ySpacing, headers);
+        writeLine(g, ySpacing, false, headers);
         float yPos = 2 * ySpacing;
         for (Datum d: data) {
             List<String> values = new ArrayList<String>(4);
@@ -49,7 +51,7 @@ public class DataTable extends Plot {
             values.add(String.format("%.1f", p.decDegrees()));
             values.add(String.format("%.1f", p.incDegrees()));
             values.add(String.format("%.1g", p.mag()));
-            writeLine(g, yPos, values);
+            writeLine(g, yPos, d.selected, values);
             yPos += ySpacing;
         }
     }

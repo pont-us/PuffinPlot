@@ -23,7 +23,7 @@ public class PuffinActions {
     public final Action about = new AbstractAction("About PuffinPlot") {
 
         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(app.mainWindow, "This is the about box.");
+            JOptionPane.showMessageDialog(app.getMainWindow(), "This is the about box.");
         }
     };
     
@@ -39,11 +39,11 @@ public class PuffinActions {
                 JFileChooser chooser = new JFileChooser();
                 chooser.setMultiSelectionEnabled(true);
                 chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-                int choice = chooser.showOpenDialog(app.mainWindow);
+                int choice = chooser.showOpenDialog(app.getMainWindow());
                 if (choice == JFileChooser.APPROVE_OPTION)
                     files = chooser.getSelectedFiles();
             } else {
-                FileDialog fd = new FileDialog(app.mainWindow, "Open file",
+                FileDialog fd = new FileDialog(app.getMainWindow(), "Open file",
                         FileDialog.LOAD);
                 fd.setVisible(true);
                 String filename = fd.getFile();
@@ -67,35 +67,35 @@ public class PuffinActions {
     public final Action pca = new AbstractAction("PCA") {
         public void actionPerformed(ActionEvent e) {
             app.getCurrentSample().doPca();
-            app.mainWindow.repaint();
+            app.getMainWindow().repaint();
         }
     };
     
     public final Action fisher = new AbstractAction("Fisher") {
         public void actionPerformed(ActionEvent e) {
             app.getCurrentSample().doFisher();
-            app.mainWindow.repaint();
+            app.getMainWindow().repaint();
         }
     };
     
     public final Action clear = new AbstractAction("Clear") {
         public void actionPerformed(ActionEvent e) {
             app.getCurrentSample().clear();
-            app.mainWindow.repaint();
+            app.getMainWindow().repaint();
         }
     };
     
     public final Action selectAll = new AbstractAction("Select all") {
         public void actionPerformed(ActionEvent e) {
             app.getCurrentSample().selectAll();
-            app.mainWindow.repaint();
+            app.getMainWindow().repaint();
         }
     };
     
     public final Action prefs = new AbstractAction("Preferences…") {
 
         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(app.mainWindow, "This is the preferences dialog.");
+            JOptionPane.showMessageDialog(app.getMainWindow(), "This is the preferences dialog.");
         }
     };
     
@@ -105,7 +105,7 @@ public class PuffinActions {
             PrinterJob job = PrinterJob.getPrinterJob();
             PageFormat pf = new PageFormat();
             pf.setOrientation(PageFormat.LANDSCAPE);
-            job.setPrintable(app.mainWindow.graphDisplay,
+            job.setPrintable(app.getMainWindow().graphDisplay,
                     app.getCurrentPageFormat());
 
             PrintService[] services =
