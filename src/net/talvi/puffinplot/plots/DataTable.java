@@ -50,7 +50,9 @@ public class DataTable extends Plot {
             values.add(String.format("%.0f", d.getDemagLevel()));
             values.add(String.format("%.1f", p.decDegrees()));
             values.add(String.format("%.1f", p.incDegrees()));
-            values.add(String.format("%.1g", p.mag()));
+            // Don't use .1g, it tickles a bug in Java which
+            // throws an ArrayFormatException (at least in Sun Java 5 & 6)
+            values.add(String.format("%.2g", p.mag()));
             writeLine(g, yPos, d.selected, values);
             yPos += ySpacing;
         }

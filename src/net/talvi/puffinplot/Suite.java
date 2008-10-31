@@ -1,10 +1,11 @@
 package net.talvi.puffinplot;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,13 +16,17 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 
 import net.talvi.puffinplot.data.Datum;
+import net.talvi.puffinplot.data.FisherValues;
 import net.talvi.puffinplot.data.MeasType;
+import net.talvi.puffinplot.data.PcaValues;
+import net.talvi.puffinplot.data.Point;
 import net.talvi.puffinplot.data.Sample;
-import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.TwoGeeField;
 
 public class Suite implements Iterable<Datum> {
@@ -144,7 +149,6 @@ public class Suite implements Iterable<Datum> {
         return result;
     }
     
-    
     /*
      * Note that this may return an empty suite, in which case various things
      * can break. We can't just throw an exception if the suite's empty,
@@ -264,6 +268,56 @@ public class Suite implements Iterable<Datum> {
         setCurrentDepthIndex(0);
     }
 
+    public void saveCalculations(File file) {
+        Writer writer = null;
+        try {
+            writer = new FileWriter(file);
+            ArrayList<Sample> samples = new ArrayList<Sample>(getNumSamples());
+            if (measType == MeasType.CONTINUOUS) {
+                for (double depth: depths)
+                    samples.add(getSampleByDepth(depth));
+            } else {
+                for (String name: names)
+                    samples.add(getSampleByName(name));
+            }
+
+            writer.write(measType == MeasType.CONTINUOUS ?
+                "\"Depth\", " : "\"Sample\", ");
+            writer.write("\"Fisher inc.\", \"Fisher dec.\", \"a95\", \"k\", "+
+                    "\"PCA inc.\", \"PCA dec.\", \"MAD1\", \"MAD3\"\n");
+            for (Sample sample: samples) {
+                String fishCsv = ",,,";
+                String pcaCsv = ",,,";
+                PcaValues pca = sample.getPca();
+                if (pca != null) {
+                    pcaCsv = String.format("%.1f, %.1f, %.1f, %.1f",
+                            pca.getIncDegrees(), pca.getDecDegrees(),
+                            pca.getMad1(), pca.getMad3());
+                }
+                FisherValues fish = sample.getFisher();
+                if (fish != null) {
+                    Point dir = fish.getMeanDirection();
+                    fishCsv = String.format("%.1f, %.1f, %.1f, %.1f",
+                            dir.decDegrees(), dir.incDegrees(),
+                            fish.getA95(), fish.getK());
+                }
+                String sampleId = (measType == MeasType.CONTINUOUS) ?
+                    String.format("%f", sample.getDepth()) :
+                    sample.getName();
+                writer.write(sampleId+", "+fishCsv+", "+pcaCsv+"\n");
+            }
+            
+        } catch (IOException ex) {
+            PuffinApp.errorDialog("Error saving file", ex.getMessage());
+        } finally {
+                try {
+                    if (writer != null) writer.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(PuffinActions.class.getName()).log(Level.SEVERE, null, ex);
+                }
+        }
+    }
+    
     public Sample getSampleByDepth(double depth) {
         return samplesByDepth.get(depth);
     }

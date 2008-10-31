@@ -42,7 +42,6 @@ public abstract class Plot
         private static final double highlightSize = 1.6;
         private static final double plotPointSize = 5;
 
-
         PlotPoint(Datum datum, Point2D centre,
                 boolean filled, boolean lineToHere, boolean special) {
             double size = (plotPointSize / 2);

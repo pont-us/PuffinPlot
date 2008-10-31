@@ -28,8 +28,7 @@ public class PuffinApp {
     List<Suite> suites;
     private MainWindow mainWindow;
     private int currentSuiteIndex;
-    private PageFormat currentPageFormat =
-            PrinterJob.getPrinterJob().defaultPage();
+    private PageFormat currentPageFormat;
     public static final boolean MAC_OS_X = (System.getProperty("os.name").
             toLowerCase().startsWith("mac os x"));
     private TableWindow tableWindow;
@@ -78,6 +77,10 @@ public class PuffinApp {
         mainWindow = new MainWindow();
         suites = new ArrayList<Suite>();
         if (MAC_OS_X) createAppleEventListener();
+        
+        currentPageFormat = PrinterJob.getPrinterJob().defaultPage();
+        currentPageFormat.setOrientation(PageFormat.LANDSCAPE);
+        
         mainWindow.setVisible(true);
         
     }

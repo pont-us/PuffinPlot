@@ -39,16 +39,17 @@ public class MainMenuBar extends JMenuBar {
 
         MenuItemDef[] fileItems = {
             new MenuItemDef(actions.open, 'O', 0, true),
+            new MenuItemDef(actions.save, 'S', 0, true),
             new MenuItemDef(actions.pageSetup, 'P', InputEvent.SHIFT_MASK, true),
             new MenuItemDef(actions.print, 'P', 0, true),
             new MenuItemDef(actions.prefs, ',', 0, false),
-            new MenuItemDef(actions.quit, 'Q', 0, false),
+            new MenuItemDef(actions.quit, 'Q', 0, false)
         };
         
         for (MenuItemDef def: fileItems) def.addToMenu(fileMenu);
         
         JMenu editMenu = new JMenu("Edit");
-        addSimpleItem(editMenu, actions.selectAll, 'S');
+        addSimpleItem(editMenu, actions.selectAll, 'D');
         // Can't use ctrl-A, it's already "select all samples in this suite"
         final JCheckBoxMenuItem movePlotsItem = new JCheckBoxMenuItem("Move plots")
         {

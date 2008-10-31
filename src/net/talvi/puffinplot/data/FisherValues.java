@@ -12,6 +12,7 @@ public class FisherValues {
     private final double a95;
     private final double k;
     private final Point meanDirection;
+    private final static double p = 0.05;
 
     private FisherValues(double a95, double k, Point meanDirection) {
         this.a95 = a95;
@@ -22,10 +23,9 @@ public class FisherValues {
     public static FisherValues calculate(Collection<Point> points) {
         List<Point> normPoints = new ArrayList<Point>(points.size());
         double N = points.size();
-        for (Point p: points) normPoints.add(p.normalize());
+        for (Point point: points) normPoints.add(point.normalize());
         double R = Point.vectorSumLength(normPoints);
         double k = (N-1)/(N-R);
-        double p = 0.05;
         double a95 = Math.toDegrees(acos( 1 - ((N-R)/R) * (pow(1/p,1/(N-1))-1) ));
         return new FisherValues(a95, k, Point.meanDirection(normPoints));
     }

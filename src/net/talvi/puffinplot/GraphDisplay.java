@@ -255,10 +255,12 @@ public class GraphDisplay extends JPanel implements Printable {
         setDoubleBuffered(false);
         Graphics2D g2 = (Graphics2D) graphics;
         g2.translate(pf.getImageableX(), pf.getImageableY());
-        //double xScale = pf.getImageableWidth() / getWidth();
-        //double yScale = pf.getImageableHeight() / getHeight();
-        //double scale = Math.min(xScale, yScale);
-        g2.scale(0.5, 0.5);
+        double xScale = pf.getImageableWidth() / getWidth();
+        double yScale = pf.getImageableHeight() / getHeight();
+        double scale = Math.min(xScale, yScale);
+        g2.scale(scale, scale);
+        g2.setPaint(Color.BLACK);
+        g2.setPaintMode();
         for (Plot plot: plots) plot.draw(g2);
         printChildren(graphics);
         setDoubleBuffered(true);

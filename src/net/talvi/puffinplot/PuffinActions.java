@@ -2,7 +2,6 @@ package net.talvi.puffinplot;
 
 import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
-import java.awt.print.PageFormat;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.File;
@@ -43,7 +42,7 @@ public class PuffinActions {
                 if (choice == JFileChooser.APPROVE_OPTION)
                     files = chooser.getSelectedFiles();
             } else {
-                FileDialog fd = new FileDialog(app.getMainWindow(), "Open file",
+                FileDialog fd = new FileDialog(app.getMainWindow(), "Open file(s)",
                         FileDialog.LOAD);
                 fd.setVisible(true);
                 String filename = fd.getFile();
@@ -55,6 +54,32 @@ public class PuffinActions {
             if (files != null)
                 app.openFiles(files);
         }
+    };
+    
+    public final Action save = new AbstractAction("Save PCA/Fisher…") {
+
+        public void actionPerformed(ActionEvent arg0) {
+            boolean useSwingChooser = !PuffinApp.MAC_OS_X;
+
+            File file = null;
+
+            if (useSwingChooser) {
+                JFileChooser chooser = new JFileChooser();
+                int choice = chooser.showSaveDialog(app.getMainWindow());
+                if (choice == JFileChooser.APPROVE_OPTION)
+                    file = chooser.getSelectedFile();
+            } else {
+                FileDialog fd = new FileDialog(app.getMainWindow(), "Save PCA/Fisher",
+                        FileDialog.SAVE);
+                fd.setVisible(true);
+                String filename = fd.getFile();
+                if (filename != null) {
+                    file = new File(fd.getDirectory(), fd.getFile());
+                }
+            }
+            if (file != null) app.getCurrentSuite().saveCalculations(file);
+        }
+        
     };
     
     public final Action pageSetup = new AbstractAction("Page Setup…") {
@@ -103,8 +128,6 @@ public class PuffinActions {
 
         public void actionPerformed(ActionEvent e) {
             PrinterJob job = PrinterJob.getPrinterJob();
-            PageFormat pf = new PageFormat();
-            pf.setOrientation(PageFormat.LANDSCAPE);
             job.setPrintable(app.getMainWindow().graphDisplay,
                     app.getCurrentPageFormat());
 
