@@ -155,7 +155,7 @@ public class PuffinActions {
     
     public final Action quit = new AbstractAction("Quit") {
         public void actionPerformed(ActionEvent e) {
-            System.out.println("quit");
+            PuffinApp.getApp().getPrefs().save();
             System.exit(0);
         }
     };

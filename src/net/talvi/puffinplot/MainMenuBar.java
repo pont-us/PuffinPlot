@@ -9,6 +9,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.List;
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
@@ -17,33 +19,36 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import net.talvi.puffinplot.PuffinApp.Prefs;
+import net.talvi.puffinplot.PuffinPrefs;
+import net.talvi.puffinplot.PuffinPrefs.RecentFile;
 
 public class MainMenuBar extends JMenuBar {
 
     private static final long serialVersionUID = 1L;
 
+    final static private JMenuItem noRecentFiles = new JMenuItem("No recent files");
     // control or apple key as appropriate
     private static final int modifierKey =
             Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-    
-    private void addSimpleItem(JMenu menu, Action action, char key) {
-        JMenuItem item = new JMenuItem(action);
-        menu.add(item);
-        item.setAccelerator(KeyStroke.getKeyStroke(key, modifierKey, false));
-    }
-    
+    private JMenu recentFilesMenu;
+        
     public MainMenuBar() {
         final JMenu fileMenu = new JMenu("File");
         final PuffinActions actions = PuffinApp.getApp().actions;
 
+        recentFilesMenu = new JMenu("Open recent file");
+
+        noRecentFiles.setEnabled(false);
+        updateRecentFiles();
+        
         MenuItemDef[] fileItems = {
-            new MenuItemDef(actions.open, 'O', 0, true),
-            new MenuItemDef(actions.save, 'S', 0, true),
-            new MenuItemDef(actions.pageSetup, 'P', InputEvent.SHIFT_MASK, true),
-            new MenuItemDef(actions.print, 'P', 0, true),
-            new MenuItemDef(actions.prefs, ',', 0, false),
-            new MenuItemDef(actions.quit, 'Q', 0, false)
+            new ActionItemDef(actions.open, 'O', 0, true),
+            new SubmenuDef(recentFilesMenu),
+            new ActionItemDef(actions.save, 'S', 0, true),
+            new ActionItemDef(actions.pageSetup, 'P', InputEvent.SHIFT_MASK, true),
+            new ActionItemDef(actions.print, 'P', 0, true),
+            new ActionItemDef(actions.prefs, ',', 0, false),
+            new ActionItemDef(actions.quit, 'Q', 0, false)
         };
         
         for (MenuItemDef def: fileItems) def.addToMenu(fileMenu);
@@ -65,12 +70,10 @@ public class MainMenuBar extends JMenuBar {
         editMenu.add(movePlotsItem);
         movePlotsItem.addActionListener(
                 new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
-
-                GraphDisplay gd = PuffinApp.getApp().getMainWindow().graphDisplay;
-                gd.setDragPlotMode(!gd.isDragPlotMode());
-                gd.repaint();
-
+                    public void actionPerformed(ActionEvent event) {
+                        GraphDisplay gd = PuffinApp.getApp().getMainWindow().graphDisplay;
+                        gd.setDragPlotMode(!gd.isDragPlotMode());
+                        gd.repaint();
       } }
         );
         
@@ -87,7 +90,7 @@ public class MainMenuBar extends JMenuBar {
         calcMenu.add(anchorItem);
         anchorItem.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent event) {
-                Prefs prefs = PuffinApp.getApp().getPrefs();
+                PuffinPrefs prefs = PuffinApp.getApp().getPrefs();
                 prefs.setPcaAnchored(!prefs.isPcaAnchored());
             }
         });
@@ -105,6 +108,33 @@ public class MainMenuBar extends JMenuBar {
         add(editMenu);
         add(calcMenu);
         add(windowMenu);
+    }
+    
+    private void addSimpleItem(JMenu menu, Action action, char key) {
+        JMenuItem item = new JMenuItem(action);
+        menu.add(item);
+        item.setAccelerator(KeyStroke.getKeyStroke(key, modifierKey, false));
+    }
+  
+    void updateRecentFiles() {
+        recentFilesMenu.removeAll();
+        final List<RecentFile> recentFiles =
+                PuffinApp.getApp().getPrefs().getRecentFiles();
+        if (recentFiles.size() == 0)
+            recentFilesMenu.add(noRecentFiles);
+        for (final PuffinPrefs.RecentFile recent : recentFiles) {
+            recentFilesMenu.add(new AbstractAction() {
+                public void actionPerformed(ActionEvent arg0) {
+                    PuffinApp.getApp().openFiles(recent.getFiles());
+                }
+                @Override
+                public Object getValue(String key) {
+                    return (NAME.equals(key)) ?
+                        recent.getName() :
+                        super.getValue(key);
+                }
+            });
+        }
     }
     
     private static class DataTableItem extends JCheckBoxMenuItem {
@@ -138,13 +168,17 @@ public class MainMenuBar extends JMenuBar {
             }
     }
     
-    private static class MenuItemDef {
+    private static interface MenuItemDef {
+        void addToMenu(JMenu menu);
+    }
+    
+    private static class ActionItemDef implements MenuItemDef {
         private Action action;
         private char shortcut;
         private boolean onMac;
         private int mask;
         
-        MenuItemDef(Action action, char shortcut, int mask, boolean onMac) {
+        ActionItemDef(Action action, char shortcut, int mask, boolean onMac) {
             super();
             this.action = action;
             this.shortcut = shortcut;
@@ -152,7 +186,7 @@ public class MainMenuBar extends JMenuBar {
             this.onMac = onMac;
         }
         
-        void addToMenu(JMenu menu) {
+        public void addToMenu(JMenu menu) {
             if (onMac || !PuffinApp.MAC_OS_X) {
                 JMenuItem item = new JMenuItem(action);
                 item.setAccelerator(KeyStroke.getKeyStroke(shortcut,
@@ -161,4 +195,17 @@ public class MainMenuBar extends JMenuBar {
             }
         }
     }
-}
+    
+    private static class SubmenuDef implements MenuItemDef {
+        private JMenu submenu;
+
+        SubmenuDef(JMenu submenu) {
+            this.submenu = submenu;
+        }
+        
+        public void addToMenu(JMenu menu) {
+            menu.add(submenu);
+        }
+        
+    }
+    }

@@ -21,13 +21,15 @@ public class MainWindow extends JFrame {
     public final ControlPanel controlPanel;
     private JScrollPane jsp;
     SampleChooser sampleChooser;
+    private final MainMenuBar menuBar;
     private JLabel welcomeMessage;
-    
+
     public MainWindow() {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new CloseListener());
         setPreferredSize(new Dimension(800,400));
-        setJMenuBar(new MainMenuBar());
+        menuBar = new MainMenuBar();
+        setJMenuBar(menuBar);
         
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
@@ -62,6 +64,10 @@ public class MainWindow extends JFrame {
         graphDisplay.setVisible(true);
         welcomeMessage.setVisible(false);
         repaint();
+    }
+    
+    public MainMenuBar getMainMenuBar() {
+        return menuBar;
     }
     
     static class CloseListener extends WindowAdapter {

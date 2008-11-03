@@ -32,35 +32,14 @@ public class PuffinApp {
     public static final boolean MAC_OS_X = (System.getProperty("os.name").
             toLowerCase().startsWith("mac os x"));
     private TableWindow tableWindow;
-    private Prefs prefs;
+    private PuffinPrefs prefs;
 
-    public Prefs getPrefs() {
+    public PuffinPrefs getPrefs() {
         return prefs;
     }
 
     public MainWindow getMainWindow() {
         return mainWindow;
-    }
-    
-    public static class Prefs {
-        private boolean axisScaleLocked;
-        private boolean pcaAnchored;
-
-        public boolean isAxisScaleLocked() {
-            return axisScaleLocked;
-        }
-
-        public void setAxisScaleLocked(boolean axisScaleLocked) {
-            this.axisScaleLocked = axisScaleLocked;
-        }
-
-        public boolean isPcaAnchored() {
-            return pcaAnchored;
-        }
-
-        public void setPcaAnchored(boolean pcaThroughOrigin) {
-            this.pcaAnchored = pcaThroughOrigin;
-        }
     }
 
     private PuffinApp() {
@@ -71,7 +50,7 @@ public class PuffinApp {
         System.setProperty("apple.laf.useScreenMenuBar", "true");
         System.setProperty("com.apple.mrj.application.apple.menu.about.name", "PuffinPlot");
 
-        prefs = new Prefs();
+        prefs = new PuffinPrefs();
         actions = new PuffinActions(this);
         tableWindow = new TableWindow();
         mainWindow = new MainWindow();
@@ -81,6 +60,7 @@ public class PuffinApp {
         currentPageFormat = PrinterJob.getPrinterJob().defaultPage();
         currentPageFormat.setOrientation(PageFormat.LANDSCAPE);
         
+        mainWindow.getMainMenuBar().updateRecentFiles();
         mainWindow.setVisible(true);
         
     }
@@ -121,6 +101,12 @@ public class PuffinApp {
         if (files.length == 0) return;
 
         try {
+            getPrefs().addRecentFile(files);
+        } catch (IOException ex) {
+            errorDialog("Error updating recent files list", ex.getLocalizedMessage());
+        }
+        
+        try {
             Suite suite = new Suite(files);
             List<String> warnings = suite.getLoadWarnings();
             if (warnings.size() > 0) {
@@ -148,6 +134,7 @@ public class PuffinApp {
         } catch (IOException e) {
             errorDialog("Error reading file", e.getMessage());
         }
+        mainWindow.getMainMenuBar().updateRecentFiles();
     }
     
     public static void errorDialog(String title, String message) {
@@ -167,7 +154,7 @@ public class PuffinApp {
             errorDialog("EAWT error", "Apple EAWT not supported: Application" +
                     " Menu handling disabled\n(" + e + ")");
         } catch (Exception e) {
-            errorDialog("EAWT error", "Exception while loading the OSXAdapter:");
+            errorDialog("EAWT error", "Error while loading the OSXAdapter:");
             e.printStackTrace();
         }
     }
