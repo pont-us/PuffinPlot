@@ -77,7 +77,7 @@ public class PuffinActions {
                     file = new File(fd.getDirectory(), fd.getFile());
                 }
             }
-            if (file != null) app.getCurrentSuite().saveCalculations(file);
+            if (file != null) app.getSuite().saveCalculations(file);
         }
         
     };
@@ -91,28 +91,28 @@ public class PuffinActions {
     
     public final Action pca = new AbstractAction("PCA") {
         public void actionPerformed(ActionEvent e) {
-            app.getCurrentSample().doPca();
+            app.getSample().doPca();
             app.getMainWindow().repaint();
         }
     };
     
     public final Action fisher = new AbstractAction("Fisher") {
         public void actionPerformed(ActionEvent e) {
-            app.getCurrentSample().doFisher();
+            app.getSample().doFisher();
             app.getMainWindow().repaint();
         }
     };
     
     public final Action clear = new AbstractAction("Clear") {
         public void actionPerformed(ActionEvent e) {
-            app.getCurrentSample().clear();
+            app.getSample().clear();
             app.getMainWindow().repaint();
         }
     };
     
     public final Action selectAll = new AbstractAction("Select all") {
         public void actionPerformed(ActionEvent e) {
-            app.getCurrentSample().selectAll();
+            app.getSample().selectAll();
             app.getMainWindow().repaint();
         }
     };
@@ -128,8 +128,8 @@ public class PuffinActions {
 
         public void actionPerformed(ActionEvent e) {
             PrinterJob job = PrinterJob.getPrinterJob();
-            job.setPrintable(app.getMainWindow().graphDisplay,
-                    app.getCurrentPageFormat());
+            job.setPrintable(
+                    app.getMainWindow().getGraphDisplay(),app.getCurrentPageFormat());
 
             PrintService[] services =
                     PrinterJob.lookupPrintServices();

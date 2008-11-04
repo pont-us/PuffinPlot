@@ -17,7 +17,7 @@ public class MainWindow extends JFrame {
 
     private static final long serialVersionUID = -9075963924200708871L;
 
-    public final GraphDisplay graphDisplay;
+    private final GraphDisplay graphDisplay;
     public final ControlPanel controlPanel;
     private JScrollPane jsp;
     SampleChooser sampleChooser;
@@ -35,7 +35,7 @@ public class MainWindow extends JFrame {
         mainPanel.setLayout(new BorderLayout());
         // mainPanel.add(graphDisplay = new GraphDisplay(), BorderLayout.CENTER);
         graphDisplay = new GraphDisplay();
-        jsp = new JScrollPane(graphDisplay);
+        jsp = new JScrollPane(getGraphDisplay());
         jsp.setMaximumSize(new Dimension(1000,700));
         mainPanel.add(jsp);
         mainPanel.add(welcomeMessage =
@@ -61,7 +61,7 @@ public class MainWindow extends JFrame {
     void suitesChanged() {
         sampleChooser.updateSuite();
         controlPanel.updateSuites();
-        graphDisplay.setVisible(true);
+        getGraphDisplay().setVisible(true);
         welcomeMessage.setVisible(false);
         repaint();
     }
@@ -69,11 +69,15 @@ public class MainWindow extends JFrame {
     public MainMenuBar getMainMenuBar() {
         return menuBar;
     }
+
+    public GraphDisplay getGraphDisplay() {
+        return graphDisplay;
+    }
     
     static class CloseListener extends WindowAdapter {
         @Override
         public void windowClosing(WindowEvent e) {
-            PuffinApp.getApp().actions.quit.
+            PuffinApp.getApp().getActions().quit.
             actionPerformed(new ActionEvent(this, 0, "window close"));
         }
     }

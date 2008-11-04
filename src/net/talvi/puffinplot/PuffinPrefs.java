@@ -1,8 +1,10 @@
 package net.talvi.puffinplot;
 
+import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 import java.util.prefs.Preferences;
@@ -15,6 +17,8 @@ public class PuffinPrefs {
     private boolean pcaAnchored;
     private RecentFile[] recentFiles = new RecentFile[MAX_RECENT_FILES];
     private int nextRecentFile = 0;
+    private HashMap<String,Rectangle2D> plotSizes =
+            new HashMap<String, Rectangle2D>();
     
     static Preferences prefs = Preferences.userNodeForPackage(PuffinPrefs.class);
     
@@ -47,6 +51,19 @@ public class PuffinPrefs {
             return files;
         }
         
+        /**
+         * The string representation is designed to be stored and retrieved
+         * through the Preferences API, which seems to have trouble with
+         * control characters. Thus the format is now
+         * 
+         * numpaths pathlen1... pathlenN path1path2... pathN
+         * 
+         * which avoids the need to find a suitable separator string
+         * (i.e. one which can be handled by the Preferences API on all
+         * platforms, and will never appear in a pathname on any platform).
+         * 
+         * @return a string representation of this class
+         */
         @Override
         public String toString() {
             StringBuffer sb = new StringBuffer();
@@ -112,10 +129,26 @@ public class PuffinPrefs {
         this.pcaAnchored = pcaThroughOrigin;
     }
     
+    public Rectangle2D getPlotSize(String plotName) {
+        return plotSizes.get(plotName);
+    }
+    
     public void load() {
         for (int i=0; i<MAX_RECENT_FILES; i++)
             recentFiles[i] = RecentFile.fromString(prefs.get("recentFile"+i, null));
         nextRecentFile = prefs.getInt("nextRecentFile", 0);
+        String plotSizeString = prefs.get("plotSizes",
+                "equarea 700 100 300 300 zplot 100 100 500 400 " +
+                "demag 100 550 300 200 datatable 600 500 400 400");
+        Scanner scanner = new Scanner(plotSizeString);
+        while (scanner.hasNext()) {
+            String plotName = scanner.next();
+            Rectangle2D geometry = 
+                    new Rectangle2D.Double(scanner.nextDouble(),
+                    scanner.nextDouble(), scanner.nextDouble(),
+                    scanner.nextDouble());
+            plotSizes.put(plotName, geometry);
+        }
     }
     
     public void save() {
@@ -123,5 +156,14 @@ public class PuffinPrefs {
             if (recentFiles[i] != null)
                 prefs.put("recentFile" + i, recentFiles[i].toString());
         prefs.putInt("nextRecentFile", nextRecentFile);
+        StringBuffer sb = new StringBuffer();
+        for (String plotName: plotSizes.keySet()) {
+            Rectangle2D r = PuffinApp.getApp().getMainWindow().
+                    getGraphDisplay().getPlotSize(plotName);
+            sb.append(String.format("%s %f %f %f %f ",
+                    plotName, r.getMinX(), r.getMinY(),
+                    r.getWidth(), r.getHeight()));
+        }
+        prefs.put("plotSizes", sb.toString());
     }
 }

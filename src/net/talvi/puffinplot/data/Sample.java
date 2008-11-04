@@ -68,7 +68,7 @@ public class Sample {
         LinkedList<Point> points = new LinkedList<Point>();
         for (Datum d: data)
             if (d.selected)
-                points.add(d.getPoint(PuffinApp.getApp().currentCorrection()));
+                points.add(d.getPoint(PuffinApp.getApp().getCorrection()));
         return points;
     }
     

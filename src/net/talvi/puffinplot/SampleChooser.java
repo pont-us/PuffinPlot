@@ -57,7 +57,7 @@ public class SampleChooser extends JPanel {
     public Sample[] getSelectedSamples() {
         Object[] names = sampleList.getSelectedValues();
         Sample[] samples = new Sample[names.length];
-        Suite suite = PuffinApp.getApp().getCurrentSuite();
+        Suite suite = PuffinApp.getApp().getSuite();
         for (int i=0; i<names.length; i++)
             samples[i] = suite.getSampleByName((String) names[i]);
         return samples;
@@ -70,7 +70,7 @@ public class SampleChooser extends JPanel {
             addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
                 if (getSelectedValue() != null)
-                    PuffinApp.getApp().getCurrentSuite().
+                    PuffinApp.getApp().getSuite().
                             setCurrentName((String) getSelectedValue());
                     PuffinApp.getApp().getMainWindow().repaint(100);
             }
@@ -101,7 +101,7 @@ public class SampleChooser extends JPanel {
             setSnapToTicks(true);
             addChangeListener(new ChangeListener() {
                 public void stateChanged(ChangeEvent e) {
-                    PuffinApp.getApp().getCurrentSuite().setCurrentDepthIndex(getValue());
+                    PuffinApp.getApp().getSuite().setCurrentDepthIndex(getValue());
                     PuffinApp.getApp().getMainWindow().repaint(100);
                 }
             });
@@ -128,7 +128,7 @@ public class SampleChooser extends JPanel {
     }
 
     public void updateSuite() {
-        Suite suite = PuffinApp.getApp().getCurrentSuite();
+        Suite suite = PuffinApp.getApp().getSuite();
         switch (suite.getMeasType()) {
             case CONTINUOUS:
                 depthSlider.setForSuite(suite);

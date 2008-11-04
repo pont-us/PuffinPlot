@@ -38,9 +38,9 @@ public class ControlPanel extends JPanel
         add(suiteBox = new JComboBox(new String[] {"no samples loaded"}));
         add(correctionBox = new CorrectionBox());
         add(vVsBox = new VVsBox());
-        add(new JButton(PuffinApp.getApp().actions.pca));
-        add(new JButton(PuffinApp.getApp().actions.fisher));
-        add(new JButton(PuffinApp.getApp().actions.clear));
+        add(new JButton(PuffinApp.getApp().getActions().pca));
+        add(new JButton(PuffinApp.getApp().getActions().fisher));
+        add(new JButton(PuffinApp.getApp().getActions().clear));
         suiteBox.addActionListener(this);
         
         int modifierKey = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
@@ -56,7 +56,7 @@ public class ControlPanel extends JPanel
             suiteBox.addItem(suite);
         }
         updatingSuites = false;
-        Suite currentSuite = PuffinApp.getApp().getCurrentSuite();
+        Suite currentSuite = PuffinApp.getApp().getSuite();
         suiteBox.setSelectedItem(currentSuite);
     }
 
@@ -68,7 +68,7 @@ public class ControlPanel extends JPanel
          */
         if (!updatingSuites) {
             int index = suiteBox.getSelectedIndex();
-            if (index > -1) PuffinApp.getApp().setCurrentSuite(index);
+            if (index > -1) PuffinApp.getApp().setSuite(index);
         }
     }
     

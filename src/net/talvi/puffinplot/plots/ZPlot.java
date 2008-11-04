@@ -116,7 +116,6 @@ public class ZPlot extends Plot {
                     pca.getDecDegrees(), pca.getIncDegrees(), pca.getMad1(), pca.getMad3()),
                     (int) getDimensions().getMinX(), (int) (getDimensions().getMinY()-30));
         }
-        g.setRenderingHints(parent.renderingHints);
         drawPoints(g);
         
         String line = null;

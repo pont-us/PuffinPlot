@@ -34,7 +34,7 @@ public class MainMenuBar extends JMenuBar {
         
     public MainMenuBar() {
         final JMenu fileMenu = new JMenu("File");
-        final PuffinActions actions = PuffinApp.getApp().actions;
+        final PuffinActions actions = PuffinApp.getApp().getActions();
 
         recentFilesMenu = new JMenu("Open recent file");
 
@@ -61,7 +61,7 @@ public class MainMenuBar extends JMenuBar {
             @Override
             public boolean isSelected() {
                 try {
-                    return PuffinApp.getApp().getMainWindow().graphDisplay.isDragPlotMode();
+                    return PuffinApp.getApp().getMainWindow().getGraphDisplay().isDragPlotMode();
                 } catch (NullPointerException e) {
                     return false;
                 }
@@ -71,7 +71,7 @@ public class MainMenuBar extends JMenuBar {
         movePlotsItem.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent event) {
-                        GraphDisplay gd = PuffinApp.getApp().getMainWindow().graphDisplay;
+                        GraphDisplay gd = PuffinApp.getApp().getMainWindow().getGraphDisplay();
                         gd.setDragPlotMode(!gd.isDragPlotMode());
                         gd.repaint();
       } }

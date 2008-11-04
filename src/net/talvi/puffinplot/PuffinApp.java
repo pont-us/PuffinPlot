@@ -24,23 +24,17 @@ public class PuffinApp {
     public static PuffinApp getApp() {
         return app;
     }
-    final PuffinActions actions;
+
+    private final PuffinActions actions;
     List<Suite> suites;
-    private MainWindow mainWindow;
+    private final MainWindow mainWindow;
     private int currentSuiteIndex;
     private PageFormat currentPageFormat;
-    public static final boolean MAC_OS_X = (System.getProperty("os.name").
+    public static final boolean MAC_OS_X =
+            (System.getProperty("os.name").
             toLowerCase().startsWith("mac os x"));
-    private TableWindow tableWindow;
-    private PuffinPrefs prefs;
-
-    public PuffinPrefs getPrefs() {
-        return prefs;
-    }
-
-    public MainWindow getMainWindow() {
-        return mainWindow;
-    }
+    private final TableWindow tableWindow;
+    private final PuffinPrefs prefs;
 
     private PuffinApp() {
         // have to set app here (not in main) since we need it during initialization
@@ -62,7 +56,6 @@ public class PuffinApp {
         
         mainWindow.getMainMenuBar().updateRecentFiles();
         mainWindow.setVisible(true);
-        
     }
 
     public static void main(String[] args) {
@@ -74,7 +67,7 @@ public class PuffinApp {
                         "A major error occurred. Please tell Pont.\n" +
                         "I will try to write the details "+
                         "to a file called PUFFIN-ERROR.txt");
-                File f = new File(System.getProperty("user.home"), "PUFFIN-ERROR.txt");
+                File f = new File(System.getProperty("user.home"), ERROR_FILE);
                 try {
                     PrintWriter w = new PrintWriter(new FileWriter(f));
                     exception.printStackTrace(w);
@@ -83,13 +76,20 @@ public class PuffinApp {
                     exception.printStackTrace();
                     ex.printStackTrace();
                 }
-                
             }
         });
         new PuffinApp();
     }
     
-    public Correction currentCorrection() {
+    public PuffinPrefs getPrefs() {
+        return prefs;
+    }
+
+    public MainWindow getMainWindow() {
+        return mainWindow;
+    }
+ 
+    public Correction getCorrection() {
         return getMainWindow().controlPanel.getCorrection();
     }
     
@@ -143,7 +143,7 @@ public class PuffinApp {
     }
     
     @SuppressWarnings("unchecked")
-    public void createAppleEventListener() {
+    private void createAppleEventListener() {
         try {
             Class appleListener = ClassLoader.getSystemClassLoader()
             .loadClass("net.talvi.puffinplot.AppleListener");
@@ -159,13 +159,13 @@ public class PuffinApp {
         }
     }
 
-    public Suite getCurrentSuite() {
+    public Suite getSuite() {
         if (suites==null) return null;
         return suites.isEmpty() ? null : suites.get(currentSuiteIndex);
     }
     
-    public Sample getCurrentSample() {
-        Suite suite = getCurrentSuite();
+    public Sample getSample() {
+        Suite suite = getSuite();
         if (suite==null) return null;
         return suite.getCurrentSample();
     }
@@ -175,23 +175,23 @@ public class PuffinApp {
         return getMainWindow().sampleChooser.getSelectedSamples();
     }
 
-    public void setCurrentSuite(int selectedIndex) {
+    public void setSuite(int selectedIndex) {
         currentSuiteIndex = selectedIndex;
-        if (getCurrentSuite() != null) getMainWindow().suitesChanged();
+        if (getSuite() != null) getMainWindow().suitesChanged();
     }
     
     public void quit() {
-        actions.quit.actionPerformed
+        getActions().quit.actionPerformed
         (new ActionEvent(this, ActionEvent.ACTION_PERFORMED, ""));
     }
     
     public void about() {
-        actions.about.actionPerformed
+        getActions().about.actionPerformed
         (new ActionEvent(this, ActionEvent.ACTION_PERFORMED, ""));
     }
     
     public void preferences() {
-        actions.prefs.actionPerformed
+        getActions().prefs.actionPerformed
         (new ActionEvent(this, ActionEvent.ACTION_PERFORMED, ""));
     }
     
@@ -206,5 +206,9 @@ public class PuffinApp {
 
     public TableWindow getTableWindow() {
         return tableWindow;
+    }
+
+    public PuffinActions getActions() {
+        return actions;
     }
 }
