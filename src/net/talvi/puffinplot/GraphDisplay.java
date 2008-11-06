@@ -167,7 +167,6 @@ public class GraphDisplay extends JPanel implements Printable {
         private static final int LEFT=1, TOP=2, RIGHT=4, BOTTOM=8, ALLSIDES=15;
         private int sides;
         
-        @Override
         public void mouseClicked(MouseEvent e) {
             final Point2D position = getAntiZoom().transform(e.getPoint(), null);
             for (Plot plot: plots.values())
@@ -176,13 +175,11 @@ public class GraphDisplay extends JPanel implements Printable {
             repaint();
         }
         
-        @Override
         public void mouseReleased(MouseEvent e) {
             draggee = null;
             repaint();
         }
         
-        @Override
         public void mousePressed(MouseEvent e) {
             draggee = null;
             if (!isDragPlotMode()) return;            
@@ -205,7 +202,6 @@ public class GraphDisplay extends JPanel implements Printable {
             }
         }
         
-        @Override
         public void mouseDragged(MouseEvent e) {
             if (isDragPlotMode() && getDraggingPlot() != null) {
                 Point2D thisPoint = getAntiZoom().transform(e.getPoint(), null);

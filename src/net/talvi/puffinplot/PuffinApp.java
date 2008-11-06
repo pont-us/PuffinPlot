@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Reader;
@@ -22,7 +23,7 @@ import net.talvi.puffinplot.data.Sample;
 public class PuffinApp {
 
     private static PuffinApp app;
-    private static final String buildDate;
+    private static String buildDate;
 
     public static PuffinApp getApp() {
         return app;
@@ -43,13 +44,13 @@ public class PuffinApp {
     private final TableWindow tableWindow;
     private final PuffinPrefs prefs;
 
-    static {
-        Reader propReader = null;
+    private void loadBuildProperties() {
+        InputStream propStream = null;
         String buildDateTmp = "unknown";
         try {
-            propReader = new InputStreamReader(PuffinApp.class.getResourceAsStream("build.properties"));
+            propStream = PuffinApp.class.getResourceAsStream("build.properties");
             Properties props = new Properties();
-            props.load(propReader);
+            props.load(propStream);
             buildDateTmp = props.getProperty("build.date");
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -57,8 +58,8 @@ public class PuffinApp {
              * in the about box, so we can get away with just printing a stack trace.
              */
         } finally {
-            if (propReader != null) 
-                try {propReader.close();} catch (IOException e) {}
+            if (propStream != null)
+                try {propStream.close();} catch (IOException e) {}
             buildDate = buildDateTmp;
         }
         System.out.println(getBuildDate());
@@ -72,7 +73,8 @@ public class PuffinApp {
         // com.apple.macos.useScreenMenuBar deprecated since 1.4, I think
         System.setProperty("apple.laf.useScreenMenuBar", "true");
         System.setProperty("com.apple.mrj.application.apple.menu.about.name", "PuffinPlot");
-
+        loadBuildProperties();
+        
         prefs = new PuffinPrefs();
         actions = new PuffinActions(this);
         tableWindow = new TableWindow();
