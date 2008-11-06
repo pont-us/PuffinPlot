@@ -1,0 +1,21 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Fisher analysis of PCA directions
+desc: |-
+  Claudio needs to do a Fisher statistics meta-analysis of PCA d/reset
+  Claudio needs to do Fisher analysis on a bunch of PCA directions.
+  It's probably easiest to pop up a new window for this.
+type: :feature
+component: PuffinPlot
+release: 
+reporter: Pontus Lurcock <pont@ou094023>
+status: :unstarted
+disposition: 
+creation_time: 2008-10-23 21:00:02.138113 Z
+references: []
+
+id: 453c16016676a9208e11a3e15b2efa1b03cea007
+log_events: 
+- - 2008-10-23 21:00:04.355337 Z
+  - Pontus Lurcock <pont@ou094023>
+  - created
+  - ""

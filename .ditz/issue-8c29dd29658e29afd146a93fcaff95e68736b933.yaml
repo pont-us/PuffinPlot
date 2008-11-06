@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Updating of data table window is broken
+desc: Needs to auto-update when sample changes.
+type: :bugfix
+component: PuffinPlot
+release: 
+reporter: Pontus Lurcock <pont@ou094023>
+status: :unstarted
+disposition: 
+creation_time: 2008-11-04 03:24:05.222970 Z
+references: []
+
+id: 8c29dd29658e29afd146a93fcaff95e68736b933
+log_events: 
+- - 2008-11-04 03:24:06.261474 Z
+  - Pontus Lurcock <pont@ou094023>
+  - created
+  - ""

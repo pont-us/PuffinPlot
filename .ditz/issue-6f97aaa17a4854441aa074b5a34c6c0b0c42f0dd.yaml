@@ -1,0 +1,20 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Key for symbols on Z-plot
+desc: |-
+  We need a legend printed on the graph, detailing the meanings of the
+  open and closed points on the Zijderveld plot.
+type: :feature
+component: PuffinPlot
+release: 
+reporter: Pontus Lurcock <pont@ou094023>
+status: :unstarted
+disposition: 
+creation_time: 2008-11-04 03:22:20.862207 Z
+references: []
+
+id: 6f97aaa17a4854441aa074b5a34c6c0b0c42f0dd
+log_events: 
+- - 2008-11-04 03:22:22.474195 Z
+  - Pontus Lurcock <pont@ou094023>
+  - created
+  - ""

@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Great circle analysis
+desc: See McFadden & McElhinny 1988 EPSL paper.
+type: :feature
+component: PuffinPlot
+release: 
+reporter: Pontus Lurcock <pont@ou094023>
+status: :unstarted
+disposition: 
+creation_time: 2008-10-31 03:34:30.129899 Z
+references: []
+
+id: c844d26f0a61da2d2179068f22bf3239f96f9e58
+log_events: 
+- - 2008-10-31 03:34:32.025954 Z
+  - Pontus Lurcock <pont@ou094023>
+  - created
+  - ""

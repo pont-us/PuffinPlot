@@ -1,0 +1,22 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Reformat PCA display
+desc: |-
+  It would look better as:
+  
+  Dec 12.34  Inc 56.78
+  MAD1 1.23  MAD3 4.56
+type: :feature
+component: PuffinPlot
+release: 
+reporter: Pontus Lurcock <pont@ou094023>
+status: :unstarted
+disposition: 
+creation_time: 2008-11-04 03:46:31.353413 Z
+references: []
+
+id: 6318de8e82dacf0ca6684feb0218b849bd039ab4
+log_events: 
+- - 2008-11-04 03:46:32.815312 Z
+  - Pontus Lurcock <pont@ou094023>
+  - created
+  - ""

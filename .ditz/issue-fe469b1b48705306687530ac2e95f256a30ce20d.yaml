@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Version number in about box
+desc: Or build number, or build date.
+type: :feature
+component: PuffinPlot
+release: 
+reporter: Pontus Lurcock <pont@ou094023>
+status: :unstarted
+disposition: 
+creation_time: 2008-11-04 03:24:57.309574 Z
+references: []
+
+id: fe469b1b48705306687530ac2e95f256a30ce20d
+log_events: 
+- - 2008-11-04 03:24:59.012486 Z
+  - Pontus Lurcock <pont@ou094023>
+  - created
+  - ""

@@ -7,11 +7,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.Reader;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
+import java.util.Properties;
 import javax.swing.JOptionPane;
 
 import net.talvi.puffinplot.data.Correction;
@@ -20,9 +22,14 @@ import net.talvi.puffinplot.data.Sample;
 public class PuffinApp {
 
     private static PuffinApp app;
+    private static final String buildDate;
 
     public static PuffinApp getApp() {
         return app;
+    }
+
+    public static String getBuildDate() {
+        return buildDate;
     }
 
     private final PuffinActions actions;
@@ -36,6 +43,28 @@ public class PuffinApp {
     private final TableWindow tableWindow;
     private final PuffinPrefs prefs;
 
+    static {
+        Reader propReader = null;
+        String buildDateTmp = "unknown";
+        try {
+            propReader = new InputStreamReader(PuffinApp.class.getResourceAsStream("build.properties"));
+            Properties props = new Properties();
+            props.load(propReader);
+            buildDateTmp = props.getProperty("build.date");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            /* The only effect of this on the user is a lack of build date
+             * in the about box, so we can get away with just printing a stack trace.
+             */
+        } finally {
+            if (propReader != null) 
+                try {propReader.close();} catch (IOException e) {}
+            buildDate = buildDateTmp;
+        }
+        System.out.println(getBuildDate());
+    }
+    private final AboutBox aboutBox;
+    
     private PuffinApp() {
         // have to set app here (not in main) since we need it during initialization
         PuffinApp.app = this; 
@@ -54,6 +83,8 @@ public class PuffinApp {
         currentPageFormat = PrinterJob.getPrinterJob().defaultPage();
         currentPageFormat.setOrientation(PageFormat.LANDSCAPE);
         
+        aboutBox = new AboutBox(mainWindow);
+            
         mainWindow.getMainMenuBar().updateRecentFiles();
         mainWindow.setVisible(true);
     }
@@ -210,5 +241,9 @@ public class PuffinApp {
 
     public PuffinActions getActions() {
         return actions;
+    }
+
+    public AboutBox getAboutBox() {
+        return aboutBox;
     }
 }

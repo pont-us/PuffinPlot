@@ -6,14 +6,17 @@
     <description>Builds, tests, and runs the project PuffinPlot.</description>
     <import file="nbproject/build-impl.xml"/>
     
+    <target name="-pre-init">
+        <propertyfile file="src/net/talvi/puffinplot/build.properties">
+            <entry  key="build.date" type="date" value="now" pattern="yyyy-MM-dd HH:mm"/>
+        </propertyfile>
+    </target>
+    
     <target name="macbundle" depends="jar"
             description="Build an example application">
-        
         <taskdef name="jarbundler"
                  classpath="${jarbundler.jar}"
                  classname="net.sourceforge.jarbundler.JarBundler"/>
-        
-        
         <jarbundler dir="${basedir}" verbose="true" showPlist="true"
                     name="${ant.project.name}"
                     mainclass="net.talvi.puffinplot.PuffinApp"
@@ -22,35 +25,29 @@
                     version="UNKNOWN"
                     stubfile="apple-resources/JavaApplicationStub"
         />
-        
         <exec executable="zip">
             <arg value="-r" />
             <arg value="${ant.project.name}" />
             <arg value="${ant.project.name}.app" />
         </exec>
-        
-        </target>
-        
-        <target name="upload">
-        
+    </target>
+    
+    <target name="upload">
         <exec executable="scp" resultproperty="scp.result">
             <arg file="${ant.project.name}.zip"/>
             <arg value="ou094053:~" />
         </exec>
         <echo message="scp hemulen: ${scp.result}" />
-        
         <exec executable="scp" resultproperty="scp.result">
             <arg file="${ant.project.name}.zip"/>
             <arg value="feather:/puysegur/scratch/" />
         </exec>
         <echo message="scp feather: ${scp.result}" />
-        
         <exec executable="scp" resultproperty="scp.result">
             <arg file="${ant.project.name}.zip"/>
             <arg value="lumi:www.talvi.net/public_html/" />
         </exec>
         <echo message="scp lumi: ${scp.result}" />
-        
     </target>
     
     

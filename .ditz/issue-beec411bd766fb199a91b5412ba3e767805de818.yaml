@@ -1,0 +1,22 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Correct plot margins
+desc: |-
+  Most of the plots plot slightly outside their margins (mainly
+  axis labels and suchlike). They should have their own internal margins
+  to make sure that the plot as a whole stays inside its official
+  bounding box.
+type: :bugfix
+component: PuffinPlot
+release: 
+reporter: Pontus Lurcock <pont@ou094023>
+status: :unstarted
+disposition: 
+creation_time: 2008-11-04 04:04:14.865042 Z
+references: []
+
+id: beec411bd766fb199a91b5412ba3e767805de818
+log_events: 
+- - 2008-11-04 04:04:15.949434 Z
+  - Pontus Lurcock <pont@ou094023>
+  - created
+  - ""

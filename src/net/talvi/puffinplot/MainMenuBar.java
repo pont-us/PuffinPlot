@@ -104,10 +104,14 @@ public class MainMenuBar extends JMenuBar {
         final JCheckBoxMenuItem dt = new DataTableItem();
         windowMenu.add(dt);
         
+        JMenu helpMenu = new JMenu("Help");
+        helpMenu.add(PuffinApp.getApp().getActions().about);
+        
         add(fileMenu);
         add(editMenu);
         add(calcMenu);
         add(windowMenu);
+        add(helpMenu);
     }
     
     private void addSimpleItem(JMenu menu, Action action, char key) {

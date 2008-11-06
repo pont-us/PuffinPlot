@@ -22,7 +22,8 @@ public class PuffinActions {
     public final Action about = new AbstractAction("About PuffinPlot") {
 
         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(app.getMainWindow(), "This is the about box.");
+            app.getAboutBox().setLocationRelativeTo(app.getMainWindow());
+            app.getAboutBox().setVisible(true);
         }
     };
     
