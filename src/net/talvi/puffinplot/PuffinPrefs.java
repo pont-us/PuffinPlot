@@ -56,7 +56,7 @@ public class PuffinPrefs {
          * through the Preferences API, which seems to have trouble with
          * control characters. Thus the format is now
          * 
-         * numpaths pathlen1... pathlenN path1path2... pathN
+         * numpaths pathlen1... pathlenN path1path2...pathN
          * 
          * which avoids the need to find a suitable separator string
          * (i.e. one which can be handled by the Preferences API on all
@@ -130,6 +130,8 @@ public class PuffinPrefs {
     }
     
     public Rectangle2D getPlotSize(String plotName) {
+        if (!plotSizes.containsKey(plotName))
+            plotSizes.put(plotName, new Rectangle2D.Double(100, 100, 100, 100));
         return plotSizes.get(plotName);
     }
     
@@ -138,8 +140,10 @@ public class PuffinPrefs {
             recentFiles[i] = RecentFile.fromString(prefs.get("recentFile"+i, null));
         nextRecentFile = prefs.getInt("nextRecentFile", 0);
         String plotSizeString = prefs.get("plotSizes",
-                "equarea 700 100 300 300 zplot 100 100 500 400 " +
-                "demag 100 550 300 200 datatable 600 500 400 400");
+                "zplot 407 32 610 405 pcatable 518 708 195 67 " +
+                "sampletable 24 13 215 39 fishertable 837 60 155 60 " +
+                "datatable 43 324 349 441 demag 50 69 323 213 " +
+                "equarea 685 439 338 337");
         Scanner scanner = new Scanner(plotSizeString);
         while (scanner.hasNext()) {
             String plotName = scanner.next();

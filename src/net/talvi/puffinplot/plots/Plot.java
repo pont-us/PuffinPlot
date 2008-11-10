@@ -30,6 +30,10 @@ public abstract class Plot
         this.dimensions = dimensions;
     }
     
+    public int getMargin() {
+        return 24;
+    }
+    
     private static class PlotPoint {
 
         private final Shape shape;

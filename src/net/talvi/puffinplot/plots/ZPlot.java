@@ -21,6 +21,7 @@ import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.DatumComparator;
 import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.PcaValues;
+import net.talvi.puffinplot.data.Point;
 import net.talvi.puffinplot.data.Sample;
 
 public class ZPlot extends Plot {
@@ -52,10 +53,8 @@ public class ZPlot extends Plot {
     }
     
     public void draw(Graphics2D g) {
-
         Sample sample = params.getSample();
         if (sample==null) return;
-        
         List<Datum> data = sample.getData();
         if (data.size() == 0) return;
         
@@ -63,41 +62,48 @@ public class ZPlot extends Plot {
         Correction correction = params.getCorrection();
         MeasurementAxis vVs = params.getAxis();
         
-        Rectangle2D extent1 = extent(data, correction, MeasurementAxis.Y, MeasurementAxis.X);
-        Rectangle2D extent2 = extent(data, correction, vVs, MeasurementAxis.MINUSZ);
+        Rectangle2D extent1 =
+                extent(data, correction, MeasurementAxis.Y, MeasurementAxis.X);
+        Rectangle2D extent2 =
+                extent(data, correction, vVs, MeasurementAxis.MINUSZ);
 
-        ZplotAxes axes = new ZplotAxes(extent1.createUnion(extent2),getDimensions(),
-                vVs);
+        ZplotAxes axes = new ZplotAxes(extent1.createUnion(extent2),
+                getDimensions(), vVs);
         
         g.setColor(Color.BLACK);
         axes.draw(g);
+
+        final double scale = axes.getScale();
+        final double xOffset = axes.getXOffset();
+        final double yOffset = axes.getYOffset();
         
         boolean first = true;
         for (Datum d: data) {
-            double x = d.getPoint(correction).y * axes.getScale();
-            double y = - d.getPoint(correction).x * axes.getScale();
-            addPoint(d, new Point2D.Double(axes.getXOffset() + x, axes.getYOffset() + y)
-                    , true, first, !first);
+            Point p = d.getPoint(correction);
+            // Plot the point in the horizontal plane
+            double x1 = xOffset + p.y * scale;
+            double y1 = yOffset - p.x * scale;
+            addPoint(d, new Point2D.Double(x1, y1), true, first, !first);
             first = false;
         }
-        
         first = true;
         for (Datum d: data) {
-            double x = d.getPoint(correction).getComponent(vVs) * axes.getScale();
-            double y = - d.getPoint(correction).getComponent(MeasurementAxis.MINUSZ) * axes.getScale();
-            addPoint(d, new Point2D.Double(axes.getXOffset() + x, axes.getYOffset() + y),
-                    false, first, !first);
+            Point p = d.getPoint(correction);
+            // Now plot the point in the vertical plane
+            double x2 = xOffset + p.getComponent(vVs) * scale;
+            double y2 = yOffset - p.getComponent(MeasurementAxis.MINUSZ) * scale;
+            addPoint(d, new Point2D.Double(x2, y2), false, first, !first);
             first = false;
         }
         
         final PcaValues pca = sample.getPca();
         if (pca != null) {
-            double x1 = pca.getOrigin().y * axes.getScale();
-            double y1 = - pca.getOrigin().x * axes.getScale();
-            drawLine(g, axes.getXOffset() + x1, axes.getYOffset() + y1,pca.getDecRadians(), axes, Color.BLUE);
+            double x1 = pca.getOrigin().y * scale;
+            double y1 = - pca.getOrigin().x * scale;
+            drawLine(g, xOffset + x1, yOffset + y1,pca.getDecRadians(), axes, Color.BLUE);
             
-            double x2 = pca.getOrigin().getComponent(vVs) * axes.getScale();
-            double y2 = - pca.getOrigin().getComponent(MeasurementAxis.MINUSZ) * axes.getScale();
+            double x2 = pca.getOrigin().getComponent(vVs) * scale;
+            double y2 = - pca.getOrigin().getComponent(MeasurementAxis.MINUSZ) * scale;
             double incCorr = 0;
             switch (vVs) {
                 // We don't necessarily want the actual line of inclination; we
@@ -110,22 +116,8 @@ public class ZPlot extends Plot {
                     break;
                 case H: incCorr = pca.getIncRadians(); break;
             }
-            drawLine(g, axes.getXOffset() + x2, axes.getYOffset() + y2, Math.PI/2 + incCorr, axes, Color.BLUE);
-            g.setColor(Color.BLACK);
-            g.drawString(String.format("D:%.1f I:%.1f MAD1:%.1f MAD3:%.1f",
-                    pca.getDecDegrees(), pca.getIncDegrees(), pca.getMad1(), pca.getMad3()),
-                    (int) getDimensions().getMinX(), (int) (getDimensions().getMinY()-30));
+            drawLine(g, xOffset + x2, yOffset + y2, Math.PI/2 + incCorr, axes, Color.BLUE);
         }
         drawPoints(g);
-        
-        String line = null;
-        switch (params.getMeasType()) {
-        case DISCRETE: line = "Sample: " + sample.getName();
-            break;
-        case CONTINUOUS: line = "Depth: " + sample.getDepth();
-            break;
-        }
-        line = line + ", Correction: " + params.getCorrection();
-        g.drawString(line, 20, 20);
     }
 }

@@ -86,17 +86,5 @@ public class EqAreaPlot extends Plot {
             first = false;
         }
         drawPoints(g);
-        
-        FisherValues fish = sample.getFisher();
-        if (fish != null) {
-            float xOrig = (float) getDimensions().getMinX();
-            float yOrig = (float) getDimensions().getMinY();
-            g.drawString(
-                    String.format("D:%.1f I:%.1f",
-                    fish.getMeanDirection().decDegrees(),
-                    fish.getMeanDirection().incDegrees()), xOrig, yOrig);
-            g.drawString(String.format("α95:%.1f",fish.getA95()), xOrig, yOrig + 15);
-            g.drawString(String.format("k:%.1f",fish.getK()), xOrig, yOrig + 30);
-        }
     }
 }

@@ -22,19 +22,22 @@ public class AppleListener extends ApplicationAdapter {
 		eawtApp.setEnabledPreferencesMenu(true);
 	}
 	
-//	public void handleAbout(ApplicationEvent event) {
-//		if (puffinApp != null) {
-//			event.setHandled(true);
-//			puffinApp.about();
-//		} else throw new IllegalStateException("handleAbout can't find the PuffinApp.");
-//	}
+    @Override
+	public void handleAbout(ApplicationEvent event) {
+		if (puffinApp != null) {
+			event.setHandled(true);
+			puffinApp.about();
+		} else throw new IllegalStateException("handleAbout can't find the PuffinApp.");
+	}
 	
 	// public void handleOpenApplication(ApplicationEvent event) {}
     
+    @Override
 	public void handleOpenFile(ApplicationEvent event) {
 		puffinApp.openFiles(new File(event.getFilename()));
 	}
 
+    @Override
 	public void handlePreferences(ApplicationEvent event) {
 		if (puffinApp != null) {
 			puffinApp.preferences();
@@ -44,6 +47,7 @@ public class AppleListener extends ApplicationAdapter {
 
 	// public void handlePrintFile(ApplicationEvent event) {};
 	
+    @Override
 	public void handleQuit(ApplicationEvent event) {
 		if (puffinApp != null) {
 			event.setHandled(false); // "Don't do the quit, we will handle it our way."

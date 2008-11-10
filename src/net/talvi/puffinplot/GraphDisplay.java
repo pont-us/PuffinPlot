@@ -30,7 +30,10 @@ import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.plots.DataTable;
 import net.talvi.puffinplot.plots.DemagPlot;
 import net.talvi.puffinplot.plots.EqAreaPlot;
+import net.talvi.puffinplot.plots.FisherTable;
+import net.talvi.puffinplot.plots.PcaTable;
 import net.talvi.puffinplot.plots.Plot;
+import net.talvi.puffinplot.plots.SampleTable;
 import net.talvi.puffinplot.plots.ZPlot;
 
 public class GraphDisplay extends JPanel implements Printable {
@@ -43,7 +46,6 @@ public class GraphDisplay extends JPanel implements Printable {
     private static final RenderingHints renderingHints = new PRenderingHints();
     private AffineTransform zoomTransform;
     private final GdMouseListener mouseListener;
-    private final static int dragMargin = 32;
     private boolean dragPlotMode = false;
     
     static private final class PRenderingHints extends RenderingHints {
@@ -99,6 +101,9 @@ public class GraphDisplay extends JPanel implements Printable {
         plots.put("zplot", new ZPlot(this, params, pref.getPlotSize("zplot")));
         plots.put("demag", new DemagPlot(this, params, pref.getPlotSize("demag")));
         plots.put("datatable", new DataTable(this, params, pref.getPlotSize("datatable")));
+        plots.put("pcatable", new PcaTable(this, params, pref.getPlotSize("pcatable")));
+        plots.put("sampletable", new SampleTable(this, params, pref.getPlotSize("sampletable")));
+        plots.put("fishertable", new FisherTable(this, params, pref.getPlotSize("fishertable")));
         
         setOpaque(true);
         setBackground(Color.WHITE);
@@ -122,14 +127,15 @@ public class GraphDisplay extends JPanel implements Printable {
 
         if (isDragPlotMode()) {
             for (Plot plot : plots.values()) {
+                int margin = plot.getMargin();
                 g2.setPaint(Color.ORANGE);
                 g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .2f));
                 Rectangle2D d = plot.getDimensions();
                 g2.fill(d);
-                g2.fill(new Rectangle2D.Double(d.getMinX(), d.getMinY(), dragMargin, d.getHeight()));
-                g2.fill(new Rectangle2D.Double(d.getMaxX() - dragMargin, d.getMinY(), dragMargin, d.getHeight()));
-                g2.fill(new Rectangle2D.Double(d.getMinX(), d.getMinY(), d.getWidth(), dragMargin));
-                g2.fill(new Rectangle2D.Double(d.getMinX(), d.getMaxY() - dragMargin, d.getWidth(), dragMargin));
+                g2.fill(new Rectangle2D.Double(d.getMinX(), d.getMinY(), margin, d.getHeight()));
+                g2.fill(new Rectangle2D.Double(d.getMaxX() - margin, d.getMinY(), margin, d.getHeight()));
+                g2.fill(new Rectangle2D.Double(d.getMinX(), d.getMinY(), d.getWidth(), margin));
+                g2.fill(new Rectangle2D.Double(d.getMinX(), d.getMaxY() - margin, d.getWidth(), margin));
             }
         }
         
@@ -193,10 +199,11 @@ public class GraphDisplay extends JPanel implements Printable {
                 double relX = (startPoint.getX() - oldDims.getMinX());
                 double relY = (startPoint.getY() - oldDims.getMinY());
                 int sidesTmp = 0;
-                if (relX < dragMargin) sidesTmp |= LEFT;
-                if (relX > oldDims.getWidth() - dragMargin) sidesTmp |= RIGHT;
-                if (relY < dragMargin) sidesTmp |= TOP;
-                if (relY > oldDims.getHeight() - dragMargin) sidesTmp |= BOTTOM;
+                double margin = getDraggingPlot().getMargin();
+                if (relX < margin) sidesTmp |= LEFT;
+                if (relX > oldDims.getWidth() - margin) sidesTmp |= RIGHT;
+                if (relY < margin) sidesTmp |= TOP;
+                if (relY > oldDims.getHeight() - margin) sidesTmp |= BOTTOM;
                 if (sidesTmp==0) sidesTmp = ALLSIDES;
                 sides = sidesTmp;
             }
@@ -216,6 +223,7 @@ public class GraphDisplay extends JPanel implements Printable {
                 if ((sides & RIGHT)!=0) x1+=dx;
                 if ((sides & BOTTOM)!=0) y1+=dy;
                 
+                double dragMargin = getDraggingPlot().getMargin();
                 // Check for minimum dimensions
                 if (x1-x0 < 3*dragMargin) {
                     x0 = getDraggingPlot().getDimensions().getMinX();
