@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Proper open file dialog for OS X
+desc: I think Quaqua can do this.
+type: :feature
+component: PuffinPlot
+release: 
+reporter: Pontus Lurcock <pont@ou094023>
+status: :unstarted
+disposition: 
+creation_time: 2008-11-11 03:10:58.395060 Z
+references: []
+
+id: 89e0a1ba0d8ec639a01280d93be39d07664b00c0
+log_events: 
+- - 2008-11-11 03:10:58.836246 Z
+  - Pontus Lurcock <pont@ou094023>
+  - created
+  - ""

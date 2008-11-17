@@ -1,22 +1,22 @@
 --- !ditz.rubyforge.org,2008-03-06/issue 
-title: Version number in about box
-desc: Or build number, or build date.
-type: :feature
+title: Transfer tdl bugs to ditz
+desc: Only 7 bugs remaining in tdl, so probably easiest to do by hand.
+type: :task
 component: PuffinPlot
 release: 
 reporter: Pontus Lurcock <pont@ou094023>
 status: :closed
 disposition: :fixed
-creation_time: 2008-11-04 03:24:57.309574 Z
+creation_time: 2008-11-10 05:07:49.188790 Z
 references: []
 
-id: fe469b1b48705306687530ac2e95f256a30ce20d
+id: b45d172e9f3b7694528af49ce946d047cccf013c
 log_events: 
-- - 2008-11-04 03:24:59.012486 Z
+- - 2008-11-10 05:07:50.451627 Z
   - Pontus Lurcock <pont@ou094023>
   - created
   - ""
-- - 2008-11-10 05:06:06.821799 Z
+- - 2008-11-11 03:13:34.720591 Z
   - Pontus Lurcock <pont@ou094023>
   - closed with disposition fixed
-  - Build date and time are now shown in the about box.
+  - ""

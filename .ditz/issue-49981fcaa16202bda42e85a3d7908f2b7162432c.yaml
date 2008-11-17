@@ -1,0 +1,26 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Inconsistent fonts on printout
+desc: |-
+  The second line of the Fisher statistics is printed in Java's default
+  font rather than Helvetica.
+type: :bugfix
+component: PuffinPlot
+release: 
+reporter: Pontus Lurcock <pont@ou094023>
+status: :unstarted
+disposition: 
+creation_time: 2008-11-12 07:29:11.684638 Z
+references: []
+
+id: 49981fcaa16202bda42e85a3d7908f2b7162432c
+log_events: 
+- - 2008-11-12 07:30:49.408061 Z
+  - Pontus Lurcock <pont@ou094023>
+  - created
+  - |-
+    Seems to be due to the unicode lower-case alpha character in the
+    line -- falling back to default font if Helvetica doesn't contain
+    the character? Changing the alpha to an `a' fixes the problem but it's
+    rather shoddy to make that substitution. I think this could be solved
+    by using an AttributedString with an explicit font change after the
+    alpha.

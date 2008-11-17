@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Add help
+desc: ""
+type: :feature
+component: PuffinPlot
+release: 
+reporter: Pontus Lurcock <pont@ou094023>
+status: :unstarted
+disposition: 
+creation_time: 2008-11-11 03:02:58.102458 Z
+references: []
+
+id: 6aec739ef7cfa1c77c6056747c75dbe2867e0f83
+log_events: 
+- - 2008-11-11 03:02:58.603177 Z
+  - Pontus Lurcock <pont@ou094023>
+  - created
+  - ""

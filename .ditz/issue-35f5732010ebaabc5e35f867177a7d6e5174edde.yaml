@@ -1,0 +1,25 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Configurable axis scaling
+desc: |-
+  Not entirely sure what this one alluded to (I'm transcribing it from the
+  old tdl bug-list) but I'm pretty sure it means "allow scaling of Z-plot
+  for whole suite rather than single sample". This allows for easier
+  side-by-side comparison of samples. Actually what's needed is scaling
+  according to a selected bunch of samples within a suite: yo wouldn't be
+  publishing the graphs of the whole suite anyway, so you'd want to scale
+  according to exactly those samples you were publishing.
+type: :feature
+component: PuffinPlot
+release: 
+reporter: Pontus Lurcock <pont@ou094023>
+status: :unstarted
+disposition: 
+creation_time: 2008-11-11 02:58:32.852261 Z
+references: []
+
+id: 35f5732010ebaabc5e35f867177a7d6e5174edde
+log_events: 
+- - 2008-11-11 02:58:33.420028 Z
+  - Pontus Lurcock <pont@ou094023>
+  - created
+  - ""

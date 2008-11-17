@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: More unit tests
+desc: ""
+type: :task
+component: PuffinPlot
+release: 
+reporter: Pontus Lurcock <pont@ou094023>
+status: :unstarted
+disposition: 
+creation_time: 2008-11-11 03:11:41.320935 Z
+references: []
+
+id: a6d773bfc56f9279f2d5e16306d0c86d8dece393
+log_events: 
+- - 2008-11-11 03:11:41.798328 Z
+  - Pontus Lurcock <pont@ou094023>
+  - created
+  - ""

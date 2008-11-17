@@ -32,7 +32,7 @@ public class FisherTable extends Plot {
                     String.format("Dec %.2f  Inc %.2f",
                     fish.getMeanDirection().decDegrees(),
                     fish.getMeanDirection().incDegrees()), xOrig, yOrig+16);
-            g.drawString(String.format("α95 %.2f  k %.2f" 
+            g.drawString(String.format(/*"α*/"a95 %.2f  k %.2f" 
                     ,fish.getA95(), fish.getK()), xOrig, yOrig + 32);
         }
     }

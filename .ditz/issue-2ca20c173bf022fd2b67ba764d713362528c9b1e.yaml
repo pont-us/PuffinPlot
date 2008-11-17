@@ -13,8 +13,8 @@ type: :feature
 component: PuffinPlot
 release: 
 reporter: Pontus Lurcock <pont@ou094023>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2008-11-04 04:06:27.065965 Z
 references: []
 
@@ -24,3 +24,9 @@ log_events:
   - Pontus Lurcock <pont@ou094023>
   - created
   - ""
+- - 2008-11-10 05:05:15.892056 Z
+  - Pontus Lurcock <pont@ou094023>
+  - closed with disposition fixed
+  - |-
+    Implemented as specified. Margin sizes are now determined by an
+    overrideable method in the Plot class.

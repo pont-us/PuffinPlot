@@ -9,8 +9,8 @@ type: :feature
 component: PuffinPlot
 release: 
 reporter: Pontus Lurcock <pont@ou094023>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2008-11-04 03:46:31.353413 Z
 references: []
 
@@ -20,3 +20,9 @@ log_events:
   - Pontus Lurcock <pont@ou094023>
   - created
   - ""
+- - 2008-11-10 05:02:23.581364 Z
+  - Pontus Lurcock <pont@ou094023>
+  - closed with disposition fixed
+  - |-
+    Could still be better -- e.g. values aligned around decimal point.
+    But we can always open another bug for that if anyone cares.

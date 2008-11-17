@@ -1,0 +1,21 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Label data points with demag level
+desc: |-
+  Optionally display the demag level next to the data point on Zplot
+  and equal-area plot (presumably superfluous on demag plot). Claudio
+  asked for this one.
+type: :feature
+component: PuffinPlot
+release: 
+reporter: Pontus Lurcock <pont@ou094023>
+status: :unstarted
+disposition: 
+creation_time: 2008-11-11 02:46:06.933865 Z
+references: []
+
+id: 908e6951c0d6cc9fa0ee4906e9ee778e3cb4e9dd
+log_events: 
+- - 2008-11-11 02:46:08.007067 Z
+  - Pontus Lurcock <pont@ou094023>
+  - created
+  - ""

@@ -1,0 +1,20 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Implement `loading...' dialog
+desc: |-
+  Large datasets can take a while to load. A progress dialogue would
+  be nice, even if implemented `cheaply' without an ETA.
+type: :feature
+component: PuffinPlot
+release: 
+reporter: Pontus Lurcock <pont@ou094023>
+status: :unstarted
+disposition: 
+creation_time: 2008-11-11 03:01:28.539270 Z
+references: []
+
+id: 579352385b287372f8f2f549cef8521de7795c73
+log_events: 
+- - 2008-11-11 03:01:28.983538 Z
+  - Pontus Lurcock <pont@ou094023>
+  - created
+  - ""

@@ -1,0 +1,22 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Implement saving
+desc: |-
+  User needs to be able to save the whole current state -- loaded files,
+  selections, calculations, etc. Obviously some careful thought needed
+  about how to do this sensibly; it will probably involve packing up
+  all the loaded files into a zip, with another file of metadata.
+type: :feature
+component: PuffinPlot
+release: 
+reporter: Pontus Lurcock <pont@ou094023>
+status: :unstarted
+disposition: 
+creation_time: 2008-11-11 02:15:59.125355 Z
+references: []
+
+id: 95cb4ac537e0f39f98e0165ddc863f24547bb019
+log_events: 
+- - 2008-11-11 02:16:00.190284 Z
+  - Pontus Lurcock <pont@ou094023>
+  - created
+  - ""

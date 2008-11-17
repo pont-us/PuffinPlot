@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Look at MRJadapter
+desc: Might be a neater way to handle OS X integration.
+type: :task
+component: PuffinPlot
+release: 
+reporter: Pontus Lurcock <pont@ou094023>
+status: :unstarted
+disposition: 
+creation_time: 2008-11-11 03:11:27.694476 Z
+references: []
+
+id: b9b99e9eea6b4ab86fff2eb8daaf7465baecd133
+log_events: 
+- - 2008-11-11 03:11:28.315055 Z
+  - Pontus Lurcock <pont@ou094023>
+  - created
+  - ""

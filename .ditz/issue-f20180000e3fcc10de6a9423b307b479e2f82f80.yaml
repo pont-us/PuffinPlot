@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: AF demag units are currently incorrect
+desc: Another Oe/G/mT stuff-up.
+type: :bugfix
+component: PuffinPlot
+release: 
+reporter: Pontus Lurcock <pont@ou094023>
+status: :unstarted
+disposition: 
+creation_time: 2008-11-11 02:55:45.479800 Z
+references: []
+
+id: f20180000e3fcc10de6a9423b307b479e2f82f80
+log_events: 
+- - 2008-11-11 02:55:45.909408 Z
+  - Pontus Lurcock <pont@ou094023>
+  - created
+  - ""

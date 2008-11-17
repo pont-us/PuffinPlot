@@ -1,0 +1,23 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Grab-and-drag scrolling
+desc: |-
+  When PP's not in "move plots" mode, grabbing and dragging a blank
+  section of the plots window should scroll the window (if it has
+  scrollbars).
+type: :feature
+component: PuffinPlot
+release: 
+reporter: Pontus Lurcock <pont@ou094023>
+status: :unstarted
+disposition: 
+creation_time: 2008-11-12 07:33:12.005557 Z
+references: []
+
+id: bb4bad7ccc0ef1437f0dff055c462618207f07c7
+log_events: 
+- - 2008-11-12 07:33:34.196842 Z
+  - Pontus Lurcock <pont@ou094023>
+  - created
+  - |-
+    google for "grab-and-drag scrolling" site:javafaq.nu should turn up
+    some example code.
