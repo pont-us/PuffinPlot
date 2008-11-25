@@ -60,7 +60,7 @@
             <Property name="editable" type="boolean" value="false"/>
             <Property name="lineWrap" type="boolean" value="true"/>
             <Property name="rows" type="int" value="5"/>
-            <Property name="text" type="java.lang.String" value="PuffinPlot is a program for showing, exploring, and analysing palaeomagnetic data. It is released under the GNU General Public Licence version 3, and is Copyright 2008 Pontus Lurcock (pont@talvi.net)."/>
+            <Property name="text" type="java.lang.String" value="PuffinPlot is a program for showing, exploring, and analysing pal&#xe6;omagnetic data. It is released under the GNU General Public Licence version 3, and is Copyright 2008 Pontus Lurcock (pont@talvi.net)."/>
             <Property name="wrapStyleWord" type="boolean" value="true"/>
             <Property name="opaque" type="boolean" value="false"/>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">

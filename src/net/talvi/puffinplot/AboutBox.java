@@ -53,7 +53,7 @@ public class AboutBox extends javax.swing.JDialog {
         jTextArea1.setEditable(false);
         jTextArea1.setLineWrap(true);
         jTextArea1.setRows(5);
-        jTextArea1.setText("PuffinPlot is a program for showing, exploring, and analysing palaeomagnetic data. It is released under the GNU General Public Licence version 3, and is Copyright 2008 Pontus Lurcock (pont@talvi.net).");
+        jTextArea1.setText("PuffinPlot is a program for showing, exploring, and analysing palæomagnetic data. It is released under the GNU General Public Licence version 3, and is Copyright 2008 Pontus Lurcock (pont@talvi.net).");
         jTextArea1.setWrapStyleWord(true);
         jTextArea1.setOpaque(false);
         jTextArea1.setPreferredSize(null);
