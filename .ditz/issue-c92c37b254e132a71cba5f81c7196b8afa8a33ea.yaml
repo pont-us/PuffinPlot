@@ -1,0 +1,26 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Sensible units for intensity values
+desc: |-
+  Any way to change the way intensity values are displayed. I have
+  corrected intensity values in my composite dotDAT file to S.I.
+  thus my mag intensity is now displayed as 3540000. Is it possible
+  to have a flexible abbreviation rather than being stuck with
+  x10-7. It will make life a bit more manageable when trying to
+  think ones way through magnetic intensity. Or maybe we could have
+  a self correcting feature? i.e. change a drop down box from emu
+  to Am. WOW... [from Christian]
+type: :feature
+component: PuffinPlot
+release: 
+reporter: Pontus Lurcock <pont@ou094023>
+status: :unstarted
+disposition: 
+creation_time: 2008-10-21 05:46:26.376632 Z
+references: []
+
+id: c92c37b254e132a71cba5f81c7196b8afa8a33ea
+log_events: 
+- - 2008-10-21 05:46:36.297957 Z
+  - Pontus Lurcock <pont@ou094023>
+  - created
+  - ""
