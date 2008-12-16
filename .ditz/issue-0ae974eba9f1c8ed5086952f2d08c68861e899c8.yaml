@@ -1,5 +1,5 @@
 --- !ditz.rubyforge.org,2008-03-06/issue 
-title: Replace JavaApplicationStub witha symlink
+title: Replace JavaApplicationStub with a symlink
 desc: |-
   Wouldn't save much space (it's only 6.3K gzipped) but would assauge
   any worries about redistributing Apple code.
@@ -17,4 +17,8 @@ log_events:
 - - 2008-11-11 03:10:25.152941 Z
   - Pontus Lurcock <pont@ou094023>
   - created
+  - ""
+- - 2008-12-16 04:31:21.380438 Z
+  - Pontus Lurcock <pont@ou094023>
+  - edited title
   - ""
