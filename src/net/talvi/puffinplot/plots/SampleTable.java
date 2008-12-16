@@ -1,7 +1,9 @@
 package net.talvi.puffinplot.plots;
 
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import java.text.AttributedCharacterIterator.Attribute;
 import net.talvi.puffinplot.GraphDisplay;
 import net.talvi.puffinplot.PlotParams;
 import net.talvi.puffinplot.data.Sample;
@@ -23,6 +25,11 @@ public class SampleTable extends Plot {
         if (sample==null) return;
                 
         String line = null;
+        
+        Font oldFont = g.getFont();
+        Font biggerFont = oldFont.deriveFont(20.0f);
+        g.setFont(biggerFont);
+        
         switch (params.getMeasType()) {
         case DISCRETE: line = "Sample: " + sample.getName();
             break;
@@ -32,6 +39,7 @@ public class SampleTable extends Plot {
         line = line + ", Correction: " + params.getCorrection();
         g.drawString(line, (int) getDimensions().getMinX(), 
                 (int) getDimensions().getMinY() + 16);
+        g.setFont(oldFont);
     }
     
 }
