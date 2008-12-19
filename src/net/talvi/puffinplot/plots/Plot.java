@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -61,7 +62,7 @@ public abstract class Plot
         }
 
         void draw(Graphics2D g) {
-            g.setColor(datum.selected ? Color.RED: Color.BLACK);
+            g.setColor(datum!=null && datum.isSelected() ? Color.RED: Color.BLACK);
             g.draw(shape);
             if (special) g.draw(highlight);
             if (filled) g.fill(shape);
@@ -99,13 +100,18 @@ public abstract class Plot
         points.clear();
     }
     
-    public void mouseClicked(java.awt.geom.Point2D position) {
-        for (PlotPoint s : points) {
-            if (s.shape.contains(position)) {
-                s.datum.toggleSel();
+    public void mouseClicked(java.awt.geom.Point2D position, MouseEvent e) {
+        if (e.isShiftDown()) {
+            for (PlotPoint s : points) {
+                if (s.centre.distance(position) < 24)
+                    s.datum.setSelected(e.getButton() == e.BUTTON1);
+            }
+        } else {
+            for (PlotPoint s : points) {
+                if (s.shape.contains(position)) s.datum.toggleSel();
             }
         }
     }
-    
+        
     public abstract void draw(Graphics2D g);
 }

@@ -29,7 +29,8 @@ import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.plots.DataTable;
 import net.talvi.puffinplot.plots.DemagPlot;
-import net.talvi.puffinplot.plots.EqAreaPlot;
+import net.talvi.puffinplot.plots.FisherEqAreaPlot;
+import net.talvi.puffinplot.plots.SampleEqAreaPlot;
 import net.talvi.puffinplot.plots.FisherTable;
 import net.talvi.puffinplot.plots.PcaTable;
 import net.talvi.puffinplot.plots.Plot;
@@ -97,7 +98,7 @@ public class GraphDisplay extends JPanel implements Printable {
         setLayout(null);
         plots = new HashMap<String, Plot>();
         PuffinPrefs pref = PuffinApp.getApp().getPrefs();
-        plots.put("equarea", new EqAreaPlot(this, params, pref.getPlotSize("equarea")));
+        plots.put("equarea", new SampleEqAreaPlot(this, params, pref.getPlotSize("equarea")));
         plots.put("zplot", new ZPlot(this, params, pref.getPlotSize("zplot")));
         plots.put("demag", new DemagPlot(this, params, pref.getPlotSize("demag")));
         plots.put("datatable", new DataTable(this, params, pref.getPlotSize("datatable")));
@@ -177,7 +178,7 @@ public class GraphDisplay extends JPanel implements Printable {
             final Point2D position = getAntiZoom().transform(e.getPoint(), null);
             for (Plot plot: plots.values())
                 if (plot.getDimensions().contains(position))
-                    plot.mouseClicked(position);
+                    plot.mouseClicked(position, e);
             repaint();
         }
         

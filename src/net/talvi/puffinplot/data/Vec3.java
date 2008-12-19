@@ -10,22 +10,22 @@ import static java.lang.Math.toRadians;
 import Jama.Matrix;
 import java.util.Collection;
 
-public class Point {
+public class Vec3 {
 
     public final double x, y, z;
-    public static final Point ORIGIN = new Point(0,0,0);
+    public static final Vec3 ORIGIN = new Vec3(0,0,0);
     
-    public Point(double x, double y, double z) {
+    public Vec3(double x, double y, double z) {
         this.x = x;
         this.y = y;
         this.z = z;
     }
 
-    public Point(Point p) {
+    public Vec3(Vec3 p) {
         this(p.x, p.y, p.z);
     }
 
-    public Point correctSample(double az, double dip) {
+    public Vec3 correctSample(double az, double dip) {
         double[][] matrix =
         {{ sin(dip)*cos(az) , -sin(az) , cos(dip)*cos(az)  },
          { sin(dip)*sin(az) ,  cos(az) , cos(dip)*sin(az)  },
@@ -66,11 +66,11 @@ public class Point {
         return transform(m3).transform(m2).transform(m1);
      */
     
-    public Point correctForm(double az, double dip) {
-        double cd = sin(dip);
-        double sa = sin(az);
-        double sd = cos(dip);
-        double ca = cos(az);
+    public Vec3 correctForm(double az, double dip) {
+        final double cd = sin(dip);
+        final double sa = sin(az);
+        final double sd = cos(dip);
+        final double ca = cos(az);
         
         double[][] matrix =
             {{ca*sd*ca+sa*sa, sd*sa*ca-sa*ca, cd*ca},
@@ -80,17 +80,17 @@ public class Point {
         return transform(matrix);
     }
     
-    public Point transform(double[][] matrix) {
+    public Vec3 transform(double[][] matrix) {
         double[][] m = matrix;
-        return new Point(
+        return new Vec3(
                 x * m[0][0] + y * m[0][1] + z * m[0][2],
                 x * m[1][0] + y * m[1][1] + z * m[1][2],
                 x * m[2][0] + y * m[2][1] + z * m[2][2]);
     }
 
-    public Point normalize() {
-        double m = mag();
-        return new Point(x / m, y / m, z / m);
+    public Vec3 normalize() {
+        final double m = mag();
+        return new Vec3(x / m, y / m, z / m);
     }
 
     public double getComponent(MeasurementAxis axis) {
@@ -108,24 +108,24 @@ public class Point {
         return Math.sqrt(x * x + y * y + z * z);
     }
 
-    public Point plus(Point p) {
-        return new Point(x + p.x, y + p.y, z + p.z);
+    public Vec3 plus(Vec3 p) {
+        return new Vec3(x + p.x, y + p.y, z + p.z);
     }
 
-    public Point minus(Point p) {
-        return new Point(x - p.x, y - p.y, z - p.z);
+    public Vec3 minus(Vec3 p) {
+        return new Vec3(x - p.x, y - p.y, z - p.z);
     }
 
-    public Point times(double a) {
-        return new Point(x * a, y * a, z * a);
+    public Vec3 times(double a) {
+        return new Vec3(x * a, y * a, z * a);
     }
 
-    public double scalarProduct(Point p) {
+    public double scalarProduct(Vec3 p) {
         return (x * p.x + y * p.y + z * p.z);
     }
 
-    public Point invert() {
-        return new Point(-x, -y, -z);
+    public Vec3 invert() {
+        return new Vec3(-x, -y, -z);
     }
 
     public Matrix oTensor() {
@@ -134,22 +134,22 @@ public class Point {
             {z * x, z * y, z * z}});
     }
 
-    public static Point centreOfMass(Iterable<Point> points) {
+    public static Vec3 centreOfMass(Iterable<Vec3> points) {
         double xs = 0, ys = 0, zs = 0;
         int i = 0;
-        for (Point p : points) {
+        for (Vec3 p : points) {
             xs += p.x;
             ys += p.y;
             zs += p.z;
             i++;
         }
-        return new Point(xs / i, ys / i, zs / i);
+        return new Vec3(xs / i, ys / i, zs / i);
     }
 
-    public static Point fromPolarDegrees(double m, double inc, double dec) {
-        double i = toRadians(inc);
-        double d = toRadians(dec);
-        return new Point(m * cos(i) * cos(d),
+    public static Vec3 fromPolarDegrees(double m, double inc, double dec) {
+        final double i = toRadians(inc);
+        final double d = toRadians(dec);
+        return new Vec3(m * cos(i) * cos(d),
                 m * cos(i) * sin(d),
                 m * sin(i));
     }
@@ -191,9 +191,9 @@ public class Point {
         return toDegrees(decRadians());
     }
     
-    public static double vectorSumLength(Collection<Point> points) {
+    public static double vectorSumLength(Collection<Vec3> points) {
         double xs=0, ys=0, zs=0;
-        for (Point p: points) {
+        for (Vec3 p: points) {
             xs += p.x;
             ys += p.y;
             zs += p.z;
@@ -201,14 +201,14 @@ public class Point {
         return sqrt(xs*xs + ys*ys + zs*zs);
     }
     
-    public static Point meanDirection(Collection<Point> points) {
+    public static Vec3 meanDirection(Collection<Vec3> points) {
         double xs = 0, ys = 0, zs = 0;
-        for (Point p: points) {
+        for (Vec3 p: points) {
             xs += p.x;
             ys += p.y;
             zs += p.z;
         }
-        double R = sqrt(xs*xs + ys*ys + zs*zs);
-        return new Point(xs/R, ys/R, zs/R);
+        final double R = sqrt(xs*xs + ys*ys + zs*zs);
+        return new Vec3(xs/R, ys/R, zs/R);
     }
 }

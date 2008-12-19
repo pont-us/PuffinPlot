@@ -16,9 +16,9 @@ public class Datum {
      defaultCoreArea = 4.0, // can be overridden by Area field in file
      defaultVolume = 10.8; // can be overridden by Volume field in file
 
-    private String sampleId;
-    private MeasType measType;
-    private TreatType treatType;
+    private String sampleId = "UNSET";
+    private MeasType measType = MeasType.UNSET;
+    private TreatType treatType = TreatType.UNKNOWN;
     private double afx=NaN, afy=NaN, afz=NaN;
     private double temp=NaN;
     private double decUc, incUc=NaN, decSc=NaN, incSc=NaN, decFc=NaN, incFc=NaN;
@@ -32,17 +32,25 @@ public class Datum {
     private double depth=NaN;
     private double irmGauss=NaN, armGauss=NaN;
     private double xbkg1=NaN, xbkg2=NaN, ybkg1=NaN, ybkg2=NaN, zbkg1=NaN, zbkg2=NaN;
-    private ArmAxis armAxis;
-    private final Point uc, sc, fc;
+    private ArmAxis armAxis = ArmAxis.UNKNOWN;
+    private final Vec3 uc, sc, fc;
     private double volume = defaultVolume;
     private double area = defaultCoreArea;
     private int runNumber = -1;
-    private String timeStamp = null;
+    private String timeStamp = "UNSET"; // NB this is a magic value; see below
     
-    public boolean selected = false;
+    private boolean selected = false;
     
     private final static Pattern delimPattern = Pattern.compile("\\t");
     private final static Pattern numberPattern = Pattern.compile("\\d+(\\.\\d+)?");
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
 
     private static class NaScanner {
         
@@ -71,8 +79,11 @@ public class Datum {
         }
         
         public int nextInt() {
-            String next = s.next();
-            return Integer.parseInt(next);
+            return s.nextInt();
+        }
+        
+        public boolean nextBoolean() {
+            return s.nextBoolean();
         }
 
         public String next() {
@@ -103,7 +114,7 @@ public class Datum {
         intensity = s.nextDouble();
         String operation = s.next();
         magSus = Double.NaN;
-        uc = Point.fromPolarDegrees(intensity, incUc, decUc);
+        uc = Vec3.fromPolarDegrees(intensity, incUc, decUc);
         fc = sc = uc;
         treatType = TreatType.DEGAUSS;
         if (project.toLowerCase().contains("therm") ||
@@ -166,6 +177,7 @@ public class Datum {
             case RUNNUMBER: runNumber = s.nextInt(); break;
             case TIMESTAMP: timeStamp = s.next(); break;
             case AREA: area = s.nextD(); break;
+            case PP_SELECTED: selected = s.nextBoolean(); break;
             case UNKNOWN: s.next(); break;
             default: s.next(); break;
                 }
@@ -197,13 +209,13 @@ public class Datum {
                 // TODO: make this configurable
                 // by a user preferences setting.
                 //
-                final double flip = timeStamp==null ? -1 : 1;
-                uc = new Point(flip * xCorr / (area * sensorLengthX),
+                final double flip = timeStamp.equals("UNSET") ? -1 : 1;
+                uc = new Vec3(flip * xCorr / (area * sensorLengthX),
                         yCorr / (area * sensorLengthY),
                         flip * zCorr / (area * sensorLengthZ));
                 break;
             case DISCRETE:
-                uc = new Point(xCorr / volume, yCorr / volume, zCorr / volume);
+                uc = new Vec3(xCorr / volume, yCorr / volume, zCorr / volume);
                 break;
             default:
                 throw new IllegalArgumentException
@@ -213,7 +225,7 @@ public class Datum {
         fc = sc.correctForm(Math.toRadians(formAz), Math.toRadians(formDip));
     }
     
-    public Point getPoint(Correction c) {
+    public Vec3 getPoint(Correction c) {
         switch (c) {
             case FORMATION: return fc;
             case SAMPLE: return sc;
@@ -223,7 +235,7 @@ public class Datum {
     }
 
     public void toggleSel() {
-        selected = !selected;
+        setSelected(!isSelected());
     }
     
     public boolean isMagSus() {
@@ -305,6 +317,7 @@ public class Datum {
         case TIMESTAMP: return timeStamp;
         case RUNNUMBER: return runNumber;
         case AREA: return area;
+        case PP_SELECTED: return selected;
         default: throw new IllegalArgumentException("Unknown field "+field);
         }
     }

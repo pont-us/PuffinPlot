@@ -9,7 +9,7 @@ import java.util.List;
 import net.talvi.puffinplot.GraphDisplay;
 import net.talvi.puffinplot.PlotParams;
 import net.talvi.puffinplot.data.Datum;
-import net.talvi.puffinplot.data.Point;
+import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.data.Sample;
 
 public class DataTable extends Plot {
@@ -46,14 +46,14 @@ public class DataTable extends Plot {
         float yPos = 2 * ySpacing;
         for (Datum d: data) {
             List<String> values = new ArrayList<String>(4);
-            Point p = d.getPoint(params.getCorrection());
+            Vec3 p = d.getPoint(params.getCorrection());
             values.add(String.format("%.0f", d.getDemagLevel()));
             values.add(String.format("%.1f", p.decDegrees()));
             values.add(String.format("%.1f", p.incDegrees()));
             // Don't use .1g, it tickles a bug in Java (#6469160) which
             // throws an ArrayFormatException (at least in Sun Java 5 & 6)
             values.add(String.format("%.3g", p.mag()));
-            writeLine(g, yPos, d.selected, values);
+            writeLine(g, yPos,d.isSelected(), values);
             yPos += ySpacing;
         }
     }

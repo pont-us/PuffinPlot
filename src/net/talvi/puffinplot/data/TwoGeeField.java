@@ -48,6 +48,7 @@ public enum TwoGeeField {
     RUNNUMBER(Integer.class, "Run #"),
     TIMESTAMP(String.class, "Sample Timestamp"),
     AREA(Double.class, "Area"),
+    PP_SELECTED(Boolean.class, "PUFFIN selected"),
     UNKNOWN(Object.class, null);
     
     private final String heading;

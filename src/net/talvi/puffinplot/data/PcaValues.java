@@ -12,19 +12,16 @@ import Jama.EigenvalueDecomposition;
 import Jama.Matrix;
 
 public class PcaValues {
-    private final double inc;
-    private final double dec;
     private final double mad1;
     private final double mad3;
-    private final Point origin;
+    private final Vec3 origin;
+    private final Vec3 direction;
     
-    private PcaValues(double inc, double dec, double mad1, double mad3, Point origin) {
-        super();
-        this.inc = inc;
-        this.dec = dec;
+    private PcaValues(Vec3 direction, double mad1, double mad3, Vec3 origin) {
         this.mad1 = mad1;
         this.mad3 = mad3;
         this.origin = origin;
+        this.direction = direction;
     }
 
     private static int[] order(double[] x) {
@@ -60,17 +57,17 @@ public class PcaValues {
         return result;
     }
     
-    public static PcaValues calculate(Iterable<Point> points, Point origin) {
+    public static PcaValues calculate(Iterable<Vec3> points, Vec3 origin) {
         // We use Kirschvink's procedure but append a direction correction.
         
         // translate points to be centred on centre of mass
-        ArrayList<Point> movedPoints = new ArrayList<Point>();
+        ArrayList<Vec3> movedPoints = new ArrayList<Vec3>();
         // Point origin = Point.centreOfMass(points);
-        for (Point p: points) movedPoints.add(p.minus(origin));
+        for (Vec3 p: points) movedPoints.add(p.minus(origin));
         
         // construct the orientation tensor
         Matrix oTensor = new Matrix(3,3); // zeros
-        for (Point p: movedPoints) oTensor.plusEquals(p.oTensor());
+        for (Vec3 p: movedPoints) oTensor.plusEquals(p.oTensor());
         
         EigenvalueDecomposition eigDecomp = oTensor.eig();
         double[] eigenvalues = eigDecomp.getRealEigenvalues();
@@ -81,7 +78,7 @@ public class PcaValues {
         double[] vmax = eigDecomp.getV().
             getMatrix(rowIndices, colIndices).getColumnPackedCopy();
         
-        Point pComp = new Point(vmax[0], vmax[1], vmax[2]);
+        Vec3 pComp = new Vec3(vmax[0], vmax[1], vmax[2]);
         
         double lmax = abs(eigenvalues[eigenOrder[0]]);
         double lint = abs(eigenvalues[eigenOrder[1]]);
@@ -98,34 +95,31 @@ public class PcaValues {
          */
         
         // We want these in opposite directions, thus negative scalar product
-        Point trend = movedPoints.get(movedPoints.size()-1).
+        Vec3 trend = movedPoints.get(movedPoints.size()-1).
             minus(movedPoints.get(0));
         if (trend.scalarProduct(pComp) > 0) pComp = pComp.invert();
-
-        double inc = pComp.incRadians();
-        double dec = pComp.decRadians();
 
         double mad3 = toDegrees(atan(sqrt((lint + lmin) / lmax)));
         double mad1 = (lint != 0 && lmax != 0) ?
                 toDegrees(atan(sqrt(lmin/lint + lmin/lmax))) : 0;
         
-        return new PcaValues(inc, dec, mad1, mad3, origin);
+        return new PcaValues(pComp, mad1, mad3, origin);
     }
 
     public double getIncRadians() {
-        return inc;
+        return direction.incRadians();
     }
 
     public double getDecRadians() {
-        return dec;
+        return direction.decRadians();
     }
     
     public double getIncDegrees() {
-        return toDegrees(getIncRadians());
+        return direction.incDegrees();
     }
 
     public double getDecDegrees() {
-        return toDegrees(getDecRadians());
+        return direction.decDegrees();
     }
 
     public double getMad1() {
@@ -136,8 +130,12 @@ public class PcaValues {
         return mad3;
     }
 
-    public Point getOrigin() {
+    public Vec3 getOrigin() {
         return origin;
+    }
+
+    public Vec3 getDirection() {
+        return direction;
     }
     
     

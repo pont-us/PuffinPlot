@@ -7,9 +7,13 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +29,7 @@ import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.FisherValues;
 import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.PcaValues;
-import net.talvi.puffinplot.data.Point;
+import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.TwoGeeField;
 
@@ -44,6 +48,7 @@ public class Suite implements Iterable<Datum> {
     private static final Pattern emptyLine = Pattern.compile("^\\s*$");
     private static final Pattern whitespace = Pattern.compile("\\s+");
     private List<String> loadWarnings = new LinkedList<String>();
+    private List<FisherForSite> siteFishers;
 
     public Iterator<Datum> iterator() {
         return data.iterator();
@@ -75,6 +80,111 @@ public class Suite implements Iterable<Datum> {
                 if (field != TwoGeeField.UNKNOWN)
                     return false;
             return true;
+        }
+    }
+
+    private static class FisherForSite {
+        String site;
+        FisherValues fisher;
+        
+        public FisherForSite(String site, FisherValues fisher) {
+            this.site = site;
+            this.fisher = fisher;
+        }
+    }
+    
+    void doFisherOnPcas() {
+        Map<String, Set<PcaValues>> sitePcas =
+                new LinkedHashMap<String, Set<PcaValues>>();
+        
+        // Chuck PCA values into buckets
+        for (Sample sample : PuffinApp.getApp().getSelectedSamples()) {
+            String site = sample.getName().substring(0, 2);
+            PcaValues pca = sample.getPca();
+            if (pca != null) {
+                if (!sitePcas.containsKey(site))
+                    sitePcas.put(site, new HashSet<PcaValues>());
+                sitePcas.get(site).add(pca);
+            }
+        }
+        
+        siteFishers = new ArrayList<FisherForSite>(sitePcas.size());
+        // Go through them doing Fisher calculations
+        for (Map.Entry<String, Set<PcaValues>> entry: sitePcas.entrySet()) {
+            Collection<Vec3> directions =
+                    new ArrayList<Vec3>(entry.getValue().size());
+            for (PcaValues pca: entry.getValue())
+                directions.add(pca.getDirection());
+            siteFishers.add(new FisherForSite(entry.getKey(),
+                    FisherValues.calculate(directions)));
+        }
+        
+        Writer writer = null;
+        try {
+            // write them to a file
+            writer = new FileWriter(new File("/home/pont/fisher.txt"));
+            writer.write("site\tinc\tdec\ta95\tk\n");
+            for (FisherForSite f: siteFishers) {
+                writer.write(String.format("%s\t%.1f\t%.1f\t%.1f\t%.1f\n",
+                        f.site, f.fisher.getMeanDirection().incDegrees(),
+                        f.fisher.getMeanDirection().decDegrees(),
+                        f.fisher.getA95(), f.fisher.getK()));
+            }
+        } catch (IOException ex) {
+           throw new Error(ex);
+        } finally {
+            if (writer != null) {
+                try { writer.close(); }
+                catch (IOException e) { throw new Error(e); }
+            }
+        }
+    }
+
+    public List<FisherValues> getFishers() {
+        if (siteFishers==null) return null;
+        List<FisherValues> result = new ArrayList<FisherValues>(siteFishers.size());
+        for (FisherForSite f: siteFishers) result.add(f.fisher);
+        return result;
+    }
+    
+    void save(File file) {
+        List<TwoGeeField> fields = new LinkedList(Arrays.asList(TwoGeeField.values()));
+        fields.remove(TwoGeeField.UNKNOWN);
+        
+        Writer writer = null;
+        try {
+            writer = new FileWriter(file);
+        
+            StringBuilder header = new StringBuilder();
+            for (TwoGeeField field : fields) {
+                header.append(field.getHeading());
+                header.append("\t");
+            }
+            header.deleteCharAt(header.length()-1);
+            header.append("\n");
+            writer.write(header.toString());
+            
+            for (Sample sample : getSamples()) {
+                for (Datum datum : sample.getData()) {
+                    StringBuilder line = new StringBuilder();
+                    for (TwoGeeField field : fields) {
+                        line.append(datum.getValue(field).toString());
+                        line.append("\t");
+                    }
+                    line.deleteCharAt(line.length() - 1);
+                    line.append("\n");
+                    writer.write(line.toString());
+                }
+            }
+        } catch (IOException e) {
+            PuffinApp.errorDialog("Error saving file", e.getLocalizedMessage());
+        } finally {
+            if (writer != null)  {
+                try { writer.close(); }
+                catch (IOException e) {
+                    PuffinApp.errorDialog("Error closing saved file", e.getLocalizedMessage());
+                }
+            }
         }
     }
     
@@ -178,6 +288,7 @@ public class Suite implements Iterable<Datum> {
             FileType fileType = FileType.guessFromName(file);
             LineNumberReader reader = null;
             fileTypeSwitch: switch (fileType) {
+            case PUFFINPLOT:
             case TWOGEE: 
                 try {
                     reader = new LineNumberReader(new FileReader(file));
@@ -250,10 +361,6 @@ public class Suite implements Iterable<Datum> {
                     if (reader != null) reader.close();
                 }
                 break;
-
-            case PUFFINPLOT:
-                loadWarnings.add("Can't load PuffinPlot files yet: ignoring "+file.getName());
-                break;
                 
             case UNKNOWN:
                 loadWarnings.add("I don't recognize the file\""+file+"\", so I'm ignoring it.");
@@ -296,7 +403,7 @@ public class Suite implements Iterable<Datum> {
                 }
                 FisherValues fish = sample.getFisher();
                 if (fish != null) {
-                    Point dir = fish.getMeanDirection();
+                    Vec3 dir = fish.getMeanDirection();
                     fishCsv = String.format("%.1f, %.1f, %.1f, %.1f",
                             dir.decDegrees(), dir.incDegrees(),
                             fish.getA95(), fish.getK());
@@ -346,6 +453,11 @@ public class Suite implements Iterable<Datum> {
         }
     }
 
+    public Collection<Sample> getSamples() {
+        return measType == MeasType.CONTINUOUS ?
+            samplesByDepth.values() : samplesByName.values();
+    }
+    
     public List<Datum> getData() {
         return data;
     }

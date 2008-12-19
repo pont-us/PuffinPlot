@@ -44,8 +44,9 @@ public class MainMenuBar extends JMenuBar {
         MenuItemDef[] fileItems = {
             new ActionItemDef(actions.open, 'O', 0, true),
             new SubmenuDef(recentFilesMenu),
-            new ActionItemDef(actions.save, 'S', 0, true),
-            new ActionItemDef(actions.pageSetup, 'P', InputEvent.SHIFT_MASK, true),
+            new ActionItemDef(actions.saveCalcs, 'S', 0, true),
+            new ActionItemDef(actions.save, 'S', InputEvent.SHIFT_DOWN_MASK, true),
+            new ActionItemDef(actions.pageSetup, 'P', InputEvent.SHIFT_DOWN_MASK, true),
             new ActionItemDef(actions.print, 'P', 0, true),
             new ActionItemDef(actions.prefs, ',', 0, false),
             new ActionItemDef(actions.quit, 'Q', 0, false)
@@ -79,6 +80,7 @@ public class MainMenuBar extends JMenuBar {
         
         JMenu calcMenu = new JMenu("Calculate");
         addSimpleItem(calcMenu, actions.pca, 'R');
+        addSimpleItem(calcMenu, actions.pcaOnSelection, 'T');
         
         final JCheckBoxMenuItem anchorItem = new JCheckBoxMenuItem("Anchor PCA")
         {
@@ -96,6 +98,7 @@ public class MainMenuBar extends JMenuBar {
         });
         
         addSimpleItem(calcMenu, actions.fisher, 'F');
+        addSimpleItem(calcMenu, actions.fisherOnPca, 'G');
         addSimpleItem(calcMenu, actions.clear, 'Z');
         
         // calcMenu.add(new JCheckBoxMenuItem("Lock axis scale"));

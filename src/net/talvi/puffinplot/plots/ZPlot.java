@@ -21,7 +21,7 @@ import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.DatumComparator;
 import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.PcaValues;
-import net.talvi.puffinplot.data.Point;
+import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.data.Sample;
 
 public class ZPlot extends Plot {
@@ -79,7 +79,7 @@ public class ZPlot extends Plot {
         
         boolean first = true;
         for (Datum d: data) {
-            Point p = d.getPoint(correction);
+            Vec3 p = d.getPoint(correction);
             // Plot the point in the horizontal plane
             double x1 = xOffset + p.y * scale;
             double y1 = yOffset - p.x * scale;
@@ -88,7 +88,7 @@ public class ZPlot extends Plot {
         }
         first = true;
         for (Datum d: data) {
-            Point p = d.getPoint(correction);
+            Vec3 p = d.getPoint(correction);
             // Now plot the point in the vertical plane
             double x2 = xOffset + p.getComponent(vVs) * scale;
             double y2 = yOffset - p.getComponent(MeasurementAxis.MINUSZ) * scale;

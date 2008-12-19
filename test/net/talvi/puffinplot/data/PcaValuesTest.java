@@ -55,13 +55,13 @@ public class PcaValuesTest {
          {2,2,1},
          {1,1,0}};
         
-        ArrayList<Point> points = new ArrayList(coords.length);
+        ArrayList<Vec3> points = new ArrayList(coords.length);
         for (double[] coord: coords)
-            points.add(new Point(coord[0], coord[1], coord[2]));
+            points.add(new Vec3(coord[0], coord[1], coord[2]));
         
-        Point centreOfMass = Point.centreOfMass(points);
+        Vec3 centreOfMass = Vec3.centreOfMass(points);
         
-        PcaValues anchored = PcaValues.calculate(points, Point.ORIGIN);
+        PcaValues anchored = PcaValues.calculate(points, Vec3.ORIGIN);
         PcaValues unanchored = PcaValues.calculate(points, centreOfMass);
 
         /* Declination worked out by hand, other values from

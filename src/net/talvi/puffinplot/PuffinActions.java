@@ -10,6 +10,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import net.talvi.puffinplot.data.Sample;
 
 public class PuffinActions {
 
@@ -57,7 +58,7 @@ public class PuffinActions {
         }
     };
     
-    public final Action save = new AbstractAction("Save PCA/Fisher…") {
+    public final Action saveCalcs = new AbstractAction("Save PCA/Fisher…") {
 
         public void actionPerformed(ActionEvent arg0) {
             boolean useSwingChooser = !PuffinApp.MAC_OS_X;
@@ -83,6 +84,32 @@ public class PuffinActions {
         
     };
     
+    public final Action save = new AbstractAction("Save…") {
+
+        public void actionPerformed(ActionEvent arg0) {
+            boolean useSwingChooser = !PuffinApp.MAC_OS_X;
+
+            File file = null;
+
+            if (useSwingChooser) {
+                JFileChooser chooser = new JFileChooser();
+                int choice = chooser.showSaveDialog(app.getMainWindow());
+                if (choice == JFileChooser.APPROVE_OPTION)
+                    file = chooser.getSelectedFile();
+            } else {
+                FileDialog fd = new FileDialog(app.getMainWindow(), "Save PCA/Fisher",
+                        FileDialog.SAVE);
+                fd.setVisible(true);
+                String filename = fd.getFile();
+                if (filename != null) {
+                    file = new File(fd.getDirectory(), fd.getFile());
+                }
+            }
+            if (file != null) app.getSuite().save(file);
+        }
+        
+    };
+    
     public final Action pageSetup = new AbstractAction("Page Setup…") {
 
         public void actionPerformed(ActionEvent arg0) {
@@ -90,17 +117,32 @@ public class PuffinActions {
         }
     };
     
-    public final Action pca = new AbstractAction("PCA") {
+    public final Action pca = new AbstractAction("PCA (this sample)") {
         public void actionPerformed(ActionEvent e) {
             app.getSample().doPca();
             app.getMainWindow().repaint();
         }
     };
+
+    public final Action pcaOnSelection = new AbstractAction("PCA (selected samples)") {
+        public void actionPerformed(ActionEvent e) {
+            for (Sample sample: app.getSelectedSamples())
+                if (sample.getSelectedPoints().size()>1)
+                    sample.doPca();
+            app.getMainWindow().repaint();
+        }
+    };
     
-    public final Action fisher = new AbstractAction("Fisher") {
+    public final Action fisher = new AbstractAction("Fisher on sample") {
         public void actionPerformed(ActionEvent e) {
             app.getSample().doFisher();
             app.getMainWindow().repaint();
+        }
+    };
+    
+    public final Action fisherOnPca = new AbstractAction("Fisher on PCA") {
+        public void actionPerformed(ActionEvent e) {
+            app.getSuite().doFisherOnPcas();
         }
     };
     
