@@ -14,7 +14,7 @@ public class FisherValues {
     private final Vec3 meanDirection;
     private final static double p = 0.05;
 
-    private FisherValues(double a95, double k, Vec3 meanDirection) {
+    public FisherValues(double a95, double k, Vec3 meanDirection) {
         this.a95 = a95;
         this.k = k;
         this.meanDirection = meanDirection;

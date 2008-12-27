@@ -17,7 +17,7 @@ import net.talvi.puffinplot.data.Datum;
 
 public abstract class Plot
 {
-    protected final GraphDisplay parent;
+    private final GraphDisplay parent;
     protected final PlotParams params;
     private Rectangle2D dimensions;
     private List<PlotPoint> points = new LinkedList<PlotPoint>();

@@ -25,8 +25,56 @@ public class Vec3 {
         this(p.x, p.y, p.z);
     }
 
-    public Vec3 correctSample(double az, double dip) {
+    /*
+     * Returns a new vector equals to this vector with the specified
+     * angle added to the declination.
+     */
+    public Vec3 addDecRad(double angle) {
+        final double[][] matrix =
+        {{ cos(angle), -sin(angle), 0},
+         { sin(angle), cos(angle),  0},
+         { 0,          0,           1}};
+        return transform(matrix);
+    }
+    
+    public Vec3 addIncRad(double angle) {
+        final double sini = -sin(angle);
+        final double sind = y/sqrt(y*y+x*x); // sine of -declination
+        final double cosi = cos(angle);
+        final double cosd = x/sqrt(y*y+x*x); // cosine of -declination
+        
         double[][] matrix =
+            {{cosd*cosi*cosd+sind*sind, cosi*sind*cosd-sind*cosd, sini*cosd},
+            {sind*cosi*cosd-cosd*sind,  cosi*sind*sind+cosd*cosd, sini*sind},
+            {-cosd*sini,               -sind*sini,                cosi}};
+        
+        return transform(matrix);
+    }
+    
+    /*
+     * Rotate about the Y axis
+     */
+    public Vec3 rotY(double angle) {
+        final double[][] m =
+         {{cos(angle), 0, sin(angle)},
+          {0, 1, 0},
+          { -sin(angle), 0, cos(angle)}};
+        return transform(m);
+    }
+    
+    /*
+     * Rotate about the Z axis
+     */
+    public Vec3 rotZ(double angle) {
+        final double[][] m =
+         {{ cos(angle), -sin(angle), 0 },
+         { sin(angle),  cos(angle), 0 },
+         { 0      ,  0      , 1 }};
+        return transform(m);
+    }
+    
+    public Vec3 correctSample(double az, double dip) {
+        final double[][] matrix =
         {{ sin(dip)*cos(az) , -sin(az) , cos(dip)*cos(az)  },
          { sin(dip)*sin(az) ,  cos(az) , cos(dip)*sin(az)  },
          { -cos(dip)        , 0        , sin(dip)          }};
@@ -67,15 +115,15 @@ public class Vec3 {
      */
     
     public Vec3 correctForm(double az, double dip) {
-        final double cd = sin(dip);
+        final double sd = sin(dip);
         final double sa = sin(az);
-        final double sd = cos(dip);
+        final double cd = cos(dip);
         final double ca = cos(az);
         
         double[][] matrix =
-            {{ca*sd*ca+sa*sa, sd*sa*ca-sa*ca, cd*ca},
-            {sa*sd*ca-ca*sa, sd*sa*sa+ca*ca, cd*sa},
-            {-ca*cd, -sa*cd, sd}};
+            {{ca*cd*ca+sa*sa, cd*sa*ca-sa*ca, sd*ca},
+            {sa*cd*ca-ca*sa, cd*sa*sa+ca*ca, sd*sa},
+            {-ca*sd, -sa*sd, cd}};
         
         return transform(matrix);
     }

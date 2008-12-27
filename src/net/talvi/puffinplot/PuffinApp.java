@@ -43,6 +43,7 @@ public class PuffinApp {
             toLowerCase().startsWith("mac os x"));
     private final TableWindow tableWindow;
     private final PuffinPrefs prefs;
+    private FisherWindow fisherWindow;
 
     private void loadBuildProperties() {
         InputStream propStream = null;
@@ -79,6 +80,7 @@ public class PuffinApp {
         actions = new PuffinActions(this);
         tableWindow = new TableWindow();
         mainWindow = new MainWindow();
+        fisherWindow = new FisherWindow();
         suites = new ArrayList<Suite>();
         if (MAC_OS_X) createAppleEventListener();
         
