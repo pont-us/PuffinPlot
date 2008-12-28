@@ -1,0 +1,20 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Better recent file list
+desc: |-
+  If a file is selected from the `recently opened' list, it is added
+  again. It should instead be moved to the end of the list.
+type: :bugfix
+component: PuffinPlot
+release: 
+reporter: Pontus Lurcock <pont@ou094023>
+status: :unstarted
+disposition: 
+creation_time: 2008-12-28 05:06:43.625803 Z
+references: []
+
+id: c2642601af95f35fb6d8d451f30ab02aaf256c58
+log_events: 
+- - 2008-12-28 05:06:45.212235 Z
+  - Pontus Lurcock <pont@ou094023>
+  - created
+  - ""

@@ -1,9 +1,11 @@
 package net.talvi.puffinplot.plots;
 
 import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import static java.lang.Math.min;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
+import java.awt.Stroke;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -18,17 +20,16 @@ import net.talvi.puffinplot.data.Vec3;
 
 public class FisherEqAreaPlot extends EqAreaPlot {
 
-    private List<FisherValues> testFishers;
+    private static final Stroke dashedStroke =
+            new BasicStroke(0.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL,
+            1.0f, new float[] {1,0,1}, 0);
+    
+    private static final Stroke thinStroke =
+            new BasicStroke(0.0f);
     
     public FisherEqAreaPlot(GraphDisplay parent, PlotParams params,
             Rectangle2D dimensions) {
         super(parent, params, dimensions);
-        
-        testFishers = new ArrayList<FisherValues>(20);
-        for (double inc=10; inc<=90; inc+=10) {
-            testFishers.add(new FisherValues(10, 0, Vec3.fromPolarDegrees(1, inc, 0)));
-        }
-
     }
     
     @Override
@@ -44,38 +45,46 @@ public class FisherEqAreaPlot extends EqAreaPlot {
         if (suite==null) return;
         List<FisherValues> fishers = suite.getFishers();
         if (fishers==null) return;
-        
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .1f));
+
+        final AlphaComposite translucent =
+                AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .05f);
+        final AlphaComposite opaque =
+                AlphaComposite.getInstance(AlphaComposite.SRC);
+
         boolean first = true;
         for (FisherValues fisher: fishers) {
             final Vec3 v = fisher.getMeanDirection();
-            addPoint(null, project(v, xo, yo, radius), v.z>0, first, !first);
+            Point2D meanPoint = project(v, xo, yo, radius);
+            addPoint(null, meanPoint, v.z>0, first, !first);
             
             Polygon ellipse = new Polygon();
             List<Vec3> circle = new ArrayList<Vec3>(36);
-            for (double dec = 0; dec < 360; dec += 10) {
+            for (double dec = 0; dec < 360; dec += 5) {
                 circle.add(Vec3.fromPolarDegrees(1, 90-fisher.getA95(), dec));
             }
-              for (Vec3 c: circle) {
-                  Vec3 w = c.rotY(Math.PI/2 - v.incRadians());
-                  Point2D p = project(w, xo, yo, radius);
-                  ellipse.addPoint((int) p.getX(), (int) p.getY());
-              }
+            for (Vec3 c: circle) {
+                Vec3 w = c.rotY(Math.PI / 2 - v.incRadians());
+                w = w.rotZ(v.decRadians());
+                Point2D p = project(w, xo, yo, radius);
+                ellipse.addPoint((int) p.getX(), (int) p.getY());
+            }
               
-              
-//            double r = Math.toRadians(fisher.getA95());
-//            for (double t=-Math.PI; t<Math.PI; t += 0.05) {
-//                Vec3 w = v.addIncRad(r*Math.cos(t)).addDecRad(r*Math.sin(t));
-//                Point2D p = project(w, xo, yo, radius);
-//                ellipse.addPoint((int) p.getX(), (int) p.getY());
-//            }
-              
-              g.fill(ellipse);
-                
-          
+            g.setComposite(translucent);
+            g.fill(ellipse);
+            g.setComposite(opaque);
+            Stroke oldStroke = g.getStroke();
+            g.setStroke(thinStroke);
+            g.draw(ellipse);
+            
+            g.setStroke(dashedStroke);
+            for (Vec3 w: fisher.getDirections()) {
+                g.draw(new Line2D.Double(meanPoint, project(w, xo, yo, radius)));
+            }
+            g.setStroke(oldStroke);
+
             first = false;
         }
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
+
         drawPoints(g);
     }
 

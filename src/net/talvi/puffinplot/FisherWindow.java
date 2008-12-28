@@ -36,7 +36,6 @@ public class FisherWindow extends JFrame {
         newContentPane.setOpaque(true); //content panes must be opaque
         setContentPane(newContentPane);
         pack();
-        setVisible(true);
     }
     
 }

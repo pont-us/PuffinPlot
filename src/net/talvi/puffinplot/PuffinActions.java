@@ -111,7 +111,6 @@ public class PuffinActions {
     };
     
     public final Action pageSetup = new AbstractAction("Page Setup…") {
-
         public void actionPerformed(ActionEvent arg0) {
             app.showPageSetupDialog();
         }
@@ -143,6 +142,7 @@ public class PuffinActions {
     public final Action fisherOnPca = new AbstractAction("Fisher on PCA") {
         public void actionPerformed(ActionEvent e) {
             app.getSuite().doFisherOnPcas();
+            app.getFisherWindow().setVisible(true);
         }
     };
     

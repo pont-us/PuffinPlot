@@ -79,8 +79,10 @@ public class PuffinApp {
         prefs = new PuffinPrefs();
         actions = new PuffinActions(this);
         tableWindow = new TableWindow();
-        mainWindow = new MainWindow();
         fisherWindow = new FisherWindow();
+        // NB main window must be instantiated last, as
+        // the Window menu references the other windows
+        mainWindow = new MainWindow();
         suites = new ArrayList<Suite>();
         if (MAC_OS_X) createAppleEventListener();
         
@@ -249,5 +251,9 @@ public class PuffinApp {
 
     public AboutBox getAboutBox() {
         return aboutBox;
+    }
+
+    public FisherWindow getFisherWindow() {
+        return fisherWindow;
     }
 }

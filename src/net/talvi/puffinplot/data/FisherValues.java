@@ -2,6 +2,7 @@ package net.talvi.puffinplot.data;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import static java.lang.Math.acos;
@@ -12,9 +13,11 @@ public class FisherValues {
     private final double a95;
     private final double k;
     private final Vec3 meanDirection;
+    private final List<Vec3> directions;
     private final static double p = 0.05;
 
-    public FisherValues(double a95, double k, Vec3 meanDirection) {
+    private FisherValues(List<Vec3> directions, double a95, double k, Vec3 meanDirection) {
+        this.directions = Collections.unmodifiableList(directions);
         this.a95 = a95;
         this.k = k;
         this.meanDirection = meanDirection;
@@ -27,7 +30,7 @@ public class FisherValues {
         double R = Vec3.vectorSumLength(normPoints);
         double k = (N-1)/(N-R);
         double a95 = Math.toDegrees(acos( 1 - ((N-R)/R) * (pow(1/p,1/(N-1))-1) ));
-        return new FisherValues(a95, k, Vec3.meanDirection(normPoints));
+        return new FisherValues(normPoints, a95, k, Vec3.meanDirection(normPoints));
     }
     
     public double getA95() {
@@ -40,6 +43,10 @@ public class FisherValues {
 
     public Vec3 getMeanDirection() {
         return meanDirection;
+    }
+    
+    public List<Vec3> getDirections() {
+        return directions;
     }
     
 }

@@ -13,6 +13,7 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -34,7 +35,8 @@ public class MainMenuBar extends JMenuBar {
         
     public MainMenuBar() {
         final JMenu fileMenu = new JMenu("File");
-        final PuffinActions actions = PuffinApp.getApp().getActions();
+        final PuffinApp app = PuffinApp.getApp();
+        final PuffinActions actions = app.getActions();
 
         recentFilesMenu = new JMenu("Open recent file");
 
@@ -62,7 +64,7 @@ public class MainMenuBar extends JMenuBar {
             @Override
             public boolean isSelected() {
                 try {
-                    return PuffinApp.getApp().getMainWindow().getGraphDisplay().isDragPlotMode();
+                    return app.getMainWindow().getGraphDisplay().isDragPlotMode();
                 } catch (NullPointerException e) {
                     return false;
                 }
@@ -72,10 +74,11 @@ public class MainMenuBar extends JMenuBar {
         movePlotsItem.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent event) {
-                        GraphDisplay gd = PuffinApp.getApp().getMainWindow().getGraphDisplay();
+                        GraphDisplay gd = app.getMainWindow().getGraphDisplay();
                         gd.setDragPlotMode(!gd.isDragPlotMode());
                         gd.repaint();
       } }
+        
         );
         
         JMenu calcMenu = new JMenu("Calculate");
@@ -86,13 +89,13 @@ public class MainMenuBar extends JMenuBar {
         {
             @Override
             public boolean getState() {
-                return PuffinApp.getApp().getPrefs().isPcaAnchored();
+                return app.getPrefs().isPcaAnchored();
             }
         };
         calcMenu.add(anchorItem);
         anchorItem.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent event) {
-                PuffinPrefs prefs = PuffinApp.getApp().getPrefs();
+                PuffinPrefs prefs = app.getPrefs();
                 prefs.setPcaAnchored(!prefs.isPcaAnchored());
             }
         });
@@ -104,11 +107,14 @@ public class MainMenuBar extends JMenuBar {
         // calcMenu.add(new JCheckBoxMenuItem("Lock axis scale"));
         
         JMenu windowMenu = new JMenu("Window");
-        final JCheckBoxMenuItem dt = new DataTableItem();
-        windowMenu.add(dt);
+        windowMenu.add(new WindowMenuItem("Data table") 
+        { JFrame window(PuffinApp app) {return app.getTableWindow();}});
+        windowMenu.add(new WindowMenuItem("Fisher EA plot") 
+        { JFrame window(PuffinApp app) {return app.getFisherWindow();}});
+        
         
         JMenu helpMenu = new JMenu("Help");
-        helpMenu.add(PuffinApp.getApp().getActions().about);
+        helpMenu.add(app.getActions().about);
         
         add(fileMenu);
         add(editMenu);
@@ -142,37 +148,6 @@ public class MainMenuBar extends JMenuBar {
                 }
             });
         }
-    }
-    
-    private static class DataTableItem extends JCheckBoxMenuItem {
-        public DataTableItem() {
-            super("Data table");
-            addItemListener(new ItemListener() {
-                public void itemStateChanged(ItemEvent arg0) {
-                    PuffinApp.getApp().getTableWindow().setVisible(DataTableItem.super.isSelected());
-                }
-            });
-            PuffinApp.getApp().getTableWindow().addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosing(WindowEvent e) {
-                    setSelected(false); }
-            });
-            }
-            
-            @Override
-            public boolean isSelected() {
-                return PuffinApp.getApp() != null && PuffinApp.getApp().getTableWindow() != null
-                        ? PuffinApp.getApp().getTableWindow().isVisible()
-                        : false;
-            }
-        @Override
-            public boolean getState() {
-                return isSelected();
-            }
-        @Override
-            public Object[] getSelectedObjects() {
-                return isSelected() ? new Object[] { getText() } : null;
-            }
     }
     
     private static interface MenuItemDef {
