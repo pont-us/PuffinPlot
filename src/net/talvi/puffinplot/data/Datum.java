@@ -7,6 +7,7 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 import static java.lang.Double.NaN;
+import static java.lang.Math.toRadians;
 
 public class Datum {
 
@@ -25,7 +26,7 @@ public class Datum {
     private double intensity=NaN;
     private double magSus=NaN; // default to "not mag sus" if no such field
     private double sampAz=NaN, sampDip=NaN, formAz=NaN, formDip=NaN;
-    private double magDev=NaN;
+    private double magDev=0;
     private double xCorr=NaN, yCorr=NaN, zCorr=NaN;
     private double xDrift=NaN, yDrift=NaN, zDrift=NaN;    
     private double xMean=NaN, yMean=NaN, zMean=NaN;
@@ -33,7 +34,7 @@ public class Datum {
     private double irmGauss=NaN, armGauss=NaN;
     private double xbkg1=NaN, xbkg2=NaN, ybkg1=NaN, ybkg2=NaN, zbkg1=NaN, zbkg2=NaN;
     private ArmAxis armAxis = ArmAxis.UNKNOWN;
-    private final Vec3 uc, sc, fc;
+    private Vec3 uc, sc, fc;
     private double volume = defaultVolume;
     private double area = defaultCoreArea;
     private int runNumber = -1;
@@ -50,6 +51,51 @@ public class Datum {
 
     public void setSelected(boolean selected) {
         this.selected = selected;
+    }
+
+    public double getSampAz() {
+        return sampAz;
+    }
+
+    public void setSampAz(double sampAz) {
+        this.sampAz = sampAz;
+        applyCorrections();
+    }
+
+    public double getSampDip() {
+        return sampDip;
+    }
+
+    public void setSampDip(double sampDip) {
+        this.sampDip = sampDip;
+        applyCorrections();
+    }
+
+    public double getFormAz() {
+        return formAz;
+    }
+
+    public void setFormAz(double formAz) {
+        this.formAz = formAz;
+        applyCorrections();
+    }
+
+    public double getFormDip() {
+        return formDip;
+    }
+
+    public void setFormDip(double formDip) {
+        this.formDip = formDip;
+        applyCorrections();
+    }
+
+    public double getMagDev() {
+        return magDev;
+    }
+
+    public void setMagDev(double magDev) {
+        this.magDev = magDev;
+        applyCorrections();
     }
 
     private static class NaScanner {
@@ -192,6 +238,8 @@ public class Datum {
                         f.getHeading());
             }
         }
+        
+        if (Double.isNaN(magDev)) magDev = 0; // sensible default
 
         if (measType==null) {
           throw new IllegalArgumentException("No measurement type specified");
@@ -221,8 +269,14 @@ public class Datum {
                 throw new IllegalArgumentException
                         ("Unknown measurement type "+measType);
         }
-        sc = uc.correctSample(Math.toRadians(sampAz), Math.toRadians(sampDip));
-        fc = sc.correctForm(Math.toRadians(formAz), Math.toRadians(formDip));
+        applyCorrections();
+    }
+    
+    private void applyCorrections() {
+        sc = Double.isNaN(sampAz) || Double.isNaN(sampDip)
+                ? uc : uc.correctSample(toRadians(sampAz - magDev), toRadians(sampDip));
+        fc = Double.isNaN(formAz) || Double.isNaN(formDip)
+                ? sc : sc.correctForm(toRadians(formAz - magDev), toRadians(formDip));
     }
     
     public Vec3 getPoint(Correction c) {
@@ -232,6 +286,14 @@ public class Datum {
             case NONE: return uc;
             default: throw new IllegalArgumentException("unknown correction");
         }
+    }
+    
+    /*
+     *  Rotate orientations 180 degrees about X axis.
+     */
+    public void rotX180() {
+        uc = uc.rotX180();
+        applyCorrections();
     }
 
     public void toggleSel() {
@@ -286,14 +348,14 @@ public class Datum {
         case INCFC: return incFc;
         case INTENSITY: return intensity;
         case MSCORR: return magSus;
-        case SAMPLEAZ: return sampAz;
-        case SAMPLEDIP: return sampDip;
-        case FORMAZ: return formAz;
-        case FORMDIP: return formDip;
+        case SAMPLEAZ: return getSampAz();
+        case SAMPLEDIP: return getSampDip();
+        case FORMAZ: return getFormAz();
+        case FORMDIP: return getFormDip();
         case XMEAN: return xMean;
         case YMEAN: return yMean;
         case ZMEAN: return zMean;
-        case MAGDEV: return magDev;
+        case MAGDEV: return getMagDev();
         case XCORR: return xCorr;
         case YCORR: return yCorr;
         case ZCORR: return zCorr;
@@ -318,6 +380,56 @@ public class Datum {
         case RUNNUMBER: return runNumber;
         case AREA: return area;
         case PP_SELECTED: return selected;
+        default: throw new IllegalArgumentException("Unknown field "+field);
+        }
+    }
+    
+    public void setValue(TwoGeeField field, Object o) {
+        switch (field) {
+        case AFX: afx = (Double) o; break;
+        case AFY: afy = (Double) o; break;
+        case AFZ: afz = (Double) o; break;
+        case TEMP: temp = (Double) o; break;
+        case DECUC: decUc = (Double) o; break;
+        case INCUC: incUc = (Double) o; break;
+        case DECSC: decSc = (Double) o; break;
+        case INCSC: incSc = (Double) o; break;
+        case DECFC: decFc = (Double) o; break;
+        case INCFC: incFc = (Double) o; break;
+        case INTENSITY: intensity = (Double) o; break;
+        case MSCORR: magSus = (Double) o; break;
+        case SAMPLEAZ: setSampAz((Double) o); break;
+        case SAMPLEDIP: setSampDip((Double) o); break;
+        case FORMAZ: setFormAz((Double) o); break;
+        case FORMDIP: setFormDip((Double) o); break;
+        case XMEAN: xMean = (Double) o; break;
+        case YMEAN: yMean = (Double) o; break;
+        case ZMEAN: zMean = (Double) o; break;
+        case MAGDEV: setMagDev((Double) o); break;
+        case XCORR: xCorr = (Double) o; break;
+        case YCORR: yCorr = (Double) o; break;
+        case ZCORR: zCorr = (Double) o; break;
+        case XDRIFT: xDrift = (Double) o; break;
+        case YDRIFT: yDrift = (Double) o; break;
+        case ZDRIFT: zDrift = (Double) o; break;
+        case DEPTH: depth = (Double) o; break;
+        case IRMGAUSS: irmGauss = (Double) o; break;
+        case ARMGAUSS: armGauss = (Double) o; break;
+        case VOLUME: volume = (Double) o; break;
+        case XBKG1: xbkg1 = (Double) o; break;
+        case XBKG2: xbkg2 = (Double) o; break;
+        case YBKG1: ybkg1 = (Double) o; break;
+        case YBKG2: ybkg2 = (Double) o; break;
+        case ZBKG1: zbkg1 = (Double) o; break;
+        case ZBKG2: zbkg2 = (Double) o; break;
+        case SAMPLEID: sampleId = (String) o; break;
+        case MEASTYPE: measType = (MeasType) o; break;
+        case TREATMENT: treatType = (TreatType) o; break;
+        case ARMAXIS: armAxis = (ArmAxis) o; break;
+        case TIMESTAMP: timeStamp = (String) o; break;
+        case RUNNUMBER: runNumber = (Integer) o; break;
+        case AREA: area = (Double) o; break;
+        case PP_SELECTED: selected = (Boolean) o; break;
         default: throw new IllegalArgumentException("Unknown field "+field);
         }
     }

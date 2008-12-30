@@ -20,11 +20,11 @@ public enum TwoGeeField {
     INCFC(Double.class, "Inclination: Formation Rotated"),
     INTENSITY(Double.class, "Intensity"),
     MSCORR(Double.class, "MS corr"),
-    SAMPLEAZ(Double.class, "Sample Azimiuth"), // [sic]
-    SAMPLEDIP(Double.class, "Sample Dip"),
-    FORMAZ(Double.class, "Formation Dip Azimuth"),
-    FORMDIP(Double.class, "Formation Dip"),
-    MAGDEV(Double.class, "Mag Dev"),
+    SAMPLEAZ(Double.class, "Sample Azimiuth" /* sic */, "Sample azimuth"),
+    SAMPLEDIP(Double.class, "Sample Dip", "Sample dip"),
+    FORMAZ(Double.class, "Formation Dip Azimuth", "Formation dip azimuth"),
+    FORMDIP(Double.class, "Formation Dip", "Formation dip"),
+    MAGDEV(Double.class, "Mag Dev", "Local deviation"),
     XCORR(Double.class, "X corr"),
     YCORR(Double.class, "Y corr"),
     ZCORR(Double.class, "Z corr"),
@@ -52,6 +52,7 @@ public enum TwoGeeField {
     UNKNOWN(Object.class, null);
     
     private final String heading;
+    private final String niceName;
     private final static Map<String, TwoGeeField> map;
     private Class type;
     
@@ -62,9 +63,14 @@ public enum TwoGeeField {
          for (TwoGeeField f: values()) map.put(f.getHeading(), f);
     }
 
-    private TwoGeeField(Class type, String heading) {
+    private TwoGeeField(Class type, String heading, String niceName) {
         this.type = type;
         this.heading = heading;
+        this.niceName = niceName;
+    }
+
+    private TwoGeeField(Class type, String heading) {
+        this(type, heading, heading);
     }
 
     public static TwoGeeField getByHeader(String h) {
@@ -74,6 +80,10 @@ public enum TwoGeeField {
 
     public String getHeading() {
         return heading;
+    }
+    
+    public String getNiceName() {
+        return niceName;
     }
     
     public Class getType() {

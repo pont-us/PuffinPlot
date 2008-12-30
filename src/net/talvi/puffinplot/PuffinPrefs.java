@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 import java.util.prefs.Preferences;
+import net.talvi.puffinplot.data.Correction;
 
 public class PuffinPrefs {
 
@@ -21,6 +22,7 @@ public class PuffinPrefs {
             new HashMap<String, Rectangle2D>();
     
     static Preferences prefs = Preferences.userNodeForPackage(PuffinPrefs.class);
+    private Correction correction;
     
     public PuffinPrefs() {
         load();
@@ -129,6 +131,10 @@ public class PuffinPrefs {
         this.pcaAnchored = pcaThroughOrigin;
     }
     
+    public Correction getCorrection() {
+        return correction;
+    }
+    
     public Rectangle2D getPlotSize(String plotName) {
         if (!plotSizes.containsKey(plotName))
             plotSizes.put(plotName, new Rectangle2D.Double(100, 100, 100, 100));
@@ -139,12 +145,12 @@ public class PuffinPrefs {
         for (int i=0; i<MAX_RECENT_FILES; i++)
             recentFiles[i] = RecentFile.fromString(prefs.get("recentFile"+i, null));
         nextRecentFile = prefs.getInt("nextRecentFile", 0);
-        String plotSizeString = prefs.get("plotSizes",
+        final String plotSizeString = prefs.get("plotSizes",
                 "zplot 407 32 610 405 pcatable 518 708 195 67 " +
                 "sampletable 24 13 215 39 fishertable 837 60 155 60 " +
                 "datatable 43 324 349 441 demag 50 69 323 213 " +
                 "equarea 685 439 338 337");
-        Scanner scanner = new Scanner(plotSizeString);
+        final Scanner scanner = new Scanner(plotSizeString);
         while (scanner.hasNext()) {
             String plotName = scanner.next();
             Rectangle2D geometry = 
@@ -153,6 +159,7 @@ public class PuffinPrefs {
                     scanner.nextDouble());
             plotSizes.put(plotName, geometry);
         }
+        correction = Correction.valueOf(prefs.get("correction", "NONE"));
     }
     
     public void save() {
@@ -169,5 +176,6 @@ public class PuffinPrefs {
                     r.getWidth(), r.getHeight()));
         }
         prefs.put("plotSizes", sb.toString());
+        prefs.put("correction", PuffinApp.getApp().getCorrection().name());
     }
 }

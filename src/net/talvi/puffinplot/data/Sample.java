@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.talvi.puffinplot.PuffinApp;
+import net.talvi.puffinplot.Suite;
 
 public class Sample {
     
@@ -30,6 +31,13 @@ public class Sample {
         pca = null;
         fisher = null;
         selectNone();
+    }
+    
+    /*
+     * Rotates all data 180 degrees about the X axis.
+     */
+    public void flip() {
+        for (Datum d: data) d.rotX180();
     }
     
     public void selectAll() {

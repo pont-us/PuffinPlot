@@ -1,5 +1,6 @@
 package net.talvi.puffinplot;
 
+import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,10 +12,15 @@ import javax.swing.Action;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import javax.swing.JSeparator;
+import javax.swing.JTextField;
+import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import net.talvi.puffinplot.data.Correction;
+import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.MeasurementAxis;
 
 public class ControlPanel extends JPanel 
@@ -22,6 +28,10 @@ public class ControlPanel extends JPanel
 
     private static final long serialVersionUID = 1L;
 
+    private final NumField sampAzField;
+    private final NumField sampDipField;
+    private final NumField formAzField;
+    private final NumField formDipField;
     JComboBox suiteBox;
     private CorrectionBox correctionBox;
     VVsBox vVsBox;
@@ -32,22 +42,50 @@ public class ControlPanel extends JPanel
             vVsBox.toggle();
         }
     };
+
     
     public ControlPanel() {
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         add(suiteBox = new JComboBox(new String[] {"no samples loaded"}));
         add(correctionBox = new CorrectionBox());
         add(vVsBox = new VVsBox());
-        add(new JButton(PuffinApp.getApp().getActions().pca));
+
+        add(new JToolBar.Separator());
+        add(new JLabel("samp az"));
+        add(sampAzField = new NumField(4));
+        add(new JLabel("dip"));
+        add(sampDipField = new NumField(3));
+        add(new JLabel("form az"));
+        add(formAzField = new NumField(4));
+        add(new JLabel("dip"));
+        add(formDipField = new NumField(3));
+        add(new JLabel("mag dev"));
+        add(new NumField(4));
+        add(new JToolBar.Separator());
+        add(new JButton(PuffinApp.getApp().getActions().pcaOnSelection));
         add(new JButton(PuffinApp.getApp().getActions().fisher));
         add(new JButton(PuffinApp.getApp().getActions().clear));
+        
         suiteBox.addActionListener(this);
         
         int modifierKey = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke('E', modifierKey), "toggle-zplot");
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).
+                put(KeyStroke.getKeyStroke('E', modifierKey), "toggle-zplot");
         getActionMap().put("toggle-zplot", toggleZplotAction);
     }
 
+    private class NumField extends JLabel {
+        public NumField(int columns) {
+            super("----");
+            setMaximumSize(new Dimension(getPreferredSize().width,
+                   getMaximumSize().height));
+        }
+        
+        public void setValue(double value) {
+            setText(Double.toString(value));
+        }
+    }
+    
     private volatile boolean updatingSuites = false;
     void updateSuites() {
         updatingSuites = true;
@@ -58,6 +96,14 @@ public class ControlPanel extends JPanel
         updatingSuites = false;
         Suite currentSuite = PuffinApp.getApp().getSuite();
         suiteBox.setSelectedItem(currentSuite);
+    }
+    
+    void updateSample() {
+        Datum d = PuffinApp.getApp().getSample().getDatum(0);
+        sampAzField.setValue(d.getSampAz());
+        sampDipField.setValue(d.getSampDip());
+        formAzField.setValue(d.getFormAz());
+        formDipField.setValue(d.getFormDip());
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -77,7 +123,11 @@ public class ControlPanel extends JPanel
     }
     
     public Correction getCorrection() {
-        return correctionBox.correction();
+        return correctionBox.getCorrection();
+    }
+    
+    public void setCorrection(Correction c) {
+        correctionBox.setCorrection(c);
     }
     
     private class VVsBox extends JComboBox {
@@ -109,16 +159,20 @@ public class ControlPanel extends JPanel
 
         CorrectionBox() {
             super(new String[] {"uncorrected", "samp. corr.", "form. corr."});
+            Correction[] cs = Correction.values();
+            for (int i=0; i<cs.length; i++)
+                if (cs[i] == PuffinApp.getApp().getPrefs().getCorrection())
+                    setSelectedIndex(i);
             addItemListener(ControlPanel.this);
         }
         
-        public Correction correction() {
-            switch (getSelectedIndex()) {
-            case 0: return Correction.NONE;
-            case 1: return Correction.SAMPLE;
-            case 2: return Correction.FORMATION;
-            default: throw new Error("unknown correction");
-            }
+        public void setCorrection(Correction c) {
+            Correction[] cs = Correction.values();
+            for (int i=0; i<cs.length; i++) if (c==cs[i]) setSelectedIndex(i);
+        }
+        
+        public Correction getCorrection() {
+            return Correction.values()[getSelectedIndex()];
         }
         
     }

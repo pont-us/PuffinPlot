@@ -72,7 +72,7 @@ public class SampleChooser extends JPanel {
                 if (getSelectedValue() != null)
                     PuffinApp.getApp().getSuite().
                             setCurrentName((String) getSelectedValue());
-                    PuffinApp.getApp().getMainWindow().repaint(100);
+                    PuffinApp.getApp().updateDisplay();
             }
             });
         }
@@ -102,7 +102,7 @@ public class SampleChooser extends JPanel {
             addChangeListener(new ChangeListener() {
                 public void stateChanged(ChangeEvent e) {
                     PuffinApp.getApp().getSuite().setCurrentDepthIndex(getValue());
-                    PuffinApp.getApp().getMainWindow().repaint(100);
+                    PuffinApp.getApp().updateDisplay();
                 }
             });
         }

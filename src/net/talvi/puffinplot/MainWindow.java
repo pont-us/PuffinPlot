@@ -27,6 +27,7 @@ public class MainWindow extends JFrame {
     public MainWindow() {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new CloseListener());
+        setTitle("PuffinPlot");
         setPreferredSize(new Dimension(800,400));
         menuBar = new MainMenuBar();
         setJMenuBar(menuBar);

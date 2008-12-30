@@ -80,9 +80,12 @@ public class PuffinApp {
         actions = new PuffinActions(this);
         tableWindow = new TableWindow();
         fisherWindow = new FisherWindow();
+
         // NB main window must be instantiated last, as
         // the Window menu references the other windows
         mainWindow = new MainWindow();
+
+        
         suites = new ArrayList<Suite>();
         if (MAC_OS_X) createAppleEventListener();
         
@@ -93,6 +96,7 @@ public class PuffinApp {
             
         mainWindow.getMainMenuBar().updateRecentFiles();
         mainWindow.setVisible(true);
+                new CorrectionWindow();
     }
 
     public static void main(String[] args) {
@@ -128,6 +132,15 @@ public class PuffinApp {
  
     public Correction getCorrection() {
         return getMainWindow().controlPanel.getCorrection();
+    }
+    
+    public void setCorrection(Correction c) {
+        getMainWindow().controlPanel.setCorrection(c);
+    }
+    
+    public void updateDisplay() {
+        getMainWindow().controlPanel.updateSample();
+        getMainWindow().repaint(100);
     }
     
     public void openFiles(File f) {

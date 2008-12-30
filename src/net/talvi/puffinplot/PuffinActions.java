@@ -2,6 +2,7 @@ package net.talvi.puffinplot;
 
 import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
+import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.File;
@@ -116,14 +117,13 @@ public class PuffinActions {
         }
     };
     
-    public final Action pca = new AbstractAction("PCA (this sample)") {
-        public void actionPerformed(ActionEvent e) {
-            app.getSample().doPca();
-            app.getMainWindow().repaint();
+    public final Action flipSample = new AbstractAction("Flip sample(s)") {
+        public void actionPerformed(ActionEvent arg0) {
+            for (Sample s: app.getSelectedSamples()) s.flip();
         }
     };
-
-    public final Action pcaOnSelection = new AbstractAction("PCA (selected samples)") {
+    
+    public final Action pcaOnSelection = new AbstractAction("PCA") {
         public void actionPerformed(ActionEvent e) {
             for (Sample sample: app.getSelectedSamples())
                 if (sample.getSelectedPoints().size()>1)
@@ -132,7 +132,7 @@ public class PuffinActions {
         }
     };
     
-    public final Action fisher = new AbstractAction("Fisher on sample") {
+    public final Action fisher = new AbstractAction("Fisher") {
         public void actionPerformed(ActionEvent e) {
             app.getSample().doFisher();
             app.getMainWindow().repaint();
@@ -171,28 +171,47 @@ public class PuffinActions {
 
         public void actionPerformed(ActionEvent e) {
             PrinterJob job = PrinterJob.getPrinterJob();
-            job.setPrintable(
-                    app.getMainWindow().getGraphDisplay(),app.getCurrentPageFormat());
+            job.setPrintable(app.getMainWindow().getGraphDisplay(),
+                             app.getCurrentPageFormat());
 
-            PrintService[] services =
-                    PrinterJob.lookupPrintServices();
+            PrintService[] services = PrinterJob.lookupPrintServices();
 
             if (services.length > 0) {
-                System.out.println("selected printer " + services[0].getName());
                 try {
                     job.setPrintService(services[0]);
                     /* Note: if we pass an attribute set to printDialog(),
                      * it forces the use of a cross-platform Swing print
                      * dialog rather than the default native one.
                     */
-                    if (job.printDialog()) {
-                        job.print();
-                    }
+                    if (job.printDialog()) job.print();
                 } catch (PrinterException pe) {
                     System.err.println(pe);
                 }
             }
+        }
+    };
+    
+    public final Action printFisher = new AbstractAction("Print Fisher…") {
 
+        public void actionPerformed(ActionEvent e) {
+            PrinterJob job = PrinterJob.getPrinterJob();
+            job.setPrintable((Printable) app.getFisherWindow().getContentPane(),
+                    app.getCurrentPageFormat());
+
+            PrintService[] services = PrinterJob.lookupPrintServices();
+
+            if (services.length > 0) {
+                try {
+                    job.setPrintService(services[0]);
+                    /* Note: if we pass an attribute set to printDialog(),
+                     * it forces the use of a cross-platform Swing print
+                     * dialog rather than the default native one.
+                    */
+                    if (job.printDialog()) job.print();
+                } catch (PrinterException pe) {
+                    System.err.println(pe);
+                }
+            }
         }
     };
     

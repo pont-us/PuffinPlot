@@ -50,6 +50,7 @@ public class MainMenuBar extends JMenuBar {
             new ActionItemDef(actions.save, 'S', InputEvent.SHIFT_DOWN_MASK, true),
             new ActionItemDef(actions.pageSetup, 'P', InputEvent.SHIFT_DOWN_MASK, true),
             new ActionItemDef(actions.print, 'P', 0, true),
+            new ActionItemDef(actions.printFisher, 'I', 0, true),
             new ActionItemDef(actions.prefs, ',', 0, false),
             new ActionItemDef(actions.quit, 'Q', 0, false)
         };
@@ -71,6 +72,7 @@ public class MainMenuBar extends JMenuBar {
             }
         };
         editMenu.add(movePlotsItem);
+        addSimpleItem(editMenu, actions.flipSample, '\u0000');
         movePlotsItem.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent event) {
@@ -82,8 +84,7 @@ public class MainMenuBar extends JMenuBar {
         );
         
         JMenu calcMenu = new JMenu("Calculate");
-        addSimpleItem(calcMenu, actions.pca, 'R');
-        addSimpleItem(calcMenu, actions.pcaOnSelection, 'T');
+        addSimpleItem(calcMenu, actions.pcaOnSelection, 'R');
         
         final JCheckBoxMenuItem anchorItem = new JCheckBoxMenuItem("Anchor PCA")
         {
@@ -126,7 +127,7 @@ public class MainMenuBar extends JMenuBar {
     private void addSimpleItem(JMenu menu, Action action, char key) {
         JMenuItem item = new JMenuItem(action);
         menu.add(item);
-        item.setAccelerator(KeyStroke.getKeyStroke(key, modifierKey, false));
+        if (key != '\u0000') item.setAccelerator(KeyStroke.getKeyStroke(key, modifierKey, false));
     }
   
     void updateRecentFiles() {
