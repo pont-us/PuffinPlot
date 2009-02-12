@@ -76,7 +76,7 @@ public class Sample {
         LinkedList<Vec3> points = new LinkedList<Vec3>();
         for (Datum d: data)
             if (d.isSelected())
-                points.add(d.getPoint(PuffinApp.getApp().getCorrection()));
+                points.add(d.getPoint(PuffinApp.getInstance().getCorrection()));
         return points;
     }
     
@@ -89,23 +89,37 @@ public class Sample {
             fisher = FisherValues.calculate(points);
     }
 
-    public void doPca() {
+    public void doPca(boolean anchored) {
+        for (Datum d: data) d.setPcaAnchored(anchored);
         List<Vec3> points = getSelectedPoints();
-        if (points.size() < 2)
-            PuffinApp.errorDialog("PCA error", "You must select at least two points in order "+
-                    "to perform PCA.");
-        else
+//        if (points.size() < 2)
+//            PuffinApp.errorDialog("PCA error", "You must select at least two points in order "+
+//                    "to perform PCA.");
+//        else
+        if (points.size() > 1)
             pca = PcaValues.calculate(points, 
-                    PuffinApp.getApp().getPrefs().isPcaAnchored()
+                    anchored
                     ? Vec3.ORIGIN
                     : Vec3.centreOfMass(points));
     }
 
+    public void doPca() {
+        doPca(data.get(0).isPcaAnchored());
+    }
+    
     public String getName() {
         return name;
     }
 
     public FisherValues getFisher() {
         return fisher;
+    }
+    
+    public boolean isPcaAnchored() {
+        return data.get(0).isPcaAnchored();
+    }
+    
+    public void setPcaAnchored(boolean pcaAnchored) {
+        for (Datum d: data) d.setPcaAnchored(pcaAnchored);
     }
 }

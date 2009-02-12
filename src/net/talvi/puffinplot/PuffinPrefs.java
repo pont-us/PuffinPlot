@@ -169,13 +169,13 @@ public class PuffinPrefs {
         prefs.putInt("nextRecentFile", nextRecentFile);
         StringBuffer sb = new StringBuffer();
         for (String plotName: plotSizes.keySet()) {
-            Rectangle2D r = PuffinApp.getApp().getMainWindow().
+            Rectangle2D r = PuffinApp.getInstance().getMainWindow().
                     getGraphDisplay().getPlotSize(plotName);
             sb.append(String.format("%s %f %f %f %f ",
                     plotName, r.getMinX(), r.getMinY(),
                     r.getWidth(), r.getHeight()));
         }
         prefs.put("plotSizes", sb.toString());
-        prefs.put("correction", PuffinApp.getApp().getCorrection().name());
+        prefs.put("correction", PuffinApp.getInstance().getCorrection().name());
     }
 }

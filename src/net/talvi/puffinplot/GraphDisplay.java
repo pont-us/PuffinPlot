@@ -51,7 +51,7 @@ public class GraphDisplay extends JPanel implements Printable {
          
     GraphDisplay() {
         
-        final PuffinApp app = PuffinApp.getApp();
+        final PuffinApp app = PuffinApp.getInstance();
         params = new PlotParams() {
 
             public Sample getSample() {
@@ -81,7 +81,7 @@ public class GraphDisplay extends JPanel implements Printable {
 
         setLayout(null);
         plots = new HashMap<String, Plot>();
-        PuffinPrefs pref = PuffinApp.getApp().getPrefs();
+        PuffinPrefs pref = PuffinApp.getInstance().getPrefs();
         plots.put("equarea", new SampleEqAreaPlot(this, params, pref.getPlotSize("equarea")));
         plots.put("zplot", new ZPlot(this, params, pref.getPlotSize("zplot")));
         plots.put("demag", new DemagPlot(this, params, pref.getPlotSize("demag")));
@@ -237,7 +237,7 @@ public class GraphDisplay extends JPanel implements Printable {
     public int print(Graphics graphics, PageFormat pf, int pageIndex)
             throws PrinterException {
         pf.setOrientation(PageFormat.LANDSCAPE);
-        if (samples == null) samples = PuffinApp.getApp().getSelectedSamples();
+        if (samples == null) samples = PuffinApp.getInstance().getSelectedSamples();
         if (pageIndex >= samples.length) {
             samples = null; // we've finished printing
             return NO_SUCH_PAGE;

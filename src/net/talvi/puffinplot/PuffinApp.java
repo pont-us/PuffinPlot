@@ -24,26 +24,21 @@ public class PuffinApp {
 
     private static PuffinApp app;
     private static String buildDate;
-
-    public static PuffinApp getApp() {
-        return app;
-    }
-
-    public static String getBuildDate() {
-        return buildDate;
-    }
-
     private final PuffinActions actions;
     List<Suite> suites;
     private final MainWindow mainWindow;
     private int currentSuiteIndex;
     private PageFormat currentPageFormat;
     public static final boolean MAC_OS_X =
-            (System.getProperty("os.name").
-            toLowerCase().startsWith("mac os x"));
+            System.getProperty("os.name").toLowerCase().startsWith("mac os x");
     private final TableWindow tableWindow;
     private final PuffinPrefs prefs;
-    private FisherWindow fisherWindow;
+    private final FisherWindow fisherWindow;
+    private final CorrectionWindow correctionWindow;
+    
+    public static PuffinApp getInstance() { return app; }
+
+    public static String getBuildDate() { return buildDate; }
 
     private void loadBuildProperties() {
         InputStream propStream = null;
@@ -80,11 +75,10 @@ public class PuffinApp {
         actions = new PuffinActions(this);
         tableWindow = new TableWindow();
         fisherWindow = new FisherWindow();
-
+        correctionWindow = new CorrectionWindow();
         // NB main window must be instantiated last, as
         // the Window menu references the other windows
         mainWindow = new MainWindow();
-
         
         suites = new ArrayList<Suite>();
         if (MAC_OS_X) createAppleEventListener();
@@ -96,7 +90,7 @@ public class PuffinApp {
             
         mainWindow.getMainMenuBar().updateRecentFiles();
         mainWindow.setVisible(true);
-                new CorrectionWindow();
+
     }
 
     public static void main(String[] args) {
@@ -189,7 +183,7 @@ public class PuffinApp {
     
     public static void errorDialog(String title, String message) {
         JOptionPane.showMessageDialog
-        (getApp().getMainWindow(), message, title, JOptionPane.ERROR_MESSAGE);
+        (getInstance().getMainWindow(), message, title, JOptionPane.ERROR_MESSAGE);
     }
     
     @SuppressWarnings("unchecked")
@@ -268,5 +262,9 @@ public class PuffinApp {
 
     public FisherWindow getFisherWindow() {
         return fisherWindow;
+    }
+
+    public CorrectionWindow getCorrectionWindow() {
+        return correctionWindow;
     }
 }

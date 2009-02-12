@@ -1,5 +1,6 @@
 package net.talvi.puffinplot;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -49,6 +50,7 @@ public class Suite implements Iterable<Datum> {
     private static final Pattern whitespace = Pattern.compile("\\s+");
     private List<String> loadWarnings = new LinkedList<String>();
     private List<FisherForSite> siteFishers;
+    private FisherValues suiteFisher;
 
     public Iterator<Datum> iterator() {
         return data.iterator();
@@ -56,6 +58,10 @@ public class Suite implements Iterable<Datum> {
 
     public List<String> getLoadWarnings() {
         return loadWarnings;
+    }
+
+    public FisherValues getSuiteFisher() {
+        return suiteFisher;
     }
     
     private static class Fields {
@@ -93,12 +99,47 @@ public class Suite implements Iterable<Datum> {
         }
     }
     
-    void doFisherOnPcas() {
+    void doFisherOnAllPcas() {
+        Sample[] samples = PuffinApp.getInstance().getSelectedSamples();
+        List<PcaValues> pcas = new ArrayList<PcaValues>(samples.length);
+        
+        for (Sample sample: samples) {
+            PcaValues pca = sample.getPca();
+            if (pca != null) pcas.add(pca);
+        }
+        
+        List<Vec3> directions = new ArrayList<Vec3>(pcas.size());
+        for (PcaValues pca: pcas) directions.add(pca.getDirection());
+        
+        suiteFisher = FisherValues.calculate(directions);
+        
+        Writer writer = null;
+        try {
+            // write them to a file
+            writer = new FileWriter("/home/pont/suite-fisher.txt");
+            writer.write("inc\tdec\ta95\tk\n");
+            FisherValues f = suiteFisher;
+                writer.write(String.format("%.1f\t%.1f\t%.1f\t%.1f\n",
+                        f.getMeanDirection().incDegrees(),
+                        f.getMeanDirection().decDegrees(),
+                        f.getA95(), f.getK()));
+            
+        } catch (IOException ex) {
+           throw new Error(ex);
+        } finally {
+            if (writer != null) {
+                try { writer.close(); }
+                catch (IOException e) { throw new Error(e); }
+            }
+        }
+    }
+    
+    void doFisherOnPcasBySite() {
         Map<String, Set<PcaValues>> sitePcas =
                 new LinkedHashMap<String, Set<PcaValues>>();
         
         // Chuck PCA values into buckets
-        for (Sample sample : PuffinApp.getApp().getSelectedSamples()) {
+        for (Sample sample : PuffinApp.getInstance().getSelectedSamples()) {
             String site = sample.getName().substring(0, 2);
             PcaValues pca = sample.getPca();
             if (pca != null) {
@@ -122,7 +163,7 @@ public class Suite implements Iterable<Datum> {
         Writer writer = null;
         try {
             // write them to a file
-            writer = new FileWriter(new File("/home/pont/fisher.txt"));
+            writer = new FileWriter(new File("/home/pont/site-fisher.txt"));
             writer.write("site\tinc\tdec\ta95\tk\n");
             for (FisherForSite f: siteFishers) {
                 writer.write(String.format("%s\t%.1f\t%.1f\t%.1f\t%.1f\n",
@@ -373,6 +414,7 @@ public class Suite implements Iterable<Datum> {
         depths = depthSet.toArray(depths);
         names = nameSet.toArray(names);
         setCurrentDepthIndex(0);
+        for (Sample s: getSamples()) s.doPca();
     }
 
     public void saveCalculations(File file) {

@@ -11,6 +11,10 @@ import static java.lang.Math.toRadians;
 
 public class Datum {
 
+    // Note that sensors may have negative effective lengths, depending
+    // on how they're mounted. These are the absolute values, and some
+    // may be negated when calculating magnetization vectors for long cores.
+    // (See the constructor for details.)
     private static final double sensorLengthX = 4.628,
      sensorLengthY = 4.404,
      sensorLengthZ = 6.280,
@@ -41,6 +45,7 @@ public class Datum {
     private String timeStamp = "UNSET"; // NB this is a magic value; see below
     
     private boolean selected = false;
+    private boolean pcaAnchored = false;
     
     private final static Pattern delimPattern = Pattern.compile("\\t");
     private final static Pattern numberPattern = Pattern.compile("\\d+(\\.\\d+)?");
@@ -96,6 +101,14 @@ public class Datum {
     public void setMagDev(double magDev) {
         this.magDev = magDev;
         applyCorrections();
+    }
+
+    public boolean isPcaAnchored() {
+        return pcaAnchored;
+    }
+
+    public void setPcaAnchored(boolean pcaAnchored) {
+        this.pcaAnchored = pcaAnchored;
     }
 
     private static class NaScanner {
@@ -224,6 +237,7 @@ public class Datum {
             case TIMESTAMP: timeStamp = s.next(); break;
             case AREA: area = s.nextD(); break;
             case PP_SELECTED: selected = s.nextBoolean(); break;
+            case PP_ANCHOR_PCA: pcaAnchored = s.nextBoolean(); break;
             case UNKNOWN: s.next(); break;
             default: s.next(); break;
                 }
@@ -254,13 +268,25 @@ public class Datum {
                 // fairly good indicator. 
                 // (Used to be run number but G. thought we might have
                 // had that in the format previously.)
+                
+                // ADDENDUM 2009-02-12: turns out that the effective
+                // sensor lengths for the Y and Z SQUIDs have been 
+                // negated in the new set-up. To summarize:
+                //   old new
+                // x  -   +
+                // y  +   -
+                // z  -   -
+                
                 // TODO: make this configurable
                 // by a user preferences setting.
                 //
-                final double flip = timeStamp.equals("UNSET") ? -1 : 1;
-                uc = new Vec3(flip * xCorr / (area * sensorLengthX),
-                        yCorr / (area * sensorLengthY),
-                        flip * zCorr / (area * sensorLengthZ));
+                boolean old = timeStamp.equals("UNSET");
+                double xVol = area * sensorLengthX;
+                double yVol = area * sensorLengthY;
+                double zVol = area * sensorLengthZ;
+                uc = new Vec3( (old ? -1 : 1) * xCorr / xVol,
+                        (old ? 1 : -1) * yCorr / yVol,
+                        -zCorr / zVol);
                 break;
             case DISCRETE:
                 uc = new Vec3(xCorr / volume, yCorr / volume, zCorr / volume);
@@ -380,6 +406,7 @@ public class Datum {
         case RUNNUMBER: return runNumber;
         case AREA: return area;
         case PP_SELECTED: return selected;
+        case PP_ANCHOR_PCA: return isPcaAnchored();
         default: throw new IllegalArgumentException("Unknown field "+field);
         }
     }
@@ -430,6 +457,7 @@ public class Datum {
         case RUNNUMBER: runNumber = (Integer) o; break;
         case AREA: area = (Double) o; break;
         case PP_SELECTED: selected = (Boolean) o; break;
+        case PP_ANCHOR_PCA: setPcaAnchored((boolean) (Boolean) o); break;
         default: throw new IllegalArgumentException("Unknown field "+field);
         }
     }

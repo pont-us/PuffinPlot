@@ -14,7 +14,7 @@ import net.talvi.puffinplot.plots.FisherEqAreaPlot;
 
 public class FisherWindow extends JFrame {
 
-    private final FisherEqAreaPlot plot;
+    final FisherEqAreaPlot plot;
     // private final JPanel contentPane;
     
     private class FisherPanel extends JPanel implements Printable {
@@ -53,10 +53,10 @@ public class FisherWindow extends JFrame {
     }
     
     public FisherWindow() {
-        setPreferredSize(new Dimension(800, 800));
+        setPreferredSize(new Dimension(900, 900));
         setTitle("Fisher analysis");
         JPanel contentPane = new FisherPanel();
-        plot = new FisherEqAreaPlot(null, null, new Rectangle2D.Double(50, 50, 700, 700));
+        plot = new FisherEqAreaPlot(null, null, new Rectangle2D.Double(50, 50, 800, 800));
         contentPane.setOpaque(true); //content panes must be opaque
         setContentPane(contentPane);
         pack();

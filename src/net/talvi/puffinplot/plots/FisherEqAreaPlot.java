@@ -10,12 +10,14 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import net.talvi.puffinplot.GraphDisplay;
 import net.talvi.puffinplot.PlotParams;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.Suite;
 import net.talvi.puffinplot.data.FisherValues;
+import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Vec3;
 
 public class FisherEqAreaPlot extends EqAreaPlot {
@@ -26,6 +28,8 @@ public class FisherEqAreaPlot extends EqAreaPlot {
     
     private static final Stroke thinStroke =
             new BasicStroke(0.0f);
+    
+    private boolean groupedBySite = true;
     
     public FisherEqAreaPlot(GraphDisplay parent, PlotParams params,
             Rectangle2D dimensions) {
@@ -41,9 +45,11 @@ public class FisherEqAreaPlot extends EqAreaPlot {
         
         clearPoints();
         drawAxes(g, xo, yo, radius);
-        Suite suite = PuffinApp.getApp().getSuite();
+        Suite suite = PuffinApp.getInstance().getSuite();
         if (suite==null) return;
-        List<FisherValues> fishers = suite.getFishers();
+        List<FisherValues> fishers = groupedBySite 
+                ? suite.getFishers()
+                : Collections.singletonList(suite.getSuiteFisher());
         if (fishers==null) return;
 
         final AlphaComposite translucent =
@@ -76,16 +82,33 @@ public class FisherEqAreaPlot extends EqAreaPlot {
             g.setStroke(thinStroke);
             g.draw(ellipse);
             
+            if (groupedBySite) {
             g.setStroke(dashedStroke);
             for (Vec3 w: fisher.getDirections()) {
                 g.draw(new Line2D.Double(meanPoint, project(w, xo, yo, radius)));
             }
             g.setStroke(oldStroke);
+            } else {
+                g.setStroke(thinStroke);
+                for (Sample s: PuffinApp.getInstance().getSelectedSamples()) {
+                    Point2D p = project(s.getPca().getDirection(), xo, yo, radius);
+                    g.draw(new Line2D.Double(p.getX()-10, p.getY(), p.getX()+10, p.getY()));
+                    g.draw(new Line2D.Double(p.getX(), p.getY()-10, p.getX(), p.getY()+10));
+                }
+            }
 
             first = false;
         }
 
         drawPoints(g);
+    }
+
+    public boolean isGroupedBySite() {
+        return groupedBySite;
+    }
+
+    public void setGroupedBySite(boolean groupedBySite) {
+        this.groupedBySite = groupedBySite;
     }
 
 }

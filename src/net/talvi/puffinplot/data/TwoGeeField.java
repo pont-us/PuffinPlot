@@ -24,7 +24,7 @@ public enum TwoGeeField {
     SAMPLEDIP(Double.class, "Sample Dip", "Sample dip"),
     FORMAZ(Double.class, "Formation Dip Azimuth", "Formation dip azimuth"),
     FORMDIP(Double.class, "Formation Dip", "Formation dip"),
-    MAGDEV(Double.class, "Mag Dev", "Local deviation"),
+    MAGDEV(Double.class, "Mag Dev", "Magnetic deviation"),
     XCORR(Double.class, "X corr"),
     YCORR(Double.class, "Y corr"),
     ZCORR(Double.class, "Z corr"),
@@ -49,6 +49,7 @@ public enum TwoGeeField {
     TIMESTAMP(String.class, "Sample Timestamp"),
     AREA(Double.class, "Area"),
     PP_SELECTED(Boolean.class, "PUFFIN selected"),
+    PP_ANCHOR_PCA(Boolean.class, "PUFFIN anchor PCA"),
     UNKNOWN(Object.class, null);
     
     private final String heading;

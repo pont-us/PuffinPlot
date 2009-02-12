@@ -92,14 +92,13 @@ public class CorrectionWindow extends JFrame implements ActionListener {
         cp.add(buttonPane);
 
         pack();
-        setVisible(true);
     }
 
     public void actionPerformed(ActionEvent event) {
         if (event.getSource() == cancelButton)
             setVisible(false);
         if (event.getSource() == setButton) {
-            Sample[] samples = PuffinApp.getApp().getSelectedSamples();
+            Sample[] samples = PuffinApp.getInstance().getSelectedSamples();
             for (TwoGeeField field : fields) {
                 if (checkBoxMap.get(field).isSelected()) {
                     double value = Double.parseDouble(
@@ -108,6 +107,7 @@ public class CorrectionWindow extends JFrame implements ActionListener {
                         for (Datum d: s.getData()) d.setValue(field, value);
                 }
             }
+            setVisible(false);
         }
     }
 }

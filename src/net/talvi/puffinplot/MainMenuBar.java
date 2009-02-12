@@ -22,6 +22,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import net.talvi.puffinplot.PuffinPrefs;
 import net.talvi.puffinplot.PuffinPrefs.RecentFile;
+import net.talvi.puffinplot.data.Sample;
 
 public class MainMenuBar extends JMenuBar {
 
@@ -35,7 +36,7 @@ public class MainMenuBar extends JMenuBar {
         
     public MainMenuBar() {
         final JMenu fileMenu = new JMenu("File");
-        final PuffinApp app = PuffinApp.getApp();
+        final PuffinApp app = PuffinApp.getInstance();
         final PuffinActions actions = app.getActions();
 
         recentFilesMenu = new JMenu("Open recent file");
@@ -64,45 +65,46 @@ public class MainMenuBar extends JMenuBar {
         {
             @Override
             public boolean isSelected() {
-                try {
-                    return app.getMainWindow().getGraphDisplay().isDragPlotMode();
-                } catch (NullPointerException e) {
-                    return false;
-                }
+                MainWindow w = app.getMainWindow();
+                return w==null ? false : w.getGraphDisplay().isDragPlotMode();
             }
         };
+        movePlotsItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                GraphDisplay gd = app.getMainWindow().getGraphDisplay();
+                gd.setDragPlotMode(!gd.isDragPlotMode());
+                gd.repaint();
+            }
+        });
         editMenu.add(movePlotsItem);
+        addSimpleItem(editMenu, actions.editCorrections, '\u0000');
         addSimpleItem(editMenu, actions.flipSample, '\u0000');
-        movePlotsItem.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent event) {
-                        GraphDisplay gd = app.getMainWindow().getGraphDisplay();
-                        gd.setDragPlotMode(!gd.isDragPlotMode());
-                        gd.repaint();
-      } }
-        
-        );
         
         JMenu calcMenu = new JMenu("Calculate");
         addSimpleItem(calcMenu, actions.pcaOnSelection, 'R');
+        addSimpleItem(calcMenu, actions.anchoredPcaOnSelection, 'T');
         
-        final JCheckBoxMenuItem anchorItem = new JCheckBoxMenuItem("Anchor PCA")
-        {
-            @Override
-            public boolean getState() {
-                return app.getPrefs().isPcaAnchored();
-            }
-        };
-        calcMenu.add(anchorItem);
-        anchorItem.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent event) {
-                PuffinPrefs prefs = app.getPrefs();
-                prefs.setPcaAnchored(!prefs.isPcaAnchored());
-            }
-        });
+//        final JCheckBoxMenuItem anchorItem = new JCheckBoxMenuItem("Anchor PCA")
+//        {
+//            @Override
+//            public boolean getState() {
+//                return app.getSample().isPcaAnchored();
+//            }
+//        };
+//        calcMenu.add(anchorItem);
+//        anchorItem.addChangeListener(new ChangeListener() {
+//            public void stateChanged(ChangeEvent event) {
+//                for (Sample s: app.getSelectedSamples()) {
+//                    s.setPcaAnchored(anchorItem.isSelected());
+//                    s.doPca();
+//                }
+//                app.updateDisplay();
+//            }
+//        });
         
         addSimpleItem(calcMenu, actions.fisher, 'F');
-        addSimpleItem(calcMenu, actions.fisherOnPca, 'G');
+        addSimpleItem(calcMenu, actions.fisherBySite, 'G');
+        addSimpleItem(calcMenu, actions.fisherBySample, 'H');
         addSimpleItem(calcMenu, actions.clear, 'Z');
         
         // calcMenu.add(new JCheckBoxMenuItem("Lock axis scale"));
@@ -112,7 +114,6 @@ public class MainMenuBar extends JMenuBar {
         { JFrame window(PuffinApp app) {return app.getTableWindow();}});
         windowMenu.add(new WindowMenuItem("Fisher EA plot") 
         { JFrame window(PuffinApp app) {return app.getFisherWindow();}});
-        
         
         JMenu helpMenu = new JMenu("Help");
         helpMenu.add(app.getActions().about);
@@ -133,13 +134,13 @@ public class MainMenuBar extends JMenuBar {
     void updateRecentFiles() {
         recentFilesMenu.removeAll();
         final List<RecentFile> recentFiles =
-                PuffinApp.getApp().getPrefs().getRecentFiles();
+                PuffinApp.getInstance().getPrefs().getRecentFiles();
         if (recentFiles.size() == 0)
             recentFilesMenu.add(noRecentFiles);
         for (final PuffinPrefs.RecentFile recent : recentFiles) {
             recentFilesMenu.add(new AbstractAction() {
                 public void actionPerformed(ActionEvent arg0) {
-                    PuffinApp.getApp().openFiles(recent.getFiles());
+                    PuffinApp.getInstance().openFiles(recent.getFiles());
                 }
                 @Override
                 public Object getValue(String key) {

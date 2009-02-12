@@ -72,8 +72,8 @@ public class PuffinActions {
                 if (choice == JFileChooser.APPROVE_OPTION)
                     file = chooser.getSelectedFile();
             } else {
-                FileDialog fd = new FileDialog(app.getMainWindow(), "Save PCA/Fisher",
-                        FileDialog.SAVE);
+                FileDialog fd = new FileDialog(app.getMainWindow(),
+                        "Save PCA/Fisher", FileDialog.SAVE);
                 fd.setVisible(true);
                 String filename = fd.getFile();
                 if (filename != null) {
@@ -127,22 +127,46 @@ public class PuffinActions {
         public void actionPerformed(ActionEvent e) {
             for (Sample sample: app.getSelectedSamples())
                 if (sample.getSelectedPoints().size()>1)
-                    sample.doPca();
-            app.getMainWindow().repaint();
+                    sample.doPca(false);
+            app.updateDisplay();
         }
     };
     
-    public final Action fisher = new AbstractAction("Fisher") {
+    public final Action anchoredPcaOnSelection = new AbstractAction("PCA (anchored)") {
+        public void actionPerformed(ActionEvent e) {
+            for (Sample sample: app.getSelectedSamples())
+                if (sample.getSelectedPoints().size()>1)
+                    sample.doPca(true);
+            app.updateDisplay();
+        }
+    };
+    
+    public final Action fisher = new AbstractAction("Fisher on sample") {
         public void actionPerformed(ActionEvent e) {
             app.getSample().doFisher();
             app.getMainWindow().repaint();
         }
     };
     
-    public final Action fisherOnPca = new AbstractAction("Fisher on PCA") {
+    public final Action fisherBySite = new AbstractAction("Fisher by site") {
         public void actionPerformed(ActionEvent e) {
-            app.getSuite().doFisherOnPcas();
+            app.getFisherWindow().plot.setGroupedBySite(true);
+            app.getSuite().doFisherOnPcasBySite();
             app.getFisherWindow().setVisible(true);
+        }
+    };
+        
+    public final Action fisherBySample = new AbstractAction("Fisher on all") {
+        public void actionPerformed(ActionEvent e) {
+            app.getSuite().doFisherOnAllPcas();
+            app.getFisherWindow().plot.setGroupedBySite(false);
+            app.getFisherWindow().setVisible(true);
+        }
+    };
+    
+    public final Action editCorrections = new AbstractAction("Corrections…") {
+        public void actionPerformed(ActionEvent e) {
+            app.getCorrectionWindow().setVisible(true);
         }
     };
     
@@ -217,7 +241,7 @@ public class PuffinActions {
     
     public final Action quit = new AbstractAction("Quit") {
         public void actionPerformed(ActionEvent e) {
-            PuffinApp.getApp().getPrefs().save();
+            PuffinApp.getInstance().getPrefs().save();
             System.exit(0);
         }
     };

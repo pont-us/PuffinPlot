@@ -26,7 +26,7 @@ abstract class WindowMenuItem extends JCheckBoxMenuItem {
     }
 
     private JFrame window() {
-        final PuffinApp app = PuffinApp.getApp();
+        final PuffinApp app = PuffinApp.getInstance();
         return (app==null) ? null : window(app);
     }
     

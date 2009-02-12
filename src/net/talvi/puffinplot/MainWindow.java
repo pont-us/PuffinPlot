@@ -79,7 +79,7 @@ public class MainWindow extends JFrame {
     static class CloseListener extends WindowAdapter {
         @Override
         public void windowClosing(WindowEvent e) {
-            PuffinApp.getApp().getActions().quit.
+            PuffinApp.getInstance().getActions().quit.
             actionPerformed(new ActionEvent(this, 0, "window close"));
         }
     }

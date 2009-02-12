@@ -21,7 +21,7 @@ public abstract class Plot
     protected final PlotParams params;
     private Rectangle2D dimensions;
     private List<PlotPoint> points = new LinkedList<PlotPoint>();
-    private static final Stroke stroke = new BasicStroke();
+    private Stroke stroke = new BasicStroke();
 
     public Rectangle2D getDimensions() {
         return dimensions;
@@ -35,7 +35,7 @@ public abstract class Plot
         return 24;
     }
     
-    private static class PlotPoint {
+    private class PlotPoint {
 
         private final Shape shape;
         private final Shape highlight;
@@ -49,7 +49,7 @@ public abstract class Plot
 
         PlotPoint(Datum datum, Point2D centre,
                 boolean filled, boolean lineToHere, boolean special) {
-            double size = (plotPointSize / 2);
+            double size = (plotPointSize * Math.max(dimensions.getWidth(), 600) / (500.0 *2.0) );
             this.centre = centre;
             this.datum = datum;
             shape = new Rectangle2D.Double(centre.getX() - size, centre.getY() - size, 2 * size, 2 * size);
@@ -80,6 +80,7 @@ public abstract class Plot
     }
     
     protected void drawPoints(Graphics2D g) {
+        stroke = new BasicStroke((float) (dimensions.getWidth() / 1000.0));
         g.setStroke(stroke);
         Point2D prev = null;
         for (int i=0; i<points.size(); i++) {
