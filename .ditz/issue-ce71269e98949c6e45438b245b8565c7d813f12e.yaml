@@ -1,0 +1,23 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Proper plot scaling
+desc: |-
+  ALL plot elements (line widths, data-point sizes, axis ticks, etc.)
+  need to be explicitly scaled to current resolution, so that e.g.
+  high-resolution printouts don't get tiny data-points. Shouldn't be
+  too hard now that the underlying graphics system makes less use of
+  AffineTransforms.
+type: :bugfix
+component: PuffinPlot
+release: 
+reporter: Pontus Lurcock <pont@ou094023>
+status: :unstarted
+disposition: 
+creation_time: 2009-02-12 02:18:23.968242 Z
+references: []
+
+id: ce71269e98949c6e45438b245b8565c7d813f12e
+log_events: 
+- - 2009-02-12 02:18:25.412427 Z
+  - Pontus Lurcock <pont@ou094023>
+  - created
+  - ""
