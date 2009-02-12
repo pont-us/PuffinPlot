@@ -1,0 +1,22 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Allow hiding of points
+desc: |-
+  It should be possible to hide points from the plots, e.g. to avoid
+  scaling a Zplot to a flux jump, or to ignore a mismeasurement
+  superceded by a repetition at the same demagnetization level.
+  Needs a little thought about getting the hidden points back, though.
+type: :feature
+component: PuffinPlot
+release: 
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2009-02-12 02:30:26.741821 Z
+references: []
+
+id: 9f62c5f2e40f2f1b5ef2db0b019f7300a560438e
+log_events: 
+- - 2009-02-12 02:30:28.125561 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

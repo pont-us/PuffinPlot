@@ -54,12 +54,29 @@ public class SampleChooser extends JPanel {
         setVisibility(false, false);
     }
     
+    /**
+     * 
+     * @return Selected samples if current suite is discrete; a length-1 
+     * array containing the current sample if it's continuous.
+     * 
+     */
     public Sample[] getSelectedSamples() {
-        Object[] names = sampleList.getSelectedValues();
-        Sample[] samples = new Sample[names.length];
+        Sample[] samples;
         Suite suite = PuffinApp.getInstance().getSuite();
-        for (int i=0; i<names.length; i++)
-            samples[i] = suite.getSampleByName((String) names[i]);
+        switch (suite.getMeasType()) {
+        case DISCRETE:
+            Object[] names = sampleList.getSelectedValues();
+            samples = new Sample[names.length];
+            for (int i = 0; i < names.length; i++)
+                samples[i] = suite.getSampleByName((String) names[i]);
+            break;
+        case CONTINUOUS:
+            samples = new Sample[1];
+            samples[0] = suite.getCurrentSample();
+            break;
+        default:
+            throw new Error("Unknown measurement type.");
+        }
         return samples;
     }
 
