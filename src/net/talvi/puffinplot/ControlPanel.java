@@ -19,6 +19,7 @@ import javax.swing.KeyStroke;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.MeasurementAxis;
+import net.talvi.puffinplot.data.Sample;
 
 public class ControlPanel extends JPanel 
    implements ActionListener, ItemListener {
@@ -72,11 +73,14 @@ public class ControlPanel extends JPanel
     }
     
     void updateSample() {
-        Datum d = PuffinApp.getInstance().getSample().getDatum(0);
-        correctionField.setText(String.format(
-                "Samp. %.1f/%.1f Form. %.1f/%.1f Dev. %.1f Anc:%s",
-                d.getSampAz(), d.getSampDip(), d.getFormAz(), d.getFormDip(),
-                d.getMagDev(), d.isPcaAnchored() ? "Y" : "N"));
+        Sample s = PuffinApp.getInstance().getSample();
+        Datum d = null;
+        if (s != null) d=s.getDatum(0);
+        if (d != null)
+            correctionField.setText(String.format(
+                    "Samp. %.1f/%.1f Form. %.1f/%.1f Dev. %.1f Anc:%s",
+                    d.getSampAz(), d.getSampDip(), d.getFormAz(), d.getFormDip(),
+                    d.getMagDev(), d.isPcaAnchored() ? "Y" : "N"));
     }
 
     public void actionPerformed(ActionEvent e) {
