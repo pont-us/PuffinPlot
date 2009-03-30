@@ -1,0 +1,24 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Set PCA anchoring per sample
+desc: |-
+  PCA anchoring should be a sample property, since different samples
+  within the same suite can have demagnetization chaarcteristics
+  calling for either anchoring or no anchoring. Currently anchoring
+  is specified on PCA recalculation and must thus be explicitly specified
+  every time. This loses information when recalculating for a whole
+  batch of samples.
+type: :bugfix
+component: PuffinPlot
+release: 
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2009-03-29 19:42:54.986594 Z
+references: []
+
+id: a727d64bfda696eaa4cd8abf395bd988f65bc24f
+log_events: 
+- - 2009-03-29 19:42:56.309434 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

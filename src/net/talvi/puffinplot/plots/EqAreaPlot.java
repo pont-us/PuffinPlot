@@ -16,7 +16,7 @@ import net.talvi.puffinplot.data.Vec3;
 
  public abstract class EqAreaPlot extends Plot {
      // as fraction of radius
-    private static final float decTickLength = 0.03F;
+    private static final float decTickLength = 48f;
     private static final int decTickStep = 10;
     private static final float incTickLength = decTickLength;
     private static final int incTickNum = 9;
@@ -25,19 +25,19 @@ import net.talvi.puffinplot.data.Vec3;
         super(parent, params, dimensions);
     }
     
-    protected static void drawAxes(Graphics2D g, int xo, int yo, int radius) {
+    protected void drawAxes(Graphics2D g, int xo, int yo, int radius) {
         g.setColor(Color.BLACK);
 
         g.drawArc(xo - radius, yo - radius, radius * 2, radius * 2, 0, 360);
         for (int theta = 0; theta < 360; theta += decTickStep) {
-            double x = cos(toRadians(theta)) * radius;
-            double y = sin(toRadians(theta)) * radius;
-            g.drawLine((int) (xo + x), (int) (yo + y),
-                    (int) (xo + x * (1.0F - decTickLength)),
-                    (int) (yo + y * (1.0F - decTickLength)));
+            double x = cos(toRadians(theta));
+            double y = sin(toRadians(theta));
+            g.drawLine((int) (xo + x * radius), (int) (yo + y * radius),
+                    (int) (xo + x * (radius - decTickLength * getUnitSize())),
+                    (int) (yo + y * (radius - decTickLength * getUnitSize())));
         }
 
-        final int l = (int) (radius * incTickLength / 2);
+        final int l = (int) (incTickLength * getUnitSize() / 2.0);
         for (int i = 0; i < incTickNum; i++) {
             int x = (int) ((i * radius) / incTickNum);
             g.drawLine(xo + x, yo - l, xo + x, yo + l);

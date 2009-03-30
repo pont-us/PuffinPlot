@@ -76,7 +76,7 @@ public class GraphDisplay extends JPanel implements Printable {
         };
         
         setPreferredSize(new Dimension(1200, 800));
-        setMaximumSize(new Dimension(1200, 800));
+        setMaximumSize(getPreferredSize());
         zoomTransform = AffineTransform.getScaleInstance(1.0, 1.0);
 
         setLayout(null);

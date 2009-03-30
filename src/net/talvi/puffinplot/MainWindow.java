@@ -37,7 +37,7 @@ public class MainWindow extends JFrame {
         // mainPanel.add(graphDisplay = new GraphDisplay(), BorderLayout.CENTER);
         graphDisplay = new GraphDisplay();
         jsp = new JScrollPane(getGraphDisplay());
-        jsp.setMaximumSize(new Dimension(1000,700));
+        // jsp.setMaximumSize(new Dimension(1000,700));
         mainPanel.add(jsp);
         mainPanel.add(welcomeMessage =
                 new JLabel("Welcome to PuffinPlot. This puffin was born on "+

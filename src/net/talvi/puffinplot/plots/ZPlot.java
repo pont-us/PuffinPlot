@@ -41,12 +41,13 @@ public class ZPlot extends Plot {
         return new Rectangle2D.Double(xMin, yMin, xMax-xMin, yMax-yMin);
     }
     
-    private static void drawLine(Graphics2D g, double x, double y,
+    private void drawLine(Graphics2D g, double x, double y,
             double angleRad, ZplotAxes axes, Color colour) {
         Rectangle oldClip = g.getClipBounds();
         g.setClip(axes.getBounds());
         double dx = 800*sin(angleRad);
         double dy = 800*cos(angleRad);
+        g.setStroke(getStroke());
         g.setColor(colour);
         g.draw(new Line2D.Double(x-dx, y+dy, x+dx, y-dy));
         g.setClip(oldClip);
@@ -68,9 +69,10 @@ public class ZPlot extends Plot {
                 extent(data, correction, vVs, MeasurementAxis.MINUSZ);
 
         ZplotAxes axes = new ZplotAxes(extent1.createUnion(extent2),
-                getDimensions(), vVs);
+                getDimensions(), vVs, getUnitSize());
         
         g.setColor(Color.BLACK);
+        g.setStroke(getStroke());
         axes.draw(g);
 
         final double scale = axes.getScale();

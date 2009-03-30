@@ -2,6 +2,7 @@ package net.talvi.puffinplot.plots;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.Stroke;
@@ -21,7 +22,9 @@ public abstract class Plot
     protected final PlotParams params;
     private Rectangle2D dimensions;
     private List<PlotPoint> points = new LinkedList<PlotPoint>();
-    private Stroke stroke = new BasicStroke();
+    private static final float UNIT_SCALE = (float) 0.0001f; 
+    private Stroke stroke;
+    private float unitSize;
 
     public Rectangle2D getDimensions() {
         return dimensions;
@@ -34,6 +37,14 @@ public abstract class Plot
     public int getMargin() {
         return 24;
     }
+
+    public Stroke getStroke() {
+        return stroke;
+    }
+    
+    public float getUnitSize() {
+        return unitSize;
+    }
     
     private class PlotPoint {
 
@@ -44,17 +55,19 @@ public abstract class Plot
         private final boolean lineToHere;
         private final boolean special;
         private final Point2D centre;
-        private static final double highlightSize = 1.6;
-        private static final double plotPointSize = 5;
+        private static final double HIGHLIGHT_SCALE = 1.6;
+        private static final double PLOT_POINT_SIZE = 24;
 
         PlotPoint(Datum datum, Point2D centre,
                 boolean filled, boolean lineToHere, boolean special) {
-            double size = (plotPointSize * Math.max(dimensions.getWidth(), 600) / (500.0 *2.0) );
+            double size = PLOT_POINT_SIZE * getUnitSize();
             this.centre = centre;
             this.datum = datum;
-            shape = new Rectangle2D.Double(centre.getX() - size, centre.getY() - size, 2 * size, 2 * size);
-            double hs = highlightSize;
-            highlight = new Rectangle2D.Double(centre.getX() - size * hs, centre.getY() - size * hs,
+            shape = new Rectangle2D.Double(centre.getX() - size,
+                    centre.getY() - size, 2 * size, 2 * size);
+            final double hs = HIGHLIGHT_SCALE;
+            highlight = new Rectangle2D.Double(centre.getX() - size * hs,
+                    centre.getY() - size * hs,
                     2 * size * hs, 2 * size * hs);
             this.filled = filled;
             this.lineToHere = lineToHere;
@@ -77,11 +90,18 @@ public abstract class Plot
         this.params = params;
         this.parent = parent;
         this.dimensions = dimensions;
+        float maxDim = 800;
+        if (parent != null) {
+            Dimension dims = parent.getMaximumSize();
+            maxDim = (float) Math.max(dims.getWidth(), dims.getHeight());
+        }
+        unitSize = maxDim * UNIT_SCALE;
+        stroke = new BasicStroke(getUnitSize() * 8);
+        // TODO fix this; parent should never be null (see FisherEqAreaPlot).
     }
     
     protected void drawPoints(Graphics2D g) {
-        stroke = new BasicStroke((float) (dimensions.getWidth() / 1000.0));
-        g.setStroke(stroke);
+        g.setStroke(getStroke());
         Point2D prev = null;
         for (int i=0; i<points.size(); i++) {
             points.get(i).draw(g);
@@ -93,7 +113,8 @@ public abstract class Plot
         }
     }
         
-    protected void addPoint(Datum d, Point2D p, boolean filled, boolean special, boolean line) {
+    protected void addPoint(Datum d, Point2D p, boolean filled,
+            boolean special, boolean line) {
         points.add(new PlotPoint(d, p, filled, line, special));
     }
     
@@ -105,7 +126,7 @@ public abstract class Plot
         if (e.isShiftDown()) {
             for (PlotPoint s : points) {
                 if (s.centre.distance(position) < 24)
-                    s.datum.setSelected(e.getButton() == e.BUTTON1);
+                    s.datum.setSelected(e.getButton() == MouseEvent.BUTTON1);
             }
         } else {
             for (PlotPoint s : points) {

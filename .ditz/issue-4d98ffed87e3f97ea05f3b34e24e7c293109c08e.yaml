@@ -1,0 +1,20 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Add file extension on saving
+desc: |-
+  PuffinPlot should automatically add the .ppl extension when saving
+  files.
+type: :bugfix
+component: PuffinPlot
+release: 
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2009-03-26 20:43:44.996465 Z
+references: []
+
+id: 4d98ffed87e3f97ea05f3b34e24e7c293109c08e
+log_events: 
+- - 2009-03-26 20:43:46.851878 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

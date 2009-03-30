@@ -20,7 +20,7 @@ public class ZplotAxes {
     private final PlotAxis[] axes;
     
     public ZplotAxes(Rectangle2D dataArea, Rectangle2D plotArea,
-            MeasurementAxis vVs) {
+            MeasurementAxis vVs, float unitSize) {
         super();
 
         Rectangle2D.Double extDataArea = new Rectangle2D.Double();
@@ -62,7 +62,7 @@ public class ZplotAxes {
         
         axes = new PlotAxis[4];
         for (int i=0; i<4; i++)
-            axes[i] = new PlotAxis(lengths[i], directions[i], step, null, labels[i]);
+            axes[i] = new PlotAxis(lengths[i], directions[i], step, null, labels[i], unitSize);
         
         extDataArea.setRect(-axes[2].getLength(), -axes[1].getLength(),
                 axes[0].getLength()+axes[2].getLength(),

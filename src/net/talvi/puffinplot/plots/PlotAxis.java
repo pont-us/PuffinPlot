@@ -9,7 +9,12 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.text.AttributedString;
 
+import static java.awt.font.TextAttribute.SUPERSCRIPT;
+import static java.awt.font.TextAttribute.SUPERSCRIPT_SUPER;
+
 class PlotAxis {
+    private float unitSize;
+    private static final float TICK_LENGTH = 48;
 
     static enum Direction {
         RIGHT("R","E"), DOWN("D","S"),
@@ -57,7 +62,7 @@ class PlotAxis {
     private final String endLabel;
     
     PlotAxis(double extent, PlotAxis.Direction direction, double stepSize,
-            int numSteps, String label, String endLabel) {
+            int numSteps, String label, String endLabel, float unitSize) {
         super();
         this.extent = extent;
         this.numSteps = numSteps;
@@ -65,6 +70,7 @@ class PlotAxis {
         this.direction = direction;
         this.label = label;
         this.endLabel = endLabel;
+        this.unitSize = unitSize;
         int nf = 0;
         while (getLength() * Math.pow(10, nf) > 1000) nf -= 3;
         while (getLength() * Math.pow(10, nf) < 1) nf += 1;
@@ -72,9 +78,9 @@ class PlotAxis {
     }
     
     PlotAxis(double extent, Direction direction, double stepSize, String label,
-            String endLabel) {
+            String endLabel, float unitSize) {
         this(extent, direction, stepSize, (int) (Math.ceil(extent/stepSize)),
-                label, endLabel);
+                label, endLabel, unitSize);
     }
 
     public static double saneStepSize(double extent) {
@@ -92,8 +98,8 @@ class PlotAxis {
                                20 ;
     }
     
-    private static void putText(Graphics2D g, AttributedString text, double x, double y,
-            Direction dir, double θ, double padding) {
+    private static void putText(Graphics2D g, AttributedString text, double x,
+            double y, Direction dir, double θ, double padding) {
         FontRenderContext frc = g.getFontRenderContext();
         text.addAttribute(TextAttribute.FAMILY, "SansSerif");
         TextLayout layout = new TextLayout(text.getIterator(), frc);
@@ -122,7 +128,7 @@ class PlotAxis {
     
     public void draw(Graphics2D g, double scale, int xOrig, int yOrig) {
         int x = 0, y = 0;
-        double t = 5;
+        double t = unitSize * TICK_LENGTH / 2.0f;
         switch (direction) {
         case RIGHT: x = 1; break;
         case DOWN: y = 1; break;
@@ -139,7 +145,8 @@ class PlotAxis {
         double xLen = x*getLength()*scale;
         double yLen = y*getLength()*scale;
         g.draw(new Line2D.Double(xOrig, yOrig, xOrig+xLen, yOrig+yLen));
-        if (getLength()!=0) putText(g, new AttributedString(String.format("%3.1f", getNormalizedLength())),
+        if (getLength()!=0) putText(g,
+                new AttributedString(String.format("%3.1f", getNormalizedLength())),
                 xOrig+xLen, yOrig+yLen, direction.labelPos(), 0, 5);
         if (label != null) {
             String text = label;
@@ -147,17 +154,20 @@ class PlotAxis {
                 text += " \u00D710";
                 String exponent = Integer.toString(-normalizationFactor);
                 AttributedString as = new AttributedString(text+exponent);
-                as.addAttribute(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUPER,
+                as.addAttribute(SUPERSCRIPT, SUPERSCRIPT_SUPER,
                         text.length(), text.length()+exponent.length());
-                putText(g, as, xOrig+xLen/2, yOrig+yLen/2, direction.labelPos(), direction.labelRot(), 15);
+                putText(g, as, xOrig+xLen/2, yOrig+yLen/2,
+                        direction.labelPos(), direction.labelRot(), 15);
             } else {
-                putText(g, new AttributedString(text), xOrig+xLen/2, yOrig+yLen/2, direction.labelPos(),
+                putText(g, new AttributedString(text), xOrig+xLen/2,
+                        yOrig+yLen/2, direction.labelPos(),
                         direction.labelRot(), 15);
             }
         }
         
         if (endLabel != null) {
-            putText(g, new AttributedString(endLabel), xOrig+xLen, yOrig+yLen, direction, 0, 8);
+            putText(g, new AttributedString(endLabel), xOrig+xLen, yOrig+yLen,
+                    direction, 0, 8);
         }
     }
 
