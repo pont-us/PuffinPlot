@@ -2,7 +2,10 @@ package net.talvi.puffinplot.plots;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
+import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,21 +17,22 @@ import net.talvi.puffinplot.data.Sample;
 
 public class DataTable extends Plot {
 
-    private final int xSpacing = 80;
-    private final int ySpacing = 20;
+    private final int xSpacing = (int) (600 * getUnitSize());
+    private final int ySpacing = (int) (120 * getUnitSize());
     private final List<String> headers = 
             Arrays.asList(new String[] {"demag.", "dec.", "inc.", "int."});
     
     public DataTable(GraphDisplay parent, PlotParams params, Rectangle2D dimensions) {
         super(parent, params, dimensions);
     }
-    
+
     private void writeLine(Graphics2D g, float yPos, boolean selected, List<String> values) {
-        if (selected) g.drawString("‣", (float) getDimensions().getMinX(),
+
+        if (selected) writeString(g, "‣", (float) getDimensions().getMinX(),
                 (float) (getDimensions().getMinY() + yPos));
         float xPos = 10;
         for (String s: values) {
-            g.drawString(s, (float) (getDimensions().getMinX() + xPos),
+            writeString(g, s, (float) (getDimensions().getMinX() + xPos),
                     (float) (getDimensions().getMinY() + yPos));
             xPos += xSpacing;
         }

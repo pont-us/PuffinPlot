@@ -35,7 +35,7 @@ public class MainWindow extends JFrame {
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
         // mainPanel.add(graphDisplay = new GraphDisplay(), BorderLayout.CENTER);
-        graphDisplay = new GraphDisplay();
+        graphDisplay = new MainGraphDisplay();
         jsp = new JScrollPane(getGraphDisplay());
         // jsp.setMaximumSize(new Dimension(1000,700));
         mainPanel.add(jsp);

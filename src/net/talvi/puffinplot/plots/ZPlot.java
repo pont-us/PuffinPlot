@@ -69,7 +69,7 @@ public class ZPlot extends Plot {
                 extent(data, correction, vVs, MeasurementAxis.MINUSZ);
 
         ZplotAxes axes = new ZplotAxes(extent1.createUnion(extent2),
-                getDimensions(), vVs, getUnitSize());
+                getDimensions(), vVs,this);
         
         g.setColor(Color.BLACK);
         g.setStroke(getStroke());

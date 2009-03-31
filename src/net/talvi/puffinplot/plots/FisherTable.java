@@ -28,11 +28,11 @@ public class FisherTable extends Plot {
         if (fish != null) {
             float xOrig = (float) getDimensions().getMinX();
             float yOrig = (float) getDimensions().getMinY();
-            g.drawString(
+            writeString(g,
                     String.format("Dec %.2f  Inc %.2f",
                     fish.getMeanDirection().decDegrees(),
                     fish.getMeanDirection().incDegrees()), xOrig, yOrig+16);
-            g.drawString(String.format(/*"α*/"a95 %.2f  k %.2f" 
+            writeString(g, String.format(/*"α*/"a95 %.2f  k %.2f"
                     ,fish.getA95(), fish.getK()), xOrig, yOrig + 32);
         }
     }

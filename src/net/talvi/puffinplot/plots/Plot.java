@@ -7,11 +7,18 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.event.MouseEvent;
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextAttribute;
+import java.awt.font.TextLayout;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.text.AttributedString;
+import java.util.HashMap;
+import static java.text.AttributedCharacterIterator.Attribute;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import net.talvi.puffinplot.GraphDisplay;
 import net.talvi.puffinplot.PlotParams;
 import net.talvi.puffinplot.data.Datum;
@@ -22,9 +29,13 @@ public abstract class Plot
     protected final PlotParams params;
     private Rectangle2D dimensions;
     private List<PlotPoint> points = new LinkedList<PlotPoint>();
-    private static final float UNIT_SCALE = (float) 0.0001f; 
+    private static final float UNIT_SCALE = (float) 0.0001f;
     private Stroke stroke;
     private float unitSize;
+    private static final float TICK_LENGTH_IN_UNITS = 48.0f;
+    private static final float FONT_SIZE_IN_UNITS = 100.0f;
+    private Map<Attribute,Object> attributeMap
+     = new HashMap<Attribute, Object>();
 
     public Rectangle2D getDimensions() {
         return dimensions;
@@ -44,6 +55,27 @@ public abstract class Plot
     
     public float getUnitSize() {
         return unitSize;
+    }
+
+    public float getTickLength() {
+        return TICK_LENGTH_IN_UNITS * getUnitSize();
+    }
+
+    public float getFontSize() {
+        return FONT_SIZE_IN_UNITS * getUnitSize();
+    }
+
+    public Map<? extends Attribute,?>
+            getTextAttributes() {
+        return attributeMap;
+    }
+
+    protected void writeString(Graphics2D g, String text, float x, float y) {
+        AttributedString as = new AttributedString(text);
+        as.addAttributes(getTextAttributes(), 0, text.length());
+        FontRenderContext frc = g.getFontRenderContext();
+        TextLayout layout = new TextLayout(as.getIterator(), frc);
+        layout.draw(g, x, y);
     }
     
     private class PlotPoint {
@@ -98,6 +130,10 @@ public abstract class Plot
         unitSize = maxDim * UNIT_SCALE;
         stroke = new BasicStroke(getUnitSize() * 8);
         // TODO fix this; parent should never be null (see FisherEqAreaPlot).
+
+        attributeMap.put(TextAttribute.FAMILY, "SansSerif");
+        attributeMap.put(TextAttribute.SIZE, getFontSize());
+
     }
     
     protected void drawPoints(Graphics2D g) {

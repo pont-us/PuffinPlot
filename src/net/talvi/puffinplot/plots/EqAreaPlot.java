@@ -16,9 +16,7 @@ import net.talvi.puffinplot.data.Vec3;
 
  public abstract class EqAreaPlot extends Plot {
      // as fraction of radius
-    private static final float decTickLength = 48f;
     private static final int decTickStep = 10;
-    private static final float incTickLength = decTickLength;
     private static final int incTickNum = 9;
 
     protected EqAreaPlot(GraphDisplay parent, PlotParams params, Rectangle2D dimensions) {
@@ -33,11 +31,11 @@ import net.talvi.puffinplot.data.Vec3;
             double x = cos(toRadians(theta));
             double y = sin(toRadians(theta));
             g.drawLine((int) (xo + x * radius), (int) (yo + y * radius),
-                    (int) (xo + x * (radius - decTickLength * getUnitSize())),
-                    (int) (yo + y * (radius - decTickLength * getUnitSize())));
+                    (int) (xo + x * (radius - getTickLength())),
+                    (int) (yo + y * (radius - getTickLength())));
         }
 
-        final int l = (int) (incTickLength * getUnitSize() / 2.0);
+        final int l = (int) (getTickLength() / 2.0);
         for (int i = 0; i < incTickNum; i++) {
             int x = (int) ((i * radius) / incTickNum);
             g.drawLine(xo + x, yo - l, xo + x, yo + l);

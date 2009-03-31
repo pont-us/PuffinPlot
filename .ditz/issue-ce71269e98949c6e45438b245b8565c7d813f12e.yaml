@@ -10,8 +10,8 @@ type: :bugfix
 component: PuffinPlot
 release: 
 reporter: Pontus Lurcock <pont@ou094023>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2009-02-12 02:18:23.968242 Z
 references: []
 
@@ -21,3 +21,10 @@ log_events:
   - Pontus Lurcock <pont@ou094023>
   - created
   - ""
+- - 2009-03-31 20:51:21.203928 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Fixed as specified. I suspect that a couple of unanticipated 
+    consequences may eventuate but these can be opened as new, more
+    sepcific bugs.

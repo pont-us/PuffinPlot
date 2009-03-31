@@ -150,7 +150,7 @@ public class PuffinActions {
     
     public final Action fisherBySite = new AbstractAction("Fisher by site") {
         public void actionPerformed(ActionEvent e) {
-            app.getFisherWindow().plot.setGroupedBySite(true);
+            app.getFisherWindow().getPlot().setGroupedBySite(true);
             app.getSuite().doFisherOnPcasBySite();
             app.getFisherWindow().setVisible(true);
         }
@@ -159,7 +159,7 @@ public class PuffinActions {
     public final Action fisherBySample = new AbstractAction("Fisher on all") {
         public void actionPerformed(ActionEvent e) {
             app.getSuite().doFisherOnAllPcas();
-            app.getFisherWindow().plot.setGroupedBySite(false);
+            app.getFisherWindow().getPlot().setGroupedBySite(false);
             app.getFisherWindow().setVisible(true);
         }
     };

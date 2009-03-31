@@ -13,53 +13,57 @@ import javax.swing.JPanel;
 import net.talvi.puffinplot.plots.FisherEqAreaPlot;
 
 public class FisherWindow extends JFrame {
+    private FisherGraphDisplay graphDisplay;
 
-    final FisherEqAreaPlot plot;
+    // final FisherEqAreaPlot plot;
     // private final JPanel contentPane;
     
-    private class FisherPanel extends JPanel implements Printable {
-        
-        public FisherPanel() {
-            setBackground(Color.WHITE);
-        }
-        
-        @Override
-        public void paint(Graphics g) {
-            Graphics2D g2 = (Graphics2D) g;
-            g2.setRenderingHints(PuffinRenderingHints.getInstance());
-            super.paint(g2);
-            plot.draw(g2);
-        }
-
-        public int print(Graphics graphics, PageFormat pf, int pageIndex) throws PrinterException {
-                    pf.setOrientation(PageFormat.LANDSCAPE);
-            if (pageIndex > 0) return NO_SUCH_PAGE;
-
-            setDoubleBuffered(false);
-            Graphics2D g2 = (Graphics2D) graphics;
-            g2.translate(pf.getImageableX(), pf.getImageableY());
-            double xScale = pf.getImageableWidth() / getWidth();
-            double yScale = pf.getImageableHeight() / getHeight();
-            double scale = Math.min(xScale, yScale);
-            g2.scale(scale, scale);
-            g2.setPaint(Color.BLACK);
-            g2.setPaintMode();
-            plot.draw(g2);
-            printChildren(graphics);
-            setDoubleBuffered(true);
-            return PAGE_EXISTS;
-        }
-        
-    }
+//    private class FisherPanel extends JPanel implements Printable {
+//
+//        public FisherPanel() {
+//            setBackground(Color.WHITE);
+//        }
+//
+//        @Override
+//        public void paint(Graphics g) {
+//            Graphics2D g2 = (Graphics2D) g;
+//            g2.setRenderingHints(PuffinRenderingHints.getInstance());
+//            super.paint(g2);
+//            plot.draw(g2);
+//        }
+//
+//        public int print(Graphics graphics, PageFormat pf, int pageIndex) throws PrinterException {
+//                    pf.setOrientation(PageFormat.LANDSCAPE);
+//            if (pageIndex > 0) return NO_SUCH_PAGE;
+//
+//            setDoubleBuffered(false);
+//            Graphics2D g2 = (Graphics2D) graphics;
+//            g2.translate(pf.getImageableX(), pf.getImageableY());
+//            double xScale = pf.getImageableWidth() / getWidth();
+//            double yScale = pf.getImageableHeight() / getHeight();
+//            double scale = Math.min(xScale, yScale);
+//            g2.scale(scale, scale);
+//            g2.setPaint(Color.BLACK);
+//            g2.setPaintMode();
+//            plot.draw(g2);
+//            printChildren(graphics);
+//            setDoubleBuffered(true);
+//            return PAGE_EXISTS;
+//        }
+//
+//    }
     
     public FisherWindow() {
-        setPreferredSize(new Dimension(900, 900));
+        setPreferredSize(new Dimension(600, 600));
         setTitle("Fisher analysis");
-        JPanel contentPane = new FisherPanel();
-        plot = new FisherEqAreaPlot(null, null, new Rectangle2D.Double(50, 50, 800, 800));
+        JPanel contentPane = graphDisplay = new FisherGraphDisplay();
         contentPane.setOpaque(true); //content panes must be opaque
         setContentPane(contentPane);
         pack();
+    }
+
+    public FisherEqAreaPlot getPlot() {
+        return (FisherEqAreaPlot) graphDisplay.plots.get("fisherplot");
     }
     
 }

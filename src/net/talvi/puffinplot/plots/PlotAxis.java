@@ -13,8 +13,7 @@ import static java.awt.font.TextAttribute.SUPERSCRIPT;
 import static java.awt.font.TextAttribute.SUPERSCRIPT_SUPER;
 
 class PlotAxis {
-    private float unitSize;
-    private static final float TICK_LENGTH = 48;
+    private Plot plot;
 
     static enum Direction {
         RIGHT("R","E"), DOWN("D","S"),
@@ -62,7 +61,7 @@ class PlotAxis {
     private final String endLabel;
     
     PlotAxis(double extent, PlotAxis.Direction direction, double stepSize,
-            int numSteps, String label, String endLabel, float unitSize) {
+            int numSteps, String label, String endLabel, Plot plot) {
         super();
         this.extent = extent;
         this.numSteps = numSteps;
@@ -70,7 +69,7 @@ class PlotAxis {
         this.direction = direction;
         this.label = label;
         this.endLabel = endLabel;
-        this.unitSize = unitSize;
+        this.plot = plot;
         int nf = 0;
         while (getLength() * Math.pow(10, nf) > 1000) nf -= 3;
         while (getLength() * Math.pow(10, nf) < 1) nf += 1;
@@ -78,9 +77,9 @@ class PlotAxis {
     }
     
     PlotAxis(double extent, Direction direction, double stepSize, String label,
-            String endLabel, float unitSize) {
+            String endLabel, Plot plot) {
         this(extent, direction, stepSize, (int) (Math.ceil(extent/stepSize)),
-                label, endLabel, unitSize);
+                label, endLabel, plot);
     }
 
     public static double saneStepSize(double extent) {
@@ -97,11 +96,17 @@ class PlotAxis {
                maxValue <= 60 ? 10 :
                                20 ;
     }
-    
-    private static void putText(Graphics2D g, AttributedString text, double x,
+
+    private void putText(Graphics2D g, String textString, double x,
             double y, Direction dir, double θ, double padding) {
+        AttributedString text = new AttributedString(textString);
+        putText(g, text, textString.length(), x, y, dir, θ, padding);
+    }
+
+    private void putText(Graphics2D g, AttributedString text, int length, double x,
+            double y, Direction dir, double θ, double padding) {
+        text.addAttributes(plot.getTextAttributes(), 0, length);
         FontRenderContext frc = g.getFontRenderContext();
-        text.addAttribute(TextAttribute.FAMILY, "SansSerif");
         TextLayout layout = new TextLayout(text.getIterator(), frc);
         Rectangle2D bounds = AffineTransform.getRotateInstance(θ).
                 createTransformedShape(layout.getBounds()).getBounds2D();
@@ -128,7 +133,7 @@ class PlotAxis {
     
     public void draw(Graphics2D g, double scale, int xOrig, int yOrig) {
         int x = 0, y = 0;
-        double t = unitSize * TICK_LENGTH / 2.0f;
+        double t = plot.getTickLength() / 2.0f;
         switch (direction) {
         case RIGHT: x = 1; break;
         case DOWN: y = 1; break;
@@ -146,27 +151,28 @@ class PlotAxis {
         double yLen = y*getLength()*scale;
         g.draw(new Line2D.Double(xOrig, yOrig, xOrig+xLen, yOrig+yLen));
         if (getLength()!=0) putText(g,
-                new AttributedString(String.format("%3.1f", getNormalizedLength())),
+                String.format("%3.1f", getNormalizedLength()),
                 xOrig+xLen, yOrig+yLen, direction.labelPos(), 0, 5);
         if (label != null) {
-            String text = label;
+            String text = new String(label);
             if (normalizationFactor != 0) {
-                text += " \u00D710";
-                String exponent = Integer.toString(-normalizationFactor);
-                AttributedString as = new AttributedString(text+exponent);
+                text += " \u00D710"; // 00D7 is the multiplication sign
+                String exp = Integer.toString(-normalizationFactor);
+                text += exp;
+                AttributedString as = new AttributedString(text);
                 as.addAttribute(SUPERSCRIPT, SUPERSCRIPT_SUPER,
-                        text.length(), text.length()+exponent.length());
-                putText(g, as, xOrig+xLen/2, yOrig+yLen/2,
+                        text.length()-exp.length(), text.length());
+                putText(g, as, text.length(), xOrig+xLen/2, yOrig+yLen/2,
                         direction.labelPos(), direction.labelRot(), 15);
             } else {
-                putText(g, new AttributedString(text), xOrig+xLen/2,
+                putText(g, text, xOrig+xLen/2,
                         yOrig+yLen/2, direction.labelPos(),
                         direction.labelRot(), 15);
             }
         }
         
         if (endLabel != null) {
-            putText(g, new AttributedString(endLabel), xOrig+xLen, yOrig+yLen,
+            putText(g, endLabel, xOrig+xLen, yOrig+yLen,
                     direction, 0, 8);
         }
     }

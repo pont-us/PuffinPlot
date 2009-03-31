@@ -22,12 +22,12 @@ import net.talvi.puffinplot.data.Vec3;
 
 public class FisherEqAreaPlot extends EqAreaPlot {
 
-    private static final Stroke dashedStroke =
+    private final Stroke dashedStroke =
             new BasicStroke(0.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL,
-            1.0f, new float[] {1,0,1}, 0);
+            10.0f * getUnitSize(), new float[] {1,0,1}, 0);
     
-    private static final Stroke thinStroke =
-            new BasicStroke(0.0f);
+    private final Stroke thinStroke =
+            new BasicStroke(getUnitSize() / 2.0f);
     
     private boolean groupedBySite = true;
     
@@ -83,17 +83,19 @@ public class FisherEqAreaPlot extends EqAreaPlot {
             g.draw(ellipse);
             
             if (groupedBySite) {
-            g.setStroke(dashedStroke);
-            for (Vec3 w: fisher.getDirections()) {
-                g.draw(new Line2D.Double(meanPoint, project(w, xo, yo, radius)));
-            }
-            g.setStroke(oldStroke);
+                g.setStroke(dashedStroke);
+                for (Vec3 w : fisher.getDirections()) {
+                    g.draw(new Line2D.Double(meanPoint, project(w, xo, yo, radius)));
+                }
+                g.setStroke(oldStroke);
             } else {
                 g.setStroke(thinStroke);
                 for (Sample s: PuffinApp.getInstance().getSelectedSamples()) {
-                    Point2D p = project(s.getPca().getDirection(), xo, yo, radius);
-                    g.draw(new Line2D.Double(p.getX()-10, p.getY(), p.getX()+10, p.getY()));
-                    g.draw(new Line2D.Double(p.getX(), p.getY()-10, p.getX(), p.getY()+10));
+                    if (s != null && s.getPca() != null && s.getPca().getDirection() != null) {
+                        Point2D p = project(s.getPca().getDirection(), xo, yo, radius);
+                        g.draw(new Line2D.Double(p.getX() - 10, p.getY(), p.getX() + 10, p.getY()));
+                        g.draw(new Line2D.Double(p.getX(), p.getY() - 10, p.getX(), p.getY() + 10));
+                    }
                 }
             }
 
