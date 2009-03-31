@@ -9,8 +9,8 @@ type: :feature
 component: PuffinPlot
 release: 
 reporter: Pontus Lurcock <pont@ou094023>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2008-11-11 02:15:59.125355 Z
 references: []
 
@@ -20,3 +20,9 @@ log_events:
   - Pontus Lurcock <pont@ou094023>
   - created
   - ""
+- - 2009-03-31 21:13:52.043639 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    PuffinPlot can now save an augmented 2G-style data table. This might
+    need rethinking at a later date but for now it works.

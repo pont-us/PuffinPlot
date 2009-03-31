@@ -35,6 +35,7 @@ public class PuffinApp {
     private final PuffinPrefs prefs;
     private final FisherWindow fisherWindow;
     private final CorrectionWindow correctionWindow;
+    private RecentFileList recentFiles;
     
     public static PuffinApp getInstance() { return app; }
 
@@ -70,7 +71,7 @@ public class PuffinApp {
         System.setProperty("apple.laf.useScreenMenuBar", "true");
         System.setProperty("com.apple.mrj.application.apple.menu.about.name", "PuffinPlot");
         loadBuildProperties();
-        
+
         prefs = new PuffinPrefs();
         actions = new PuffinActions(this);
         tableWindow = new TableWindow();
@@ -141,13 +142,22 @@ public class PuffinApp {
         openFiles(new File[] {f});
     }
 
+
     public void openFiles(File[] files) {
+        openFiles(files, false);
+    }
+
+    public void openFiles(File[] files, boolean fromRecentFileList) {
+
+
         if (files.length == 0) return;
 
-        try {
-            getPrefs().addRecentFile(files);
-        } catch (IOException ex) {
-            errorDialog("Error updating recent files list", ex.getLocalizedMessage());
+        if (!fromRecentFileList) {
+            try {
+                recentFiles.add(files);
+            } catch (IOException ex) {
+                errorDialog("Error updating recent files list", ex.getLocalizedMessage());
+            }
         }
         
         try {
@@ -266,5 +276,19 @@ public class PuffinApp {
 
     public CorrectionWindow getCorrectionWindow() {
         return correctionWindow;
+    }
+
+    /**
+     * @return the recentFiles
+     */
+    public RecentFileList getRecentFiles() {
+        return recentFiles;
+    }
+
+    /**
+     * @param recentFiles the recentFiles to set
+     */
+    public void setRecentFiles(RecentFileList recentFiles) {
+        this.recentFiles = recentFiles;
     }
 }

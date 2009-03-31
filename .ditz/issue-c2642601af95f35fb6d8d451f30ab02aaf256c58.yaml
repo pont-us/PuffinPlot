@@ -7,8 +7,8 @@ type: :bugfix
 component: PuffinPlot
 release: 
 reporter: Pontus Lurcock <pont@ou094023>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2008-12-28 05:06:43.625803 Z
 references: []
 
@@ -18,3 +18,9 @@ log_events:
   - Pontus Lurcock <pont@ou094023>
   - created
   - ""
+- - 2009-03-31 23:40:06.534600 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Fixed as specified, with some heavy rearchitecting of the recent
+    file code.

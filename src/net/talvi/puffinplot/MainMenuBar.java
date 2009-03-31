@@ -4,11 +4,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
-
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -18,11 +13,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import net.talvi.puffinplot.PuffinPrefs;
-import net.talvi.puffinplot.PuffinPrefs.RecentFile;
-import net.talvi.puffinplot.data.Sample;
 
 public class MainMenuBar extends JMenuBar {
 
@@ -133,19 +123,21 @@ public class MainMenuBar extends JMenuBar {
   
     void updateRecentFiles() {
         recentFilesMenu.removeAll();
-        final List<RecentFile> recentFiles =
-                PuffinApp.getInstance().getPrefs().getRecentFiles();
-        if (recentFiles.size() == 0)
+        final RecentFileList recent = PuffinApp.getInstance().getRecentFiles();
+        final String[] recentFileNames = recent.getFilesetNames();
+        if (recentFileNames.length == 0)
             recentFilesMenu.add(noRecentFiles);
-        for (final PuffinPrefs.RecentFile recent : recentFiles) {
+        for (int i=0; i<recentFileNames.length; i++) {
+            String fileName = recentFileNames[i];
+            final int index  = i;
             recentFilesMenu.add(new AbstractAction() {
                 public void actionPerformed(ActionEvent arg0) {
-                    PuffinApp.getInstance().openFiles(recent.getFiles());
+                    PuffinApp.getInstance().openFiles(recent.getFilesAndReorder(index), true);
                 }
                 @Override
                 public Object getValue(String key) {
                     return (NAME.equals(key)) ?
-                        recent.getName() :
+                        recent.getFilesetNames()[index] :
                         super.getValue(key);
                 }
             });

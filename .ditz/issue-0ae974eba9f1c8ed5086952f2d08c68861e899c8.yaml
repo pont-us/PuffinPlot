@@ -7,8 +7,8 @@ type: :task
 component: PuffinPlot
 release: 
 reporter: Pontus Lurcock <pont@ou094023>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :wontfix
 creation_time: 2008-11-11 03:10:24.174734 Z
 references: []
 
@@ -22,3 +22,15 @@ log_events:
   - Pontus Lurcock <pont@ou094023>
   - edited title
   - ""
+- - 2009-03-31 21:12:46.902570 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition wontfix
+  - |-
+    http://www.snailshell.de/blog/archives/2006/01/entry_37.html reports
+    that "...this approach does not work as expected - you cannot use
+    more than one Java application that uses the linked stub at the same
+    time... So it seems we'll have to wait for Apple to provide a reliable
+    solution". Ho ho ho. That's a shame, but any actual problems with
+    incompatibility of JavaAPplicationStub versions (which is the most
+    serious problem addressed by this technique) can be remdied on an
+    as-needed basis.
