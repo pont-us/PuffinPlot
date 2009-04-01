@@ -7,7 +7,7 @@ type: :feature
 component: PuffinPlot
 release: 
 reporter: Pontus Lurcock <pont@ou094023>
-status: :unstarted
+status: :in_progress
 disposition: 
 creation_time: 2008-11-11 02:17:43.781595 Z
 references: []
@@ -17,4 +17,8 @@ log_events:
 - - 2008-11-11 02:17:44.402917 Z
   - Pontus Lurcock <pont@ou094023>
   - created
+  - ""
+- - 2009-04-01 21:35:10.226320 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
   - ""

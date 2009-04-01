@@ -5,8 +5,8 @@ type: :feature
 component: PuffinPlot
 release: 
 reporter: Pontus Lurcock <pont@ou094023>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2008-10-23 10:33:47.378232 Z
 references: []
 
@@ -16,3 +16,24 @@ log_events:
   - Pontus Lurcock <pont@ou094023>
   - created
   - ""
+- - 2009-04-01 21:32:12.616544 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2009-04-01 21:32:36.117483 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from in_progress to paused
+  - ""
+- - 2009-04-01 21:32:49.192079 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from paused to in_progress
+  - ""
+- - 2009-04-01 21:34:36.181560 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Selection behaviour is now as follows: a normal click toggles a point's
+    selection state iff the pointer is directly over the point. A shift-
+    click either selectes (left button) or deselects (right button) all
+    points within a certain radius of the pointer. The radius is currently
+    defined in a constant in Plot.java.

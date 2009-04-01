@@ -7,8 +7,8 @@ type: :feature
 component: PuffinPlot
 release: 
 reporter: Pontus Lurcock <pont@ou094023>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2008-10-31 03:30:28.776036 Z
 references: []
 
@@ -24,3 +24,11 @@ log_events:
   - |-
     Saving now done; not closing the bug yet because "revert to default"
     isn't done yet.
+- - 2009-04-01 01:49:45.846805 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    "Revert to default" now added. Bloody hell that was a rabbit hole.
+    Ended up refactoring the whole preferences / plot sizes interface,
+    but it was long overdue.
+    /

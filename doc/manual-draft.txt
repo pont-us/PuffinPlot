@@ -1,0 +1,11 @@
+Selecting points
+----------------
+
+You can select a point, or deselect a selected point, by clicking on it 
+with the left mouse button.
+
+Holding down shift activates "sloppy selection mode": if you left-click
+while holding shift, all points within a small radius of the pointer will 
+be selected. If you right-click while holding shift, all points within
+a small radius of the pointer will be deselected.
+
