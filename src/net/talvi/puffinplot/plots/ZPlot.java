@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import java.util.prefs.Preferences;
 import net.talvi.puffinplot.GraphDisplay;
 import net.talvi.puffinplot.PlotParams;
 import net.talvi.puffinplot.data.Correction;
@@ -26,8 +27,8 @@ import net.talvi.puffinplot.data.Sample;
 
 public class ZPlot extends Plot {
 
-    public ZPlot(GraphDisplay parent, PlotParams params, Rectangle2D dimensions) {
-        super(parent, params, dimensions);
+    public ZPlot(GraphDisplay parent, PlotParams params, Preferences prefs) {
+        super(parent, params, prefs);
     }
 
     private static Rectangle2D extent(List<Datum> sample, Correction corr,
@@ -53,6 +54,11 @@ public class ZPlot extends Plot {
         g.setClip(oldClip);
     }
     
+    @Override
+    public String getName() {
+        return "zplot";
+    }
+
     public void draw(Graphics2D g) {
         Sample sample = params.getSample();
         if (sample==null) return;

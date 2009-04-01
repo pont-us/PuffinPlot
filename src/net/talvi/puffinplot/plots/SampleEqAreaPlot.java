@@ -3,6 +3,7 @@ package net.talvi.puffinplot.plots;
 import static java.lang.Math.min;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import java.util.prefs.Preferences;
 import net.talvi.puffinplot.GraphDisplay;
 import net.talvi.puffinplot.PlotParams;
 import net.talvi.puffinplot.data.Datum;
@@ -12,8 +13,13 @@ import net.talvi.puffinplot.data.Sample;
 public class SampleEqAreaPlot extends EqAreaPlot {
 
     public SampleEqAreaPlot(GraphDisplay parent, PlotParams params,
-            Rectangle2D dimensions) {
-        super(parent, params, dimensions);
+            Preferences prefs) {
+        super(parent, params, prefs);
+    }
+
+    @Override
+    public String getName() {
+        return "equarea";
     }
     
     public void draw(Graphics2D g) {

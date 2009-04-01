@@ -9,6 +9,7 @@ import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.prefs.Preferences;
 import net.talvi.puffinplot.GraphDisplay;
 import net.talvi.puffinplot.PlotParams;
 import net.talvi.puffinplot.data.Datum;
@@ -22,8 +23,8 @@ public class DataTable extends Plot {
     private final List<String> headers = 
             Arrays.asList(new String[] {"demag.", "dec.", "inc.", "int."});
     
-    public DataTable(GraphDisplay parent, PlotParams params, Rectangle2D dimensions) {
-        super(parent, params, dimensions);
+    public DataTable(GraphDisplay parent, PlotParams params, Preferences prefs) {
+        super(parent, params, prefs);
     }
 
     private void writeLine(Graphics2D g, float yPos, boolean selected, List<String> values) {
@@ -37,7 +38,12 @@ public class DataTable extends Plot {
             xPos += xSpacing;
         }
     }
-        
+
+    @Override
+    public String getName() {
+        return "datatable";
+    }
+
     @Override
     public void draw(Graphics2D g) {
         g.setColor(Color.BLACK);

@@ -4,19 +4,25 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.text.AttributedCharacterIterator.Attribute;
+import java.util.prefs.Preferences;
 import net.talvi.puffinplot.GraphDisplay;
 import net.talvi.puffinplot.PlotParams;
 import net.talvi.puffinplot.data.Sample;
 
 public class SampleTable extends Plot {
 
-    public SampleTable(GraphDisplay parent, PlotParams params, Rectangle2D dimensions) {
-        super(parent, params, dimensions);
+    public SampleTable(GraphDisplay parent, PlotParams params, Preferences prefs) {
+        super(parent, params, prefs);
     }
     
     @Override
     public int getMargin() {
         return 12;
+    }
+
+    @Override
+    public String getName() {
+        return "sampletable";
     }
 
     @Override

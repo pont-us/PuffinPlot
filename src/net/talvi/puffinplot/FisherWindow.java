@@ -18,7 +18,7 @@ public class FisherWindow extends JFrame {
     }
 
     public FisherEqAreaPlot getPlot() {
-        return (FisherEqAreaPlot) graphDisplay.plots.get("fisherplot");
+        return (FisherEqAreaPlot) graphDisplay.plots.iterator().next();
     }
     
 }

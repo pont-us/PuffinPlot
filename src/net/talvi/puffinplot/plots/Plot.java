@@ -19,6 +19,8 @@ import static java.text.AttributedCharacterIterator.Attribute;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
+import java.util.prefs.Preferences;
 import net.talvi.puffinplot.GraphDisplay;
 import net.talvi.puffinplot.PlotParams;
 import net.talvi.puffinplot.data.Datum;
@@ -27,7 +29,7 @@ public abstract class Plot
 {
     private final GraphDisplay parent;
     protected final PlotParams params;
-    private Rectangle2D dimensions;
+    protected Rectangle2D dimensions;
     private List<PlotPoint> points = new LinkedList<PlotPoint>();
     private static final float UNIT_SCALE = (float) 0.0001f;
     private Stroke stroke;
@@ -37,6 +39,12 @@ public abstract class Plot
     private Map<Attribute,Object> attributeMap
      = new HashMap<Attribute, Object>();
 
+    protected static final String DEFAULT_PLOT_POSITIONS =
+            "zplot 407 32 610 405 pcatable 518 708 195 67 " +
+            "sampletable 24 13 215 39 fishertable 837 60 155 60 " +
+            "datatable 43 324 349 441 demag 50 69 323 213 " +
+            "equarea 685 439 338 337";
+
     public Rectangle2D getDimensions() {
         return dimensions;
     }
@@ -44,7 +52,11 @@ public abstract class Plot
     public void setDimensions(Rectangle2D dimensions) {
         this.dimensions = dimensions;
     }
-    
+
+    public void setDimensionsToDefault() {
+        this.dimensions = dimensionsFromPrefsString(DEFAULT_PLOT_POSITIONS);
+    }
+
     public int getMargin() {
         return 24;
     }
@@ -118,10 +130,12 @@ public abstract class Plot
         }
     }
     
-    public Plot(GraphDisplay parent, PlotParams params, Rectangle2D dimensions) {
+    public Plot(GraphDisplay parent, PlotParams params, Preferences prefs) {
         this.params = params;
         this.parent = parent;
-        this.dimensions = dimensions;
+        String sizesString = DEFAULT_PLOT_POSITIONS;
+        if (prefs != null) sizesString = prefs.get("plotSizes", DEFAULT_PLOT_POSITIONS);
+        this.dimensions = dimensionsFromPrefsString(sizesString);
         float maxDim = 800;
         if (parent != null) {
             Dimension dims = parent.getMaximumSize();
@@ -135,7 +149,30 @@ public abstract class Plot
         attributeMap.put(TextAttribute.SIZE, getFontSize());
 
     }
-    
+
+    private Rectangle2D dimensionsFromPrefsString(String spec) {
+        final Scanner scanner = new Scanner(spec);
+        while (scanner.hasNext()) {
+            String plotName = scanner.next();
+            if (getName().equals(plotName)) {
+                return
+                    new Rectangle2D.Double(scanner.nextDouble(),
+                    scanner.nextDouble(), scanner.nextDouble(),
+                    scanner.nextDouble());
+            } else {
+                for (int i=0; i<4; i++) scanner.next();
+            }
+        }
+        return null;
+    }
+
+    public String dimensionsAsString() {
+        Rectangle2D r = dimensions;
+        return String.format("%f %f %f %f ",
+                r.getMinX(), r.getMinY(),
+                r.getWidth(), r.getHeight());
+    }
+
     protected void drawPoints(Graphics2D g) {
         g.setStroke(getStroke());
         Point2D prev = null;
@@ -170,6 +207,8 @@ public abstract class Plot
             }
         }
     }
+
+    public abstract String getName();
         
     public abstract void draw(Graphics2D g);
 }

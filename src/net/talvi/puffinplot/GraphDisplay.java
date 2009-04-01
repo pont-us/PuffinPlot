@@ -17,6 +17,7 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
@@ -29,7 +30,7 @@ public class GraphDisplay extends JPanel implements Printable {
     private static final long serialVersionUID = -5730958004698337302L;
     protected Sample[] samples = null;
     protected int printPageIndex = -1;
-    protected HashMap<String, Plot> plots;
+    protected HashSet<Plot> plots;
     private static final RenderingHints renderingHints = PuffinRenderingHints.getInstance();
     protected AffineTransform zoomTransform;
     private final GdMouseListener mouseListener;
@@ -42,7 +43,7 @@ public class GraphDisplay extends JPanel implements Printable {
         zoomTransform = AffineTransform.getScaleInstance(1.0, 1.0);
 
         setLayout(null);
-        plots = new HashMap<String, Plot>();
+        plots = new HashSet<Plot>();
 
         setOpaque(true);
         setBackground(Color.WHITE);
@@ -52,7 +53,18 @@ public class GraphDisplay extends JPanel implements Printable {
         addMouseListener(mouseListener);
         addMouseMotionListener(mouseListener);
     }
-    
+
+    public String getPlotSizeString() {
+        StringBuilder sb = new StringBuilder();
+        for (Plot plot: plots) {
+            sb.append(plot.getName());
+            sb.append(" ");
+            sb.append(plot.dimensionsAsString());
+            sb.append(" ");
+        }
+        return sb.toString();
+    }
+
     @Override
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
@@ -62,10 +74,10 @@ public class GraphDisplay extends JPanel implements Printable {
         g2.setRenderingHints(renderingHints);
         g2.setPaint(Color.BLACK);
         g2.setPaintMode();
-        for (Plot plot: plots.values()) plot.draw(g2);
+        for (Plot plot: plots) plot.draw(g2);
 
         if (isDragPlotMode()) {
-            for (Plot plot : plots.values()) {
+            for (Plot plot : plots) {
                 int margin = plot.getMargin();
                 g2.setPaint(Color.ORANGE);
                 g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .2f));
@@ -100,6 +112,11 @@ public class GraphDisplay extends JPanel implements Printable {
         this.dragPlotMode = dragPlotMode;
     }
 
+    void resetLayout() {
+        for (Plot plot: plots) plot.setDimensionsToDefault();
+        repaint();
+    }
+
     /**
      * We can't use a MouseAdapter because it crashes OS X Java with a 
      * ClassCastException. No idea why.
@@ -114,7 +131,7 @@ public class GraphDisplay extends JPanel implements Printable {
         
         public void mouseClicked(MouseEvent e) {
             final Point2D position = getAntiZoom().transform(e.getPoint(), null);
-            for (Plot plot: plots.values())
+            for (Plot plot: plots)
                 if (plot.getDimensions().contains(position))
                     plot.mouseClicked(position, e);
             repaint();
@@ -129,7 +146,7 @@ public class GraphDisplay extends JPanel implements Printable {
             draggee = null;
             if (!isDragPlotMode()) return;            
             startPoint = getAntiZoom().transform(e.getPoint(), null);
-            for (Plot plot : plots.values())
+            for (Plot plot : plots)
                 if (plot.getDimensions().contains(startPoint))
                     draggee = plot;
             if (getDraggingPlot() != null) {
@@ -206,14 +223,10 @@ public class GraphDisplay extends JPanel implements Printable {
         g2.scale(scale, scale);
         g2.setPaint(Color.BLACK);
         g2.setPaintMode();
-        for (Plot plot: plots.values()) plot.draw(g2);
+        for (Plot plot: plots) plot.draw(g2);
         printChildren(graphics);
         setDoubleBuffered(true);
         return PAGE_EXISTS;
-    }
-    
-    protected Rectangle2D getPlotSize(String plotName) {
-        return plots.get(plotName).getDimensions();
     }
 
 }

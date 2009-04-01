@@ -67,6 +67,7 @@ public class MainMenuBar extends JMenuBar {
             }
         });
         editMenu.add(movePlotsItem);
+        addSimpleItem(editMenu, actions.resetLayout, '\u0000');
         addSimpleItem(editMenu, actions.editCorrections, '\u0000');
         addSimpleItem(editMenu, actions.flipSample, '\u0000');
         

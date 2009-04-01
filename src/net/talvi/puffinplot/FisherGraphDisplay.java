@@ -12,7 +12,7 @@ public class FisherGraphDisplay extends GraphDisplay {
 
         zoomTransform = AffineTransform.getScaleInstance(0.5, 0.5);
 
-        plots.put("fisherplot",
+        plots.add(
                 new FisherEqAreaPlot(
                 null, null, new Rectangle2D.Double(50, 50, 1200, 1200)));
 

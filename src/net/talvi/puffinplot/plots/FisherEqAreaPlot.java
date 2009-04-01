@@ -12,6 +12,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.prefs.Preferences;
 import net.talvi.puffinplot.GraphDisplay;
 import net.talvi.puffinplot.PlotParams;
 import net.talvi.puffinplot.PuffinApp;
@@ -33,9 +34,15 @@ public class FisherEqAreaPlot extends EqAreaPlot {
     
     public FisherEqAreaPlot(GraphDisplay parent, PlotParams params,
             Rectangle2D dimensions) {
-        super(parent, params, dimensions);
+        super(parent, params, null);
+        this.dimensions = dimensions;
     }
-    
+
+    @Override
+    public String getName() {
+        return "fisherplot";
+    }
+
     @Override
     public void draw(Graphics2D g) {
         final Rectangle2D dims = getDimensions();

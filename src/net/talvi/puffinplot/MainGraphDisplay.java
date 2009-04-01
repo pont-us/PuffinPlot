@@ -1,5 +1,6 @@
 package net.talvi.puffinplot;
 
+import java.util.prefs.Preferences;
 import net.talvi.puffinplot.plots.DataTable;
 import net.talvi.puffinplot.plots.DemagPlot;
 import net.talvi.puffinplot.plots.FisherEqAreaPlot;
@@ -43,14 +44,20 @@ public class MainGraphDisplay extends GraphDisplay {
             }
         };
 
-        PuffinPrefs pref = PuffinApp.getInstance().getPrefs();
-        plots.put("equarea", new SampleEqAreaPlot(this, params, pref.getPlotSize("equarea")));
-        plots.put("zplot", new ZPlot(this, params, pref.getPlotSize("zplot")));
-        plots.put("demag", new DemagPlot(this, params, pref.getPlotSize("demag")));
-        plots.put("datatable", new DataTable(this, params, pref.getPlotSize("datatable")));
-        plots.put("pcatable", new PcaTable(this, params, pref.getPlotSize("pcatable")));
-        plots.put("sampletable", new SampleTable(this, params, pref.getPlotSize("sampletable")));
-        plots.put("fishertable", new FisherTable(this, params, pref.getPlotSize("fishertable")));
+        Preferences pref = PuffinApp.getInstance().getPrefs().prefs;
+
+        for (int i=0; i<7; i++) {
+            plots.add(
+                    i==0 ? new SampleEqAreaPlot(this, params, pref)
+                    : i == 1 ? new ZPlot(this, params, pref)
+                    : i == 2 ? new DemagPlot(this, params, pref)
+                    : i == 3 ? new DataTable(this, params, pref)
+                    : i == 4 ? new PcaTable(this, params, pref)
+                    : i == 5 ? new SampleTable(this, params, pref)
+                    : /*i==6*/ new FisherTable(this, params, pref)
+                    );
+        }
+
     }
 
 }

@@ -6,6 +6,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
+import java.util.prefs.Preferences;
 import net.talvi.puffinplot.GraphDisplay;
 import net.talvi.puffinplot.PlotParams;
 import net.talvi.puffinplot.data.Datum;
@@ -13,8 +14,12 @@ import net.talvi.puffinplot.data.Sample;
 
 public class DemagPlot extends Plot {
 
-    public DemagPlot(GraphDisplay parent, PlotParams params, Rectangle2D dimensions) {
-        super(parent, params, dimensions);
+    public DemagPlot(GraphDisplay parent, PlotParams params, Preferences prefs) {
+        super(parent, params, prefs);
+    }
+
+    public String getName() {
+        return "demag";
     }
 
     public void draw(Graphics2D g) {

@@ -10,6 +10,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.prefs.Preferences;
 import net.talvi.puffinplot.GraphDisplay;
 import net.talvi.puffinplot.PlotParams;
 import net.talvi.puffinplot.data.Vec3;
@@ -19,8 +20,8 @@ import net.talvi.puffinplot.data.Vec3;
     private static final int decTickStep = 10;
     private static final int incTickNum = 9;
 
-    protected EqAreaPlot(GraphDisplay parent, PlotParams params, Rectangle2D dimensions) {
-        super(parent, params, dimensions);
+    protected EqAreaPlot(GraphDisplay parent, PlotParams params, Preferences prefs) {
+        super(parent, params, prefs);
     }
     
     protected void drawAxes(Graphics2D g, int xo, int yo, int radius) {

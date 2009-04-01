@@ -245,4 +245,10 @@ public class PuffinActions {
             System.exit(0);
         }
     };
+
+    public final Action resetLayout = new AbstractAction("Reset layout") {
+        public void actionPerformed(ActionEvent e) {
+            app.getMainWindow().getGraphDisplay().resetLayout();
+        }
+    };
 }

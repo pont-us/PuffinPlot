@@ -3,6 +3,7 @@ package net.talvi.puffinplot.plots;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import java.util.prefs.Preferences;
 import net.talvi.puffinplot.GraphDisplay;
 import net.talvi.puffinplot.PlotParams;
 import net.talvi.puffinplot.data.PcaValues;
@@ -13,10 +14,15 @@ public class PcaTable extends Plot {
     private static final int X_SPACE = 100;
     private static final int Y_SPACE = 20;
     
-    public PcaTable(GraphDisplay parent, PlotParams params, Rectangle2D dimensions) {
-        super(parent, params, dimensions);
+    public PcaTable(GraphDisplay parent, PlotParams params, Preferences prefs) {
+        super(parent, params, prefs);
     }
-    
+
+    @Override
+    public String getName() {
+        return "pcatable";
+    }
+
     @Override
     public int getMargin() {
         return 12;
