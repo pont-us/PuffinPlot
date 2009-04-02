@@ -8,8 +8,8 @@ type: :feature
 component: PuffinPlot
 release: 
 reporter: Pontus Lurcock <pont@ou094023>
-status: :in_progress
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2008-10-23 21:00:02.138113 Z
 references: []
 
@@ -23,3 +23,9 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - changed status from unstarted to in_progress
   - ""
+- - 2009-04-01 22:12:16.208967 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Now implemented -- imperfectly, but the imperfection is open as
+    ticket #40 so I'm closing this one.

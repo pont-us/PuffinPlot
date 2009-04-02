@@ -2,10 +2,14 @@ package net.talvi.puffinplot;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.util.LinkedList;
+import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.TwoGeeField;
@@ -15,10 +19,29 @@ import net.talvi.puffinplot.data.TwoGeeField;
  * @author pont
  */
 public class TableWindow extends JFrame {
+    private JTable table;
+    private DataTableModel tableModel;
 
     private static class DataTableModel extends AbstractTableModel {
-          private static final long serialVersionUID = 1L;
-          
+        private static final long serialVersionUID = 1L;
+        private List<TableModelListener> listeners = new LinkedList<TableModelListener>();
+        
+        @Override
+        public void addTableModelListener(TableModelListener listener) {
+            listeners.add(listener);
+        }
+
+        @Override
+        public void removeTableModelListener(TableModelListener listener) {
+            listeners.remove(listener);
+        }
+
+        public void fireModelChangedEvent() {
+            for (TableModelListener listener: listeners) {
+                listener.tableChanged(new TableModelEvent(this));
+            }
+        }
+
         public int getColumnCount() {
             return TwoGeeField.values().length - 1;
         }
@@ -50,21 +73,29 @@ public class TableWindow extends JFrame {
         }
     }
     
-    static class TablePanel extends JPanel {
+    class TablePanel extends JPanel {
+
+
         
-    public TablePanel() {
-        super(new GridLayout(1, 0));
+        public TablePanel() {
+            super(new GridLayout(1, 0));
 
-        final JTable table = new JTable(new DataTableModel());
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        table.setPreferredScrollableViewportSize(new Dimension(500, 70));
+            table = new JTable(tableModel = new DataTableModel());
+            table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-        //Create the scroll pane and add the table to it.
-        JScrollPane scrollPane = new JScrollPane(table);
+            table.setPreferredScrollableViewportSize(new Dimension(500, 70));
 
-        //Add the scroll pane to this panel.
-        add(scrollPane);
+            //Create the scroll pane and add the table to it.
+            JScrollPane scrollPane = new JScrollPane(table);
+
+            //Add the scroll pane to this panel.
+            add(scrollPane);
         }
+    }
+
+    public void dataChanged() {
+        tableModel.fireModelChangedEvent();
+        repaint(100);
     }
 
     public TableWindow() {
@@ -72,8 +103,8 @@ public class TableWindow extends JFrame {
         TablePanel newContentPane = new TablePanel();
         newContentPane.setOpaque(true); //content panes must be opaque
         setContentPane(newContentPane);
+        newContentPane.setVisible(true);
         pack();
-        // setVisible(true);
     }
     
 }

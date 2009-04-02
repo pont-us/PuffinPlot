@@ -15,6 +15,8 @@ abstract class WindowMenuItem extends JCheckBoxMenuItem {
 
             public void itemStateChanged(ItemEvent arg0) {
                 window().setVisible(WindowMenuItem.super.isSelected());
+                window().invalidate();
+                window().repaint(100);
             }
         });
         window().addWindowListener(new WindowAdapter() {

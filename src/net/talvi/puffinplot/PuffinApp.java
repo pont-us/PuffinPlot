@@ -136,6 +136,7 @@ public class PuffinApp {
     public void updateDisplay() {
         getMainWindow().controlPanel.updateSample();
         getMainWindow().repaint(100);
+        getTableWindow().dataChanged();
     }
     
     public void openFiles(File f) {

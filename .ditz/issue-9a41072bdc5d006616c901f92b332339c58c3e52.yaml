@@ -7,8 +7,8 @@ type: :feature
 component: PuffinPlot
 release: 
 reporter: Pontus Lurcock <pont@ou094023>
-status: :in_progress
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2008-11-11 02:17:43.781595 Z
 references: []
 
@@ -22,3 +22,12 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - changed status from unstarted to in_progress
   - ""
+- - 2009-04-01 22:18:40.283783 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Now implemented as a dialogue box accessible from the Edit > 
+    Corrections... menu item. won't work for long cores, but this is part
+    of a wider UI/design problem of how to handle selection in long cores
+    so I will open this as a separate ticket if and when anyone requests
+    it.

@@ -9,3 +9,16 @@ while holding shift, all points within a small radius of the pointer will
 be selected. If you right-click while holding shift, all points within
 a small radius of the pointer will be deselected.
 
+
+Corrections for sample and formation orientation and magnetic deviation
+-----------------------------------------------------------------------
+
+PuffinPlot will make use of the sample and formation corrections 
+specified in its input file, but these values can be changed by selecting
+one or more samples and choosing "Corrections..." from the Edit menu.
+Select the corrections you'd like to change and enter the new values.
+
+This window also allows you to apply a correction for magnetic deviation
+to one or more samples.
+
+
