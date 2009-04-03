@@ -4,7 +4,8 @@ import java.util.regex.Pattern;
 
 public enum TreatType {
     NONE("none"),
-    DEGAUSS("degauss"),
+    DEGAUSS("degauss x, y, & z"),
+    ARM("degauss z - arm axial"),
     IRM("irm"),
     THERMAL("thermal"),
     UNKNOWN();
@@ -36,6 +37,7 @@ public enum TreatType {
         case NONE: return "No demagnetization";
         case DEGAUSS: return "AF strength (mT)";
         case IRM: return "IRM";
+        case ARM: return "ARM";
         case THERMAL: return "Temperature (°C)";
         default: return "unknown units";
         }

@@ -7,8 +7,8 @@ type: :bugfix
 component: PuffinPlot
 release: 
 reporter: Pontus Lurcock <pont@ou094023>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2008-10-23 21:01:59.470154 Z
 references: []
 
@@ -18,3 +18,11 @@ log_events:
   - Pontus Lurcock <pont@ou094023>
   - created
   - ""
+- - 2009-04-03 02:04:52.091130 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Such values are now ignored on loading (along with mag. sus. values
+    as before). Presumably at some point someone will want to work with
+    some of the ignored values within PuffinPlot and I will have to 
+    produce a solution, but we can open a new bug for that.

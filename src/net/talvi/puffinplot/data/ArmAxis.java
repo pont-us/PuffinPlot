@@ -7,7 +7,7 @@ public enum ArmAxis {
     
     public static ArmAxis getByString(String s) {
         if ("AXIAL".equals(s)) return AXIAL;
-        else if ("NONE".equals(s)) return NONE;
+        else if ("NONE".equals(s) || "NA".equals(s)) return NONE;
         else return UNKNOWN;
     }
 }

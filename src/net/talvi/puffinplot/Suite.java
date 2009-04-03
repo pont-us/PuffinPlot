@@ -32,6 +32,7 @@ import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.PcaValues;
 import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.data.Sample;
+import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.TwoGeeField;
 
 public class Suite implements Iterable<Datum> {
@@ -230,7 +231,7 @@ public class Suite implements Iterable<Datum> {
     }
     
     private void addDatumLongcore(Datum d, Set<Double> depthSet) {
-        if (!d.isMagSus()) {
+        if (!d.isMagSus() && d.getTreatType() != TreatType.ARM) {
             data.add(d);
             Sample s = samplesByDepth.get(d.getDepth());
             if (s == null) {
@@ -243,7 +244,7 @@ public class Suite implements Iterable<Datum> {
     }
     
     private void addDatumDiscrete(Datum d, Set<String> nameSet) {
-        if (!d.isMagSus()) {
+        if (!d.isMagSus() && d.getTreatType() != TreatType.ARM) {
             data.add(d);
             String name = d.getSampleId();
             Sample s = samplesByName.get(name);

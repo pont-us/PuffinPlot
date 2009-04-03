@@ -1,0 +1,22 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Quit option on default error dialogue
+desc: |-
+  The default error handler currently pops up a dialogue with a single
+  OK button; this means that if the error is repeated there is no way
+  to quit the application. Put Continue and Quit buttons on the 
+  dialogue box.
+type: :bugfix
+component: PuffinPlot
+release: 
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2009-04-03 01:54:04.846205 Z
+references: []
+
+id: 5b2b7cf310b79480acdc973e4e80aeca4eae81c5
+log_events: 
+- - 2009-04-03 01:54:06.208363 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

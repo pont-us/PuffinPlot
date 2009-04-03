@@ -13,8 +13,8 @@ type: :feature
 component: PuffinPlot
 release: 
 reporter: Pontus Lurcock <pont@ou094023>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2008-10-21 05:46:26.376632 Z
 references: []
 
@@ -24,3 +24,26 @@ log_events:
   - Pontus Lurcock <pont@ou094023>
   - created
   - ""
+- - 2009-04-03 00:31:59.269013 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    I'm assuming that this relates to the values displayed on the 
+    on-graph data table, since the values on graph axes are automatically
+    scaled.
+- - 2009-04-03 00:37:33.860671 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2009-04-03 00:47:05.017257 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Looks as though this was fixed some time ago -- values are now displayed
+    inscientific notation and no overall OOM scaling is applied. Unsure
+    how to interpret C's last sentence there, but it seems to be a vague
+    notion rather than a definite feature request, so I'm closing this now
+    on the assumption that if he really wants a "self correcting feature"
+    he'll ask for it again, at which point I can ask him what he means.
+    (Asking him now, over email to the JOIDES Resolution, what he meant
+    5+ months ago would probably not be worthwhile.)
