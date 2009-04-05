@@ -26,6 +26,11 @@ public class SampleTable extends Plot {
     }
 
     @Override
+    public String getNiceName() {
+        return "Title";
+    }
+
+    @Override
     public void draw(Graphics2D g) {
         Sample sample = params.getSample();
         if (sample==null) return;

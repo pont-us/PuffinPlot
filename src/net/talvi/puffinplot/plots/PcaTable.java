@@ -24,6 +24,11 @@ public class PcaTable extends Plot {
     }
 
     @Override
+    public String getNiceName() {
+        return "PCA";
+    }
+
+    @Override
     public int getMargin() {
         return 12;
     }

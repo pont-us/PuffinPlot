@@ -59,6 +59,11 @@ public class ZPlot extends Plot {
         return "zplot";
     }
 
+    @Override
+    public String getNiceName() {
+        return "Zplot";
+    }
+
     public void draw(Graphics2D g) {
         Sample sample = params.getSample();
         if (sample==null) return;

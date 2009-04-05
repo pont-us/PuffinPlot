@@ -6,11 +6,13 @@ import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.File;
+import java.io.FilenameFilter;
 import javax.print.PrintService;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
 import net.talvi.puffinplot.data.Sample;
 
 public class PuffinActions {
@@ -90,22 +92,43 @@ public class PuffinActions {
         public void actionPerformed(ActionEvent arg0) {
             boolean useSwingChooser = !PuffinApp.MAC_OS_X;
 
-            File file = null;
+            String pathname = null;
 
             if (useSwingChooser) {
                 JFileChooser chooser = new JFileChooser();
+                chooser.setFileFilter(new FileFilter() {
+
+                    @Override
+                    public boolean accept(File f) {
+                        return f.getName().toLowerCase().endsWith(".ppl");
+                    }
+
+                    @Override
+                    public String getDescription() {
+                        return "PuffinPlot files";
+                    }
+                });
                 int choice = chooser.showSaveDialog(app.getMainWindow());
                 if (choice == JFileChooser.APPROVE_OPTION)
-                    file = chooser.getSelectedFile();
+                    pathname = chooser.getSelectedFile().getPath();
             } else {
-                FileDialog fd = new FileDialog(app.getMainWindow(), "Save PCA/Fisher",
+                FileDialog fd = new FileDialog(app.getMainWindow(), "Save data",
                         FileDialog.SAVE);
+                fd.setFilenameFilter(new FilenameFilter() {
+                    public boolean accept(File dir, String name) {
+                        return name.toLowerCase().endsWith(".ppl");
+                    }
+                });
                 fd.setVisible(true);
-                String filename = fd.getFile();
-                if (filename != null) {
-                    file = new File(fd.getDirectory(), fd.getFile());
-                }
+                pathname = new File(fd.getDirectory(), fd.getFile()).getPath();
             }
+
+            File file = null;
+            if (pathname != null) {
+                    if (!pathname.toLowerCase().endsWith(".ppl"))
+                        pathname += ".ppl";
+                    file = new File(pathname);
+                }
             if (file != null) app.getSuite().save(file);
         }
         

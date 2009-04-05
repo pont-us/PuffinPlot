@@ -21,7 +21,12 @@ public class SampleEqAreaPlot extends EqAreaPlot {
     public String getName() {
         return "equarea";
     }
-    
+
+    @Override
+    public String getNiceName() {
+        return "Equal-area";
+    }
+
     public void draw(Graphics2D g) {
         final Rectangle2D dims = getDimensions();
         final int radius = (int) (min(dims.getWidth(), dims.getHeight()) / 2);

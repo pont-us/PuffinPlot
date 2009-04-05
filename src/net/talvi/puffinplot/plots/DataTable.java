@@ -45,6 +45,11 @@ public class DataTable extends Plot {
     }
 
     @Override
+    public String getNiceName() {
+        return "Data table";
+    }
+
+    @Override
     public void draw(Graphics2D g) {
         g.setColor(Color.BLACK);
         Sample sample = params.getSample();

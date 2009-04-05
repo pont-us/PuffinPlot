@@ -31,6 +31,11 @@ public enum TreatType {
             if (tt.matches(s)) return tt;
         return UNKNOWN;
     }
+
+    @Override
+    public String toString() {
+        return namePattern.pattern();
+    }
     
     public String getAxisLabel() {
         switch (this) {

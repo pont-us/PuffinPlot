@@ -22,6 +22,11 @@ public class DemagPlot extends Plot {
         return "demag";
     }
 
+    @Override
+    public String getNiceName() {
+        return "Demag.";
+    }
+
     public void draw(Graphics2D g) {
         clearPoints();
         Sample sample = params.getSample();

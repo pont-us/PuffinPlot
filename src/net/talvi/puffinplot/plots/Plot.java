@@ -211,6 +211,10 @@ public abstract class Plot
     }
 
     public abstract String getName();
+
+    public String getNiceName() {
+        return getName();
+    }
         
     public abstract void draw(Graphics2D g);
 }

@@ -9,8 +9,8 @@ type: :bugfix
 component: PuffinPlot
 release: 
 reporter: Pontus Lurcock <pont@ou094023>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2008-12-19 07:20:04.273222 Z
 references: []
 
@@ -20,3 +20,11 @@ log_events:
   - Pontus Lurcock <pont@ou094023>
   - created
   - ""
+- - 2009-04-05 00:48:57.057178 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Implemented as described. Also added a feature whereby smaller plots
+    are preferentially selected for dragging when an area of overlap is
+    clicked on by the user. This makes it easier e.g. to position the 
+    PCA values table atop the Zplot.
