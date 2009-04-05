@@ -9,8 +9,8 @@ type: :bugfix
 component: PuffinPlot
 release: 
 reporter: Pontus Lurcock <pont@ou094023>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2008-11-04 04:04:14.865042 Z
 references: []
 
@@ -20,3 +20,11 @@ log_events:
   - Pontus Lurcock <pont@ou094023>
   - created
   - ""
+- - 2009-04-05 07:27:54.643814 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Done. Only demag and zplot needed fixing. Note that this was a 
+    fairly quick-and-dirty solution, hardcoding the thickness of the
+    extra "furniture". This may fail if changes are ever made to the
+    axis labels or suchlike, but such occurrences should be rare.

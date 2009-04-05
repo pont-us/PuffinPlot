@@ -90,7 +90,17 @@ public abstract class Plot
         TextLayout layout = new TextLayout(as.getIterator(), frc);
         layout.draw(g, x, y);
     }
-    
+
+    protected Rectangle2D cropRectangle(Rectangle2D r, double left,
+            double right, double top, double bottom) {
+        final double u = getUnitSize();
+        return new Rectangle2D.Double(
+                r.getMinX() + left * u,
+                r.getMinY() + top * u,
+                r.getWidth() - (left + right) * u,
+                r.getHeight() - (top + bottom) * u);
+    }
+
     private class PlotPoint {
 
         private final Shape shape;

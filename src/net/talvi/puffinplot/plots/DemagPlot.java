@@ -34,7 +34,10 @@ public class DemagPlot extends Plot {
         List<Datum> data = sample.getData();
         if (data.size() == 0) return;
 
-        Rectangle2D dim = getDimensions();
+        Rectangle2D dim = cropRectangle(getDimensions(), 270, 200, 50, 230);
+        {
+
+        }
         
         g.setColor(Color.BLACK);
         double maxIntens = 0;

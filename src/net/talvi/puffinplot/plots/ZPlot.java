@@ -79,8 +79,10 @@ public class ZPlot extends Plot {
         Rectangle2D extent2 =
                 extent(data, correction, vVs, MeasurementAxis.MINUSZ);
 
+        Rectangle2D dim = cropRectangle(getDimensions(), 250, 250, 200, 200);
+
         ZplotAxes axes = new ZplotAxes(extent1.createUnion(extent2),
-                getDimensions(), vVs,this);
+                dim, vVs,this);
         
         g.setColor(Color.BLACK);
         g.setStroke(getStroke());
