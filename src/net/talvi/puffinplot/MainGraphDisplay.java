@@ -13,6 +13,7 @@ import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;
+import net.talvi.puffinplot.plots.ZplotLegend;
 
 /**
  *
@@ -46,7 +47,7 @@ public class MainGraphDisplay extends GraphDisplay {
 
         Preferences pref = PuffinApp.getInstance().getPrefs().prefs;
 
-        for (int i=0; i<7; i++) {
+        for (int i=0; i<8; i++) {
             plots.add(
                     i==0 ? new SampleEqAreaPlot(this, params, pref)
                     : i == 1 ? new ZPlot(this, params, pref)
@@ -54,7 +55,8 @@ public class MainGraphDisplay extends GraphDisplay {
                     : i == 3 ? new DataTable(this, params, pref)
                     : i == 4 ? new PcaTable(this, params, pref)
                     : i == 5 ? new SampleTable(this, params, pref)
-                    : /*i==6*/ new FisherTable(this, params, pref)
+                    : i == 6 ? new FisherTable(this, params, pref)
+                    : /*i==7*/ new ZplotLegend(this, params, pref)
                     );
         }
 

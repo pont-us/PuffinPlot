@@ -44,7 +44,7 @@ public abstract class Plot
             "zplot 407 32 610 405 pcatable 518 708 195 67 " +
             "sampletable 24 13 215 39 fishertable 837 60 155 60 " +
             "datatable 43 324 349 441 demag 50 69 323 213 " +
-            "equarea 685 439 338 337";
+            "equarea 685 439 338 337 zplotlegend 50 50 100 100";
 
     public Rectangle2D getDimensions() {
         return dimensions;
@@ -136,7 +136,9 @@ public abstract class Plot
         this.parent = parent;
         String sizesString = DEFAULT_PLOT_POSITIONS;
         if (prefs != null) sizesString = prefs.get("plotSizes", DEFAULT_PLOT_POSITIONS);
-        this.dimensions = dimensionsFromPrefsString(sizesString);
+        dimensions = dimensionsFromPrefsString(sizesString);
+        // We may have a sizes string in the prefs but without this specific plot
+        if (dimensions==null) dimensions = dimensionsFromPrefsString(DEFAULT_PLOT_POSITIONS);
         float maxDim = 800;
         if (parent != null) {
             Dimension dims = parent.getMaximumSize();
@@ -199,13 +201,13 @@ public abstract class Plot
     public void mouseClicked(java.awt.geom.Point2D position, MouseEvent e) {
         if (e.isShiftDown()) {
             for (PlotPoint s : points) {
-                if (s.centre.distance(position) <
+                if (s.datum != null && s.centre.distance(position) <
                         SLOPPY_SELECTION_RADIUS_IN_UNITS * getUnitSize())
                     s.datum.setSelected(e.getButton() == MouseEvent.BUTTON1);
             }
         } else {
             for (PlotPoint s : points) {
-                if (s.shape.contains(position)) s.datum.toggleSel();
+                if (s.datum != null && s.shape.contains(position)) s.datum.toggleSel();
             }
         }
     }
