@@ -3,7 +3,7 @@ title: Multiple suite loading bug
 desc: Something's screwy with the suite selection drop-down. It always seems to be one suite short -- the last-loaded one is not available for selection.
 type: :bugfix
 component: PuffinPlot
-release: 
+release: "0.9"
 reporter: Pontus Lurcock <pont@ou094023>
 status: :closed
 disposition: :fixed
@@ -22,3 +22,7 @@ log_events:
   - |-
     Suite change notification was a bit of a mess -- simplified it significantly
     and I think it now all works as it should.
+- - 2009-04-05 23:54:51.983946 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 0.9 from unassigned
+  - ""

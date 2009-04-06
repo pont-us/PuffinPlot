@@ -3,7 +3,7 @@ title: Great circle analysis
 desc: See McFadden & McElhinny 1988 EPSL paper.
 type: :feature
 component: PuffinPlot
-release: 
+release: "1.2"
 reporter: Pontus Lurcock <pont@ou094023>
 status: :unstarted
 disposition: 
@@ -15,4 +15,8 @@ log_events:
 - - 2008-10-31 03:34:32.025954 Z
   - Pontus Lurcock <pont@ou094023>
   - created
+  - ""
+- - 2009-04-05 20:48:59.425776 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.2 from unassigned
   - ""

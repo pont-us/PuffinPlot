@@ -3,7 +3,7 @@ title: Show mag. sus. on demag. plot
 desc: Probably as bars.
 type: :feature
 component: PuffinPlot
-release: 
+release: "1.1"
 reporter: Pontus Lurcock <pont@ou094023>
 status: :unstarted
 disposition: 
@@ -15,4 +15,8 @@ log_events:
 - - 2008-11-11 03:02:41.065982 Z
   - Pontus Lurcock <pont@ou094023>
   - created
+  - ""
+- - 2009-04-05 20:49:48.685188 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.1 from unassigned
   - ""

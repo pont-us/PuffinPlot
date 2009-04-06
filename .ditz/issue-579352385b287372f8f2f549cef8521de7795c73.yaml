@@ -5,7 +5,7 @@ desc: |-
   be nice, even if implemented `cheaply' without an ETA.
 type: :feature
 component: PuffinPlot
-release: 
+release: "1.2"
 reporter: Pontus Lurcock <pont@ou094023>
 status: :unstarted
 disposition: 
@@ -17,4 +17,8 @@ log_events:
 - - 2008-11-11 03:01:28.983538 Z
   - Pontus Lurcock <pont@ou094023>
   - created
+  - ""
+- - 2009-04-05 20:49:31.758451 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.2 from unassigned
   - ""

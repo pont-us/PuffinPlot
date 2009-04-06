@@ -7,7 +7,7 @@ desc: |-
   Needs a little thought about getting the hidden points back, though.
 type: :feature
 component: PuffinPlot
-release: 
+release: "1.1"
 reporter: Pontus Lurcock <pont@talvi.net>
 status: :unstarted
 disposition: 
@@ -19,4 +19,8 @@ log_events:
 - - 2009-02-12 02:30:28.125561 Z
   - Pontus Lurcock <pont@talvi.net>
   - created
+  - ""
+- - 2009-04-05 20:50:13.497897 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.1 from unassigned
   - ""

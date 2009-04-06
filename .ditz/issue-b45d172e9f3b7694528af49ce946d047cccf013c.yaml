@@ -3,7 +3,7 @@ title: Transfer tdl bugs to ditz
 desc: Only 7 bugs remaining in tdl, so probably easiest to do by hand.
 type: :task
 component: PuffinPlot
-release: 
+release: "0.9"
 reporter: Pontus Lurcock <pont@ou094023>
 status: :closed
 disposition: :fixed
@@ -19,4 +19,8 @@ log_events:
 - - 2008-11-11 03:13:34.720591 Z
   - Pontus Lurcock <pont@ou094023>
   - closed with disposition fixed
+  - ""
+- - 2009-04-05 23:54:42.907453 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 0.9 from unassigned
   - ""

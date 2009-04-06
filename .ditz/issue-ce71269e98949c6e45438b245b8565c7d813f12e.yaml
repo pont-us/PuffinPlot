@@ -8,7 +8,7 @@ desc: |-
   AffineTransforms.
 type: :bugfix
 component: PuffinPlot
-release: 
+release: "0.9"
 reporter: Pontus Lurcock <pont@ou094023>
 status: :closed
 disposition: :fixed
@@ -28,3 +28,7 @@ log_events:
     Fixed as specified. I suspect that a couple of unanticipated 
     consequences may eventuate but these can be opened as new, more
     sepcific bugs.
+- - 2009-04-05 23:54:44.375722 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 0.9 from unassigned
+  - ""

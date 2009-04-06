@@ -3,7 +3,7 @@ title: Sloppy selection mode
 desc: Point selection is fiddly. Add a mode whereby any point within some small distance of the mouse pointer is selected on a click.
 type: :feature
 component: PuffinPlot
-release: 
+release: "0.9"
 reporter: Pontus Lurcock <pont@ou094023>
 status: :closed
 disposition: :fixed
@@ -37,3 +37,7 @@ log_events:
     click either selectes (left button) or deselects (right button) all
     points within a certain radius of the pointer. The radius is currently
     defined in a constant in Plot.java.
+- - 2009-04-05 23:54:45.109690 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 0.9 from unassigned
+  - ""

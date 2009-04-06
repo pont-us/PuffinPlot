@@ -6,7 +6,7 @@ desc: |-
   no longer works).
 type: :bugfix
 component: PuffinPlot
-release: 
+release: "0.9"
 reporter: Pontus Lurcock <pont@ou094023>
 status: :closed
 disposition: :fixed
@@ -25,3 +25,7 @@ log_events:
   - |-
     Added a "move plot mode" which makes it much clearer when and how
     plots can be moved and resized.
+- - 2009-04-05 23:54:43.644910 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 0.9 from unassigned
+  - ""

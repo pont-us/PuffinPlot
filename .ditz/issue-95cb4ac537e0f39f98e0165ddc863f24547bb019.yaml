@@ -7,7 +7,7 @@ desc: |-
   all the loaded files into a zip, with another file of metadata.
 type: :feature
 component: PuffinPlot
-release: 
+release: "0.9"
 reporter: Pontus Lurcock <pont@ou094023>
 status: :closed
 disposition: :fixed
@@ -26,3 +26,7 @@ log_events:
   - |-
     PuffinPlot can now save an augmented 2G-style data table. This might
     need rethinking at a later date but for now it works.
+- - 2009-04-05 23:54:49.347438 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 0.9 from unassigned
+  - ""

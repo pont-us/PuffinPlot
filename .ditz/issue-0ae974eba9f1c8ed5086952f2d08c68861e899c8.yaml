@@ -5,7 +5,7 @@ desc: |-
   any worries about redistributing Apple code.
 type: :task
 component: PuffinPlot
-release: 
+release: "0.9"
 reporter: Pontus Lurcock <pont@ou094023>
 status: :closed
 disposition: :wontfix
@@ -34,3 +34,7 @@ log_events:
     incompatibility of JavaAPplicationStub versions (which is the most
     serious problem addressed by this technique) can be remdied on an
     as-needed basis.
+- - 2009-04-05 23:54:50.012350 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 0.9 from unassigned
+  - ""

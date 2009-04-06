@@ -5,7 +5,7 @@ desc: |-
   and recalculate the corrected magnetization values based on this.
 type: :feature
 component: PuffinPlot
-release: 
+release: "0.9"
 reporter: Pontus Lurcock <pont@ou094023>
 status: :closed
 disposition: :fixed
@@ -31,3 +31,7 @@ log_events:
     of a wider UI/design problem of how to handle selection in long cores
     so I will open this as a separate ticket if and when anyone requests
     it.
+- - 2009-04-05 23:54:39.655712 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 0.9 from unassigned
+  - ""

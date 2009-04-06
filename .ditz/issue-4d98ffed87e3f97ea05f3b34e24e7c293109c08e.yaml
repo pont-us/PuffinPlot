@@ -5,7 +5,7 @@ desc: |-
   files.
 type: :bugfix
 component: PuffinPlot
-release: 
+release: "0.9"
 reporter: Pontus Lurcock <pont@talvi.net>
 status: :closed
 disposition: :fixed
@@ -22,3 +22,7 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - closed with disposition fixed
   - Implemented as described (unless .ppl is already entered by the user).
+- - 2009-04-05 23:54:53.570983 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 0.9 from unassigned
+  - ""

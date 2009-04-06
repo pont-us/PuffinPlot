@@ -5,7 +5,7 @@ desc: |-
   again. It should instead be moved to the end of the list.
 type: :bugfix
 component: PuffinPlot
-release: 
+release: "0.9"
 reporter: Pontus Lurcock <pont@ou094023>
 status: :closed
 disposition: :fixed
@@ -24,3 +24,7 @@ log_events:
   - |-
     Fixed as specified, with some heavy rearchitecting of the recent
     file code.
+- - 2009-04-05 23:54:51.321061 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 0.9 from unassigned
+  - ""

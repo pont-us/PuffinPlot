@@ -5,7 +5,7 @@ desc: |-
   open and closed points on the Zijderveld plot.
 type: :feature
 component: PuffinPlot
-release: 
+release: "0.9"
 reporter: Pontus Lurcock <pont@ou094023>
 status: :closed
 disposition: :fixed
@@ -22,3 +22,7 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - closed with disposition fixed
   - Implemented as specified.
+- - 2009-04-05 23:54:48.010734 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 0.9 from unassigned
+  - ""

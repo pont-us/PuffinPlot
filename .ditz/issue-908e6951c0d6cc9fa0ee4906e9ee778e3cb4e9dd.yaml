@@ -6,7 +6,7 @@ desc: |-
   asked for this one.
 type: :feature
 component: PuffinPlot
-release: 
+release: "1.1"
 reporter: Pontus Lurcock <pont@ou094023>
 status: :unstarted
 disposition: 
@@ -18,4 +18,8 @@ log_events:
 - - 2008-11-11 02:46:08.007067 Z
   - Pontus Lurcock <pont@ou094023>
   - created
+  - ""
+- - 2009-04-05 20:47:06.540904 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.1 from unassigned
   - ""

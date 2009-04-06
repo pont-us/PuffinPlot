@@ -3,7 +3,7 @@ title: Sort out saving of Fisher values
 desc: Currently they get dumped into files in the home directory.
 type: :bugfix
 component: PuffinPlot
-release: 
+release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
 status: :unstarted
 disposition: 
@@ -15,4 +15,8 @@ log_events:
 - - 2009-02-12 05:38:02.316495 Z
   - Pontus Lurcock <pont@talvi.net>
   - created
+  - ""
+- - 2009-04-05 20:45:27.594586 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.0 from unassigned
   - ""
