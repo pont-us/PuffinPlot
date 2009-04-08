@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Implement zooming
+desc: Everything necessary is in place, we just need a widget.
+type: :feature
+component: PuffinPlot
+release: "1.1"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2009-04-08 07:08:43.997012 Z
+references: []
+
+id: fb3ed7452e56297dccb0325681ddc8b6436d8962
+log_events: 
+- - 2009-04-08 07:08:44.987306 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
