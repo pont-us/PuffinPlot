@@ -39,9 +39,14 @@ public class SampleEqAreaPlot extends EqAreaPlot {
         
         drawAxes(g, xo, yo, radius);
         boolean first = true;
+        Vec3 prev = null;
         for (Datum d: sample.getData()) {
             final Vec3 p = d.getPoint(params.getCorrection()).normalize();
-            addPoint(d, project(p, xo, yo, radius), p.z>0, first, !first);
+            addPoint(d, project(p, xo, yo, radius), p.z>0, first, false && !first);
+            if (!first) {
+                drawGreatCircleSegment(g, xo, yo, radius, prev, p);
+            }
+            prev = p;
             first = false;
         }
         drawPoints(g);

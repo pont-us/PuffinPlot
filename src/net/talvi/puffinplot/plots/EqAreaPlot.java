@@ -1,13 +1,16 @@
 package net.talvi.puffinplot.plots;
 
+import java.awt.BasicStroke;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.abs;
 import static java.lang.Math.toRadians;
+import static java.lang.Math.signum;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.prefs.Preferences;
@@ -42,6 +45,30 @@ import net.talvi.puffinplot.data.Vec3;
             g.drawLine(xo + x, yo - l, xo + x, yo + l);
         }
         g.drawLine(xo - l, yo, xo + l, yo);
+    }
+
+    protected static void drawGreatCircleSegment(Graphics2D g,
+            int xo, int yo, int radius, Vec3 p1, Vec3 p2) {
+        BasicStroke stroke1 = new BasicStroke();
+        BasicStroke stroke2 = new BasicStroke(1, 0, 0, 1, new float[] {2, 2}, 0);
+        Vec3[] points = Vec3.spherInterpolate(p1, p2, 0.05);
+        GeneralPath path = null;
+        int i = 0;
+        while (i < points.length) {
+            path = new GeneralPath();
+            Point2D p = null;
+            p = project(points[i], xo, yo, radius);
+            path.moveTo((float) p.getX(), (float) p.getY());
+            do {
+                i++;
+                if (i >= points.length) break;
+                p = project(points[i], xo, yo, radius);
+                path.lineTo((float) p.getX(), (float) p.getY());
+            } while ((signum(points[i - 1].z) == signum(points[i].z)));
+
+            g.setStroke(points[i-1].z < 0 ? stroke1 : stroke2);
+            g.draw(path);
+        }
     }
 
     protected static Point2D project(Vec3 p, int xo, int yo, int radius) {

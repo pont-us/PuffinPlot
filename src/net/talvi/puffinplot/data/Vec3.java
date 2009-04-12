@@ -61,6 +61,28 @@ public class Vec3 {
         return new Vec3(x, -y, -z);
     }
     
+    /* Given two vectors, interpolates unit vectors along a great circle.
+     * Uses Shoemake's Slerp algorithm.
+     */
+
+    public static Vec3[] spherInterpolate(Vec3 v1, Vec3 v2, double stepSize) {
+        v1 = v1.normalize();
+        v2 = v2.normalize();
+        double omega = Math.acos(v1.scalarProduct(v2));
+        if (omega < stepSize) return new Vec3[] {v1, v2};
+        int steps = (int) (omega / stepSize) + 1;
+        final Vec3[] result = new Vec3[steps];
+        for (int i=0; i<steps; i++) {
+            final double t = (double) i / (double) (steps-1);
+            double scale0 = (sin((1.0-t)*omega)) / sin(omega);
+            double scale1 = sin(t*omega) / sin(omega);
+            result[i] =
+                    v1.times(scale0).plus(v2.times(scale1));
+        }
+
+        return result;
+    }
+
     /*
      * Rotate about the Y axis
      */
@@ -205,11 +227,13 @@ public class Vec3 {
     }
 
     public static Vec3 fromPolarDegrees(double m, double inc, double dec) {
-        final double i = toRadians(inc);
-        final double d = toRadians(dec);
-        return new Vec3(m * cos(i) * cos(d),
-                m * cos(i) * sin(d),
-                m * sin(i));
+        return Vec3.fromPolarRadians(m, toRadians(inc), toRadians(dec));
+    }
+
+    public static Vec3 fromPolarRadians(double m, double inc, double dec) {
+        return new Vec3(m * cos(inc) * cos(dec),
+                m * cos(inc) * sin(dec),
+                m * sin(inc));
     }
 
     public double incRadians() {
