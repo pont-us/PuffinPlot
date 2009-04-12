@@ -22,3 +22,9 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - assigned to release 1.2 from unassigned
   - ""
+- - 2009-04-10 02:26:29.244405 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    http://forums.java.net/jive/thread.jspa?messageID=321154&tstart=0 
+    has some discussion on how to implement this.
