@@ -7,6 +7,7 @@ import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.toDegrees;
 import static java.lang.Math.toRadians;
+import static java.lang.Math.signum;
 import Jama.Matrix;
 import java.util.Collection;
 
@@ -60,26 +61,42 @@ public class Vec3 {
     public Vec3 rotX180() {
         return new Vec3(x, -y, -z);
     }
-    
+
+    /* Return the unit vector on the intersection of the equator (z=0 line)
+     * and the great circle between the supplied points.
+     *
+     */
+    public static Vec3 equatorPoint(Vec3 v0, Vec3 v1) {
+        return v0.times(signum(v0.z) / v0.z).
+                plus(v1.times(signum(v1.z) / v1.z)).
+                normalize();
+    }
+
+    /* Return true iff the supplied vector is in the same (upper/lower)
+     * hemisphere as this one.
+     *
+     */
+    public boolean sameHemisphere(Vec3 v) {
+        return signum(z) == signum(v.z);
+    }
+
     /* Given two vectors, interpolates unit vectors along a great circle.
      * Uses Shoemake's Slerp algorithm.
      */
 
-    public static Vec3[] spherInterpolate(Vec3 v1, Vec3 v2, double stepSize) {
-        v1 = v1.normalize();
-        v2 = v2.normalize();
-        double omega = Math.acos(v1.scalarProduct(v2));
-        if (omega < stepSize) return new Vec3[] {v1, v2};
+    public static Vec3[] spherInterpolate(Vec3 v0, Vec3 v1, double stepSize) {
+        Vec3 v0n = v0.normalize();
+        Vec3 v1n = v1.normalize();
+        double omega = Math.acos(v0n.scalarProduct(v1n));
+        if (omega < stepSize) return new Vec3[] {v0n, v1n};
         int steps = (int) (omega / stepSize) + 1;
         final Vec3[] result = new Vec3[steps];
         for (int i=0; i<steps; i++) {
             final double t = (double) i / (double) (steps-1);
             double scale0 = (sin((1.0-t)*omega)) / sin(omega);
             double scale1 = sin(t*omega) / sin(omega);
-            result[i] =
-                    v1.times(scale0).plus(v2.times(scale1));
+            result[i] = v0n.times(scale0).plus(v1n.times(scale1));
         }
-
         return result;
     }
 

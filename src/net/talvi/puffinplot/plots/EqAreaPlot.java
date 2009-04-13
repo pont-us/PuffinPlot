@@ -18,10 +18,11 @@ import net.talvi.puffinplot.GraphDisplay;
 import net.talvi.puffinplot.PlotParams;
 import net.talvi.puffinplot.data.Vec3;
 
- public abstract class EqAreaPlot extends Plot {
-     // as fraction of radius
+public abstract class EqAreaPlot extends Plot {
     private static final int decTickStep = 10;
     private static final int incTickNum = 9;
+    private static BasicStroke stroke1 = new BasicStroke();
+    private static BasicStroke stroke2 = new BasicStroke(1, 0, 0, 1, new float[]{2, 2}, 0);
 
     protected EqAreaPlot(GraphDisplay parent, PlotParams params, Preferences prefs) {
         super(parent, params, prefs);
@@ -47,27 +48,38 @@ import net.talvi.puffinplot.data.Vec3;
         g.drawLine(xo - l, yo, xo + l, yo);
     }
 
-    protected static void drawGreatCircleSegment(Graphics2D g,
-            int xo, int yo, int radius, Vec3 p1, Vec3 p2) {
-        BasicStroke stroke1 = new BasicStroke();
-        BasicStroke stroke2 = new BasicStroke(1, 0, 0, 1, new float[] {2, 2}, 0);
-        Vec3[] points = Vec3.spherInterpolate(p1, p2, 0.05);
-        GeneralPath path = null;
-        int i = 0;
-        while (i < points.length) {
-            path = new GeneralPath();
-            Point2D p = null;
-            p = project(points[i], xo, yo, radius);
-            path.moveTo((float) p.getX(), (float) p.getY());
-            do {
-                i++;
-                if (i >= points.length) break;
-                p = project(points[i], xo, yo, radius);
-                path.lineTo((float) p.getX(), (float) p.getY());
-            } while ((signum(points[i - 1].z) == signum(points[i].z)));
+     private static void drawGreatCircleSubsegment(Graphics2D g,
+            int xo, int yo, int radius, Vec3[] vs) {
+         BasicStroke stroke;
+         if (abs(vs[0].z) > 1e-10) stroke = vs[0].z<0 ? stroke1 : stroke2;
+         else stroke = vs[vs.length-1].z<0 ? stroke1 : stroke2;
+         GeneralPath path = new GeneralPath();
+         boolean first = true;
+         for (Vec3 v : vs) {
+             Point2D p = project(v, xo, yo, radius);
+             if (first) {
+                 path.moveTo((float) p.getX(), (float) p.getY());
+                 first = false;
+             } else {
+                 path.lineTo((float) p.getX(), (float) p.getY());
+             }
+         }
+         g.setStroke(stroke);
+         g.draw(path);
+     }
 
-            g.setStroke(points[i-1].z < 0 ? stroke1 : stroke2);
-            g.draw(path);
+     protected static void drawGreatCircleSegment(Graphics2D g,
+            int xo, int yo, int radius, Vec3 p1, Vec3 p2) {
+
+        if (p1.sameHemisphere(p2)) {
+            drawGreatCircleSubsegment(g, xo, yo, radius,
+                    Vec3.spherInterpolate(p1, p2, 0.05));
+        } else {
+            Vec3 equator = Vec3.equatorPoint(p1, p2);
+            drawGreatCircleSubsegment(g, xo, yo, radius,
+                    Vec3.spherInterpolate(p1, equator, 0.05));
+            drawGreatCircleSubsegment(g, xo, yo, radius,
+                    Vec3.spherInterpolate(equator, p2, 0.05));
         }
     }
 
