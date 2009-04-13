@@ -40,7 +40,7 @@ public enum TreatType {
     public String getAxisLabel() {
         switch (this) {
         case NONE: return "No demagnetization";
-        case DEGAUSS: return "AF strength (mT)";
+        case DEGAUSS: return "AF strength (G)";
         case IRM: return "IRM";
         case ARM: return "ARM";
         case THERMAL: return "Temperature (°C)";
