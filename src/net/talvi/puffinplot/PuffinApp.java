@@ -99,10 +99,7 @@ public class PuffinApp {
 
             public void uncaughtException(Thread thread, Throwable exception) {
                 final String ERROR_FILE = "PUFFIN-ERROR.txt";
-                errorDialog("Serious error",
-                        "A major error occurred. Please tell Pont.\n" +
-                        "I will try to write the details "+
-                        "to a file called PUFFIN-ERROR.txt");
+                boolean quit = quitDialog();
                 File f = new File(System.getProperty("user.home"), ERROR_FILE);
                 try {
                     PrintWriter w = new PrintWriter(new FileWriter(f));
@@ -112,6 +109,7 @@ public class PuffinApp {
                     exception.printStackTrace();
                     ex.printStackTrace();
                 }
+                if (quit) System.exit(1);
             }
         });
         new PuffinApp();
@@ -196,7 +194,23 @@ public class PuffinApp {
         JOptionPane.showMessageDialog
         (getInstance().getMainWindow(), message, title, JOptionPane.ERROR_MESSAGE);
     }
-    
+
+    private static boolean quitDialog() {
+        Object[] options = {"Continue", "Quit"};
+        int response =
+                JOptionPane.showOptionDialog(
+                getInstance().getMainWindow(),
+                "A major error occurred. Please tell Pont.\n" +
+                "I will try to write the details " +
+                "to a file called PUFFIN-ERROR.txt . \n"+
+                "I recommend that you quit, but if you have unsaved \n"+
+                "data you could try to continue and save it.",
+                "Serious error",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+                null, options, options[1]);
+        return (response==1);
+    }
+
     @SuppressWarnings("unchecked")
     private void createAppleEventListener() {
         try {
