@@ -32,8 +32,9 @@ public abstract class Plot
     protected Rectangle2D dimensions;
     private List<PlotPoint> points = new LinkedList<PlotPoint>();
     private static final float UNIT_SCALE = (float) 0.0001f;
-    private Stroke stroke;
+    private Stroke stroke, dashedStroke;
     private float unitSize;
+    private static final float LINE_WIDTH_IN_UNITS = 8.0f;
     private static final float TICK_LENGTH_IN_UNITS = 48.0f;
     private static final float FONT_SIZE_IN_UNITS = 100.0f;
     private static final float SLOPPY_SELECTION_RADIUS_IN_UNITS = 128.0f;
@@ -41,10 +42,10 @@ public abstract class Plot
      = new HashMap<Attribute, Object>();
 
     protected static final String DEFAULT_PLOT_POSITIONS =
-            "zplot 407 32 610 405 pcatable 518 708 195 67 " +
-            "sampletable 24 13 215 39 fishertable 837 60 155 60 " +
-            "datatable 43 324 349 441 demag 50 69 323 213 " +
-            "equarea 685 439 338 337 zplotlegend 50 50 100 100";
+            "demag 374 85 348 311 zplot 736 85 456 697 zplotlegend 1060 30 " +
+            "130 49 sampletable 14 14 462 57 fishertable 550 14 178 61 " +
+            "pcatable 736 14 193 64 equarea 376 398 346 389 datatable 14 83 " +
+            "356 706 ";
 
     public Rectangle2D getDimensions() {
         return dimensions;
@@ -66,6 +67,10 @@ public abstract class Plot
         return stroke;
     }
     
+    public Stroke getDashedStroke() {
+        return dashedStroke;
+    }
+
     public float getUnitSize() {
         return unitSize;
     }
@@ -150,13 +155,15 @@ public abstract class Plot
         // We may have a sizes string in the prefs but without this specific plot
         if (dimensions==null) dimensions = dimensionsFromPrefsString(DEFAULT_PLOT_POSITIONS);
         float maxDim = 800;
+        // TODO fix this; parent should never be null (see FisherEqAreaPlot).
         if (parent != null) {
             Dimension dims = parent.getMaximumSize();
             maxDim = (float) Math.max(dims.getWidth(), dims.getHeight());
         }
         unitSize = maxDim * UNIT_SCALE;
-        stroke = new BasicStroke(getUnitSize() * 8);
-        // TODO fix this; parent should never be null (see FisherEqAreaPlot).
+        stroke = new BasicStroke(getUnitSize() * LINE_WIDTH_IN_UNITS);
+        dashedStroke = new BasicStroke(getUnitSize() * LINE_WIDTH_IN_UNITS,
+                0, 0, 1, new float[]{2, 2}, 0);
 
         attributeMap.put(TextAttribute.FAMILY, "SansSerif");
         attributeMap.put(TextAttribute.SIZE, getFontSize());

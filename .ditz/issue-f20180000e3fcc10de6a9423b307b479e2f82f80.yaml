@@ -5,8 +5,8 @@ type: :bugfix
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@ou094023>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2008-11-11 02:55:45.479800 Z
 references: []
 
@@ -20,3 +20,7 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - assigned to release 1.0 from unassigned
   - ""
+- - 2009-04-16 02:09:51.593016 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - Fixed by the simple expedient of changing the X axis label.

@@ -277,9 +277,6 @@ public class Datum {
                 // y  +   -
                 // z  -   -
                 
-                // TODO: make this configurable
-                // by a user preferences setting.
-                //
                 boolean old = timeStamp.equals("UNSET");
                 double xVol = area * sensorLengthX;
                 double yVol = area * sensorLengthY;

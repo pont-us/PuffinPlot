@@ -1,18 +1,16 @@
 package net.talvi.puffinplot.plots;
 
-import java.awt.BasicStroke;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.abs;
 import static java.lang.Math.toRadians;
-import static java.lang.Math.signum;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.GraphDisplay;
 import net.talvi.puffinplot.PlotParams;
@@ -21,8 +19,6 @@ import net.talvi.puffinplot.data.Vec3;
 public abstract class EqAreaPlot extends Plot {
     private static final int decTickStep = 10;
     private static final int incTickNum = 9;
-    private static BasicStroke stroke1 = new BasicStroke();
-    private static BasicStroke stroke2 = new BasicStroke(1, 0, 0, 1, new float[]{2, 2}, 0);
 
     protected EqAreaPlot(GraphDisplay parent, PlotParams params, Preferences prefs) {
         super(parent, params, prefs);
@@ -48,11 +44,11 @@ public abstract class EqAreaPlot extends Plot {
         g.drawLine(xo - l, yo, xo + l, yo);
     }
 
-     private static void drawGreatCircleSubsegment(Graphics2D g,
+     private void drawGreatCircleSubsegment(Graphics2D g,
             int xo, int yo, int radius, Vec3[] vs) {
-         BasicStroke stroke;
-         if (abs(vs[0].z) > 1e-10) stroke = vs[0].z<0 ? stroke1 : stroke2;
-         else stroke = vs[vs.length-1].z<0 ? stroke1 : stroke2;
+         double checkHemisphere = vs[0].z;
+         if (abs(checkHemisphere) < 1e-10) checkHemisphere = vs[vs.length-1].z;
+         Stroke stroke = checkHemisphere<0 ? getStroke() : getDashedStroke();
          GeneralPath path = new GeneralPath();
          boolean first = true;
          for (Vec3 v : vs) {
@@ -68,9 +64,8 @@ public abstract class EqAreaPlot extends Plot {
          g.draw(path);
      }
 
-     protected static void drawGreatCircleSegment(Graphics2D g,
+     protected void drawGreatCircleSegment(Graphics2D g,
             int xo, int yo, int radius, Vec3 p1, Vec3 p2) {
-
         if (p1.sameHemisphere(p2)) {
             drawGreatCircleSubsegment(g, xo, yo, radius,
                     Vec3.spherInterpolate(p1, p2, 0.05));
