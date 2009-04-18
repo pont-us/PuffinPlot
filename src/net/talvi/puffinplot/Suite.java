@@ -1,6 +1,5 @@
 package net.talvi.puffinplot;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -24,7 +23,6 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-
 
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.FisherValues;
@@ -100,7 +98,7 @@ public class Suite implements Iterable<Datum> {
         }
     }
     
-    void doFisherOnAllPcas() {
+    void doFisherOnSuite() {
         Sample[] samples = PuffinApp.getInstance().getSelectedSamples();
         List<PcaValues> pcas = new ArrayList<PcaValues>(samples.length);
         
@@ -113,29 +111,9 @@ public class Suite implements Iterable<Datum> {
         for (PcaValues pca: pcas) directions.add(pca.getDirection());
         
         suiteFisher = FisherValues.calculate(directions);
-        
-        Writer writer = null;
-        try {
-            // write them to a file
-            writer = new FileWriter("/home/pont/suite-fisher.txt");
-            writer.write("inc\tdec\ta95\tk\n");
-            FisherValues f = suiteFisher;
-                writer.write(String.format("%.1f\t%.1f\t%.1f\t%.1f\n",
-                        f.getMeanDirection().incDegrees(),
-                        f.getMeanDirection().decDegrees(),
-                        f.getA95(), f.getK()));
-            
-        } catch (IOException ex) {
-           throw new Error(ex);
-        } finally {
-            if (writer != null) {
-                try { writer.close(); }
-                catch (IOException e) { throw new Error(e); }
-            }
-        }
     }
     
-    void doFisherOnPcasBySite() {
+    void doFisherOnSites() {
         Map<String, Set<PcaValues>> sitePcas =
                 new LinkedHashMap<String, Set<PcaValues>>();
         
@@ -160,26 +138,7 @@ public class Suite implements Iterable<Datum> {
             siteFishers.add(new FisherForSite(entry.getKey(),
                     FisherValues.calculate(directions)));
         }
-        
-        Writer writer = null;
-        try {
-            // write them to a file
-            writer = new FileWriter(new File("/home/pont/site-fisher.txt"));
-            writer.write("site\tinc\tdec\ta95\tk\n");
-            for (FisherForSite f: siteFishers) {
-                writer.write(String.format("%s\t%.1f\t%.1f\t%.1f\t%.1f\n",
-                        f.site, f.fisher.getMeanDirection().incDegrees(),
-                        f.fisher.getMeanDirection().decDegrees(),
-                        f.fisher.getA95(), f.fisher.getK()));
-            }
-        } catch (IOException ex) {
-           throw new Error(ex);
-        } finally {
-            if (writer != null) {
-                try { writer.close(); }
-                catch (IOException e) { throw new Error(e); }
-            }
-        }
+
     }
 
     public List<FisherValues> getFishers() {
@@ -418,10 +377,12 @@ public class Suite implements Iterable<Datum> {
         for (Sample s: getSamples()) s.doPca();
     }
 
-    public void saveCalculations(File file) {
+    /*
+     * Save calculations per-sample.
+     */
+    public void saveCalcsSample(File file) {
         Writer writer = null;
         try {
-            writer = new FileWriter(file);
             ArrayList<Sample> samples = new ArrayList<Sample>(getNumSamples());
             if (measType == MeasType.CONTINUOUS) {
                 for (double depth: depths)
@@ -430,31 +391,26 @@ public class Suite implements Iterable<Datum> {
                 for (String name: names)
                     samples.add(getSampleByName(name));
             }
+            if (samples.size()==0) {
+                PuffinApp.errorDialog("Error saving calculations",
+                        "No calculations to save!");
+                return;
+            }
 
-            writer.write(measType == MeasType.CONTINUOUS ?
-                "\"Depth\", " : "\"Sample\", ");
-            writer.write("\"Fisher inc.\", \"Fisher dec.\", \"a95\", \"k\", "+
-                    "\"PCA inc.\", \"PCA dec.\", \"MAD1\", \"MAD3\"\n");
+            writer = new FileWriter(file);
+            writer.write(
+                    (measType == MeasType.CONTINUOUS ? "depth" : "sample") +
+                    "," + FisherValues.getHeader(",") +
+                    "," + PcaValues.getHeader(",") + "\n");
             for (Sample sample: samples) {
-                String fishCsv = ",,,";
-                String pcaCsv = ",,,";
                 PcaValues pca = sample.getPca();
-                if (pca != null) {
-                    pcaCsv = String.format("%.1f, %.1f, %.1f, %.1f",
-                            pca.getIncDegrees(), pca.getDecDegrees(),
-                            pca.getMad1(), pca.getMad3());
-                }
+                String pcaCsv = pca==null ? ",,," : pca.toLine(",");
                 FisherValues fish = sample.getFisher();
-                if (fish != null) {
-                    Vec3 dir = fish.getMeanDirection();
-                    fishCsv = String.format("%.1f, %.1f, %.1f, %.1f",
-                            dir.decDegrees(), dir.incDegrees(),
-                            fish.getA95(), fish.getK());
-                }
+                String fishCsv = fish==null ? ",,," : fish.toLine(",");
                 String sampleId = (measType == MeasType.CONTINUOUS) ?
                     String.format("%f", sample.getDepth()) :
                     sample.getName();
-                writer.write(sampleId+", "+fishCsv+", "+pcaCsv+"\n");
+                writer.write(sampleId+","+fishCsv+","+pcaCsv+"\n");
             }
             
         } catch (IOException ex) {
@@ -468,6 +424,60 @@ public class Suite implements Iterable<Datum> {
         }
     }
     
+    /*
+     * Save [Fisher] calculations per site. Only works for discrete.
+     */
+    public void saveCalcsSite(File file) {
+        Writer writer = null;
+        try {
+            if (siteFishers==null || siteFishers.size() == 0) {
+                PuffinApp.errorDialog("Error saving calculations",
+                        "No calculations to save!");
+                return;
+            }
+            // write them to a file
+            writer = new FileWriter("/home/pont/site-fisher.txt");
+            writer.write("site,"+FisherValues.getHeader(",")+"\n");
+            for (FisherForSite f: siteFishers) {
+                writer.write(f.site + "," + f.fisher.toLine(",")+"\n");
+            }
+        } catch (IOException ex) {
+           throw new Error(ex);
+        } finally {
+            if (writer != null) {
+                try { writer.close(); }
+                catch (IOException e) { throw new Error(e); }
+            }
+        }
+    }
+
+    /*
+     * Save a single Fisher calculation for the suite.
+     */
+    public void saveCalcsSuite(File file) {
+        Writer writer = null;
+        try {
+            if (suiteFisher == null) {
+                PuffinApp.errorDialog("Error saving calculations",
+                        "No calculations to save!");
+                return;
+            }
+            writer = new FileWriter("/home/pont/suite-fisher.txt");
+            writer.write(FisherValues.getHeader(",")+"\n");
+            writer.write(suiteFisher.toLine(",")+"\n");
+
+        } catch (IOException ex) {
+           throw new Error(ex);
+        } finally {
+            if (writer != null) {
+                try { writer.close(); }
+                catch (IOException e) { throw new Error(e); }
+            }
+        }
+
+    }
+
+
     public Sample getSampleByDepth(double depth) {
         return samplesByDepth.get(depth);
     }

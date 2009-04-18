@@ -18,6 +18,9 @@ import net.talvi.puffinplot.data.Sample;
 public class PuffinActions {
 
     private PuffinApp app;
+    private static final boolean useSwingChooserForOpen = true;
+    private static final boolean useSwingChooserForSave = !PuffinApp.MAC_OS_X;
+
 
     PuffinActions(PuffinApp app) {
         this.app = app;
@@ -35,11 +38,8 @@ public class PuffinActions {
 
         public void actionPerformed(ActionEvent e) {
 
-            boolean useSwingChooser = true; // !PuffinApp.MAC_OS_X;
-
             File[] files = null;
-
-            if (useSwingChooser) {
+            if (useSwingChooserForOpen) {
                 JFileChooser chooser = new JFileChooser();
                 chooser.setMultiSelectionEnabled(true);
                 chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -60,68 +60,91 @@ public class PuffinActions {
                 app.openFiles(files);
         }
     };
-    
-    public final Action saveCalcs = new AbstractAction("Save PCA/Fisher…") {
+
+    private String getSavePath(final String title, final String extension,
+            final String type) {
+        String pathname = null;
+        if (useSwingChooserForSave) {
+            JFileChooser chooser = new JFileChooser();
+            chooser.setFileFilter(new FileFilter() {
+
+                @Override
+                public boolean accept(File f) {
+                    return f.getName().toLowerCase().endsWith(extension);
+                }
+
+                @Override
+                public String getDescription() {
+                    return type;
+                }
+            });
+            int choice = chooser.showSaveDialog(app.getMainWindow());
+            if (choice == JFileChooser.APPROVE_OPTION)
+                pathname = chooser.getSelectedFile().getPath();
+        } else {
+            FileDialog fd = new FileDialog(app.getMainWindow(), title,
+                    FileDialog.SAVE);
+            fd.setFilenameFilter(new FilenameFilter() {
+
+                public boolean accept(File dir, String name) {
+                    return name.toLowerCase().endsWith(extension);
+                }
+            });
+            fd.setVisible(true);
+            pathname = new File(fd.getDirectory(), fd.getFile()).getPath();
+        }
+        return pathname;
+    }
+
+    public final Action saveCalcsSample = new AbstractAction("Save sample calculations…") {
 
         public void actionPerformed(ActionEvent arg0) {
-            boolean useSwingChooser = !PuffinApp.MAC_OS_X;
-
-            File file = null;
-
-            if (useSwingChooser) {
-                JFileChooser chooser = new JFileChooser();
-                int choice = chooser.showSaveDialog(app.getMainWindow());
-                if (choice == JFileChooser.APPROVE_OPTION)
-                    file = chooser.getSelectedFile();
-            } else {
-                FileDialog fd = new FileDialog(app.getMainWindow(),
-                        "Save PCA/Fisher", FileDialog.SAVE);
-                fd.setVisible(true);
-                String filename = fd.getFile();
-                if (filename != null) {
-                    file = new File(fd.getDirectory(), fd.getFile());
-                }
+            if (app.getSuite() == null) {
+                PuffinApp.errorDialog("Error saving calculation", "No file loaded.");
+                            return;
             }
-            if (file != null) app.getSuite().saveCalculations(file);
+            String pathname = getSavePath("Save sample calculations", ".csv",
+                    "Comma Separated Values");
+
+            if (pathname != null)
+                app.getSuite().saveCalcsSample(new File(pathname));
         }
-        
     };
-    
+
+    public final Action saveCalcsSite = new AbstractAction("Save site calculations…") {
+
+        public void actionPerformed(ActionEvent arg0) {
+            if (app.getSuite() == null) {
+                PuffinApp.errorDialog("Error saving calculation", "No file loaded.");
+                            return;
+            }
+            String pathname = getSavePath("Save site calculations", ".csv",
+                    "Comma Separated Values");
+
+            if (pathname != null)
+                app.getSuite().saveCalcsSite(new File(pathname));
+        }
+    };
+
+    public final Action saveCalcsSuite = new AbstractAction("Save suite calculations…") {
+
+        public void actionPerformed(ActionEvent arg0) {
+            if (app.getSuite() == null) {
+                PuffinApp.errorDialog("Error saving calculation", "No file loaded.");
+                return;
+            }
+            String pathname = getSavePath("Save suite calculations", ".csv",
+                    "Comma Separated Values");
+
+            if (pathname != null)
+                app.getSuite().saveCalcsSuite(new File(pathname));
+        }
+    };
+
     public final Action save = new AbstractAction("Save…") {
 
         public void actionPerformed(ActionEvent arg0) {
-            boolean useSwingChooser = !PuffinApp.MAC_OS_X;
-
-            String pathname = null;
-
-            if (useSwingChooser) {
-                JFileChooser chooser = new JFileChooser();
-                chooser.setFileFilter(new FileFilter() {
-
-                    @Override
-                    public boolean accept(File f) {
-                        return f.getName().toLowerCase().endsWith(".ppl");
-                    }
-
-                    @Override
-                    public String getDescription() {
-                        return "PuffinPlot files";
-                    }
-                });
-                int choice = chooser.showSaveDialog(app.getMainWindow());
-                if (choice == JFileChooser.APPROVE_OPTION)
-                    pathname = chooser.getSelectedFile().getPath();
-            } else {
-                FileDialog fd = new FileDialog(app.getMainWindow(), "Save data",
-                        FileDialog.SAVE);
-                fd.setFilenameFilter(new FilenameFilter() {
-                    public boolean accept(File dir, String name) {
-                        return name.toLowerCase().endsWith(".ppl");
-                    }
-                });
-                fd.setVisible(true);
-                pathname = new File(fd.getDirectory(), fd.getFile()).getPath();
-            }
+            String pathname = getSavePath("Save data", ".ppl", "PuffinPlot data");
 
             File file = null;
             if (pathname != null) {
@@ -174,14 +197,14 @@ public class PuffinActions {
     public final Action fisherBySite = new AbstractAction("Fisher by site") {
         public void actionPerformed(ActionEvent e) {
             app.getFisherWindow().getPlot().setGroupedBySite(true);
-            app.getSuite().doFisherOnPcasBySite();
+            app.getSuite().doFisherOnSites();
             app.getFisherWindow().setVisible(true);
         }
     };
         
     public final Action fisherBySample = new AbstractAction("Fisher on all") {
         public void actionPerformed(ActionEvent e) {
-            app.getSuite().doFisherOnAllPcas();
+            app.getSuite().doFisherOnSuite();
             app.getFisherWindow().getPlot().setGroupedBySite(false);
             app.getFisherWindow().setVisible(true);
         }

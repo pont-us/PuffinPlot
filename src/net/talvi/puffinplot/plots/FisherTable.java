@@ -48,8 +48,8 @@ public class FisherTable extends Plot {
 
             writeString(g,
                     String.format("Dec %.2f  Inc %.2f",
-                    fish.getMeanDirection().decDegrees(),
-                    fish.getMeanDirection().incDegrees()), xOrig, yOrig+16);
+                    fish.getMeanDirection().getDecDeg(),
+                    fish.getMeanDirection().getIncDeg()), xOrig, yOrig+16);
             String s = String.format("α95 %.2f  k %.2f"
                     ,fish.getA95(), fish.getK());
             AttributedString as = new AttributedString(s);

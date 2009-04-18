@@ -22,3 +22,15 @@ This window also allows you to apply a correction for magnetic deviation
 to one or more samples.
 
 
+Fisher calculations
+-------------------
+
+Fisher statistics can be calculated at three levels:
+
+1. On selected points within individual samples.
+2. On a per-site basis, using the PCA direction for each sample within
+   the site. Sites are determined using the OPRF sample code convention
+   whereby the first two digits of the sample code denote the site number.
+3. On a per-suite basis, performing the calculation on every PCA value
+   from every sample for which one has been calculated.
+

@@ -76,8 +76,8 @@ public class FisherEqAreaPlot extends EqAreaPlot {
                 circle.add(Vec3.fromPolarDegrees(1, 90-fisher.getA95(), dec));
             }
             for (Vec3 c: circle) {
-                Vec3 w = c.rotY(Math.PI / 2 - v.incRadians());
-                w = w.rotZ(v.decRadians());
+                Vec3 w = c.rotY(Math.PI / 2 - v.getIncRad());
+                w = w.rotZ(v.getDecRad());
                 Point2D p = project(w, xo, yo, radius);
                 ellipse.addPoint((int) p.getX(), (int) p.getY());
             }

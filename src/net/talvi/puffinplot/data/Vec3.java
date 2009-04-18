@@ -253,7 +253,7 @@ public class Vec3 {
                 m * sin(inc));
     }
 
-    public double incRadians() {
+    public double getIncRad() {
         return atan2(z, sqrt(x*x + y*y));
     }
 
@@ -276,18 +276,18 @@ public class Vec3 {
      * 
      */
     
-    public double decRadians() {
+    public double getDecRad() {
         double theta = atan2(y, x);
         if (theta<0) theta += 2*PI;
         return theta;
     }
 
-    public double incDegrees() {
-        return toDegrees(incRadians());
+    public double getIncDeg() {
+        return toDegrees(getIncRad());
     }
 
-    public double decDegrees() {
-        return toDegrees(decRadians());
+    public double getDecDeg() {
+        return toDegrees(getDecRad());
     }
     
     public static double vectorSumLength(Collection<Vec3> points) {

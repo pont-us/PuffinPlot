@@ -43,6 +43,7 @@ public class PcaValues {
                         ? (compareTo((Pair) o)==0)
                         : false;
             }
+            @Override
             public int hashCode() {
                 assert false : "hashCode not designed";
                 return 42; // any arbitrary constant will do 
@@ -107,19 +108,19 @@ public class PcaValues {
     }
 
     public double getIncRadians() {
-        return direction.incRadians();
+        return direction.getIncRad();
     }
 
     public double getDecRadians() {
-        return direction.decRadians();
+        return direction.getDecRad();
     }
     
     public double getIncDegrees() {
-        return direction.incDegrees();
+        return direction.getIncDeg();
     }
 
     public double getDecDegrees() {
-        return direction.decDegrees();
+        return direction.getDecDeg();
     }
 
     public double getMad1() {
@@ -138,5 +139,16 @@ public class PcaValues {
         return direction;
     }
     
-    
+    public static String getHeader(String separator) {
+        return String.format("PCA inc.%sPCA dec.%sMAD1%sMAD3",
+                separator, separator, separator);
+    }
+
+    public String toLine(String separator) {
+        return String.format("%.1f%s%.1f%s%.1f%s%.1f",
+                getIncDegrees(), separator, getDecDegrees(), separator,
+                getMad1(), separator, getMad3());
+    }
+
+
 }

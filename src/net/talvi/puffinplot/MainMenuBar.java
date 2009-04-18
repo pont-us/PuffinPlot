@@ -37,8 +37,10 @@ public class MainMenuBar extends JMenuBar {
         MenuItemDef[] fileItems = {
             new ActionItemDef(actions.open, 'O', 0, true),
             new SubmenuDef(recentFilesMenu),
-            new ActionItemDef(actions.saveCalcs, 'S', 0, true),
             new ActionItemDef(actions.save, 'S', InputEvent.SHIFT_DOWN_MASK, true),
+            new ActionItemDef(actions.saveCalcsSample, true),
+            new ActionItemDef(actions.saveCalcsSite, true),
+            new ActionItemDef(actions.saveCalcsSuite, true),
             new ActionItemDef(actions.pageSetup, 'P', InputEvent.SHIFT_DOWN_MASK, true),
             new ActionItemDef(actions.print, 'P', 0, true),
             new ActionItemDef(actions.printFisher, 'I', 0, true),
@@ -154,6 +156,7 @@ public class MainMenuBar extends JMenuBar {
         private char shortcut;
         private boolean onMac;
         private int mask;
+        private boolean hasShortcut;
         
         ActionItemDef(Action action, char shortcut, int mask, boolean onMac) {
             super();
@@ -161,13 +164,22 @@ public class MainMenuBar extends JMenuBar {
             this.shortcut = shortcut;
             this.mask = mask;
             this.onMac = onMac;
+            this.hasShortcut = true;
+        }
+
+        ActionItemDef(Action action, boolean onMac) {
+            super();
+            this.action = action;
+            this.onMac = onMac;
+            this.hasShortcut = false;
         }
         
         public void addToMenu(JMenu menu) {
             if (onMac || !PuffinApp.MAC_OS_X) {
                 JMenuItem item = new JMenuItem(action);
-                item.setAccelerator(KeyStroke.getKeyStroke(shortcut,
-                        modifierKey | mask, false));
+                if (hasShortcut)
+                    item.setAccelerator(KeyStroke.getKeyStroke(shortcut,
+                            modifierKey | mask, false));
                 menu.add(item);
             }
         }
