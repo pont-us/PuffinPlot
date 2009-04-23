@@ -5,7 +5,7 @@ import java.io.File;
 public enum FileType {
 	TWOGEE, ZPLOT, PUFFINPLOT, UNKNOWN;
 	
-	static FileType guessFromName(File f) {
+	static public FileType guessFromName(File f) {
 		String name = f.getName().toLowerCase();
 		if (name.endsWith(".dat")) return TWOGEE;
 		else if (name.endsWith(".txt")) return ZPLOT;

@@ -43,6 +43,10 @@ public class MainGraphDisplay extends GraphDisplay {
             public MeasType getMeasType() {
                 return app.getSuite().getMeasType();
             }
+
+            public boolean isEmptyCorrectionActive() {
+                return app.isEmptyCorrectionActive();
+            }
         };
 
         Preferences pref = PuffinApp.getInstance().getPrefs().prefs;

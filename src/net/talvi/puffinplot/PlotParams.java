@@ -15,6 +15,6 @@ public interface PlotParams {
     public Sample getSample();
     public Correction getCorrection();
     public MeasurementAxis getAxis();
-    
+    public boolean isEmptyCorrectionActive();
     
 }

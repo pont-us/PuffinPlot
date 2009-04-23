@@ -1,4 +1,4 @@
-package net.talvi.puffinplot;
+package net.talvi.puffinplot.data;
 
 import java.io.File;
 import java.io.FileReader;
@@ -24,14 +24,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
-import net.talvi.puffinplot.data.Datum;
-import net.talvi.puffinplot.data.FisherValues;
-import net.talvi.puffinplot.data.MeasType;
-import net.talvi.puffinplot.data.PcaValues;
-import net.talvi.puffinplot.data.Vec3;
-import net.talvi.puffinplot.data.Sample;
-import net.talvi.puffinplot.data.TreatType;
-import net.talvi.puffinplot.data.TwoGeeField;
+import net.talvi.puffinplot.FileType;
+import net.talvi.puffinplot.PuffinApp;
 
 public class Suite implements Iterable<Datum> {
 
@@ -41,6 +35,7 @@ public class Suite implements Iterable<Datum> {
     private String[] names = {};
     private Map<Double, Sample> samplesByDepth;
     private Map<String, Sample> samplesByName;
+    private Map<Integer, Line> dataByLine;
     private int currentDepthIndex = 0;
     private MeasType measType;
     private String currentName;
@@ -51,6 +46,7 @@ public class Suite implements Iterable<Datum> {
     private List<FisherForSite> siteFishers;
     private FisherValues suiteFisher;
 
+    @Override
     public Iterator<Datum> iterator() {
         return data.iterator();
     }
@@ -98,7 +94,7 @@ public class Suite implements Iterable<Datum> {
         }
     }
     
-    void doFisherOnSuite() {
+    public void doFisherOnSuite() {
         Sample[] samples = PuffinApp.getInstance().getSelectedSamples();
         List<PcaValues> pcas = new ArrayList<PcaValues>(samples.length);
         
@@ -113,7 +109,7 @@ public class Suite implements Iterable<Datum> {
         suiteFisher = FisherValues.calculate(directions);
     }
     
-    void doFisherOnSites() {
+    public void doFisherOnSites() {
         Map<String, Set<PcaValues>> sitePcas =
                 new LinkedHashMap<String, Set<PcaValues>>();
         
@@ -148,7 +144,7 @@ public class Suite implements Iterable<Datum> {
         return result;
     }
     
-    void save(File file) {
+    public void save(File file) {
         List<TwoGeeField> fields = new LinkedList(Arrays.asList(TwoGeeField.values()));
         fields.remove(TwoGeeField.UNKNOWN);
         
@@ -188,7 +184,13 @@ public class Suite implements Iterable<Datum> {
             }
         }
     }
-    
+
+    private Line getLineContainer(int lineNumber) {
+        if (!dataByLine.containsKey(lineNumber))
+            dataByLine.put(lineNumber, new Line(lineNumber));
+        return dataByLine.get(lineNumber);
+    }
+
     private void addDatumLongcore(Datum d, Set<Double> depthSet) {
         if (!d.isMagSus() && d.getTreatType() != TreatType.ARM) {
             data.add(d);
@@ -216,10 +218,10 @@ public class Suite implements Iterable<Datum> {
         }
     }
     
-    private void addLine2G(String line, List<TwoGeeField> fields,
+    private void addLine2G(String line, int lineNumber, List<TwoGeeField> fields,
             Set<Double> depthSet, Set<String> nameSet) {
         if (!emptyLine.matcher(line).matches()) {
-            Datum d = new Datum(line, fields);
+            Datum d = new Datum(line, fields, getLineContainer(lineNumber));
             if (measType == MeasType.UNSET)
                 measType = d.getMeasType();
             if (d.getMeasType() != measType) {
@@ -276,13 +278,12 @@ public class Suite implements Iterable<Datum> {
         data = new ArrayList<Datum>();
         samplesByDepth = new HashMap<Double, Sample>();
         samplesByName = new HashMap<String, Sample>();
+        dataByLine = new HashMap<Integer, Line>();
         measType = MeasType.UNSET;
         String line;
         TreeSet<Double> depthSet = new TreeSet<Double>();
         TreeSet<String> nameSet = new TreeSet<String>();
         final int MAX_WARNINGS_PER_FILE = 3;
-        
-        // TODO: throw exceptions when loading fails, or when no samples in file!
         
         for (File file: files) {
             int warningsThisFile = 0;
@@ -305,18 +306,20 @@ public class Suite implements Iterable<Datum> {
                                 "Ignoring it.");
                     } else {
                         while ((line = reader.readLine()) != null) {
+                            final int lineNum = reader.getLineNumber();
                             try {
-                                addLine2G(line, fields.fields, depthSet, nameSet);
+                                addLine2G(line, lineNum, fields.fields,
+                                        depthSet, nameSet);
                             } catch (IllegalArgumentException e) {
                                 loadWarnings.add(e.getMessage() +
-                                        " at line " + reader.getLineNumber() +
+                                        " at line " + lineNum +
                                         " in file " + file.getName() +
                                         " -- ignoring this line.");
                                 if (++warningsThisFile > MAX_WARNINGS_PER_FILE) {
                                     loadWarnings.add("Too many errors in " +
                                             file.getName() +
                                             "-- aborting load at line " +
-                                            reader.getLineNumber());
+                                            lineNum);
                                     break;
                                 }
                             }
@@ -419,7 +422,7 @@ public class Suite implements Iterable<Datum> {
                 try {
                     if (writer != null) writer.close();
                 } catch (IOException ex) {
-                    Logger.getLogger(PuffinActions.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Suite.class.getName()).log(Level.SEVERE, null, ex);
                 }
         }
     }

@@ -48,6 +48,7 @@ public class SampleTable extends Plot {
             break;
         }
         line = line + ", Correction: " + params.getCorrection();
+        if (params.isEmptyCorrectionActive()) line = line + " E";
         g.drawString(line, (int) getDimensions().getMinX(), 
                 (int) getDimensions().getMinY() + 16);
         g.setFont(oldFont);

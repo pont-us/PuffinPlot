@@ -32,13 +32,15 @@ public class ZPlot extends Plot {
     }
 
     private static Rectangle2D extent(List<Datum> sample, Correction corr,
+            boolean emptyCorrection,
             MeasurementAxis axis1, MeasurementAxis axis2) {
-        Comparator<Datum> xComp = new DatumComparator(axis1, corr);
-        Comparator<Datum> yComp = new DatumComparator(axis2, corr);
-        double xMin = Collections.min(sample, xComp).getPoint(corr).getComponent(axis1);
-        double xMax = Collections.max(sample, xComp).getPoint(corr).getComponent(axis1);
-        double yMin = Collections.min(sample, yComp).getPoint(corr).getComponent(axis2);
-        double yMax = Collections.max(sample, yComp).getPoint(corr).getComponent(axis2);
+        final boolean ec = emptyCorrection;
+        Comparator<Datum> xComp = new DatumComparator(axis1, corr, ec);
+        Comparator<Datum> yComp = new DatumComparator(axis2, corr, ec);
+        double xMin = Collections.min(sample, xComp).getPoint(corr,ec).getComponent(axis1);
+        double xMax = Collections.max(sample, xComp).getPoint(corr,ec).getComponent(axis1);
+        double yMin = Collections.min(sample, yComp).getPoint(corr,ec).getComponent(axis2);
+        double yMax = Collections.max(sample, yComp).getPoint(corr,ec).getComponent(axis2);
         return new Rectangle2D.Double(xMin, yMin, xMax-xMin, yMax-yMin);
     }
     
@@ -73,11 +75,12 @@ public class ZPlot extends Plot {
         clearPoints();
         Correction correction = params.getCorrection();
         MeasurementAxis vVs = params.getAxis();
-        
+        boolean emptyC = params.isEmptyCorrectionActive();
+
         Rectangle2D extent1 =
-                extent(data, correction, MeasurementAxis.Y, MeasurementAxis.X);
+                extent(data, correction, emptyC, MeasurementAxis.Y, MeasurementAxis.X);
         Rectangle2D extent2 =
-                extent(data, correction, vVs, MeasurementAxis.MINUSZ);
+                extent(data, correction, emptyC, vVs, MeasurementAxis.MINUSZ);
 
         Rectangle2D dim = cropRectangle(getDimensions(), 250, 250, 200, 200);
 
@@ -94,7 +97,7 @@ public class ZPlot extends Plot {
         
         boolean first = true;
         for (Datum d: data) {
-            Vec3 p = d.getPoint(correction);
+            Vec3 p = d.getPoint(correction, emptyC);
             // Plot the point in the horizontal plane
             double x1 = xOffset + p.y * scale;
             double y1 = yOffset - p.x * scale;
@@ -103,7 +106,7 @@ public class ZPlot extends Plot {
         }
         first = true;
         for (Datum d: data) {
-            Vec3 p = d.getPoint(correction);
+            Vec3 p = d.getPoint(correction, emptyC);
             // Now plot the point in the vertical plane
             double x2 = xOffset + p.getComponent(vVs) * scale;
             double y2 = yOffset - p.getComponent(MeasurementAxis.MINUSZ) * scale;

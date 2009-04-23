@@ -1,5 +1,6 @@
 package net.talvi.puffinplot;
 
+import net.talvi.puffinplot.data.Suite;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.util.LinkedList;

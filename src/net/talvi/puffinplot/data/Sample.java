@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.talvi.puffinplot.PuffinApp;
-import net.talvi.puffinplot.Suite;
+import net.talvi.puffinplot.data.Suite;
 
 public class Sample {
     
@@ -14,6 +14,7 @@ public class Sample {
     private final String name;
     private PcaValues pca = null;
     private FisherValues fisher = null;
+    private boolean emptySlot = false;
 
     public Sample(double depth) {
         this.depth = depth;
@@ -62,6 +63,7 @@ public class Sample {
     
     public void addDatum(Datum d) {
         data.add(d);
+        d.setSample(this);
     }
 
     public double getDepth() {
@@ -74,28 +76,23 @@ public class Sample {
     
     public List<Vec3> getSelectedPoints() {
         LinkedList<Vec3> points = new LinkedList<Vec3>();
+        PuffinApp app = PuffinApp.getInstance();
         for (Datum d: data)
             if (d.isSelected())
-                points.add(d.getPoint(PuffinApp.getInstance().getCorrection()));
+                points.add(d.getPoint(app.getCorrection(),
+                        app.isEmptyCorrectionActive()));
         return points;
     }
     
     public void doFisher() {
         List<Vec3> points = getSelectedPoints();
-        if (points.size() < 2)
-            PuffinApp.errorDialog("Fisher error", "You must select at least two points in order " +
-                    "to calculate Fisher statistics.");
-        else
+        if (points.size() > 1)
             fisher = FisherValues.calculate(points);
     }
 
     public void doPca(boolean anchored) {
         for (Datum d: data) d.setPcaAnchored(anchored);
         List<Vec3> points = getSelectedPoints();
-//        if (points.size() < 2)
-//            PuffinApp.errorDialog("PCA error", "You must select at least two points in order "+
-//                    "to perform PCA.");
-//        else
         if (points.size() > 1)
             pca = PcaValues.calculate(points, 
                     anchored
@@ -121,5 +118,13 @@ public class Sample {
     
     public void setPcaAnchored(boolean pcaAnchored) {
         for (Datum d: data) d.setPcaAnchored(pcaAnchored);
+    }
+
+    public boolean isEmptySlot() {
+        return emptySlot;
+    }
+
+    public void setEmptySlot(boolean isEmptySlot) {
+        this.emptySlot = isEmptySlot;
     }
 }

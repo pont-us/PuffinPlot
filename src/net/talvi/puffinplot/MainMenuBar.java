@@ -4,7 +4,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
-import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
@@ -13,6 +12,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import net.talvi.puffinplot.data.Sample;
 
 public class MainMenuBar extends JMenuBar {
 
@@ -72,28 +74,45 @@ public class MainMenuBar extends JMenuBar {
         addSimpleItem(editMenu, actions.resetLayout, '\u0000');
         addSimpleItem(editMenu, actions.editCorrections, '\u0000');
         addSimpleItem(editMenu, actions.flipSample, '\u0000');
-        
+        addSimpleItem(editMenu, actions.useAsEmptySlot, '\u0000');
+        addSimpleItem(editMenu, actions.unsetEmptySlot, '\u0000');
+        final JCheckBoxMenuItem useEmptyItem = new JCheckBoxMenuItem("Apply empty correction")
+        {
+            @Override
+            public boolean isSelected() {
+                return app.isEmptyCorrectionActive();
+            }
+        };
+        useEmptyItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                app.setEmptyCorrectionActive(!app.isEmptyCorrectionActive());
+                app.updateDisplay();
+            }
+        });
+        useEmptyItem.setAccelerator(KeyStroke.getKeyStroke('Y', modifierKey));
+        editMenu.add(useEmptyItem);
+
         JMenu calcMenu = new JMenu("Calculate");
         addSimpleItem(calcMenu, actions.pcaOnSelection, 'R');
-        addSimpleItem(calcMenu, actions.anchoredPcaOnSelection, 'T');
         
-//        final JCheckBoxMenuItem anchorItem = new JCheckBoxMenuItem("Anchor PCA")
-//        {
-//            @Override
-//            public boolean getState() {
-//                return app.getSample().isPcaAnchored();
-//            }
-//        };
-//        calcMenu.add(anchorItem);
-//        anchorItem.addChangeListener(new ChangeListener() {
-//            public void stateChanged(ChangeEvent event) {
-//                for (Sample s: app.getSelectedSamples()) {
-//                    s.setPcaAnchored(anchorItem.isSelected());
-//                    s.doPca();
-//                }
-//                app.updateDisplay();
-//            }
-//        });
+        final JCheckBoxMenuItem anchorItem = new JCheckBoxMenuItem("Anchor PCA")
+        {
+            @Override
+            public boolean getState() {
+                return app.getSample().isPcaAnchored();
+            }
+        };
+        calcMenu.add(anchorItem);
+        anchorItem.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent event) {
+                for (Sample s: app.getSelectedSamples()) {
+                    s.setPcaAnchored(anchorItem.isSelected());
+                    s.doPca();
+                }
+                app.updateDisplay();
+            }
+        });
+        anchorItem.setAccelerator(KeyStroke.getKeyStroke('T', modifierKey));
         
         addSimpleItem(calcMenu, actions.fisher, 'F');
         addSimpleItem(calcMenu, actions.fisherBySite, 'G');

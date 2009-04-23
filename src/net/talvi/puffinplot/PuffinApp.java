@@ -1,5 +1,6 @@
 package net.talvi.puffinplot;
 
+import net.talvi.puffinplot.data.Suite;
 import java.awt.event.ActionEvent;
 import java.awt.print.PageFormat;
 import java.awt.print.PrinterJob;
@@ -38,6 +39,15 @@ public class PuffinApp {
     public static PuffinApp getInstance() { return app; }
 
     public static String getBuildDate() { return buildDate; }
+    private boolean emptyCorrectionActive;
+
+    public boolean isEmptyCorrectionActive() {
+        return emptyCorrectionActive;
+    }
+
+    void setEmptyCorrectionActive(boolean b) {
+        emptyCorrectionActive = b;
+    }
 
     private void loadBuildProperties() {
         InputStream propStream = null;
@@ -309,4 +319,5 @@ public class PuffinApp {
     public void setRecentFiles(RecentFileList recentFiles) {
         this.recentFiles = recentFiles;
     }
+
 }

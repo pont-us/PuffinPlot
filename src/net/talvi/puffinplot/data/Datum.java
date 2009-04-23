@@ -38,17 +38,19 @@ public class Datum {
     private double irmGauss=NaN, armGauss=NaN;
     private double xbkg1=NaN, xbkg2=NaN, ybkg1=NaN, ybkg2=NaN, zbkg1=NaN, zbkg2=NaN;
     private ArmAxis armAxis = ArmAxis.UNKNOWN;
-    private Vec3 uc, sc, fc;
+    private Vec3 uc;
+    private int runNumber = -1;
     private double volume = defaultVolume;
     private double area = defaultCoreArea;
-    private int runNumber = -1;
     private String timeStamp = "UNSET"; // NB this is a magic value; see below
-    
+
+    private final Line line;
     private boolean selected = false;
     private boolean pcaAnchored = false;
     
     private final static Pattern delimPattern = Pattern.compile("\\t");
     private final static Pattern numberPattern = Pattern.compile("\\d+(\\.\\d+)?");
+    private Sample sample;
 
     public boolean isSelected() {
         return selected;
@@ -64,7 +66,7 @@ public class Datum {
 
     public void setSampAz(double sampAz) {
         this.sampAz = sampAz;
-        applyCorrections();
+        // applyCorrections();
     }
 
     public double getSampDip() {
@@ -73,7 +75,7 @@ public class Datum {
 
     public void setSampDip(double sampDip) {
         this.sampDip = sampDip;
-        applyCorrections();
+        // applyCorrections();
     }
 
     public double getFormAz() {
@@ -82,7 +84,7 @@ public class Datum {
 
     public void setFormAz(double formAz) {
         this.formAz = formAz;
-        applyCorrections();
+        // applyCorrections();
     }
 
     public double getFormDip() {
@@ -91,7 +93,7 @@ public class Datum {
 
     public void setFormDip(double formDip) {
         this.formDip = formDip;
-        applyCorrections();
+        // applyCorrections();
     }
 
     public double getMagDev() {
@@ -100,7 +102,7 @@ public class Datum {
 
     public void setMagDev(double magDev) {
         this.magDev = magDev;
-        applyCorrections();
+        // applyCorrections();
     }
 
     public boolean isPcaAnchored() {
@@ -109,6 +111,14 @@ public class Datum {
 
     public void setPcaAnchored(boolean pcaAnchored) {
         this.pcaAnchored = pcaAnchored;
+    }
+
+    public Line getLine() {
+        return line;
+    }
+
+    public Sample getSample() {
+        return sample;
     }
 
     private static class NaScanner {
@@ -151,6 +161,7 @@ public class Datum {
     }
     
     public Datum(String zPlotLine) {
+        line = null;
         Scanner s = new Scanner(zPlotLine);
         s.useLocale(Locale.ENGLISH); // don't want to be using commas as decimal separators...
         s.useDelimiter(delimPattern); // might have spaces within fields
@@ -174,7 +185,7 @@ public class Datum {
         String operation = s.next();
         magSus = Double.NaN;
         uc = Vec3.fromPolarDegrees(intensity, incUc, decUc);
-        fc = sc = uc;
+        // fc = sc = uc;
         treatType = TreatType.DEGAUSS;
         if (project.toLowerCase().contains("therm") ||
                 operation.toLowerCase().contains("therm"))
@@ -188,8 +199,9 @@ public class Datum {
         }
     }
     
-    public Datum(String line, List<TwoGeeField> fields) {
-        NaScanner s = new NaScanner(line);
+    public Datum(String dataLine, List<TwoGeeField> fields, Line line) {
+        this.line = line;
+        NaScanner s = new NaScanner(dataLine);
         for (TwoGeeField f: fields) {
             try {
                 switch (f) {
@@ -292,21 +304,37 @@ public class Datum {
                 throw new IllegalArgumentException
                         ("Unknown measurement type "+measType);
         }
-        applyCorrections();
+        line.add(this);
+        // applyCorrections();
+    }
+
+    void setSample(Sample sample) {
+        this.sample = sample;
+    }
+
+    private Vec3 getFc(boolean emptyCorr) {
+        return Double.isNaN(formAz) || Double.isNaN(formDip)
+                ? getSc(emptyCorr)
+                : getSc(emptyCorr).correctForm(toRadians(formAz - magDev), toRadians(formDip));
+    }
+
+    private Vec3 getSc(boolean emptyCorr) {
+        return Double.isNaN(sampAz) || Double.isNaN(sampDip)
+                ? getUc(emptyCorr)
+                : getUc(emptyCorr).correctSample(toRadians(sampAz - magDev), toRadians(sampDip));
+    }
+
+    private Vec3 getUc(boolean emptyCorr) {
+        return (!emptyCorr) || getLine().getEmptySlot() == null
+                ? uc
+                : uc.minus(getLine().getEmptySlot().getUc(false));
     }
     
-    private void applyCorrections() {
-        sc = Double.isNaN(sampAz) || Double.isNaN(sampDip)
-                ? uc : uc.correctSample(toRadians(sampAz - magDev), toRadians(sampDip));
-        fc = Double.isNaN(formAz) || Double.isNaN(formDip)
-                ? sc : sc.correctForm(toRadians(formAz - magDev), toRadians(formDip));
-    }
-    
-    public Vec3 getPoint(Correction c) {
+    public Vec3 getPoint(Correction c, boolean emptyCorrection) {
         switch (c) {
-            case FORMATION: return fc;
-            case SAMPLE: return sc;
-            case NONE: return uc;
+            case FORMATION: return getFc(emptyCorrection);
+            case SAMPLE: return getSc(emptyCorrection);
+            case NONE: return getUc(emptyCorrection);
             default: throw new IllegalArgumentException("unknown correction");
         }
     }
@@ -316,7 +344,7 @@ public class Datum {
      */
     public void rotX180() {
         uc = uc.rotX180();
-        applyCorrections();
+        // applyCorrections();
     }
 
     public void toggleSel() {
@@ -349,8 +377,8 @@ public class Datum {
         }
     }
 
-    public double getIntensity() {
-        return intensity;
+    public double getIntensity(boolean emptyCorrection) {
+        return getUc(emptyCorrection).mag();
     }
 
     public double getDepth() {

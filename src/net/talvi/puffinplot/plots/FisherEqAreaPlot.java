@@ -16,7 +16,7 @@ import java.util.prefs.Preferences;
 import net.talvi.puffinplot.GraphDisplay;
 import net.talvi.puffinplot.PlotParams;
 import net.talvi.puffinplot.PuffinApp;
-import net.talvi.puffinplot.Suite;
+import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.data.FisherValues;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Vec3;

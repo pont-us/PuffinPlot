@@ -173,20 +173,26 @@ public class PuffinActions {
         public void actionPerformed(ActionEvent e) {
             for (Sample sample: app.getSelectedSamples())
                 if (sample.getSelectedPoints().size()>1)
-                    sample.doPca(false);
+                    sample.doPca();
             app.updateDisplay();
         }
     };
-    
-    public final Action anchoredPcaOnSelection = new AbstractAction("PCA (anchored)") {
+
+    public final Action useAsEmptySlot = new AbstractAction("Use as empty slot") {
         public void actionPerformed(ActionEvent e) {
-            for (Sample sample: app.getSelectedSamples())
-                if (sample.getSelectedPoints().size()>1)
-                    sample.doPca(true);
+            for (Sample s : app.getSuite().getSamples()) s.setEmptySlot(false);
+            app.getSample().setEmptySlot(true);
             app.updateDisplay();
         }
     };
-    
+   
+    public final Action unsetEmptySlot = new AbstractAction("Unset empty slot") {
+        public void actionPerformed(ActionEvent e) {
+            for (Sample s : app.getSuite().getSamples()) s.setEmptySlot(false);
+            app.updateDisplay();
+        }
+    };
+
     public final Action fisher = new AbstractAction("Fisher on sample") {
         public void actionPerformed(ActionEvent e) {
             app.getSample().doFisher();

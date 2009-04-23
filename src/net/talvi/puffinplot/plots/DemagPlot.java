@@ -35,14 +35,18 @@ public class DemagPlot extends Plot {
         if (data.size() == 0) return;
 
         Rectangle2D dim = cropRectangle(getDimensions(), 270, 200, 50, 230);
-        
+        boolean emptyC = params.isEmptyCorrectionActive();
+
         g.setColor(Color.BLACK);
         double maxIntens = 0;
         double maxDemag = 0;
         for (Datum d: data) {
             if (d.getDemagLevel() > maxDemag) maxDemag = d.getDemagLevel();
-            if (d.getIntensity() > maxIntens) maxIntens = d.getIntensity();
+            if (d.getIntensity(emptyC) > maxIntens) maxIntens = d.getIntensity(emptyC);
         }
+
+        if (maxDemag == 0) maxDemag = 1;
+        if (maxIntens == 0) maxIntens = 1;
         
         PlotAxis vAxis = new PlotAxis(maxIntens, PlotAxis.Direction.UP,
                 PlotAxis.saneStepSize(maxIntens),
@@ -60,7 +64,7 @@ public class DemagPlot extends Plot {
         boolean first = true;
         for (Datum d: data) {
             addPoint(d, new Point2D.Double(dim.getMinX() + d.getDemagLevel() * hScale,
-                    dim.getMaxY() - d.getIntensity() * vScale), true, false, !first);
+                    dim.getMaxY() - d.getIntensity(emptyC) * vScale), true, false, !first);
             first = false;
         }
         drawPoints(g);
