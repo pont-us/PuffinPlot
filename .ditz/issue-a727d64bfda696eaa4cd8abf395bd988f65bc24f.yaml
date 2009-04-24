@@ -11,8 +11,8 @@ type: :bugfix
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2009-03-29 19:42:54.986594 Z
 references: []
 
@@ -30,3 +30,7 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - assigned to release 1.0 from 1.1
   - ""
+- - 2009-04-24 00:19:15.231134 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - Implemented as specified.

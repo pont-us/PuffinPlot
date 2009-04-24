@@ -11,7 +11,7 @@ desc: |-
   (say) 10 for plotting on the screen. (When zooming is implemented,
   the zoom percentage would simply be scaled so that 100% was in fact
   10%.)
-type: :bugfix
+type: :task
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>

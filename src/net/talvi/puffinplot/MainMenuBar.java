@@ -4,6 +4,8 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
@@ -25,6 +27,7 @@ public class MainMenuBar extends JMenuBar {
     private static final int modifierKey =
             Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
     private JMenu recentFilesMenu;
+    final private JCheckBoxMenuItem anchorItem;
         
     public MainMenuBar() {
         final JMenu fileMenu = new JMenu("File");
@@ -95,7 +98,7 @@ public class MainMenuBar extends JMenuBar {
         JMenu calcMenu = new JMenu("Calculate");
         addSimpleItem(calcMenu, actions.pcaOnSelection, 'R');
         
-        final JCheckBoxMenuItem anchorItem = new JCheckBoxMenuItem("Anchor PCA")
+        anchorItem = new JCheckBoxMenuItem("Anchor PCA")
         {
             @Override
             public boolean getState() {
@@ -103,8 +106,8 @@ public class MainMenuBar extends JMenuBar {
             }
         };
         calcMenu.add(anchorItem);
-        anchorItem.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent event) {
+        anchorItem.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent event) {
                 for (Sample s: app.getSelectedSamples()) {
                     s.setPcaAnchored(anchorItem.isSelected());
                     s.doPca();
@@ -135,6 +138,10 @@ public class MainMenuBar extends JMenuBar {
         add(calcMenu);
         add(windowMenu);
         add(helpMenu);
+    }
+
+    void sampleChanged() {
+        anchorItem.setSelected(PuffinApp.getInstance().getSample().isPcaAnchored());
     }
     
     private void addSimpleItem(JMenu menu, Action action, char key) {

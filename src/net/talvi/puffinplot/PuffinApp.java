@@ -49,6 +49,15 @@ public class PuffinApp {
         emptyCorrectionActive = b;
     }
 
+    public void redoCalculations() {
+        for (Suite suite: suites) {
+            for (Sample sample: suite.getSamples()) {
+                sample.doFisher();
+                sample.doPca();
+            }
+        }
+    }
+
     private void loadBuildProperties() {
         InputStream propStream = null;
         String buildDateTmp = "unknown";
@@ -147,6 +156,7 @@ public class PuffinApp {
     public void updateDisplay() {
         getMainWindow().controlPanel.updateSample();
         getMainWindow().repaint(100);
+        getMainWindow().getMainMenuBar().sampleChanged();
         getTableWindow().dataChanged();
     }
     

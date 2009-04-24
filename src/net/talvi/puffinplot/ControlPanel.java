@@ -32,13 +32,13 @@ public class ControlPanel extends JPanel
     private CorrectionBox correctionBox;
     VVsBox vVsBox;
     // private JButton pcaButton;
+    private static final PuffinApp app = PuffinApp.getInstance();
     
     private Action toggleZplotAction = new AbstractAction() {
         public void actionPerformed(ActionEvent e) {
             vVsBox.toggle();
         }
     };
-
     
     public ControlPanel() {
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -49,9 +49,9 @@ public class ControlPanel extends JPanel
         add(new JToolBar.Separator());
         add(correctionField = new JLabel());
         add(new JToolBar.Separator());
-        add(new JButton(PuffinApp.getInstance().getActions().pcaOnSelection));
-        add(new JButton(PuffinApp.getInstance().getActions().fisher));
-        add(new JButton(PuffinApp.getInstance().getActions().clear));
+        add(new JButton(app.getActions().pcaOnSelection));
+        add(new JButton(app.getActions().fisher));
+        add(new JButton(app.getActions().clear));
         
         suiteBox.addActionListener(this);
         
@@ -65,18 +65,18 @@ public class ControlPanel extends JPanel
     void updateSuites() {
         updatingSuites = true;
         suiteBox.removeAllItems();
-        for (Suite suite: PuffinApp.getInstance().suites) {
+        for (Suite suite: app.suites) {
             suiteBox.addItem(suite);
         }
         updatingSuites = false;
-        Suite currentSuite = PuffinApp.getInstance().getSuite();
+        Suite currentSuite = app.getSuite();
         suiteBox.setSelectedItem(currentSuite);
     }
     
     void updateSample() {
-        Sample s = PuffinApp.getInstance().getSample();
+        Sample s = app.getSample();
         Datum d = null;
-        if (s != null) d=s.getDatum(0);
+        if (s != null) d = s.getDatum(0);
         if (d != null)
             correctionField.setText(String.format(
                     "Samp. %.1f/%.1f Form. %.1f/%.1f Dev. %.1f Anc:%s",
@@ -88,11 +88,10 @@ public class ControlPanel extends JPanel
         /* No way to tell if this was a user click or the box being
          * rebuilt, so we have to use this ugly variable to avoid spurious
          * changes.
-         * 
          */
         if (!updatingSuites) {
             int index = suiteBox.getSelectedIndex();
-            if (index > -1) PuffinApp.getInstance().setSuite(index);
+            if (index > -1) app.setSuite(index);
         }
     }
     
@@ -139,7 +138,7 @@ public class ControlPanel extends JPanel
             super(new String[] {"uncorrected", "samp. corr.", "form. corr."});
             Correction[] cs = Correction.values();
             for (int i=0; i<cs.length; i++)
-                if (cs[i] == PuffinApp.getInstance().getPrefs().getCorrection())
+                if (cs[i] == app.getPrefs().getCorrection())
                     setSelectedIndex(i);
             addItemListener(ControlPanel.this);
         }
@@ -156,6 +155,7 @@ public class ControlPanel extends JPanel
     }
 
     public void itemStateChanged(ItemEvent e) {
-        PuffinApp.getInstance().getMainWindow().repaint();
+        if (e.getSource() == correctionBox) app.redoCalculations();
+        app.getMainWindow().repaint();
     }
 }
