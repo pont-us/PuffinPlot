@@ -46,7 +46,6 @@ public class Suite implements Iterable<Datum> {
     private List<FisherForSite> siteFishers;
     private FisherValues suiteFisher;
 
-    @Override
     public Iterator<Datum> iterator() {
         return data.iterator();
     }

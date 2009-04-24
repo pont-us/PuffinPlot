@@ -102,7 +102,8 @@ public class MainMenuBar extends JMenuBar {
         {
             @Override
             public boolean getState() {
-                return app.getSample().isPcaAnchored();
+                Sample s = app.getSample();
+                return s != null ? s.isPcaAnchored() : false;
             }
         };
         calcMenu.add(anchorItem);
