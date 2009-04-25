@@ -6,8 +6,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.print.PageFormat;
-import java.awt.print.Printable;
-import java.awt.print.PrinterException;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -17,20 +15,18 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.print.Printable;
 import java.text.AttributedString;
 import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
-import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.plots.Plot;
 
 
-public class GraphDisplay extends JPanel implements Printable {
+public abstract class GraphDisplay extends JPanel implements Printable {
 
     private static final long serialVersionUID = -5730958004698337302L;
-    protected Sample[] samples = null;
-    protected int printPageIndex = -1;
     protected HashSet<Plot> plots;
     private static final RenderingHints renderingHints = PuffinRenderingHints.getInstance();
     protected AffineTransform zoomTransform;
@@ -224,15 +220,7 @@ public class GraphDisplay extends JPanel implements Printable {
         public void mouseMoved(MouseEvent arg0) {}
     }
 
-    public int print(Graphics graphics, PageFormat pf, int pageIndex)
-            throws PrinterException {
-        pf.setOrientation(PageFormat.LANDSCAPE);
-        if (samples == null) samples = PuffinApp.getInstance().getSelectedSamples();
-        if (pageIndex >= samples.length) {
-            samples = null; // we've finished printing
-            return NO_SUCH_PAGE;
-        }
-        printPageIndex = pageIndex;
+    protected void printPlots(PageFormat pf, Graphics graphics) {
         setDoubleBuffered(false);
         Graphics2D g2 = (Graphics2D) graphics;
         g2.translate(pf.getImageableX(), pf.getImageableY());
@@ -245,7 +233,8 @@ public class GraphDisplay extends JPanel implements Printable {
         for (Plot plot: plots) plot.draw(g2);
         printChildren(graphics);
         setDoubleBuffered(true);
-        return PAGE_EXISTS;
     }
+
+
 
 }

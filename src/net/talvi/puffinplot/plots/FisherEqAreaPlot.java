@@ -6,6 +6,7 @@ import static java.lang.Math.min;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.Stroke;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -64,23 +65,27 @@ public class FisherEqAreaPlot extends EqAreaPlot {
         final AlphaComposite opaque =
                 AlphaComposite.getInstance(AlphaComposite.SRC);
 
-        boolean first = true;
+        boolean firstPoint = true;
         for (FisherValues fisher: fishers) {
             final Vec3 v = fisher.getMeanDirection();
             Point2D meanPoint = project(v, xo, yo, radius);
-            addPoint(null, meanPoint, v.z>0, first, !first);
-            
-            Polygon ellipse = new Polygon();
-            List<Vec3> circle = new ArrayList<Vec3>(36);
+            addPoint(null, meanPoint, v.z>0, firstPoint, !firstPoint);
+
+            GeneralPath ellipse = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 72);
+
+            boolean firstEllipsePoint = true;
             for (double dec = 0; dec < 360; dec += 5) {
-                circle.add(Vec3.fromPolarDegrees(1, 90-fisher.getA95(), dec));
-            }
-            for (Vec3 c: circle) {
-                Vec3 w = c.rotY(Math.PI / 2 - v.getIncRad());
+                Vec3 circlePoint =
+                        (Vec3.fromPolarDegrees(1, 90-fisher.getA95(), dec));
+                Vec3 w = circlePoint.rotY(Math.PI / 2 - v.getIncRad());
                 w = w.rotZ(v.getDecRad());
                 Point2D p = project(w, xo, yo, radius);
-                ellipse.addPoint((int) p.getX(), (int) p.getY());
+                if (firstEllipsePoint)
+                    ellipse.moveTo((float) p.getX(), (float) p.getY());
+                else ellipse.lineTo((float) p.getX(), (float) p.getY());
+                firstEllipsePoint = false;
             }
+            ellipse.closePath();
               
             g.setComposite(translucent);
             g.fill(ellipse);
@@ -106,7 +111,7 @@ public class FisherEqAreaPlot extends EqAreaPlot {
                 }
             }
 
-            first = false;
+            firstPoint = false;
         }
 
         drawPoints(g);

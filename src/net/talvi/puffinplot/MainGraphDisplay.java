@@ -1,5 +1,9 @@
 package net.talvi.puffinplot;
 
+import java.awt.Graphics;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.MeasType;
@@ -11,7 +15,11 @@ import net.talvi.puffinplot.plots.Plot;
  *
  * @author pont
  */
-public class MainGraphDisplay extends GraphDisplay {
+public class MainGraphDisplay extends GraphDisplay implements Printable {
+
+    // samplesForPrinting is only non-null during printing.
+    private Sample[] samplesForPrinting = null;
+    private int printPageIndex = -1;
 
     MainGraphDisplay() {
 
@@ -20,8 +28,9 @@ public class MainGraphDisplay extends GraphDisplay {
         PlotParams params = new PlotParams() {
 
             public Sample getSample() {
-                // TODO: looks a bit hacky, fix or document
-                return samples == null ? app.getSample() : samples[printPageIndex];
+                return samplesForPrinting == null
+                        ? app.getSample()
+                        : samplesForPrinting[printPageIndex];
             }
 
             public Correction getCorrection() {
@@ -58,5 +67,21 @@ public class MainGraphDisplay extends GraphDisplay {
         }
 
     }
+
+    public int print(Graphics graphics, PageFormat pf, int pageIndex)
+            throws PrinterException {
+        pf.setOrientation(PageFormat.LANDSCAPE);
+
+        if (samplesForPrinting == null)
+            samplesForPrinting = PuffinApp.getInstance().getSelectedSamples();
+        if (pageIndex >= samplesForPrinting.length) {
+            samplesForPrinting = null; // we've finished printing
+            return NO_SUCH_PAGE;
+        }
+        printPageIndex = pageIndex;
+        printPlots(pf, graphics);
+        return PAGE_EXISTS;
+    }
+
 
 }

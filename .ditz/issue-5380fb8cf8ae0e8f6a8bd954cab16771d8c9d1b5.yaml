@@ -15,8 +15,8 @@ type: :task
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2009-04-08 07:08:11.571732 Z
 references: []
 
@@ -26,3 +26,21 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2009-04-25 02:41:47.082857 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    This turns out on closer inspection to be not one issue but several.
+    
+    1. Offset point fills seem to be an OS X bug; opened separately as #56.
+    2. Jagged confidence ellipses are a result of using java.awt.Polygon,
+       which uses integer coordinates. I will try substituting GeneralPath
+       which should fix it.
+    3. All the other drawing, as far as I know, uses float or double co-
+       ordinates, so we shouldn't need to scale it up to get accuracy.
+- - 2009-04-25 03:35:52.027018 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    OK, fixed the jaggies with a GeneralPath (and fixed a printing bug in
+    passing), so closing this now.
