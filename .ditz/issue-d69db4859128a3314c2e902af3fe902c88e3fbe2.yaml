@@ -1,0 +1,33 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Data point fills are off on Mac printouts
+desc: |-
+  On Mac printouts, the fills for filled points are slightly offset
+  up and to the left. Examination of the file shows that it's off by
+  exactly half a PDF unit in each direction. Looks as though this is a
+  Mac Java bug; should check on Java 6 if I can find a 64-bit Intel
+  machine. Haven't thought hard about workarounds yet (shifting the fill
+  to compensate is the obvious but nasty one!) -- in worst case, could
+  output to PDF via a third-party library like Big Faceless, iText,
+  or Batik.
+type: :bugfix
+component: PuffinPlot
+release: "1.2"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2009-04-24 04:30:34.851738 Z
+references: []
+
+id: d69db4859128a3314c2e902af3fe902c88e3fbe2
+log_events: 
+- - 2009-04-24 04:30:35.982752 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
+- - 2009-04-25 03:37:38.396272 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.2 from 1.0
+  - |-
+    Reassigning since (1) I want to get 1.0 out soon (2) nobody's ever
+    complained about it (3) fixing it will probably require either a
+    really nasty hack or a really big workaround.
