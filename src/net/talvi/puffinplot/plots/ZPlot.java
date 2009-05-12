@@ -69,7 +69,7 @@ public class ZPlot extends Plot {
     public void draw(Graphics2D g) {
         Sample sample = params.getSample();
         if (sample==null) return;
-        List<Datum> data = sample.getData();
+        List<Datum> data = sample.getVisibleData();
         if (data.size() == 0) return;
         
         clearPoints();

@@ -38,7 +38,7 @@ public class MainMenuBar extends JMenuBar {
 
         noRecentFiles.setEnabled(false);
         updateRecentFiles();
-        
+
         MenuItemDef[] fileItems = {
             new ActionItemDef(actions.open, 'O', 0, true),
             new SubmenuDef(recentFilesMenu),
@@ -49,6 +49,18 @@ public class MainMenuBar extends JMenuBar {
             new ActionItemDef(actions.pageSetup, 'P', InputEvent.SHIFT_DOWN_MASK, true),
             new ActionItemDef(actions.print, 'P', 0, true),
             new ActionItemDef(actions.printFisher, 'I', 0, true),
+            new CheckboxDef(("Use old SQUID orientations")) {
+
+            @Override
+            protected void setValue(boolean b) {
+                PuffinApp.getInstance().getPrefs().setUseOldSquidOrientations(b);
+            }
+
+            @Override
+            protected boolean getValue() {
+                return PuffinApp.getInstance().getPrefs().isUseOldSquidOrientations();
+            }
+            },
             new ActionItemDef(actions.prefs, ',', 0, false),
             new ActionItemDef(actions.quit, 'Q', 0, false)
         };
@@ -79,6 +91,8 @@ public class MainMenuBar extends JMenuBar {
         addSimpleItem(editMenu, actions.flipSample, '\u0000');
         addSimpleItem(editMenu, actions.useAsEmptySlot, '\u0000');
         addSimpleItem(editMenu, actions.unsetEmptySlot, '\u0000');
+        addSimpleItem(editMenu, actions.hideSelectedPoints, '\u0000');
+        addSimpleItem(editMenu, actions.unhideAllPoints, '\u0000');
         final JCheckBoxMenuItem useEmptyItem = new JCheckBoxMenuItem("Apply empty correction")
         {
             @Override
@@ -142,7 +156,8 @@ public class MainMenuBar extends JMenuBar {
     }
 
     void sampleChanged() {
-        anchorItem.setSelected(PuffinApp.getInstance().getSample().isPcaAnchored());
+        Sample s = PuffinApp.getInstance().getSample();
+        if (s != null) anchorItem.setSelected(s.isPcaAnchored());
     }
     
     private void addSimpleItem(JMenu menu, Action action, char key) {
@@ -224,4 +239,30 @@ public class MainMenuBar extends JMenuBar {
         }
         
     }
+
+    private static abstract class CheckboxDef extends JCheckBoxMenuItem implements MenuItemDef {
+        CheckboxDef(String name) {
+            super(name);
+            final JCheckBoxMenuItem item = this;
+            addItemListener(new ItemListener() {
+                public void itemStateChanged(ItemEvent event) {
+                    setValue(item.isSelected());
+                }
+            });
+            setSelected(getValue());
+        }
+
+        protected abstract void setValue(boolean b);
+        protected abstract boolean getValue();
+
+        @Override
+        public boolean getState() {
+            return getValue();
+        }
+
+        public void addToMenu(JMenu menu) {
+            menu.add(this);
+        }
+    }
+
     }

@@ -27,14 +27,19 @@ public class DataTable extends Plot {
         super(parent, params, prefs);
     }
 
-    private void writeLine(Graphics2D g, float yPos, boolean selected, List<String> values) {
+    private void writeLine(Graphics2D g, float yPos, Datum d, List<String> values) {
 
-        if (selected) writeString(g, "‣", (float) getDimensions().getMinX(),
-                (float) (getDimensions().getMinY() + yPos));
+        final float xMin = (float) getDimensions().getMinX();
+        final float yMin = (float) getDimensions().getMinY();
+
+        if (d != null) {
+            if (d.isSelected()) writeString(g, "‣", xMin, yMin + yPos);
+            if (d.isHidden()) writeString(g, "-", xMin, yMin + yPos);
+        }
+
         float xPos = 10;
         for (String s: values) {
-            writeString(g, s, (float) (getDimensions().getMinX() + xPos),
-                    (float) (getDimensions().getMinY() + yPos));
+            writeString(g, s, xMin + xPos, yMin + yPos);
             xPos += xSpacing;
         }
     }
@@ -57,7 +62,7 @@ public class DataTable extends Plot {
         List<Datum> data = sample.getData();
         if (data.size() == 0) return;
 
-        writeLine(g, ySpacing, false, headers);
+        writeLine(g, ySpacing, null, headers);
         float yPos = 2 * ySpacing;
         for (Datum d: data) {
             List<String> values = new ArrayList<String>(4);
@@ -68,7 +73,7 @@ public class DataTable extends Plot {
             // Don't use .1g, it tickles a bug in Java (#6469160) which
             // throws an ArrayFormatException (at least in Sun Java 5 & 6)
             values.add(String.format("%.3g", p.mag()));
-            writeLine(g, yPos,d.isSelected(), values);
+            writeLine(g, yPos, d, values);
             yPos += ySpacing;
         }
     }

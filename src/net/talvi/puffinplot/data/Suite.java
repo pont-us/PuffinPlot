@@ -219,8 +219,9 @@ public class Suite implements Iterable<Datum> {
     
     private void addLine2G(String line, int lineNumber, List<TwoGeeField> fields,
             Set<Double> depthSet, Set<String> nameSet) {
+        final boolean oldSquid = PuffinApp.getInstance().getPrefs().isUseOldSquidOrientations();
         if (!emptyLine.matcher(line).matches()) {
-            Datum d = new Datum(line, fields, getLineContainer(lineNumber));
+            Datum d = new Datum(line, fields, getLineContainer(lineNumber), oldSquid);
             if (measType == MeasType.UNSET)
                 measType = d.getMeasType();
             if (d.getMeasType() != measType) {
@@ -438,7 +439,7 @@ public class Suite implements Iterable<Datum> {
                 return;
             }
             // write them to a file
-            writer = new FileWriter("/home/pont/site-fisher.txt");
+            writer = new FileWriter(file);
             writer.write("site,"+FisherValues.getHeader(",")+"\n");
             for (FisherForSite f: siteFishers) {
                 writer.write(f.site + "," + f.fisher.toLine(",")+"\n");
@@ -464,7 +465,7 @@ public class Suite implements Iterable<Datum> {
                         "No calculations to save!");
                 return;
             }
-            writer = new FileWriter("/home/pont/suite-fisher.txt");
+            writer = new FileWriter(file);
             writer.write(FisherValues.getHeader(",")+"\n");
             writer.write(suiteFisher.toLine(",")+"\n");
 

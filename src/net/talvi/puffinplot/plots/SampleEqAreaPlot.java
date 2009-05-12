@@ -40,7 +40,7 @@ public class SampleEqAreaPlot extends EqAreaPlot {
         drawAxes(g, xo, yo, radius);
         boolean first = true;
         Vec3 prev = null;
-        for (Datum d: sample.getData()) {
+        for (Datum d: sample.getVisibleData()) {
             final Vec3 p = d.getPoint(params.getCorrection(),
                     params.isEmptyCorrectionActive()).normalize();
             addPoint(d, project(p, xo, yo, radius), p.z>0, first, false);

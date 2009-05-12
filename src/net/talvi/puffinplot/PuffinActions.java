@@ -235,7 +235,22 @@ public class PuffinActions {
             app.getMainWindow().repaint();
         }
     };
-    
+
+    public final Action hideSelectedPoints = new AbstractAction("Hide selected points") {
+        public void actionPerformed(ActionEvent e) {
+            app.getSample().hideSelectedPoints();
+            app.getMainWindow().repaint();
+        }
+    };
+
+    public final Action unhideAllPoints = new AbstractAction("Unhide all points") {
+        public void actionPerformed(ActionEvent e) {
+            app.getSample().unhideAllPoints();
+            app.getMainWindow().repaint();
+        }
+    };
+
+
     public final Action prefs = new AbstractAction("Preferences…") {
 
         public void actionPerformed(ActionEvent e) {

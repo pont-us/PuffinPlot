@@ -1,0 +1,24 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Fix Zplot axis tick labels
+desc: |-
+  Units on ticks for Zplot axes: they are not shown, and they are
+  independently chosen -- so you can get a graph with e.g. a "1.0"
+  (with implicit e-7) on one axis, and a "5.0" (with implicit e-8)
+  on another axis half as long!
+  
+  Units need to be standardized and displayed.
+type: :bugfix
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2009-04-26 01:13:34.561293 Z
+references: []
+
+id: 98bccbf36b5ca837616905b9d3711349392e87c4
+log_events: 
+- - 2009-04-26 01:13:35.837571 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

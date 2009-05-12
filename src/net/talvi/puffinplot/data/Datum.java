@@ -47,6 +47,7 @@ public class Datum {
     private final Line line;
     private boolean selected = false;
     private boolean pcaAnchored = false;
+    private boolean hidden = false;
     
     private final static Pattern delimPattern = Pattern.compile("\\t");
     private final static Pattern numberPattern = Pattern.compile("\\d+(\\.\\d+)?");
@@ -119,6 +120,14 @@ public class Datum {
 
     public Sample getSample() {
         return sample;
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean b) {
+        hidden = b;
     }
 
     private static class NaScanner {
@@ -199,7 +208,8 @@ public class Datum {
         }
     }
     
-    public Datum(String dataLine, List<TwoGeeField> fields, Line line) {
+    public Datum(String dataLine, List<TwoGeeField> fields, Line line,
+            boolean oldSquids) {
         this.line = line;
         NaScanner s = new NaScanner(dataLine);
         for (TwoGeeField f: fields) {
@@ -250,6 +260,7 @@ public class Datum {
             case AREA: area = s.nextD(); break;
             case PP_SELECTED: selected = s.nextBoolean(); break;
             case PP_ANCHOR_PCA: pcaAnchored = s.nextBoolean(); break;
+            case PP_HIDDEN: hidden = s.nextBoolean(); break;
             case UNKNOWN: s.next(); break;
             default: s.next(); break;
                 }
@@ -273,13 +284,9 @@ public class Datum {
         
         switch (measType) {
             case CONTINUOUS:
-                // Try to guess whether this file is from the era when
-                // the X and Z SQUIDs were installed back-to-front.
-                // The timestamp was added to the file format at around
-                // the time Gary fixed the SQUIDs, so this should be a
-                // fairly good indicator. 
-                // (Used to be run number but G. thought we might have
-                // had that in the format previously.)
+
+                // We no longer try to guess whether the SQUIDs are in
+                // the old or new orientation; Faye said it's unreliable.
                 
                 // ADDENDUM 2009-02-12: turns out that the effective
                 // sensor lengths for the Y and Z SQUIDs have been 
@@ -289,12 +296,11 @@ public class Datum {
                 // y  +   -
                 // z  -   -
                 
-                boolean old = timeStamp.equals("UNSET");
                 double xVol = area * sensorLengthX;
                 double yVol = area * sensorLengthY;
                 double zVol = area * sensorLengthZ;
-                uc = new Vec3( (old ? -1 : 1) * xCorr / xVol,
-                        (old ? 1 : -1) * yCorr / yVol,
+                uc = new Vec3( (oldSquids ? -1 : 1) * xCorr / xVol,
+                        (oldSquids ? 1 : -1) * yCorr / yVol,
                         -zCorr / zVol);
                 break;
             case DISCRETE:
@@ -432,6 +438,7 @@ public class Datum {
         case AREA: return area;
         case PP_SELECTED: return selected;
         case PP_ANCHOR_PCA: return isPcaAnchored();
+        case PP_HIDDEN: return isHidden();
         default: throw new IllegalArgumentException("Unknown field "+field);
         }
     }

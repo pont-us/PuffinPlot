@@ -40,6 +40,15 @@ public class Sample {
     public void flip() {
         for (Datum d: data) d.rotX180();
     }
+
+    public void hideSelectedPoints() {
+        for (Datum d: data) {
+            if (d.isSelected()) {
+                d.setSelected(false);
+                d.setHidden(true);
+            }
+        }
+    }
     
     public void selectAll() {
         for (Datum d : data) d.setSelected(true);
@@ -48,17 +57,23 @@ public class Sample {
     public void selectNone() {
         for (Datum d : data) d.setSelected(false);
     }
-    
+
+    public List<Datum> getVisibleData() {
+        List<Datum> visibleData = new ArrayList<Datum>(data.size());
+        for (Datum d: data) if (!d.isHidden()) visibleData.add(d);
+        return visibleData;
+    }
+
     public List<Datum> getData() {
         return data;
     }
     
     public int getNumData() {
-        return data.size();
+        return getData().size();
     }
 
     public Datum getDatum(int i) {
-        return data.get(i);
+        return getData().get(i);
     }
     
     public void addDatum(Datum d) {
@@ -126,5 +141,9 @@ public class Sample {
 
     public void setEmptySlot(boolean isEmptySlot) {
         this.emptySlot = isEmptySlot;
+    }
+
+    public void unhideAllPoints() {
+        for (Datum d: data) d.setHidden(false);
     }
 }

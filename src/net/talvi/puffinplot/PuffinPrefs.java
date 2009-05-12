@@ -19,7 +19,7 @@ public class PuffinPrefs {
             new HashMap<String, Rectangle2D>();
     static Preferences prefs = Preferences.userNodeForPackage(PuffinPrefs.class);
     private Correction correction;
-
+    private boolean useOldSquidOrientations;
     
     public PuffinPrefs() {
         load();
@@ -54,11 +54,21 @@ public class PuffinPrefs {
     public void load() {
         PuffinApp.getInstance().setRecentFiles(new RecentFileList(prefs));
         correction = Correction.valueOf(prefs.get("correction", "NONE"));
+        setUseOldSquidOrientations(Boolean.parseBoolean(prefs.get("useOldSquidOrientations", "false")));
     }
     
     public void save() {
         PuffinApp.getInstance().getRecentFiles().save(prefs);
         prefs.put("plotSizes", PuffinApp.getInstance().getMainWindow().getGraphDisplay().getPlotSizeString());
         prefs.put("correction", PuffinApp.getInstance().getCorrection().name());
+        prefs.put("useOldSquidOrientations", Boolean.toString(isUseOldSquidOrientations()));
+    }
+
+    public boolean isUseOldSquidOrientations() {
+        return useOldSquidOrientations;
+    }
+
+    public void setUseOldSquidOrientations(boolean useOldSquidOrientations) {
+        this.useOldSquidOrientations = useOldSquidOrientations;
     }
 }

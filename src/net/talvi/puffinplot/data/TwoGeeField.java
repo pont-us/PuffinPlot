@@ -4,7 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum TwoGeeField {
-    
+
+    /* When adding fields here, make sure also to add them to the Datum
+     * constructor and to Datum.getValue().
+     */
+
     SAMPLEID(String.class, "Sample ID"),
     MEASTYPE(MeasType.class, "Meas. type"),
     TREATMENT(TreatType.class, "Treatment Type"),
@@ -50,6 +54,7 @@ public enum TwoGeeField {
     AREA(Double.class, "Area"),
     PP_SELECTED(Boolean.class, "PUFFIN selected"),
     PP_ANCHOR_PCA(Boolean.class, "PUFFIN anchor PCA"),
+    PP_HIDDEN(Boolean.class, "PUFFIN hidden"),
     UNKNOWN(Object.class, null);
     
     private final String heading;
