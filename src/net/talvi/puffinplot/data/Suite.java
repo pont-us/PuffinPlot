@@ -191,7 +191,7 @@ public class Suite implements Iterable<Datum> {
     }
 
     private void addDatumLongcore(Datum d, Set<Double> depthSet) {
-        if (!d.isMagSus() && d.getTreatType() != TreatType.ARM) {
+        if (!d.ignoreOnLoading()) {
             data.add(d);
             Sample s = samplesByDepth.get(d.getDepth());
             if (s == null) {
@@ -204,7 +204,7 @@ public class Suite implements Iterable<Datum> {
     }
     
     private void addDatumDiscrete(Datum d, Set<String> nameSet) {
-        if (!d.isMagSus() && d.getTreatType() != TreatType.ARM) {
+        if (!d.ignoreOnLoading()) {
             data.add(d);
             String name = d.getSampleId();
             Sample s = samplesByName.get(name);

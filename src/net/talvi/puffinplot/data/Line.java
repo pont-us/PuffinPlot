@@ -25,10 +25,6 @@ public class Line {
 
     public void add(Datum datum) {
         data.add(datum);
-//        if (datum.getMeasType() == MeasType.DISCRETE &&
-//                datum.getSampleId().equals("EMPTY")) {
-//            emptySlot = datum;
-//        }
     }
 
     public Datum getEmptySlot() {

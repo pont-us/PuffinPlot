@@ -1,0 +1,54 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Puffin crashes when no empty slot is selected
+desc: |-
+  If the empty slot correction is applied when no empty slot has
+  been set, Puffin bombs out with a NullPointerException.
+type: :bugfix
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :closed
+disposition: :fixed
+creation_time: 2009-05-25 01:13:34.941275 Z
+references: []
+
+id: c8442ad03e0d6c319f355e36bbd8efcc8607cf45
+log_events: 
+- - 2009-05-25 01:13:36.077278 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
+- - 2009-05-25 01:40:36.490127 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    Can't reproduce this; think Christian may be using an old version,
+    and the bug has since been fixed. Waiting for confirmation of this from C.
+- - 2009-05-25 04:10:35.845725 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    Still can't reproduce on my data; waiting for C to send his. From the
+    backtrace, looks as though a datum isn't getting its sample field set:
+    the exception is raised at
+    ` if (d.getSample().isEmptySlot()) return d; '
+    (line 36 of Line.java)
+- - 2009-05-26 00:04:08.920863 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Nasty one, this. Cause: PP ignores ARM and MS lines on loading -- 
+    they don't even get added to a sample, they're just left for the
+    garbage collector to clear up after creation. At least that's what's
+    meant to happen. What actually happened is that Datum's constructor
+    inserts them into a Line object (introduced for the empty-slot 
+    correction). When the empty-slot correction is activated, Datum.getUc()
+    checks for each Datum in its Line whether its sample is in an empty
+    slot. But if any Datums are ARM or MS, they don't have an associated
+    sample, and PP bombs out with a null pointer exception.
+    
+    Ideally, it should be made impossible to construct a Datum without a
+    Sample, but it's inconvenient in the current implementation, because
+    the Sample is created after the Datum. As it was, I fixed it by
+    getting Datum not to add itself to a Line if it's an ARM or MS 
+    measurement.

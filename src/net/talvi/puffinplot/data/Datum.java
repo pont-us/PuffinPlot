@@ -310,7 +310,7 @@ public class Datum {
                 throw new IllegalArgumentException
                         ("Unknown measurement type "+measType);
         }
-        line.add(this);
+        if (!ignoreOnLoading()) line.add(this);
         // applyCorrections();
     }
 
@@ -389,6 +389,10 @@ public class Datum {
 
     public double getDepth() {
         return depth;
+    }
+
+    public boolean ignoreOnLoading() {
+        return isMagSus() || (getTreatType() == TreatType.ARM);
     }
     
     public Object getValue(TwoGeeField field) {
