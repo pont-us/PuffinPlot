@@ -34,3 +34,10 @@ Fisher statistics can be calculated at three levels:
 3. On a per-suite basis, performing the calculation on every PCA value
    from every sample for which one has been calculated.
 
+
+Saving calculations
+-------------------
+
+"sample" -> individual calculations for every sample or depth
+"site" -> auto-grouped by site according to name
+"suite" -> one value from the entire suite
