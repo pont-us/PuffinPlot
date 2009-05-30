@@ -10,7 +10,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import java.util.Properties;
@@ -119,7 +121,20 @@ public class PuffinApp {
                 boolean quit = quitDialog();
                 File f = new File(System.getProperty("user.home"), ERROR_FILE);
                 try {
-                    PrintWriter w = new PrintWriter(new FileWriter(f));
+                    final PrintWriter w = new PrintWriter(new FileWriter(f));
+                    w.println("PuffinPlot error file");
+                    w.println("Build date: "+buildDate);
+                    final Date now = new Date();
+                    final SimpleDateFormat df =
+                            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    w.println("Crash date: "+df.format(now));
+                    for (String prop: new String[] {
+                                "java.version", "java.vendor",
+                                "os.name", "os.arch", "os.version",
+                                "user.name"}) {
+                        w.println(String.format("%-16s%s", prop,
+                                System.getProperty(prop)));
+                    }
                     exception.printStackTrace(w);
                     w.close();
                 } catch (IOException ex) {

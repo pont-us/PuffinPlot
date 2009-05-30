@@ -57,7 +57,7 @@ public class Suite implements Iterable<Datum> {
     public FisherValues getSuiteFisher() {
         return suiteFisher;
     }
-    
+
     private static class Fields {
         List<TwoGeeField> fields;
         List<String> unknown;
@@ -74,7 +74,7 @@ public class Suite implements Iterable<Datum> {
                 if (field == TwoGeeField.UNKNOWN) unknown.add(name);
             }
         }
-        
+
         public boolean areAllUnknown() {
             for (TwoGeeField field: fields)
                 if (field != TwoGeeField.UNKNOWN)
@@ -86,32 +86,32 @@ public class Suite implements Iterable<Datum> {
     private static class FisherForSite {
         String site;
         FisherValues fisher;
-        
+
         public FisherForSite(String site, FisherValues fisher) {
             this.site = site;
             this.fisher = fisher;
         }
     }
-    
+
     public void doFisherOnSuite() {
         Sample[] samples = PuffinApp.getInstance().getSelectedSamples();
         List<PcaValues> pcas = new ArrayList<PcaValues>(samples.length);
-        
+
         for (Sample sample: samples) {
             PcaValues pca = sample.getPca();
             if (pca != null) pcas.add(pca);
         }
-        
+
         List<Vec3> directions = new ArrayList<Vec3>(pcas.size());
         for (PcaValues pca: pcas) directions.add(pca.getDirection());
-        
+
         suiteFisher = FisherValues.calculate(directions);
     }
-    
+
     public void doFisherOnSites() {
         Map<String, Set<PcaValues>> sitePcas =
                 new LinkedHashMap<String, Set<PcaValues>>();
-        
+
         // Chuck PCA values into buckets
         for (Sample sample : PuffinApp.getInstance().getSelectedSamples()) {
             String site = sample.getSiteId();
@@ -122,7 +122,7 @@ public class Suite implements Iterable<Datum> {
                 sitePcas.get(site).add(pca);
             }
         }
-        
+
         siteFishers = new ArrayList<FisherForSite>(sitePcas.size());
         // Go through them doing Fisher calculations
         for (Map.Entry<String, Set<PcaValues>> entry: sitePcas.entrySet()) {
@@ -142,15 +142,15 @@ public class Suite implements Iterable<Datum> {
         for (FisherForSite f: siteFishers) result.add(f.fisher);
         return result;
     }
-    
+
     public void save(File file) {
         List<TwoGeeField> fields = new LinkedList(Arrays.asList(TwoGeeField.values()));
         fields.remove(TwoGeeField.UNKNOWN);
-        
+
         Writer writer = null;
         try {
             writer = new FileWriter(file);
-        
+
             StringBuilder header = new StringBuilder();
             for (TwoGeeField field : fields) {
                 header.append(field.getHeading());
@@ -159,7 +159,7 @@ public class Suite implements Iterable<Datum> {
             header.deleteCharAt(header.length()-1);
             header.append("\n");
             writer.write(header.toString());
-            
+
             for (Sample sample : getSamples()) {
                 for (Datum datum : sample.getData()) {
                     StringBuilder line = new StringBuilder();
@@ -202,7 +202,7 @@ public class Suite implements Iterable<Datum> {
             depthSet.add(d.getDepth());
         }
     }
-    
+
     private void addDatumDiscrete(Datum d, Set<String> nameSet) {
         if (!d.ignoreOnLoading()) {
             data.add(d);
@@ -216,7 +216,7 @@ public class Suite implements Iterable<Datum> {
             nameSet.add(name);
         }
     }
-    
+
     private void addLine2G(String line, int lineNumber, List<TwoGeeField> fields,
             Set<Double> depthSet, Set<String> nameSet) {
         final boolean oldSquid = PuffinApp.getInstance().getPrefs().isUseOldSquidOrientations();
@@ -239,7 +239,7 @@ public class Suite implements Iterable<Datum> {
             }
         }
     }
-    
+
     private void addLineZplot(String line, Set<Double> depthSet, Set<String> nameSet) {
         Datum d = new Datum(line);
         if (measType == MeasType.UNSET) measType = d.getMeasType();
@@ -252,7 +252,7 @@ public class Suite implements Iterable<Datum> {
         default: throw new Error("Unknown measurement type.");
         }
     }
-    
+
     private List<File> expandDirs(File[] files) {
         List<File> result = new LinkedList<File>();
         for (File file: files) {
@@ -261,13 +261,13 @@ public class Suite implements Iterable<Datum> {
         }
         return result;
     }
-    
+
     /*
      * Note that this may return an empty suite, in which case various things
      * can break. We can't just throw an exception if the suite's empty,
      * because then we lose the load warnings (which will probably explain
-     * to the user *why* the suite's empty and are thus quite important). 
-     * 
+     * to the user *why* the suite's empty and are thus quite important).
+     *
      **/
     public Suite(File[] files) throws IOException {
         assert(files.length > 0);
@@ -284,14 +284,14 @@ public class Suite implements Iterable<Datum> {
         TreeSet<Double> depthSet = new TreeSet<Double>();
         TreeSet<String> nameSet = new TreeSet<String>();
         final int MAX_WARNINGS_PER_FILE = 3;
-        
+
         for (File file: files) {
             int warningsThisFile = 0;
             FileType fileType = FileType.guessFromName(file);
             LineNumberReader reader = null;
             fileTypeSwitch: switch (fileType) {
             case PUFFINPLOT:
-            case TWOGEE: 
+            case TWOGEE:
                 try {
                     reader = new LineNumberReader(new FileReader(file));
                     String fieldsLine = reader.readLine();
@@ -341,14 +341,14 @@ public class Suite implements Iterable<Datum> {
                 reader = new LineNumberReader(new FileReader(file));
                 for (int i=0; i<6; i++) reader.readLine();     // skip the header fields
                 String[] headers = whitespace.split(reader.readLine());
-                
+
                 if (headers.length != 7) {
                     loadWarnings.add("Wrong number of header fields in Zplot file "+file.getName()+
                             ": expected 7, got "+headers.length);
                     reader.close();
                     break;
                 }
-                String[] expectedHeaders = 
+                String[] expectedHeaders =
                 {"Sample", "Project", "Demag", "Declin", "Inclin", "Intens", "Operation"};
                 for (int i=0; i<expectedHeaders.length; i++) {
                     if (!expectedHeaders[i].equals(headers[i])) {
@@ -358,21 +358,21 @@ public class Suite implements Iterable<Datum> {
                         break fileTypeSwitch;
                     }
                 }
-                
+
                 while ((line = reader.readLine()) != null)
                     addLineZplot(line, depthSet, nameSet);
                 } finally {
                     if (reader != null) reader.close();
                 }
                 break;
-                
+
             case UNKNOWN:
                 loadWarnings.add("I don't recognize the file\""+file+"\", so I'm ignoring it.");
                 break;
-                
+
             }
         }
-        
+
         loadWarnings = Collections.unmodifiableList(loadWarnings);
         depths = depthSet.toArray(depths);
         names = nameSet.toArray(names);
@@ -415,7 +415,7 @@ public class Suite implements Iterable<Datum> {
                     sample.getName();
                 writer.write(sampleId+","+fishCsv+","+pcaCsv+"\n");
             }
-            
+
         } catch (IOException ex) {
             PuffinApp.errorDialog("Error saving file", ex.getMessage());
         } finally {
@@ -426,7 +426,7 @@ public class Suite implements Iterable<Datum> {
                 }
         }
     }
-    
+
     /*
      * Save [Fisher] calculations per site. Only works for discrete.
      */
@@ -484,7 +484,7 @@ public class Suite implements Iterable<Datum> {
     public Sample getSampleByDepth(double depth) {
         return samplesByDepth.get(depth);
     }
-    
+
     public Sample getSampleByName(String name) {
         return samplesByName.get(name);
     }
@@ -500,7 +500,7 @@ public class Suite implements Iterable<Datum> {
     public int getCurrentDepthIndex() {
         return currentDepthIndex;
     }
-    
+
     public Sample getCurrentSample() {
         switch (measType) {
         case CONTINUOUS: return getSampleByDepth(getCurrentDepth());
@@ -513,7 +513,7 @@ public class Suite implements Iterable<Datum> {
         return measType == MeasType.CONTINUOUS ?
             samplesByDepth.values() : samplesByName.values();
     }
-    
+
     public List<Datum> getData() {
         return data;
     }
@@ -525,7 +525,7 @@ public class Suite implements Iterable<Datum> {
     public String getName() {
         return suiteName;
     }
-    
+
     public int getNumSamples() {
         if (measType == MeasType.CONTINUOUS) return depths.length;
         else return samplesByName.size();
@@ -538,11 +538,11 @@ public class Suite implements Iterable<Datum> {
     public void setCurrentName(String currentName) {
         this.currentName = currentName;
     }
-    
+
     public String[] getNameArray() {
         return names;
     }
-    
+
     @Override
     public String toString() {
         return getName();
