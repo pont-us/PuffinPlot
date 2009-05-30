@@ -57,7 +57,7 @@ public class FisherValues {
     }
 
     public static String getHeader(String separator) {
-        return String.format("Fisher inc.,%sFisher dec.,%s" +
+        return String.format("Fisher inc.%sFisher dec.%s" +
                 "Fisher a95%sFisher k", separator, separator, separator);
     }
 }

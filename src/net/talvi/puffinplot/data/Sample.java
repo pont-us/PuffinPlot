@@ -129,7 +129,7 @@ public class Sample {
     }
 
     public String getSiteId() {
-        return getName().substring(1, getSiteSplit());
+        return getName().substring(0, getSiteSplit());
     }
 
     public String getSampleId() {
