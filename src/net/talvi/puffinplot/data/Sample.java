@@ -15,6 +15,7 @@ public class Sample {
     private PcaValues pca = null;
     private FisherValues fisher = null;
     private boolean emptySlot = false;
+    private static final int SAMPLE_ID_LENGTH = 4;
 
     public Sample(double depth) {
         this.depth = depth;
@@ -121,6 +122,18 @@ public class Sample {
     
     public String getName() {
         return name;
+    }
+
+    private int getSiteSplit() {
+        return getName().length() - SAMPLE_ID_LENGTH;
+    }
+
+    public String getSiteId() {
+        return getName().substring(1, getSiteSplit());
+    }
+
+    public String getSampleId() {
+        return getName().substring(getSiteSplit());
     }
 
     public FisherValues getFisher() {

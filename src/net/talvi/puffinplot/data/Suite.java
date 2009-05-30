@@ -114,7 +114,7 @@ public class Suite implements Iterable<Datum> {
         
         // Chuck PCA values into buckets
         for (Sample sample : PuffinApp.getInstance().getSelectedSamples()) {
-            String site = sample.getName().substring(0, 2);
+            String site = sample.getSiteId();
             PcaValues pca = sample.getPca();
             if (pca != null) {
                 if (!sitePcas.containsKey(site))
