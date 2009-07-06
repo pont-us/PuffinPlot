@@ -1,0 +1,27 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Generalize input format
+desc: |-
+  Requested by Christian after experiences on the JOIDES. Fundamentally,
+  all that's needed for analysis is a series of 3-dimensional vectors,
+  so it's a shame that Puffin is tied to the extremely specific OPRF/2G
+  input format (complete with misspelling of `Azimuth'). Puffin should
+  accept another, stripped-down format which could be as simple as x/y/z 
+  but should also have room for e.g. sample code and demag level. This
+  would also force me to think about what fields are actually necessary in
+  the full 2G files, allowing malformed files to be rejected on loading
+  rather than causing a crash at the display stage.
+type: :feature
+component: PuffinPlot
+release: "1.1"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2009-06-07 20:22:25.911075 Z
+references: []
+
+id: 73b7ddbab66f22a785e8a038c80f34753c8963d3
+log_events: 
+- - 2009-06-07 20:22:27.195873 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
