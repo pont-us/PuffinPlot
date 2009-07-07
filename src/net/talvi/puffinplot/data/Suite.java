@@ -222,10 +222,13 @@ public class Suite implements Iterable<Datum> {
         final boolean oldSquid = PuffinApp.getInstance().getPrefs().isUseOldSquidOrientations();
         if (!emptyLine.matcher(line).matches()) {
             Datum d = new Datum(line, fields, getLineContainer(lineNumber), oldSquid);
-            if (measType == MeasType.UNSET)
-                measType = d.getMeasType();
-            if (d.getMeasType() != measType) {
-                throw new IllegalArgumentException("Can't mix long core and discrete measurements.");
+            if (d.getMeasType() != MeasType.NONE) {
+                if (measType == MeasType.UNSET)
+                    measType = d.getMeasType();
+                if (d.getMeasType() != measType) {
+                    throw new IllegalArgumentException
+                            ("Can't mix long core and discrete measurements.");
+                }
             }
             switch (measType) {
                 case CONTINUOUS:
@@ -233,6 +236,10 @@ public class Suite implements Iterable<Datum> {
                     break;
                 case DISCRETE:
                     addDatumDiscrete(d, nameSet);
+                    break;
+                case NONE:
+                    // This is a treatment step with no measurement, so there will
+                    // be no data.
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown measurement type.");
@@ -339,7 +346,14 @@ public class Suite implements Iterable<Datum> {
             case ZPLOT:
                 try {
                 reader = new LineNumberReader(new FileReader(file));
-                for (int i=0; i<6; i++) reader.readLine();     // skip the header fields
+                // Check first line for magic string
+                if (!reader.readLine().startsWith("File Name:")) {
+                    loadWarnings.add("Ignoring unrecognized file " +
+                            file.getName());
+                    break fileTypeSwitch;
+                }
+                // skip remaining header fields
+                for (int i=0; i<5; i++) reader.readLine();
                 String[] headers = whitespace.split(reader.readLine());
 
                 if (headers.length != 7) {
