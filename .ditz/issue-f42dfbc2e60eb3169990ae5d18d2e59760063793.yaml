@@ -19,3 +19,9 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2009-07-06 04:57:30.377396 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    Apparent cause: file contains "Degauss Z" (as opposed to "Degauss Z - 
+    ARM axial") treatment type which PP doesn't recognize.

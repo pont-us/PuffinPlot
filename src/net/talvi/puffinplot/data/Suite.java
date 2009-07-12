@@ -477,9 +477,7 @@ public class Suite implements Iterable<Datum> {
                 catch (IOException e) { throw new Error(e); }
             }
         }
-
     }
-
 
     public Sample getSampleByDepth(double depth) {
         return samplesByDepth.get(depth);
