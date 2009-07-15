@@ -53,13 +53,18 @@ public class ZplotAxes {
             else labels[i] += dir.getLetter();
         }
         
-        // calculate step sizes
+        // calculate step sizes & normalization factors
         Double[] stepSizes = new Double[4];
-        for (int i=0; i<4; i++) stepSizes[i] = PlotAxis.saneStepSize(lengths[i]);
-        
+        for (int i=0; i<4; i++) stepSizes[i] = PlotAxis.calculateStepSize(lengths[i]);
+
+        Integer[] normalizationFactors = new Integer[4];
+        //for (int i=0; i<4; i++) normalizationFactors[i] =
+        //        PlotAxis.calculateNormalizationFactor(scale);
+
         // We need a uniform step size or the plot will look pretty odd.
         double step = Collections.max(Arrays.asList(stepSizes));
-        
+        // int normalizationFactor = Collections
+
         axes = new PlotAxis[4];
         for (int i=0; i<4; i++)
             axes[i] = new PlotAxis(lengths[i], directions[i], step, null, labels[i], plot);

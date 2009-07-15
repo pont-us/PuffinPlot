@@ -64,10 +64,8 @@ public class DemagPlot extends Plot {
                 : sample.getDatum(sample.getNumData() - 1).getTreatType().getAxisLabel();
 
         PlotAxis vAxis = new PlotAxis(maxIntens, PlotAxis.Direction.UP,
-                PlotAxis.saneStepSize(maxIntens),
                 "Intensity", null, this);
         PlotAxis hAxis = new PlotAxis(xAxisLength, PlotAxis.Direction.RIGHT,
-                PlotAxis.saneStepSize(xAxisLength),
                 xAxisLabel, null, this);
         
         double hScale = dim.getWidth() / hAxis.getLength();

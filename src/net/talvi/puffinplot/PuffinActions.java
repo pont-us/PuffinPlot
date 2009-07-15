@@ -19,7 +19,7 @@ public class PuffinActions {
 
     private PuffinApp app;
     private static final boolean useSwingChooserForOpen = true;
-    private static final boolean useSwingChooserForSave = false; // !PuffinApp.MAC_OS_X;
+    private static final boolean useSwingChooserForSave = !PuffinApp.MAC_OS_X;
 
 
     PuffinActions(PuffinApp app) {

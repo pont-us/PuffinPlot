@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Add more key shortcuts.
+desc: ""
+type: :feature
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2009-07-15 07:44:47.336331 Z
+references: []
+
+id: 8d0d3493c203b3af97324e57c7d587c018f7842a
+log_events: 
+- - 2009-07-15 07:44:48.342972 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
