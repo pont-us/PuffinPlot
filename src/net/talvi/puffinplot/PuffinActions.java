@@ -19,7 +19,7 @@ public class PuffinActions {
 
     private PuffinApp app;
     private static final boolean useSwingChooserForOpen = true;
-    private static final boolean useSwingChooserForSave = !PuffinApp.MAC_OS_X;
+    private static final boolean useSwingChooserForSave = false; // !PuffinApp.MAC_OS_X;
 
 
     PuffinActions(PuffinApp app) {
@@ -91,7 +91,11 @@ public class PuffinActions {
                 }
             });
             fd.setVisible(true);
-            pathname = new File(fd.getDirectory(), fd.getFile()).getPath();
+            if (fd.getFile() == null) { // "cancel" selected
+                pathname = null;
+            } else { // "save" selected
+               pathname = new File(fd.getDirectory(), fd.getFile()).getPath();
+            }
         }
         return pathname;
     }
