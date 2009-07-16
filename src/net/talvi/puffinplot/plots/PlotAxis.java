@@ -69,27 +69,70 @@ class PlotAxis {
         this.label = label;
         this.endLabel = endLabel;
         this.plot = plot;
-        int nf = 0;
-        while (getLength() * Math.pow(10, nf) > 1000) nf -= 3;
-        while (getLength() * Math.pow(10, nf) < 1) nf += 1;
-        normalizationFactor = nf;
+        normalizationFactor = calculateNormalizationFactor(getLength());
     }
-    
+
     PlotAxis(double extent, Direction direction, double stepSize, String label,
             String endLabel, Plot plot) {
-        this(extent, direction, stepSize, (int) (Math.ceil(extent/stepSize)),
+        this(extent, direction, stepSize, calculateNumSteps(extent, stepSize),
                 label, endLabel, plot);
     }
 
-    public static double saneStepSize(double extent) {
+    PlotAxis(double extent, Direction direction, String label,
+            String endLabel, Plot plot) {
+        this(extent, direction, calculateStepSize(extent), label, endLabel,
+                plot);
+    }
+
+//    PlotAxis(double extent, double[] extents, Direction direction, String label,
+//            String endLabel, Plot plot) {
+//
+//        // calculate step sizes & normalization factors
+//        Double[] stepSizes = new Double[extents.length];
+//        for (int i=0; i<extents.length; i++)
+//            stepSizes[i] = calculateStepSize(extents[i]);
+//
+//        Integer[] normalizationFactors = new Integer[4];
+//        //for (int i=0; i<4; i++) normalizationFactors[i] =
+//        //        PlotAxis.calculateNormalizationFactor();
+//
+//        // We need a uniform step size or the plot will look pretty odd.
+//        double step = Collections.max(Arrays.asList(stepSizes));
+//        // int normalizationFactor = Collections
+//
+//        axes = new PlotAxis[4];
+//        for (int i=0; i<4; i++)
+//            axes[i] = new PlotAxis(lengths[i], directions[i], step, null, labels[i], plot);
+//
+//    }
+
+    static double calculateStepSize(double extent) {
         // if (extent==0) extent=1;
         double scaleFactor = Math.pow(10, 1-Math.floor(Math.log10(extent)));
         double extentScaledTo100 = extent * scaleFactor;
-        double scaledStepSize = calculateStepSize(Math.floor(extentScaledTo100));
+        double scaledStepSize =
+                calculateStepSizeForValueFrom0To100(Math.floor(extentScaledTo100));
         return scaledStepSize / scaleFactor;
     }
 
-    private static double calculateStepSize(double maxValue) {
+    static int calculateNormalizationFactor(final double length) {
+        int nf = 0;
+        while (length * Math.pow(10, nf) > 1000) nf -= 3;
+        while (length * Math.pow(10, nf) < 1) nf += 1;
+        return nf;
+    }
+
+    static int calculateNumSteps(double extent, double stepSize) {
+        return (int) (Math.ceil(extent/stepSize));
+    }
+
+    private static double roundUpToNextStep(double extent, double stepSize) {
+        double result = 0;
+        while (result < extent) result += stepSize;
+        return stepSize;
+    }
+
+    private static double calculateStepSizeForValueFrom0To100(double maxValue) {
         return maxValue < 12 ? 2 :
                maxValue < 40 ? 5 :
                maxValue <= 60 ? 10 :

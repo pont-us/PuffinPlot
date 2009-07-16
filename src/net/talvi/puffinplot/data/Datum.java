@@ -306,6 +306,9 @@ public class Datum {
             case DISCRETE:
                 uc = new Vec3(xCorr / volume, yCorr / volume, zCorr / volume);
                 break;
+            case NONE:
+                // do nothing, since there is no data.
+                break;
             default:
                 throw new IllegalArgumentException
                         ("Unknown measurement type "+measType);
@@ -392,7 +395,9 @@ public class Datum {
     }
 
     public boolean ignoreOnLoading() {
-        return isMagSus() || (getTreatType() == TreatType.ARM);
+        return isMagSus() ||
+                (getTreatType() == TreatType.ARM) ||
+                getMeasType() == MeasType.NONE;
     }
     
     public Object getValue(TwoGeeField field) {

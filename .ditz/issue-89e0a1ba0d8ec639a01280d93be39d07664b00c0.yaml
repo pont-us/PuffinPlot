@@ -20,3 +20,9 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - assigned to release 1.2 from unassigned
   - ""
+- - 2009-07-15 08:16:08.287608 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    Christian has just asked for this again, but declared it to be "no biggy",
+    so I will keep it at release 1.2 for now.

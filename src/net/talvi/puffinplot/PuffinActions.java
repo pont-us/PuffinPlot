@@ -91,7 +91,11 @@ public class PuffinActions {
                 }
             });
             fd.setVisible(true);
-            pathname = new File(fd.getDirectory(), fd.getFile()).getPath();
+            if (fd.getFile() == null) { // "cancel" selected
+                pathname = null;
+            } else { // "save" selected
+               pathname = new File(fd.getDirectory(), fd.getFile()).getPath();
+            }
         }
         return pathname;
     }

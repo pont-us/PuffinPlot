@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Point selection by rectangle dragging
+desc: ""
+type: :feature
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2009-07-15 08:37:43.325982 Z
+references: []
+
+id: 9288ac38d5f5a9d4a02192986df2cd0df8d80690
+log_events: 
+- - 2009-07-15 08:37:44.483150 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

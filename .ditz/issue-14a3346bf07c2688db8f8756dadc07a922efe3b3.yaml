@@ -1,0 +1,28 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Save point selections with PCA values
+desc: "CO 1. Is it possible ion the save calculations section to save the points\n\
+  CO you have selected for the PCA. eg. 100-350\xC2\xB0C It is a good thing to\n\
+  CO have in a file so that you see the evolution of unblocking temps or\n\
+  CO coercivity. MDF will tell you a similar thing but it would still be\n\
+  CO useful to have this data because it keep you a bit honest about which\n\
+  CO points you have picked.\n\n\
+  PL Hmm, neat idea. Would you be wanting an exhaustive list of the points\n\
+  PL (along the lines of \"100 125 150 175 200 225 250 275 300 325 350\") or\n\
+  PL just the range (\"100-350\")? If the latter, there's some ambiguity, since\n\
+  PL you haven't necessarily selected *all* the points in that range (indeed,\n\
+  PL you might only have selected 100 and 350)."
+type: :feature
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2009-07-15 08:39:09.703303 Z
+references: []
+
+id: 14a3346bf07c2688db8f8756dadc07a922efe3b3
+log_events: 
+- - 2009-07-15 08:39:10.835776 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

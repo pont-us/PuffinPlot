@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 public enum MeasType {
     DISCRETE("discrete"),
     CONTINUOUS("continuous"),
+    NONE("^na$"),
     UNSET(),
     UNKNOWN();
     

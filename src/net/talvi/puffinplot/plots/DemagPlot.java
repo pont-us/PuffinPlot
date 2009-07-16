@@ -35,25 +35,38 @@ public class DemagPlot extends Plot {
         if (data.size() == 0) return;
 
         Rectangle2D dim = cropRectangle(getDimensions(), 270, 200, 50, 230);
-        boolean emptyC = params.isEmptyCorrectionActive();
+        boolean useEmptyCorr = params.isEmptyCorrectionActive();
 
         g.setColor(Color.BLACK);
-        double maxIntens = 0;
-        double maxDemag = 0;
+        double maxIntens = 0, maxDemag = 0;
         for (Datum d: data) {
             if (d.getDemagLevel() > maxDemag) maxDemag = d.getDemagLevel();
-            if (d.getIntensity(emptyC) > maxIntens) maxIntens = d.getIntensity(emptyC);
+            if (d.getIntensity(useEmptyCorr) > maxIntens)
+                maxIntens = d.getIntensity(useEmptyCorr);
         }
 
-        if (maxDemag == 0) maxDemag = 1;
+        // If all the measurements have the same demag level, we'll
+        // just plot them in sequence to avoid giving them all the same
+        // X co-ordinate.
+        boolean xBySequence = false;
+
+        double xAxisLength;
+        if (maxDemag == 0) {
+            xAxisLength = data.size() > 1 ? data.size() : 1;
+            xBySequence = true;
+        } else {
+            xAxisLength = maxDemag;
+        }
         if (maxIntens == 0) maxIntens = 1;
-        
+
+        final String xAxisLabel = xBySequence
+                ? "Measurement number"
+                : sample.getDatum(sample.getNumData() - 1).getTreatType().getAxisLabel();
+
         PlotAxis vAxis = new PlotAxis(maxIntens, PlotAxis.Direction.UP,
-                PlotAxis.saneStepSize(maxIntens),
                 "Intensity", null, this);
-        PlotAxis hAxis = new PlotAxis(maxDemag, PlotAxis.Direction.RIGHT,
-                PlotAxis.saneStepSize(maxDemag),
-                sample.getDatum(sample.getNumData()-1).getTreatType().getAxisLabel(), null, this);
+        PlotAxis hAxis = new PlotAxis(xAxisLength, PlotAxis.Direction.RIGHT,
+                xAxisLabel, null, this);
         
         double hScale = dim.getWidth() / hAxis.getLength();
         double vScale = dim.getHeight() / vAxis.getLength();
@@ -61,11 +74,14 @@ public class DemagPlot extends Plot {
         vAxis.draw(g, vScale, (int)dim.getMinX(), (int)dim.getMaxY());
         hAxis.draw(g, hScale, (int)dim.getMinX(), (int)dim.getMaxY());
         
-        boolean first = true;
+        int i = 0;
         for (Datum d: data) {
-            addPoint(d, new Point2D.Double(dim.getMinX() + d.getDemagLevel() * hScale,
-                    dim.getMaxY() - d.getIntensity(emptyC) * vScale), true, false, !first);
-            first = false;
+            double xPos = dim.getMinX() +
+                    (xBySequence ? (i + 1) : d.getDemagLevel()) * hScale;
+            addPoint(d, new Point2D.Double(xPos,
+                    dim.getMaxY() - d.getIntensity(useEmptyCorr) * vScale),
+                    true, false, i>0);
+            i++;
         }
         drawPoints(g);
     }
