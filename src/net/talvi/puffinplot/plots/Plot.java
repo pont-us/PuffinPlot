@@ -88,6 +88,11 @@ public abstract class Plot
         return attributeMap;
     }
 
+    public void applyTextAttributes(AttributedString as) {
+        for (Map.Entry<? extends Attribute, ?> a : attributeMap.entrySet())
+            as.addAttribute(a.getKey(), a.getValue());
+    }
+
     protected void writeString(Graphics2D g, String text, float x, float y) {
         AttributedString as = new AttributedString(text);
         as.addAttributes(getTextAttributes(), 0, text.length());

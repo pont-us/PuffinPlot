@@ -42,6 +42,8 @@ public class ZplotLegend extends Plot {
                 (float) (yOrig + textOffs));
         writeString(g, "horizontal", (float) (xOrig + 50 * getUnitSize()),
                 (float) (yOrig + lineOffs + textOffs));
+        writeString(g, "Units: Gauss", (float) xOrig,
+                (float) (yOrig + 2 * lineOffs + textOffs));
         drawPoints(g);
     }
 

@@ -17,7 +17,7 @@ public class ZplotAxes {
             new Direction[] { RIGHT, DOWN, LEFT, UP };
     private final double scale;
     private final double xOffset, yOffset;
-    private final PlotAxis[] axes;
+    private /* final */ PlotAxis[] axes;
     
     public ZplotAxes(Rectangle2D dataArea, Rectangle2D plotArea,
             MeasurementAxis vVs, Plot plot) {
@@ -65,10 +65,15 @@ public class ZplotAxes {
         double step = Collections.max(Arrays.asList(stepSizes));
         // int normalizationFactor = Collections
 
-        axes = new PlotAxis[4];
-        for (int i=0; i<4; i++)
-            axes[i] = new PlotAxis(lengths[i], directions[i], step, null, labels[i], plot);
-        
+        PlotAxis.AxisParameters[] aps = new PlotAxis.AxisParameters[4];
+
+        for (int i=0; i<4; i++) {
+            aps[i] = new PlotAxis.AxisParameters(lengths[i], directions[i]).
+                    withEndLabel(labels[i]);
+        }
+
+        axes = PlotAxis.makeMatchingAxes(aps, plot);
+
         extDataArea.setRect(-axes[2].getLength(), -axes[1].getLength(),
                 axes[0].getLength()+axes[2].getLength(),
                 axes[1].getLength()+axes[3].getLength());

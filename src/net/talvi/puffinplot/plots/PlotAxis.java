@@ -8,11 +8,15 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.text.AttributedString;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import static java.awt.font.TextAttribute.SUPERSCRIPT;
 import static java.awt.font.TextAttribute.SUPERSCRIPT_SUPER;
 
 class PlotAxis {
-    private Plot plot;
+    private final Plot plot;
+    private final AxisParameters ap;
 
     static enum Direction {
         RIGHT("R","E"), DOWN("D","S"),
@@ -51,60 +55,73 @@ class PlotAxis {
         }
     }
 
-    private final int numSteps;
-    private final double stepSize;
-    private final double extent;
-    private final PlotAxis.Direction direction;
-    private final String label;
-    private final int normalizationFactor;
-    private final String endLabel;
-    
-    PlotAxis(double extent, PlotAxis.Direction direction, double stepSize,
-            int numSteps, String label, String endLabel, Plot plot) {
-        super();
-        this.extent = extent;
-        this.numSteps = numSteps;
-        this.stepSize = stepSize;
-        this.direction = direction;
-        this.label = label;
-        this.endLabel = endLabel;
+    public PlotAxis(AxisParameters axisParameters, Plot plot) {
+        ap = new AxisParameters(axisParameters);
+        if (ap.stepSize == null) ap.stepSize = calculateStepSize(ap.extent);
+        if (ap.numSteps == null) ap.numSteps = calculateNumSteps(ap.extent, ap.stepSize);
+        if (ap.magnitude == null) ap.magnitude = calculateMagnitude(getLength());
         this.plot = plot;
-        normalizationFactor = calculateNormalizationFactor(getLength());
     }
 
-    PlotAxis(double extent, Direction direction, double stepSize, String label,
-            String endLabel, Plot plot) {
-        this(extent, direction, stepSize, calculateNumSteps(extent, stepSize),
-                label, endLabel, plot);
-    }
+    static PlotAxis[] makeMatchingAxes(AxisParameters[] params, Plot plot) {
+        List<Double> stepSizes = new ArrayList<Double>(params.length);
+        List<Integer> magnitudes = new ArrayList<Integer>(params.length);
+        for (AxisParameters p: params)
+            stepSizes.add(calculateStepSize(p.extent));
+        double stepSize = Collections.max(stepSizes);
+        for (AxisParameters p : params)
+            magnitudes.add(calculateMagnitude(roundUpToNextStep(p.extent, stepSize)));
+        int magnitude = Collections.max(magnitudes);
 
-    PlotAxis(double extent, Direction direction, String label,
-            String endLabel, Plot plot) {
-        this(extent, direction, calculateStepSize(extent), label, endLabel,
-                plot);
-    }
+        List<PlotAxis> axes = new ArrayList<PlotAxis>(params.length);
+        for (AxisParameters p: params) {
+            AxisParameters newP = new AxisParameters(p);
+            newP.stepSize = stepSize;
+            newP.magnitude = magnitude;
+            axes.add(new PlotAxis(newP, plot));
+        }
 
-//    PlotAxis(double extent, double[] extents, Direction direction, String label,
-//            String endLabel, Plot plot) {
-//
-//        // calculate step sizes & normalization factors
-//        Double[] stepSizes = new Double[extents.length];
-//        for (int i=0; i<extents.length; i++)
-//            stepSizes[i] = calculateStepSize(extents[i]);
-//
-//        Integer[] normalizationFactors = new Integer[4];
-//        //for (int i=0; i<4; i++) normalizationFactors[i] =
-//        //        PlotAxis.calculateNormalizationFactor();
-//
-//        // We need a uniform step size or the plot will look pretty odd.
-//        double step = Collections.max(Arrays.asList(stepSizes));
-//        // int normalizationFactor = Collections
-//
-//        axes = new PlotAxis[4];
-//        for (int i=0; i<4; i++)
-//            axes[i] = new PlotAxis(lengths[i], directions[i], step, null, labels[i], plot);
-//
-//    }
+        return axes.toArray(new PlotAxis[] {});
+      }
+
+        public final static class AxisParameters {
+            public double extent = 1;
+            public Direction direction = Direction.UP;
+            public String label = null;
+            public String endLabel = null;
+            public boolean magnitudeOnTicks = true;
+            public boolean magnitudeOnLabel = true;
+            public Double stepSize = null;
+            public Integer numSteps = null;
+            public Integer magnitude = null;
+
+            public AxisParameters(double extent, Direction direction) {
+                this.extent = extent;
+                this.direction = direction;
+            }
+
+            public AxisParameters(AxisParameters p) {
+                extent = p.extent;
+                direction = p.direction;
+                label = p.label;
+                endLabel = p.endLabel;
+                magnitudeOnTicks = p.magnitudeOnTicks;
+                magnitudeOnLabel = p.magnitudeOnLabel;
+                stepSize = p.stepSize;
+                numSteps = p.numSteps;
+                magnitude = p.magnitude;
+            }
+
+            public AxisParameters withEndLabel(String endLabel) {
+                this.endLabel = endLabel;
+                return this;
+            }
+
+            public AxisParameters withLabel(String label) {
+                this.label = label;
+                return this;
+            }
+        }
 
     static double calculateStepSize(double extent) {
         // if (extent==0) extent=1;
@@ -115,7 +132,7 @@ class PlotAxis {
         return scaledStepSize / scaleFactor;
     }
 
-    static int calculateNormalizationFactor(final double length) {
+    static int calculateMagnitude(final double length) {
         int nf = 0;
         while (length * Math.pow(10, nf) > 1000) nf -= 3;
         while (length * Math.pow(10, nf) < 1) nf += 1;
@@ -142,12 +159,12 @@ class PlotAxis {
     private void putText(Graphics2D g, String textString, double x,
             double y, Direction dir, double θ, double padding) {
         AttributedString text = new AttributedString(textString);
-        putText(g, text, textString.length(), x, y, dir, θ, padding);
+        putText(g, text, x, y, dir, θ, padding);
     }
 
-    private void putText(Graphics2D g, AttributedString text, int length, double x,
+    private void putText(Graphics2D g, AttributedString text, double x,
             double y, Direction dir, double θ, double padding) {
-        text.addAttributes(plot.getTextAttributes(), 0, length);
+        plot.applyTextAttributes(text);
         FontRenderContext frc = g.getFontRenderContext();
         TextLayout layout = new TextLayout(text.getIterator(), frc);
         Rectangle2D bounds = AffineTransform.getRotateInstance(θ).
@@ -172,18 +189,28 @@ class PlotAxis {
         layout.draw(g, 0,0);
         g.setTransform(old);
     }
+
+    private AttributedString timesTenToThe(String text, int exponent) {
+        String expText = Integer.toString(exponent);
+         // 00D7 is the multiplication sign
+        text += " \u00D710" + expText;
+        AttributedString as = new AttributedString(text);
+        as.addAttribute(SUPERSCRIPT, SUPERSCRIPT_SUPER,
+                text.length() - expText.length(), text.length());
+        return as;
+    }
     
     public void draw(Graphics2D g, double scale, int xOrig, int yOrig) {
         int x = 0, y = 0;
         double t = plot.getTickLength() / 2.0f;
-        switch (direction) {
+        switch (ap.direction) {
         case RIGHT: x = 1; break;
         case DOWN: y = 1; break;
         case LEFT: x = -1; break;
         case UP: y = -1; break;
         }
 
-        for (int i=1; i<=numSteps; i++) {
+        for (int i=1; i<=ap.numSteps; i++) {
             double pos = i*getStepSize()*scale;
             g.draw(new Line2D.Double(xOrig+x*pos+y*t, yOrig+y*pos+x*t,
                     xOrig+x*pos-y*t, yOrig+y*pos-x*t));
@@ -192,50 +219,49 @@ class PlotAxis {
         double xLen = x*getLength()*scale;
         double yLen = y*getLength()*scale;
         g.draw(new Line2D.Double(xOrig, yOrig, xOrig+xLen, yOrig+yLen));
-        if (getLength()!=0) putText(g,
-                String.format("%3.1f", getNormalizedLength()),
-                xOrig+xLen, yOrig+yLen, direction.labelPos(), 0, 5);
-        if (label != null) {
-            String text = new String(label);
-            if (normalizationFactor != 0) {
-                text += " \u00D710"; // 00D7 is the multiplication sign
-                String exp = Integer.toString(-normalizationFactor);
-                text += exp;
-                AttributedString as = new AttributedString(text);
-                as.addAttribute(SUPERSCRIPT, SUPERSCRIPT_SUPER,
-                        text.length()-exp.length(), text.length());
-                putText(g, as, text.length(), xOrig+xLen/2, yOrig+yLen/2,
-                        direction.labelPos(), direction.labelRot(), 15);
-            } else {
-                putText(g, text, xOrig+xLen/2,
-                        yOrig+yLen/2, direction.labelPos(),
-                        direction.labelRot(), 15);
-            }
+        if (getLength()!=0) {
+            double length = getNormalizedLength();
+            int length_int = (int) length;
+            String text =  Math.abs(length-length_int) < 0.0001
+                ? Integer.toString(length_int)
+                : String.format("%.1f", length);
+            AttributedString as = (ap.magnitudeOnTicks && ap.magnitude != 0)
+                    ? timesTenToThe(text, -ap.magnitude)
+                    : new AttributedString(text);
+            putText(g, as,
+                xOrig+xLen, yOrig+yLen, ap.direction.labelPos(), 0, 5);
+        }
+        if (ap.label != null) {
+            AttributedString as = (ap.magnitudeOnLabel && ap.magnitude != 0)
+                    ? timesTenToThe(ap.label, -ap.magnitude)
+                    : new AttributedString(ap.label);
+
+            putText(g, as, xOrig + xLen / 2, yOrig + yLen / 2,
+                    ap.direction.labelPos(), ap.direction.labelRot(), 15);
         }
         
-        if (endLabel != null) {
-            putText(g, endLabel, xOrig+xLen, yOrig+yLen,
-                    direction, 0, 8);
+        if (ap.endLabel != null) {
+            putText(g, ap.endLabel, xOrig+xLen, yOrig+yLen, ap.direction, 0, 8);
         }
     }
 
     public String getEndLabel() {
-        return endLabel;
+        return ap.endLabel;
     }
 
     public PlotAxis.Direction getDirection() {
-        return direction;
+        return ap.direction;
     }
     
     public double getStepSize() {
-        return stepSize;
+        return ap.stepSize;
     }
         
     double getLength() {
-        return stepSize * numSteps;
+        return ap.stepSize * ap.numSteps;
     }
     
     double getNormalizedLength() {
-        return getLength() * Math.pow(10, normalizationFactor);
+        return getLength() * Math.pow(10, ap.magnitude);
     }
 }

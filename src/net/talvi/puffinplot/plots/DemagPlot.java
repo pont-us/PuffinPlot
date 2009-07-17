@@ -11,6 +11,8 @@ import net.talvi.puffinplot.GraphDisplay;
 import net.talvi.puffinplot.PlotParams;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.Sample;
+import static net.talvi.puffinplot.plots.PlotAxis.AxisParameters;
+import static net.talvi.puffinplot.plots.PlotAxis.Direction;
 
 public class DemagPlot extends Plot {
 
@@ -63,10 +65,12 @@ public class DemagPlot extends Plot {
                 ? "Measurement number"
                 : sample.getDatum(sample.getNumData() - 1).getTreatType().getAxisLabel();
 
-        PlotAxis vAxis = new PlotAxis(maxIntens, PlotAxis.Direction.UP,
-                "Intensity", null, this);
-        PlotAxis hAxis = new PlotAxis(xAxisLength, PlotAxis.Direction.RIGHT,
-                xAxisLabel, null, this);
+        PlotAxis vAxis =
+                new PlotAxis(new AxisParameters(maxIntens, Direction.UP).
+                withLabel("Intensity"), this);
+        PlotAxis hAxis =
+                new PlotAxis(new AxisParameters(xAxisLength, Direction.RIGHT).
+                withLabel(xAxisLabel), this);
         
         double hScale = dim.getWidth() / hAxis.getLength();
         double vScale = dim.getHeight() / vAxis.getLength();
