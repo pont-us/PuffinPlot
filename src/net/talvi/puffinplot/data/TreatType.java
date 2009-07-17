@@ -2,7 +2,6 @@ package net.talvi.puffinplot.data;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 public enum TreatType {
     NONE("none", "No demagnetization"),

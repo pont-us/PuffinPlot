@@ -84,7 +84,6 @@ public class PuffinActions {
             FileDialog fd = new FileDialog(app.getMainWindow(), title,
                     FileDialog.SAVE);
             fd.setFilenameFilter(new FilenameFilter() {
-
                 public boolean accept(File dir, String name) {
                     return name.toLowerCase().endsWith(extension);
                 }
@@ -96,10 +95,12 @@ public class PuffinActions {
                pathname = new File(fd.getDirectory(), fd.getFile()).getPath();
             }
         }
+        if (!pathname.toLowerCase().endsWith("extension"))
+            pathname += extension;
         return pathname;
     }
 
-    public final Action saveCalcsSample = new AbstractAction("Save sample calculations…") {
+    public final Action saveCalcsSample = new AbstractAction("Export sample calculations…") {
 
         public void actionPerformed(ActionEvent arg0) {
             if (app.getSuite() == null) {
@@ -114,7 +115,7 @@ public class PuffinActions {
         }
     };
 
-    public final Action saveCalcsSite = new AbstractAction("Save site calculations…") {
+    public final Action saveCalcsSite = new AbstractAction("Export site calculations…") {
 
         public void actionPerformed(ActionEvent arg0) {
             if (app.getSuite() == null) {
@@ -129,7 +130,7 @@ public class PuffinActions {
         }
     };
 
-    public final Action saveCalcsSuite = new AbstractAction("Save suite calculations…") {
+    public final Action saveCalcsSuite = new AbstractAction("Export suite calculations…") {
 
         public void actionPerformed(ActionEvent arg0) {
             if (app.getSuite() == null) {
@@ -148,14 +149,7 @@ public class PuffinActions {
 
         public void actionPerformed(ActionEvent arg0) {
             String pathname = getSavePath("Save data", ".ppl", "PuffinPlot data");
-
-            File file = null;
-            if (pathname != null) {
-                    if (!pathname.toLowerCase().endsWith(".ppl"))
-                        pathname += ".ppl";
-                    file = new File(pathname);
-                }
-            if (file != null) app.getSuite().save(file);
+            if (pathname != null) app.getSuite().save(new File(pathname));
         }
         
     };

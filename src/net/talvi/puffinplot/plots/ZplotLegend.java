@@ -1,5 +1,6 @@
 package net.talvi.puffinplot.plots;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -36,6 +37,7 @@ public class ZplotLegend extends Plot {
         double yOrig = dims.getMinY() + getMargin();
         double textOffs = 25 * getUnitSize();
         double lineOffs = 150 * getUnitSize();
+        g.setColor(Color.BLACK);
         addPoint(null, new Point2D.Double(xOrig, yOrig), false, false, false);
         addPoint(null, new Point2D.Double(xOrig, yOrig + lineOffs), true, false, false);
         writeString(g, "vertical", (float) xOrig + 50 * getUnitSize(),
