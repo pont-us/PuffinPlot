@@ -1,50 +1,50 @@
 package net.talvi.puffinplot.data;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public enum TreatType {
-    NONE("none"),
-    DEGAUSS("degauss x, y, & z"),
-    ARM("degauss z - arm axial"),
-    IRM("irm"),
-    THERMAL("thermal"),
-    UNKNOWN();
+    NONE("none", "No demagnetization"),
+    DEGAUSS_XYZ("degauss x, y, & z", "3-axis AF strength (G)"),
+    DEGAUSS_Z("degauss z", "Z-axis AF strength (G)"),
+    ARM("degauss z - arm axial", "ARM field strength"),
+    IRM("irm", "IRM field strength"),
+    THERMAL("thermal", "Temperature (°C)"),
+    UNKNOWN("", "Unknown treatment");
 	
-    private Pattern namePattern;
+    private final String axisLabel;
+    private final String name;
+    private final static Map<String, TreatType> nameMap;
+
+    static {
+        // This block is run after the enums have been initialized.
+        // See http://deepjava.wordpress.com/2006/12/08/bootstrapping-static-fields-within-enums/
+         nameMap = new HashMap<String, TreatType>();
+         for (TreatType t: values()) nameMap.put(t.toString().toLowerCase(), t);
+    }
     
     private TreatType() {
-        namePattern = null;
+        name = null;
+        axisLabel = null;
     }
     
-    private TreatType(String name) {
-        namePattern = Pattern.compile(name, Pattern.CASE_INSENSITIVE);
-    }
-    
-    private boolean matches(String name) {
-        return namePattern != null
-                ? namePattern.matcher(name).find()
-                : false;
+    private TreatType(String name, String axisLabel) {
+        this.name = name;
+        this.axisLabel = axisLabel;
     }
     
     static TreatType fromString(String s) {
-        for (TreatType tt : TreatType.values())
-            if (tt.matches(s)) return tt;
-        return UNKNOWN;
+        TreatType t = nameMap.get(s.toLowerCase());
+        return t != null ? t : UNKNOWN;
     }
 
     @Override
     public String toString() {
-        return namePattern.pattern();
+        return name;
     }
     
     public String getAxisLabel() {
-        switch (this) {
-        case NONE: return "No demagnetization";
-        case DEGAUSS: return "AF strength (G)";
-        case IRM: return "IRM";
-        case ARM: return "ARM";
-        case THERMAL: return "Temperature (°C)";
-        default: return "unknown units";
-        }
+        return axisLabel;
     }
 }

@@ -5,8 +5,7 @@
 <project name="PuffinPlot" default="default" basedir=".">
     <description>Builds, tests, and runs the project PuffinPlot.</description>
     <import file="nbproject/build-impl.xml"/>
-
-    <import file="nbproject/profiler-build-impl.xml"/>    
+    
     <target name="-pre-jar">
         <propertyfile file="build/classes/net/talvi/puffinplot/build.properties">
             <entry  key="build.date" type="date" value="now" pattern="yyyy-MM-dd HH:mm"/>

@@ -195,12 +195,12 @@ public class Datum {
         magSus = Double.NaN;
         uc = Vec3.fromPolarDegrees(intensity, incUc, decUc);
         // fc = sc = uc;
-        treatType = TreatType.DEGAUSS;
+        treatType = TreatType.DEGAUSS_XYZ;
         if (project.toLowerCase().contains("therm") ||
                 operation.toLowerCase().contains("therm"))
             treatType = TreatType.THERMAL;
         switch (treatType) {
-        case DEGAUSS: afx = afy = afz = afOrThermalDemag;
+        case DEGAUSS_XYZ: afx = afy = afz = afOrThermalDemag;
         break;
         case THERMAL: temp = afOrThermalDemag;
         break;
@@ -379,9 +379,11 @@ public class Datum {
     public double getDemagLevel() {
         switch (treatType) {
         case NONE: return 0;
-        case DEGAUSS: return afx>0?afx : afy>0?afy : afz;
+        case DEGAUSS_XYZ: return afx>0?afx : afy>0?afy : afz;
+        case DEGAUSS_Z: return afz;
         case THERMAL: return temp;
-        case ARM: return afz;
+        case ARM: return armGauss;
+        case IRM: return irmGauss;
         default: throw new IllegalArgumentException("unhandled treatment type");
         }
     }

@@ -90,7 +90,7 @@ class PlotAxis {
             public String label = null;
             public String endLabel = null;
             public boolean magnitudeOnTicks = true;
-            public boolean magnitudeOnLabel = true;
+            public boolean magnitudeOnLabel = false;
             public Double stepSize = null;
             public Integer numSteps = null;
             public Integer magnitude = null;

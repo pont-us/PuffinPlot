@@ -40,8 +40,9 @@ public class TreatTypeTest {
     @Test
     public void testValues() {
         System.out.println("values");
-        TreatType[] expResult = {TreatType.NONE, TreatType.DEGAUSS,
-                TreatType.IRM, TreatType.THERMAL, TreatType.UNKNOWN};
+        TreatType[] expResult = {TreatType.NONE, TreatType.DEGAUSS_XYZ,
+        TreatType.DEGAUSS_Z,
+        TreatType.ARM, TreatType.IRM, TreatType.THERMAL, TreatType.UNKNOWN};
         TreatType[] result = TreatType.values();
         assertEquals(expResult, result);
     }
@@ -52,8 +53,10 @@ public class TreatTypeTest {
         String s = "";
         TreatType expResult = null;
         TreatType result = TreatType.fromString(s);
-        assertEquals(TreatType.DEGAUSS, TreatType.fromString("DEGAUSS"));
-        assertEquals(TreatType.THERMAL, TreatType.fromString("THERMAL"));
+        assertEquals(TreatType.DEGAUSS_XYZ, TreatType.fromString("Degauss X, Y, & Z"));
+        assertEquals(TreatType.DEGAUSS_Z, TreatType.fromString("Degauss Z"));
+        assertEquals(TreatType.THERMAL, TreatType.fromString("Thermal"));
+        assertEquals(TreatType.ARM, TreatType.fromString("Degauss Z - ARM axial"));
         assertEquals(TreatType.IRM, TreatType.fromString("IRM"));
         assertEquals(TreatType.NONE, TreatType.fromString("NONE"));
         assertEquals(TreatType.UNKNOWN, TreatType.fromString("{}{}{}"));
@@ -68,13 +71,17 @@ public class TreatTypeTest {
             switch (t) {
             case NONE: assertEquals("No demagnetization", label);
                 break;
-            case DEGAUSS: assertEquals("AF strength (mT)", label);
+            case DEGAUSS_XYZ: assertEquals("3-axis AF strength (G)", label);
                 break;
-            case IRM: assertEquals("IRM", label);
+            case DEGAUSS_Z: assertEquals("Z-axis AF strength (G)", label);
+                break;
+            case IRM: assertEquals("IRM field strength", label);
                 break;
             case THERMAL: assertEquals("Temperature (°C)", label);
                 break;
-            case UNKNOWN: assertEquals("unknown units", label);
+            case UNKNOWN: assertEquals("Unknown treatment", label);
+                break;
+            case ARM: assertEquals("ARM field strength", label);
                 break;
             default: fail("No test for axis label "+label);
                 break;
