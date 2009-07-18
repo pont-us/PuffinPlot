@@ -7,19 +7,16 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import net.talvi.puffinplot.plots.FisherEqAreaPlot;
+import net.talvi.puffinplot.plots.Plot;
 
 public class FisherGraphDisplay extends GraphDisplay implements Printable {
 
     public FisherGraphDisplay() {
-
         super();
-
         zoomTransform = AffineTransform.getScaleInstance(1.0, 1.0);
-
-        plots.add(
-                new FisherEqAreaPlot(
-                null, null, new Rectangle2D.Double(50, 50, 600, 600)));
-
+        Plot plot = new FisherEqAreaPlot(
+                null, null, new Rectangle2D.Double(50, 50, 600, 600));
+        plots.put(plot.getName(), plot);
     }
 
     public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
@@ -30,5 +27,4 @@ public class FisherGraphDisplay extends GraphDisplay implements Printable {
             return PAGE_EXISTS;
         }
     }
-
 }

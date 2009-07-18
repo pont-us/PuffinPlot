@@ -24,6 +24,8 @@ import java.util.prefs.Preferences;
 import net.talvi.puffinplot.GraphDisplay;
 import net.talvi.puffinplot.PlotParams;
 import net.talvi.puffinplot.data.Datum;
+import static java.awt.font.TextAttribute.SUPERSCRIPT;
+import static java.awt.font.TextAttribute.SUPERSCRIPT_SUPER;
 
 public abstract class Plot
 {
@@ -83,8 +85,7 @@ public abstract class Plot
         return FONT_SIZE_IN_UNITS * getUnitSize();
     }
 
-    public Map<? extends Attribute,?>
-            getTextAttributes() {
+    public Map<? extends Attribute,?> getTextAttributes() {
         return attributeMap;
     }
 
@@ -94,12 +95,26 @@ public abstract class Plot
     }
 
     protected void writeString(Graphics2D g, String text, float x, float y) {
-        AttributedString as = new AttributedString(text);
-        as.addAttributes(getTextAttributes(), 0, text.length());
+        writeString(g, new AttributedString(text), x, y);
+    }
+
+    protected void writeString(Graphics2D g, AttributedString as, float x, float y) {
+        applyTextAttributes(as);
         FontRenderContext frc = g.getFontRenderContext();
         TextLayout layout = new TextLayout(as.getIterator(), frc);
         layout.draw(g, x, y);
     }
+
+    AttributedString timesTenToThe(String text, int exponent) {
+        String expText = Integer.toString(exponent);
+         // 00D7 is the multiplication sign
+        text += " \u00D710" + expText;
+        AttributedString as = new AttributedString(text);
+        as.addAttribute(SUPERSCRIPT, SUPERSCRIPT_SUPER,
+                text.length() - expText.length(), text.length());
+        return as;
+    }
+
 
     protected Rectangle2D cropRectangle(Rectangle2D r, double left,
             double right, double top, double bottom) {

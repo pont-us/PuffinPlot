@@ -186,7 +186,6 @@ public class PuffinApp {
 
     public void openFiles(File[] files, boolean fromRecentFileList) {
 
-
         if (files.length == 0) return;
 
         if (!fromRecentFileList) {
@@ -238,12 +237,12 @@ public class PuffinApp {
         int response =
                 JOptionPane.showOptionDialog(
                 getInstance().getMainWindow(),
-                "A major error occurred. Please tell Pont.\n" +
+                "An unexpected error occurred. Please tell Pont.\n" +
                 "I will try to write the details " +
                 "to a file called PUFFIN-ERROR.txt . \n"+
                 "I recommend that you quit, but if you have unsaved \n"+
                 "data you could try to continue and save it.",
-                "Serious error",
+                "Unexpected error",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
                 null, options, options[1]);
         return (response==1);
@@ -331,18 +330,11 @@ public class PuffinApp {
         return correctionWindow;
     }
 
-    /**
-     * @return the recentFiles
-     */
     public RecentFileList getRecentFiles() {
         return recentFiles;
     }
 
-    /**
-     * @param recentFiles the recentFiles to set
-     */
     public void setRecentFiles(RecentFileList recentFiles) {
         this.recentFiles = recentFiles;
     }
-
 }

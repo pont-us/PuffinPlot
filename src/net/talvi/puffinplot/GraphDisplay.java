@@ -17,7 +17,9 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.print.Printable;
 import java.text.AttributedString;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
@@ -27,11 +29,15 @@ import net.talvi.puffinplot.plots.Plot;
 public abstract class GraphDisplay extends JPanel implements Printable {
 
     private static final long serialVersionUID = -5730958004698337302L;
-    protected HashSet<Plot> plots;
+    protected Map<String,Plot> plots;
     private static final RenderingHints renderingHints = PuffinRenderingHints.getInstance();
     protected AffineTransform zoomTransform;
     private final GdMouseListener mouseListener;
     private boolean dragPlotMode = false;
+    private static final AlphaComposite WEAK_COMPOSITE =
+            AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .2f);
+    private static final AlphaComposite STRONG_COMPOSITE =
+            AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .8f);
          
     GraphDisplay() {
         
@@ -40,7 +46,7 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         zoomTransform = AffineTransform.getScaleInstance(1.0, 1.0);
 
         setLayout(null);
-        plots = new HashSet<Plot>();
+        plots = new HashMap<String,Plot>();
 
         setOpaque(true);
         setBackground(Color.WHITE);
@@ -53,7 +59,7 @@ public abstract class GraphDisplay extends JPanel implements Printable {
 
     public String getPlotSizeString() {
         StringBuilder sb = new StringBuilder();
-        for (Plot plot: plots) {
+        for (Plot plot: plots.values()) {
             sb.append(plot.getName());
             sb.append(" ");
             sb.append(plot.dimensionsAsString());
@@ -71,16 +77,15 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         g2.setRenderingHints(renderingHints);
         g2.setPaint(Color.BLACK);
         g2.setPaintMode();
-        for (Plot plot: plots) plot.draw(g2);
 
-        if (isDragPlotMode()) {
-            AlphaComposite weakComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .2f);
-            AlphaComposite strongComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .8f);
-            for (Plot plot : plots) {
+        if (!isDragPlotMode()) {
+            for (Plot plot: plots.values()) plot.draw(g2);
+        } else {
+            for (Plot plot : plots.values()) {
                 float fontSize = plot.getFontSize() * 2;
                 int margin = plot.getMargin();
                 g2.setPaint(Color.ORANGE);
-                g2.setComposite(weakComposite);
+                g2.setComposite(WEAK_COMPOSITE);
                 Rectangle2D d = plot.getDimensions();
                 g2.fill(d);
                 g2.fill(new Rectangle2D.Double(d.getMinX(), d.getMinY(), margin, d.getHeight()));
@@ -91,7 +96,10 @@ public abstract class GraphDisplay extends JPanel implements Printable {
                 as.addAttribute(TextAttribute.FAMILY, "SansSerif");
                 as.addAttribute(TextAttribute.SIZE, fontSize);
                 as.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_ULTRABOLD);
-                g2.setComposite(strongComposite);
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .5f));
+                plot.draw(g2);
+                g2.setPaint(Color.BLUE);
+                g2.setComposite(STRONG_COMPOSITE);
                 g2.drawString(as.getIterator(),
                         (float) d.getMinX()+margin, (float) d.getMinY()+margin+fontSize);
             }
@@ -120,7 +128,7 @@ public abstract class GraphDisplay extends JPanel implements Printable {
     }
 
     void resetLayout() {
-        for (Plot plot: plots) plot.setDimensionsToDefault();
+        for (Plot plot: plots.values()) plot.setDimensionsToDefault();
         repaint();
     }
 
@@ -138,7 +146,7 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         
         public void mouseClicked(MouseEvent e) {
             final Point2D position = getAntiZoom().transform(e.getPoint(), null);
-            for (Plot plot: plots)
+            for (Plot plot: plots.values())
                 if (plot.getDimensions().contains(position))
                     plot.mouseClicked(position, e);
             repaint();
@@ -154,7 +162,7 @@ public abstract class GraphDisplay extends JPanel implements Printable {
             if (!isDragPlotMode()) return;            
             startPoint = getAntiZoom().transform(e.getPoint(), null);
             double smallestSize = Double.MAX_VALUE; // when plots overlap, pick the smallest
-            for (Plot plot : plots) {
+            for (Plot plot : plots.values()) {
                 Rectangle2D dims = plot.getDimensions();
                 if (dims.contains(startPoint)) {
                     double size = dims.getWidth() * dims.getHeight();
@@ -230,7 +238,7 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         g2.scale(scale, scale);
         g2.setPaint(Color.BLACK);
         g2.setPaintMode();
-        for (Plot plot: plots) plot.draw(g2);
+        for (Plot plot: plots.values()) plot.draw(g2);
         printChildren(graphics);
         setDoubleBuffered(true);
     }

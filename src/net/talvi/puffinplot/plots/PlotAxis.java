@@ -11,8 +11,6 @@ import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import static java.awt.font.TextAttribute.SUPERSCRIPT;
-import static java.awt.font.TextAttribute.SUPERSCRIPT_SUPER;
 
 class PlotAxis {
     private final Plot plot;
@@ -89,8 +87,8 @@ class PlotAxis {
             public Direction direction = Direction.UP;
             public String label = null;
             public String endLabel = null;
-            public boolean magnitudeOnTicks = true;
-            public boolean magnitudeOnLabel = false;
+            public boolean magnitudeOnTicks = false;
+            public boolean magnitudeOnLabel = true;
             public Double stepSize = null;
             public Integer numSteps = null;
             public Integer magnitude = null;
@@ -123,7 +121,7 @@ class PlotAxis {
             }
         }
 
-    static double calculateStepSize(double extent) {
+    private static double calculateStepSize(double extent) {
         // if (extent==0) extent=1;
         double scaleFactor = Math.pow(10, 1-Math.floor(Math.log10(extent)));
         double extentScaledTo100 = extent * scaleFactor;
@@ -132,14 +130,19 @@ class PlotAxis {
         return scaledStepSize / scaleFactor;
     }
 
-    static int calculateMagnitude(final double length) {
+    /**
+     *
+     * @param length >0
+     * @return x such that length * 10^x is in the range [1,1000).
+     */
+    private static int calculateMagnitude(final double length) {
         int nf = 0;
         while (length * Math.pow(10, nf) > 1000) nf -= 3;
         while (length * Math.pow(10, nf) < 1) nf += 1;
-        return nf;
+        return -nf;
     }
 
-    static int calculateNumSteps(double extent, double stepSize) {
+    private static int calculateNumSteps(double extent, double stepSize) {
         return (int) (Math.ceil(extent/stepSize));
     }
 
@@ -190,16 +193,6 @@ class PlotAxis {
         g.setTransform(old);
     }
 
-    private AttributedString timesTenToThe(String text, int exponent) {
-        String expText = Integer.toString(exponent);
-         // 00D7 is the multiplication sign
-        text += " \u00D710" + expText;
-        AttributedString as = new AttributedString(text);
-        as.addAttribute(SUPERSCRIPT, SUPERSCRIPT_SUPER,
-                text.length() - expText.length(), text.length());
-        return as;
-    }
-    
     public void draw(Graphics2D g, double scale, int xOrig, int yOrig) {
         int x = 0, y = 0;
         double t = plot.getTickLength() / 2.0f;
@@ -225,15 +218,15 @@ class PlotAxis {
             String text =  Math.abs(length-length_int) < 0.0001
                 ? Integer.toString(length_int)
                 : String.format("%.1f", length);
-            AttributedString as = (ap.magnitudeOnTicks && ap.magnitude != 0)
-                    ? timesTenToThe(text, -ap.magnitude)
+            AttributedString as = (ap.magnitudeOnTicks && getMagnitude() != 0)
+                    ? plot.timesTenToThe(text, getMagnitude())
                     : new AttributedString(text);
             putText(g, as,
                 xOrig+xLen, yOrig+yLen, ap.direction.labelPos(), 0, 5);
         }
         if (ap.label != null) {
-            AttributedString as = (ap.magnitudeOnLabel && ap.magnitude != 0)
-                    ? timesTenToThe(ap.label, -ap.magnitude)
+            AttributedString as = (ap.magnitudeOnLabel && getMagnitude() != 0)
+                    ? plot.timesTenToThe(ap.label, getMagnitude())
                     : new AttributedString(ap.label);
 
             putText(g, as, xOrig + xLen / 2, yOrig + yLen / 2,
@@ -262,6 +255,10 @@ class PlotAxis {
     }
     
     double getNormalizedLength() {
-        return getLength() * Math.pow(10, ap.magnitude);
+        return getLength() * Math.pow(10, -getMagnitude());
+    }
+
+    int getMagnitude() {
+        return ap.magnitude;
     }
 }

@@ -147,6 +147,10 @@ public class SampleChooser extends JPanel {
 
     public void updateSuite() {
         Suite suite = PuffinApp.getInstance().getSuite();
+        if (suite == null) {
+            setVisibility(false, false);
+            return;
+        }
         switch (suite.getMeasType()) {
             case CONTINUOUS:
                 depthSlider.setForSuite(suite);

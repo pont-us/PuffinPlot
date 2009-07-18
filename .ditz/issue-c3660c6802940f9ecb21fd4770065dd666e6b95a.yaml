@@ -1,0 +1,23 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Implement both "save" and "save as..." actions
+desc: |-
+  PuffinPlot should follow the standard desktop application semantics of
+  having a non-interactive "save" action when a filename is already defined,
+  falling through to an interactive "save as..." for the first time a file
+  is saved. Currently we have a "save as..." labelled as a "save", and nothing
+  else.
+type: :feature
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2009-07-17 22:18:28.763050 Z
+references: []
+
+id: c3660c6802940f9ecb21fd4770065dd666e6b95a
+log_events: 
+- - 2009-07-17 22:18:29.808228 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

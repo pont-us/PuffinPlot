@@ -63,8 +63,9 @@ public class MainWindow extends JFrame {
     void suitesChanged() {
         sampleChooser.updateSuite();
         controlPanel.updateSuites();
-        getGraphDisplay().setVisible(true);
-        welcomeMessage.setVisible(false);
+        int numSuites = PuffinApp.getInstance().suites.size();
+        getGraphDisplay().setVisible(numSuites > 0);
+        welcomeMessage.setVisible(numSuites == 0);
         repaint();
     }
     

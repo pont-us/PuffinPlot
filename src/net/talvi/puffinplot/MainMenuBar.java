@@ -22,7 +22,8 @@ public class MainMenuBar extends JMenuBar {
 
     private static final long serialVersionUID = 1L;
 
-    final static private JMenuItem noRecentFiles = new JMenuItem("No recent files");
+    final static private JMenuItem noRecentFiles =
+            new JMenuItem("No recent files");
     // control or apple key as appropriate
     private static final int modifierKey =
             Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
@@ -42,23 +43,25 @@ public class MainMenuBar extends JMenuBar {
         MenuItemDef[] fileItems = {
             new ActionItemDef(actions.open, 'O', 0, true),
             new SubmenuDef(recentFilesMenu),
-            new ActionItemDef(actions.save, 'S', InputEvent.SHIFT_DOWN_MASK, true),
-            new ActionItemDef(actions.saveCalcsSample, true),
-            new ActionItemDef(actions.saveCalcsSite, true),
-            new ActionItemDef(actions.saveCalcsSuite, true),
-            new ActionItemDef(actions.pageSetup, 'P', InputEvent.SHIFT_DOWN_MASK, true),
+            new ActionItemDef(actions.save, 'S',
+                    InputEvent.SHIFT_DOWN_MASK, true),
+            new ActionItemDef(actions.exportCalcsSample, true),
+            new ActionItemDef(actions.exportCalcsSite, true),
+            new ActionItemDef(actions.exportCalcsSuite, true),
+            new ActionItemDef(actions.pageSetup, 'P',
+                    InputEvent.SHIFT_DOWN_MASK, true),
             new ActionItemDef(actions.print, 'P', 0, true),
             new ActionItemDef(actions.printFisher, 'I', 0, true),
             new CheckboxDef(("Use old SQUID orientations")) {
 
             @Override
             protected void setValue(boolean b) {
-                PuffinApp.getInstance().getPrefs().setUseOldSquidOrientations(b);
+                app.getPrefs().setUseOldSquidOrientations(b);
             }
 
             @Override
             protected boolean getValue() {
-                return PuffinApp.getInstance().getPrefs().isUseOldSquidOrientations();
+                return app.getPrefs().isUseOldSquidOrientations();
             }
             },
             new ActionItemDef(actions.prefs, ',', 0, false),
@@ -70,8 +73,8 @@ public class MainMenuBar extends JMenuBar {
         JMenu editMenu = new JMenu("Edit");
         addSimpleItem(editMenu, actions.selectAll, 'D');
         // Can't use ctrl-A, it's already "select all samples in this suite"
-        final JCheckBoxMenuItem movePlotsItem = new JCheckBoxMenuItem("Move plots")
-        {
+        final JCheckBoxMenuItem movePlotsItem =
+                new JCheckBoxMenuItem("Move plots") {
             @Override
             public boolean isSelected() {
                 MainWindow w = app.getMainWindow();
@@ -93,7 +96,8 @@ public class MainMenuBar extends JMenuBar {
         addSimpleItem(editMenu, actions.unsetEmptySlot, '\u0000');
         addSimpleItem(editMenu, actions.hideSelectedPoints, '\u0000');
         addSimpleItem(editMenu, actions.unhideAllPoints, '\u0000');
-        final JCheckBoxMenuItem useEmptyItem = new JCheckBoxMenuItem("Apply empty correction")
+        final JCheckBoxMenuItem useEmptyItem =
+                new JCheckBoxMenuItem("Apply empty correction")
         {
             @Override
             public boolean isSelected() {
@@ -163,7 +167,8 @@ public class MainMenuBar extends JMenuBar {
     private void addSimpleItem(JMenu menu, Action action, char key) {
         JMenuItem item = new JMenuItem(action);
         menu.add(item);
-        if (key != '\u0000') item.setAccelerator(KeyStroke.getKeyStroke(key, modifierKey, false));
+        // if (key != '\u0000')
+        //item.setAccelerator(KeyStroke.getKeyStroke(key, modifierKey, false));
     }
   
     void updateRecentFiles() {
@@ -173,11 +178,11 @@ public class MainMenuBar extends JMenuBar {
         if (recentFileNames.length == 0)
             recentFilesMenu.add(noRecentFiles);
         for (int i=0; i<recentFileNames.length; i++) {
-            String fileName = recentFileNames[i];
             final int index  = i;
             recentFilesMenu.add(new AbstractAction() {
                 public void actionPerformed(ActionEvent arg0) {
-                    PuffinApp.getInstance().openFiles(recent.getFilesAndReorder(index), true);
+                    PuffinApp.getInstance().
+                            openFiles(recent.getFilesAndReorder(index), true);
                 }
                 @Override
                 public Object getValue(String key) {
@@ -219,9 +224,9 @@ public class MainMenuBar extends JMenuBar {
         public void addToMenu(JMenu menu) {
             if (onMac || !PuffinApp.MAC_OS_X) {
                 JMenuItem item = new JMenuItem(action);
-                if (hasShortcut)
-                    item.setAccelerator(KeyStroke.getKeyStroke(shortcut,
-                            modifierKey | mask, false));
+                //if (hasShortcut)
+                //    item.setAccelerator(KeyStroke.getKeyStroke(shortcut,
+                //            modifierKey | mask, false));
                 menu.add(item);
             }
         }
@@ -240,7 +245,8 @@ public class MainMenuBar extends JMenuBar {
         
     }
 
-    private static abstract class CheckboxDef extends JCheckBoxMenuItem implements MenuItemDef {
+    private static abstract class CheckboxDef extends JCheckBoxMenuItem
+            implements MenuItemDef {
         CheckboxDef(String name) {
             super(name);
             final JCheckBoxMenuItem item = this;
@@ -264,5 +270,4 @@ public class MainMenuBar extends JMenuBar {
             menu.add(this);
         }
     }
-
-    }
+}

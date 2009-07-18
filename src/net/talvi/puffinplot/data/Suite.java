@@ -45,6 +45,7 @@ public class Suite implements Iterable<Datum> {
     private List<String> loadWarnings = new LinkedList<String>();
     private List<FisherForSite> siteFishers;
     private FisherValues suiteFisher;
+    final private static String[] ZPLOT_HEADERS = {"Sample", "Project", "Demag", "Declin", "Inclin", "Intens", "Operation"};
 
     public Iterator<Datum> iterator() {
         return data.iterator();
@@ -269,6 +270,10 @@ public class Suite implements Iterable<Datum> {
         return result;
     }
 
+    private void addWarning(String s, Object... args) {
+        loadWarnings.add(String.format(s, args));
+    }
+
     /*
      * Note that this may return an empty suite, in which case various things
      * can break. We can't just throw an exception if the suite's empty,
@@ -295,6 +300,7 @@ public class Suite implements Iterable<Datum> {
         for (File file: files) {
             int warningsThisFile = 0;
             FileType fileType = FileType.guessFromName(file);
+            final String fileName = file.getName();
             LineNumberReader reader = null;
             fileTypeSwitch: switch (fileType) {
             case PUFFINPLOT:
@@ -303,39 +309,39 @@ public class Suite implements Iterable<Datum> {
                     reader = new LineNumberReader(new FileReader(file));
                     String fieldsLine = reader.readLine();
                     if (fieldsLine == null) {
-                        loadWarnings.add(file.getName()+" is empty.");
+                        addWarning("%s is empty.", fileName);
+                        reader.close();
                         break;
                     }
                     Fields fields = new Fields(fieldsLine);
                     if (fields.areAllUnknown()) {
-                        loadWarnings.add(file.getName() +
-                                " doesn't look like a 2G file. " +
+                        addWarning("%s doesn't look like a 2G or PPL file. " +
                                 "Ignoring it.");
-                    } else {
-                        while ((line = reader.readLine()) != null) {
-                            final int lineNum = reader.getLineNumber();
-                            try {
-                                addLine2G(line, lineNum, fields.fields,
-                                        depthSet, nameSet);
-                            } catch (IllegalArgumentException e) {
-                                loadWarnings.add(e.getMessage() +
-                                        " at line " + lineNum +
-                                        " in file " + file.getName() +
-                                        " -- ignoring this line.");
-                                if (++warningsThisFile > MAX_WARNINGS_PER_FILE) {
-                                    loadWarnings.add("Too many errors in " +
-                                            file.getName() +
-                                            "-- aborting load at line " +
-                                            lineNum);
-                                    break;
-                                }
+                        reader.close();
+                        break;
+                    }
+
+                    while ((line = reader.readLine()) != null) {
+                        final int lineNum = reader.getLineNumber();
+                        try {
+                            addLine2G(line, lineNum, fields.fields,
+                                    depthSet, nameSet);
+                        } catch (IllegalArgumentException e) {
+                            addWarning("%s at line %d in file %s -- " +
+                                    "ignoring this line.", e.getMessage(),
+                                    lineNum, fileName);
+                            if (++warningsThisFile > MAX_WARNINGS_PER_FILE) {
+                                addWarning("Too many errors in %s -- " +
+                                        "aborting load at line %d",
+                                        fileName, lineNum);
+                                break;
                             }
                         }
                     }
+                    
                     if (fields.unknown.size() > 0) {
-                        loadWarnings.add(
-                                "I didn't recognize the following field names,\n" +
-                                "so I'm ignoring them:\n" +
+                        addWarning("I didn't recognize the following field " +
+                                "names,\nso I'm ignoring them:\n" +
                                 fields.unknown);
                     }
                 } finally {
@@ -345,43 +351,48 @@ public class Suite implements Iterable<Datum> {
 
             case ZPLOT:
                 try {
-                reader = new LineNumberReader(new FileReader(file));
-                // Check first line for magic string
-                if (!reader.readLine().startsWith("File Name:")) {
-                    loadWarnings.add("Ignoring unrecognized file " +
-                            file.getName());
-                    break fileTypeSwitch;
-                }
-                // skip remaining header fields
-                for (int i=0; i<5; i++) reader.readLine();
-                String[] headers = whitespace.split(reader.readLine());
-
-                if (headers.length != 7) {
-                    loadWarnings.add("Wrong number of header fields in Zplot file "+file.getName()+
-                            ": expected 7, got "+headers.length);
-                    reader.close();
-                    break;
-                }
-                String[] expectedHeaders =
-                {"Sample", "Project", "Demag", "Declin", "Inclin", "Intens", "Operation"};
-                for (int i=0; i<expectedHeaders.length; i++) {
-                    if (!expectedHeaders[i].equals(headers[i])) {
-                        loadWarnings.add("Unknown header field "+headers[i]+" in file "+
-                                file.getName()+" -- aborting load.");
+                    reader = new LineNumberReader(new FileReader(file));
+                    // Check first line for magic string
+                    if (!reader.readLine().startsWith("File Name:")) {
+                        addWarning("Ignoring unrecognized file %s", fileName);
                         reader.close();
                         break fileTypeSwitch;
                     }
-                }
+                    // skip remaining header fields
+                    for (int i = 0; i < 5; i++) reader.readLine();
+                    String headerLine = reader.readLine();
+                    if (headerLine == null) {
+                        addWarning("Ignoring malformed ZPlot file %s", file.getName());
+                        reader.close();
+                        break fileTypeSwitch;
+                    }
+                    String[] headers = whitespace.split(reader.readLine());
 
-                while ((line = reader.readLine()) != null)
-                    addLineZplot(line, depthSet, nameSet);
+                    if (headers.length != 7) {
+                        addWarning("Wrong number of header fields in Zplot file %s:" +
+                                ": expected 7, got %s", fileName, headers.length);
+                        reader.close();
+                        break fileTypeSwitch;
+                    }
+                    for (int i = 0; i < ZPLOT_HEADERS.length; i++) {
+                        if (!ZPLOT_HEADERS[i].equals(headers[i])) {
+                            addWarning("Unknown header field %s in file %s " +
+                                    " -- aborting load.", headers[i], fileName);
+                            reader.close();
+                            break fileTypeSwitch;
+                        }
+                    }
+
+                    while ((line = reader.readLine()) != null)
+                        addLineZplot(line, depthSet, nameSet);
                 } finally {
                     if (reader != null) reader.close();
                 }
                 break;
 
             case UNKNOWN:
-                loadWarnings.add("I don't recognize the file\""+file+"\", so I'm ignoring it.");
+                addWarning("I don't recognize the file %s, so I'm ignoring it.",
+                        fileName);
                 break;
 
             }

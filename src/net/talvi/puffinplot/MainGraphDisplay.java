@@ -10,11 +10,8 @@ import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.plots.Plot;
+import net.talvi.puffinplot.plots.ZPlot;
 
-/**
- *
- * @author pont
- */
 public class MainGraphDisplay extends GraphDisplay implements Printable {
 
     // samplesForPrinting is only non-null during printing.
@@ -53,19 +50,19 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
         Preferences pref = PuffinPrefs.prefs;
 
         String[] plotNames = {"SampleEqAreaPlot", "ZPlot", "DemagPlot",
-            "DataTable", "PcaTable", "SampleTable", "FisherTable",
-            "ZplotLegend"};
+            "DataTable", "PcaTable", "SampleTable", "FisherTable"};
 
         try {
             for (String plotName : plotNames) {
-                plots.add((Plot) Class.forName("net.talvi.puffinplot.plots." + plotName).
+                plots.put(plotName,
+                        (Plot) Class.forName("net.talvi.puffinplot.plots." + plotName).
                         getConstructor(GraphDisplay.class, PlotParams.class, Preferences.class).
                         newInstance(this, params, pref));
             }
         } catch (Exception ex) {
             throw new Error(ex);
         }
-
+        plots.put("ZplotLegend", ((ZPlot) plots.get("ZPlot")).getLegend());
     }
 
     public int print(Graphics graphics, PageFormat pf, int pageIndex)
@@ -82,6 +79,4 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
         printPlots(pf, graphics);
         return PAGE_EXISTS;
     }
-
-
 }

@@ -70,7 +70,7 @@ public class ControlPanel extends JPanel
         }
         updatingSuites = false;
         Suite currentSuite = app.getSuite();
-        suiteBox.setSelectedItem(currentSuite);
+        if (currentSuite != null) suiteBox.setSelectedItem(currentSuite);
     }
     
     void updateSample() {

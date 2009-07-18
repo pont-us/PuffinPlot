@@ -27,8 +27,12 @@ import net.talvi.puffinplot.data.Sample;
 
 public class ZPlot extends Plot {
 
+    private ZplotAxes axes;
+    private final ZplotLegend legend;
+
     public ZPlot(GraphDisplay parent, PlotParams params, Preferences prefs) {
         super(parent, params, prefs);
+        legend = new ZplotLegend(parent, params, prefs);
     }
 
     private static Rectangle2D extent(List<Datum> sample, Correction corr,
@@ -84,8 +88,7 @@ public class ZPlot extends Plot {
 
         Rectangle2D dim = cropRectangle(getDimensions(), 250, 250, 200, 200);
 
-        ZplotAxes axes = new ZplotAxes(extent1.createUnion(extent2),
-                dim, vVs,this);
+        axes = new ZplotAxes(extent1.createUnion(extent2), dim, vVs, this);
         
         g.setColor(Color.BLACK);
         g.setStroke(getStroke());
@@ -137,5 +140,51 @@ public class ZPlot extends Plot {
             drawLine(g, xOffset + x2, yOffset + y2, Math.PI/2 + incCorr, axes, Color.BLUE);
         }
         drawPoints(g);
+    }
+
+    public ZplotLegend getLegend() {
+        return legend;
+    }
+
+    public class ZplotLegend extends Plot {
+
+        public ZplotLegend(GraphDisplay parent, PlotParams params, Preferences prefs) {
+            super(parent, params, prefs);
+        }
+
+        @Override
+        public String getName() {
+            return "zplotlegend";
+        }
+
+        @Override
+        public String getNiceName() {
+            return "Zplot key";
+        }
+
+        @Override
+        public int getMargin() {
+            return 12;
+        }
+
+        @Override
+        public void draw(Graphics2D g) {
+            final Rectangle2D dims = getDimensions();
+            clearPoints();
+            double xOrig = dims.getMinX() + getMargin() + getUnitSize() * 50;
+            double yOrig = dims.getMinY() + getMargin();
+            double textOffs = 25 * getUnitSize();
+            double lineOffs = 150 * getUnitSize();
+            g.setColor(Color.BLACK);
+            addPoint(null, new Point2D.Double(xOrig, yOrig), false, false, false);
+            addPoint(null, new Point2D.Double(xOrig, yOrig + lineOffs), true, false, false);
+            writeString(g, "vertical", (float) xOrig + 50 * getUnitSize(),
+                    (float) (yOrig + textOffs));
+            writeString(g, "horizontal", (float) (xOrig + 50 * getUnitSize()),
+                    (float) (yOrig + lineOffs + textOffs));
+            writeString(g, timesTenToThe("Units: Gauss", axes.getMagnitude()), (float) xOrig,
+                    (float) (yOrig + 2 * lineOffs + textOffs));
+            drawPoints(g);
+        }
     }
 }

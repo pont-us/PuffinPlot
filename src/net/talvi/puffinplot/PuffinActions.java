@@ -1,7 +1,9 @@
 package net.talvi.puffinplot;
 
 import java.awt.FileDialog;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
@@ -12,6 +14,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileFilter;
 import net.talvi.puffinplot.data.Sample;
 
@@ -20,12 +23,31 @@ public class PuffinActions {
     private PuffinApp app;
     private static final boolean useSwingChooserForOpen = true;
     private static final boolean useSwingChooserForSave = !PuffinApp.MAC_OS_X;
+    // control or apple key as appropriate
+    private static final int modifierKey =
+            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
     PuffinActions(PuffinApp app) {
         this.app = app;
     }
+
+    private abstract class PuffinAction extends AbstractAction {
+
+        public PuffinAction(String name, String description,
+                Character accelerator, boolean shift, Integer mnemonic) {
+            super(name);
+            putValue(SHORT_DESCRIPTION, description);
+            if (accelerator != null) putValue(ACCELERATOR_KEY,
+                    KeyStroke.getKeyStroke(accelerator,
+                    modifierKey, false));
+            if (mnemonic != null) putValue(MNEMONIC_KEY, mnemonic);
+        }
+
+    }
     
-    public final Action about = new AbstractAction("About PuffinPlot") {
+    public final Action about = new PuffinAction("About PuffinPlot",
+            "Show information about this program",
+            null, false, KeyEvent.VK_A) {
 
         public void actionPerformed(ActionEvent e) {
             app.getAboutBox().setLocationRelativeTo(app.getMainWindow());
@@ -33,7 +55,9 @@ public class PuffinActions {
         }
     };
     
-    public final Action open = new AbstractAction("Open…") {
+    public final Action open = new PuffinAction("Open…",
+            "Open a 2G, PPL, or ZPlot data file.", 'O', false,
+            KeyEvent.VK_O) {
 
         public void actionPerformed(ActionEvent e) {
 
@@ -58,6 +82,15 @@ public class PuffinActions {
             if (files != null)
                 app.openFiles(files);
         }
+    };
+
+    public final Action close = new PuffinAction("Close…",
+            "Close this suite of data", 'W', false, KeyEvent.VK_C) {
+
+        public void actionPerformed(ActionEvent e) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
     };
 
     private String getSavePath(final String title, final String extension,
@@ -100,14 +133,14 @@ public class PuffinActions {
         return pathname;
     }
 
-    public final Action saveCalcsSample = new AbstractAction("Export sample calculations…") {
+    public final Action exportCalcsSample = new AbstractAction("Export sample calculations…") {
 
         public void actionPerformed(ActionEvent arg0) {
             if (app.getSuite() == null) {
                 PuffinApp.errorDialog("Error saving calculation", "No file loaded.");
                             return;
             }
-            String pathname = getSavePath("Save sample calculations", ".csv",
+            String pathname = getSavePath("Export sample calculations", ".csv",
                     "Comma Separated Values");
 
             if (pathname != null)
@@ -115,14 +148,14 @@ public class PuffinActions {
         }
     };
 
-    public final Action saveCalcsSite = new AbstractAction("Export site calculations…") {
+    public final Action exportCalcsSite = new AbstractAction("Export site calculations…") {
 
         public void actionPerformed(ActionEvent arg0) {
             if (app.getSuite() == null) {
                 PuffinApp.errorDialog("Error saving calculation", "No file loaded.");
                             return;
             }
-            String pathname = getSavePath("Save site calculations", ".csv",
+            String pathname = getSavePath("Export site calculations", ".csv",
                     "Comma Separated Values");
 
             if (pathname != null)
@@ -130,14 +163,14 @@ public class PuffinActions {
         }
     };
 
-    public final Action saveCalcsSuite = new AbstractAction("Export suite calculations…") {
+    public final Action exportCalcsSuite = new AbstractAction("Export suite calculations…") {
 
         public void actionPerformed(ActionEvent arg0) {
             if (app.getSuite() == null) {
                 PuffinApp.errorDialog("Error saving calculation", "No file loaded.");
                 return;
             }
-            String pathname = getSavePath("Save suite calculations", ".csv",
+            String pathname = getSavePath("Export suite calculations", ".csv",
                     "Comma Separated Values");
 
             if (pathname != null)
@@ -145,7 +178,8 @@ public class PuffinActions {
         }
     };
 
-    public final Action save = new AbstractAction("Save…") {
+    public final Action save = new PuffinAction("Save as…",
+            "Save this suite of data in a new file.", 'S', true, KeyEvent.VK_S) {
 
         public void actionPerformed(ActionEvent arg0) {
             String pathname = getSavePath("Save data", ".ppl", "PuffinPlot data");
@@ -154,7 +188,8 @@ public class PuffinActions {
         
     };
     
-    public final Action pageSetup = new AbstractAction("Page Setup…") {
+    public final Action pageSetup = new PuffinAction("Page Setup…",
+            "Change the page setup for printing", 'P', true, KeyEvent.VK_G) {
         public void actionPerformed(ActionEvent arg0) {
             app.showPageSetupDialog();
         }
@@ -166,7 +201,8 @@ public class PuffinActions {
         }
     };
     
-    public final Action pcaOnSelection = new AbstractAction("PCA") {
+    public final Action pcaOnSelection = new PuffinAction("PCA",
+            "Perform PCA on selected points", 'R', false, KeyEvent.VK_P) {
         public void actionPerformed(ActionEvent e) {
             for (Sample sample: app.getSelectedSamples())
                 if (sample.getSelectedPoints().size()>1)
@@ -175,7 +211,9 @@ public class PuffinActions {
         }
     };
 
-    public final Action useAsEmptySlot = new AbstractAction("Use as empty slot") {
+    public final Action useAsEmptySlot = new PuffinAction("Use as empty slot",
+            "Use this sample as a control for machine noise", null, false,
+            KeyEvent.VK_E) {
         public void actionPerformed(ActionEvent e) {
             for (Sample s : app.getSuite().getSamples()) s.setEmptySlot(false);
             app.getSample().setEmptySlot(true);
@@ -190,7 +228,9 @@ public class PuffinActions {
         }
     };
 
-    public final Action fisher = new AbstractAction("Fisher on sample") {
+    public final Action fisher = new PuffinAction("Fisher on sample",
+            "Calculate Fisher statistics for selected points", null, false,
+            KeyEvent.VK_A) {
         public void actionPerformed(ActionEvent e) {
             app.getSample().doFisher();
             app.getMainWindow().repaint();
