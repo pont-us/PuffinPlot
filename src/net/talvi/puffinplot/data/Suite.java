@@ -279,7 +279,6 @@ public class Suite implements Iterable<Datum> {
      * can break. We can't just throw an exception if the suite's empty,
      * because then we lose the load warnings (which will probably explain
      * to the user *why* the suite's empty and are thus quite important).
-     *
      **/
     public Suite(File[] files) throws IOException {
         assert(files.length > 0);

@@ -46,7 +46,7 @@ public class Datum {
 
     private final Line line;
     private boolean selected = false;
-    private boolean pcaAnchored = false;
+    private boolean pcaAnchored = true;
     private boolean hidden = false;
     
     private final static Pattern delimPattern = Pattern.compile("\\t");

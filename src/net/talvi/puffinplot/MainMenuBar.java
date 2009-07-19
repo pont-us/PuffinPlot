@@ -3,7 +3,6 @@ package net.talvi.puffinplot;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.AbstractAction;
@@ -14,73 +13,52 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import net.talvi.puffinplot.data.Sample;
+import static net.talvi.puffinplot.PuffinActions.PuffinAction;
 
 public class MainMenuBar extends JMenuBar {
 
     private static final long serialVersionUID = 1L;
-
     final static private JMenuItem noRecentFiles =
             new JMenuItem("No recent files");
     // control or apple key as appropriate
     private static final int modifierKey =
             Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
     private JMenu recentFilesMenu;
-    final private JCheckBoxMenuItem anchorItem;
-        
+    private final JCheckBoxMenuItem anchorItem;
+    private final PuffinApp app = PuffinApp.getInstance();
+
+    private static JMenu makeMenu(String name, Object... things) {
+        JMenu menu = new JMenu(name);
+        for (Object thing: things) {
+            if (thing instanceof PuffinAction) {
+                PuffinAction puffinAction = (PuffinAction) thing;
+                if (!puffinAction.excludeFromMenu())
+                    menu.add(puffinAction);
+            } else if (thing instanceof Action) {
+                menu.add((Action) thing);
+            } else if (thing instanceof JMenuItem) {
+                menu.add((JMenuItem) thing);
+            }
+        }
+        return menu;
+    }
+
     public MainMenuBar() {
-        final JMenu fileMenu = new JMenu("File");
-        final PuffinApp app = PuffinApp.getInstance();
-        final PuffinActions actions = app.getActions();
-
+        final PuffinActions pa = app.getActions();
         recentFilesMenu = new JMenu("Open recent file");
-
         noRecentFiles.setEnabled(false);
         updateRecentFiles();
 
-        MenuItemDef[] fileItems = {
-            new ActionItemDef(actions.open, 'O', 0, true),
-            new SubmenuDef(recentFilesMenu),
-            new ActionItemDef(actions.save, 'S',
-                    InputEvent.SHIFT_DOWN_MASK, true),
-            new ActionItemDef(actions.exportCalcsSample, true),
-            new ActionItemDef(actions.exportCalcsSite, true),
-            new ActionItemDef(actions.exportCalcsSuite, true),
-            new ActionItemDef(actions.pageSetup, 'P',
-                    InputEvent.SHIFT_DOWN_MASK, true),
-            new ActionItemDef(actions.print, 'P', 0, true),
-            new ActionItemDef(actions.printFisher, 'I', 0, true),
-            new CheckboxDef(("Use old SQUID orientations")) {
-
-            @Override
-            protected void setValue(boolean b) {
-                app.getPrefs().setUseOldSquidOrientations(b);
-            }
-
-            @Override
-            protected boolean getValue() {
-                return app.getPrefs().isUseOldSquidOrientations();
-            }
-            },
-            new ActionItemDef(actions.prefs, ',', 0, false),
-            new ActionItemDef(actions.quit, 'Q', 0, false)
-        };
-        
-        for (MenuItemDef def: fileItems) def.addToMenu(fileMenu);
-        
-        JMenu editMenu = new JMenu("Edit");
-        addSimpleItem(editMenu, actions.selectAll, 'D');
-        // Can't use ctrl-A, it's already "select all samples in this suite"
         final JCheckBoxMenuItem movePlotsItem =
                 new JCheckBoxMenuItem("Move plots") {
-            @Override
-            public boolean isSelected() {
-                MainWindow w = app.getMainWindow();
-                return w==null ? false : w.getGraphDisplay().isDragPlotMode();
-            }
-        };
+                    @Override
+                    public boolean isSelected() {
+                        MainWindow w = app.getMainWindow();
+                        return w != null ? w.getGraphDisplay().isDragPlotMode()
+                                : false;
+                    }
+                };
         movePlotsItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 GraphDisplay gd = app.getMainWindow().getGraphDisplay();
@@ -88,22 +66,14 @@ public class MainMenuBar extends JMenuBar {
                 gd.repaint();
             }
         });
-        editMenu.add(movePlotsItem);
-        addSimpleItem(editMenu, actions.resetLayout, '\u0000');
-        addSimpleItem(editMenu, actions.editCorrections, '\u0000');
-        addSimpleItem(editMenu, actions.flipSample, '\u0000');
-        addSimpleItem(editMenu, actions.useAsEmptySlot, '\u0000');
-        addSimpleItem(editMenu, actions.unsetEmptySlot, '\u0000');
-        addSimpleItem(editMenu, actions.hideSelectedPoints, '\u0000');
-        addSimpleItem(editMenu, actions.unhideAllPoints, '\u0000');
+
         final JCheckBoxMenuItem useEmptyItem =
-                new JCheckBoxMenuItem("Apply empty correction")
-        {
-            @Override
-            public boolean isSelected() {
-                return app.isEmptyCorrectionActive();
-            }
-        };
+                new JCheckBoxMenuItem("Apply empty correction") {
+                    @Override
+                    public boolean isSelected() {
+                        return app.isEmptyCorrectionActive();
+                    }
+                };
         useEmptyItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 app.setEmptyCorrectionActive(!app.isEmptyCorrectionActive());
@@ -111,52 +81,45 @@ public class MainMenuBar extends JMenuBar {
             }
         });
         useEmptyItem.setAccelerator(KeyStroke.getKeyStroke('Y', modifierKey));
-        editMenu.add(useEmptyItem);
-
-        JMenu calcMenu = new JMenu("Calculate");
-        addSimpleItem(calcMenu, actions.pcaOnSelection, 'R');
         
-        anchorItem = new JCheckBoxMenuItem("Anchor PCA")
-        {
-            @Override
-            public boolean getState() {
-                Sample s = app.getSample();
-                return s != null ? s.isPcaAnchored() : false;
-            }
-        };
-        calcMenu.add(anchorItem);
-        anchorItem.addItemListener(new ItemListener() {
+        add(makeMenu("File", pa.open, recentFilesMenu, pa.save, pa.close,
+                pa.exportCalcsSample, pa.exportCalcsSite, pa.exportCalcsSuite,
+                pa.pageSetup, pa.print, pa.printFisher, new OldSquidItem(),
+                pa.prefs, pa.quit));
+        add(makeMenu("Edit", pa.selectAll, movePlotsItem, pa.resetLayout,
+                pa.editCorrections, pa.flipSample, pa.useAsEmptySlot,
+                pa.unsetEmptySlot, pa.hideSelectedPoints, pa.unhideAllPoints,
+                useEmptyItem));
+        add(makeMenu("Calculations",
+                pa.pcaOnSelection, anchorItem = new AnchorItem(),
+                pa.fisher, pa.fisherBySite, pa.fisherBySample, pa.clear));
+        add(makeMenu("Window",
+                new WindowMenuItem("Data table")
+                { JFrame window(PuffinApp a) {return a.getTableWindow();}},
+                new WindowMenuItem("Fisher EA plot")
+                { JFrame window(PuffinApp a) {return a.getFisherWindow();}}));
+        add(makeMenu("Help", pa.about));
+    }
+
+    private class AnchorItem extends JCheckBoxMenuItem {
+        AnchorItem() {
+            super("Anchor PCA");
+            addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent event) {
                 for (Sample s: app.getSelectedSamples()) {
-                    s.setPcaAnchored(anchorItem.isSelected());
+                    s.setPcaAnchored(isSelected());
                     s.doPca();
                 }
                 app.updateDisplay();
+            }});
+            setAccelerator(KeyStroke.getKeyStroke('T', modifierKey));
+        }
+
+        @Override
+        public boolean getState() {
+                Sample s = app.getSample();
+                return s != null ? s.isPcaAnchored() : false;
             }
-        });
-        anchorItem.setAccelerator(KeyStroke.getKeyStroke('T', modifierKey));
-        
-        addSimpleItem(calcMenu, actions.fisher, 'F');
-        addSimpleItem(calcMenu, actions.fisherBySite, 'G');
-        addSimpleItem(calcMenu, actions.fisherBySample, 'H');
-        addSimpleItem(calcMenu, actions.clear, 'Z');
-        
-        // calcMenu.add(new JCheckBoxMenuItem("Lock axis scale"));
-        
-        JMenu windowMenu = new JMenu("Window");
-        windowMenu.add(new WindowMenuItem("Data table") 
-        { JFrame window(PuffinApp app) {return app.getTableWindow();}});
-        windowMenu.add(new WindowMenuItem("Fisher EA plot") 
-        { JFrame window(PuffinApp app) {return app.getFisherWindow();}});
-        
-        JMenu helpMenu = new JMenu("Help");
-        helpMenu.add(app.getActions().about);
-        
-        add(fileMenu);
-        add(editMenu);
-        add(calcMenu);
-        add(windowMenu);
-        add(helpMenu);
     }
 
     void sampleChanged() {
@@ -164,13 +127,6 @@ public class MainMenuBar extends JMenuBar {
         if (s != null) anchorItem.setSelected(s.isPcaAnchored());
     }
     
-    private void addSimpleItem(JMenu menu, Action action, char key) {
-        JMenuItem item = new JMenuItem(action);
-        menu.add(item);
-        // if (key != '\u0000')
-        //item.setAccelerator(KeyStroke.getKeyStroke(key, modifierKey, false));
-    }
-  
     void updateRecentFiles() {
         recentFilesMenu.removeAll();
         final RecentFileList recent = PuffinApp.getInstance().getRecentFiles();
@@ -194,61 +150,10 @@ public class MainMenuBar extends JMenuBar {
         }
     }
     
-    private static interface MenuItemDef {
-        void addToMenu(JMenu menu);
-    }
-    
-    private static class ActionItemDef implements MenuItemDef {
-        private Action action;
-        private char shortcut;
-        private boolean onMac;
-        private int mask;
-        private boolean hasShortcut;
-        
-        ActionItemDef(Action action, char shortcut, int mask, boolean onMac) {
-            super();
-            this.action = action;
-            this.shortcut = shortcut;
-            this.mask = mask;
-            this.onMac = onMac;
-            this.hasShortcut = true;
-        }
+    private class OldSquidItem extends JCheckBoxMenuItem {
 
-        ActionItemDef(Action action, boolean onMac) {
-            super();
-            this.action = action;
-            this.onMac = onMac;
-            this.hasShortcut = false;
-        }
-        
-        public void addToMenu(JMenu menu) {
-            if (onMac || !PuffinApp.MAC_OS_X) {
-                JMenuItem item = new JMenuItem(action);
-                //if (hasShortcut)
-                //    item.setAccelerator(KeyStroke.getKeyStroke(shortcut,
-                //            modifierKey | mask, false));
-                menu.add(item);
-            }
-        }
-    }
-    
-    private static class SubmenuDef implements MenuItemDef {
-        private JMenu submenu;
-
-        SubmenuDef(JMenu submenu) {
-            this.submenu = submenu;
-        }
-        
-        public void addToMenu(JMenu menu) {
-            menu.add(submenu);
-        }
-        
-    }
-
-    private static abstract class CheckboxDef extends JCheckBoxMenuItem
-            implements MenuItemDef {
-        CheckboxDef(String name) {
-            super(name);
+        public OldSquidItem() {
+            super("Use old SQUID orientations");
             final JCheckBoxMenuItem item = this;
             addItemListener(new ItemListener() {
                 public void itemStateChanged(ItemEvent event) {
@@ -258,16 +163,17 @@ public class MainMenuBar extends JMenuBar {
             setSelected(getValue());
         }
 
-        protected abstract void setValue(boolean b);
-        protected abstract boolean getValue();
-
         @Override
         public boolean getState() {
             return getValue();
         }
 
-        public void addToMenu(JMenu menu) {
-            menu.add(this);
+        private void setValue(boolean b) {
+            app.getPrefs().setUseOldSquidOrientations(b);
+        }
+
+        private boolean getValue() {
+            return app.getPrefs().isUseOldSquidOrientations();
         }
     }
 }

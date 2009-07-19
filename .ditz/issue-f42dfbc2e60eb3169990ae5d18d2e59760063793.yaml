@@ -8,8 +8,8 @@ type: :bugfix
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2009-06-04 02:54:37.906566 Z
 references: []
 
@@ -25,3 +25,7 @@ log_events:
   - |-
     Apparent cause: file contains "Degauss Z" (as opposed to "Degauss Z - 
     ARM axial") treatment type which PP doesn't recognize.
+- - 2009-07-19 06:39:15.072574 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - "(Seems to have been duped as #78; fixed now in any case.)"

@@ -10,8 +10,8 @@ type: :bugfix
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2009-07-15 09:39:32.999884 Z
 references: []
 
@@ -21,3 +21,9 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2009-07-19 06:55:17.052701 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Implemented as specified; now bombs out with "malformed Zplot file"
+    error if this happens.

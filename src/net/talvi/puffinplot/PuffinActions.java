@@ -3,6 +3,7 @@ package net.talvi.puffinplot;
 import java.awt.FileDialog;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
@@ -31,18 +32,30 @@ public class PuffinActions {
         this.app = app;
     }
 
-    private abstract class PuffinAction extends AbstractAction {
+    static abstract class PuffinAction extends AbstractAction {
+        private boolean specialMacMenuItem;
 
         public PuffinAction(String name, String description,
-                Character accelerator, boolean shift, Integer mnemonic) {
+                Character accelerator, boolean shift, Integer mnemonic,
+                boolean specialMacMenuItem) {
             super(name);
+            this.specialMacMenuItem = specialMacMenuItem;
             putValue(SHORT_DESCRIPTION, description);
             if (accelerator != null) putValue(ACCELERATOR_KEY,
                     KeyStroke.getKeyStroke(accelerator,
-                    modifierKey, false));
+                    modifierKey | (shift ? InputEvent.SHIFT_DOWN_MASK : 0),
+                    false));
             if (mnemonic != null) putValue(MNEMONIC_KEY, mnemonic);
         }
+        
+        public PuffinAction(String name, String description,
+                Character accelerator, boolean shift, Integer mnemonic) {
+            this(name, description, accelerator, shift, mnemonic, false);
+        }
 
+        public boolean excludeFromMenu() {
+            return PuffinApp.MAC_OS_X && specialMacMenuItem;
+        }
     }
     
     public final Action about = new PuffinAction("About PuffinPlot",
@@ -88,7 +101,7 @@ public class PuffinActions {
             "Close this suite of data", 'W', false, KeyEvent.VK_C) {
 
         public void actionPerformed(ActionEvent e) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            app.closeCurrentSuite();
         }
 
     };
@@ -189,7 +202,7 @@ public class PuffinActions {
     };
     
     public final Action pageSetup = new PuffinAction("Page Setup…",
-            "Change the page setup for printing", 'P', true, KeyEvent.VK_G) {
+            "Edit the page setup for printing", 'P', true, KeyEvent.VK_G) {
         public void actionPerformed(ActionEvent arg0) {
             app.showPageSetupDialog();
         }
@@ -237,7 +250,9 @@ public class PuffinActions {
         }
     };
     
-    public final Action fisherBySite = new AbstractAction("Fisher by site") {
+    public final Action fisherBySite = new PuffinAction("Fisher by site",
+            "Fisher statistics on PCA directions grouped by site", 'F', false,
+            KeyEvent.VK_I) {
         public void actionPerformed(ActionEvent e) {
             app.getFisherWindow().getPlot().setGroupedBySite(true);
             app.getSuite().doFisherOnSites();
@@ -245,7 +260,9 @@ public class PuffinActions {
         }
     };
         
-    public final Action fisherBySample = new AbstractAction("Fisher on all") {
+    public final Action fisherBySample = new PuffinAction("Fisher on suite",
+            "Fisher statistics on PCA directions for entire selection",
+            'F', true, KeyEvent.VK_U) {
         public void actionPerformed(ActionEvent e) {
             app.getSuite().doFisherOnSuite();
             app.getFisherWindow().getPlot().setGroupedBySite(false);
@@ -253,34 +270,41 @@ public class PuffinActions {
         }
     };
     
-    public final Action editCorrections = new AbstractAction("Corrections…") {
+    public final Action editCorrections = new PuffinAction("Corrections…",
+            "Edit corrections for sample, formation, and magnetic deviation",
+            null, false, KeyEvent.VK_R) {
         public void actionPerformed(ActionEvent e) {
             app.getCorrectionWindow().setVisible(true);
         }
     };
     
-    public final Action clear = new AbstractAction("Clear") {
+    public final Action clear = new PuffinAction("Clear",
+            "Clear selection and calculations for this sample",
+            'Z', false, KeyEvent.VK_C) {
         public void actionPerformed(ActionEvent e) {
             app.getSample().clear();
             app.getMainWindow().repaint();
         }
     };
     
-    public final Action selectAll = new AbstractAction("Select all") {
+    public final Action selectAll = new PuffinAction("Select all",
+            "Select all points in this sample", 'D', false, KeyEvent.VK_A) {
         public void actionPerformed(ActionEvent e) {
             app.getSample().selectAll();
             app.getMainWindow().repaint();
         }
     };
 
-    public final Action hideSelectedPoints = new AbstractAction("Hide selected points") {
+    public final Action hideSelectedPoints = new PuffinAction("Hide selection",
+            "Hide the selected points", 'H', false, KeyEvent.VK_H) {
         public void actionPerformed(ActionEvent e) {
             app.getSample().hideSelectedPoints();
             app.getMainWindow().repaint();
         }
     };
 
-    public final Action unhideAllPoints = new AbstractAction("Unhide all points") {
+    public final Action unhideAllPoints = new PuffinAction("Show all points",
+            "Make hidden points visible again", 'H', true, KeyEvent.VK_O) {
         public void actionPerformed(ActionEvent e) {
             app.getSample().unhideAllPoints();
             app.getMainWindow().repaint();
@@ -288,14 +312,16 @@ public class PuffinActions {
     };
 
 
-    public final Action prefs = new AbstractAction("Preferences…") {
+    public final Action prefs = new PuffinAction("Preferences…",
+            "Show the preferences window", ',', false, KeyEvent.VK_R, true) {
 
         public void actionPerformed(ActionEvent e) {
             JOptionPane.showMessageDialog(app.getMainWindow(), "This is the preferences dialog.");
         }
     };
     
-    public final Action print = new AbstractAction("Print…") {
+    public final Action print = new PuffinAction("Print…",
+            "Print the selected samples", 'P', false, KeyEvent.VK_E) {
 
         public void actionPerformed(ActionEvent e) {
             PrinterJob job = PrinterJob.getPrinterJob();
@@ -319,7 +345,8 @@ public class PuffinActions {
         }
     };
     
-    public final Action printFisher = new AbstractAction("Print Fisher…") {
+    public final Action printFisher = new PuffinAction("Print Fisher…",
+            "Print the Fisher statistics plot", null, false, KeyEvent.VK_F) {
 
         public void actionPerformed(ActionEvent e) {
             PrinterJob job = PrinterJob.getPrinterJob();
@@ -343,14 +370,17 @@ public class PuffinActions {
         }
     };
     
-    public final Action quit = new AbstractAction("Quit") {
+    public final Action quit = new PuffinAction("Quit",
+            null, 'Q', false, KeyEvent.VK_Q, true) {
         public void actionPerformed(ActionEvent e) {
             PuffinApp.getInstance().getPrefs().save();
             System.exit(0);
         }
     };
 
-    public final Action resetLayout = new AbstractAction("Reset layout") {
+    public final Action resetLayout = new PuffinAction("Reset layout",
+            "Move plots back to their original positions", null, false,
+            KeyEvent.VK_L) {
         public void actionPerformed(ActionEvent e) {
             app.getMainWindow().getGraphDisplay().resetLayout();
         }

@@ -1,0 +1,22 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Automatic update checking
+desc: |-
+  I waste a lot of time trying to verify bugs which have already been
+  fixed. It would be good to have a mechanism whereby PP can check in
+  at talvi.net whether there is a newer version, and exhort the user to
+  upgrade if so (especially in the case of a crash).
+type: :feature
+component: PuffinPlot
+release: "1.2"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2009-07-19 06:35:49.998833 Z
+references: []
+
+id: 2bd5b297d153a9762ba29db89400a9a413c202b9
+log_events: 
+- - 2009-07-19 06:35:50.460539 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

@@ -5,8 +5,8 @@ type: :bugfix
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :in_progress
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2009-07-17 03:49:59.946732 Z
 references: []
 
@@ -20,3 +20,9 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - changed status from unstarted to in_progress
   - ""
+- - 2009-07-19 06:37:18.565099 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Christian's latest email seems to indicate that the fix works for him.
+    Closing.

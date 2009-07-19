@@ -179,9 +179,14 @@ public class PuffinApp {
         openFiles(new File[] {f});
     }
 
-
     public void openFiles(File[] files) {
         openFiles(files, false);
+    }
+
+    public void closeCurrentSuite() {
+        if (suites == null || suites.isEmpty()) return;
+        suites.remove(currentSuiteIndex);
+        getMainWindow().suitesChanged();
     }
 
     public void openFiles(File[] files, boolean fromRecentFileList) {
@@ -237,7 +242,9 @@ public class PuffinApp {
         int response =
                 JOptionPane.showOptionDialog(
                 getInstance().getMainWindow(),
-                "An unexpected error occurred. Please tell Pont.\n" +
+                "An unexpected error occurred. \n" +
+                "Please MAKE SURE THAT YOU ARE USING THE LATEST VERSION\n" +
+                "of PuffinPlot. If so, report the error to Pont.\n" +
                 "I will try to write the details " +
                 "to a file called PUFFIN-ERROR.txt . \n"+
                 "I recommend that you quit, but if you have unsaved \n"+
