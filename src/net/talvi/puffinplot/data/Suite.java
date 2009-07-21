@@ -99,7 +99,7 @@ public class Suite implements Iterable<Datum> {
         List<PcaValues> pcas = new ArrayList<PcaValues>(samples.length);
 
         for (Sample sample: samples) {
-            PcaValues pca = sample.getPca();
+            PcaValues pca = sample.getPcaValues();
             if (pca != null) pcas.add(pca);
         }
 
@@ -116,7 +116,7 @@ public class Suite implements Iterable<Datum> {
         // Chuck PCA values into buckets
         for (Sample sample : PuffinApp.getInstance().getSelectedSamples()) {
             String site = sample.getSiteId();
-            PcaValues pca = sample.getPca();
+            PcaValues pca = sample.getPcaValues();
             if (pca != null) {
                 if (!sitePcas.containsKey(site))
                     sitePcas.put(site, new HashSet<PcaValues>());
@@ -408,36 +408,24 @@ public class Suite implements Iterable<Datum> {
      * Save calculations per-sample.
      */
     public void saveCalcsSample(File file) {
-        Writer writer = null;
+        CsvWriter writer = null;
         try {
-            ArrayList<Sample> samples = new ArrayList<Sample>(getNumSamples());
-            if (measType == MeasType.CONTINUOUS) {
-                for (double depth: depths)
-                    samples.add(getSampleByDepth(depth));
-            } else {
-                for (String name: names)
-                    samples.add(getSampleByName(name));
-            }
+            List<Sample> samples = getSamplesOrdered();
             if (samples.size()==0) {
                 PuffinApp.errorDialog("Error saving calculations",
                         "No calculations to save!");
                 return;
             }
 
-            writer = new FileWriter(file);
-            writer.write(
-                    (measType == MeasType.CONTINUOUS ? "depth" : "sample") +
-                    "," + FisherValues.getHeader(",") +
-                    "," + PcaValues.getHeader(",") + "\n");
+            writer = new CsvWriter(new FileWriter(file));
+            writer.writeCsv(measType.getColumnHeader(),
+                    FisherValues.getHeaders(), PcaAnnotated.getHeaders());
             for (Sample sample: samples) {
-                PcaValues pca = sample.getPca();
-                String pcaCsv = pca==null ? ",,," : pca.toLine(",");
+                PcaAnnotated pca = sample.getPca();
                 FisherValues fish = sample.getFisher();
-                String fishCsv = fish==null ? ",,," : fish.toLine(",");
-                String sampleId = (measType == MeasType.CONTINUOUS) ?
-                    String.format("%f", sample.getDepth()) :
-                    sample.getName();
-                writer.write(sampleId+","+fishCsv+","+pcaCsv+"\n");
+                writer.writeCsv(sample.getNameOrDepth(),
+                        fish == null ? FisherValues.getEmptyFields() : fish.toStrings(),
+                        pca == null ? PcaAnnotated.getEmptyFields() : pca.toStrings());
             }
 
         } catch (IOException ex) {
@@ -446,7 +434,7 @@ public class Suite implements Iterable<Datum> {
                 try {
                     if (writer != null) writer.close();
                 } catch (IOException ex) {
-                    Logger.getLogger(Suite.class.getName()).log(Level.SEVERE, null, ex);
+                    PuffinApp.errorDialog("Error closing file", ex.getLocalizedMessage());
                 }
         }
     }
@@ -455,18 +443,18 @@ public class Suite implements Iterable<Datum> {
      * Save [Fisher] calculations per site. Only works for discrete.
      */
     public void saveCalcsSite(File file) {
-        Writer writer = null;
+        CsvWriter writer = null;
         try {
             if (siteFishers==null || siteFishers.size() == 0) {
                 PuffinApp.errorDialog("Error saving calculations",
                         "No calculations to save!");
                 return;
             }
-            // write them to a file
-            writer = new FileWriter(file);
-            writer.write("site,"+FisherValues.getHeader(",")+"\n");
+
+            writer = new CsvWriter(new FileWriter(file));
+            writer.writeCsv("site", FisherValues.getHeaders());
             for (FisherForSite f: siteFishers) {
-                writer.write(f.site + "," + f.fisher.toLine(",")+"\n");
+                writer.writeCsv(f.site, f.fisher.toStrings());
             }
         } catch (IOException ex) {
            throw new Error(ex);
@@ -482,17 +470,16 @@ public class Suite implements Iterable<Datum> {
      * Save a single Fisher calculation for the suite.
      */
     public void saveCalcsSuite(File file) {
-        Writer writer = null;
+        CsvWriter writer = null;
         try {
             if (suiteFisher == null) {
                 PuffinApp.errorDialog("Error saving calculations",
                         "No calculations to save!");
                 return;
             }
-            writer = new FileWriter(file);
-            writer.write(FisherValues.getHeader(",")+"\n");
-            writer.write(suiteFisher.toLine(",")+"\n");
-
+            writer = new CsvWriter(new FileWriter(file));
+            writer.writeCsv(FisherValues.getHeaders());
+            writer.writeCsv(suiteFisher.toStrings());
         } catch (IOException ex) {
            throw new Error(ex);
         } finally {
@@ -534,6 +521,16 @@ public class Suite implements Iterable<Datum> {
     public Collection<Sample> getSamples() {
         return measType == MeasType.CONTINUOUS ?
             samplesByDepth.values() : samplesByName.values();
+    }
+
+    public List<Sample> getSamplesOrdered() {
+        ArrayList<Sample> samples = new ArrayList<Sample>(getNumSamples());
+        if (measType == MeasType.CONTINUOUS) {
+            for (double depth : depths) samples.add(getSampleByDepth(depth));
+        } else {
+            for (String name : names) samples.add(getSampleByName(name));
+        }
+        return samples;
     }
 
     public List<Datum> getData() {

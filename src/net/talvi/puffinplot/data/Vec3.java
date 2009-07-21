@@ -10,6 +10,7 @@ import static java.lang.Math.toRadians;
 import static java.lang.Math.signum;
 import Jama.Matrix;
 import java.util.Collection;
+import java.util.List;
 
 public class Vec3 {
 
@@ -231,7 +232,7 @@ public class Vec3 {
             {z * x, z * y, z * z}});
     }
 
-    public static Vec3 centreOfMass(Iterable<Vec3> points) {
+    public static Vec3 centreOfMass(List<Vec3> points) {
         double xs = 0, ys = 0, zs = 0;
         int i = 0;
         for (Vec3 p : points) {

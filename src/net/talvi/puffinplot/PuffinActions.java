@@ -141,7 +141,7 @@ public class PuffinActions {
                pathname = new File(fd.getDirectory(), fd.getFile()).getPath();
             }
         }
-        if (!pathname.toLowerCase().endsWith("extension"))
+        if (pathname != null && !pathname.toLowerCase().endsWith(extension))
             pathname += extension;
         return pathname;
     }
@@ -295,8 +295,9 @@ public class PuffinActions {
         }
     };
 
+    // we can't use ctrl-H because Apples use it already.
     public final Action hideSelectedPoints = new PuffinAction("Hide selection",
-            "Hide the selected points", 'H', false, KeyEvent.VK_H) {
+            "Hide the selected points", 'G', false, KeyEvent.VK_H) {
         public void actionPerformed(ActionEvent e) {
             app.getSample().hideSelectedPoints();
             app.getMainWindow().repaint();
@@ -304,7 +305,7 @@ public class PuffinActions {
     };
 
     public final Action unhideAllPoints = new PuffinAction("Show all points",
-            "Make hidden points visible again", 'H', true, KeyEvent.VK_O) {
+            "Make hidden points visible again", 'G', true, KeyEvent.VK_O) {
         public void actionPerformed(ActionEvent e) {
             app.getSample().unhideAllPoints();
             app.getMainWindow().repaint();

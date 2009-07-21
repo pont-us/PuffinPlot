@@ -83,7 +83,8 @@ public class MainMenuBar extends JMenuBar {
         useEmptyItem.setAccelerator(KeyStroke.getKeyStroke('Y', modifierKey));
         
         add(makeMenu("File", pa.open, recentFilesMenu, pa.save, pa.close,
-                pa.exportCalcsSample, pa.exportCalcsSite, pa.exportCalcsSuite,
+                makeMenu("Export calculations", pa.exportCalcsSample,
+                pa.exportCalcsSite, pa.exportCalcsSuite),
                 pa.pageSetup, pa.print, pa.printFisher, new OldSquidItem(),
                 pa.prefs, pa.quit));
         add(makeMenu("Edit", pa.selectAll, movePlotsItem, pa.resetLayout,

@@ -38,7 +38,7 @@ public class PcaTable extends Plot {
         Sample sample = params.getSample();
         if (sample==null) return;
  
-        final PcaValues pca = sample.getPca();
+        final PcaValues pca = sample.getPcaValues();
         
         if (pca != null) {
             String[] strings = {

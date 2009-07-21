@@ -10,18 +10,25 @@ import java.util.Collections;
 
 import Jama.EigenvalueDecomposition;
 import Jama.Matrix;
+import java.util.Arrays;
+import java.util.List;
 
 public class PcaValues {
     private final double mad1;
     private final double mad3;
-    private final Vec3 origin;
     private final Vec3 direction;
+    private final Vec3 origin;
+    private final boolean anchored;
+    private static final List<String> HEADERS =
+        Arrays.asList("PCA inc.", "PCA dec.", "PCA MAD1", "PCA MAD3", "PCA anchored");
     
-    private PcaValues(Vec3 direction, double mad1, double mad3, Vec3 origin) {
+    private PcaValues(Vec3 direction, double mad1, double mad3,
+            Vec3 origin, boolean anchored) {
+        this.direction = direction;
         this.mad1 = mad1;
         this.mad3 = mad3;
         this.origin = origin;
-        this.direction = direction;
+        this.anchored = anchored;
     }
 
     private static int[] order(double[] x) {
@@ -58,13 +65,16 @@ public class PcaValues {
         return result;
     }
     
-    public static PcaValues calculate(Iterable<Vec3> points, Vec3 origin) {
+    public static PcaValues calculate(List<Vec3> points, boolean anchored) {
         // We use Kirschvink's procedure but append a direction correction.
-        
-        // translate points to be centred on centre of mass
-        ArrayList<Vec3> movedPoints = new ArrayList<Vec3>();
-        // Point origin = Point.centreOfMass(points);
-        for (Vec3 p: points) movedPoints.add(p.minus(origin));
+
+        List<Vec3> movedPoints = points;
+        Vec3 origin = anchored ? Vec3.ORIGIN : Vec3.centreOfMass(points);
+        if (!anchored) {
+            // translate points to be centred on centre of mass
+            movedPoints = new ArrayList<Vec3>(points.size());
+            for (Vec3 p: points) movedPoints.add(p.minus(origin));
+        }
         
         // construct the orientation tensor
         Matrix oTensor = new Matrix(3,3); // zeros
@@ -104,7 +114,7 @@ public class PcaValues {
         double mad1 = (lint != 0 && lmax != 0) ?
                 toDegrees(atan(sqrt(lmin/lint + lmin/lmax))) : 0;
         
-        return new PcaValues(pComp, mad1, mad3, origin);
+        return new PcaValues(pComp, mad1, mad3, origin, anchored);
     }
 
     public double getIncRadians() {
@@ -138,17 +148,17 @@ public class PcaValues {
     public Vec3 getDirection() {
         return direction;
     }
-    
-    public static String getHeader(String separator) {
-        return String.format("PCA inc.%sPCA dec.%sMAD1%sMAD3",
-                separator, separator, separator);
+
+    private String fmt(double d) {
+        return String.format("%.1f", d);
     }
 
-    public String toLine(String separator) {
-        return String.format("%.1f%s%.1f%s%.1f%s%.1f",
-                getIncDegrees(), separator, getDecDegrees(), separator,
-                getMad1(), separator, getMad3());
+    public static List<String> getHeaders() {
+        return HEADERS;
     }
 
-
+    public List<String> toStrings() {
+        return Arrays.asList(fmt(getIncDegrees()), fmt(getDecDegrees()),
+            fmt(getMad1()), fmt(getMad3()), anchored ? "yes" : "no");
+    }
 }

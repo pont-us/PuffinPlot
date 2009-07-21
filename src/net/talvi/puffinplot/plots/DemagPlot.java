@@ -67,7 +67,7 @@ public class DemagPlot extends Plot {
 
         PlotAxis vAxis =
                 new PlotAxis(new AxisParameters(maxIntens, Direction.UP).
-                withLabel("Intensity"), this);
+                withLabel("Intensity (Gauss)"), this);
         PlotAxis hAxis =
                 new PlotAxis(new AxisParameters(xAxisLength, Direction.RIGHT).
                 withLabel(xAxisLabel), this);

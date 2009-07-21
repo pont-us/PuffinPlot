@@ -4,21 +4,19 @@ import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import static java.lang.Math.min;
 import java.awt.Graphics2D;
-import java.awt.Polygon;
 import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.prefs.Preferences;
 import net.talvi.puffinplot.GraphDisplay;
 import net.talvi.puffinplot.PlotParams;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.data.FisherValues;
+import net.talvi.puffinplot.data.PcaValues;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Vec3;
 
@@ -103,8 +101,9 @@ public class FisherEqAreaPlot extends EqAreaPlot {
             } else {
                 g.setStroke(thinStroke);
                 for (Sample s: PuffinApp.getInstance().getSelectedSamples()) {
-                    if (s != null && s.getPca() != null && s.getPca().getDirection() != null) {
-                        Point2D p = project(s.getPca().getDirection(), xo, yo, radius);
+                    PcaValues pca = s.getPcaValues();
+                    if (s != null && pca != null && pca.getDirection() != null) {
+                        Point2D p = project(pca.getDirection(), xo, yo, radius);
                         g.draw(new Line2D.Double(p.getX() - 10, p.getY(), p.getX() + 10, p.getY()));
                         g.draw(new Line2D.Double(p.getX(), p.getY() - 10, p.getX(), p.getY() + 10));
                     }

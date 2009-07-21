@@ -1,6 +1,7 @@
 package net.talvi.puffinplot.data;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -15,6 +16,8 @@ public class FisherValues {
     private final Vec3 meanDirection;
     private final List<Vec3> directions;
     private final static double p = 0.05;
+    private static final List<String> HEADERS =
+        Arrays.asList("Fisher inc.", "Fisher dec.", "Fisher a95", "Fisher k");
 
     private FisherValues(List<Vec3> directions, double a95, double k, Vec3 meanDirection) {
         this.directions = Collections.unmodifiableList(directions);
@@ -47,6 +50,24 @@ public class FisherValues {
     
     public List<Vec3> getDirections() {
         return directions;
+    }
+
+    private String fmt(double d) {
+        return String.format("%.1f", d);
+    }
+
+    public List<String> toStrings() {
+        return Arrays.asList(fmt(getMeanDirection().getIncDeg()),
+                fmt(getMeanDirection().getDecDeg()), fmt(getA95()),
+                fmt(getK()));
+    }
+
+    public static List<String> getHeaders() {
+        return HEADERS;
+    }
+
+    public static List<String> getEmptyFields() {
+        return Collections.nCopies(HEADERS.size(), "");
     }
 
     public String toLine(String separator) {

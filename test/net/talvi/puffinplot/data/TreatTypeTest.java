@@ -50,12 +50,9 @@ public class TreatTypeTest {
     @Test
     public void testFromString() {
         System.out.println("fromString");
-        String s = "";
-        TreatType expResult = null;
-        TreatType result = TreatType.fromString(s);
         assertEquals(TreatType.DEGAUSS_XYZ, TreatType.fromString("Degauss X, Y, & Z"));
         assertEquals(TreatType.DEGAUSS_Z, TreatType.fromString("Degauss Z"));
-        assertEquals(TreatType.THERMAL, TreatType.fromString("Thermal"));
+        assertEquals(TreatType.THERMAL, TreatType.fromString("Thermal Demag"));
         assertEquals(TreatType.ARM, TreatType.fromString("Degauss Z - ARM axial"));
         assertEquals(TreatType.IRM, TreatType.fromString("IRM"));
         assertEquals(TreatType.NONE, TreatType.fromString("NONE"));

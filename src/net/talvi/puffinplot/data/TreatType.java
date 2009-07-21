@@ -9,7 +9,7 @@ public enum TreatType {
     DEGAUSS_Z("degauss z", "Z-axis AF strength (G)"),
     ARM("degauss z - arm axial", "ARM field strength"),
     IRM("irm", "IRM field strength"),
-    THERMAL("thermal", "Temperature (°C)"),
+    THERMAL("thermal demag", "Temperature (°C)"),
     UNKNOWN("", "Unknown treatment");
 	
     private final String axisLabel;

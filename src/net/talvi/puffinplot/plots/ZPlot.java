@@ -117,7 +117,7 @@ public class ZPlot extends Plot {
             first = false;
         }
         
-        final PcaValues pca = sample.getPca();
+        final PcaValues pca = sample.getPcaValues();
         if (pca != null) {
             double x1 = pca.getOrigin().y * scale;
             double y1 = - pca.getOrigin().x * scale;
