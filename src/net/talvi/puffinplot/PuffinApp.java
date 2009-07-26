@@ -1,5 +1,6 @@
 package net.talvi.puffinplot;
 
+import java.awt.Dimension;
 import net.talvi.puffinplot.data.Suite;
 import java.awt.event.ActionEvent;
 import java.awt.print.PageFormat;
@@ -12,12 +13,16 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import java.util.Properties;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
+import javax.swing.JTextArea;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Sample;
 
@@ -118,7 +123,7 @@ public class PuffinApp {
 
             public void uncaughtException(Thread thread, Throwable exception) {
                 final String ERROR_FILE = "PUFFIN-ERROR.txt";
-                boolean quit = quitDialog();
+                boolean quit = unhandledErrorDialog();
                 File f = new File(System.getProperty("user.home"), ERROR_FILE);
                 try {
                     final PrintWriter w = new PrintWriter(new FileWriter(f));
@@ -176,10 +181,10 @@ public class PuffinApp {
     }
     
     public void openFiles(File f) {
-        openFiles(new File[] {f});
+        openFiles(Collections.singletonList(f));
     }
 
-    public void openFiles(File[] files) {
+    public void openFiles(List<File> files) {
         openFiles(files, false);
     }
 
@@ -189,9 +194,9 @@ public class PuffinApp {
         getMainWindow().suitesChanged();
     }
 
-    public void openFiles(File[] files, boolean fromRecentFileList) {
+    public void openFiles(List<File> files, boolean fromRecentFileList) {
 
-        if (files.length == 0) return;
+        if (files.size() == 0) return;
 
         if (!fromRecentFileList) {
             try {
@@ -232,26 +237,30 @@ public class PuffinApp {
         mainWindow.getMainMenuBar().updateRecentFiles();
     }
     
-    public static void errorDialog(String title, String message) {
+    public void errorDialog(String title, String message) {
         JOptionPane.showMessageDialog
-        (getInstance().getMainWindow(), message, title, JOptionPane.ERROR_MESSAGE);
+        (getMainWindow(), message, title, JOptionPane.ERROR_MESSAGE);
     }
 
-    private static boolean quitDialog() {
-        Object[] options = {"Continue", "Quit"};
-        int response =
-                JOptionPane.showOptionDialog(
-                getInstance().getMainWindow(),
-                "An unexpected error occurred. \n" +
-                "Please MAKE SURE THAT YOU ARE USING THE LATEST VERSION\n" +
-                "of PuffinPlot. If so, report the error to Pont.\n" +
+    private static boolean unhandledErrorDialog() {
+        final Object[] options = {"Continue", "Quit"};
+        final JOptionPane pane = new JOptionPane();
+        final JLabel message = new JLabel(
+                "<html><body style=\"width: 400pt; font-weight: normal;\">" +
+                "<p>An unexpected error occurred. </p><p>" +
+                "Please <b>make sure that you are using the latest version</b> " +
+                "of PuffinPlot. If so, report the error to Pont. " +
                 "I will try to write the details " +
-                "to a file called PUFFIN-ERROR.txt . \n"+
-                "I recommend that you quit, but if you have unsaved \n"+
-                "data you could try to continue and save it.",
-                "Unexpected error",
+                "to a file called PUFFIN-ERROR.txt . "+
+                "I recommend that you quit, but if you have unsaved "+
+                "data you could try to continue and save it.</p></body></html>")
+                ;
+        int response =
+                JOptionPane.showOptionDialog(getInstance().getMainWindow(),
+                message, "Unexpected error",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
                 null, options, options[1]);
+
         return (response==1);
     }
 
@@ -282,9 +291,9 @@ public class PuffinApp {
         if (suite==null) return null;
         return suite.getCurrentSample();
     }
-    
+
     // Only works for discrete, of course.
-    public Sample[] getSelectedSamples() {
+    public List<Sample> getSelectedSamples() {
         return getMainWindow().sampleChooser.getSelectedSamples();
     }
 

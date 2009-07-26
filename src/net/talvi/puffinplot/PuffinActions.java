@@ -10,6 +10,9 @@ import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import javax.print.PrintService;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -18,6 +21,7 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileFilter;
 import net.talvi.puffinplot.data.Sample;
+import net.talvi.puffinplot.data.Suite;
 
 public class PuffinActions {
 
@@ -74,14 +78,14 @@ public class PuffinActions {
 
         public void actionPerformed(ActionEvent e) {
 
-            File[] files = null;
+            List<File> files = null;
             if (useSwingChooserForOpen) {
                 JFileChooser chooser = new JFileChooser();
                 chooser.setMultiSelectionEnabled(true);
                 chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
                 int choice = chooser.showOpenDialog(app.getMainWindow());
                 if (choice == JFileChooser.APPROVE_OPTION)
-                    files = chooser.getSelectedFiles();
+                    files = Arrays.asList(chooser.getSelectedFiles());
             } else {
                 FileDialog fd = new FileDialog(app.getMainWindow(), "Open file(s)",
                         FileDialog.LOAD);
@@ -89,15 +93,14 @@ public class PuffinActions {
                 String filename = fd.getFile();
                 if (filename != null) {
                     File file = new File(fd.getDirectory(), fd.getFile());
-                    files = new File[]{file};
+                    files = Collections.singletonList(file);
                 }
             }
-            if (files != null)
-                app.openFiles(files);
+            if (files != null) app.openFiles(files);
         }
     };
 
-    public final Action close = new PuffinAction("Close…",
+    public final Action close = new PuffinAction("Close",
             "Close this suite of data", 'W', false, KeyEvent.VK_C) {
 
         public void actionPerformed(ActionEvent e) {
@@ -150,7 +153,7 @@ public class PuffinActions {
 
         public void actionPerformed(ActionEvent arg0) {
             if (app.getSuite() == null) {
-                PuffinApp.errorDialog("Error saving calculation", "No file loaded.");
+                app.errorDialog("Error saving calculation", "No file loaded.");
                             return;
             }
             String pathname = getSavePath("Export sample calculations", ".csv",
@@ -165,7 +168,7 @@ public class PuffinActions {
 
         public void actionPerformed(ActionEvent arg0) {
             if (app.getSuite() == null) {
-                PuffinApp.errorDialog("Error saving calculation", "No file loaded.");
+                app.errorDialog("Error saving calculation", "No file loaded.");
                             return;
             }
             String pathname = getSavePath("Export site calculations", ".csv",
@@ -180,7 +183,7 @@ public class PuffinActions {
 
         public void actionPerformed(ActionEvent arg0) {
             if (app.getSuite() == null) {
-                PuffinApp.errorDialog("Error saving calculation", "No file loaded.");
+                app.errorDialog("Error saving calculation", "No file loaded.");
                 return;
             }
             String pathname = getSavePath("Export suite calculations", ".csv",
@@ -191,14 +194,29 @@ public class PuffinActions {
         }
     };
 
-    public final Action save = new PuffinAction("Save as…",
+    private void doSaveAs(Suite suite) {
+        String pathname = getSavePath("Save data", ".ppl", "PuffinPlot data");
+        if (pathname != null) suite.saveAs(new File(pathname));
+    }
+
+    public final Action save = new PuffinAction("Save",
+            "Re-save the current file", 'S', false, KeyEvent.VK_A) {
+        public void actionPerformed(ActionEvent e) {
+            Suite suite = app.getSuite();
+            if (suite != null) {
+                if (suite.isFilenameSet()) suite.save();
+                else doSaveAs(suite);
+            }
+        }
+    };
+
+    public final Action saveAs = new PuffinAction("Save as…",
             "Save this suite of data in a new file.", 'S', true, KeyEvent.VK_S) {
 
         public void actionPerformed(ActionEvent arg0) {
-            String pathname = getSavePath("Save data", ".ppl", "PuffinPlot data");
-            if (pathname != null) app.getSuite().save(new File(pathname));
+            Suite suite = app.getSuite();
+            if (suite != null) doSaveAs(suite);
         }
-        
     };
     
     public final Action pageSetup = new PuffinAction("Page Setup…",
@@ -245,8 +263,13 @@ public class PuffinActions {
             "Calculate Fisher statistics for selected points", null, false,
             KeyEvent.VK_A) {
         public void actionPerformed(ActionEvent e) {
-            app.getSample().doFisher();
-            app.getMainWindow().repaint();
+            Sample s = app.getSample();
+            if (s == null) {
+                app.errorDialog("Fisher on sample", "No sample selected.");
+            } else {
+                app.getSample().doFisher();
+                app.getMainWindow().repaint();
+            }
         }
     };
     
@@ -254,22 +277,44 @@ public class PuffinActions {
             "Fisher statistics on PCA directions grouped by site", 'F', false,
             KeyEvent.VK_I) {
         public void actionPerformed(ActionEvent e) {
-            app.getFisherWindow().getPlot().setGroupedBySite(true);
-            app.getSuite().doFisherOnSites();
-            app.getFisherWindow().setVisible(true);
+            Suite suite = app.getSuite();
+            if (suite == null) {
+                app.errorDialog("Fisher by site", "No suite loaded.");
+            } else {
+                suite.doFisherOnSites();
+                app.getFisherWindow().getPlot().setGroupedBySite(true);
+                app.getFisherWindow().setVisible(true);
+            }
         }
     };
         
-    public final Action fisherBySample = new PuffinAction("Fisher on suite",
+    public final Action fisherOnSuite = new PuffinAction("Fisher on suite",
             "Fisher statistics on PCA directions for entire selection",
             'F', true, KeyEvent.VK_U) {
         public void actionPerformed(ActionEvent e) {
-            app.getSuite().doFisherOnSuite();
-            app.getFisherWindow().getPlot().setGroupedBySite(false);
-            app.getFisherWindow().setVisible(true);
+            Suite suite = app.getSuite();
+            if (suite == null) {
+                app.errorDialog("Fisher on suite", "No suite loaded.");
+            } else {
+                suite.doFisherOnSuite();
+                app.getFisherWindow().getPlot().setGroupedBySite(false);
+                app.getFisherWindow().setVisible(true);
+            }
         }
     };
-    
+
+    public final Action mdf = new PuffinAction("MDF",
+            "Calculate median destructive field (or temperature) on selected samples",
+            'M', false, KeyEvent.VK_M) {
+        public void actionPerformed(ActionEvent e) {
+            List<Sample> samples = app.getSelectedSamples();
+            for (Sample s: samples) {
+                s.calculateMidpoint(app.isEmptyCorrectionActive());
+            }
+            app.getMainWindow().repaint();
+        }
+    };
+
     public final Action editCorrections = new PuffinAction("Corrections…",
             "Edit corrections for sample, formation, and magnetic deviation",
             null, false, KeyEvent.VK_R) {
@@ -282,16 +327,22 @@ public class PuffinActions {
             "Clear selection and calculations for this sample",
             'Z', false, KeyEvent.VK_C) {
         public void actionPerformed(ActionEvent e) {
-            app.getSample().clear();
-            app.getMainWindow().repaint();
+            Sample s = app.getSample();
+            if (s != null) {
+                s.clear();
+                app.getMainWindow().repaint();
+            }
         }
     };
     
     public final Action selectAll = new PuffinAction("Select all",
             "Select all points in this sample", 'D', false, KeyEvent.VK_A) {
         public void actionPerformed(ActionEvent e) {
-            app.getSample().selectAll();
-            app.getMainWindow().repaint();
+            Sample s = app.getSample();
+            if (s != null) {
+                s.selectAll();
+                app.getMainWindow().repaint();
+            }
         }
     };
 
@@ -299,16 +350,22 @@ public class PuffinActions {
     public final Action hideSelectedPoints = new PuffinAction("Hide selection",
             "Hide the selected points", 'G', false, KeyEvent.VK_H) {
         public void actionPerformed(ActionEvent e) {
-            app.getSample().hideSelectedPoints();
-            app.getMainWindow().repaint();
+            Sample s = app.getSample();
+            if (s != null) {
+                s.hideSelectedPoints();
+                app.getMainWindow().repaint();
+            }
         }
     };
 
     public final Action unhideAllPoints = new PuffinAction("Show all points",
             "Make hidden points visible again", 'G', true, KeyEvent.VK_O) {
         public void actionPerformed(ActionEvent e) {
-            app.getSample().unhideAllPoints();
-            app.getMainWindow().repaint();
+            Sample s = app.getSample();
+            if (s != null) {
+                s.unhideAllPoints();
+                app.getMainWindow().repaint();
+            }
         }
     };
 
@@ -374,7 +431,7 @@ public class PuffinActions {
     public final Action quit = new PuffinAction("Quit",
             null, 'Q', false, KeyEvent.VK_Q, true) {
         public void actionPerformed(ActionEvent e) {
-            PuffinApp.getInstance().getPrefs().save();
+            app.getPrefs().save();
             System.exit(0);
         }
     };

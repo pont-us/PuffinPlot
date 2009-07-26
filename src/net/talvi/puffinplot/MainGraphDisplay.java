@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
+import java.util.List;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.MeasType;
@@ -15,7 +16,7 @@ import net.talvi.puffinplot.plots.ZPlot;
 public class MainGraphDisplay extends GraphDisplay implements Printable {
 
     // samplesForPrinting is only non-null during printing.
-    private Sample[] samplesForPrinting = null;
+    private List<Sample> samplesForPrinting = null;
     private int printPageIndex = -1;
 
     MainGraphDisplay() {
@@ -27,7 +28,7 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
             public Sample getSample() {
                 return samplesForPrinting == null
                         ? app.getSample()
-                        : samplesForPrinting[printPageIndex];
+                        : samplesForPrinting.get(printPageIndex);
             }
 
             public Correction getCorrection() {
@@ -71,7 +72,7 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
 
         if (samplesForPrinting == null)
             samplesForPrinting = PuffinApp.getInstance().getSelectedSamples();
-        if (pageIndex >= samplesForPrinting.length) {
+        if (pageIndex >= samplesForPrinting.size()) {
             samplesForPrinting = null; // we've finished printing
             return NO_SUCH_PAGE;
         }

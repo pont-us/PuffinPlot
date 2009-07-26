@@ -2,16 +2,14 @@ package net.talvi.puffinplot;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.prefs.Preferences;
 
-/**
- *
- * @author pont
- */
 public class RecentFileList {
 
     private static final int MAX_LENGTH = 8;
@@ -45,47 +43,44 @@ public class RecentFileList {
         return result;
     }
 
-    public File[] getFilesAndReorder(int index) {
+    public List<File> getFilesAndReorder(int index) {
         FileSet result = fileSets.get(index);
         fileSets.remove(index);
         fileSets.add(0, result);
         return result.getFiles();
     }
 
-    public void add(File[] files) throws IOException {
-        fileSets.add(0, new FileSet(files));
+    public void add(List<File> files) throws IOException {
+        FileSet f = new FileSet(files);
+        fileSets.remove(f);
+        fileSets.add(0, f);
         if (fileSets.size() > MAX_LENGTH) fileSets.removeLast();
     }
 
     public static class FileSet {
 
-        private final String[] pathNames;
+        private final List<File> files;
         private final String name;
 
-        public FileSet(File[] files) throws IOException {
-            pathNames = new String[files.length];
-            name = files[0].getName() + (files.length > 1 ? " etc." : "");
-            for (int i=0; i<files.length; i++)
-                pathNames[i] = files[i].getCanonicalPath();
+        public FileSet(List<File> files) {
+            this.files = files;
+            name = files.get(0).getName() + (files.size() > 1 ? " etc." : "");
         }
 
-        private FileSet(String[] paths) {
-            name = new File(paths[0]).getName() +
-                    (paths.length > 1 ? " etc." : "");
-            pathNames = paths;
-        }
-
-        public File[] getFiles() {
-            File[] files = new File[pathNames.length];
-            for (int i=0; i<pathNames.length; i++)
-                    files[i] = new File(pathNames[i]);
+        public List<File> getFiles() {
             return files;
+        }
+
+        private List<String> getPathNames() {
+            List<String> pathNames = new ArrayList<String>(files.size());
+            for (File file: files) pathNames.add(file.getAbsolutePath());
+            return pathNames;
         }
 
         /**
          * The string representation is designed to be stored and retrieved
          * through the Preferences API, which seems to have trouble with
-         * control characters. Thus the format is now
+         * control characters. Thus the format is
          *
          * numpaths pathlen1... pathlenN path1path2...pathN
          *
@@ -97,8 +92,9 @@ public class RecentFileList {
          */
         @Override
         public String toString() {
+            List<String> pathNames = getPathNames();
             StringBuffer sb = new StringBuffer();
-            sb.append(pathNames.length);
+            sb.append(pathNames.size());
             sb.append(" ");
             for (String path: pathNames) {
                 sb.append(path.length());
@@ -114,20 +110,28 @@ public class RecentFileList {
             if (s==null) return null;
             Scanner scanner = new Scanner(s);
             final int numPaths = scanner.nextInt();
-            int[] lengths = new int[numPaths];
-            String[] paths = new String[numPaths];
-            for (int i=0; i<numPaths; i++)
-                lengths[i] = scanner.nextInt();
+            List<Integer> lengths = new ArrayList<Integer>(numPaths);
+            List<File> files = new ArrayList<File>(numPaths);
+            for (int i=0; i<numPaths; i++) lengths.add(scanner.nextInt());
             String allThePaths = scanner.findInLine(".*$");
-            for (int i=0, pos=1; i<numPaths; i++) {
-                paths[i] = allThePaths.substring(pos, pos+lengths[i]);
-                pos += lengths[i];
+            int pos=1;
+            for (Integer length: lengths) {
+                String path = allThePaths.substring(pos, pos + length);
+                files.add(new File(path));
+                pos += length;
             }
-            return new FileSet(paths);
+            return new FileSet(files);
         }
 
         public String getName() {
             return name;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof FileSet)) return false;
+            FileSet f = (FileSet) o;
+            return (files.equals(f.files));
         }
     }
 

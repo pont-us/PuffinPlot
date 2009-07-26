@@ -20,8 +20,6 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import net.talvi.puffinplot.FileType;
@@ -30,7 +28,8 @@ import net.talvi.puffinplot.PuffinApp;
 public class Suite implements Iterable<Datum> {
 
     private List<Datum> data;
-    private File[] files;
+    private final List<File> inputFiles;
+    private File puffinFile;
     private Double[] depths = {};
     private String[] names = {};
     private Map<Double, Sample> samplesByDepth;
@@ -38,14 +37,16 @@ public class Suite implements Iterable<Datum> {
     private Map<Integer, Line> dataByLine;
     private int currentDepthIndex = 0;
     private MeasType measType;
-    private String currentName;
+    private String currentSampleName;
     private String suiteName;
     private static final Pattern emptyLine = Pattern.compile("^\\s*$");
     private static final Pattern whitespace = Pattern.compile("\\s+");
     private List<String> loadWarnings = new LinkedList<String>();
     private List<FisherForSite> siteFishers;
     private FisherValues suiteFisher;
-    final private static String[] ZPLOT_HEADERS = {"Sample", "Project", "Demag", "Declin", "Inclin", "Intens", "Operation"};
+    final private static String[] ZPLOT_HEADERS =
+      {"Sample", "Project", "Demag", "Declin", "Inclin", "Intens", "Operation"};
+    final private PuffinApp app;
 
     public Iterator<Datum> iterator() {
         return data.iterator();
@@ -95,8 +96,8 @@ public class Suite implements Iterable<Datum> {
     }
 
     public void doFisherOnSuite() {
-        Sample[] samples = PuffinApp.getInstance().getSelectedSamples();
-        List<PcaValues> pcas = new ArrayList<PcaValues>(samples.length);
+        List<Sample> samples = PuffinApp.getInstance().getSelectedSamples();
+        List<PcaValues> pcas = new ArrayList<PcaValues>(samples.size());
 
         for (Sample sample: samples) {
             PcaValues pca = sample.getPcaValues();
@@ -144,7 +145,15 @@ public class Suite implements Iterable<Datum> {
         return result;
     }
 
-    public void save(File file) {
+    public boolean isFilenameSet() {
+        return puffinFile != null;
+    }
+
+    public void save() {
+        if (puffinFile != null) saveAs(puffinFile);
+    }
+
+    public void saveAs(File file) {
         List<TwoGeeField> fields = new LinkedList(Arrays.asList(TwoGeeField.values()));
         fields.remove(TwoGeeField.UNKNOWN);
 
@@ -173,13 +182,18 @@ public class Suite implements Iterable<Datum> {
                     writer.write(line.toString());
                 }
             }
+            writer.close();
+            puffinFile = file;
+            suiteName = file.getName();
+            app.getRecentFiles().add(Collections.singletonList(file));
+            app.getMainWindow().getMainMenuBar().updateRecentFiles();
         } catch (IOException e) {
-            PuffinApp.errorDialog("Error saving file", e.getLocalizedMessage());
+            app.errorDialog("Error saving file", e.getLocalizedMessage());
         } finally {
             if (writer != null)  {
                 try { writer.close(); }
                 catch (IOException e) {
-                    PuffinApp.errorDialog("Error closing saved file", e.getLocalizedMessage());
+                    app.errorDialog("Error closing saved file", e.getLocalizedMessage());
                 }
             }
         }
@@ -261,10 +275,11 @@ public class Suite implements Iterable<Datum> {
         }
     }
 
-    private List<File> expandDirs(File[] files) {
+    private List<File> expandDirs(List<File> files) {
         List<File> result = new LinkedList<File>();
         for (File file: files) {
-            if (file.isDirectory()) result.addAll(expandDirs(file.listFiles()));
+            if (file.isDirectory())
+                result.addAll(expandDirs(Arrays.asList(file.listFiles())));
             else result.add(file);
         }
         return result;
@@ -280,12 +295,13 @@ public class Suite implements Iterable<Datum> {
      * because then we lose the load warnings (which will probably explain
      * to the user *why* the suite's empty and are thus quite important).
      **/
-    public Suite(File[] files) throws IOException {
-        assert(files.length > 0);
-        if (files.length == 1) suiteName = files[0].getName();
-        else suiteName = files[0].getParentFile().getName();
-        files = expandDirs(files).toArray(new File[] {});
-        this.files = files;
+    public Suite(List<File> files) throws IOException {
+        app = PuffinApp.getInstance();
+        assert(files.size() > 0);
+        if (files.size() == 1) suiteName = files.get(0).getName();
+        else suiteName = files.get(0).getParentFile().getName();
+        files = expandDirs(files);
+        this.inputFiles = files;
         data = new ArrayList<Datum>();
         samplesByDepth = new HashMap<Double, Sample>();
         samplesByName = new HashMap<String, Sample>();
@@ -402,6 +418,13 @@ public class Suite implements Iterable<Datum> {
         names = nameSet.toArray(names);
         setCurrentDepthIndex(0);
         for (Sample s: getSamples()) s.doPca();
+        if (files.size() == 1 &&
+                FileType.guessFromName(files.get(0)) == FileType.PUFFINPLOT &&
+                getNumSamples() > 0) {
+            app.getRecentFiles().add(files);
+            app.getMainWindow().getMainMenuBar().updateRecentFiles();
+            puffinFile = files.get(0);
+        }
     }
 
     /*
@@ -412,29 +435,32 @@ public class Suite implements Iterable<Datum> {
         try {
             List<Sample> samples = getSamplesOrdered();
             if (samples.size()==0) {
-                PuffinApp.errorDialog("Error saving calculations",
+                app.errorDialog("Error saving calculations",
                         "No calculations to save!");
                 return;
             }
 
             writer = new CsvWriter(new FileWriter(file));
             writer.writeCsv(measType.getColumnHeader(),
-                    FisherValues.getHeaders(), PcaAnnotated.getHeaders());
+                    FisherValues.getHeaders(), PcaAnnotated.getHeaders(),
+                    MDF.getHeaders());
             for (Sample sample: samples) {
                 PcaAnnotated pca = sample.getPca();
                 FisherValues fish = sample.getFisher();
+                MDF mdf = sample.getMidpoint();
                 writer.writeCsv(sample.getNameOrDepth(),
                         fish == null ? FisherValues.getEmptyFields() : fish.toStrings(),
-                        pca == null ? PcaAnnotated.getEmptyFields() : pca.toStrings());
+                        pca == null ? PcaAnnotated.getEmptyFields() : pca.toStrings(),
+                        mdf == null ? MDF.getEmptyFields() : mdf.toStrings());
             }
 
         } catch (IOException ex) {
-            PuffinApp.errorDialog("Error saving file", ex.getMessage());
+            app.errorDialog("Error saving file", ex.getMessage());
         } finally {
                 try {
                     if (writer != null) writer.close();
                 } catch (IOException ex) {
-                    PuffinApp.errorDialog("Error closing file", ex.getLocalizedMessage());
+                    app.errorDialog("Error closing file", ex.getLocalizedMessage());
                 }
         }
     }
@@ -446,7 +472,7 @@ public class Suite implements Iterable<Datum> {
         CsvWriter writer = null;
         try {
             if (siteFishers==null || siteFishers.size() == 0) {
-                PuffinApp.errorDialog("Error saving calculations",
+                app.errorDialog("Error saving calculations",
                         "No calculations to save!");
                 return;
             }
@@ -473,7 +499,7 @@ public class Suite implements Iterable<Datum> {
         CsvWriter writer = null;
         try {
             if (suiteFisher == null) {
-                PuffinApp.errorDialog("Error saving calculations",
+                app.errorDialog("Error saving calculations",
                         "No calculations to save!");
                 return;
             }
@@ -513,7 +539,7 @@ public class Suite implements Iterable<Datum> {
     public Sample getCurrentSample() {
         switch (measType) {
         case CONTINUOUS: return getSampleByDepth(getCurrentDepth());
-        case DISCRETE: return getSampleByName(currentName);
+        case DISCRETE: return getSampleByName(currentSampleName);
         default: throw new RuntimeException("Unknown measurement type.");
         }
     }
@@ -551,11 +577,11 @@ public class Suite implements Iterable<Datum> {
     }
 
     public String getCurrentName() {
-        return currentName;
+        return currentSampleName;
     }
 
     public void setCurrentName(String currentName) {
-        this.currentName = currentName;
+        this.currentSampleName = currentName;
     }
 
     public String[] getNameArray() {

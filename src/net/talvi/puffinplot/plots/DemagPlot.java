@@ -2,6 +2,7 @@ package net.talvi.puffinplot.plots;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.prefs.Preferences;
 import net.talvi.puffinplot.GraphDisplay;
 import net.talvi.puffinplot.PlotParams;
 import net.talvi.puffinplot.data.Datum;
+import net.talvi.puffinplot.data.MDF;
 import net.talvi.puffinplot.data.Sample;
 import static net.talvi.puffinplot.plots.PlotAxis.AxisParameters;
 import static net.talvi.puffinplot.plots.PlotAxis.Direction;
@@ -87,6 +89,17 @@ public class DemagPlot extends Plot {
                     true, false, i>0);
             i++;
         }
+
+        final MDF midpoint = sample.getMidpoint();
+        if (midpoint != null) {
+            double xPos = dim.getMinX() + midpoint.getDemagLevel() * hScale;
+            double yPos = dim.getMaxY() - midpoint.getIntensity() * vScale;
+            g.draw(new Line2D.Double(dim.getMinX(), yPos,
+                    xPos, yPos));
+            g.draw(new Line2D.Double(xPos, dim.getMaxY(),
+                    xPos, yPos));
+        }
+
         drawPoints(g);
     }
 }

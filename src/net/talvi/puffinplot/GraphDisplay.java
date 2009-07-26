@@ -12,19 +12,18 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Line2D;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.print.Printable;
 import java.text.AttributedString;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
 import net.talvi.puffinplot.plots.Plot;
-
 
 public abstract class GraphDisplay extends JPanel implements Printable {
 
@@ -80,6 +79,15 @@ public abstract class GraphDisplay extends JPanel implements Printable {
 
         if (!isDragPlotMode()) {
             for (Plot plot: plots.values()) plot.draw(g2);
+            if (mouseListener.pointSelectionCorner != null &&
+                    mouseListener.startPoint != null) {
+                Rectangle2D r = new Rectangle2D.Double();
+                r.add(mouseListener.pointSelectionCorner);
+                r.add(mouseListener.startPoint);
+                //g2.draw(r);
+                //g2.draw(new Line2D.Double(mouseListener.startPoint,
+                //        mouseListener.pointSelectionCorner));
+            }
         } else {
             for (Plot plot : plots.values()) {
                 float fontSize = plot.getFontSize() * 2;
@@ -143,6 +151,7 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         private Plot draggee; // the plot currently being dragged
         private static final int LEFT=1, TOP=2, RIGHT=4, BOTTOM=8, ALLSIDES=15;
         private int sides;
+        private Point2D pointSelectionCorner;
         
         public void mouseClicked(MouseEvent e) {
             final Point2D position = getAntiZoom().transform(e.getPoint(), null);
@@ -159,8 +168,8 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         
         public void mousePressed(MouseEvent e) {
             draggee = null;
-            if (!isDragPlotMode()) return;            
             startPoint = getAntiZoom().transform(e.getPoint(), null);
+            if (!isDragPlotMode()) return;            
             double smallestSize = Double.MAX_VALUE; // when plots overlap, pick the smallest
             for (Plot plot : plots.values()) {
                 Rectangle2D dims = plot.getDimensions();
@@ -189,8 +198,8 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         }
         
         public void mouseDragged(MouseEvent e) {
+            Point2D thisPoint = getAntiZoom().transform(e.getPoint(), null);
             if (isDragPlotMode() && getDraggingPlot() != null) {
-                Point2D thisPoint = getAntiZoom().transform(e.getPoint(), null);
                 double dx = thisPoint.getX() - startPoint.getX();
                 double dy = thisPoint.getY() - startPoint.getY();
                 double x0 = oldDims.getMinX();
@@ -215,6 +224,9 @@ public abstract class GraphDisplay extends JPanel implements Printable {
                 Rectangle2D newDims =
                         new Rectangle2D.Double(x0, y0, x1 - x0, y1 - y0);
                 getDraggingPlot().setDimensions(newDims);
+                repaint();
+            } else {
+                pointSelectionCorner = thisPoint;
                 repaint();
             }
         }
@@ -242,7 +254,4 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         printChildren(graphics);
         setDoubleBuffered(true);
     }
-
-
-
 }

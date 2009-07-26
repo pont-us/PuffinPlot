@@ -82,7 +82,8 @@ public class MainMenuBar extends JMenuBar {
         });
         useEmptyItem.setAccelerator(KeyStroke.getKeyStroke('Y', modifierKey));
         
-        add(makeMenu("File", pa.open, recentFilesMenu, pa.save, pa.close,
+        add(makeMenu("File", pa.open, recentFilesMenu, pa.save, pa.saveAs,
+                pa.close,
                 makeMenu("Export calculations", pa.exportCalcsSample,
                 pa.exportCalcsSite, pa.exportCalcsSuite),
                 pa.pageSetup, pa.print, pa.printFisher, new OldSquidItem(),
@@ -93,7 +94,8 @@ public class MainMenuBar extends JMenuBar {
                 useEmptyItem));
         add(makeMenu("Calculations",
                 pa.pcaOnSelection, anchorItem = new AnchorItem(),
-                pa.fisher, pa.fisherBySite, pa.fisherBySample, pa.clear));
+                pa.fisher, pa.fisherBySite, pa.fisherOnSuite,
+                pa.mdf, pa.clear));
         add(makeMenu("Window",
                 new WindowMenuItem("Data table")
                 { JFrame window(PuffinApp a) {return a.getTableWindow();}},
@@ -128,7 +130,7 @@ public class MainMenuBar extends JMenuBar {
         if (s != null) anchorItem.setSelected(s.isPcaAnchored());
     }
     
-    void updateRecentFiles() {
+    public void updateRecentFiles() {
         recentFilesMenu.removeAll();
         final RecentFileList recent = PuffinApp.getInstance().getRecentFiles();
         final String[] recentFileNames = recent.getFilesetNames();

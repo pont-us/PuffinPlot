@@ -1,8 +1,11 @@
 package net.talvi.puffinplot;
 
+import com.sun.org.apache.bcel.internal.generic.SIPUSH;
 import net.talvi.puffinplot.data.Suite;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.AbstractAction;
@@ -61,19 +64,19 @@ public class SampleChooser extends JPanel {
      * array containing the current sample if it's continuous.
      * 
      */
-    public Sample[] getSelectedSamples() {
-        Sample[] samples;
+    public List<Sample> getSelectedSamples() {
+        List<Sample> samples;
         Suite suite = PuffinApp.getInstance().getSuite();
+        if (suite == null) return Collections.emptyList();
         switch (suite.getMeasType()) {
         case DISCRETE:
             Object[] names = sampleList.getSelectedValues();
-            samples = new Sample[names.length];
+            samples = new ArrayList<Sample>(names.length);
             for (int i = 0; i < names.length; i++)
-                samples[i] = suite.getSampleByName((String) names[i]);
+                samples.add(suite.getSampleByName((String) names[i]));
             break;
         case CONTINUOUS:
-            samples = new Sample[1];
-            samples[0] = suite.getCurrentSample();
+            samples = Collections.singletonList(suite.getCurrentSample());
             break;
         default:
             throw new Error("Unknown measurement type.");

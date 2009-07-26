@@ -69,16 +69,4 @@ public class FisherValues {
     public static List<String> getEmptyFields() {
         return Collections.nCopies(HEADERS.size(), "");
     }
-
-    public String toLine(String separator) {
-        return String.format("%.1f%s%.1f%s%.1f%s%.1f",
-                getMeanDirection().getIncDeg(), separator,
-                getMeanDirection().getDecDeg(), separator,
-                getA95(), separator, getK());
-    }
-
-    public static String getHeader(String separator) {
-        return String.format("Fisher inc.%sFisher dec.%s" +
-                "Fisher a95%sFisher k", separator, separator, separator);
-    }
 }

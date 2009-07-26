@@ -14,6 +14,7 @@ public class Sample {
     private boolean emptySlot = false;
     private static final int SAMPLE_ID_LENGTH = 4;
     private PcaAnnotated pcaAnnotated;
+    private MDF midpoint;
 
     public Sample(double depth) {
         this.depth = depth;
@@ -32,7 +33,15 @@ public class Sample {
         fisher = null;
         selectNone();
     }
-    
+
+    public void calculateMidpoint(boolean useEmptyCorrection) {
+        midpoint = MDF.calculate(data, useEmptyCorrection);
+    }
+
+    public MDF getMidpoint() {
+        return midpoint;
+    }
+
     /*
      * Rotates all data 180 degrees about the X axis.
      */
