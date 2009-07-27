@@ -14,7 +14,7 @@ type: :feature
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
+status: :in_progress
 disposition: 
 creation_time: 2009-06-07 20:22:25.911075 Z
 references: []
@@ -35,3 +35,13 @@ log_events:
   - |-
     No sense doing a release if we can only read OPRF files! There should be
     a well-defined set of required input fields in the documentation.
+- - 2009-07-27 01:58:18.798575 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - |-
+    Have discussed with Christian. We thrashed out the notion of a
+    preview window for tabulated data of unknown format, which would allow
+    the user to specify which columns meant what. This is technically
+    straightforward, but will require some careful UI decisions.
+    Christian has put the word out for examples of other data formats,
+    so I should have something to work with soon.

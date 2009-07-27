@@ -56,6 +56,33 @@ public class DataTable extends Plot {
 
     @Override
     public void draw(Graphics2D g) {
+        clearPoints();
+
+        Sample sample = params.getSample();
+        if (sample==null) return;
+        List<Datum> data = sample.getData();
+        if (data.size() == 0) return;
+
+        FontRenderContext frc = g.getFontRenderContext();
+        points.add(new TextLinePoint(this, frc, 0, null, headers, xSpacing));
+        float yPos = 2 * ySpacing;
+        for (Datum d: data) {
+            List<String> values = new ArrayList<String>(4);
+            Vec3 p = d.getPoint(params.getCorrection(), params.isEmptyCorrectionActive());
+            values.add(String.format("%.0f", d.getDemagLevel()));
+            values.add(String.format("%.1f", p.getDecDeg()));
+            values.add(String.format("%.1f", p.getIncDeg()));
+            // Don't use .1g, it tickles a bug in Java (#6469160) which
+            // throws an ArrayFormatException (at least in Sun Java 5 & 6)
+            values.add(String.format("%.3g", p.mag()));
+            points.add(new TextLinePoint(this, frc, yPos, d, values, xSpacing));
+            yPos += ySpacing;
+        }
+        drawPoints(g);
+
+    }
+
+    public void draw_XXX(Graphics2D g) {
         g.setColor(Color.BLACK);
         Sample sample = params.getSample();
         if (sample==null) return;

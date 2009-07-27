@@ -32,7 +32,7 @@ public abstract class Plot
     private final GraphDisplay parent;
     protected final PlotParams params;
     protected Rectangle2D dimensions;
-    private List<PlotPoint> points = new LinkedList<PlotPoint>();
+    List<PlotPoint> points = new LinkedList<PlotPoint>();
     private static final float UNIT_SCALE = (float) 0.0001f;
     private Stroke stroke, dashedStroke;
     private float unitSize;
@@ -125,46 +125,6 @@ public abstract class Plot
                 r.getWidth() - (left + right) * u,
                 r.getHeight() - (top + bottom) * u);
     }
-
-    private class PlotPoint {
-
-        private final Shape shape;
-        private final Shape highlight;
-        private final Datum datum;
-        private final boolean filled;
-        private final boolean lineToHere;
-        private final boolean special;
-        private final Point2D centre;
-        private static final double HIGHLIGHT_SCALE = 1.6;
-        private static final double PLOT_POINT_SIZE = 24;
-
-        PlotPoint(Datum datum, Point2D centre,
-                boolean filled, boolean lineToHere, boolean special) {
-            double size = PLOT_POINT_SIZE * getUnitSize();
-            this.centre = centre;
-            this.datum = datum;
-            shape = new Rectangle2D.Double(centre.getX() - size,
-                    centre.getY() - size, 2 * size, 2 * size);
-            final double hs = HIGHLIGHT_SCALE;
-            highlight = new Rectangle2D.Double(centre.getX() - size * hs,
-                    centre.getY() - size * hs,
-                    2 * size * hs, 2 * size * hs);
-            this.filled = filled;
-            this.lineToHere = lineToHere;
-            this.special = special;
-        }
-
-        void draw(Graphics2D g) {
-            g.setColor(datum!=null && datum.isSelected() ? Color.RED: Color.BLACK);
-            g.draw(shape);
-            if (special) g.draw(highlight);
-            if (filled) g.fill(shape);
-        }
-
-        public Point2D getCentre() {
-            return centre;
-        }
-    }
     
     public Plot(GraphDisplay parent, PlotParams params, Preferences prefs) {
         this.params = params;
@@ -215,20 +175,16 @@ public abstract class Plot
 
     protected void drawPoints(Graphics2D g) {
         g.setStroke(getStroke());
-        Point2D prev = null;
-        for (int i=0; i<points.size(); i++) {
-            points.get(i).draw(g);
-            if (i > 0 && points.get(i).lineToHere) {
-                g.setColor(Color.BLACK);
-                g.draw(new Line2D.Double(prev, points.get(i).centre));
-            }
-            prev = points.get(i).centre;
+        PlotPoint prev = null;
+        for (PlotPoint point: points) {
+            point.drawWithPossibleLine(g, prev);
+            prev = point;
         }
     }
         
     protected void addPoint(Datum d, Point2D p, boolean filled,
             boolean special, boolean line) {
-        points.add(new PlotPoint(d, p, filled, line, special));
+        points.add(new SquarePoint(this, d, p, filled, line, special));
     }
     
     protected void clearPoints() {
@@ -238,21 +194,21 @@ public abstract class Plot
     public void mouseClicked(java.awt.geom.Point2D position, MouseEvent e) {
         if (e.isShiftDown()) {
             for (PlotPoint s : points) {
-                if (s.datum != null && s.centre.distance(position) <
-                        SLOPPY_SELECTION_RADIUS_IN_UNITS * getUnitSize())
-                    s.datum.setSelected(e.getButton() == MouseEvent.BUTTON1);
+                if (s.getDatum() != null && s.isNear(position,
+                        SLOPPY_SELECTION_RADIUS_IN_UNITS * getUnitSize()))
+                    s.getDatum().setSelected(e.getButton() == MouseEvent.BUTTON1);
             }
         } else {
             for (PlotPoint s : points) {
-                if (s.datum != null && s.shape.contains(position)) s.datum.toggleSel();
+                if (s.getDatum() != null && s.getShape().contains(position)) s.getDatum().toggleSel();
             }
         }
     }
 
     public void selectByRectangle(Rectangle2D r) {
         for (PlotPoint point: points) {
-            if (point.datum != null && point.shape.intersects(r))
-                point.datum.setSelected(true);
+            if (point.getDatum() != null && point.getShape().intersects(r))
+                point.getDatum().setSelected(true);
         }
     }
 

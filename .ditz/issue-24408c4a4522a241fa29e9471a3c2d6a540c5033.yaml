@@ -1,0 +1,23 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Site auto-grouping fails for Christian's numbering scheme
+desc: |-
+  Christian has a data-set where the sample codes don't include the
+  dot between the core number and sample number. Thus site groupings
+  are wrong, since PuffinPlot uses the last four characters as the 
+  sample ID. PuffinPlot should check for presence of dot and act
+  accordingly.
+type: :bugfix
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2009-07-27 02:01:12.232468 Z
+references: []
+
+id: 24408c4a4522a241fa29e9471a3c2d6a540c5033
+log_events: 
+- - 2009-07-27 02:01:12.750682 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
