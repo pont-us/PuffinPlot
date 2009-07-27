@@ -33,6 +33,7 @@ public abstract class GraphDisplay extends JPanel implements Printable {
     protected AffineTransform zoomTransform;
     private final GdMouseListener mouseListener;
     private boolean dragPlotMode = false;
+    private boolean draggingSelection = false;
     private static final AlphaComposite WEAK_COMPOSITE =
             AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .2f);
     private static final AlphaComposite STRONG_COMPOSITE =
@@ -78,15 +79,22 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         g2.setPaintMode();
 
         if (!isDragPlotMode()) {
-            for (Plot plot: plots.values()) plot.draw(g2);
-            if (mouseListener.pointSelectionCorner != null &&
-                    mouseListener.startPoint != null) {
+            if (draggingSelection) {
                 Rectangle2D r = new Rectangle2D.Double();
-                r.add(mouseListener.pointSelectionCorner);
-                r.add(mouseListener.startPoint);
-                //g2.draw(r);
-                //g2.draw(new Line2D.Double(mouseListener.startPoint,
-                //        mouseListener.pointSelectionCorner));
+                r.setFrameFromDiagonal(mouseListener.startPoint,
+                        mouseListener.currentDragPoint);
+                Rectangle2D rUnzoomed = new Rectangle2D.Double();
+                rUnzoomed.setFrameFromDiagonal(getAntiZoom().transform(mouseListener.startPoint, null),
+                        getAntiZoom().transform(mouseListener.currentDragPoint, null));
+                for (Plot plot : plots.values()) plot.selectByRectangle(rUnzoomed);
+                for (Plot plot : plots.values()) plot.draw(g2);
+                g2.setColor(Color.ORANGE);
+                g2.setComposite(WEAK_COMPOSITE);
+                g2.fill(r);
+                g2.setComposite(STRONG_COMPOSITE);
+                g2.draw(r);
+            } else {
+                for (Plot plot : plots.values()) plot.draw(g2);
             }
         } else {
             for (Plot plot : plots.values()) {
@@ -151,7 +159,7 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         private Plot draggee; // the plot currently being dragged
         private static final int LEFT=1, TOP=2, RIGHT=4, BOTTOM=8, ALLSIDES=15;
         private int sides;
-        private Point2D pointSelectionCorner;
+        private Point2D currentDragPoint;
         
         public void mouseClicked(MouseEvent e) {
             final Point2D position = getAntiZoom().transform(e.getPoint(), null);
@@ -163,13 +171,11 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         
         public void mouseReleased(MouseEvent e) {
             draggee = null;
+            draggingSelection = false;
             repaint();
         }
-        
-        public void mousePressed(MouseEvent e) {
-            draggee = null;
-            startPoint = getAntiZoom().transform(e.getPoint(), null);
-            if (!isDragPlotMode()) return;            
+
+        private void updateDraggingPlot() {
             double smallestSize = Double.MAX_VALUE; // when plots overlap, pick the smallest
             for (Plot plot : plots.values()) {
                 Rectangle2D dims = plot.getDimensions();
@@ -195,6 +201,13 @@ public abstract class GraphDisplay extends JPanel implements Printable {
                 if (sidesTmp==0) sidesTmp = ALLSIDES;
                 sides = sidesTmp;
             }
+        }
+
+        public void mousePressed(MouseEvent e) {
+            draggee = null;
+            startPoint = getAntiZoom().transform(e.getPoint(), null);
+            if (isDragPlotMode()) updateDraggingPlot();
+            else draggingSelection = true;
         }
         
         public void mouseDragged(MouseEvent e) {
@@ -226,7 +239,7 @@ public abstract class GraphDisplay extends JPanel implements Printable {
                 getDraggingPlot().setDimensions(newDims);
                 repaint();
             } else {
-                pointSelectionCorner = thisPoint;
+                currentDragPoint = thisPoint;
                 repaint();
             }
         }

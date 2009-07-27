@@ -249,6 +249,13 @@ public abstract class Plot
         }
     }
 
+    public void selectByRectangle(Rectangle2D r) {
+        for (PlotPoint point: points) {
+            if (point.datum != null && point.shape.intersects(r))
+                point.datum.setSelected(true);
+        }
+    }
+
     public abstract String getName();
 
     public String getNiceName() {

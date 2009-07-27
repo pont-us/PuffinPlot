@@ -5,8 +5,8 @@ type: :feature
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2009-07-15 08:37:43.325982 Z
 references: []
 
@@ -16,3 +16,14 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2009-07-27 00:25:09.511804 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - |-
+    Pretty much working, except on the data table, but I am not
+    regarding #91 as a blocker for this, since it should automagically
+    start working once data table lines are implemented as PlotPoints.
+- - 2009-07-27 00:25:43.031033 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - Implemented as specified.
