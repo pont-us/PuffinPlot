@@ -1,0 +1,21 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Automatic PCA selection
+desc: |-
+  Christian claims that Gary Acton has a script which does this, and
+  has asked for it. An algorithm for this is also described in the
+  Kirschvink paper.
+type: :feature
+component: PuffinPlot
+release: "1.2"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2009-07-28 02:31:03.811330 Z
+references: []
+
+id: 29fdd916761b20596c4bf6c4f0e983fdaedefc0b
+log_events: 
+- - 2009-07-28 02:31:04.033943 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

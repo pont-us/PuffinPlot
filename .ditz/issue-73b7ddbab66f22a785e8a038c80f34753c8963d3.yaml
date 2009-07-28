@@ -45,3 +45,10 @@ log_events:
     straightforward, but will require some careful UI decisions.
     Christian has put the word out for examples of other data formats,
     so I should have something to work with soon.
+- - 2009-07-28 00:07:35.441920 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    Interpreting long core files requires knowledge of the effective
+    sensor lengths, so this will have to be moved to a configuration
+    option.

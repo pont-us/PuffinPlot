@@ -21,3 +21,14 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2009-07-27 20:43:50.638738 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    Ideally I should add some kind of UI to allow manual grouping of
+    samples into sites in cases where the scheme doesn't follow OPRF
+    conventions.
+- - 2009-07-28 02:33:52.395242 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - "`User-selectable' portion of this now split out into bug #95."
