@@ -7,7 +7,7 @@ desc: |-
   application.
 type: :task
 component: PuffinPlot
-release: "1.1"
+release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
 status: :unstarted
 disposition: 
@@ -24,3 +24,7 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - edited title, description
   - ""
+- - 2009-07-28 22:09:35.679455 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.0 from 1.1
+  - Definitely needed for 1.0 if it's going to be a public release!
