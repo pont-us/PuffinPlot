@@ -59,7 +59,7 @@ public class PuffinApp {
     public void redoCalculations() {
         for (Suite suite: suites) {
             for (Sample sample: suite.getSamples()) {
-                sample.doFisher();
+                sample.calculateFisher();
                 sample.doPca();
             }
         }

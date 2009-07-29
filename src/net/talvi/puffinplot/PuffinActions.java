@@ -267,7 +267,7 @@ public class PuffinActions {
             if (s == null) {
                 app.errorDialog("Fisher on sample", "No sample selected.");
             } else {
-                app.getSample().doFisher();
+                app.getSample().calculateFisher();
                 app.getMainWindow().repaint();
             }
         }
@@ -309,7 +309,7 @@ public class PuffinActions {
         public void actionPerformed(ActionEvent e) {
             List<Sample> samples = app.getSelectedSamples();
             for (Sample s: samples) {
-                s.calculateMidpoint(app.isEmptyCorrectionActive());
+                s.calculateMdf(app.isEmptyCorrectionActive());
             }
             app.getMainWindow().repaint();
         }

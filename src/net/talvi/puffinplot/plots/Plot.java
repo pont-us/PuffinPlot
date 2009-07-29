@@ -1,16 +1,13 @@
 package net.talvi.puffinplot.plots;
 
 import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
-import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.text.AttributedString;
@@ -192,22 +189,25 @@ public abstract class Plot
     }
     
     public void mouseClicked(java.awt.geom.Point2D position, MouseEvent e) {
-        if (e.isShiftDown()) {
-            for (PlotPoint s : points) {
-                if (s.getDatum() != null && s.isNear(position,
-                        SLOPPY_SELECTION_RADIUS_IN_UNITS * getUnitSize()))
-                    s.getDatum().setSelected(e.getButton() == MouseEvent.BUTTON1);
+        final boolean sloppy = e.isShiftDown();
+        for (PlotPoint p : points) {
+            final Datum d = p.getDatum();
+            if (d == null || d.isHidden()) continue;
+            if (sloppy) {
+                if (p.isNear(position, SLOPPY_SELECTION_RADIUS_IN_UNITS * getUnitSize()))
+                    d.setSelected(e.getButton() == MouseEvent.BUTTON1);
+                } else {
+                if (p.getShape().contains(position))
+                    d.toggleSel();
             }
-        } else {
-            for (PlotPoint s : points) {
-                if (s.getDatum() != null && s.getShape().contains(position)) s.getDatum().toggleSel();
             }
-        }
     }
 
     public void selectByRectangle(Rectangle2D r) {
         for (PlotPoint point: points) {
-            if (point.getDatum() != null && point.getShape().intersects(r))
+            if (point.getDatum() != null && 
+                    !point.getDatum().isHidden() &&
+                    point.getShape().intersects(r))
                 point.getDatum().setSelected(true);
         }
     }

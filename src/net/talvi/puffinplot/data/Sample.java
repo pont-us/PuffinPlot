@@ -34,8 +34,8 @@ public class Sample {
         selectNone();
     }
 
-    public void calculateMidpoint(boolean useEmptyCorrection) {
-        midpoint = MDF.calculate(data, useEmptyCorrection);
+    public void calculateMdf(boolean useEmptyCorrection) {
+        midpoint = MDF.calculate(getVisibleData(), useEmptyCorrection);
     }
 
     public MDF getMidpoint() {
@@ -129,7 +129,7 @@ public class Sample {
         return (runEndsSeen <= 1);
     }
     
-    public void doFisher() {
+    public void calculateFisher() {
         List<Vec3> points = getSelectedPoints();
         if (points.size() > 1)
             fisher = FisherValues.calculate(points);
