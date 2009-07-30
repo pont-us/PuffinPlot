@@ -10,6 +10,7 @@ import java.awt.Rectangle;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.text.AttributedString;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -175,6 +176,7 @@ public class ZPlot extends Plot {
             double yOrig = dims.getMinY() + getMargin();
             double textOffs = 25 * getUnitSize();
             double lineOffs = 150 * getUnitSize();
+
             g.setColor(Color.BLACK);
             addPoint(null, new Point2D.Double(xOrig, yOrig), false, false, false);
             addPoint(null, new Point2D.Double(xOrig, yOrig + lineOffs), true, false, false);
@@ -182,7 +184,10 @@ public class ZPlot extends Plot {
                     (float) (yOrig + textOffs));
             writeString(g, "horizontal", (float) (xOrig + 50 * getUnitSize()),
                     (float) (yOrig + lineOffs + textOffs));
-            writeString(g, timesTenToThe("Units: Gauss", axes.getMagnitude()), (float) xOrig,
+            final AttributedString units = axes != null
+                    ? timesTenToThe("Units: Gauss", axes.getMagnitude())
+                    : timesTenToThe("Units: Gauss", "?");
+            writeString(g, units, (float) xOrig,
                     (float) (yOrig + 2 * lineOffs + textOffs));
             drawPoints(g);
         }

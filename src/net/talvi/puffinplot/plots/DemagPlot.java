@@ -42,12 +42,8 @@ public class DemagPlot extends Plot {
         boolean useEmptyCorr = params.isEmptyCorrectionActive();
 
         g.setColor(Color.BLACK);
-        double maxIntens = 0, maxDemag = 0;
-        for (Datum d: data) {
-            if (d.getDemagLevel() > maxDemag) maxDemag = d.getDemagLevel();
-            if (d.getIntensity(useEmptyCorr) > maxIntens)
-                maxIntens = d.getIntensity(useEmptyCorr);
-        }
+        double maxDemag = Datum.maximumDemag(data);
+        double maxIntens = Datum.maximumIntensity(data, useEmptyCorr);
 
         // If all the measurements have the same demag level, we'll
         // just plot them in sequence to avoid giving them all the same

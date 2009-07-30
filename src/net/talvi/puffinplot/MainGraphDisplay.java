@@ -63,6 +63,8 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
         } catch (Exception ex) {
             throw new Error(ex);
         }
+        // The legend will always be drawn after the Zplot (as required),
+        // since LinkedHashMap guarantees iteration in order of insertion.
         plots.put("ZplotLegend", ((ZPlot) plots.get("ZPlot")).getLegend());
     }
 

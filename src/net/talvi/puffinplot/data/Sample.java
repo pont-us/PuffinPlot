@@ -14,7 +14,7 @@ public class Sample {
     private boolean emptySlot = false;
     private static final int SAMPLE_ID_LENGTH = 4;
     private PcaAnnotated pcaAnnotated;
-    private MDF midpoint;
+    private MDF mdf;
 
     public Sample(double depth) {
         this.depth = depth;
@@ -31,15 +31,16 @@ public class Sample {
     public void clear() {
         pcaAnnotated = null;
         fisher = null;
+        mdf = null;
         selectNone();
     }
 
     public void calculateMdf(boolean useEmptyCorrection) {
-        midpoint = MDF.calculate(getVisibleData(), useEmptyCorrection);
+        mdf = MDF.calculate(getVisibleData(), useEmptyCorrection);
     }
 
     public MDF getMidpoint() {
-        return midpoint;
+        return mdf;
     }
 
     /*

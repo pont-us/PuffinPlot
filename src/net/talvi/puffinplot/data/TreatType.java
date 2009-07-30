@@ -14,12 +14,11 @@ public enum TreatType {
 	
     private final String axisLabel;
     private final String name;
-    private final static Map<String, TreatType> nameMap;
+    private final static Map<String, TreatType> nameMap =
+            new HashMap<String, TreatType>();
 
     static {
-        // This block is run after the enums have been initialized.
-        // See http://deepjava.wordpress.com/2006/12/08/bootstrapping-static-fields-within-enums/
-         nameMap = new HashMap<String, TreatType>();
+         // See Effective Java, 2nd ed., item 30, p. 154 for this technique
          for (TreatType t: values()) nameMap.put(t.toString().toLowerCase(), t);
     }
     
@@ -32,9 +31,16 @@ public enum TreatType {
         this.name = name;
         this.axisLabel = axisLabel;
     }
+
+    private static String normalizeString(String s) {
+        s = s.toLowerCase();
+        if (s.startsWith("\"")) s = s.substring(1);
+        if (s.endsWith("\"")) s = s.substring(0, s.length()-1);
+        return s;
+    }
     
     static TreatType fromString(String s) {
-        TreatType t = nameMap.get(s.toLowerCase());
+        TreatType t = nameMap.get(normalizeString(s));
         return t != null ? t : UNKNOWN;
     }
 

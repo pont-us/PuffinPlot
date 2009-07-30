@@ -19,6 +19,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.print.Printable;
 import java.text.AttributedString;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,7 +47,10 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         zoomTransform = AffineTransform.getScaleInstance(1.0, 1.0);
 
         setLayout(null);
-        plots = new HashMap<String,Plot>();
+        // LinkedHashMap because ZplotLegend has to be drawn after
+        // Zplot, since it must read the order of magnitude from the
+        // axes.
+        plots = new LinkedHashMap<String,Plot>();
 
         setOpaque(true);
         setBackground(Color.WHITE);

@@ -331,7 +331,7 @@ public class Suite implements Iterable<Datum> {
                     Fields fields = new Fields(fieldsLine);
                     if (fields.areAllUnknown()) {
                         addWarning("%s doesn't look like a 2G or PPL file. " +
-                                "Ignoring it.");
+                                "Ignoring it.", fileName);
                         reader.close();
                         break;
                     }

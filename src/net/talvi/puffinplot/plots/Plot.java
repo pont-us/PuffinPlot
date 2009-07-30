@@ -102,16 +102,21 @@ public abstract class Plot
         layout.draw(g, x, y);
     }
 
-    AttributedString timesTenToThe(String text, int exponent) {
-        String expText = Integer.toString(exponent);
-         // 00D7 is the multiplication sign
-        text += " \u00D710" + expText;
+    /**
+     *  Used for "x10^?" when exponent is unknown.
+     */
+    protected AttributedString timesTenToThe(String text, String exponent) {
+        // 00D7 is the multiplication sign
+        text += " \u00D710" + exponent;
         AttributedString as = new AttributedString(text);
         as.addAttribute(SUPERSCRIPT, SUPERSCRIPT_SUPER,
-                text.length() - expText.length(), text.length());
+                text.length() - exponent.length(), text.length());
         return as;
     }
 
+    protected AttributedString timesTenToThe(String text, int exponent) {
+        return timesTenToThe(text, Integer.toString(exponent));
+    }
 
     protected Rectangle2D cropRectangle(Rectangle2D r, double left,
             double right, double top, double bottom) {

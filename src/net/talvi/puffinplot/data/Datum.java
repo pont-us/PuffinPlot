@@ -384,8 +384,27 @@ public class Datum {
         case THERMAL: return temp;
         case ARM: return armGauss;
         case IRM: return irmGauss;
+        case UNKNOWN: return 0;
         default: throw new IllegalArgumentException("unhandled treatment type");
         }
+    }
+
+    public static double maximumDemag(List<Datum> ds) {
+        double max = 0;
+        for (Datum d: ds) {
+            double level = d.getDemagLevel();
+            if (level > max) max = level;
+        }
+        return max;
+    }
+
+    public static double maximumIntensity(List<Datum> ds, boolean emptyCorr) {
+        double max = 0;
+        for (Datum d: ds) {
+            double i = d.getIntensity(emptyCorr);
+            if (i > max) max = i;
+        }
+        return max;
     }
 
     public double getIntensity(boolean emptyCorrection) {
