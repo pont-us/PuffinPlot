@@ -593,6 +593,14 @@ public class Suite implements Iterable<Datum> {
             mySample.copySelectionFrom(sample);
     }
 
+    public Sample getSampleByIndex(int i) {
+        if (measType == MeasType.CONTINUOUS) {
+            return samplesByDepth.get(depths[i]);
+        } else {
+            return samplesByName.get(names[i]);
+        }
+    }
+
     @Override
     public String toString() {
         return getName();

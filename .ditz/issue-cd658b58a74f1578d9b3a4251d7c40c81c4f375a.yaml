@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Split Suite into DiscreteSuite and ContinuousSuite
+desc: See Bloch 2nd ed., item 20.
+type: :task
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2009-07-31 06:01:36.157187 Z
+references: []
+
+id: cd658b58a74f1578d9b3a4251d7c40c81c4f375a
+log_events: 
+- - 2009-07-31 06:01:36.670635 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

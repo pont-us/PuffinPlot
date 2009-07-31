@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -13,7 +14,9 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.LinkedList;
 import java.util.List;
+import javax.swing.AbstractAction;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import net.talvi.puffinplot.data.Suite;
@@ -42,6 +45,18 @@ public class DepthSlider extends JPanel
                     suite.setCurrentDepthIndex(getValue());
                     PuffinApp.getInstance().updateDisplay();
                 }
+            }
+        });
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DOWN"), "next");
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("UP"), "previous");
+        getActionMap().put("next", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                changeValueBy(1);
+            }
+        });
+        getActionMap().put("previous", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                changeValueBy(-1);
             }
         });
         addMouseListener(this);
@@ -75,11 +90,11 @@ public class DepthSlider extends JPanel
         double scale = getScale();
         double yOrig = getY() + getYMargin();
         double y = yOrig + (scale * value);
-        if (rangeStart > -1) {
+        if (getRangeStart() > -1) {
             g2.setColor(Color.RED);
             Rectangle2D selection = new Rectangle2D.Double();
-            selection.setFrameFromDiagonal(getX(), yOrig + rangeStart * scale,
-                    getX() + getWidth(), yOrig + rangeEnd * scale);
+            selection.setFrameFromDiagonal(getX(), yOrig + getRangeStart() * scale,
+                    getX() + getWidth(), yOrig + getRangeEnd() * scale);
             g2.fill(selection);
         }
         g2.setColor(Color.WHITE);
@@ -131,7 +146,7 @@ public class DepthSlider extends JPanel
     }
 
     public void mousePressed(MouseEvent e) {
-        // Do nothing.
+        requestFocusInWindow();;
     }
 
     public void mouseReleased(MouseEvent e) {
@@ -166,13 +181,13 @@ public class DepthSlider extends JPanel
     }
 
     private void adjustRange(int v) {
-        if (rangeStart == -1) rangeStart = v;
-        if (rangeEnd == -1) rangeEnd = v;
-        if (v < rangeStart) rangeStart = v;
-        else if (v < rangeEnd) {
-            if (v - rangeStart < rangeEnd - v) rangeStart = v;
+        if (getRangeStart() == -1) rangeStart = v;
+        if (getRangeEnd() == -1) rangeEnd = v;
+        if (v < getRangeStart()) rangeStart = v;
+        else if (v < getRangeEnd()) {
+            if (v - getRangeStart() < getRangeEnd() - v) rangeStart = v;
             else rangeEnd = v;
-        } else if (v > rangeEnd) rangeEnd = v;
+        } else if (v > getRangeEnd()) rangeEnd = v;
     }
 
     private int yposToValue(double yPos) {
@@ -183,6 +198,20 @@ public class DepthSlider extends JPanel
         return v < 0 ? 0
                 : v > maximum ? maximum
                 : v;
+    }
+
+    /**
+     * @return the rangeStart
+     */
+    public int getRangeStart() {
+        return rangeStart;
+    }
+
+    /**
+     * @return the rangeEnd
+     */
+    public int getRangeEnd() {
+        return rangeEnd;
     }
 
 }

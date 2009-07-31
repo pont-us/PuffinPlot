@@ -207,7 +207,7 @@ public abstract class GraphDisplay extends JPanel implements Printable {
 
         public void mousePressed(MouseEvent e) {
             draggee = null;
-            startPoint = getAntiZoom().transform(e.getPoint(), null);
+            startPoint = currentDragPoint = getAntiZoom().transform(e.getPoint(), null);
             if (isDragPlotMode()) updateDraggingPlot();
             else draggingSelection = true;
         }

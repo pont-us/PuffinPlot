@@ -12,8 +12,8 @@ type: :bugfix
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2009-07-30 04:19:50.651996 Z
 references: []
 
@@ -23,3 +23,10 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2009-07-31 06:38:29.978758 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Implemented almost as specified: pointer is overlain on range selection
+    rather than being adjacent. User holds shift to perform a range 
+    selection.

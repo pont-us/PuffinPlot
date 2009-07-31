@@ -67,7 +67,19 @@ public class SampleChooser extends JPanel {
                 samples.add(suite.getSampleByName((String) names[i]));
             break;
         case CONTINUOUS:
-            samples = Collections.singletonList(suite.getCurrentSample());
+            int start = depthSlider.getRangeStart();
+            int end = depthSlider.getRangeEnd();
+            int value = depthSlider.getValue();
+            if (start > -1) {
+                samples = new ArrayList<Sample>(end - start + 2);
+                if (value < start) samples.add(suite.getSampleByIndex(value));
+                for (int i = start; i <= end; i++) {
+                    samples.add(suite.getSampleByIndex(i));
+                }
+                if (value > end) samples.add(suite.getSampleByIndex(value));
+            } else {
+                samples = Collections.singletonList(suite.getCurrentSample());
+            }
             break;
         default:
             throw new Error("Unknown measurement type.");
