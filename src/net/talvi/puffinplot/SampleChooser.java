@@ -1,12 +1,10 @@
 package net.talvi.puffinplot;
 
-import com.sun.org.apache.bcel.internal.generic.SIPUSH;
 import net.talvi.puffinplot.data.Suite;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -54,16 +52,9 @@ public class SampleChooser extends JPanel {
         getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke('B', modifierKey), "previous");
         getActionMap().put("next", nextAction);
         getActionMap().put("previous", prevAction);
-        
         setVisibility(false, false);
     }
     
-    /**
-     * 
-     * @return Selected samples if current suite is discrete; a length-1 
-     * array containing the current sample if it's continuous.
-     * 
-     */
     public List<Sample> getSelectedSamples() {
         List<Sample> samples;
         Suite suite = PuffinApp.getInstance().getSuite();
@@ -107,11 +98,11 @@ public class SampleChooser extends JPanel {
         }
     }
     
-    private class DepthSlider extends JSlider {
+    private class OldDepthSlider extends JSlider {
 
         private static final long serialVersionUID = 1L;
 
-        DepthSlider() {
+        OldDepthSlider() {
             super(VERTICAL, 0, 0, 0);
             setMinimum(0);
             setValue(0);

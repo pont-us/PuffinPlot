@@ -588,6 +588,11 @@ public class Suite implements Iterable<Datum> {
         return names;
     }
 
+    public void applySelectionToAll(Sample sample) {
+        for (Sample mySample: getSamples())
+            mySample.copySelectionFrom(sample);
+    }
+
     @Override
     public String toString() {
         return getName();

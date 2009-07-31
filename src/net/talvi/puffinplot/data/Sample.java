@@ -196,4 +196,10 @@ public class Sample {
     public void unhideAllPoints() {
         for (Datum d: data) d.setHidden(false);
     }
+
+    public void copySelectionFrom(Sample s) {
+        List<Datum> otherData = s.getData();
+        for (int i=0; i<data.size(); i++)
+            data.get(i).setSelected(otherData.get(i).isSelected());
+    }
 }

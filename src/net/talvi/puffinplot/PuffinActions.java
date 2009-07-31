@@ -346,6 +346,17 @@ public class PuffinActions {
         }
     };
 
+    public final Action applySelectionToSuite = new PuffinAction("Apply selection to suite",
+            "Select the same points for every sample in this suite", null, false, KeyEvent.VK_P) {
+        public void actionPerformed(ActionEvent e) {
+            Sample s = app.getSample();
+            if (s != null) {
+                s.selectAll();
+                app.getMainWindow().repaint();
+            }
+        }
+    };
+
     // we can't use ctrl-H because Apples use it already.
     public final Action hideSelectedPoints = new PuffinAction("Hide selection",
             "Hide the selected points", 'G', false, KeyEvent.VK_H) {

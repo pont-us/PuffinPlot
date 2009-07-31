@@ -1,0 +1,25 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Allow range selection for long cores
+desc: |-
+  Long cores really need to be on a par with discrete suites in terms
+  of multiple sample selection. Unfortunately a standard JSlider can't
+  do this; there are third-party range sliders available but
+  implementing my own is probably the easiest, since I don't actually
+  need much functionality. Most intuitive way would probably two
+  adjacent vertical strips, one showing the `pointer' (current sample),
+  the other the range (if any).
+type: :bugfix
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2009-07-30 04:19:50.651996 Z
+references: []
+
+id: efa295a479a1ace3d94a08f800478102f03a0c24
+log_events: 
+- - 2009-07-30 04:19:51.609945 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
