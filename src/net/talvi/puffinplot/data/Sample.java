@@ -8,6 +8,8 @@ import net.talvi.puffinplot.PuffinApp;
 public class Sample {
     
     private final List<Datum> data;
+    private final List<Datum> demagData;
+    private final List<Datum> magSusData;
     private final double depth;
     private final String name;
     private FisherValues fisher = null;
@@ -16,16 +18,20 @@ public class Sample {
     private PcaAnnotated pcaAnnotated;
     private MDF mdf;
 
-    public Sample(double depth) {
+    private Sample(double depth, String name) {
         this.depth = depth;
-        this.name = null;
+        this.name = name;
         this.data = new ArrayList<Datum>();
+        this.demagData = new ArrayList<Datum>();
+        this.magSusData = new ArrayList<Datum>();
+    }
+
+    public Sample(double depth) {
+        this(depth, null);
     }
 
     public Sample(String name) {
-        this.name = name;
-        this.depth = Double.NaN;
-        this.data = new ArrayList<Datum>();
+        this(Double.NaN, name);
     }
     
     public void clear() {
@@ -47,11 +53,11 @@ public class Sample {
      * Rotates all data 180 degrees about the X axis.
      */
     public void flip() {
-        for (Datum d: data) d.rotX180();
+        for (Datum d: getData()) d.rotX180();
     }
 
     public void hideSelectedPoints() {
-        for (Datum d: data) {
+        for (Datum d: getData()) {
             if (d.isSelected()) {
                 d.setSelected(false);
                 d.setHidden(true);
@@ -60,23 +66,38 @@ public class Sample {
     }
     
     public void selectAll() {
-        for (Datum d : data) d.setSelected(true);
+        for (Datum d : getData()) d.setSelected(true);
     }
     
     public void selectNone() {
-        for (Datum d : data) d.setSelected(false);
+        for (Datum d : getData()) d.setSelected(false);
     }
 
     public List<Datum> getVisibleData() {
-        List<Datum> visibleData = new ArrayList<Datum>(data.size());
-        for (Datum d: data) if (!d.isHidden()) visibleData.add(d);
+        List<Datum> visibleData = new ArrayList<Datum>(getNumData());
+        for (Datum d: getData()) if (!d.isHidden()) visibleData.add(d);
         return visibleData;
     }
 
     public List<Datum> getData() {
+        return demagData;
+    }
+
+    public List<Datum> getAllData() {
         return data;
     }
-    
+
+    public List<Datum> getMagSusData() {
+        return magSusData;
+    }
+
+    public List<Datum> getVisibleMagSusData() {
+        List<Datum> visibleData = new ArrayList<Datum>(getNumData());
+        for (Datum d: getMagSusData()) if (!d.isHidden()) visibleData.add(d);
+        return visibleData;
+    }
+
+
     public int getNumData() {
         return getData().size();
     }
@@ -87,6 +108,13 @@ public class Sample {
     
     public void addDatum(Datum d) {
         data.add(d);
+        if (d.isMagSus()) {
+            if (demagData.size()>0)
+                d.copyDemagDataFrom(demagData.get(demagData.size()-1));
+            magSusData.add(d);
+        } else {
+            demagData.add(d);
+        }
         d.setSample(this);
     }
 
@@ -104,14 +132,14 @@ public class Sample {
 
     public List<Datum> getSelectedData() {
         LinkedList<Datum> selData = new LinkedList<Datum>();
-        for (Datum d: data) if (d.isSelected()) selData.add(d);
+        for (Datum d: getData()) if (d.isSelected()) selData.add(d);
         return selData;
     }
 
     public List<Vec3> getSelectedPoints() {
         LinkedList<Vec3> points = new LinkedList<Vec3>();
         PuffinApp app = PuffinApp.getInstance();
-        for (Datum d: data)
+        for (Datum d: getData())
             if (d.isSelected())
                 points.add(d.getPoint(app.getCorrection(),
                         app.isEmptyCorrectionActive()));
@@ -121,7 +149,7 @@ public class Sample {
     public boolean isSelectionContiguous() {
         int runEndsSeen = 0;
         boolean thisIsSelected = false, lastWasSelected = false;
-        for (Datum d: data) {
+        for (Datum d: getData()) {
             thisIsSelected = d.isSelected();
             if (lastWasSelected && !thisIsSelected) runEndsSeen++;
             lastWasSelected = thisIsSelected;
@@ -137,12 +165,12 @@ public class Sample {
     }
 
     public void doPca(boolean anchored) {
-        for (Datum d: data) d.setPcaAnchored(anchored);
+        for (Datum d: getData()) d.setPcaAnchored(anchored);
         pcaAnnotated = PcaAnnotated.calculate(this);
     }
 
     public void doPca() {
-        doPca(data.get(0).isPcaAnchored());
+        doPca(getData().get(0).isPcaAnchored());
     }
     
     public String getName() {
@@ -150,7 +178,7 @@ public class Sample {
     }
 
     public MeasType getMeasType() {
-        for (Datum d: data)
+        for (Datum d: getData())
             if (d.getMeasType().isActualMeasurement()) return d.getMeasType();
         return MeasType.UNKNOWN;
     }
@@ -178,11 +206,11 @@ public class Sample {
     }
     
     public boolean isPcaAnchored() {
-        return data.get(0).isPcaAnchored();
+        return getData().get(0).isPcaAnchored();
     }
     
     public void setPcaAnchored(boolean pcaAnchored) {
-        for (Datum d: data) d.setPcaAnchored(pcaAnchored);
+        for (Datum d: getData()) d.setPcaAnchored(pcaAnchored);
     }
 
     public boolean isEmptySlot() {
@@ -194,12 +222,12 @@ public class Sample {
     }
 
     public void unhideAllPoints() {
-        for (Datum d: data) d.setHidden(false);
+        for (Datum d: getData()) d.setHidden(false);
     }
 
     public void copySelectionFrom(Sample s) {
         List<Datum> otherData = s.getData();
-        for (int i=0; i<data.size(); i++)
-            data.get(i).setSelected(otherData.get(i).isSelected());
+        for (int i=0; i<getNumData(); i++)
+            getData().get(i).setSelected(otherData.get(i).isSelected());
     }
 }

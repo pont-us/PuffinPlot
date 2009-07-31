@@ -359,7 +359,11 @@ public class Datum {
     public void toggleSel() {
         setSelected(!isSelected());
     }
-    
+
+    public double getMagSus() {
+        return magSus;
+    }
+
     public boolean isMagSus() {
         return !Double.isNaN(magSus);
     }
@@ -389,6 +393,22 @@ public class Datum {
         }
     }
 
+    /**
+     * Intended to fix up 2G's anonymous mag sus lines by inserting the
+     * demagnetization data from the preceding remanence reading.
+     * 
+     * @param d datum from which to copy
+     */
+    public void copyDemagDataFrom(Datum d) {
+        afx = d.afx;
+        afy = d.afy;
+        afz = d.afz;
+        temp = d.temp;
+        armGauss = d.armGauss;
+        irmGauss = d.irmGauss;
+        treatType = d.treatType;
+    }
+
     public static double maximumDemag(List<Datum> ds) {
         double max = 0;
         for (Datum d: ds) {
@@ -416,7 +436,7 @@ public class Datum {
     }
 
     public boolean ignoreOnLoading() {
-        return isMagSus() ||
+        return /* isMagSus() || */
                 (getTreatType() == TreatType.ARM) ||
                 getMeasType() == MeasType.NONE;
     }

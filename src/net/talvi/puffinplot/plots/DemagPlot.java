@@ -37,6 +37,7 @@ public class DemagPlot extends Plot {
         if (sample==null) return;
         List<Datum> data = sample.getVisibleData();
         if (data.size() == 0) return;
+        List<Datum> msData = sample.getVisibleMagSusData();
 
         Rectangle2D dim = cropRectangle(getDimensions(), 270, 200, 50, 230);
         boolean useEmptyCorr = params.isEmptyCorrectionActive();
@@ -70,13 +71,13 @@ public class DemagPlot extends Plot {
         if (midpoint != null) {
             hAxisParams.markedPosition = midpoint.getDemagLevel();
         }
-        PlotAxis hAxis = new PlotAxis(hAxisParams, this);
-        PlotAxis vAxis =
+        final PlotAxis hAxis = new PlotAxis(hAxisParams, this);
+        final PlotAxis vAxis =
                 new PlotAxis(new AxisParameters(maxIntens, Direction.UP).
                 withLabel("Intensity (Gauss)"), this);
         
-        double hScale = dim.getWidth() / hAxis.getLength();
-        double vScale = dim.getHeight() / vAxis.getLength();
+        final double hScale = dim.getWidth() / hAxis.getLength();
+        final double vScale = dim.getHeight() / vAxis.getLength();
         
         vAxis.draw(g, vScale, (int)dim.getMinX(), (int)dim.getMaxY());
         hAxis.draw(g, hScale, (int)dim.getMinX(), (int)dim.getMaxY());
@@ -91,14 +92,29 @@ public class DemagPlot extends Plot {
             i++;
         }
 
-
         if (midpoint != null) {
-            double xPos = dim.getMinX() + midpoint.getDemagLevel() * hScale;
-            double yPos = dim.getMaxY() - midpoint.getIntensity() * vScale;
+            final double xPos = dim.getMinX() + midpoint.getDemagLevel() * hScale;
+            final double yPos = dim.getMaxY() - midpoint.getIntensity() * vScale;
             g.draw(new Line2D.Double(dim.getMinX(), yPos,
                     xPos, yPos));
             g.draw(new Line2D.Double(xPos, dim.getMaxY(),
                     xPos, yPos));
+        }
+
+        if (msData != null && msData.size() > 0) {
+            final AxisParameters msAxisParams = new AxisParameters(50, Direction.UP);
+            final PlotAxis msAxis = new PlotAxis(msAxisParams, this);
+            final double msScale = dim.getHeight() / msAxis.getLength();
+            msAxis.draw(g, msScale, (int)dim.getMaxX(), (int)dim.getMaxY());
+            i = 0;
+            for (Datum d: msData) {
+            final double xPos = dim.getMinX() +
+                    (xBySequence ? (i + 1) : d.getDemagLevel()) * hScale;
+            addPoint(d, new Point2D.Double(xPos,
+                    dim.getMaxY() - d.getMagSus() * msScale),
+                    false, false, i>0);
+            i++;
+            }
         }
 
         drawPoints(g);

@@ -14,10 +14,6 @@ import javax.swing.table.AbstractTableModel;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.TwoGeeField;
 
-/**
- *
- * @author pont
- */
 public class TableWindow extends JFrame {
     private JTable table;
     private DataTableModel tableModel;
@@ -54,7 +50,7 @@ public class TableWindow extends JFrame {
         public int getRowCount() {
             if (PuffinApp.getInstance() != null &&
                     PuffinApp.getInstance().getSample() != null)
-                return PuffinApp.getInstance().getSample().getNumData();
+                return PuffinApp.getInstance().getSample().getAllData().size();
             else return 0;
         }
 
@@ -65,7 +61,7 @@ public class TableWindow extends JFrame {
 
         public Object getValueAt(int row, int col) {
             try {
-                Datum d = PuffinApp.getInstance().getSample().getDatum(row);
+                Datum d = PuffinApp.getInstance().getSample().getAllData().get(row);
                 return d.getValue(TwoGeeField.values()[col]);
             } catch (NullPointerException e) {
                 throw new RuntimeException("row " + row + " col " + col, e);
@@ -75,20 +71,12 @@ public class TableWindow extends JFrame {
     
     class TablePanel extends JPanel {
 
-
-        
         public TablePanel() {
             super(new GridLayout(1, 0));
-
             table = new JTable(tableModel = new DataTableModel());
             table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-
             table.setPreferredScrollableViewportSize(new Dimension(500, 70));
-
-            //Create the scroll pane and add the table to it.
             JScrollPane scrollPane = new JScrollPane(table);
-
-            //Add the scroll pane to this panel.
             add(scrollPane);
         }
     }
