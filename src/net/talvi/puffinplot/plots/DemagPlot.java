@@ -63,12 +63,17 @@ public class DemagPlot extends Plot {
                 ? "Measurement number"
                 : sample.getDatum(sample.getNumData() - 1).getTreatType().getAxisLabel();
 
+        AxisParameters hAxisParams = new AxisParameters(xAxisLength, Direction.RIGHT).
+                withLabel(xAxisLabel);
+
+        final MDF midpoint = sample.getMidpoint();
+        if (midpoint != null) {
+            hAxisParams.markedPosition = midpoint.getDemagLevel();
+        }
+        PlotAxis hAxis = new PlotAxis(hAxisParams, this);
         PlotAxis vAxis =
                 new PlotAxis(new AxisParameters(maxIntens, Direction.UP).
                 withLabel("Intensity (Gauss)"), this);
-        PlotAxis hAxis =
-                new PlotAxis(new AxisParameters(xAxisLength, Direction.RIGHT).
-                withLabel(xAxisLabel), this);
         
         double hScale = dim.getWidth() / hAxis.getLength();
         double vScale = dim.getHeight() / vAxis.getLength();
@@ -86,7 +91,7 @@ public class DemagPlot extends Plot {
             i++;
         }
 
-        final MDF midpoint = sample.getMidpoint();
+
         if (midpoint != null) {
             double xPos = dim.getMinX() + midpoint.getDemagLevel() * hScale;
             double yPos = dim.getMaxY() - midpoint.getIntensity() * vScale;

@@ -11,6 +11,7 @@ import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import sun.awt.motif.MPopupMenuPeer;
 
 class PlotAxis {
     private final Plot plot;
@@ -92,6 +93,7 @@ class PlotAxis {
             public Double stepSize = null;
             public Integer numSteps = null;
             public Integer magnitude = null;
+            public Double markedPosition = null;
 
             public AxisParameters(double extent, Direction direction) {
                 this.extent = extent;
@@ -108,6 +110,7 @@ class PlotAxis {
                 stepSize = p.stepSize;
                 numSteps = p.numSteps;
                 magnitude = p.magnitude;
+                markedPosition = p.markedPosition;
             }
 
             public AxisParameters withEndLabel(String endLabel) {
@@ -119,6 +122,7 @@ class PlotAxis {
                 this.label = label;
                 return this;
             }
+
         }
 
     private static double calculateStepSize(double extent) {
@@ -223,6 +227,14 @@ class PlotAxis {
                     : new AttributedString(text);
             putText(g, as,
                 xOrig+xLen, yOrig+yLen, ap.direction.labelPos(), 0, 5);
+            if (ap.markedPosition != null) {
+                AttributedString mark = new AttributedString
+                        (String.format("%.0f", ap.markedPosition));
+                putText(g, mark,
+                        xOrig + x * ap.markedPosition * scale,
+                        yOrig + y * ap.markedPosition * scale,
+                        ap.direction.labelPos(), 0, 5);
+            }
         }
         if (ap.label != null) {
             AttributedString as = (ap.magnitudeOnLabel && getMagnitude() != 0)
