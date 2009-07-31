@@ -33,8 +33,9 @@ class PlotAxis {
             return this==LEFT || this==RIGHT;
         }
         
-        Direction labelPos() {
-            return this.isHorizontal() ? DOWN : LEFT;
+        Direction labelPos(boolean farSide) {
+            final Direction d = this.isHorizontal() ? DOWN : LEFT;
+            return farSide ? d.opposite() : d;
         }
         
         Direction rotAcw90() {
@@ -51,6 +52,13 @@ class PlotAxis {
 
         public String getLetter() {
             return letter;
+        }
+
+        public Direction opposite() {
+            return this == LEFT ? RIGHT
+                    : this == RIGHT ? LEFT
+                    : this == UP ? DOWN
+                    : DOWN;
         }
     }
 
@@ -94,6 +102,9 @@ class PlotAxis {
             public Integer numSteps = null;
             public Integer magnitude = null;
             public Double markedPosition = null;
+            // farside: true for an axis at top or right.
+            // used to draw label on correct side.
+            public boolean farSide = false;
 
             public AxisParameters(double extent, Direction direction) {
                 this.extent = extent;
@@ -111,6 +122,7 @@ class PlotAxis {
                 numSteps = p.numSteps;
                 magnitude = p.magnitude;
                 markedPosition = p.markedPosition;
+                farSide = p.farSide;
             }
 
             public AxisParameters withEndLabel(String endLabel) {
@@ -226,14 +238,14 @@ class PlotAxis {
                     ? plot.timesTenToThe(text, getMagnitude())
                     : new AttributedString(text);
             putText(g, as,
-                xOrig+xLen, yOrig+yLen, ap.direction.labelPos(), 0, 5);
+                xOrig+xLen, yOrig+yLen, ap.direction.labelPos(ap.farSide), 0, 5);
             if (ap.markedPosition != null) {
                 AttributedString mark = new AttributedString
                         (String.format("%.0f", ap.markedPosition));
                 putText(g, mark,
                         xOrig + x * ap.markedPosition * scale,
                         yOrig + y * ap.markedPosition * scale,
-                        ap.direction.labelPos(), 0, 5);
+                        ap.direction.labelPos(ap.farSide), 0, 5);
             }
         }
         if (ap.label != null) {
@@ -242,7 +254,7 @@ class PlotAxis {
                     : new AttributedString(ap.label);
 
             putText(g, as, xOrig + xLen / 2, yOrig + yLen / 2,
-                    ap.direction.labelPos(), ap.direction.labelRot(), 15);
+                    ap.direction.labelPos(ap.farSide), ap.direction.labelRot(), 15);
         }
         
         if (ap.endLabel != null) {

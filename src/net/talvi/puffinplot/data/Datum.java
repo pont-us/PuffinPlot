@@ -364,6 +364,10 @@ public class Datum {
         return magSus;
     }
 
+    public void setMagSus(double magSus) {
+        this.magSus = magSus;
+    }
+
     public boolean isMagSus() {
         return !Double.isNaN(magSus);
     }
@@ -391,22 +395,6 @@ public class Datum {
         case UNKNOWN: return 0;
         default: throw new IllegalArgumentException("unhandled treatment type");
         }
-    }
-
-    /**
-     * Intended to fix up 2G's anonymous mag sus lines by inserting the
-     * demagnetization data from the preceding remanence reading.
-     * 
-     * @param d datum from which to copy
-     */
-    public void copyDemagDataFrom(Datum d) {
-        afx = d.afx;
-        afy = d.afy;
-        afz = d.afz;
-        temp = d.temp;
-        armGauss = d.armGauss;
-        irmGauss = d.irmGauss;
-        treatType = d.treatType;
     }
 
     public static double maximumDemag(List<Datum> ds) {

@@ -37,7 +37,6 @@ public class DemagPlot extends Plot {
         if (sample==null) return;
         List<Datum> data = sample.getVisibleData();
         if (data.size() == 0) return;
-        List<Datum> msData = sample.getVisibleMagSusData();
 
         Rectangle2D dim = cropRectangle(getDimensions(), 270, 200, 50, 230);
         boolean useEmptyCorr = params.isEmptyCorrectionActive();
@@ -101,18 +100,24 @@ public class DemagPlot extends Plot {
                     xPos, yPos));
         }
 
-        if (msData != null && msData.size() > 0) {
+        {
             final AxisParameters msAxisParams = new AxisParameters(50, Direction.UP);
+            msAxisParams.label = "Magnetic susceptibility (S.I.)";
+            msAxisParams.farSide = true;
             final PlotAxis msAxis = new PlotAxis(msAxisParams, this);
             final double msScale = dim.getHeight() / msAxis.getLength();
             msAxis.draw(g, msScale, (int)dim.getMaxX(), (int)dim.getMaxY());
             i = 0;
-            for (Datum d: msData) {
+            boolean first = true;
+            for (Datum d: data) {
             final double xPos = dim.getMinX() +
                     (xBySequence ? (i + 1) : d.getDemagLevel()) * hScale;
-            addPoint(d, new Point2D.Double(xPos,
+            if (d.isMagSus()) {
+                addPoint(d, new Point2D.Double(xPos,
                     dim.getMaxY() - d.getMagSus() * msScale),
-                    false, false, i>0);
+                    false, false, !first);
+                first = false;
+            }
             i++;
             }
         }

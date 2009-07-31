@@ -5,7 +5,7 @@ type: :feature
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@ou094023>
-status: :unstarted
+status: :in_progress
 disposition: 
 creation_time: 2008-11-11 03:02:40.713745 Z
 references: []
@@ -24,3 +24,15 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - assigned to release 1.0 from 1.1
   - ""
+- - 2009-07-31 09:43:46.534799 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - |-
+    Now partially implemented. Realized during implementation that
+    MS values can simply be folded into the (inferred) corresponding
+    remanence Datum objects, since a 2G MS line contains no valid
+    fields except for the sample name and MS reading (I think). This
+    should simplify a lot of things.
+    
+    A couple of rough edges (autoscaling; not showing MS axis when
+    there's no data) remain.

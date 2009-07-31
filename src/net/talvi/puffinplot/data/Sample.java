@@ -8,8 +8,6 @@ import net.talvi.puffinplot.PuffinApp;
 public class Sample {
     
     private final List<Datum> data;
-    private final List<Datum> demagData;
-    private final List<Datum> magSusData;
     private final double depth;
     private final String name;
     private FisherValues fisher = null;
@@ -22,8 +20,6 @@ public class Sample {
         this.depth = depth;
         this.name = name;
         this.data = new ArrayList<Datum>();
-        this.demagData = new ArrayList<Datum>();
-        this.magSusData = new ArrayList<Datum>();
     }
 
     public Sample(double depth) {
@@ -80,23 +76,12 @@ public class Sample {
     }
 
     public List<Datum> getData() {
-        return demagData;
+        return data;
     }
 
     public List<Datum> getAllData() {
         return data;
     }
-
-    public List<Datum> getMagSusData() {
-        return magSusData;
-    }
-
-    public List<Datum> getVisibleMagSusData() {
-        List<Datum> visibleData = new ArrayList<Datum>(getNumData());
-        for (Datum d: getMagSusData()) if (!d.isHidden()) visibleData.add(d);
-        return visibleData;
-    }
-
 
     public int getNumData() {
         return getData().size();
@@ -107,14 +92,9 @@ public class Sample {
     }
     
     public void addDatum(Datum d) {
-        data.add(d);
-        if (d.isMagSus()) {
-            if (demagData.size()>0)
-                d.copyDemagDataFrom(demagData.get(demagData.size()-1));
-            magSusData.add(d);
-        } else {
-            demagData.add(d);
-        }
+        if (d.isMagSus() && getData().size()>0)
+                getData().get(getData().size()-1).setMagSus(d.getMagSus());
+        else data.add(d);
         d.setSample(this);
     }
 
