@@ -381,7 +381,7 @@ public class Suite implements Iterable<Datum> {
                         reader.close();
                         break fileTypeSwitch;
                     }
-                    String[] headers = whitespace.split(reader.readLine());
+                    String[] headers = whitespace.split(headerLine);
 
                     if (headers.length != 7) {
                         addWarning("Wrong number of header fields in Zplot file %s:" +

@@ -7,7 +7,7 @@ type: :bugfix
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
+status: :in_progress
 disposition: 
 creation_time: 2009-08-01 07:34:21.925853 Z
 references: []
@@ -18,3 +18,15 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2009-08-01 08:50:34.563630 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2009-08-01 08:53:23.540848 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    Yes, I broke it when trying to make PuffinPlot behave more gracefully
+    with broken files. It was throwing away the header line, then trying
+    to read the first data line as headers -- oops! Have fixed & tested
+    with the file Christian sent me; will wait for his OK before closing.
