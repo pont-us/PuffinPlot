@@ -184,7 +184,7 @@ public class Datum {
             break;
         case DISCRETE: sampleId = depthOrSample;
             break;
-        default: throw new Error("Can't happen.");
+        default: throw new Error("Unhandled measurement type "+measType);
         }
         String project = s.next();
         double afOrThermalDemag = s.nextDouble();
