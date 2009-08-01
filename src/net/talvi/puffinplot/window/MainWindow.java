@@ -1,5 +1,6 @@
-package net.talvi.puffinplot;
+package net.talvi.puffinplot.window;
 
+import net.talvi.puffinplot.*;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -51,11 +52,15 @@ public class MainWindow extends JFrame {
         setMaximumSize(jsp.getMaximumSize());
         pack();
     }
+
+    public SampleChooser getSampleChooser() {
+        return sampleChooser;
+    }
     
-    void suitesChanged() {
+    public void suitesChanged() {
         sampleChooser.updateSuite();
         controlPanel.updateSuites();
-        int numSuites = PuffinApp.getInstance().suites.size();
+        int numSuites = PuffinApp.getInstance().getSuites().size();
         getGraphDisplay().setVisible(numSuites > 0);
         welcomeMessage.setVisible(numSuites == 0);
         repaint();

@@ -1,4 +1,4 @@
-package net.talvi.puffinplot;
+package net.talvi.puffinplot.window;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -145,7 +145,7 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         this.dragPlotMode = dragPlotMode;
     }
 
-    void resetLayout() {
+    public void resetLayout() {
         for (Plot plot: plots.values()) plot.setDimensionsToDefault();
         repaint();
     }

@@ -1,5 +1,6 @@
-package net.talvi.puffinplot;
+package net.talvi.puffinplot.window;
 
+import net.talvi.puffinplot.*;
 import java.awt.Graphics;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
@@ -48,7 +49,7 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
             }
         };
 
-        Preferences pref = PuffinPrefs.prefs;
+        Preferences pref = PuffinPrefs.getPrefs();
 
         String[] plotNames = {"SampleEqAreaPlot", "ZPlot", "DemagPlot",
             "DataTable", "PcaTable", "SampleTable", "FisherTable"};

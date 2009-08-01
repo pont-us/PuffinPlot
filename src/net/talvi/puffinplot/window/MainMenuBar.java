@@ -1,5 +1,6 @@
-package net.talvi.puffinplot;
+package net.talvi.puffinplot.window;
 
+import net.talvi.puffinplot.*;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -126,7 +127,7 @@ public class MainMenuBar extends JMenuBar {
             }
     }
 
-    void sampleChanged() {
+    public void sampleChanged() {
         Sample s = PuffinApp.getInstance().getSample();
         if (s != null) anchorItem.setSelected(s.isPcaAnchored());
     }

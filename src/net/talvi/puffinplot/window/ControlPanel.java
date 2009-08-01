@@ -1,5 +1,6 @@
-package net.talvi.puffinplot;
+package net.talvi.puffinplot.window;
 
+import net.talvi.puffinplot.*;
 import net.talvi.puffinplot.data.Suite;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -65,7 +66,7 @@ public class ControlPanel extends JPanel
     void updateSuites() {
         updatingSuites = true;
         suiteBox.removeAllItems();
-        for (Suite suite: app.suites) {
+        for (Suite suite: app.getSuites()) {
             suiteBox.addItem(suite);
         }
         updatingSuites = false;
@@ -73,7 +74,7 @@ public class ControlPanel extends JPanel
         if (currentSuite != null) suiteBox.setSelectedItem(currentSuite);
     }
     
-    void updateSample() {
+    public void updateSample() {
         Sample s = app.getSample();
         Datum d = null;
         if (s != null) d = s.getDatum(0);

@@ -1,15 +1,9 @@
 package net.talvi.puffinplot;
 
 import java.awt.geom.Rectangle2D;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Scanner;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.data.Correction;
-import net.talvi.puffinplot.plots.Plot;
 
 public class PuffinPrefs {
 
@@ -17,14 +11,18 @@ public class PuffinPrefs {
     private boolean pcaAnchored;
     private HashMap<String,Rectangle2D> plotSizes =
             new HashMap<String, Rectangle2D>();
-    static Preferences prefs = Preferences.userNodeForPackage(PuffinPrefs.class);
+    private static Preferences prefs = Preferences.userNodeForPackage(PuffinPrefs.class);
     private Correction correction;
     private boolean useOldSquidOrientations;
     
     public PuffinPrefs() {
         load();
     }
-    
+
+    public static Preferences getPrefs() {
+        return prefs;
+    }
+
     public boolean isAxisScaleLocked() {
         return axisScaleLocked;
     }
@@ -52,16 +50,16 @@ public class PuffinPrefs {
     }
 
     public void load() {
-        PuffinApp.getInstance().setRecentFiles(new RecentFileList(prefs));
-        correction = Correction.valueOf(prefs.get("correction", "NONE"));
-        setUseOldSquidOrientations(Boolean.parseBoolean(prefs.get("useOldSquidOrientations", "false")));
+        PuffinApp.getInstance().setRecentFiles(new RecentFileList(getPrefs()));
+        correction = Correction.valueOf(getPrefs().get("correction", "NONE"));
+        setUseOldSquidOrientations(Boolean.parseBoolean(getPrefs().get("useOldSquidOrientations", "false")));
     }
     
     public void save() {
-        PuffinApp.getInstance().getRecentFiles().save(prefs);
-        prefs.put("plotSizes", PuffinApp.getInstance().getMainWindow().getGraphDisplay().getPlotSizeString());
-        prefs.put("correction", PuffinApp.getInstance().getCorrection().name());
-        prefs.put("useOldSquidOrientations", Boolean.toString(isUseOldSquidOrientations()));
+        PuffinApp.getInstance().getRecentFiles().save(getPrefs());
+        getPrefs().put("plotSizes", PuffinApp.getInstance().getMainWindow().getGraphDisplay().getPlotSizeString());
+        getPrefs().put("correction", PuffinApp.getInstance().getCorrection().name());
+        getPrefs().put("useOldSquidOrientations", Boolean.toString(isUseOldSquidOrientations()));
     }
 
     public boolean isUseOldSquidOrientations() {

@@ -6,8 +6,8 @@ import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.text.AttributedString;
 import java.util.prefs.Preferences;
-import net.talvi.puffinplot.GraphDisplay;
-import net.talvi.puffinplot.PlotParams;
+import net.talvi.puffinplot.window.GraphDisplay;
+import net.talvi.puffinplot.window.PlotParams;
 import net.talvi.puffinplot.data.FisherValues;
 import net.talvi.puffinplot.data.Sample;
 

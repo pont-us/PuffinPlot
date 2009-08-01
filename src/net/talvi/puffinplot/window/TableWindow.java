@@ -1,5 +1,6 @@
-package net.talvi.puffinplot;
+package net.talvi.puffinplot.window;
 
+import net.talvi.puffinplot.*;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.LinkedList;

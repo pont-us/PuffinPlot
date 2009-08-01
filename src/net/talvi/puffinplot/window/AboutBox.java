@@ -4,8 +4,9 @@
  * Created on 6 November 2008, 14:13
  */
 
-package net.talvi.puffinplot;
+package net.talvi.puffinplot.window;
 
+import net.talvi.puffinplot.*;
 import java.awt.Frame;
 
 /**

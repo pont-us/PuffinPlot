@@ -1,4 +1,4 @@
-package net.talvi.puffinplot;
+package net.talvi.puffinplot.window;
 
 import java.awt.Dimension;
 import javax.swing.JFrame;

@@ -1,0 +1,20 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Combine PuffinActions and PuffinAction
+desc: |-
+  No reason why PuffinAction shouldn't fill the role of PuffinActions
+  and contain static instances of itself.
+type: :task
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2009-08-01 22:15:17.615123 Z
+references: []
+
+id: 3f038b83cdef062eae5643e0611c1c4c52afcdeb
+log_events: 
+- - 2009-08-01 22:15:17.941613 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

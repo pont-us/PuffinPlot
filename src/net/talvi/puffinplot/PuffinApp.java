@@ -1,5 +1,10 @@
 package net.talvi.puffinplot;
 
+import net.talvi.puffinplot.window.CorrectionWindow;
+import net.talvi.puffinplot.window.TableWindow;
+import net.talvi.puffinplot.window.FisherWindow;
+import net.talvi.puffinplot.window.AboutBox;
+import net.talvi.puffinplot.window.MainWindow;
 import java.awt.Dimension;
 import net.talvi.puffinplot.data.Suite;
 import java.awt.event.ActionEvent;
@@ -48,11 +53,15 @@ public class PuffinApp {
     public static String getBuildDate() { return buildDate; }
     private boolean emptyCorrectionActive;
 
+    public List<Suite> getSuites() {
+        return suites;
+    }
+
     public boolean isEmptyCorrectionActive() {
         return emptyCorrectionActive;
     }
 
-    void setEmptyCorrectionActive(boolean b) {
+    public void setEmptyCorrectionActive(boolean b) {
         emptyCorrectionActive = b;
     }
 
@@ -294,7 +303,7 @@ public class PuffinApp {
 
     // Only works for discrete, of course.
     public List<Sample> getSelectedSamples() {
-        return getMainWindow().sampleChooser.getSelectedSamples();
+        return getMainWindow().getSampleChooser().getSelectedSamples();
     }
 
     public void setSuite(int selectedIndex) {

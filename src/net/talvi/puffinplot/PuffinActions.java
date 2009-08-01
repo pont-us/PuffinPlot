@@ -36,7 +36,7 @@ public class PuffinActions {
         this.app = app;
     }
 
-    static abstract class PuffinAction extends AbstractAction {
+    public static abstract class PuffinAction extends AbstractAction {
         private boolean specialMacMenuItem;
 
         public PuffinAction(String name, String description,
