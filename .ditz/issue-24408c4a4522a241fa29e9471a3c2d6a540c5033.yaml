@@ -10,8 +10,8 @@ type: :bugfix
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2009-07-27 02:01:12.232468 Z
 references: []
 
@@ -32,3 +32,13 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - commented
   - "`User-selectable' portion of this now split out into bug #95."
+- - 2009-08-01 06:40:20.329520 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2009-08-01 07:20:01.788893 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Site grouping now peels off last three digits of sample code if no
+    dot is present, and the last four if there is a dot.

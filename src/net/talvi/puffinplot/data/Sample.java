@@ -12,7 +12,6 @@ public class Sample {
     private final String name;
     private FisherValues fisher = null;
     private boolean emptySlot = false;
-    private static final int SAMPLE_ID_LENGTH = 4;
     private PcaAnnotated pcaAnnotated;
     private MDF mdf;
     private boolean hasMsData = false;
@@ -176,7 +175,9 @@ public class Sample {
     }
 
     private int getSiteSplit() {
-        return getName().length() - SAMPLE_ID_LENGTH;
+        String n = getName();
+        int len = n.length();
+        return len - n.charAt(len-2) == '.' ? 4 : 3;
     }
 
     public String getSiteId() {
