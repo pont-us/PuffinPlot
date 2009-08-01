@@ -8,8 +8,11 @@ import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
+import java.awt.font.TransformAttribute;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 import java.util.HashMap;
 import static java.text.AttributedCharacterIterator.Attribute;
@@ -20,6 +23,7 @@ import java.util.Scanner;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.GraphDisplay;
 import net.talvi.puffinplot.PlotParams;
+import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.Datum;
 import static java.awt.font.TextAttribute.SUPERSCRIPT;
 import static java.awt.font.TextAttribute.SUPERSCRIPT_SUPER;
@@ -39,12 +43,37 @@ public abstract class Plot
     private static final float SLOPPY_SELECTION_RADIUS_IN_UNITS = 128.0f;
     private Map<Attribute,Object> attributeMap
      = new HashMap<Attribute, Object>();
+    private static final TextAttribute SUPERSCRIPT_KEY;
+    private static final Object SUPERSCRIPT_VALUE;
 
     protected static final String DEFAULT_PLOT_POSITIONS =
             "demag 374 85 348 311 zplot 736 85 456 697 zplotlegend 1060 30 " +
             "130 49 sampletable 14 14 462 57 fishertable 550 14 178 61 " +
             "pcatable 736 14 193 64 equarea 376 398 346 389 datatable 14 83 " +
             "356 706 ";
+
+    static {
+        /* The superscript attribute doesn't always work properly:
+         * under Linux/Java 1.5 , it appears a little too high. Under
+         * any (current) Apple Java, it appears halfway to Mongolia.
+         * Thus, for broken JREs, we fall back on a manual text transform
+         * based on the TextAttribute.SUPERSCRIPT Javadoc. The vertical
+         * offset is determined by experiment, and does not accord
+         * with the value suggested by the TextAttribute Javadoc.
+         */
+        if (PuffinApp.MAC_OS_X ||
+                System.getProperty("java.version", "UNKNOWN").
+                matches("^1\\.5.*")) {
+            SUPERSCRIPT_KEY = TextAttribute.TRANSFORM;
+            final double scale = 2d / 3d;
+            AffineTransform at = AffineTransform.getTranslateInstance(0, -5);
+            at.concatenate(AffineTransform.getScaleInstance(scale, scale));
+            SUPERSCRIPT_VALUE = new TransformAttribute(at);
+        } else {
+            SUPERSCRIPT_KEY = TextAttribute.SUPERSCRIPT;
+            SUPERSCRIPT_VALUE = TextAttribute.SUPERSCRIPT_SUPER;
+        }
+    }
 
     public Rectangle2D getDimensions() {
         return dimensions;
@@ -109,7 +138,7 @@ public abstract class Plot
         // 00D7 is the multiplication sign
         text += " \u00D710" + exponent;
         AttributedString as = new AttributedString(text);
-        as.addAttribute(SUPERSCRIPT, SUPERSCRIPT_SUPER,
+        as.addAttribute(SUPERSCRIPT_KEY, SUPERSCRIPT_VALUE,
                 text.length() - exponent.length(), text.length());
         return as;
     }

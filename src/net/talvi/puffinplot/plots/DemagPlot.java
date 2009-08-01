@@ -100,7 +100,7 @@ public class DemagPlot extends Plot {
                     xPos, yPos));
         }
 
-        {
+        if (sample.hasMsData()) {
             final AxisParameters msAxisParams = new AxisParameters(50, Direction.UP);
             msAxisParams.label = "Magnetic susceptibility (S.I.)";
             msAxisParams.farSide = true;

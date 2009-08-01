@@ -15,6 +15,7 @@ public class Sample {
     private static final int SAMPLE_ID_LENGTH = 4;
     private PcaAnnotated pcaAnnotated;
     private MDF mdf;
+    private boolean hasMsData = false;
 
     private Sample(double depth, String name) {
         this.depth = depth;
@@ -95,11 +96,16 @@ public class Sample {
         if (d.isMagSus() && getData().size()>0)
                 getData().get(getData().size()-1).setMagSus(d.getMagSus());
         else data.add(d);
+        if (d.isMagSus()) hasMsData = true;
         d.setSample(this);
     }
 
     public double getDepth() {
         return depth;
+    }
+
+    public boolean hasMsData() {
+        return hasMsData;
     }
 
     public PcaAnnotated getPca() {

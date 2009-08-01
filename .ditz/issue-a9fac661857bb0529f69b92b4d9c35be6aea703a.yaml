@@ -1,0 +1,22 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: "MS integration: shift from Sample to Suite"
+desc: |-
+  MS data is transferred to the corresponding demag Datum in
+  Sample.addDatum. This would be more appropriately done in Suite, since
+  it is more obvious there that the lines are immediately adjacent,
+  which is the only clue in a 2G file that they are related.
+type: :task
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2009-08-01 00:55:16.267820 Z
+references: []
+
+id: a9fac661857bb0529f69b92b4d9c35be6aea703a
+log_events: 
+- - 2009-08-01 00:55:17.785880 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
