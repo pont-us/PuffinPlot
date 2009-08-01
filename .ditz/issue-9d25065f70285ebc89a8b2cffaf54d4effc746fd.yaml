@@ -1,5 +1,5 @@
 --- !ditz.rubyforge.org,2008-03-06/issue 
-title: Build standalone jar as well as Mac bundle
+title: Upload standalone jar as well as Mac bundle
 desc: |-
   At present, Windows and Linux users wishing to use Puffin would have to 
   download the zip and fish the jar out by hand. Change the build process 
@@ -28,3 +28,7 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - assigned to release 1.0 from 1.1
   - Definitely needed for 1.0 if it's going to be a public release!
+- - 2009-08-01 02:07:25.199274 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - edited title
+  - ""

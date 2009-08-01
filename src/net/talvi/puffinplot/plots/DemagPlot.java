@@ -101,7 +101,9 @@ public class DemagPlot extends Plot {
         }
 
         if (sample.hasMsData()) {
-            final AxisParameters msAxisParams = new AxisParameters(50, Direction.UP);
+            final AxisParameters msAxisParams =
+                    new AxisParameters(Datum.maximumMagSus(data),
+                    Direction.UP);
             msAxisParams.label = "Magnetic susceptibility (S.I.)";
             msAxisParams.farSide = true;
             final PlotAxis msAxis = new PlotAxis(msAxisParams, this);
@@ -112,9 +114,11 @@ public class DemagPlot extends Plot {
             for (Datum d: data) {
             final double xPos = dim.getMinX() +
                     (xBySequence ? (i + 1) : d.getDemagLevel()) * hScale;
+            double magSus = d.getMagSus();
+            if (magSus < 0) magSus = 0;
             if (d.isMagSus()) {
                 addPoint(d, new Point2D.Double(xPos,
-                    dim.getMaxY() - d.getMagSus() * msScale),
+                    dim.getMaxY() - magSus * msScale),
                     false, false, !first);
                 first = false;
             }

@@ -50,14 +50,6 @@ public class MainWindow extends JFrame {
         cp.add(mainPanel);
         setMaximumSize(jsp.getMaximumSize());
         pack();
-        
-//        addComponentListener(new java.awt.event.ComponentAdapter() {
-//            public void componentResized(ComponentEvent event) {
-//              setSize(
-//                Math.min(1200, getWidth()),
-//                Math.min(600, getHeight()));
-//            }
-//          });
     }
     
     void suitesChanged() {

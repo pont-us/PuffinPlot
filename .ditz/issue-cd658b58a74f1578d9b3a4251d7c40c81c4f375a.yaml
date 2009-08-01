@@ -16,3 +16,7 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2009-08-01 06:19:15.126011 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - "This may be unnecessary if #106 is fixed as suggested."

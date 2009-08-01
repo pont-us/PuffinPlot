@@ -12,10 +12,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSlider;
 import javax.swing.KeyStroke;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.talvi.puffinplot.data.Sample;
@@ -109,42 +106,6 @@ public class SampleChooser extends JPanel {
             }
         }
     }
-    
-    private class OldDepthSlider extends JSlider {
-
-        private static final long serialVersionUID = 1L;
-
-        OldDepthSlider() {
-            super(VERTICAL, 0, 0, 0);
-            setMinimum(0);
-            setValue(0);
-            setInverted(true);
-            setMajorTickSpacing(10);
-            setMinorTickSpacing(1);
-            setPaintTicks(true);
-            setSnapToTicks(true);
-            addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent e) {
-                    PuffinApp.getInstance().getSuite().setCurrentDepthIndex(getValue());
-                    PuffinApp.getInstance().updateDisplay();
-                }
-            });
-        }
-
-        void setForSuite(Suite suite) {
-            setMaximum(suite.getNumSamples() - 1);
-            setValue(suite.getCurrentDepthIndex());
-        }
-        
-        void changeValueBy(int delta) {
-            if (isVisible()) {
-                int proposedValue = getValue() + delta;
-                if (proposedValue >= getMinimum() &&
-                        proposedValue <= getMaximum())
-                    setValue(proposedValue);
-            }
-        }
-    }
 
     private void setVisibility(boolean slider, boolean list) {
         depthSlider.setVisible(slider);
@@ -175,7 +136,4 @@ public class SampleChooser extends JPanel {
     public int getDepthIndex() {
         return depthSlider.getValue();
     }
-//    public String getSampleName() {
-//        return sampleList.getModel().getElementAt(sampleList.getSelectedIndex()).toString();
-//    }
 }

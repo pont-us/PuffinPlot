@@ -89,8 +89,9 @@ public class MainMenuBar extends JMenuBar {
                 pa.pageSetup, pa.print, pa.printFisher, new OldSquidItem(),
                 pa.prefs, pa.quit));
         add(makeMenu("Edit", pa.selectAll, movePlotsItem, pa.resetLayout,
-                pa.editCorrections, pa.flipSample, pa.useAsEmptySlot,
-                pa.unsetEmptySlot, pa.hideSelectedPoints, pa.unhideAllPoints,
+                pa.editCorrections, pa.copyPointSelection, pa.flipSample,
+                pa.hideSelectedPoints, pa.unhideAllPoints,
+                pa.useAsEmptySlot, pa.unsetEmptySlot,
                 useEmptyItem));
         add(makeMenu("Calculations",
                 pa.pcaOnSelection, anchorItem = new AnchorItem(),

@@ -49,6 +49,7 @@ public class DepthSlider extends JPanel
         });
         getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DOWN"), "next");
         getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("UP"), "previous");
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control A"), "select_all");
         getActionMap().put("next", new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
                 changeValueBy(1);
@@ -57,6 +58,13 @@ public class DepthSlider extends JPanel
         getActionMap().put("previous", new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
                 changeValueBy(-1);
+            }
+        });
+        getActionMap().put("select_all", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                rangeStart = 0;
+                rangeEnd = maximum;
+                repaint();
             }
         });
         addMouseListener(this);
@@ -146,7 +154,7 @@ public class DepthSlider extends JPanel
     }
 
     public void mousePressed(MouseEvent e) {
-        requestFocusInWindow();;
+        requestFocusInWindow();
     }
 
     public void mouseReleased(MouseEvent e) {
@@ -174,6 +182,7 @@ public class DepthSlider extends JPanel
         if (e.isShiftDown()) {
             adjustRange(v);
         } else {
+            if (!e.isControlDown()) rangeStart = rangeEnd = -1;
             value = v;
             notifyChangeListeners();
         }

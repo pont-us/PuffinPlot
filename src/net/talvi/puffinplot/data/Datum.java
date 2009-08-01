@@ -415,6 +415,15 @@ public class Datum {
         return max;
     }
 
+    public static double maximumMagSus(List<Datum> ds) {
+        double max = 0;
+        for (Datum d: ds) {
+            double level = d.getMagSus();
+            if (!Double.isNaN(level) && level > max) max = level;
+        }
+        return max;
+    }
+
     public double getIntensity(boolean emptyCorrection) {
         return getUc(emptyCorrection).mag();
     }

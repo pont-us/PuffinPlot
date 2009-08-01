@@ -307,10 +307,7 @@ public class PuffinActions {
             "Calculate median destructive field (or temperature) on selected samples",
             'M', false, KeyEvent.VK_M) {
         public void actionPerformed(ActionEvent e) {
-            List<Sample> samples = app.getSelectedSamples();
-            for (Sample s: samples) {
-                s.calculateMdf(app.isEmptyCorrectionActive());
-            }
+            for (Sample s: app.getSelectedSamples()) s.calculateMdf(app.isEmptyCorrectionActive());
             app.getMainWindow().repaint();
         }
     };
@@ -324,66 +321,55 @@ public class PuffinActions {
     };
     
     public final Action clear = new PuffinAction("Clear",
-            "Clear selection and calculations for this sample",
+            "Clear selection and calculations for selected samples",
             'Z', false, KeyEvent.VK_C) {
         public void actionPerformed(ActionEvent e) {
-            Sample s = app.getSample();
-            if (s != null) {
-                s.clear();
-                app.getMainWindow().repaint();
-            }
+            for (Sample s: app.getSelectedSamples()) s.clear();
+            app.getMainWindow().repaint();
         }
     };
     
     public final Action selectAll = new PuffinAction("Select all",
-            "Select all points in this sample", 'D', false, KeyEvent.VK_A) {
+            "Select all points in selected samples", 'D', false, KeyEvent.VK_A) {
         public void actionPerformed(ActionEvent e) {
-            Sample s = app.getSample();
-            if (s != null) {
-                s.selectAll();
+            for (Sample s: app.getSelectedSamples()) s.selectAll();
                 app.getMainWindow().repaint();
-            }
         }
     };
 
-    public final Action applySelectionToSuite = new PuffinAction("Apply selection to suite",
-            "Select the same points for every sample in this suite", null, false, KeyEvent.VK_P) {
+    public final Action copyPointSelection = new PuffinAction("Copy point selection",
+            "Select these points for every selected sample", null, false, KeyEvent.VK_P) {
         public void actionPerformed(ActionEvent e) {
-            Sample s = app.getSample();
-            if (s != null) {
-                s.selectAll();
+            Sample source = app.getSample();
+            if (source != null) {
+                for (Sample dest: app.getSelectedSamples()) {
+                    dest.copySelectionFrom(source);
+                }
                 app.getMainWindow().repaint();
             }
         }
     };
 
     // we can't use ctrl-H because Apples use it already.
-    public final Action hideSelectedPoints = new PuffinAction("Hide selection",
-            "Hide the selected points", 'G', false, KeyEvent.VK_H) {
+    public final Action hideSelectedPoints = new PuffinAction("Hide points",
+            "Hide the selected points in all selected samples", 'G', false, KeyEvent.VK_H) {
         public void actionPerformed(ActionEvent e) {
-            Sample s = app.getSample();
-            if (s != null) {
-                s.hideSelectedPoints();
-                app.getMainWindow().repaint();
-            }
+           for (Sample s: app.getSelectedSamples())  s.hideSelectedPoints();
+            app.getMainWindow().repaint();
         }
     };
 
     public final Action unhideAllPoints = new PuffinAction("Show all points",
-            "Make hidden points visible again", 'G', true, KeyEvent.VK_O) {
+            "Make hidden points visible again for all selected samples", 'G', true, KeyEvent.VK_O) {
         public void actionPerformed(ActionEvent e) {
-            Sample s = app.getSample();
-            if (s != null) {
-                s.unhideAllPoints();
-                app.getMainWindow().repaint();
-            }
+            for (Sample s : app.getSelectedSamples()) s.unhideAllPoints();
+            app.getMainWindow().repaint();
         }
     };
 
 
     public final Action prefs = new PuffinAction("Preferences…",
             "Show the preferences window", ',', false, KeyEvent.VK_R, true) {
-
         public void actionPerformed(ActionEvent e) {
             JOptionPane.showMessageDialog(app.getMainWindow(), "This is the preferences dialog.");
         }
