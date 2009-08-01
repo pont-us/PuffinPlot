@@ -49,7 +49,7 @@
             <arg file="${ant.project.name}.zip"/>
             <arg value="rae.vm.bytemark.co.uk:/srv/talvi.net/public/htdocs/" />
         </exec>
-        <echo message="scp lumi: ${scp.result}" />
+        <echo message="scp rae: ${scp.result}" />
     </target>
     
     
