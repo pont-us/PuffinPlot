@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package net.talvi.puffinplot.data;
 
 import java.util.ArrayList;
@@ -14,10 +9,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- *
- * @author pont
- */
 public class PcaValuesTest {
 
     public PcaValuesTest() {
@@ -59,10 +50,8 @@ public class PcaValuesTest {
         for (double[] coord: coords)
             points.add(new Vec3(coord[0], coord[1], coord[2]));
         
-        Vec3 centreOfMass = Vec3.centreOfMass(points);
-        
-        PcaValues anchored = PcaValues.calculate(points, Vec3.ORIGIN);
-        PcaValues unanchored = PcaValues.calculate(points, centreOfMass);
+        PcaValues anchored = PcaValues.calculate(points, true);
+        PcaValues unanchored = PcaValues.calculate(points, false);
 
         /* Declination worked out by hand, other values from
          * Tauxe's programs, modified to allow anchoring to origin

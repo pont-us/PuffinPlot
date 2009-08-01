@@ -47,7 +47,7 @@
         <exec executable="scp" resultproperty="scp.result">
 	    <arg value="-P57047"/>
             <arg file="${ant.project.name}.zip"/>
-            <arg value="lumi:www.talvi.net/public_html/" />
+            <arg value="rae.vm.bytemark.co.uk:/srv/talvi.net/public/htdocs/" />
         </exec>
         <echo message="scp lumi: ${scp.result}" />
     </target>
