@@ -4,8 +4,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,8 +20,16 @@ import net.talvi.puffinplot.data.TwoGeeField;
 
 public class TwoGeeLoader implements FileLoader {
 
+    // Note that sensors may have negative effective lengths, depending
+    // on how they're mounted. These are the absolute values, and some
+    // may be negated when calculating magnetization vectors for long cores.
+    // (See the constructor for details.)
+    private static final double sensorLengthX = 4.628,
+     sensorLengthY = 4.404,
+     sensorLengthZ = 6.280;
+
     private final LineNumberReader reader;
-    private Fields fields;
+    private Map<String,Integer> fields;
     private Datum nextDatum;
     private LoadingStatus status;
     private static final Pattern emptyLine = Pattern.compile("^\\s*$");
@@ -36,6 +47,10 @@ public class TwoGeeLoader implements FileLoader {
             reader.close();
             status = LoadingStatus.COMPLETE;
         } else {
+            fields = new HashMap<String, Integer>();
+            String[] fieldNames = fieldsLine.split(("\\t"));
+            for (int i=0; i<fieldNames.length; i++)
+                fields.put(fieldNames[i], i);
             fields = new Fields(fieldsLine);
             if (fields.areAllUnknown()) {
                 addWarning("%s doesn't look like a 2G or PPL file. " +
@@ -49,6 +64,46 @@ public class TwoGeeLoader implements FileLoader {
         }
     }
 
+    private static class NaScanner {
+
+/*  The nice way to do this would be to define a DecimalFormat where "NA" is the
+ *  NaN symbol. But we can't specify a NumberFormat for a scanner, only a locale
+ *  -- in which case we'd have to define a custom locale with the correct
+ *  DecimalFormat, register it via the Java Extension Mechanism, and then
+ *  select it with Scanner.useLocale(). NumberFormatProviders aren't available
+ *  in Java 5 so this would be impossible on OS X anyway, and either way
+ *  it would be a lot of effort.
+ */
+
+        private final static Pattern delimPattern = Pattern.compile("\\t");
+        private Scanner s;
+
+        public NaScanner(String line) {
+            s = new Scanner(line);
+            s.useLocale(Locale.ENGLISH); // don't want to be using commas as decimal separators...
+            s.useDelimiter(delimPattern); // might have spaces within fields
+        }
+
+        public double nextD() {
+            String next = s.next();
+            return  ("NA".equals(next))
+                    ? Double.NaN
+                    : Double.parseDouble(next);
+        }
+
+        public int nextInt() {
+            return s.nextInt();
+        }
+
+        public boolean nextBoolean() {
+            return s.nextBoolean();
+        }
+
+        public String next() {
+            return s.next();
+        }
+    }
+
     private void readNextDatum() {
         Datum d = null;
         try {
@@ -58,7 +113,7 @@ public class TwoGeeLoader implements FileLoader {
             } else {
                 final int lineNum = reader.getLineNumber();
                 try {
-                    d = lineToDatum(line, lineNum, fields.fields);
+                    d = lineToDatum(line, lineNum);
                 } catch (IllegalArgumentException e) {
                     addWarning("%s at line %d in file %s -- " + "ignoring this line.",
                             e.getMessage(), lineNum, fileName);
@@ -93,9 +148,16 @@ public class TwoGeeLoader implements FileLoader {
         loadWarnings.add(String.format(s, args));
     }
 
+    private double getField(String[] values, String name) {
 
-    private Datum lineToDatum(String line, int lineNumber, List<TwoGeeField> fields) {
+    }
+
+    private Datum lineToDatum(String line, int lineNumber) {
         final boolean oldSquid = PuffinApp.getInstance().getPrefs().isUseOldSquidOrientations();
+        String[] values = line.split("\\t");
+        Datum d = new Datum(getField(values, "X corr"),
+                getField(values, "Y corr"),
+                getField(values, "Z corr"));
         if (!emptyLine.matcher(line).matches()) {
             Datum d = new Datum(line, fields, null /*getLineContainer(lineNumber)*/, oldSquid);
             if (d.getMeasType() != MeasType.NONE) {
