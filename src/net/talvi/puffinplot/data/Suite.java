@@ -24,40 +24,42 @@ import java.util.regex.Pattern;
 
 import net.talvi.puffinplot.FileType;
 import net.talvi.puffinplot.PuffinApp;
+import net.talvi.puffinplot.data.file.FileLoader;
+import net.talvi.puffinplot.data.file.LoadingStatus;
+import net.talvi.puffinplot.data.file.TwoGeeLoader;
 
 public class Suite implements Iterable<Datum> {
 
     private List<Datum> data;
     private final List<File> inputFiles;
     private File puffinFile;
-    private Double[] depths = {};
     private String[] names = {};
-    private Map<Double, Sample> samplesByDepth;
     private Map<String, Sample> samplesByName;
     private Map<Integer, Line> dataByLine;
-    private int currentDepthIndex = 0;
+    private int currentSampleIndex = 0;
     private MeasType measType;
     private String currentSampleName;
     private String suiteName;
     private static final Pattern emptyLine = Pattern.compile("^\\s*$");
     private static final Pattern whitespace = Pattern.compile("\\s+");
-    private List<String> loadWarnings = new LinkedList<String>();
     private List<FisherForSite> siteFishers;
     private FisherValues suiteFisher;
-    final private static String[] ZPLOT_HEADERS =
-      {"Sample", "Project", "Demag", "Declin", "Inclin", "Intens", "Operation"};
     final private PuffinApp app;
+    private List<String> loadWarnings;
 
     public Iterator<Datum> iterator() {
         return data.iterator();
     }
 
-    public List<String> getLoadWarnings() {
-        return loadWarnings;
-    }
-
     public FisherValues getSuiteFisher() {
         return suiteFisher;
+    }
+
+    /**
+     * @return the loadWarnings
+     */
+    public List<String> getLoadWarnings() {
+        return loadWarnings;
     }
 
     private static class Fields {
@@ -174,7 +176,7 @@ public class Suite implements Iterable<Datum> {
                 for (Datum datum : sample.getData()) {
                     StringBuilder line = new StringBuilder();
                     for (TwoGeeField field : fields) {
-                        line.append(datum.getValue(field).toString());
+                        //line.append(datum.getValue(field).toString());
                         line.append("\t");
                     }
                     line.deleteCharAt(line.length() - 1);
@@ -205,23 +207,15 @@ public class Suite implements Iterable<Datum> {
         return dataByLine.get(lineNumber);
     }
 
-    private void addDatumLongcore(Datum d, Set<Double> depthSet) {
-        if (!d.ignoreOnLoading()) {
-            data.add(d);
-            Sample s = samplesByDepth.get(d.getDepth());
-            if (s == null) {
-                s = new Sample(d.getDepth());
-                samplesByDepth.put(d.getDepth(), s);
-            }
-            s.addDatum(d);
-            depthSet.add(d.getDepth());
+    private void addDatum(Datum d, Set<String> nameSet) {
+        final boolean oldSquid = PuffinApp.getInstance().getPrefs().isUseOldSquidOrientations();
+        if (measType == MeasType.UNSET) measType = d.getMeasType();
+        if (d.getMeasType() != measType) {
+            throw new Error("Can't mix long core and discrete measurements.");
         }
-    }
-
-    private void addDatumDiscrete(Datum d, Set<String> nameSet) {
         if (!d.ignoreOnLoading()) {
             data.add(d);
-            String name = d.getSampleId();
+            String name = d.getSampleIdOrDepth();
             Sample s = samplesByName.get(name);
             if (s == null) {
                 s = new Sample(name);
@@ -229,49 +223,6 @@ public class Suite implements Iterable<Datum> {
             }
             s.addDatum(d);
             nameSet.add(name);
-        }
-    }
-
-    private void addLine2G(String line, int lineNumber, List<TwoGeeField> fields,
-            Set<Double> depthSet, Set<String> nameSet) {
-        final boolean oldSquid = PuffinApp.getInstance().getPrefs().isUseOldSquidOrientations();
-        if (!emptyLine.matcher(line).matches()) {
-            Datum d = new Datum(line, fields, getLineContainer(lineNumber), oldSquid);
-            if (d.getMeasType() != MeasType.NONE) {
-                if (measType == MeasType.UNSET)
-                    measType = d.getMeasType();
-                if (d.getMeasType() != measType) {
-                    throw new IllegalArgumentException
-                            ("Can't mix long core and discrete measurements.");
-                }
-            }
-            switch (measType) {
-                case CONTINUOUS:
-                    addDatumLongcore(d, depthSet);
-                    break;
-                case DISCRETE:
-                    addDatumDiscrete(d, nameSet);
-                    break;
-                case NONE:
-                    // This is a treatment step with no measurement, so there will
-                    // be no data.
-                    break;
-                default:
-                    throw new IllegalArgumentException("Unknown measurement type.");
-            }
-        }
-    }
-
-    private void addLineZplot(String line, Set<Double> depthSet, Set<String> nameSet) {
-        Datum d = new Datum(line);
-        if (measType == MeasType.UNSET) measType = d.getMeasType();
-        if (d.getMeasType() != measType) {
-            throw new Error("Can't mix long core and discrete measurements.");
-        }
-        switch (measType) {
-        case CONTINUOUS: addDatumLongcore(d, depthSet); break;
-        case DISCRETE: addDatumDiscrete(d, nameSet); break;
-        default: throw new Error("Unknown measurement type.");
         }
     }
 
@@ -283,10 +234,6 @@ public class Suite implements Iterable<Datum> {
             else result.add(file);
         }
         return result;
-    }
-
-    private void addWarning(String s, Object... args) {
-        loadWarnings.add(String.format(s, args));
     }
 
     /*
@@ -303,8 +250,7 @@ public class Suite implements Iterable<Datum> {
         files = expandDirs(files);
         this.inputFiles = files;
         data = new ArrayList<Datum>();
-        samplesByDepth = new HashMap<Double, Sample>();
-        samplesByName = new HashMap<String, Sample>();
+        samplesByName = new LinkedHashMap<String, Sample>();
         dataByLine = new HashMap<Integer, Line>();
         measType = MeasType.UNSET;
         String line;
@@ -316,107 +262,14 @@ public class Suite implements Iterable<Datum> {
             int warningsThisFile = 0;
             FileType fileType = FileType.guessFromName(file);
             final String fileName = file.getName();
-            LineNumberReader reader = null;
-            fileTypeSwitch: switch (fileType) {
-            case PUFFINPLOT:
-            case TWOGEE:
-                try {
-                    reader = new LineNumberReader(new FileReader(file));
-                    String fieldsLine = reader.readLine();
-                    if (fieldsLine == null) {
-                        addWarning("%s is empty.", fileName);
-                        reader.close();
-                        break;
-                    }
-                    Fields fields = new Fields(fieldsLine);
-                    if (fields.areAllUnknown()) {
-                        addWarning("%s doesn't look like a 2G or PPL file. " +
-                                "Ignoring it.", fileName);
-                        reader.close();
-                        break;
-                    }
-
-                    while ((line = reader.readLine()) != null) {
-                        final int lineNum = reader.getLineNumber();
-                        try {
-                            addLine2G(line, lineNum, fields.fields,
-                                    depthSet, nameSet);
-                        } catch (IllegalArgumentException e) {
-                            addWarning("%s at line %d in file %s -- " +
-                                    "ignoring this line.", e.getMessage(),
-                                    lineNum, fileName);
-                            if (++warningsThisFile > MAX_WARNINGS_PER_FILE) {
-                                addWarning("Too many errors in %s -- " +
-                                        "aborting load at line %d",
-                                        fileName, lineNum);
-                                break;
-                            }
-                        }
-                    }
-                    
-                    if (fields.unknown.size() > 0) {
-                        addWarning("I didn't recognize the following field " +
-                                "names,\nso I'm ignoring them:\n" +
-                                fields.unknown);
-                    }
-                } finally {
-                    if (reader != null) reader.close();
-                }
-                break;
-
-            case ZPLOT:
-                try {
-                    reader = new LineNumberReader(new FileReader(file));
-                    // Check first line for magic string
-                    if (!reader.readLine().startsWith("File Name:")) {
-                        addWarning("Ignoring unrecognized file %s", fileName);
-                        reader.close();
-                        break fileTypeSwitch;
-                    }
-                    // skip remaining header fields
-                    for (int i = 0; i < 5; i++) reader.readLine();
-                    String headerLine = reader.readLine();
-                    if (headerLine == null) {
-                        addWarning("Ignoring malformed ZPlot file %s", file.getName());
-                        reader.close();
-                        break fileTypeSwitch;
-                    }
-                    String[] headers = whitespace.split(headerLine);
-
-                    if (headers.length != 7) {
-                        addWarning("Wrong number of header fields in Zplot file %s:" +
-                                ": expected 7, got %s", fileName, headers.length);
-                        reader.close();
-                        break fileTypeSwitch;
-                    }
-                    for (int i = 0; i < ZPLOT_HEADERS.length; i++) {
-                        if (!ZPLOT_HEADERS[i].equals(headers[i])) {
-                            addWarning("Unknown header field %s in file %s " +
-                                    " -- aborting load.", headers[i], fileName);
-                            reader.close();
-                            break fileTypeSwitch;
-                        }
-                    }
-
-                    while ((line = reader.readLine()) != null)
-                        addLineZplot(line, depthSet, nameSet);
-                } finally {
-                    if (reader != null) reader.close();
-                }
-                break;
-
-            case UNKNOWN:
-                addWarning("I don't recognize the file %s, so I'm ignoring it.",
-                        fileName);
-                break;
-
+            FileLoader loader = new TwoGeeLoader(file);
+            while (loader.getStatus() == LoadingStatus.IN_PROGRESS) {
+                            addDatum(loader.getNext(), nameSet);
             }
-        }
-
-        loadWarnings = Collections.unmodifiableList(loadWarnings);
-        depths = depthSet.toArray(depths);
+                    
+        loadWarnings = Collections.unmodifiableList(loader.getMessages());
         names = nameSet.toArray(names);
-        setCurrentDepthIndex(0);
+        setCurrentSampleIndex(0);
         for (Sample s: getSamples()) s.doPca();
         if (files.size() == 1 &&
                 FileType.guessFromName(files.get(0)) == FileType.PUFFINPLOT &&
@@ -424,8 +277,10 @@ public class Suite implements Iterable<Datum> {
             app.getRecentFiles().add(files);
             app.getMainWindow().getMainMenuBar().updateRecentFiles();
             puffinFile = files.get(0);
+            }
         }
     }
+    
 
     /*
      * Save calculations per-sample.
@@ -516,46 +371,29 @@ public class Suite implements Iterable<Datum> {
         }
     }
 
-    public Sample getSampleByDepth(double depth) {
-        return samplesByDepth.get(depth);
-    }
-
     public Sample getSampleByName(String name) {
         return samplesByName.get(name);
     }
 
-    public double getCurrentDepth() {
-        return depths[getCurrentDepthIndex()];
+    public void setCurrentSampleIndex(int value) {
+        currentSampleIndex = value;
     }
 
-    public void setCurrentDepthIndex(int value) {
-        currentDepthIndex = value;
-    }
-
-    public int getCurrentDepthIndex() {
-        return currentDepthIndex;
+    public int getCurrentSampleIndex() {
+        return currentSampleIndex;
     }
 
     public Sample getCurrentSample() {
-        switch (measType) {
-        case CONTINUOUS: return getSampleByDepth(getCurrentDepth());
-        case DISCRETE: return getSampleByName(currentSampleName);
-        default: throw new RuntimeException("Unknown measurement type.");
-        }
+        return getSampleByName(names[getCurrentSampleIndex()]);
     }
 
     public Collection<Sample> getSamples() {
-        return measType == MeasType.CONTINUOUS ?
-            samplesByDepth.values() : samplesByName.values();
+        return samplesByName.values();
     }
 
     public List<Sample> getSamplesOrdered() {
         ArrayList<Sample> samples = new ArrayList<Sample>(getNumSamples());
-        if (measType == MeasType.CONTINUOUS) {
-            for (double depth : depths) samples.add(getSampleByDepth(depth));
-        } else {
             for (String name : names) samples.add(getSampleByName(name));
-        }
         return samples;
     }
 
@@ -572,8 +410,7 @@ public class Suite implements Iterable<Datum> {
     }
 
     public int getNumSamples() {
-        if (measType == MeasType.CONTINUOUS) return depths.length;
-        else return samplesByName.size();
+        return samplesByName.size();
     }
 
     public String getCurrentName() {
@@ -594,11 +431,7 @@ public class Suite implements Iterable<Datum> {
     }
 
     public Sample getSampleByIndex(int i) {
-        if (measType == MeasType.CONTINUOUS) {
-            return samplesByDepth.get(depths[i]);
-        } else {
-            return samplesByName.get(names[i]);
-        }
+        return samplesByName.get(names[i]);
     }
 
     @Override

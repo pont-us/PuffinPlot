@@ -43,7 +43,7 @@ public class DepthSlider extends JPanel
             public void stateChanged(ChangeEvent e) {
                 Suite suite = PuffinApp.getInstance().getSuite();
                 if (suite != null) {
-                    suite.setCurrentDepthIndex(getValue());
+                    suite.setCurrentSampleIndex(getValue());
                     PuffinApp.getInstance().updateDisplay();
                 }
             }
@@ -137,7 +137,7 @@ public class DepthSlider extends JPanel
 
     void setForSuite(Suite suite) {
         maximum = suite.getNumSamples() - 1;
-        value = suite.getCurrentDepthIndex();
+        value = suite.getCurrentSampleIndex();
         rangeStart = rangeEnd = -1;
     }
 

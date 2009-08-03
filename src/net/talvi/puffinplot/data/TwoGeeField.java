@@ -9,7 +9,7 @@ public enum TwoGeeField {
      * constructor and to Datum.getValue().
      */
 
-    SAMPLEID("Sample ID") { public Double test() { return null; }},
+    SAMPLEID("Sample ID"),
     MEASTYPE("Meas. type"),
     TREATMENT("Treatment Type"),
     AFX("AF X"),

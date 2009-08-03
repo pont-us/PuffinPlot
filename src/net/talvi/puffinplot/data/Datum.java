@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 import static java.lang.Double.NaN;
 import static java.lang.Math.toRadians;
-import static java.lang.Math.sin;
-import static java.lang.Math.cos;
 
 public class Datum {
 
@@ -13,7 +11,7 @@ public class Datum {
          defaultCoreArea = 4.0, // can be overridden by Area field in file
      defaultVolume = 10.8; // can be overridden by Volume field in file
 
-   private String sampleId = "UNSET";
+    private String sampleId = "UNSET";
     private MeasType measType = MeasType.UNSET;
     private TreatType treatType = TreatType.UNKNOWN;
     private double afx=NaN, afy=NaN, afz=NaN;
@@ -21,7 +19,7 @@ public class Datum {
     private double magSus=NaN; // default to "not mag sus" if no such field
     private double sampAz=NaN, sampDip=NaN, formAz=NaN, formDip=NaN;
     private double magDev=0;
-    private double depth=NaN;
+    private String depth=null;
     private double irmGauss=NaN, armGauss=NaN;
     private ArmAxis armAxis = ArmAxis.UNKNOWN;
     private Vec3 moment;
@@ -40,69 +38,8 @@ public class Datum {
     private Sample sample;
     private boolean doVolumeCorrection;
 
-    public static class Builder {
-        private static final double BLANK = Double.NaN;
-        private double x = BLANK, y = BLANK, z = BLANK;
-        private double temperature = BLANK;
-        private double afx = BLANK,  afy = BLANK,  afz = BLANK;
-        private double magSus = BLANK;
-        private double sampAz = BLANK, sampDip = BLANK;
-        private double formAz = BLANK, formDip = BLANK;
-        private ArmAxis armAxis = ArmAxis.UNKNOWN;
-        private boolean doVolumeCorrection = false;
-        private double volume = BLANK, area = BLANK;
-
-        private Builder(double x, double y, double z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-
-        public static Builder polar(double dec, double inc, double intensity) {
-            final double m = intensity;
-            final double i = toRadians(inc);
-            final double d = toRadians(dec);
-            return new Builder(m * cos(i) * cos(d),
-                    m * cos(i) * sin(d),
-                    m * sin(i));
-        }
-
-        public static Builder cartesian(double x, double y, double z) {
-            return new Builder(x, y, z);
-        }
-
-        public Builder temperature(double value) { temperature = value; return this; }
-        public Builder afx(double value) { afx = value; return this; }
-        public Builder afy(double value) { afy = value; return this; }
-        public Builder afz(double value) { afz = value; return this; }
-        public Builder magSus(double value) { magSus = value; return this; }
-        public Builder sampAz(double value) { sampAz = value; return this; }
-        public Builder sampDip(double value) { sampDip = value; return this; }
-        public Builder formAz(double value) { formAz = value; return this; }
-        public Builder formDip(double value) { formDip = value; return this; }
-        //public Builder armAxis(double value) { armAxis = value; return this; }
-        //public Builder doVolumeCorrection(double value) { doVolumeCorrection = value; return this; }
-        public Builder volume(double value) { volume = value; return this; }
-        public Builder area(double value) { area = value; return this; }
-        //public Builder (double value) {  = value; return this; }
-    }
-
-    public Datum(Builder builder) {
-        final Builder b = builder;
-        moment = new Vec3(b.x, b.y, b.z);
-        temp = b.temperature;
-        afx = b.afx;
-        afy = b.afy;
-        afz = b.afz;
-        magSus = b.magSus;
-        sampAz = b.sampAz;
-        sampDip = b.sampDip;
-        formAz = b.formAz;
-        formDip = b.formDip;
-        armAxis = b.armAxis;
-        doVolumeCorrection = b.doVolumeCorrection;
-        volume = b.volume;
-        area = b.area;
+    public Datum(double x, double y, double z) {
+        moment = new Vec3(x, y, z);
     }
 
     public boolean isSelected()        { return selected; }
@@ -124,13 +61,19 @@ public class Datum {
     public boolean isHidden()          { return hidden; }
     public void setHidden(boolean v)   { hidden = v; }
     public void setSample(Sample v)    { sample = v; }
-    public double getDepth()           { return depth; }
+    public String getDepth()           { return depth; }
+    public void setDepth(String v)     { depth = v; }
     public double getMagSus()          { return magSus; }
     public void setMagSus(double v)    { magSus = v; }
     public MeasType getMeasType()      { return measType; }
+    public void setMeasType(MeasType v) { measType = v; }
     public String getSampleId()        { return sampleId; }
+    public void setSampleId(String v)  { sampleId = v; }
     public TreatType getTreatType()    { return treatType; }
 
+    public String getSampleIdOrDepth() {
+        return measType == MeasType.CONTINUOUS ? depth : sampleId;
+    }
     public boolean isMagSus()          { return !Double.isNaN(magSus); }
 
     private Vec3 getFc(boolean emptyCorr) {
@@ -332,106 +275,81 @@ public class Datum {
 //    }
 
     
-//    public Object getValue(TwoGeeField field) {
-//        switch (field) {
-//        case AFX: return afx;
-//        case AFY: return afy;
-//        case AFZ: return afz;
-//        case TEMP: return temp;
-//        case DECUC: return decUc;
-//        case INCUC: return incUc;
-//        case DECSC: return decSc;
-//        case INCSC: return incSc;
-//        case DECFC: return decFc;
-//        case INCFC: return incFc;
-//        case INTENSITY: return intensity;
-//        case MSCORR: return magSus;
-//        case SAMPLEAZ: return getSampAz();
-//        case SAMPLEDIP: return getSampDip();
-//        case FORMAZ: return getFormAz();
-//        case FORMDIP: return getFormDip();
-//        case XMEAN: return xMean;
-//        case YMEAN: return yMean;
-//        case ZMEAN: return zMean;
-//        case MAGDEV: return getMagDev();
-//        case XCORR: return xCorr;
-//        case YCORR: return yCorr;
-//        case ZCORR: return zCorr;
-//        case XDRIFT: return xDrift;
-//        case YDRIFT: return yDrift;
-//        case ZDRIFT: return zDrift;
-//        case DEPTH: return depth;
-//        case IRMGAUSS: return irmGauss;
-//        case ARMGAUSS: return armGauss;
-//        case VOLUME: return volume;
-//        case XBKG1: return xbkg1;
-//        case XBKG2: return xbkg2;
-//        case YBKG1: return ybkg1;
-//        case YBKG2: return ybkg2;
-//        case ZBKG1: return zbkg1;
-//        case ZBKG2: return zbkg2;
-//        case SAMPLEID: return sampleId;
-//        case MEASTYPE: return measType;
-//        case TREATMENT: return treatType;
-//        case ARMAXIS: return armAxis;
-//        case TIMESTAMP: return timeStamp;
-//        case RUNNUMBER: return runNumber;
-//        case AREA: return area;
-//        case PP_SELECTED: return selected;
-//        case PP_ANCHOR_PCA: return isPcaAnchored();
-//        case PP_HIDDEN: return isHidden();
-//        default: throw new IllegalArgumentException("Unknown field "+field);
-//        }
-//    }
-//
-//    public void setValue(TwoGeeField field, Object o) {
-//        switch (field) {
-//        case AFX: afx = (Double) o; break;
-//        case AFY: afy = (Double) o; break;
-//        case AFZ: afz = (Double) o; break;
-//        case TEMP: temp = (Double) o; break;
-//        case DECUC: decUc = (Double) o; break;
-//        case INCUC: incUc = (Double) o; break;
-//        case DECSC: decSc = (Double) o; break;
-//        case INCSC: incSc = (Double) o; break;
-//        case DECFC: decFc = (Double) o; break;
-//        case INCFC: incFc = (Double) o; break;
-//        case INTENSITY: intensity = (Double) o; break;
-//        case MSCORR: magSus = (Double) o; break;
-//        case SAMPLEAZ: setSampAz((Double) o); break;
-//        case SAMPLEDIP: setSampDip((Double) o); break;
-//        case FORMAZ: setFormAz((Double) o); break;
-//        case FORMDIP: setFormDip((Double) o); break;
-//        case XMEAN: xMean = (Double) o; break;
-//        case YMEAN: yMean = (Double) o; break;
-//        case ZMEAN: zMean = (Double) o; break;
-//        case MAGDEV: setMagDev((Double) o); break;
-//        case XCORR: xCorr = (Double) o; break;
-//        case YCORR: yCorr = (Double) o; break;
-//        case ZCORR: zCorr = (Double) o; break;
-//        case XDRIFT: xDrift = (Double) o; break;
-//        case YDRIFT: yDrift = (Double) o; break;
-//        case ZDRIFT: zDrift = (Double) o; break;
-//        case DEPTH: depth = (Double) o; break;
-//        case IRMGAUSS: irmGauss = (Double) o; break;
-//        case ARMGAUSS: armGauss = (Double) o; break;
-//        case VOLUME: volume = (Double) o; break;
-//        case XBKG1: xbkg1 = (Double) o; break;
-//        case XBKG2: xbkg2 = (Double) o; break;
-//        case YBKG1: ybkg1 = (Double) o; break;
-//        case YBKG2: ybkg2 = (Double) o; break;
-//        case ZBKG1: zbkg1 = (Double) o; break;
-//        case ZBKG2: zbkg2 = (Double) o; break;
-//        case SAMPLEID: sampleId = (String) o; break;
-//        case MEASTYPE: measType = (MeasType) o; break;
-//        case TREATMENT: treatType = (TreatType) o; break;
-//        case ARMAXIS: armAxis = (ArmAxis) o; break;
-//        case TIMESTAMP: timeStamp = (String) o; break;
-//        case RUNNUMBER: runNumber = (Integer) o; break;
-//        case AREA: area = (Double) o; break;
-//        case PP_SELECTED: selected = (Boolean) o; break;
-//        case PP_ANCHOR_PCA: setPcaAnchored((boolean) (Boolean) o); break;
-//        default: throw new IllegalArgumentException("Unknown field "+field);
-//        }
-//    }
+    public Object getValue(TwoGeeField field) {
+        switch (field) {
+        case AFX: return afx;
+        case AFY: return afy;
+        case AFZ: return afz;
+        case TEMP: return temp;
+        case MSCORR: return magSus;
+        case SAMPLEAZ: return getSampAz();
+        case SAMPLEDIP: return getSampDip();
+        case FORMAZ: return getFormAz();
+        case FORMDIP: return getFormDip();
+        case XMEAN: return 0;
+        case YMEAN: return 0;
+        case ZMEAN: return 0;
+        case MAGDEV: return getMagDev();
+        case XCORR: return 0;
+        case YCORR: return 0;
+        case ZCORR: return 0;
+        case XDRIFT: return 0;
+        case YDRIFT: return 0;
+        case ZDRIFT: return 0;
+        case DEPTH: return depth;
+        case IRMGAUSS: return irmGauss;
+        case ARMGAUSS: return armGauss;
+        case VOLUME: return volume;
+        case SAMPLEID: return sampleId;
+        case MEASTYPE: return measType;
+        case TREATMENT: return treatType;
+        case ARMAXIS: return armAxis;
+        case TIMESTAMP: return timeStamp;
+        case RUNNUMBER: return runNumber;
+        case AREA: return area;
+        case PP_SELECTED: return selected;
+        case PP_ANCHOR_PCA: return isPcaAnchored();
+        case PP_HIDDEN: return isHidden();
+        default: throw new IllegalArgumentException("Unknown field "+field);
+        }
+    }
+
+    public void setValue(TwoGeeField field, Object o) {
+        double dummy;
+        switch (field) {
+        case AFX: afx = (Double) o; break;
+        case AFY: afy = (Double) o; break;
+        case AFZ: afz = (Double) o; break;
+        case TEMP: temp = (Double) o; break;
+        case MSCORR: magSus = (Double) o; break;
+        case SAMPLEAZ: setSampAz((Double) o); break;
+        case SAMPLEDIP: setSampDip((Double) o); break;
+        case FORMAZ: setFormAz((Double) o); break;
+        case FORMDIP: setFormDip((Double) o); break;
+        case XMEAN: dummy = (Double) o; break;
+        case YMEAN: dummy = (Double) o; break;
+        case ZMEAN: dummy = (Double) o; break;
+        case MAGDEV: setMagDev((Double) o); break;
+        case XCORR: dummy = (Double) o; break;
+        case YCORR: dummy = (Double) o; break;
+        case ZCORR: dummy = (Double) o; break;
+        case XDRIFT: dummy = (Double) o; break;
+        case YDRIFT: dummy = (Double) o; break;
+        case ZDRIFT: dummy = (Double) o; break;
+        case DEPTH: depth = (String) o; break;
+        case IRMGAUSS: irmGauss = (Double) o; break;
+        case ARMGAUSS: armGauss = (Double) o; break;
+        case VOLUME: volume = (Double) o; break;
+        case SAMPLEID: sampleId = (String) o; break;
+        case MEASTYPE: measType = (MeasType) o; break;
+        case TREATMENT: treatType = (TreatType) o; break;
+        case ARMAXIS: armAxis = (ArmAxis) o; break;
+        case TIMESTAMP: timeStamp = (String) o; break;
+        case RUNNUMBER: runNumber = (Integer) o; break;
+        case AREA: area = (Double) o; break;
+        case PP_SELECTED: selected = (Boolean) o; break;
+        case PP_ANCHOR_PCA: setPcaAnchored((boolean) (Boolean) o); break;
+        default: throw new IllegalArgumentException("Unknown field "+field);
+        }
+    }
 }
