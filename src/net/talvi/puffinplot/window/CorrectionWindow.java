@@ -22,18 +22,18 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.Sample;
-import net.talvi.puffinplot.data.TwoGeeField;
+import net.talvi.puffinplot.data.DatumField;
 
 public class CorrectionWindow extends JFrame implements ActionListener {
 
-    private final static TwoGeeField[] fields = {
-        TwoGeeField.SAMPLEAZ, TwoGeeField.SAMPLEDIP, TwoGeeField.FORMAZ,
-        TwoGeeField.FORMDIP, TwoGeeField.MAGDEV
+    private final static DatumField[] fields = {
+        DatumField.SAMPLEAZ, DatumField.SAMPLEDIP, DatumField.FORMAZ,
+        DatumField.FORMDIP, DatumField.MAGDEV
     };
     private JButton cancelButton;
     private JButton setButton;
-    HashMap<TwoGeeField, JCheckBox> checkBoxMap = new HashMap<TwoGeeField, JCheckBox>();
-    HashMap<TwoGeeField, JTextField> textFieldMap = new HashMap<TwoGeeField, JTextField>();
+    HashMap<DatumField, JCheckBox> checkBoxMap = new HashMap<DatumField, JCheckBox>();
+    HashMap<DatumField, JTextField> textFieldMap = new HashMap<DatumField, JTextField>();
     
 
     public CorrectionWindow() {
@@ -57,7 +57,7 @@ public class CorrectionWindow extends JFrame implements ActionListener {
         JPanel fieldPanel = new JPanel();
         fieldPanel.setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
-        for (TwoGeeField field : fields) {
+        for (DatumField field : fields) {
             gc.gridwidth = 2;
             gc.anchor = GridBagConstraints.EAST;
             JCheckBox checkBox = new JCheckBox(field.getNiceName());
@@ -96,7 +96,7 @@ public class CorrectionWindow extends JFrame implements ActionListener {
             setVisible(false);
         if (event.getSource() == setButton) {
             List<Sample> samples = PuffinApp.getInstance().getSelectedSamples();
-            for (TwoGeeField field : fields) {
+            for (DatumField field : fields) {
                 if (checkBoxMap.get(field).isSelected()) {
                     double value = Double.parseDouble(
                             textFieldMap.get(field).getText());

@@ -8,16 +8,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.MeasType;
-import net.talvi.puffinplot.data.TwoGeeField;
+import net.talvi.puffinplot.data.TreatType;
 
 public class TwoGeeLoader implements FileLoader {
 
@@ -58,6 +54,7 @@ public class TwoGeeLoader implements FileLoader {
     }
 
     private void readNextDatum() {
+        // TODO: skip malformed lines instead of ending up with nextLine == null
         try {
             String line;
             do {
@@ -65,7 +62,7 @@ public class TwoGeeLoader implements FileLoader {
             } while (line != null && emptyLine.matcher(line).matches());
             if (line == null) {
                 status = LoadingStatus.COMPLETE;
-                // close file here
+                reader.close();
             } else {
                 final int lineNum = reader.getLineNumber();
                 try {
@@ -76,7 +73,7 @@ public class TwoGeeLoader implements FileLoader {
                     if (loadWarnings.size() > MAX_WARNINGS) {
                         addWarning("Too many errors in %s -- " + "aborting load at line %d",
                                 fileName, lineNum);
-                        // close file here
+                        reader.close();
                         status = LoadingStatus.ABORTED;
                     }
                 }
@@ -104,19 +101,51 @@ public class TwoGeeLoader implements FileLoader {
         loadWarnings.add(String.format(s, args));
     }
 
-    private double getField(String[] values, String name) {
-        return Double.parseDouble(values[fields.get(name)]);
+    private boolean fieldExists(String name) {
+        return fields.containsKey(name);
+    }
+
+    private class FieldReader {
+
+        private String[] values;
+
+        FieldReader(String line) {
+            values = line.split("\\t");
+        }
+
+        private double getDouble(String name) {
+            String v = values[fields.get(name)];
+            // catch the common case without using an expensive exception
+            if ("NA".equals(v)) return Double.NaN;
+            try { return Double.parseDouble(v); }
+            catch (NumberFormatException e) { return Double.NaN; }
+        }
+
+        private String getString(String name) {
+            return values[fields.get(name)];
+        }
     }
 
     private Datum lineToDatum(String line, int lineNumber) {
-        final boolean oldSquid = PuffinApp.getInstance().getPrefs().isUseOldSquidOrientations();
-        String[] values = line.split("\\t");
-        Datum d = new Datum(getField(values, "X corr"),
-                getField(values, "Y corr"),
-                getField(values, "Z corr"));
-        d.setSampleId(values[fields.get("Sample ID")]);
-        d.setDepth(values[fields.get("Depth")]);
-        d.setMeasType(MeasType.fromString(values[fields.get("Meas. type")]));
+        final boolean oldSquid =
+                PuffinApp.getInstance().getPrefs().isUseOldSquidOrientations();
+        FieldReader r = new FieldReader(line);
+        Datum d = new Datum(r.getDouble("X corr"),
+                r.getDouble("Y corr"),
+                r.getDouble("Z corr"));
+        if (fieldExists("Sample ID")) d.setSampleId(r.getString("Sample ID"));
+        if (fieldExists("Depth")) d.setDepth(r.getString("Depth"));
+        d.setMeasType(MeasType.fromString(r.getString("Meas. type")));
+        d.setTreatType(TreatType.fromString(r.getString("Treatment Type")));
+        d.setAfX(r.getDouble("AF X"));
+        d.setAfY(r.getDouble("AF Y"));
+        d.setAfZ(r.getDouble("AF Z"));
+        d.setTemp(r.getDouble("Temp C"));
+        d.setSampAz(r.getDouble("Sample Azimiuth")); // sic
+        d.setSampDip(r.getDouble("Sample Dip"));
+        d.setFormAz(r.getDouble("Formation Dip Azimuth")); // sic
+        d.setFormDip(r.getDouble("Formation Dip"));
+        d.setMagDev(r.getDouble("Mag Dev"));
         return d;
     }
 }

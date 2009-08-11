@@ -41,6 +41,10 @@ public class Datum {
     public Datum(double x, double y, double z) {
         moment = new Vec3(x, y, z);
     }
+    
+    public Datum(Vec3 v) {
+        moment = v; // v is immutable so it's OK not to copy it
+    }
 
     public boolean isSelected()        { return selected; }
     public void setSelected(boolean v) { selected = v; }
@@ -70,6 +74,16 @@ public class Datum {
     public String getSampleId()        { return sampleId; }
     public void setSampleId(String v)  { sampleId = v; }
     public TreatType getTreatType()    { return treatType; }
+    public void setTreatType(TreatType v) { treatType = v; }
+    public double getAfX()             { return afx; }
+    public void setAfX(double v)       { afx = v; }
+    public double getAfY()             { return afy; }
+    public void setAfY(double v)       { afy = v; }
+    public double getAfZ()             { return afz; }
+    public void setAfZ(double v)       { afz = v; }
+    public double getTemp()            { return temp; }
+    public void setTemp(double v)      { temp = v; }
+
 
     public String getSampleIdOrDepth() {
         return measType == MeasType.CONTINUOUS ? depth : sampleId;
@@ -275,7 +289,7 @@ public class Datum {
 //    }
 
     
-    public Object getValue(TwoGeeField field) {
+    public Object getValue(DatumField field) {
         switch (field) {
         case AFX: return afx;
         case AFY: return afy;
@@ -314,7 +328,7 @@ public class Datum {
         }
     }
 
-    public void setValue(TwoGeeField field, Object o) {
+    public void setValue(DatumField field, Object o) {
         double dummy;
         switch (field) {
         case AFX: afx = (Double) o; break;

@@ -12,12 +12,12 @@ import java.awt.font.TransformAttribute;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 import java.util.HashMap;
 import static java.text.AttributedCharacterIterator.Attribute;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.prefs.Preferences;
@@ -25,8 +25,6 @@ import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.Datum;
-import static java.awt.font.TextAttribute.SUPERSCRIPT;
-import static java.awt.font.TextAttribute.SUPERSCRIPT_SUPER;
 
 public abstract class Plot
 {
@@ -183,13 +181,15 @@ public abstract class Plot
 
     private Rectangle2D dimensionsFromPrefsString(String spec) {
         final Scanner scanner = new Scanner(spec);
+        scanner.useLocale(Locale.ENGLISH); // use `.' for decimals
         while (scanner.hasNext()) {
             String plotName = scanner.next();
             if (getName().equals(plotName)) {
-                return
-                    new Rectangle2D.Double(scanner.nextDouble(),
-                    scanner.nextDouble(), scanner.nextDouble(),
-                    scanner.nextDouble());
+                double x = scanner.nextDouble();
+                double y = scanner.nextDouble();
+                double w = scanner.nextDouble();
+                double h = scanner.nextDouble();
+                return new Rectangle2D.Double(x, y, w, h);
             } else {
                 for (int i=0; i<4; i++) scanner.next();
             }
@@ -199,7 +199,8 @@ public abstract class Plot
 
     public String dimensionsAsString() {
         Rectangle2D r = dimensions;
-        return String.format("%f %f %f %f ",
+        // Explicit locale to ensure . for decimal separator
+        return String.format(Locale.ENGLISH, "%f %f %f %f ",
                 r.getMinX(), r.getMinY(),
                 r.getWidth(), r.getHeight());
     }

@@ -27,6 +27,7 @@ import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.file.FileLoader;
 import net.talvi.puffinplot.data.file.LoadingStatus;
 import net.talvi.puffinplot.data.file.TwoGeeLoader;
+import net.talvi.puffinplot.data.file.ZplotLoader;
 
 public class Suite implements Iterable<Datum> {
 
@@ -63,25 +64,25 @@ public class Suite implements Iterable<Datum> {
     }
 
     private static class Fields {
-        List<TwoGeeField> fields;
+        List<DatumField> fields;
         List<String> unknown;
 
         Fields(String header) {
-            fields = new LinkedList<TwoGeeField>();
+            fields = new LinkedList<DatumField>();
             unknown = new LinkedList<String>();
             Scanner scanner = new Scanner(header);
             scanner.useDelimiter(Pattern.compile("\\t")); // might have spaces within fields
             while (scanner.hasNext()) {
                 String name = scanner.next();
-                TwoGeeField field = TwoGeeField.getByHeader(name);
+                DatumField field = DatumField.getByHeader(name);
                 fields.add(field);
-                if (field == TwoGeeField.UNKNOWN) unknown.add(name);
+                if (field == DatumField.UNKNOWN) unknown.add(name);
             }
         }
 
         public boolean areAllUnknown() {
-            for (TwoGeeField field: fields)
-                if (field != TwoGeeField.UNKNOWN)
+            for (DatumField field: fields)
+                if (field != DatumField.UNKNOWN)
                     return false;
             return true;
         }
@@ -156,15 +157,15 @@ public class Suite implements Iterable<Datum> {
     }
 
     public void saveAs(File file) {
-        List<TwoGeeField> fields = new LinkedList(Arrays.asList(TwoGeeField.values()));
-        fields.remove(TwoGeeField.UNKNOWN);
+        List<DatumField> fields = new LinkedList(Arrays.asList(DatumField.values()));
+        fields.remove(DatumField.UNKNOWN);
 
         Writer writer = null;
         try {
             writer = new FileWriter(file);
 
             StringBuilder header = new StringBuilder();
-            for (TwoGeeField field : fields) {
+            for (DatumField field : fields) {
                 header.append(field.getHeading());
                 header.append("\t");
             }
@@ -175,7 +176,7 @@ public class Suite implements Iterable<Datum> {
             for (Sample sample : getSamples()) {
                 for (Datum datum : sample.getData()) {
                     StringBuilder line = new StringBuilder();
-                    for (TwoGeeField field : fields) {
+                    for (DatumField field : fields) {
                         //line.append(datum.getValue(field).toString());
                         line.append("\t");
                     }
@@ -259,15 +260,22 @@ public class Suite implements Iterable<Datum> {
         final int MAX_WARNINGS_PER_FILE = 3;
 
         for (File file: files) {
-            int warningsThisFile = 0;
             FileType fileType = FileType.guessFromName(file);
-            final String fileName = file.getName();
-            FileLoader loader = new TwoGeeLoader(file);
+            FileLoader loader = null;
+            switch (fileType) {
+            case TWOGEE:
+            case PUFFINPLOT:
+                loader = new TwoGeeLoader(file);
+                break;
+            case ZPLOT:
+                loader = new ZplotLoader(file);
+                break;
+            }
             while (loader.getStatus() == LoadingStatus.IN_PROGRESS) {
-                            addDatum(loader.getNext(), nameSet);
+                addDatum(loader.getNext(), nameSet);
             }
                     
-        loadWarnings = Collections.unmodifiableList(loader.getMessages());
+        loadWarnings = loader.getMessages();
         names = nameSet.toArray(names);
         setCurrentSampleIndex(0);
         for (Sample s: getSamples()) s.doPca();
@@ -281,7 +289,6 @@ public class Suite implements Iterable<Datum> {
         }
     }
     
-
     /*
      * Save calculations per-sample.
      */

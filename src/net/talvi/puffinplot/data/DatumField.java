@@ -3,7 +3,7 @@ package net.talvi.puffinplot.data;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum TwoGeeField {
+public enum DatumField {
 
     /* When adding fields here, make sure also to add them to the Datum
      * constructor and to Datum.getValue().
@@ -59,26 +59,26 @@ public enum TwoGeeField {
     
     private final String heading;
     private final String niceName;
-    private final static Map<String, TwoGeeField> map;
+    private final static Map<String, DatumField> map;
     
     static {
         // This block is run after the enums have been initialized.
         // See http://deepjava.wordpress.com/2006/12/08/bootstrapping-static-fields-within-enums/
-         map = new HashMap<String, TwoGeeField>();
-         for (TwoGeeField f: values()) map.put(f.getHeading(), f);
+         map = new HashMap<String, DatumField>();
+         for (DatumField f: values()) map.put(f.getHeading(), f);
     }
 
-    private TwoGeeField(String heading, String niceName) {
+    private DatumField(String heading, String niceName) {
         this.heading = heading;
         this.niceName = niceName;
     }
 
-    private TwoGeeField(String heading) {
+    private DatumField(String heading) {
         this(heading, heading);
     }
 
-    public static TwoGeeField getByHeader(String h) {
-        TwoGeeField f =  map.get(h);
+    public static DatumField getByHeader(String h) {
+        DatumField f =  map.get(h);
         return f!=null ? f : UNKNOWN;
     }
 
