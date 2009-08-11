@@ -1,10 +1,8 @@
 package net.talvi.puffinplot.data;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.LineNumberReader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,11 +15,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.regex.Pattern;
-
 import net.talvi.puffinplot.FileType;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.file.FileLoader;
@@ -41,12 +36,14 @@ public class Suite implements Iterable<Datum> {
     private MeasType measType;
     private String currentSampleName;
     private String suiteName;
-    private static final Pattern emptyLine = Pattern.compile("^\\s*$");
-    private static final Pattern whitespace = Pattern.compile("\\s+");
     private List<FisherForSite> siteFishers;
     private FisherValues suiteFisher;
     final private PuffinApp app;
     private List<String> loadWarnings;
+    private static final Vec3 SENSOR_LENGTHS_OLD =
+            new Vec3(-4.628, 4.404, -6.280);
+    private static final Vec3 SENSOR_LENGTHS_NEW =
+            new Vec3(4.628, -4.404, -6.280);
 
     public Iterator<Datum> iterator() {
         return data.iterator();
@@ -56,36 +53,8 @@ public class Suite implements Iterable<Datum> {
         return suiteFisher;
     }
 
-    /**
-     * @return the loadWarnings
-     */
     public List<String> getLoadWarnings() {
         return loadWarnings;
-    }
-
-    private static class Fields {
-        List<DatumField> fields;
-        List<String> unknown;
-
-        Fields(String header) {
-            fields = new LinkedList<DatumField>();
-            unknown = new LinkedList<String>();
-            Scanner scanner = new Scanner(header);
-            scanner.useDelimiter(Pattern.compile("\\t")); // might have spaces within fields
-            while (scanner.hasNext()) {
-                String name = scanner.next();
-                DatumField field = DatumField.getByHeader(name);
-                fields.add(field);
-                if (field == DatumField.UNKNOWN) unknown.add(name);
-            }
-        }
-
-        public boolean areAllUnknown() {
-            for (DatumField field: fields)
-                if (field != DatumField.UNKNOWN)
-                    return false;
-            return true;
-        }
     }
 
     private static class FisherForSite {
@@ -209,7 +178,6 @@ public class Suite implements Iterable<Datum> {
     }
 
     private void addDatum(Datum d, Set<String> nameSet) {
-        final boolean oldSquid = PuffinApp.getInstance().getPrefs().isUseOldSquidOrientations();
         if (measType == MeasType.UNSET) measType = d.getMeasType();
         if (d.getMeasType() != measType) {
             throw new Error("Can't mix long core and discrete measurements.");
@@ -238,8 +206,9 @@ public class Suite implements Iterable<Datum> {
     }
 
     /*
-     * Note that this may return an empty suite, in which case various things
-     * can break. We can't just throw an exception if the suite's empty,
+     * Note that this may return an empty suite, in which case it is the
+     * caller's responsibility to notice this and deal with it.
+     * We can't just throw an exception if the suite's empty,
      * because then we lose the load warnings (which will probably explain
      * to the user *why* the suite's empty and are thus quite important).
      **/
@@ -254,10 +223,8 @@ public class Suite implements Iterable<Datum> {
         samplesByName = new LinkedHashMap<String, Sample>();
         dataByLine = new HashMap<Integer, Line>();
         measType = MeasType.UNSET;
-        String line;
         TreeSet<Double> depthSet = new TreeSet<Double>();
         TreeSet<String> nameSet = new TreeSet<String>();
-        final int MAX_WARNINGS_PER_FILE = 3;
 
         for (File file: files) {
             FileType fileType = FileType.guessFromName(file);
@@ -265,7 +232,9 @@ public class Suite implements Iterable<Datum> {
             switch (fileType) {
             case TWOGEE:
             case PUFFINPLOT:
-                loader = new TwoGeeLoader(file);
+                TwoGeeLoader twoGeeLoader = new TwoGeeLoader(file);
+                twoGeeLoader.setSensorLengths(SENSOR_LENGTHS_NEW);
+                loader = twoGeeLoader;
                 break;
             case ZPLOT:
                 loader = new ZplotLoader(file);
@@ -275,7 +244,7 @@ public class Suite implements Iterable<Datum> {
                 addDatum(loader.getNext(), nameSet);
             }
                     
-        loadWarnings = loader.getMessages();
+        loadWarnings.addAll(loader.getMessages());
         names = nameSet.toArray(names);
         setCurrentSampleIndex(0);
         for (Sample s: getSamples()) s.doPca();
@@ -315,15 +284,14 @@ public class Suite implements Iterable<Datum> {
                         pca == null ? PcaAnnotated.getEmptyFields() : pca.toStrings(),
                         mdf == null ? MDF.getEmptyFields() : mdf.toStrings());
             }
-
         } catch (IOException ex) {
             app.errorDialog("Error saving file", ex.getMessage());
         } finally {
-                try {
-                    if (writer != null) writer.close();
-                } catch (IOException ex) {
-                    app.errorDialog("Error closing file", ex.getLocalizedMessage());
-                }
+            try {
+                if (writer != null) writer.close();
+            } catch (IOException ex) {
+                app.errorDialog("Error closing file", ex.getLocalizedMessage());
+            }
         }
     }
 

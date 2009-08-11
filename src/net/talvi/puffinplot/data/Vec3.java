@@ -232,6 +232,10 @@ public class Vec3 {
             {z * x, z * y, z * z}});
     }
 
+    public Vec3 scale(Vec3 factors) {
+        return new Vec3(x * factors.x, y * factors.y, z * factors.z);
+    }
+    
     public static Vec3 centreOfMass(List<Vec3> points) {
         double xs = 0, ys = 0, zs = 0;
         int i = 0;

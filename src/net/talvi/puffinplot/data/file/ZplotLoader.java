@@ -19,15 +19,15 @@ import net.talvi.puffinplot.data.Vec3;
 
 public class ZplotLoader implements FileLoader {
 
-    private LineNumberReader reader;
+    final private LineNumberReader reader;
     private Datum nextDatum;
     private LoadingStatus status;
-    private List<String> loadWarnings = new LinkedList<String>();
+    final private List<String> loadWarnings = new LinkedList<String>();
     final private static String[] ZPLOT_HEADERS =
       {"Sample", "Project", "Demag", "Declin", "Inclin", "Intens", "Operation"};
-    private final static Pattern numberPattern = Pattern.compile("\\d+(\\.\\d+)?");
-    private static final Pattern whitespace = Pattern.compile("\\s+");
-    private final static Pattern delimPattern = Pattern.compile("\\t");
+    final private static Pattern numberPattern  = Pattern.compile("\\d+(\\.\\d+)?");
+    final private static Pattern whitespace = Pattern.compile("\\s+");
+    final private static Pattern delimPattern = Pattern.compile("\\t");
 
     public ZplotLoader(File file) throws IOException {
         reader = new LineNumberReader(new FileReader(file));

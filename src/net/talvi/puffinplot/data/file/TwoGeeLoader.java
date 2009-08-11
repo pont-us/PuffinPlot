@@ -10,27 +10,19 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.Vec3;
 
 public class TwoGeeLoader implements FileLoader {
 
-    // Note that sensors may have negative effective lengths, depending
-    // on how they're mounted. These are the absolute values, and some
-    // may be negated when calculating magnetization vectors for long cores.
-    // (See the constructor for details.)
-    private static final double sensorLengthX = 4.628,
-     sensorLengthY = 4.404,
-     sensorLengthZ = 6.280;
-
+    private Vec3 sensorLengths = new Vec3(1, 1, 1);
     private final LineNumberReader reader;
     private Map<String,Integer> fields;
     private Datum nextDatum;
     private LoadingStatus status;
     private static final Pattern emptyLine = Pattern.compile("^\\s*$");
-    private MeasType measType;
     private final String fileName;
     private List<String> loadWarnings = new LinkedList<String>();
     private static final int MAX_WARNINGS = 10;
@@ -51,6 +43,10 @@ public class TwoGeeLoader implements FileLoader {
                 fields.put(fieldNames[i], i);
         }
         readNextDatum();
+    }
+
+    public void setSensorLengths(Vec3 v) {
+        sensorLengths = v;
     }
 
     private void readNextDatum() {
@@ -127,15 +123,19 @@ public class TwoGeeLoader implements FileLoader {
     }
 
     private Datum lineToDatum(String line, int lineNumber) {
-        final boolean oldSquid =
-                PuffinApp.getInstance().getPrefs().isUseOldSquidOrientations();
         FieldReader r = new FieldReader(line);
-        Datum d = new Datum(r.getDouble("X corr"),
+        Vec3 moment = new Vec3(r.getDouble("X corr"),
                 r.getDouble("Y corr"),
                 r.getDouble("Z corr"));
+        final MeasType measType = MeasType.fromString(r.getString("Meas. type"));
+        if (measType == MeasType.CONTINUOUS) moment = moment.scale(sensorLengths);
+        // TODO this is wrong, should be using area. Also should be using
+        // volume for discrete samples
+        Datum d = new Datum(moment);
+        
         if (fieldExists("Sample ID")) d.setSampleId(r.getString("Sample ID"));
         if (fieldExists("Depth")) d.setDepth(r.getString("Depth"));
-        d.setMeasType(MeasType.fromString(r.getString("Meas. type")));
+        d.setMeasType(measType);
         d.setTreatType(TreatType.fromString(r.getString("Treatment Type")));
         d.setAfX(r.getDouble("AF X"));
         d.setAfY(r.getDouble("AF Y"));
@@ -143,7 +143,7 @@ public class TwoGeeLoader implements FileLoader {
         d.setTemp(r.getDouble("Temp C"));
         d.setSampAz(r.getDouble("Sample Azimiuth")); // sic
         d.setSampDip(r.getDouble("Sample Dip"));
-        d.setFormAz(r.getDouble("Formation Dip Azimuth")); // sic
+        d.setFormAz(r.getDouble("Formation Dip Azimuth"));
         d.setFormDip(r.getDouble("Formation Dip"));
         d.setMagDev(r.getDouble("Mag Dev"));
         return d;

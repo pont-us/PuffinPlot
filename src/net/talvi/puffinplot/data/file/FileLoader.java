@@ -8,5 +8,4 @@ public interface FileLoader {
     public Datum getNext();
     public LoadingStatus getStatus();
     public List<String> getMessages();
-
 }
