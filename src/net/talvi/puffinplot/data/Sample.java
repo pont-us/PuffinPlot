@@ -92,9 +92,7 @@ public class Sample {
     }
     
     public void addDatum(Datum d) {
-        if (d.hasMagSus() && getData().size()>0)
-                getData().get(getData().size()-1).setMagSus(d.getMagSus());
-        else data.add(d);
+        data.add(d);
         if (d.hasMagSus()) hasMsData = true;
         d.setSample(this);
     }
