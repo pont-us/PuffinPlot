@@ -71,7 +71,6 @@ public class TwoGeeLoader implements FileLoader {
                 break;
             }
         }
-
     }
 
     public void setSensorLengths(Vec3 v) {
@@ -162,7 +161,7 @@ public class TwoGeeLoader implements FileLoader {
         d.setSampDip(r.getDouble("Sample Dip"));
         d.setFormAz(r.getDouble("Formation Dip Azimuth"));
         d.setFormDip(r.getDouble("Formation Dip"));
-        d.setMagDev(r.getDouble("Mag Dev"));
+        if (fieldExists("Mag Dev")) d.setMagDev(r.getDouble("Mag Dev"));
         return d;
     }
 }

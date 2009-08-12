@@ -238,7 +238,7 @@ public class Suite {
             }
             dataArray.ensureCapacity(dataArray.size() + loader.getData().size());
             for (Datum d: loader.getData()) {
-                addDatum(d, nameSet);
+                if (!d.ignoreOnLoading()) addDatum(d, nameSet);
             }
                     
             loadWarnings.addAll(loader.getMessages());

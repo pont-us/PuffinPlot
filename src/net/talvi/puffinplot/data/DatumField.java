@@ -9,49 +9,39 @@ public enum DatumField {
      * constructor and to Datum.getValue().
      */
 
+    // Identifiers
     SAMPLEID("Sample ID"),
-    MEASTYPE("Meas. type"),
-    TREATMENT("Treatment Type"),
-    AFX("AF X"),
-    AFY("AF Y"),
-    AFZ("AF Z"),
-    TEMP("Temp C"),
-    DECUC("Declination: Unrotated"),
-    INCUC("Inclination: Unrotated"),
-    DECSC("Declination: Sample Rotated"),
-    INCSC("Inclination: Sample Rotated"),
-    DECFC("Declination: Formation Rotated"),
-    INCFC("Inclination: Formation Rotated"),
-    INTENSITY("Intensity"),
-    MSCORR("MS corr"),
-    SAMPLEAZ("Sample Azimiuth" /* sic */, "Sample azimuth"),
-    SAMPLEDIP("Sample Dip", "Sample dip"),
-    FORMAZ("Formation Dip Azimuth", "Formation dip azimuth"),
-    FORMDIP("Formation Dip", "Formation dip"),
-    MAGDEV("Mag Dev", "Magnetic deviation"),
-    XCORR("X corr"),
-    YCORR("Y corr"),
-    ZCORR("Z corr"),
-    XDRIFT("X drift"),
-    YDRIFT("Y drift"),
-    ZDRIFT("Z drift"),
-    XMEAN("X mean"),
-    YMEAN("Y mean"),
-    ZMEAN("Z mean"),
+    RUNNUMBER("Run #"),
+    TIMESTAMP("Sample Timestamp"),
+
+    // Lab measurements
+    MEASTYPE("Measurement type"),
+    XCORR("X moment"),
+    YCORR("Y moment"),
+    ZCORR("Z moment"),
+    MSCORR("Magnetic susceptibility"),
+    VOLUME("Volume"),
+    AREA("Area"),
+
+    // Field measurements
+    SAMPLEAZ("Sample azimuth"),
+    SAMPLEDIP("Sample dip"),
+    FORMAZ("Formation dip azimuth"),
+    FORMDIP("Formation dip"),
+    MAGDEV("Magnetic deviation"),
     DEPTH("Depth"),
+
+    // Treatments
+    TREATMENT("Treatment type"),
+    AFX("AF X field"),
+    AFY("AF Y field"),
+    AFZ("AF Z field"),
+    TEMP("Temperature"),
     IRMGAUSS("IRM Gauss"),
     ARMGAUSS("ARM Gauss"),
     ARMAXIS("ARM axis"),
-    VOLUME("Volume"),
-    XBKG1("X bkg #1"),
-    XBKG2("X bkg #2"),
-    YBKG1("Y bkg #1"),
-    YBKG2("Y bkg #2"),
-    ZBKG1("Z bkg #1"),
-    ZBKG2("Z bkg #2"),
-    RUNNUMBER("Run #"),
-    TIMESTAMP("Sample Timestamp"),
-    AREA("Area"),
+
+    // Processing and display parameters
     PP_SELECTED("PUFFIN selected"),
     PP_ANCHOR_PCA("PUFFIN anchor PCA"),
     PP_HIDDEN("PUFFIN hidden"),
@@ -59,12 +49,10 @@ public enum DatumField {
     
     private final String heading;
     private final String niceName;
-    private final static Map<String, DatumField> map;
+    private final static Map<String, DatumField> map
+            = new HashMap<String, DatumField>();
     
     static {
-        // This block is run after the enums have been initialized.
-        // See http://deepjava.wordpress.com/2006/12/08/bootstrapping-static-fields-within-enums/
-         map = new HashMap<String, DatumField>();
          for (DatumField f: values()) map.put(f.getHeading(), f);
     }
 

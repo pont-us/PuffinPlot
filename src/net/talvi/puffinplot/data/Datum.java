@@ -1,7 +1,6 @@
 package net.talvi.puffinplot.data;
 
 import java.util.List;
-import java.util.regex.Pattern;
 import static java.lang.Double.NaN;
 import static java.lang.Math.toRadians;
 
@@ -179,120 +178,9 @@ public class Datum {
     }
 
     public boolean ignoreOnLoading() {
-        return /* isMagSus() || */
-                (getTreatType() == TreatType.ARM) ||
+        return getTreatType() == TreatType.ARM ||
                 getMeasType() == MeasType.NONE;
     }
-
-
-//    public Datum(String dataLine, List<TwoGeeField> fields, Line line,
-//            boolean oldSquids) {
-//        this.line = line;
-//        NaScanner s = new NaScanner(dataLine);
-//        for (TwoGeeField f: fields) {
-//            try {
-//                switch (f) {
-//            case SAMPLEID: sampleId = s.next(); break;
-//            case MEASTYPE: measType = MeasType.fromString(s.next()); break;
-//            case TREATMENT: treatType = TreatType.fromString(s.next()); break;
-//            case AFX: afx = s.nextD(); break;
-//            case AFY: afy = s.nextD(); break;
-//            case AFZ: afz = s.nextD(); break;
-//            case TEMP: temp = s.nextD(); break;
-//            case DECUC: decUc = s.nextD(); break;
-//            case INCUC: incUc = s.nextD(); break;
-//            case DECSC: decSc = s.nextD(); break;
-//            case INCSC: incSc = s.nextD(); break;
-//            case DECFC: decFc = s.nextD(); break;
-//            case INCFC: incFc = s.nextD(); break;
-//            case INTENSITY: intensity = s.nextD(); break;
-//            case MSCORR: magSus = s.nextD(); break;
-//            case SAMPLEAZ: sampAz = s.nextD(); break;
-//            case SAMPLEDIP: sampDip = s.nextD(); break;
-//            case FORMAZ: formAz = s.nextD(); break;
-//            case FORMDIP: formDip = s.nextD(); break;
-//            case XMEAN: xMean = s.nextD(); break;
-//            case YMEAN: yMean = s.nextD(); break;
-//            case ZMEAN: zMean = s.nextD(); break;
-//            case MAGDEV: magDev = s.nextD(); break;
-//            case XCORR: xCorr = s.nextD(); break;
-//            case YCORR: yCorr = s.nextD(); break;
-//            case ZCORR: zCorr = s.nextD(); break;
-//            case XDRIFT: xDrift = s.nextD(); break;
-//            case YDRIFT: yDrift = s.nextD(); break;
-//            case ZDRIFT: zDrift = s.nextD(); break;
-//            case DEPTH: depth = s.nextD(); break;
-//            case IRMGAUSS: irmGauss = s.nextD(); break;
-//            case ARMGAUSS: armGauss = s.nextD(); break;
-//            case ARMAXIS: armAxis = ArmAxis.getByString(s.next()); break;
-//            case VOLUME: volume = s.nextD(); break;
-//            case XBKG1: xbkg1 = s.nextD(); break;
-//            case XBKG2: xbkg2 = s.nextD(); break;
-//            case YBKG1: ybkg1 = s.nextD(); break;
-//            case YBKG2: ybkg2 = s.nextD(); break;
-//            case ZBKG1: zbkg1 = s.nextD(); break;
-//            case ZBKG2: zbkg2 = s.nextD(); break;
-//            case RUNNUMBER: runNumber = s.nextInt(); break;
-//            case TIMESTAMP: timeStamp = s.next(); break;
-//            case AREA: area = s.nextD(); break;
-//            case PP_SELECTED: selected = s.nextBoolean(); break;
-//            case PP_ANCHOR_PCA: pcaAnchored = s.nextBoolean(); break;
-//            case PP_HIDDEN: hidden = s.nextBoolean(); break;
-//            case UNKNOWN: s.next(); break;
-//            default: s.next(); break;
-//                }
-//            } catch (InputMismatchException e) {
-//                throw new IllegalArgumentException("Expected a number for " +
-//                        f.getHeading());
-//            } catch (NumberFormatException e) {
-//                throw new IllegalArgumentException("Expected a number for " +
-//                        f.getHeading());
-//            } catch (NoSuchElementException e) {
-//                throw new IllegalArgumentException("Couldn't read " +
-//                        f.getHeading());
-//            }
-//        }
-//
-//        if (Double.isNaN(magDev)) magDev = 0; // sensible default
-//
-//        if (measType==null) {
-//          throw new IllegalArgumentException("No measurement type specified");
-//        }
-//
-//        switch (measType) {
-//            case CONTINUOUS:
-//
-//                // We no longer try to guess whether the SQUIDs are in
-//                // the old or new orientation; Faye said it's unreliable.
-//
-//                // ADDENDUM 2009-02-12: turns out that the effective
-//                // sensor lengths for the Y and Z SQUIDs have been
-//                // negated in the new set-up. To summarize:
-//                //   old new
-//                // x  -   +
-//                // y  +   -
-//                // z  -   -
-//
-//                double xVol = area * sensorLengthX;
-//                double yVol = area * sensorLengthY;
-//                double zVol = area * sensorLengthZ;
-//                uc = new Vec3( (oldSquids ? -1 : 1) * xCorr / xVol,
-//                        (oldSquids ? 1 : -1) * yCorr / yVol,
-//                        -zCorr / zVol);
-//                break;
-//            case DISCRETE:
-//                uc = new Vec3(xCorr / volume, yCorr / volume, zCorr / volume);
-//                break;
-//            case NONE:
-//                // do nothing, since there is no data.
-//                break;
-//            default:
-//                throw new IllegalArgumentException
-//                        ("Unknown measurement type "+measType);
-//        }
-//        if (!ignoreOnLoading()) line.add(this);
-//        // applyCorrections();
-//    }
 
     
     public Object getValue(DatumField field) {
@@ -306,16 +194,10 @@ public class Datum {
         case SAMPLEDIP: return getSampDip();
         case FORMAZ: return getFormAz();
         case FORMDIP: return getFormDip();
-        case XMEAN: return 0;
-        case YMEAN: return 0;
-        case ZMEAN: return 0;
         case MAGDEV: return getMagDev();
         case XCORR: return 0;
         case YCORR: return 0;
         case ZCORR: return 0;
-        case XDRIFT: return 0;
-        case YDRIFT: return 0;
-        case ZDRIFT: return 0;
         case DEPTH: return depth;
         case IRMGAUSS: return irmGauss;
         case ARMGAUSS: return armGauss;
@@ -346,16 +228,10 @@ public class Datum {
         case SAMPLEDIP: setSampDip((Double) o); break;
         case FORMAZ: setFormAz((Double) o); break;
         case FORMDIP: setFormDip((Double) o); break;
-        case XMEAN: dummy = (Double) o; break;
-        case YMEAN: dummy = (Double) o; break;
-        case ZMEAN: dummy = (Double) o; break;
         case MAGDEV: setMagDev((Double) o); break;
         case XCORR: dummy = (Double) o; break;
         case YCORR: dummy = (Double) o; break;
         case ZCORR: dummy = (Double) o; break;
-        case XDRIFT: dummy = (Double) o; break;
-        case YDRIFT: dummy = (Double) o; break;
-        case ZDRIFT: dummy = (Double) o; break;
         case DEPTH: depth = (String) o; break;
         case IRMGAUSS: irmGauss = (Double) o; break;
         case ARMGAUSS: armGauss = (Double) o; break;
