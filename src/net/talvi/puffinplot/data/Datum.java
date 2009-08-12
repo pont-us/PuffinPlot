@@ -8,8 +8,8 @@ import static java.lang.Math.toRadians;
 public class Datum {
 
     private static final double
-         defaultCoreArea = 4.0, // can be overridden by Area field in file
-     defaultVolume = 10.8; // can be overridden by Volume field in file
+            DEFAULT_AREA = 4.0, // can be overridden by Area field in file
+            DEFAULT_VOLUME = 10.8; // can be overridden by Volume field in file
 
     private String sampleId = "UNSET";
     private MeasType measType = MeasType.UNSET;
@@ -22,19 +22,15 @@ public class Datum {
     private String depth=null;
     private double irmGauss=NaN, armGauss=NaN;
     private ArmAxis armAxis = ArmAxis.UNKNOWN;
-    private Vec3 moment;
+    private Vec3 moment = null;
     private int runNumber = -1;
-    private double volume = defaultVolume;
-    private double area = defaultCoreArea;
+    private double volume = DEFAULT_VOLUME;
+    private double area = DEFAULT_AREA;
     private String timeStamp = "UNSET"; // NB this is a magic value; see below
-
     private Line line;
     private boolean selected = false;
     private boolean pcaAnchored = true;
     private boolean hidden = false;
-    
-    private final static Pattern delimPattern = Pattern.compile("\\t");
-    private final static Pattern numberPattern = Pattern.compile("\\d+(\\.\\d+)?");
     private Sample sample;
     private boolean doVolumeCorrection;
 
@@ -45,6 +41,8 @@ public class Datum {
     public Datum(Vec3 v) {
         moment = v; // v is immutable so it's OK not to copy it
     }
+
+    public Datum() {}
 
     public boolean isSelected()        { return selected; }
     public void setSelected(boolean v) { selected = v; }
@@ -83,12 +81,20 @@ public class Datum {
     public void setAfZ(double v)       { afz = v; }
     public double getTemp()            { return temp; }
     public void setTemp(double v)      { temp = v; }
-
+    public void setMoment(Vec3 v)      { moment = v; }
+    public double getArea()            { return area; }
+    public void setArea(double v)      { area = v; }
+    public double getVolume()          { return volume; }
+    public void setVolume(double v)    { volume = v; }
 
     public String getSampleIdOrDepth() {
         return measType == MeasType.CONTINUOUS ? depth : sampleId;
     }
-    public boolean isMagSus()          { return !Double.isNaN(magSus); }
+    public boolean hasMagSus()          { return !Double.isNaN(magSus); }
+
+    public boolean isMagSusOnly() {
+        return moment == null && hasMagSus();
+    }
 
     private Vec3 getFc(boolean emptyCorr) {
         return Double.isNaN(formAz) || Double.isNaN(formDip)

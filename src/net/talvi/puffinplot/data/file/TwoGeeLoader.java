@@ -18,75 +18,80 @@ import net.talvi.puffinplot.data.Vec3;
 public class TwoGeeLoader implements FileLoader {
 
     private Vec3 sensorLengths = new Vec3(1, 1, 1);
-    private final LineNumberReader reader;
     private Map<String,Integer> fields;
-    private Datum nextDatum;
-    private LoadingStatus status;
+    private List<Datum> data;
     private static final Pattern emptyLine = Pattern.compile("^\\s*$");
-    private final String fileName;
     private List<String> loadWarnings = new LinkedList<String>();
     private static final int MAX_WARNINGS = 10;
+    private File file;
+    private LineNumberReader reader;
 
-    public TwoGeeLoader(File file) throws IOException {
-        fileName = file.getName();
-        reader = new LineNumberReader(new FileReader(file));
-        status = LoadingStatus.IN_PROGRESS;
+    public TwoGeeLoader(File file) {
+        this.file = file;
+        try {
+            reader = new LineNumberReader(new FileReader(file));
+            readFile();
+        } catch (IOException e) {
+            addWarning(e.getMessage());
+        } finally {
+            try { reader.close(); } catch (IOException e2) {}
+        }
+    }
+
+    private void readFile() throws IOException {
+        String fileName = file.getName();
         String fieldsLine = reader.readLine();
         if (fieldsLine == null) {
             addWarning("%s is empty.", fileName);
             reader.close();
-            status = LoadingStatus.COMPLETE;
         } else {
             fields = new HashMap<String, Integer>();
             String[] fieldNames = fieldsLine.split(("\\t"));
             for (int i=0; i<fieldNames.length; i++)
                 fields.put(fieldNames[i], i);
         }
-        readNextDatum();
+        data = new LinkedList<Datum>();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            Datum d = readDatum(line, reader.getLineNumber());
+            if (d != null) {
+                if (d.isMagSusOnly()) {
+                     Datum dPrev = data.get(data.size()-1);
+                     if (!dPrev.isMagSusOnly()) {
+                         dPrev.setMagSus(d.getMagSus());
+                     } else {
+                         data.add(d);
+                     }
+                } else {
+                    data.add(d);
+                }
+            }
+            if (loadWarnings.size() > MAX_WARNINGS) {
+                addWarning("Too many errors in %s", fileName);
+                break;
+            }
+        }
+
     }
 
     public void setSensorLengths(Vec3 v) {
         sensorLengths = v;
     }
 
-    private void readNextDatum() {
-        // TODO: skip malformed lines instead of ending up with nextLine == null
+    private Datum readDatum(String line, int lineNumber) {
+        Datum d = null;
+        if (emptyLine.matcher(line).matches()) return null;
         try {
-            String line;
-            do {
-                line = reader.readLine();
-            } while (line != null && emptyLine.matcher(line).matches());
-            if (line == null) {
-                status = LoadingStatus.COMPLETE;
-                reader.close();
-            } else {
-                final int lineNum = reader.getLineNumber();
-                try {
-                    nextDatum = lineToDatum(line, lineNum);
-                } catch (IllegalArgumentException e) {
-                    addWarning("%s at line %d in file %s -- " + "ignoring this line.",
-                            e.getMessage(), lineNum, fileName);
-                    if (loadWarnings.size() > MAX_WARNINGS) {
-                        addWarning("Too many errors in %s -- " + "aborting load at line %d",
-                                fileName, lineNum);
-                        reader.close();
-                        status = LoadingStatus.ABORTED;
-                    }
-                }
-            }
-        } catch (IOException ex) {
-            addWarning("Error reading %s: %s", fileName, ex.getLocalizedMessage());
+            d = lineToDatum(line, lineNumber);
+        } catch (IllegalArgumentException e) {
+            addWarning("%s at line %d in file %s -- ignoring this line.",
+                    e.getMessage(), lineNumber, file.getName());
         }
-    }
-
-    public Datum getNext() {
-        Datum d = nextDatum;
-        readNextDatum();
         return d;
     }
 
-    public LoadingStatus getStatus() {
-        return status;
+    public List<Datum> getData() {
+        return data;
     }
 
     public List<String> getMessages() {
@@ -124,15 +129,27 @@ public class TwoGeeLoader implements FileLoader {
 
     private Datum lineToDatum(String line, int lineNumber) {
         FieldReader r = new FieldReader(line);
-        Vec3 moment = new Vec3(r.getDouble("X corr"),
-                r.getDouble("Y corr"),
-                r.getDouble("Z corr"));
+        Datum d = new Datum();
+
         final MeasType measType = MeasType.fromString(r.getString("Meas. type"));
-        if (measType == MeasType.CONTINUOUS) moment = moment.scale(sensorLengths);
-        // TODO this is wrong, should be using area. Also should be using
-        // volume for discrete samples
-        Datum d = new Datum(moment);
-        
+
+        if (fieldExists("Area")) d.setArea(r.getDouble("Area"));
+        if (fieldExists("Volume")) d.setVolume(r.getDouble("Volume"));
+        if (fieldExists("X corr") && ! r.getString("X corr").equals("NA")) {
+            Vec3 moment = new Vec3(r.getDouble("X corr"),
+                    r.getDouble("Y corr"),
+                    r.getDouble("Z corr"));
+            switch (measType) {
+            case CONTINUOUS:
+                moment = moment.divideBy(sensorLengths.times(d.getArea()));
+                break;
+            case DISCRETE:
+                moment = moment.divideBy(d.getVolume());
+                break;
+            }
+            d.setMoment(moment);
+        }
+        d.setMagSus(r.getDouble("MS corr"));
         if (fieldExists("Sample ID")) d.setSampleId(r.getString("Sample ID"));
         if (fieldExists("Depth")) d.setDepth(r.getString("Depth"));
         d.setMeasType(measType);

@@ -218,6 +218,18 @@ public class Vec3 {
         return new Vec3(x * a, y * a, z * a);
     }
 
+    public Vec3 times(Vec3 p) {
+        return new Vec3(x * p.x, y * p.y, z * p.z);
+    }
+
+    public Vec3 divideBy(double a) {
+        return new Vec3(x / a, y / a, z / a);
+    }
+
+    public Vec3 divideBy(Vec3 p) {
+        return new Vec3(x / p.x, y / p.y, z / p.z);
+    }
+
     public double scalarProduct(Vec3 p) {
         return (x * p.x + y * p.y + z * p.z);
     }
@@ -232,9 +244,6 @@ public class Vec3 {
             {z * x, z * y, z * z}});
     }
 
-    public Vec3 scale(Vec3 factors) {
-        return new Vec3(x * factors.x, y * factors.y, z * factors.z);
-    }
     
     public static Vec3 centreOfMass(List<Vec3> points) {
         double xs = 0, ys = 0, zs = 0;

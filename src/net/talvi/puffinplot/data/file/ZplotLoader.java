@@ -9,8 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.MeasType;
@@ -19,76 +17,67 @@ import net.talvi.puffinplot.data.Vec3;
 
 public class ZplotLoader implements FileLoader {
 
-    final private LineNumberReader reader;
-    private Datum nextDatum;
-    private LoadingStatus status;
+    private LineNumberReader reader;
+    private List<Datum> data;
     final private List<String> loadWarnings = new LinkedList<String>();
     final private static String[] ZPLOT_HEADERS =
       {"Sample", "Project", "Demag", "Declin", "Inclin", "Intens", "Operation"};
     final private static Pattern numberPattern  = Pattern.compile("\\d+(\\.\\d+)?");
     final private static Pattern whitespace = Pattern.compile("\\s+");
     final private static Pattern delimPattern = Pattern.compile("\\t");
+    private File file;
 
-    public ZplotLoader(File file) throws IOException {
-        reader = new LineNumberReader(new FileReader(file));
-        status = LoadingStatus.IN_PROGRESS;
+    public ZplotLoader(File file) {
+        this.file = file;
+        data = new LinkedList<Datum>();
+        try {
+            reader = new LineNumberReader(new FileReader(file));
+            readFile();
+        } catch (IOException e) {
+
+        }
+    }
+
+    private void readFile() throws IOException {
         // Check first line for magic string
         if (!reader.readLine().startsWith("File Name:")) {
             addWarning("Ignoring unrecognized file %s", file.getName());
-            abort();
+            return;
         }
         // skip remaining header fields
         for (int i = 0; i < 5; i++) reader.readLine();
         String headerLine = reader.readLine();
         if (headerLine == null) {
             addWarning("Ignoring malformed ZPlot file %s", file.getName());
-            abort();
+            return;
         }
         String[] headers = whitespace.split(headerLine);
 
         if (headers.length != 7) {
             addWarning("Wrong number of header fields in Zplot file %s:" +
                     ": expected 7, got %s", file.getName(), headers.length);
-            abort();
+            return;
         }
         for (int i = 0; i < ZPLOT_HEADERS.length; i++) {
             if (!ZPLOT_HEADERS[i].equals(headers[i])) {
                 addWarning("Unknown header field %s in file %s.",
                         headers[i], file.getName());
-                abort();
+                return;
             }
         }
-        readNextDatum();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            Datum d = lineToDatum(line);
+            if (d != null) data.add(d);
+        }
     }
 
-    private void abort() {
-        status = LoadingStatus.ABORTED;
-        try { reader.close(); } catch (IOException e) {}
-        addWarning("Aborting file loading.");
-    }
-
-    public Datum getNext() {
-        Datum d = nextDatum;
-        readNextDatum();
-        return d;
-    }
-
-    public LoadingStatus getStatus() {
-        return status;
+    public List<Datum> getData() {
+        return data;
     }
 
     public List<String> getMessages() {
         return Collections.unmodifiableList(loadWarnings);
-    }
-
-    private void readNextDatum() {
-        try {
-            String line = reader.readLine();
-            if (line == null) status = LoadingStatus.COMPLETE;
-            else nextDatum = lineToDatum(line);
-        } catch (IOException ex) {
-            Logger.getLogger(ZplotLoader.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 
     private void addWarning(String s, Object... args) {
@@ -96,7 +85,6 @@ public class ZplotLoader implements FileLoader {
     }
 
     private static Datum lineToDatum(String zPlotLine) {
-
         Scanner s = new Scanner(zPlotLine);
         s.useLocale(Locale.ENGLISH); // don't want to be using commas as decimal separators...
         s.useDelimiter(delimPattern);
@@ -121,21 +109,19 @@ public class ZplotLoader implements FileLoader {
         default: throw new Error("Unhandled measurement type "+measType);
         }
 
-        TreatType treatType = null;
-        treatType = TreatType.DEGAUSS_XYZ;
-        if (project.toLowerCase().contains("therm") ||
-                operation.toLowerCase().contains("therm"))
-            treatType = TreatType.THERMAL;
-        switch (treatType) {
+        d.setTreatType(project.toLowerCase().contains("therm") ||
+                operation.toLowerCase().contains("therm")
+            ? TreatType.THERMAL : TreatType.DEGAUSS_XYZ);
+        switch (d.getTreatType()) {
         case DEGAUSS_XYZ:
             d.setAfX(demag);
             d.setAfY(demag);
             d.setAfZ(demag);
-        break;
+            break;
         case THERMAL:
             d.setTemp(demag);
-        break;
-        default: throw new Error("Unhandled treatment type "+treatType);
+            break;
+        default: throw new Error("Unhandled treatment type "+d.getTreatType());
         }
         return d;
     }

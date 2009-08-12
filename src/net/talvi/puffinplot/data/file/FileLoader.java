@@ -4,8 +4,6 @@ import java.util.List;
 import net.talvi.puffinplot.data.Datum;
 
 public interface FileLoader {
-
-    public Datum getNext();
-    public LoadingStatus getStatus();
+    public List<Datum> getData();
     public List<String> getMessages();
 }

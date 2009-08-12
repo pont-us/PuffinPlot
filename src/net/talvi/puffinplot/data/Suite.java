@@ -10,7 +10,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,11 +19,10 @@ import java.util.TreeSet;
 import net.talvi.puffinplot.FileType;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.file.FileLoader;
-import net.talvi.puffinplot.data.file.LoadingStatus;
 import net.talvi.puffinplot.data.file.TwoGeeLoader;
 import net.talvi.puffinplot.data.file.ZplotLoader;
 
-public class Suite implements Iterable<Datum> {
+public class Suite {
 
     private List<Datum> data;
     private final List<File> inputFiles;
@@ -44,10 +42,6 @@ public class Suite implements Iterable<Datum> {
             new Vec3(-4.628, 4.404, -6.280);
     private static final Vec3 SENSOR_LENGTHS_NEW =
             new Vec3(4.628, -4.404, -6.280);
-
-    public Iterator<Datum> iterator() {
-        return data.iterator();
-    }
 
     public FisherValues getSuiteFisher() {
         return suiteFisher;
@@ -219,10 +213,12 @@ public class Suite implements Iterable<Datum> {
         else suiteName = files.get(0).getParentFile().getName();
         files = expandDirs(files);
         this.inputFiles = files;
-        data = new ArrayList<Datum>();
+        final ArrayList dataArray = new ArrayList<Datum>();
+        data = dataArray;
         samplesByName = new LinkedHashMap<String, Sample>();
         dataByLine = new HashMap<Integer, Line>();
         measType = MeasType.UNSET;
+        loadWarnings = new ArrayList<String>();
         TreeSet<Double> depthSet = new TreeSet<Double>();
         TreeSet<String> nameSet = new TreeSet<String>();
 
@@ -240,20 +236,21 @@ public class Suite implements Iterable<Datum> {
                 loader = new ZplotLoader(file);
                 break;
             }
-            while (loader.getStatus() == LoadingStatus.IN_PROGRESS) {
-                addDatum(loader.getNext(), nameSet);
+            dataArray.ensureCapacity(dataArray.size() + loader.getData().size());
+            for (Datum d: loader.getData()) {
+                addDatum(d, nameSet);
             }
                     
-        loadWarnings.addAll(loader.getMessages());
-        names = nameSet.toArray(names);
-        setCurrentSampleIndex(0);
-        for (Sample s: getSamples()) s.doPca();
-        if (files.size() == 1 &&
-                FileType.guessFromName(files.get(0)) == FileType.PUFFINPLOT &&
-                getNumSamples() > 0) {
-            app.getRecentFiles().add(files);
-            app.getMainWindow().getMainMenuBar().updateRecentFiles();
-            puffinFile = files.get(0);
+            loadWarnings.addAll(loader.getMessages());
+            names = nameSet.toArray(names);
+            setCurrentSampleIndex(0);
+            for (Sample s : getSamples()) s.doPca();
+            if (files.size() == 1 &&
+                    FileType.guessFromName(files.get(0)) == FileType.PUFFINPLOT &&
+                    getNumSamples() > 0) {
+                app.getRecentFiles().add(files);
+                app.getMainWindow().getMainMenuBar().updateRecentFiles();
+                puffinFile = files.get(0);
             }
         }
     }
