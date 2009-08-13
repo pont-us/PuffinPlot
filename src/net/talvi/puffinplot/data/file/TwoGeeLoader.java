@@ -4,135 +4,164 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Map;
 import java.util.regex.Pattern;
-import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.MeasType;
-import net.talvi.puffinplot.data.TwoGeeField;
+import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.Vec3;
 
 public class TwoGeeLoader implements FileLoader {
 
-    private final LineNumberReader reader;
-    private Fields fields;
-    private Datum nextDatum;
-    private LoadingStatus status;
+    private Vec3 sensorLengths = new Vec3(1, 1, 1);
+    private Map<String,Integer> fields;
+    private List<Datum> data;
     private static final Pattern emptyLine = Pattern.compile("^\\s*$");
-    private MeasType measType;
-    private final String fileName;
-    private List<String> loadWarnings;
+    private List<String> loadWarnings = new LinkedList<String>();
     private static final int MAX_WARNINGS = 10;
+    private File file;
+    private LineNumberReader reader;
 
-    public TwoGeeLoader(File file) throws IOException {
-        fileName = file.getName();
-        reader = new LineNumberReader(new FileReader(file));
+    public TwoGeeLoader(File file) {
+        this.file = file;
+        try {
+            reader = new LineNumberReader(new FileReader(file));
+            readFile();
+        } catch (IOException e) {
+            addWarning(e.getMessage());
+        } finally {
+            try { reader.close(); } catch (IOException e2) {}
+        }
+    }
+
+    private void readFile() throws IOException {
+        String fileName = file.getName();
         String fieldsLine = reader.readLine();
         if (fieldsLine == null) {
             addWarning("%s is empty.", fileName);
             reader.close();
-            status = LoadingStatus.COMPLETE;
         } else {
-            fields = new Fields(fieldsLine);
-            if (fields.areAllUnknown()) {
-                addWarning("%s doesn't look like a 2G or PPL file. " +
-                        "Ignoring it.", fileName);
-                reader.close();
-                status = LoadingStatus.ABORTED;
-            } else {
-                status = LoadingStatus.IN_PROGRESS;
-                readNextDatum();
-            }
+            fields = new HashMap<String, Integer>();
+            String[] fieldNames = fieldsLine.split(("\\t"));
+            for (int i=0; i<fieldNames.length; i++)
+                fields.put(fieldNames[i], i);
         }
-    }
-
-    private void readNextDatum() {
-        Datum d = null;
-        try {
-            String line = reader.readLine();
-            if (line == null) {
-                status = LoadingStatus.COMPLETE;
-            } else {
-                final int lineNum = reader.getLineNumber();
-                try {
-                    d = lineToDatum(line, lineNum, fields.fields);
-                } catch (IllegalArgumentException e) {
-                    addWarning("%s at line %d in file %s -- " + "ignoring this line.",
-                            e.getMessage(), lineNum, fileName);
-                    if (loadWarnings.size() > MAX_WARNINGS) {
-                        addWarning("Too many errors in %s -- " + "aborting load at line %d",
-                                fileName, lineNum);
-                        status = LoadingStatus.ABORTED;
-                    // break;
-                    }
+        data = new LinkedList<Datum>();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            Datum d = readDatum(line, reader.getLineNumber());
+            if (d != null) {
+                if (d.isMagSusOnly()) {
+                     Datum dPrev = data.get(data.size()-1);
+                     if (!dPrev.isMagSusOnly()) {
+                         dPrev.setMagSus(d.getMagSus());
+                     } else {
+                         data.add(d);
+                     }
+                } else {
+                    data.add(d);
                 }
             }
-        } catch (IOException ex) {
-            addWarning("Error reading %s: %s", fileName, ex.getLocalizedMessage());
+            if (loadWarnings.size() > MAX_WARNINGS) {
+                addWarning("Too many errors in %s", fileName);
+                break;
+            }
         }
     }
 
-    public Datum getNext() {
-        Datum d = nextDatum;
-        readNextDatum();
+    public void setSensorLengths(Vec3 v) {
+        sensorLengths = v;
+    }
+
+    private Datum readDatum(String line, int lineNumber) {
+        Datum d = null;
+        if (emptyLine.matcher(line).matches()) return null;
+        try {
+            d = lineToDatum(line, lineNumber);
+        } catch (IllegalArgumentException e) {
+            addWarning("%s at line %d in file %s -- ignoring this line.",
+                    e.getMessage(), lineNumber, file.getName());
+        }
         return d;
     }
 
-    public LoadingStatus getStatus() {
-        return status;
+    public List<Datum> getData() {
+        return data;
     }
 
-    public Iterable<String> getMessages() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public List<String> getMessages() {
+        return Collections.emptyList();
     }
 
     private void addWarning(String s, Object... args) {
         loadWarnings.add(String.format(s, args));
     }
 
-
-    private Datum lineToDatum(String line, int lineNumber, List<TwoGeeField> fields) {
-        final boolean oldSquid = PuffinApp.getInstance().getPrefs().isUseOldSquidOrientations();
-        if (!emptyLine.matcher(line).matches()) {
-            Datum d = new Datum(line, fields, null /*getLineContainer(lineNumber)*/, oldSquid);
-            if (d.getMeasType() != MeasType.NONE) {
-                if (measType == MeasType.UNSET)
-                    measType = d.getMeasType();
-                if (d.getMeasType() != measType) {
-                    throw new IllegalArgumentException
-                            ("Can't mix long core and discrete measurements.");
-                }
-            }
-            return d;
-        } else return null;
+    private boolean fieldExists(String name) {
+        return fields.containsKey(name);
     }
 
-    private static class Fields {
-        List<TwoGeeField> fields;
-        List<String> unknown;
+    private class FieldReader {
 
-        Fields(String header) {
-            fields = new LinkedList<TwoGeeField>();
-            unknown = new LinkedList<String>();
-            Scanner scanner = new Scanner(header);
-            scanner.useDelimiter(Pattern.compile("\\t")); // might have spaces within fields
-            while (scanner.hasNext()) {
-                String name = scanner.next();
-                TwoGeeField field = TwoGeeField.getByHeader(name);
-                fields.add(field);
-                if (field == TwoGeeField.UNKNOWN) unknown.add(name);
-            }
+        private String[] values;
+
+        FieldReader(String line) {
+            values = line.split("\\t");
         }
 
-        public boolean areAllUnknown() {
-            for (TwoGeeField field: fields)
-                if (field != TwoGeeField.UNKNOWN)
-                    return false;
-            return true;
+        private double getDouble(String name) {
+            String v = values[fields.get(name)];
+            // catch the common case without using an expensive exception
+            if ("NA".equals(v)) return Double.NaN;
+            try { return Double.parseDouble(v); }
+            catch (NumberFormatException e) { return Double.NaN; }
+        }
+
+        private String getString(String name) {
+            return values[fields.get(name)];
         }
     }
 
+    private Datum lineToDatum(String line, int lineNumber) {
+        FieldReader r = new FieldReader(line);
+        Datum d = new Datum();
+
+        final MeasType measType = MeasType.fromString(r.getString("Meas. type"));
+
+        if (fieldExists("Area")) d.setArea(r.getDouble("Area"));
+        if (fieldExists("Volume")) d.setVolume(r.getDouble("Volume"));
+        if (fieldExists("X corr") && ! r.getString("X corr").equals("NA")) {
+            Vec3 moment = new Vec3(r.getDouble("X corr"),
+                    r.getDouble("Y corr"),
+                    r.getDouble("Z corr"));
+            switch (measType) {
+            case CONTINUOUS:
+                moment = moment.divideBy(sensorLengths.times(d.getArea()));
+                break;
+            case DISCRETE:
+                moment = moment.divideBy(d.getVolume());
+                break;
+            }
+            d.setMoment(moment);
+        }
+        d.setMagSus(r.getDouble("MS corr"));
+        if (fieldExists("Sample ID")) d.setSampleId(r.getString("Sample ID"));
+        if (fieldExists("Depth")) d.setDepth(r.getString("Depth"));
+        d.setMeasType(measType);
+        d.setTreatType(TreatType.fromString(r.getString("Treatment Type")));
+        d.setAfX(r.getDouble("AF X"));
+        d.setAfY(r.getDouble("AF Y"));
+        d.setAfZ(r.getDouble("AF Z"));
+        d.setTemp(r.getDouble("Temp C"));
+        d.setSampAz(r.getDouble("Sample Azimiuth")); // sic
+        d.setSampDip(r.getDouble("Sample Dip"));
+        d.setFormAz(r.getDouble("Formation Dip Azimuth"));
+        d.setFormDip(r.getDouble("Formation Dip"));
+        if (fieldExists("Mag Dev")) d.setMagDev(r.getDouble("Mag Dev"));
+        return d;
+    }
 }

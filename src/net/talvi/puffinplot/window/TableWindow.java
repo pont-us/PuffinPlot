@@ -13,7 +13,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import net.talvi.puffinplot.data.Datum;
-import net.talvi.puffinplot.data.TwoGeeField;
+import net.talvi.puffinplot.data.DatumField;
 
 public class TableWindow extends JFrame {
     private JTable table;
@@ -40,12 +40,12 @@ public class TableWindow extends JFrame {
         }
 
         public int getColumnCount() {
-            return TwoGeeField.values().length - 1;
+            return DatumField.values().length - 1;
         }
         
         @Override
         public String getColumnName(int c) {
-            return TwoGeeField.values()[c].toString().toLowerCase();
+            return DatumField.values()[c].toString().toLowerCase();
         }
           
         public int getRowCount() {
@@ -57,13 +57,13 @@ public class TableWindow extends JFrame {
 
         @Override
         public Class<?> getColumnClass(int c) {
-            return TwoGeeField.values()[c].getClass();
+            return DatumField.values()[c].getClass();
         }
 
         public Object getValueAt(int row, int col) {
             try {
                 Datum d = PuffinApp.getInstance().getSample().getAllData().get(row);
-                return d.getValue(TwoGeeField.values()[col]);
+                return d.getValue(DatumField.values()[col]);
             } catch (NullPointerException e) {
                 throw new RuntimeException("row " + row + " col " + col, e);
             }

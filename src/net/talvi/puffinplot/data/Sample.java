@@ -12,7 +12,7 @@ public class Sample {
     private final String name;
     private FisherValues fisher = null;
     private boolean emptySlot = false;
-    private PcaAnnotated pcaAnnotated;
+    private PcaAnnotated pca;
     private MDF mdf;
     private boolean hasMsData = false;
 
@@ -31,7 +31,7 @@ public class Sample {
     }
     
     public void clear() {
-        pcaAnnotated = null;
+        pca = null;
         fisher = null;
         mdf = null;
         selectNone();
@@ -92,10 +92,8 @@ public class Sample {
     }
     
     public void addDatum(Datum d) {
-        if (d.isMagSus() && getData().size()>0)
-                getData().get(getData().size()-1).setMagSus(d.getMagSus());
-        else data.add(d);
-        if (d.isMagSus()) hasMsData = true;
+        data.add(d);
+        if (d.hasMagSus()) hasMsData = true;
         d.setSample(this);
     }
 
@@ -108,11 +106,11 @@ public class Sample {
     }
 
     public PcaAnnotated getPca() {
-        return pcaAnnotated;
+        return pca;
     }
 
     public PcaValues getPcaValues() {
-        return pcaAnnotated == null ? null : pcaAnnotated.getPcaValues();
+        return pca == null ? null : pca.getPcaValues();
     }
 
     public List<Datum> getSelectedData() {
@@ -151,7 +149,7 @@ public class Sample {
 
     public void doPca(boolean anchored) {
         for (Datum d: getData()) d.setPcaAnchored(anchored);
-        pcaAnnotated = PcaAnnotated.calculate(this);
+        pca = PcaAnnotated.calculate(this);
     }
 
     public void doPca() {

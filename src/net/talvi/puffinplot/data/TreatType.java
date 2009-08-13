@@ -39,7 +39,7 @@ public enum TreatType {
         return s;
     }
     
-    static TreatType fromString(String s) {
+    public static TreatType fromString(String s) {
         TreatType t = nameMap.get(normalizeString(s));
         return t != null ? t : UNKNOWN;
     }

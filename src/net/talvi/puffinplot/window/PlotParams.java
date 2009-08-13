@@ -5,10 +5,6 @@ import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;
 
-/**
- *
- * @author pont
- */
 public interface PlotParams {
 
     public MeasType getMeasType();

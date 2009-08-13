@@ -116,7 +116,7 @@ public class DemagPlot extends Plot {
                     (xBySequence ? (i + 1) : d.getDemagLevel()) * hScale;
             double magSus = d.getMagSus();
             if (magSus < 0) magSus = 0;
-            if (d.isMagSus()) {
+            if (d.hasMagSus()) {
                 addPoint(d, new Point2D.Double(xPos,
                     dim.getMaxY() - magSus * msScale),
                     false, false, !first);
