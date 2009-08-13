@@ -69,9 +69,11 @@ public abstract class Plot
             AffineTransform at = AffineTransform.getTranslateInstance(0, -5);
             at.concatenate(AffineTransform.getScaleInstance(scale, scale));
             SUPERSCRIPT_VALUE = new TransformAttribute(at);
+            System.out.println("Faking superscript");
         } else {
             SUPERSCRIPT_KEY = TextAttribute.SUPERSCRIPT;
             SUPERSCRIPT_VALUE = TextAttribute.SUPERSCRIPT_SUPER;
+            System.out.println("Using proper superscript.");
         }
     }
 

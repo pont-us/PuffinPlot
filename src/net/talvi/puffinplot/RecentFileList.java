@@ -3,8 +3,6 @@ package net.talvi.puffinplot;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
@@ -132,6 +130,13 @@ public class RecentFileList {
             if (!(o instanceof FileSet)) return false;
             FileSet f = (FileSet) o;
             return (files.equals(f.files));
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 5;
+            hash = 43 * hash + (this.files != null ? this.files.hashCode() : 0);
+            return hash;
         }
     }
 
