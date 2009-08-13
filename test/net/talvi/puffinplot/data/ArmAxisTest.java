@@ -29,14 +29,14 @@ public class ArmAxisTest {
     
     @Test
     public void testGetByString() throws Exception {
-        if (ArmAxis.getByString(name) != value) {
+        if (ArmAxis.fromString(name) != value) {
             fail(name + " not initialized.");
         }
     }
 	
     @Test
     public void unknownStringTest() throws Exception {
-        assertEquals(ArmAxis.getByString("NONEXISTENT"), ArmAxis.UNKNOWN);
+        assertEquals(ArmAxis.fromString("NONEXISTENT"), ArmAxis.UNKNOWN);
     }
 	
 }

@@ -1,5 +1,6 @@
 package net.talvi.puffinplot.data;
 
+import java.util.ArrayList;
 import java.util.List;
 import static java.lang.Double.NaN;
 import static java.lang.Math.toRadians;
@@ -15,7 +16,7 @@ public class Datum {
     private TreatType treatType = TreatType.UNKNOWN;
     private double afx=NaN, afy=NaN, afz=NaN;
     private double temp=NaN;
-    private double magSus=NaN; // default to "not mag sus" if no such field
+    private double magSus=NaN;
     private double sampAz=NaN, sampDip=NaN, formAz=NaN, formDip=NaN;
     private double magDev=0;
     private String depth=null;
@@ -25,13 +26,12 @@ public class Datum {
     private int runNumber = -1;
     private double volume = DEFAULT_VOLUME;
     private double area = DEFAULT_AREA;
-    private String timeStamp = "UNSET"; // NB this is a magic value; see below
+    private String timeStamp = "UNSET";
     private Line line;
     private boolean selected = false;
     private boolean pcaAnchored = true;
     private boolean hidden = false;
     private Sample sample;
-    private boolean doVolumeCorrection;
 
     public Datum(double x, double y, double z) {
         moment = new Vec3(x, y, z);
@@ -182,70 +182,118 @@ public class Datum {
                 getMeasType() == MeasType.NONE;
     }
 
-    
-    public Object getValue(DatumField field) {
+    private String fmt(Double d) {
+        return Double.toString(d);
+    }
+
+    public String getValue(DatumField field) {
         switch (field) {
-        case AFX: return afx;
-        case AFY: return afy;
-        case AFZ: return afz;
-        case TEMP: return temp;
-        case MSCORR: return magSus;
-        case SAMPLEAZ: return getSampAz();
-        case SAMPLEDIP: return getSampDip();
-        case FORMAZ: return getFormAz();
-        case FORMDIP: return getFormDip();
-        case MAGDEV: return getMagDev();
-        case XCORR: return 0;
-        case YCORR: return 0;
-        case ZCORR: return 0;
+        case AFX: return fmt(afx);
+        case AFY: return fmt(afy);
+        case AFZ: return fmt(afz);
+        case TEMP: return fmt(temp);
+        case MSCORR: return fmt(magSus);
+        case SAMPLEAZ: return fmt(getSampAz());
+        case SAMPLEDIP: return fmt(getSampDip());
+        case FORMAZ: return fmt(getFormAz());
+        case FORMDIP: return fmt(getFormDip());
+        case MAGDEV: return fmt(getMagDev());
+        case XCORR: return fmt(moment.x);
+        case YCORR: return fmt(moment.y);
+        case ZCORR: return fmt(moment.z);
         case DEPTH: return depth;
-        case IRMGAUSS: return irmGauss;
-        case ARMGAUSS: return armGauss;
-        case VOLUME: return volume;
+        case IRMGAUSS: return fmt(irmGauss);
+        case ARMGAUSS: return fmt(armGauss);
+        case VOLUME: return fmt(volume);
         case SAMPLEID: return sampleId;
-        case MEASTYPE: return measType;
-        case TREATMENT: return treatType;
-        case ARMAXIS: return armAxis;
+        case MEASTYPE: return measType.toString();
+        case TREATMENT: return treatType.toString();
+        case ARMAXIS: return armAxis.toString();
         case TIMESTAMP: return timeStamp;
-        case RUNNUMBER: return runNumber;
-        case AREA: return area;
-        case PP_SELECTED: return selected;
-        case PP_ANCHOR_PCA: return isPcaAnchored();
-        case PP_HIDDEN: return isHidden();
+        case RUNNUMBER: return Integer.toString(runNumber);
+        case AREA: return fmt(area);
+        case PP_SELECTED: return Boolean.toString(selected);
+        case PP_ANCHOR_PCA: return Boolean.toString(isPcaAnchored());
+        case PP_HIDDEN: return Boolean.toString(isHidden());
         default: throw new IllegalArgumentException("Unknown field "+field);
         }
     }
 
-    public void setValue(DatumField field, Object o) {
-        double dummy;
+    public void setValue(DatumField field, String s) {
         switch (field) {
-        case AFX: afx = (Double) o; break;
-        case AFY: afy = (Double) o; break;
-        case AFZ: afz = (Double) o; break;
-        case TEMP: temp = (Double) o; break;
-        case MSCORR: magSus = (Double) o; break;
-        case SAMPLEAZ: setSampAz((Double) o); break;
-        case SAMPLEDIP: setSampDip((Double) o); break;
-        case FORMAZ: setFormAz((Double) o); break;
-        case FORMDIP: setFormDip((Double) o); break;
-        case MAGDEV: setMagDev((Double) o); break;
-        case XCORR: dummy = (Double) o; break;
-        case YCORR: dummy = (Double) o; break;
-        case ZCORR: dummy = (Double) o; break;
-        case DEPTH: depth = (String) o; break;
-        case IRMGAUSS: irmGauss = (Double) o; break;
-        case ARMGAUSS: armGauss = (Double) o; break;
-        case VOLUME: volume = (Double) o; break;
-        case SAMPLEID: sampleId = (String) o; break;
-        case MEASTYPE: measType = (MeasType) o; break;
-        case TREATMENT: treatType = (TreatType) o; break;
-        case ARMAXIS: armAxis = (ArmAxis) o; break;
-        case TIMESTAMP: timeStamp = (String) o; break;
-        case RUNNUMBER: runNumber = (Integer) o; break;
-        case AREA: area = (Double) o; break;
-        case PP_SELECTED: selected = (Boolean) o; break;
-        case PP_ANCHOR_PCA: setPcaAnchored((boolean) (Boolean) o); break;
+        case AFX: afx = Double.parseDouble(s); break;
+        case AFY: afy = Double.parseDouble(s); break;
+        case AFZ: afz = Double.parseDouble(s); break;
+        case TEMP: temp = Double.parseDouble(s); break;
+        case MSCORR: magSus = Double.parseDouble(s); break;
+        case SAMPLEAZ: setSampAz(Double.parseDouble(s)); break;
+        case SAMPLEDIP: setSampDip(Double.parseDouble(s)); break;
+        case FORMAZ: setFormAz(Double.parseDouble(s)); break;
+        case FORMDIP: setFormDip(Double.parseDouble(s)); break;
+        case MAGDEV: setMagDev(Double.parseDouble(s)); break;
+        case XCORR: moment = moment.setX(Double.parseDouble(s)); break;
+        case YCORR: moment = moment.setY(Double.parseDouble(s)); break;
+        case ZCORR: moment = moment.setZ(Double.parseDouble(s)); break;
+        case DEPTH: depth = (String) s; break;
+        case IRMGAUSS: irmGauss = Double.parseDouble(s); break;
+        case ARMGAUSS: armGauss = Double.parseDouble(s); break;
+        case VOLUME: volume = Double.parseDouble(s); break;
+        case SAMPLEID: sampleId = s; break;
+        case MEASTYPE: measType = MeasType.fromString(s); break;
+        case TREATMENT: treatType = TreatType.fromString(s); break;
+        case ARMAXIS: armAxis = ArmAxis.fromString(s); break;
+        case TIMESTAMP: timeStamp = s; break;
+        case RUNNUMBER: runNumber = Integer.parseInt(s); break;
+        case AREA: area = Double.parseDouble(s); break;
+        case PP_SELECTED: selected = Boolean.parseBoolean(s); break;
+        case PP_ANCHOR_PCA: setPcaAnchored(Boolean.parseBoolean(s)); break;
         default: throw new IllegalArgumentException("Unknown field "+field);
         }
+    }
+
+
+    public static class Reader {
+
+        private List<DatumField> fields;
+
+        public Reader(List<String> headers) {
+            fields = new ArrayList(headers.size());
+            for (String s: headers) fields.add(DatumField.getByHeader(s));
+        }
+
+        public Datum fromStrings(List<String> strings) {
+            Datum d = new Datum();
+            for (int i=0; i<strings.size(); i++) {
+                d.setValue(fields.get(i), strings.get(i));
+            }
+            return d;
+        }
+    }
+
+    private static final List<String> fieldNames;
+    private static final List<DatumField> fields;
+
+    static {
+        DatumField[] dfs = DatumField.values();
+        fields = new ArrayList<DatumField>(dfs.length-1);
+        fieldNames = new ArrayList<String>(dfs.length-1);
+        for (DatumField df : dfs) {
+            if (df != DatumField.UNKNOWN) {
+                fields.add(df);
+                fieldNames.add(df.toString());
+            }
+        }
+    }
+
+    public static List<String> getFieldNames() {
+        return fieldNames;
+    }
+
+    public List<String> toStrings() {
+        List<String> result = new ArrayList<String>(fields.size());
+        for (DatumField df : fields) {
+            result.add(getValue(df));
+        }
+        return result;
     }
 }

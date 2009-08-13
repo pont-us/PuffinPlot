@@ -32,7 +32,6 @@ public class Suite {
     private Map<Integer, Line> dataByLine;
     private int currentSampleIndex = 0;
     private MeasType measType;
-    private String currentSampleName;
     private String suiteName;
     private List<FisherForSite> siteFishers;
     private FisherValues suiteFisher;
@@ -64,15 +63,12 @@ public class Suite {
     public void doFisherOnSuite() {
         List<Sample> samples = PuffinApp.getInstance().getSelectedSamples();
         List<PcaValues> pcas = new ArrayList<PcaValues>(samples.size());
-
         for (Sample sample: samples) {
             PcaValues pca = sample.getPcaValues();
             if (pca != null) pcas.add(pca);
         }
-
         List<Vec3> directions = new ArrayList<Vec3>(pcas.size());
         for (PcaValues pca: pcas) directions.add(pca.getDirection());
-
         suiteFisher = FisherValues.calculate(directions);
     }
 
@@ -101,7 +97,6 @@ public class Suite {
             siteFishers.add(new FisherForSite(entry.getKey(),
                     FisherValues.calculate(directions)));
         }
-
     }
 
     public List<FisherValues> getFishers() {
@@ -176,17 +171,15 @@ public class Suite {
         if (d.getMeasType() != measType) {
             throw new Error("Can't mix long core and discrete measurements.");
         }
-        if (!d.ignoreOnLoading()) {
-            data.add(d);
-            String name = d.getSampleIdOrDepth();
-            Sample s = samplesByName.get(name);
-            if (s == null) {
-                s = new Sample(name);
-                samplesByName.put(name, s);
-            }
-            s.addDatum(d);
-            nameSet.add(name);
+        data.add(d);
+        String name = d.getSampleIdOrDepth();
+        Sample s = samplesByName.get(name);
+        if (s == null) {
+            s = new Sample(name);
+            samplesByName.put(name, s);
         }
+        s.addDatum(d);
+        nameSet.add(name);
     }
 
     private List<File> expandDirs(List<File> files) {
@@ -240,18 +233,17 @@ public class Suite {
             for (Datum d: loader.getData()) {
                 if (!d.ignoreOnLoading()) addDatum(d, nameSet);
             }
-                    
             loadWarnings.addAll(loader.getMessages());
-            names = nameSet.toArray(names);
-            setCurrentSampleIndex(0);
-            for (Sample s : getSamples()) s.doPca();
-            if (files.size() == 1 &&
-                    FileType.guessFromName(files.get(0)) == FileType.PUFFINPLOT &&
-                    getNumSamples() > 0) {
-                app.getRecentFiles().add(files);
-                app.getMainWindow().getMainMenuBar().updateRecentFiles();
-                puffinFile = files.get(0);
-            }
+        }
+        names = nameSet.toArray(names);
+        setCurrentSampleIndex(0);
+        for (Sample s : getSamples()) s.doPca();
+        if (files.size() == 1 &&
+                FileType.guessFromName(files.get(0)) == FileType.PUFFINPLOT &&
+                getNumSamples() > 0) {
+            app.getRecentFiles().add(files);
+            app.getMainWindow().getMainMenuBar().updateRecentFiles();
+            puffinFile = files.get(0);
         }
     }
     
@@ -383,14 +375,6 @@ public class Suite {
 
     public int getNumSamples() {
         return samplesByName.size();
-    }
-
-    public String getCurrentName() {
-        return currentSampleName;
-    }
-
-    public void setCurrentName(String currentName) {
-        this.currentSampleName = currentName;
     }
 
     public String[] getNameArray() {

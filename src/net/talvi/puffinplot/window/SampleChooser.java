@@ -91,9 +91,9 @@ public class SampleChooser extends JPanel {
             setAlignmentY(0);
             addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
-                if (getSelectedValue() != null)
+                if (getSelectedIndex() != -1)
                     PuffinApp.getInstance().getSuite().
-                            setCurrentName((String) getSelectedValue());
+                            setCurrentSampleIndex(getSelectedIndex());
                     PuffinApp.getInstance().updateDisplay();
             }
             });

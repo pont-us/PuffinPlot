@@ -324,4 +324,16 @@ public class Vec3 {
         final double R = sqrt(xs*xs + ys*ys + zs*zs);
         return new Vec3(xs/R, ys/R, zs/R);
     }
+
+    Vec3 setX(double newX) {
+        return new Vec3(newX, y, z);
+    }
+
+    Vec3 setY(double newY) {
+        return new Vec3(x, newY, z);
+    }
+
+    Vec3 setZ(double newZ) {
+        return new Vec3(x, y, newZ);
+    }
 }

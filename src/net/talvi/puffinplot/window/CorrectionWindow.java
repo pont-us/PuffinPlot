@@ -98,8 +98,7 @@ public class CorrectionWindow extends JFrame implements ActionListener {
             List<Sample> samples = PuffinApp.getInstance().getSelectedSamples();
             for (DatumField field : fields) {
                 if (checkBoxMap.get(field).isSelected()) {
-                    double value = Double.parseDouble(
-                            textFieldMap.get(field).getText());
+                    String value = textFieldMap.get(field).getText();
                     for (Sample s: samples)
                         for (Datum d: s.getData()) d.setValue(field, value);
                 }
