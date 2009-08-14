@@ -1,0 +1,56 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Optimize TextLinePoint constructor
+desc: |-
+  A quick-and-dirty profiling of PuffinPlot while stepping through a
+  suite of samples reveals the following breakdown of the event queue:
+  
+  81% GraphDisplay.paint, which includes
+  60.5% DataTable.draw, which includes
+  44% TextLinePoint.<init>, which includes
+  27.5% TextLayout.<init> and
+  12.9% TextLayout.getBounds
+  
+  DataTable.draw also spends 12.1% of time in String.format.
+  
+  So there are huge time savings to be made if this can be improved in 
+  any way. A Big Dumb Cache is the obvious approach, but perhaps 
+  improvements can be made in the way the Java2D API is being used. If
+  caching is going the be done, would it be better to institute a 
+  more general system for caching whole Plots?
+type: :task
+component: PuffinPlot
+release: "1.2"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :closed
+disposition: :fixed
+creation_time: 2009-08-14 00:24:10.309534 Z
+references: []
+
+id: 399cbec5e46ad6903b327dffb08fa3883e0f9579
+log_events: 
+- - 2009-08-14 00:24:10.760770 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
+- - 2009-08-14 00:44:37.379972 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - edited description
+  - ""
+- - 2009-08-14 00:45:48.021352 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    If this can be optimized neatly by smarter use of TextLayout, it should
+    be. Caching plots is a nice idea, but so low-priority compared to approx.
+    30 other issues that it will probably never be worth doing.
+- - 2009-08-14 09:08:17.081726 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Took out the TextLayout, but I'm suspecting the original profiling
+    may have been dodgy since it only shaved a few percent off. Profiling
+    again shows fairly even division of painting time between the plots
+    and no obvious candidates for easy improvement (drawing points being
+    the most evident time sink). Anyway, the TextLayout has been replaced
+    with an AttributedCharacterIterator, with a FontMetrics to determine
+    the bounding box.

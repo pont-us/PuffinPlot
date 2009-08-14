@@ -60,8 +60,8 @@ public class DataTable extends Plot {
         final List<Datum> data = sample.getData();
         if (data.size() == 0) return;
 
-        final FontRenderContext frc = g.getFontRenderContext();
-        points.add(new TextLinePoint(this, frc, 0, null, headers, xSpacing));
+        // final FontRenderContext frc = g.getFontRenderContext();
+        points.add(new TextLinePoint(this, g, 0, null, headers, xSpacing));
         final boolean useSequence = (Datum.maximumDemag(data) == 0);
         int sequence = 1;
         float yPos = 2 * ySpacing;
@@ -76,7 +76,7 @@ public class DataTable extends Plot {
             // Don't use .1g, it tickles a bug in Java (#6469160) which
             // throws an ArrayFormatException (at least in Sun Java 5 & 6)
             values.add(format("%.3g", p.mag()));
-            points.add(new TextLinePoint(this, frc, yPos, d, values, xSpacing));
+            points.add(new TextLinePoint(this, g, yPos, d, values, xSpacing));
             yPos += ySpacing;
             sequence++;
         }

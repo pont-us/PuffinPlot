@@ -1,0 +1,21 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Add save indicator
+desc: |-
+  Add some indication that the ctrl-S shortcut is performing an action --
+  flash some component of the GUI, and/or add a * to the window title
+  when a suite is unsaved.
+type: :feature
+component: PuffinPlot
+release: "1.1"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2009-08-14 01:19:25.021008 Z
+references: []
+
+id: 4bbf152f3eb1209883931d38c774eaaf93df103f
+log_events: 
+- - 2009-08-14 01:19:25.421846 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
