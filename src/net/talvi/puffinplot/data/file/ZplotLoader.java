@@ -4,9 +4,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
-import java.util.Collections;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -15,11 +13,9 @@ import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.Vec3;
 
-public class ZplotLoader implements FileLoader {
+public class ZplotLoader extends AbstractFileLoader {
 
     private LineNumberReader reader;
-    private List<Datum> data;
-    final private List<String> loadWarnings = new LinkedList<String>();
     final private static String[] ZPLOT_HEADERS =
       {"Sample", "Project", "Demag", "Declin", "Inclin", "Intens", "Operation"};
     final private static Pattern numberPattern  = Pattern.compile("\\d+(\\.\\d+)?");
@@ -41,26 +37,26 @@ public class ZplotLoader implements FileLoader {
     private void readFile() throws IOException {
         // Check first line for magic string
         if (!reader.readLine().startsWith("File Name:")) {
-            addWarning("Ignoring unrecognized file %s", file.getName());
+            addMessage("Ignoring unrecognized file %s", file.getName());
             return;
         }
         // skip remaining header fields
         for (int i = 0; i < 5; i++) reader.readLine();
         String headerLine = reader.readLine();
         if (headerLine == null) {
-            addWarning("Ignoring malformed ZPlot file %s", file.getName());
+            addMessage("Ignoring malformed ZPlot file %s", file.getName());
             return;
         }
         String[] headers = whitespace.split(headerLine);
 
         if (headers.length != 7) {
-            addWarning("Wrong number of header fields in Zplot file %s:" +
+            addMessage("Wrong number of header fields in Zplot file %s:" +
                     ": expected 7, got %s", file.getName(), headers.length);
             return;
         }
         for (int i = 0; i < ZPLOT_HEADERS.length; i++) {
             if (!ZPLOT_HEADERS[i].equals(headers[i])) {
-                addWarning("Unknown header field %s in file %s.",
+                addMessage("Unknown header field %s in file %s.",
                         headers[i], file.getName());
                 return;
             }
@@ -70,18 +66,6 @@ public class ZplotLoader implements FileLoader {
             Datum d = lineToDatum(line);
             if (d != null) data.add(d);
         }
-    }
-
-    public List<Datum> getData() {
-        return data;
-    }
-
-    public List<String> getMessages() {
-        return Collections.unmodifiableList(loadWarnings);
-    }
-
-    private void addWarning(String s, Object... args) {
-        loadWarnings.add(String.format(s, args));
     }
 
     private static Datum lineToDatum(String zPlotLine) {

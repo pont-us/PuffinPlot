@@ -3,7 +3,6 @@ package net.talvi.puffinplot.data;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -16,9 +15,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import net.talvi.puffinplot.FileType;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.file.FileLoader;
+import net.talvi.puffinplot.data.file.Ppl2Loader;
 import net.talvi.puffinplot.data.file.TwoGeeLoader;
 import net.talvi.puffinplot.data.file.ZplotLoader;
 
@@ -115,32 +114,18 @@ public class Suite {
     }
 
     public void saveAs(File file) {
-        List<DatumField> fields = new LinkedList(Arrays.asList(DatumField.values()));
-        fields.remove(DatumField.UNKNOWN);
+        List<String> fields = Datum.getFieldNames();
 
-        Writer writer = null;
+        CsvWriter writer = null;
         try {
-            writer = new FileWriter(file);
-
-            StringBuilder header = new StringBuilder();
-            for (DatumField field : fields) {
-                header.append(field.getHeading());
-                header.append("\t");
-            }
-            header.deleteCharAt(header.length()-1);
-            header.append("\n");
-            writer.write(header.toString());
+            FileWriter fileWriter = new FileWriter(file);
+            fileWriter.write("PuffinPlot file. Version 2\n");
+            writer = new CsvWriter(fileWriter, "\t");
+            writer.writeCsv(fields);
 
             for (Sample sample : getSamples()) {
                 for (Datum datum : sample.getData()) {
-                    StringBuilder line = new StringBuilder();
-                    for (DatumField field : fields) {
-                        //line.append(datum.getValue(field).toString());
-                        line.append("\t");
-                    }
-                    line.deleteCharAt(line.length() - 1);
-                    line.append("\n");
-                    writer.write(line.toString());
+                    writer.writeCsv(datum.toStrings());
                 }
             }
             writer.close();
@@ -212,34 +197,41 @@ public class Suite {
         dataByLine = new HashMap<Integer, Line>();
         measType = MeasType.UNSET;
         loadWarnings = new ArrayList<String>();
-        TreeSet<Double> depthSet = new TreeSet<Double>();
         TreeSet<String> nameSet = new TreeSet<String>();
 
         for (File file: files) {
-            FileType fileType = FileType.guessFromName(file);
+            final FileType fileType = FileType.guess(file);
             FileLoader loader = null;
             switch (fileType) {
             case TWOGEE:
-            case PUFFINPLOT:
+            case PUFFINPLOT_1:
                 TwoGeeLoader twoGeeLoader = new TwoGeeLoader(file);
                 twoGeeLoader.setSensorLengths(SENSOR_LENGTHS_NEW);
                 loader = twoGeeLoader;
                 break;
+            case PUFFINPLOT_2:
+                loader = new Ppl2Loader(file);
+                break;
             case ZPLOT:
                 loader = new ZplotLoader(file);
                 break;
+            default:
+                loadWarnings.add(String.format("%s is of unknown file type.", file.getName()));
+                break;
             }
-            dataArray.ensureCapacity(dataArray.size() + loader.getData().size());
-            for (Datum d: loader.getData()) {
-                if (!d.ignoreOnLoading()) addDatum(d, nameSet);
+            if (loader != null) {
+                dataArray.ensureCapacity(dataArray.size() + loader.getData().size());
+                for (Datum d : loader.getData()) {
+                    if (!d.ignoreOnLoading()) addDatum(d, nameSet);
+                }
+                loadWarnings.addAll(loader.getMessages());
             }
-            loadWarnings.addAll(loader.getMessages());
         }
         names = nameSet.toArray(names);
         setCurrentSampleIndex(0);
         for (Sample s : getSamples()) s.doPca();
         if (files.size() == 1 &&
-                FileType.guessFromName(files.get(0)) == FileType.PUFFINPLOT &&
+                FileType.guess(files.get(0)) == FileType.PUFFINPLOT_1 &&
                 getNumSamples() > 0) {
             app.getRecentFiles().add(files);
             app.getMainWindow().getMainMenuBar().updateRecentFiles();

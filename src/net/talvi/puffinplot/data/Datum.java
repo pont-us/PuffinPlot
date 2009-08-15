@@ -32,6 +32,20 @@ public class Datum {
     private boolean pcaAnchored = true;
     private boolean hidden = false;
     private Sample sample;
+    private static final List<String> fieldNames;
+    private static final List<DatumField> fields;
+
+    static {
+        DatumField[] dfs = DatumField.values();
+        fields = new ArrayList<DatumField>(dfs.length-1);
+        fieldNames = new ArrayList<String>(dfs.length-1);
+        for (DatumField df : dfs) {
+            if (df != DatumField.UNKNOWN) {
+                fields.add(df);
+                fieldNames.add(df.toString());
+            }
+        }
+    }
 
     public Datum(double x, double y, double z) {
         moment = new Vec3(x, y, z);
@@ -39,6 +53,10 @@ public class Datum {
     
     public Datum(Vec3 v) {
         moment = v; // v is immutable so it's OK not to copy it
+    }
+
+    public static List<String> getFieldNames() {
+        return fieldNames;
     }
 
     public Datum() {}
@@ -198,9 +216,9 @@ public class Datum {
         case FORMAZ: return fmt(getFormAz());
         case FORMDIP: return fmt(getFormDip());
         case MAGDEV: return fmt(getMagDev());
-        case XCORR: return fmt(moment.x);
-        case YCORR: return fmt(moment.y);
-        case ZCORR: return fmt(moment.z);
+        case X_MOMENT: return fmt(moment.x);
+        case Y_MOMENT: return fmt(moment.y);
+        case Z_MOMENT: return fmt(moment.z);
         case DEPTH: return depth;
         case IRMGAUSS: return fmt(irmGauss);
         case ARMGAUSS: return fmt(armGauss);
@@ -231,9 +249,9 @@ public class Datum {
         case FORMAZ: setFormAz(Double.parseDouble(s)); break;
         case FORMDIP: setFormDip(Double.parseDouble(s)); break;
         case MAGDEV: setMagDev(Double.parseDouble(s)); break;
-        case XCORR: moment = moment.setX(Double.parseDouble(s)); break;
-        case YCORR: moment = moment.setY(Double.parseDouble(s)); break;
-        case ZCORR: moment = moment.setZ(Double.parseDouble(s)); break;
+        case X_MOMENT: moment = moment.setX(Double.parseDouble(s)); break;
+        case Y_MOMENT: moment = moment.setY(Double.parseDouble(s)); break;
+        case Z_MOMENT: moment = moment.setZ(Double.parseDouble(s)); break;
         case DEPTH: depth = (String) s; break;
         case IRMGAUSS: irmGauss = Double.parseDouble(s); break;
         case ARMGAUSS: armGauss = Double.parseDouble(s); break;
@@ -247,6 +265,7 @@ public class Datum {
         case AREA: area = Double.parseDouble(s); break;
         case PP_SELECTED: selected = Boolean.parseBoolean(s); break;
         case PP_ANCHOR_PCA: setPcaAnchored(Boolean.parseBoolean(s)); break;
+        case PP_HIDDEN: setHidden(Boolean.parseBoolean(s)); break;
         default: throw new IllegalArgumentException("Unknown field "+field);
         }
     }
@@ -258,35 +277,16 @@ public class Datum {
 
         public Reader(List<String> headers) {
             fields = new ArrayList(headers.size());
-            for (String s: headers) fields.add(DatumField.getByHeader(s));
+            for (String s: headers) fields.add(DatumField.valueOf(s));
         }
 
         public Datum fromStrings(List<String> strings) {
-            Datum d = new Datum();
+            Datum d = new Datum(Vec3.ORIGIN);
             for (int i=0; i<strings.size(); i++) {
                 d.setValue(fields.get(i), strings.get(i));
             }
             return d;
         }
-    }
-
-    private static final List<String> fieldNames;
-    private static final List<DatumField> fields;
-
-    static {
-        DatumField[] dfs = DatumField.values();
-        fields = new ArrayList<DatumField>(dfs.length-1);
-        fieldNames = new ArrayList<String>(dfs.length-1);
-        for (DatumField df : dfs) {
-            if (df != DatumField.UNKNOWN) {
-                fields.add(df);
-                fieldNames.add(df.toString());
-            }
-        }
-    }
-
-    public static List<String> getFieldNames() {
-        return fieldNames;
     }
 
     public List<String> toStrings() {

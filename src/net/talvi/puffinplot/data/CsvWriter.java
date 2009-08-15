@@ -5,27 +5,34 @@ import java.io.Writer;
 import java.util.List;
 
 public class CsvWriter {
-    private Writer writer;
+
+    private final Writer writer;
+    private final String separator;
+
+    public CsvWriter(Writer writer, String separator) {
+        this.writer = writer;
+        this.separator = separator;
+    }
 
     public CsvWriter(Writer writer) {
-        this.writer = writer;
+        this(writer, ",");
     }
 
     public void writeCsv(Object... os) throws IOException {
         StringBuilder sb = new StringBuilder();
-        for (Object o: os) {
+        for (Object o : os) {
             if (o instanceof List) {
                 List list = (List) o;
-                for (Object p: list) {
+                for (Object p : list) {
                     sb.append(p);
-                    sb.append(",");
+                    sb.append(separator);
                 }
             } else {
                 sb.append(o);
-                sb.append(",");
+                sb.append(separator);
             }
         }
-        sb.deleteCharAt(sb.length()-1);
+        sb.deleteCharAt(sb.length() - 1);
         sb.append("\n");
         writer.write(sb.toString());
     }

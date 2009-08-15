@@ -16,9 +16,9 @@ public enum DatumField {
 
     // Lab measurements
     MEASTYPE("Measurement type"),
-    XCORR("X moment"),
-    YCORR("Y moment"),
-    ZCORR("Z moment"),
+    X_MOMENT("X moment"),
+    Y_MOMENT("Y moment"),
+    Z_MOMENT("Z moment"),
     MSCORR("Magnetic susceptibility"),
     VOLUME("Volume"),
     AREA("Area"),
@@ -49,11 +49,11 @@ public enum DatumField {
     
     private final String heading;
     private final String niceName;
-    private final static Map<String, DatumField> map
+    private final static Map<String, DatumField> nameMap
             = new HashMap<String, DatumField>();
     
     static {
-         for (DatumField f: values()) map.put(f.getHeading(), f);
+         for (DatumField f: values()) nameMap.put(f.getHeading(), f);
     }
 
     private DatumField(String heading, String niceName) {
@@ -66,7 +66,7 @@ public enum DatumField {
     }
 
     public static DatumField getByHeader(String h) {
-        DatumField f =  map.get(h);
+        DatumField f =  nameMap.get(h);
         return f!=null ? f : UNKNOWN;
     }
 

@@ -5,7 +5,6 @@ import net.talvi.puffinplot.window.TableWindow;
 import net.talvi.puffinplot.window.FisherWindow;
 import net.talvi.puffinplot.window.AboutBox;
 import net.talvi.puffinplot.window.MainWindow;
-import java.awt.Dimension;
 import net.talvi.puffinplot.data.Suite;
 import java.awt.event.ActionEvent;
 import java.awt.print.PageFormat;
@@ -23,11 +22,9 @@ import java.util.Date;
 import java.util.List;
 
 import java.util.Properties;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
-import javax.swing.JTextArea;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Sample;
 

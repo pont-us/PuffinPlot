@@ -4,10 +4,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import net.talvi.puffinplot.data.Datum;
@@ -15,13 +13,11 @@ import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.Vec3;
 
-public class TwoGeeLoader implements FileLoader {
+public class TwoGeeLoader extends AbstractFileLoader {
 
     private Vec3 sensorLengths = new Vec3(1, 1, 1);
     private Map<String,Integer> fields;
-    private List<Datum> data;
     private static final Pattern emptyLine = Pattern.compile("^\\s*$");
-    private List<String> loadWarnings = new LinkedList<String>();
     private static final int MAX_WARNINGS = 10;
     private File file;
     private LineNumberReader reader;
@@ -32,7 +28,7 @@ public class TwoGeeLoader implements FileLoader {
             reader = new LineNumberReader(new FileReader(file));
             readFile();
         } catch (IOException e) {
-            addWarning(e.getMessage());
+            addMessage(e.getMessage());
         } finally {
             try { reader.close(); } catch (IOException e2) {}
         }
@@ -42,7 +38,7 @@ public class TwoGeeLoader implements FileLoader {
         String fileName = file.getName();
         String fieldsLine = reader.readLine();
         if (fieldsLine == null) {
-            addWarning("%s is empty.", fileName);
+            addMessage("%s is empty.", fileName);
             reader.close();
         } else {
             fields = new HashMap<String, Integer>();
@@ -66,8 +62,8 @@ public class TwoGeeLoader implements FileLoader {
                     data.add(d);
                 }
             }
-            if (loadWarnings.size() > MAX_WARNINGS) {
-                addWarning("Too many errors in %s", fileName);
+            if (messages.size() > MAX_WARNINGS) {
+                addMessage("Too many errors in %s", fileName);
                 break;
             }
         }
@@ -83,22 +79,10 @@ public class TwoGeeLoader implements FileLoader {
         try {
             d = lineToDatum(line, lineNumber);
         } catch (IllegalArgumentException e) {
-            addWarning("%s at line %d in file %s -- ignoring this line.",
+            addMessage("%s at line %d in file %s -- ignoring this line.",
                     e.getMessage(), lineNumber, file.getName());
         }
         return d;
-    }
-
-    public List<Datum> getData() {
-        return data;
-    }
-
-    public List<String> getMessages() {
-        return Collections.emptyList();
-    }
-
-    private void addWarning(String s, Object... args) {
-        loadWarnings.add(String.format(s, args));
     }
 
     private boolean fieldExists(String name) {
