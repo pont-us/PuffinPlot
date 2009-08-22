@@ -1,0 +1,22 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Clean up after the name/depth unification
+desc: |-
+  Need to remove old references to `depth' where no longer used, and
+  standardize a terminology -- probably `Sample ID', encompassing either
+  depth or name. Replace `name' with `sample id' in contexts where it could
+  also refer to a depth.
+type: :task
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2009-08-15 03:27:32.636455 Z
+references: []
+
+id: 1672c68107810798e088c87a9671da241a393a6f
+log_events: 
+- - 2009-08-15 03:27:32.927040 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
