@@ -27,8 +27,8 @@ import net.talvi.puffinplot.data.DatumField;
 public class CorrectionWindow extends JFrame implements ActionListener {
 
     private final static DatumField[] fields = {
-        DatumField.SAMPLEAZ, DatumField.SAMPLEDIP, DatumField.FORMAZ,
-        DatumField.FORMDIP, DatumField.MAGDEV
+        DatumField.SAMPLE_AZ, DatumField.SAMPLE_DIP, DatumField.FORM_AZ,
+        DatumField.FORM_DIP, DatumField.MAG_DEV
     };
     private JButton cancelButton;
     private JButton setButton;

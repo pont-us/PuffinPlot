@@ -9,8 +9,8 @@ type: :task
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2009-08-01 00:55:16.267820 Z
 references: []
 
@@ -20,3 +20,10 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2009-08-15 03:21:52.354263 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Fixed yet more sensibly: the integration has been moved to the recently
+    devolved TwoGeeLoader class, so PuffinPlot's data model never has to be
+    aware of the `moment and susceptibility in separate lines' phenomenon.

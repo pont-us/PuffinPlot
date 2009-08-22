@@ -5,30 +5,30 @@ import java.util.Map;
 
 public enum DatumField {
 
-    /* When adding fields here, make sure also to add them to the Datum
-     * constructor and to Datum.getValue().
+    /* When adding fields here, make sure also to add them to Datum.getValue()
+     * and Datum.setValue(v).
      */
 
     // Identifiers
-    SAMPLEID("Sample ID"),
-    RUNNUMBER("Run #"),
+    SAMPLE_ID("Sample ID"), // depth or name
+    RUN_NUMBER("Run #"),
     TIMESTAMP("Sample Timestamp"),
 
     // Lab measurements
-    MEASTYPE("Measurement type"),
+    MEAS_TYPE("Measurement type"),
     X_MOMENT("X moment"),
     Y_MOMENT("Y moment"),
     Z_MOMENT("Z moment"),
-    MSCORR("Magnetic susceptibility"),
+    MAG_SUS("Magnetic susceptibility"),
     VOLUME("Volume"),
     AREA("Area"),
 
     // Field measurements
-    SAMPLEAZ("Sample azimuth"),
-    SAMPLEDIP("Sample dip"),
-    FORMAZ("Formation dip azimuth"),
-    FORMDIP("Formation dip"),
-    MAGDEV("Magnetic deviation"),
+    SAMPLE_AZ("Sample azimuth"),
+    SAMPLE_DIP("Sample dip"),
+    FORM_AZ("Formation dip azimuth"),
+    FORM_DIP("Formation dip"),
+    MAG_DEV("Magnetic deviation"),
     DEPTH("Depth"),
 
     // Treatments

@@ -52,12 +52,21 @@ public class TwoGeeLoader extends AbstractFileLoader {
             Datum d = readDatum(line, reader.getLineNumber());
             if (d != null) {
                 if (d.isMagSusOnly()) {
-                     Datum dPrev = data.get(data.size()-1);
-                     if (!dPrev.isMagSusOnly()) {
-                         dPrev.setMagSus(d.getMagSus());
-                     } else {
-                         data.add(d);
-                     }
+                    /* The only way we can tie a mag. sus. value to a
+                     * treatment step is by assuming it comes after
+                     * the associated magnetic moment measurement.
+                     * If the first line is mag. sus., we throw it away
+                     * since we don't know the treatment step.
+                     * 
+                     */
+                    if (data.size()>0) {
+                        Datum dPrev = data.get(data.size() - 1);
+                        if (!dPrev.isMagSusOnly()) {
+                            dPrev.setMagSus(d.getMagSus());
+                        } else {
+                            data.add(d);
+                        }
+                    }
                 } else {
                     data.add(d);
                 }
