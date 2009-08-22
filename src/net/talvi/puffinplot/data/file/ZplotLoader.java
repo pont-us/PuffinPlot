@@ -88,7 +88,7 @@ public class ZplotLoader extends AbstractFileLoader {
         switch (measType) {
         case CONTINUOUS: d.setDepth(depthOrSample);
             break;
-        case DISCRETE: d.setSampleId(depthOrSample);
+        case DISCRETE: d.setDiscreteId(depthOrSample);
             break;
         default: throw new Error("Unhandled measurement type "+measType);
         }

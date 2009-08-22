@@ -5,8 +5,8 @@ type: :task
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2009-08-13 05:48:37.867736 Z
 references: []
 
@@ -16,3 +16,13 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2009-08-22 07:45:30.754245 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Yes, "fisher on sample" is of doubtful utility and definitely not
+    commonly used enough to justify the screen space for a button.
+    On-screen buttons are now "select all", "PCA", and "clear", which 
+    are probably the most used functions. In most cases people will 
+    probably use the hotkeys anyway, but there's nothing else to put in
+    that screen space for now.

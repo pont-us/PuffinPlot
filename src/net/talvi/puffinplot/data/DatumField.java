@@ -10,7 +10,8 @@ public enum DatumField {
      */
 
     // Identifiers
-    SAMPLE_ID("Sample ID"), // depth or name
+    DISCRETE_ID("Sample ID"),
+    DEPTH("Depth"),
     RUN_NUMBER("Run #"),
     TIMESTAMP("Sample Timestamp"),
 
@@ -29,17 +30,16 @@ public enum DatumField {
     FORM_AZ("Formation dip azimuth"),
     FORM_DIP("Formation dip"),
     MAG_DEV("Magnetic deviation"),
-    DEPTH("Depth"),
 
     // Treatments
     TREATMENT("Treatment type"),
-    AFX("AF X field"),
-    AFY("AF Y field"),
-    AFZ("AF Z field"),
-    TEMP("Temperature"),
-    IRMGAUSS("IRM Gauss"),
-    ARMGAUSS("ARM Gauss"),
-    ARMAXIS("ARM axis"),
+    AF_X("AF X field"),
+    AF_Y("AF Y field"),
+    AF_Z("AF Z field"),
+    TEMPERATURE("Temperature"),
+    IRM_FIELD("IRM Gauss"),
+    ARM_FIELD("ARM Gauss"),
+    ARM_AXIS("ARM axis"),
 
     // Processing and display parameters
     PP_SELECTED("PUFFIN selected"),

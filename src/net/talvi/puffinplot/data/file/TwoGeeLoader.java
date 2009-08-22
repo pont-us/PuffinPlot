@@ -57,7 +57,6 @@ public class TwoGeeLoader extends AbstractFileLoader {
                      * the associated magnetic moment measurement.
                      * If the first line is mag. sus., we throw it away
                      * since we don't know the treatment step.
-                     * 
                      */
                     if (data.size()>0) {
                         Datum dPrev = data.get(data.size() - 1);
@@ -142,7 +141,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
             d.setMoment(moment);
         }
         d.setMagSus(r.getDouble("MS corr"));
-        if (fieldExists("Sample ID")) d.setSampleId(r.getString("Sample ID"));
+        if (fieldExists("Sample ID")) d.setDiscreteId(r.getString("Sample ID"));
         if (fieldExists("Depth")) d.setDepth(r.getString("Depth"));
         d.setMeasType(measType);
         d.setTreatType(TreatType.fromString(r.getString("Treatment Type")));

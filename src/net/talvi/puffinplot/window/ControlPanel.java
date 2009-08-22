@@ -50,8 +50,8 @@ public class ControlPanel extends JPanel
         add(new JToolBar.Separator());
         add(correctionField = new JLabel());
         add(new JToolBar.Separator());
+        add(new JButton(app.getActions().selectAll));
         add(new JButton(app.getActions().pcaOnSelection));
-        add(new JButton(app.getActions().fisher));
         add(new JButton(app.getActions().clear));
         
         suiteBox.addActionListener(this);

@@ -40,4 +40,12 @@ public enum MeasType {
         return (this != NONE && this != UNSET && this != UNKNOWN);
     }
 
+    public boolean isDiscrete() {
+        return this == DISCRETE;
+    }
+
+    public boolean isContinuous() {
+        return this == CONTINUOUS;
+    }
+
 }

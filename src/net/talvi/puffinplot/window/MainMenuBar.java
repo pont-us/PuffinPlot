@@ -14,8 +14,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
+import net.talvi.puffinplot.PuffinActions.PuffinAction;
 import net.talvi.puffinplot.data.Sample;
-import static net.talvi.puffinplot.PuffinActions.PuffinAction;
 
 public class MainMenuBar extends JMenuBar {
 
@@ -32,7 +32,7 @@ public class MainMenuBar extends JMenuBar {
     private static JMenu makeMenu(String name, Object... things) {
         JMenu menu = new JMenu(name);
         for (Object thing: things) {
-            if (thing instanceof PuffinAction) {
+            if (thing instanceof PuffinActions) {
                 PuffinAction puffinAction = (PuffinAction) thing;
                 if (!puffinAction.excludeFromMenu())
                     menu.add(puffinAction);

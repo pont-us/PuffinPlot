@@ -7,8 +7,8 @@ type: :task
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2009-08-15 03:25:07.568483 Z
 references: []
 
@@ -18,3 +18,7 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2009-08-22 08:21:59.227149 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - Done.

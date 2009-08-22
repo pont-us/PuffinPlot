@@ -11,7 +11,7 @@ public class Datum {
             DEFAULT_AREA = 4.0, // can be overridden by Area field in file
             DEFAULT_VOLUME = 10.8; // can be overridden by Volume field in file
 
-    private String sampleId = "UNSET";
+    private String discreteId = "UNSET";
     private MeasType measType = MeasType.UNSET;
     private TreatType treatType = TreatType.UNKNOWN;
     private double afx=NaN, afy=NaN, afz=NaN;
@@ -86,8 +86,8 @@ public class Datum {
     public void setMagSus(double v)    { magSus = v; }
     public MeasType getMeasType()      { return measType; }
     public void setMeasType(MeasType v) { measType = v; }
-    public String getSampleId()        { return sampleId; }
-    public void setSampleId(String v)  { sampleId = v; }
+    public String getDiscreteId()        { return discreteId; }
+    public void setDiscreteId(String v)  { discreteId = v; }
     public TreatType getTreatType()    { return treatType; }
     public void setTreatType(TreatType v) { treatType = v; }
     public double getAfX()             { return afx; }
@@ -104,8 +104,8 @@ public class Datum {
     public double getVolume()          { return volume; }
     public void setVolume(double v)    { volume = v; }
 
-    public String getSampleIdOrDepth() {
-        return measType == MeasType.CONTINUOUS ? depth : sampleId;
+    public String getIdOrDepth() {
+        return measType == MeasType.CONTINUOUS ? depth : discreteId;
     }
     public boolean hasMagSus()          { return !Double.isNaN(magSus); }
 
@@ -206,10 +206,10 @@ public class Datum {
 
     public String getValue(DatumField field) {
         switch (field) {
-        case AFX: return fmt(afx);
-        case AFY: return fmt(afy);
-        case AFZ: return fmt(afz);
-        case TEMP: return fmt(temp);
+        case AF_X: return fmt(afx);
+        case AF_Y: return fmt(afy);
+        case AF_Z: return fmt(afz);
+        case TEMPERATURE: return fmt(temp);
         case MAG_SUS: return fmt(magSus);
         case SAMPLE_AZ: return fmt(getSampAz());
         case SAMPLE_DIP: return fmt(getSampDip());
@@ -220,13 +220,13 @@ public class Datum {
         case Y_MOMENT: return fmt(moment.y);
         case Z_MOMENT: return fmt(moment.z);
         case DEPTH: return depth;
-        case IRMGAUSS: return fmt(irmGauss);
-        case ARMGAUSS: return fmt(armGauss);
+        case IRM_FIELD: return fmt(irmGauss);
+        case ARM_FIELD: return fmt(armGauss);
         case VOLUME: return fmt(volume);
-        case SAMPLE_ID: return sampleId;
+        case DISCRETE_ID: return discreteId;
         case MEAS_TYPE: return measType.toString();
         case TREATMENT: return treatType.toString();
-        case ARMAXIS: return armAxis.toString();
+        case ARM_AXIS: return armAxis.toString();
         case TIMESTAMP: return timeStamp;
         case RUN_NUMBER: return Integer.toString(runNumber);
         case AREA: return fmt(area);
@@ -239,10 +239,10 @@ public class Datum {
 
     public void setValue(DatumField field, String s) {
         switch (field) {
-        case AFX: afx = Double.parseDouble(s); break;
-        case AFY: afy = Double.parseDouble(s); break;
-        case AFZ: afz = Double.parseDouble(s); break;
-        case TEMP: temp = Double.parseDouble(s); break;
+        case AF_X: afx = Double.parseDouble(s); break;
+        case AF_Y: afy = Double.parseDouble(s); break;
+        case AF_Z: afz = Double.parseDouble(s); break;
+        case TEMPERATURE: temp = Double.parseDouble(s); break;
         case MAG_SUS: magSus = Double.parseDouble(s); break;
         case SAMPLE_AZ: setSampAz(Double.parseDouble(s)); break;
         case SAMPLE_DIP: setSampDip(Double.parseDouble(s)); break;
@@ -253,13 +253,13 @@ public class Datum {
         case Y_MOMENT: moment = moment.setY(Double.parseDouble(s)); break;
         case Z_MOMENT: moment = moment.setZ(Double.parseDouble(s)); break;
         case DEPTH: depth = (String) s; break;
-        case IRMGAUSS: irmGauss = Double.parseDouble(s); break;
-        case ARMGAUSS: armGauss = Double.parseDouble(s); break;
+        case IRM_FIELD: irmGauss = Double.parseDouble(s); break;
+        case ARM_FIELD: armGauss = Double.parseDouble(s); break;
         case VOLUME: volume = Double.parseDouble(s); break;
-        case SAMPLE_ID: sampleId = s; break;
+        case DISCRETE_ID: discreteId = s; break;
         case MEAS_TYPE: measType = MeasType.fromString(s); break;
         case TREATMENT: treatType = TreatType.fromString(s); break;
-        case ARMAXIS: armAxis = ArmAxis.fromString(s); break;
+        case ARM_AXIS: armAxis = ArmAxis.fromString(s); break;
         case TIMESTAMP: timeStamp = s; break;
         case RUN_NUMBER: runNumber = Integer.parseInt(s); break;
         case AREA: area = Double.parseDouble(s); break;
@@ -269,7 +269,6 @@ public class Datum {
         default: throw new IllegalArgumentException("Unknown field "+field);
         }
     }
-
 
     public static class Reader {
 

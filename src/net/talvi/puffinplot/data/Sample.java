@@ -172,17 +172,25 @@ public class Sample {
                     getName();
     }
 
+    private void checkDiscrete() {
+        if (getMeasType().isDiscrete())
+            throw new UnsupportedOperationException("Only discrete measurements can have sites.");
+    }
+
     private int getSiteSplit() {
+        checkDiscrete();
         String n = getName();
         int len = n.length();
         return len - n.charAt(len-2) == '.' ? 4 : 3;
     }
 
     public String getSiteId() {
+        checkDiscrete();
         return getName().substring(0, getSiteSplit());
     }
 
     public String getSampleId() {
+        checkDiscrete();
         return getName().substring(getSiteSplit());
     }
 

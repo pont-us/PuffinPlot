@@ -1,5 +1,6 @@
 package net.talvi.puffinplot.window;
 
+import javax.swing.ListModel;
 import net.talvi.puffinplot.*;
 import net.talvi.puffinplot.data.Suite;
 import java.awt.Toolkit;
@@ -10,6 +11,7 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -42,7 +44,7 @@ public class SampleChooser extends JPanel {
     SampleChooser() {
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         add(depthSlider = new DepthSlider());
-        samplePane = new JScrollPane(sampleList = new SampleList());
+        samplePane = new JScrollPane(sampleList = new SampleList(new DefaultListModel()));
         samplePane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         add(samplePane);
         int modifierKey = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
@@ -86,8 +88,12 @@ public class SampleChooser extends JPanel {
     }
 
     private class SampleList extends JList {
-        
-        SampleList() {
+
+        DefaultListModel model;
+
+        SampleList(DefaultListModel model) {
+            super(model);
+            this.model = model;
             setAlignmentY(0);
             addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
@@ -125,7 +131,10 @@ public class SampleChooser extends JPanel {
                 setVisibility(true, false);
                 break;
             case DISCRETE:
-                sampleList.setListData(suite.getNameArray());
+                DefaultListModel model = sampleList.model;
+                model.clear();
+                for (Sample s: suite.getSamples())
+                    model.addElement(s.getName());
                 sampleList.setSelectedIndex(0);
                 setVisibility(false, true);
                 break;

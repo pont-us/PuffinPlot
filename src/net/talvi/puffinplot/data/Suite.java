@@ -26,8 +26,8 @@ public class Suite {
     private List<Datum> data;
     private final List<File> inputFiles;
     private File puffinFile;
-    private String[] names = {};
-    private Map<String, Sample> samplesByName;
+    private List<Sample> samples = new ArrayList<Sample>(); // samples in order
+    private Map<String, Sample> samplesById; // name or depth as appropriate
     private Map<Integer, Line> dataByLine;
     private int currentSampleIndex = 0;
     private MeasType measType;
@@ -60,9 +60,9 @@ public class Suite {
     }
 
     public void doFisherOnSuite() {
-        List<Sample> samples = PuffinApp.getInstance().getSelectedSamples();
-        List<PcaValues> pcas = new ArrayList<PcaValues>(samples.size());
-        for (Sample sample: samples) {
+        List<Sample> selected = PuffinApp.getInstance().getSelectedSamples();
+        List<PcaValues> pcas = new ArrayList<PcaValues>(selected.size());
+        for (Sample sample: selected) {
             PcaValues pca = sample.getPcaValues();
             if (pca != null) pcas.add(pca);
         }
@@ -72,6 +72,8 @@ public class Suite {
     }
 
     public void doFisherOnSites() {
+        if (!getMeasType().isDiscrete())
+            throw new UnsupportedOperationException("Only discrete suites can have sites.");
         Map<String, Set<PcaValues>> sitePcas =
                 new LinkedHashMap<String, Set<PcaValues>>();
 
@@ -151,20 +153,20 @@ public class Suite {
         return dataByLine.get(lineNumber);
     }
 
-    private void addDatum(Datum d, Set<String> nameSet) {
+    private void addDatum(Datum d) {
         if (measType == MeasType.UNSET) measType = d.getMeasType();
         if (d.getMeasType() != measType) {
             throw new Error("Can't mix long core and discrete measurements.");
         }
         data.add(d);
-        String name = d.getSampleIdOrDepth();
-        Sample s = samplesByName.get(name);
+        String name = d.getIdOrDepth();
+        Sample s = samplesById.get(name);
         if (s == null) {
             s = new Sample(name);
-            samplesByName.put(name, s);
+            samplesById.put(name, s);
+            samples.add(s);
         }
         s.addDatum(d);
-        nameSet.add(name);
     }
 
     private List<File> expandDirs(List<File> files) {
@@ -193,7 +195,7 @@ public class Suite {
         this.inputFiles = files;
         final ArrayList dataArray = new ArrayList<Datum>();
         data = dataArray;
-        samplesByName = new LinkedHashMap<String, Sample>();
+        samplesById = new LinkedHashMap<String, Sample>();
         dataByLine = new HashMap<Integer, Line>();
         measType = MeasType.UNSET;
         loadWarnings = new ArrayList<String>();
@@ -222,12 +224,11 @@ public class Suite {
             if (loader != null) {
                 dataArray.ensureCapacity(dataArray.size() + loader.getData().size());
                 for (Datum d : loader.getData()) {
-                    if (!d.ignoreOnLoading()) addDatum(d, nameSet);
+                    if (!d.ignoreOnLoading()) addDatum(d);
                 }
                 loadWarnings.addAll(loader.getMessages());
             }
         }
-        names = nameSet.toArray(names);
         setCurrentSampleIndex(0);
         for (Sample s : getSamples()) s.doPca();
         if (files.size() == 1 &&
@@ -245,7 +246,6 @@ public class Suite {
     public void saveCalcsSample(File file) {
         CsvWriter writer = null;
         try {
-            List<Sample> samples = getSamplesOrdered();
             if (samples.size()==0) {
                 app.errorDialog("Error saving calculations",
                         "No calculations to save!");
@@ -328,7 +328,7 @@ public class Suite {
     }
 
     public Sample getSampleByName(String name) {
-        return samplesByName.get(name);
+        return samplesById.get(name);
     }
 
     public void setCurrentSampleIndex(int value) {
@@ -340,16 +340,10 @@ public class Suite {
     }
 
     public Sample getCurrentSample() {
-        return getSampleByName(names[getCurrentSampleIndex()]);
+        return getSampleByIndex(getCurrentSampleIndex());
     }
 
-    public Collection<Sample> getSamples() {
-        return samplesByName.values();
-    }
-
-    public List<Sample> getSamplesOrdered() {
-        ArrayList<Sample> samples = new ArrayList<Sample>(getNumSamples());
-            for (String name : names) samples.add(getSampleByName(name));
+    public List<Sample> getSamples() {
         return samples;
     }
 
@@ -366,11 +360,7 @@ public class Suite {
     }
 
     public int getNumSamples() {
-        return samplesByName.size();
-    }
-
-    public String[] getNameArray() {
-        return names;
+        return samplesById.size();
     }
 
     public void applySelectionToAll(Sample sample) {
@@ -379,7 +369,7 @@ public class Suite {
     }
 
     public Sample getSampleByIndex(int i) {
-        return samplesByName.get(names[i]);
+        return samples.get(i);
     }
 
     @Override

@@ -7,8 +7,8 @@ type: :task
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :wontfix
 creation_time: 2009-08-01 22:15:17.615123 Z
 references: []
 
@@ -18,3 +18,9 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2009-08-22 08:02:54.619677 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition wontfix
+  - |-
+    For various reasons, this became rather ugly in implementation and
+    I swiftly reverted to the current set-up.

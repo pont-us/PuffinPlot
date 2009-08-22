@@ -5,8 +5,8 @@ type: :task
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :reorg
 creation_time: 2009-07-31 06:01:36.157187 Z
 references: []
 
@@ -20,3 +20,9 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - commented
   - "This may be unnecessary if #106 is fixed as suggested."
+- - 2009-08-22 07:42:50.456316 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition reorg
+  - |-
+    No longer necessary: long core depths are now handled as Sample ID strings,
+    so there is no special behaviour which justifies subclassing.

@@ -280,6 +280,8 @@ public class PuffinActions {
             Suite suite = app.getSuite();
             if (suite == null) {
                 app.errorDialog("Fisher by site", "No suite loaded.");
+            } else if (!suite.getMeasType().isDiscrete()) {
+                app.errorDialog("Fisher by site", "Only discrete suites can have sites.");
             } else {
                 suite.doFisherOnSites();
                 app.getFisherWindow().getPlot().setGroupedBySite(true);
