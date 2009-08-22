@@ -41,3 +41,14 @@ Saving calculations
 "sample" -> individual calculations for every sample or depth
 "site" -> auto-grouped by site according to name
 "suite" -> one value from the entire suite
+
+2G files and magnetic susceptibility data
+-----------------------------------------
+
+The 2G magnetometer software doesn't record any other data (e.g. treatment
+step) with a magnetic susceptibility reading. PuffinPlot assumes that a
+magnetic susceptibility reading always relates to an immediately preceding
+magnetic moment reading, and will integrate the magnetic susceptibility
+value into that record. If the first line of a file is a magnetic 
+susceptibility reading, it will be ignored.
+

@@ -143,7 +143,7 @@ public class MainMenuBar extends JMenuBar {
             recentFilesMenu.add(new AbstractAction() {
                 public void actionPerformed(ActionEvent arg0) {
                     PuffinApp.getInstance().
-                            openFiles(recent.getFilesAndReorder(index), true);
+                            openFiles(recent.getFilesAndReorder(index));
                 }
                 @Override
                 public Object getValue(String key) {

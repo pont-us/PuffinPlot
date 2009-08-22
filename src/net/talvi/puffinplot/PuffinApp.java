@@ -9,6 +9,7 @@ import net.talvi.puffinplot.data.Suite;
 import java.awt.event.ActionEvent;
 import java.awt.print.PageFormat;
 import java.awt.print.PrinterJob;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -17,17 +18,18 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-
 import java.util.Properties;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.MemoryHandler;
+import java.util.logging.SimpleFormatter;
 import java.util.logging.StreamHandler;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import static java.lang.Thread.UncaughtExceptionHandler;
 
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Sample;
@@ -36,8 +38,10 @@ public class PuffinApp {
 
     private static PuffinApp app;
     private static String buildDate;
-    private final Logger logger;
-    private final StreamHandler logHandler;
+    private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
+    private static final ByteArrayOutputStream logStream =
+            new ByteArrayOutputStream();
+    private static final MemoryHandler logMemoryHandler;
     private final PuffinActions actions;
     List<Suite> suites;
     private final MainWindow mainWindow;
@@ -50,7 +54,16 @@ public class PuffinApp {
     private final FisherWindow fisherWindow;
     private final CorrectionWindow correctionWindow;
     private RecentFileList recentFiles;
-    
+
+    static {
+        final Handler logStringHandler =
+            new StreamHandler(logStream, new SimpleFormatter());
+        logStringHandler.setLevel(Level.ALL);
+        logger.addHandler(logMemoryHandler =
+                new MemoryHandler(logStringHandler, 100, Level.OFF));
+        logMemoryHandler.setLevel(Level.ALL);
+    }
+
     public static PuffinApp getInstance() { return app; }
 
     public static String getBuildDate() { return buildDate; }
@@ -100,11 +113,9 @@ public class PuffinApp {
     private final AboutBox aboutBox;
     
     private PuffinApp() {
+        logger.info("Instantiating PuffinApp.");
         // have to set app here (not in main) since we need it during initialization
         PuffinApp.app = this;
-        logger = Logger.getLogger("");
-        logHandler = new StreamHandler();
-        logger.addHandler(new MemoryHandler(null, 1000, Level.OFF));
         // com.apple.macos.useScreenMenuBar deprecated since 1.4, I think
         System.setProperty("apple.laf.useScreenMenuBar", "true");
         System.setProperty("com.apple.mrj.application.apple.menu.about.name", "PuffinPlot");
@@ -124,45 +135,49 @@ public class PuffinApp {
         aboutBox = new AboutBox(mainWindow);
         mainWindow.getMainMenuBar().updateRecentFiles();
         mainWindow.setVisible(true);
+        logger.info("PuffinApp instantiation complete.");
+    }
+
+    private static class ExceptionHandler implements UncaughtExceptionHandler {
+        public void uncaughtException(Thread thread, Throwable exception) {
+            final String ERROR_FILE = "PUFFIN-ERROR.txt";
+            boolean quit = unhandledErrorDialog();
+            File f = new File(System.getProperty("user.home"), ERROR_FILE);
+            try {
+                final PrintWriter w = new PrintWriter(new FileWriter(f));
+                w.println("PuffinPlot error file");
+                w.println("Build date: " + buildDate);
+                final Date now = new Date();
+                final SimpleDateFormat df =
+                        new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                w.println("Crash date: " + df.format(now));
+                for (String prop : new String[]{"java.version", "java.vendor",
+                            "os.name", "os.arch", "os.version", "user.name"}) {
+                    w.println(String.format("%-16s%s", prop,
+                            System.getProperty(prop)));
+                }
+                exception.printStackTrace(w);
+                w.println("\nLog messages: \n");
+                logMemoryHandler.push();
+                logMemoryHandler.flush();
+                logStream.flush();
+                w.append(logStream.toString());
+                w.close();
+            } catch (IOException ex) {
+                exception.printStackTrace();
+                ex.printStackTrace();
+            }
+            if (quit) {
+                System.exit(1);
+            }
+        }
     }
 
     public static void main(String[] args) {
-        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-
-            public void uncaughtException(Thread thread, Throwable exception) {
-                final String ERROR_FILE = "PUFFIN-ERROR.txt";
-                boolean quit = unhandledErrorDialog();
-                File f = new File(System.getProperty("user.home"), ERROR_FILE);
-                try {
-                    final PrintWriter w = new PrintWriter(new FileWriter(f));
-                    w.println("PuffinPlot error file");
-                    w.println("Build date: "+buildDate);
-                    final Date now = new Date();
-                    final SimpleDateFormat df =
-                            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    w.println("Crash date: "+df.format(now));
-                    for (String prop: new String[] {
-                                "java.version", "java.vendor",
-                                "os.name", "os.arch", "os.version",
-                                "user.name"}) {
-                        w.println(String.format("%-16s%s", prop,
-                                System.getProperty(prop)));
-                    }
-                    exception.printStackTrace(w);
-                    w.close();
-                } catch (IOException ex) {
-                    exception.printStackTrace();
-                    ex.printStackTrace();
-                }
-                if (quit) System.exit(1);
-            }
-        });
-
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new PuffinApp();
-            }
-        });
+        logger.info("Entering main method.");
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
+        java.awt.EventQueue.invokeLater(
+                new Runnable() { public void run() { new PuffinApp(); } });
     }
     
     public PuffinPrefs getPrefs() {
@@ -187,14 +202,6 @@ public class PuffinApp {
         getMainWindow().getMainMenuBar().sampleChanged();
         getTableWindow().dataChanged();
     }
-    
-    public void openFiles(File f) {
-        openFiles(Collections.singletonList(f));
-    }
-
-    public void openFiles(List<File> files) {
-        openFiles(files, false);
-    }
 
     public void closeCurrentSuite() {
         if (suites == null || suites.isEmpty()) return;
@@ -202,16 +209,17 @@ public class PuffinApp {
         getMainWindow().suitesChanged();
     }
 
-    public void openFiles(List<File> files, boolean fromRecentFileList) {
-
+    public void openFiles(List<File> files) {
+        files = null;
         if (files.size() == 0) return;
 
-        if (!fromRecentFileList) {
-            try {
-                recentFiles.add(files);
-            } catch (IOException ex) {
-                errorDialog("Error updating recent files list", ex.getLocalizedMessage());
-            }
+        try {
+            // If this fileset is already in the recent-files list,
+            // it will be bumped up to the top; otherwise it will be
+            // added to the top and the last member removed.
+            recentFiles.add(files);
+        } catch (IOException ex) {
+            errorDialog("Error updating recent files list", ex.getLocalizedMessage());
         }
         
         try {
@@ -252,11 +260,10 @@ public class PuffinApp {
 
     private static boolean unhandledErrorDialog() {
         final Object[] options = {"Continue", "Quit"};
-        final JOptionPane pane = new JOptionPane();
         final JLabel message = new JLabel(
                 "<html><body style=\"width: 400pt; font-weight: normal;\">" +
                 "<p>An unexpected error occurred. </p><p>" +
-                "Please <b>make sure that you are using the latest version</b> " +
+                "Please make sure that you are using the latest version " +
                 "of PuffinPlot. If so, report the error to Pont. " +
                 "I will try to write the details " +
                 "to a file called PUFFIN-ERROR.txt . "+
@@ -268,7 +275,6 @@ public class PuffinApp {
                 message, "Unexpected error",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
                 null, options, options[1]);
-
         return (response==1);
     }
 
@@ -300,7 +306,6 @@ public class PuffinApp {
         return suite.getCurrentSample();
     }
 
-    // Only works for discrete, of course.
     public List<Sample> getSelectedSamples() {
         return getMainWindow().getSampleChooser().getSelectedSamples();
     }
