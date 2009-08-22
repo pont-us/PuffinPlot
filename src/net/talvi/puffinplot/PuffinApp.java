@@ -22,6 +22,10 @@ import java.util.Date;
 import java.util.List;
 
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.MemoryHandler;
+import java.util.logging.StreamHandler;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
@@ -32,6 +36,8 @@ public class PuffinApp {
 
     private static PuffinApp app;
     private static String buildDate;
+    private final Logger logger;
+    private final StreamHandler logHandler;
     private final PuffinActions actions;
     List<Suite> suites;
     private final MainWindow mainWindow;
@@ -95,13 +101,14 @@ public class PuffinApp {
     
     private PuffinApp() {
         // have to set app here (not in main) since we need it during initialization
-        PuffinApp.app = this; 
-        
+        PuffinApp.app = this;
+        logger = Logger.getLogger("");
+        logHandler = new StreamHandler();
+        logger.addHandler(new MemoryHandler(null, 1000, Level.OFF));
         // com.apple.macos.useScreenMenuBar deprecated since 1.4, I think
         System.setProperty("apple.laf.useScreenMenuBar", "true");
         System.setProperty("com.apple.mrj.application.apple.menu.about.name", "PuffinPlot");
         loadBuildProperties();
-
         prefs = new PuffinPrefs();
         actions = new PuffinActions(this);
         tableWindow = new TableWindow();
@@ -110,18 +117,13 @@ public class PuffinApp {
         // NB main window must be instantiated last, as
         // the Window menu references the other windows
         mainWindow = new MainWindow();
-        
         suites = new ArrayList<Suite>();
         if (MAC_OS_X) createAppleEventListener();
-        
         currentPageFormat = PrinterJob.getPrinterJob().defaultPage();
         currentPageFormat.setOrientation(PageFormat.LANDSCAPE);
-        
         aboutBox = new AboutBox(mainWindow);
-            
         mainWindow.getMainMenuBar().updateRecentFiles();
         mainWindow.setVisible(true);
-
     }
 
     public static void main(String[] args) {
