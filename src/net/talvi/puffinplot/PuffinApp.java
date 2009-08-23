@@ -210,7 +210,6 @@ public class PuffinApp {
     }
 
     public void openFiles(List<File> files) {
-        files = null;
         if (files.size() == 0) return;
 
         try {

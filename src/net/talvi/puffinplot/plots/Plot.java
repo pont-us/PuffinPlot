@@ -25,6 +25,8 @@ import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.Datum;
+import static java.awt.font.TextAttribute.SUPERSCRIPT;
+import static java.awt.font.TextAttribute.SUPERSCRIPT_SUPER;
 
 public abstract class Plot
 {
@@ -41,8 +43,7 @@ public abstract class Plot
     private static final float SLOPPY_SELECTION_RADIUS_IN_UNITS = 128.0f;
     private Map<Attribute,Object> attributeMap
      = new HashMap<Attribute, Object>();
-    private static final TextAttribute SUPERSCRIPT_KEY;
-    private static final Object SUPERSCRIPT_VALUE;
+    private static final TransformAttribute MAC_SUPERSCRIPT_TRANSFORM;
 
     protected static final String DEFAULT_PLOT_POSITIONS =
             "demag 374 85 348 311 zplot 736 85 456 697 zplotlegend 1060 30 " +
@@ -51,28 +52,9 @@ public abstract class Plot
             "356 706 ";
 
     static {
-        /* The superscript attribute doesn't always work properly:
-         * under Linux/Java 1.5 , it appears a little too high. Under
-         * any (current) Apple Java, it appears halfway to Mongolia.
-         * Thus, for broken JREs, we fall back on a manual text transform
-         * based on the TextAttribute.SUPERSCRIPT Javadoc. The vertical
-         * offset is determined by experiment, and does not accord
-         * with the value suggested by the TextAttribute Javadoc.
-         */
-        if (PuffinApp.MAC_OS_X ||
-                System.getProperty("java.version", "UNKNOWN").
-                matches("^1\\.5.*")) {
-            SUPERSCRIPT_KEY = TextAttribute.TRANSFORM;
-            final double scale = 2d / 3d;
-            AffineTransform at = AffineTransform.getTranslateInstance(0, -5);
-            at.concatenate(AffineTransform.getScaleInstance(scale, scale));
-            SUPERSCRIPT_VALUE = new TransformAttribute(at);
-            System.out.println("Faking superscript");
-        } else {
-            SUPERSCRIPT_KEY = TextAttribute.SUPERSCRIPT;
-            SUPERSCRIPT_VALUE = TextAttribute.SUPERSCRIPT_SUPER;
-            System.out.println("Using proper superscript.");
-        }
+        final AffineTransform at = AffineTransform.getTranslateInstance(0, 0.18);
+        at.concatenate(AffineTransform.getScaleInstance(0.8, 0.8));
+        MAC_SUPERSCRIPT_TRANSFORM = new TransformAttribute(at);
     }
 
     public Rectangle2D getDimensions() {
@@ -135,12 +117,34 @@ public abstract class Plot
      *  Used for "x10^?" when exponent is unknown.
      */
     protected AttributedString timesTenToThe(String text, String exponent) {
-        // 00D7 is the multiplication sign
-        text += " \u00D710" + exponent;
-        AttributedString as = new AttributedString(text);
-        as.addAttribute(SUPERSCRIPT_KEY, SUPERSCRIPT_VALUE,
-                text.length() - exponent.length(), text.length());
-        return as;
+        if (!PuffinApp.MAC_OS_X) {
+            // 00D7 is the multiplication sign
+            text += " \u00D710" + exponent;
+            AttributedString as = new AttributedString(text);
+            as.addAttribute(SUPERSCRIPT, SUPERSCRIPT_SUPER,
+                    text.length() - exponent.length(), text.length());
+            return as;
+        } else {
+            /* This is a fairly horrendous workaround for some fairly
+             * horrendous bugs in Apple Java text rendering. Superscript
+             * attributes don't work properly; the obvious workaround for
+             * that (manually creating a scale-and-translate attribute)
+             * doesn't work either, since for some reason the transform
+             * is applied once to the first character in the run, then
+             * twice to subsequent characters. To get around this, we
+             * (1) create a transform which, when applied twice over,
+             * produces an acceptable superscript effect, and (2) insert
+             * a zero-width space as the first character in the run,
+             * which "soaks up" the single application of the transform.
+             * Much tedious trial and error went into this; test any changes
+             * thoroughly!
+             */
+            text += " \u00D710\u200B" + exponent;
+            AttributedString as = new AttributedString(text);
+            as.addAttribute(TextAttribute.TRANSFORM, MAC_SUPERSCRIPT_TRANSFORM,
+                    text.length() - exponent.length() - 1, text.length());
+            return as;
+        }
     }
 
     protected AttributedString timesTenToThe(String text, int exponent) {
