@@ -8,8 +8,8 @@ type: :bugfix
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :in_progress
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2009-08-07 07:18:56.584972 Z
 references: []
 
@@ -29,3 +29,10 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - changed status from unstarted to in_progress
   - ""
+- - 2009-08-23 23:50:29.391217 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Worked around, with an unpleasant but unavoidable hack which is
+    thoroughly documented in a code comment. Tested on Corelyser, seems
+    to work fine (at least until the next Apple Java update).

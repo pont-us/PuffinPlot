@@ -14,8 +14,8 @@ type: :feature
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :in_progress
-disposition: 
+status: :closed
+disposition: :reorg
 creation_time: 2009-06-07 20:22:25.911075 Z
 references: []
 
@@ -52,3 +52,13 @@ log_events:
     Interpreting long core files requires knowledge of the effective
     sensor lengths, so this will have to be moved to a configuration
     option.
+- - 2009-08-24 00:00:38.536681 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    Most of the heavy work is done on this now, so I'm going to split
+    off the remaining bits into separate bugs and close this.
+- - 2009-08-24 01:19:31.486979 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition reorg
+  - Mostly implemented, remaining bits opened as more specific new bugs.

@@ -1,0 +1,20 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Check loading of non-OPRF files.
+desc: |-
+  Make sure that PuffinPlot correctly loads the files solicited by
+  Christian from various people.
+type: :task
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2009-08-24 00:02:04.505444 Z
+references: []
+
+id: 74b7d5f340ca73500da3bcf4bdfb76a394f94743
+log_events: 
+- - 2009-08-24 00:02:04.868422 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

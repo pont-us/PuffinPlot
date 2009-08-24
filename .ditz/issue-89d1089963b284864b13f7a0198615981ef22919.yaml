@@ -1,0 +1,20 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Make sensor lengths configurable
+desc: |-
+  Currently they are hardwired into Suite.
+  ./
+type: :bugfix
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2009-08-24 00:01:10.601479 Z
+references: []
+
+id: 89d1089963b284864b13f7a0198615981ef22919
+log_events: 
+- - 2009-08-24 00:01:10.926218 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

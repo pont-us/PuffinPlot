@@ -11,7 +11,6 @@ import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import sun.awt.motif.MPopupMenuPeer;
 
 class PlotAxis {
     private final Plot plot;
