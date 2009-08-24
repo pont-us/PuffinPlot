@@ -14,7 +14,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.file.FileLoader;
 import net.talvi.puffinplot.data.file.Ppl2Loader;
@@ -40,6 +39,7 @@ public class Suite {
             new Vec3(-4.628, 4.404, -6.280);
     private static final Vec3 SENSOR_LENGTHS_NEW =
             new Vec3(4.628, -4.404, -6.280);
+    private boolean hasUnknownTreatType;
 
     public FisherValues getSuiteFisher() {
         return suiteFisher;
@@ -159,6 +159,7 @@ public class Suite {
             throw new Error("Can't mix long core and discrete measurements.");
         }
         data.add(d);
+        if (d.getTreatType() == TreatType.UNKNOWN) hasUnknownTreatType = true;
         String name = d.getIdOrDepth();
         Sample s = samplesById.get(name);
         if (s == null) {
@@ -199,7 +200,7 @@ public class Suite {
         dataByLine = new HashMap<Integer, Line>();
         measType = MeasType.UNSET;
         loadWarnings = new ArrayList<String>();
-        TreeSet<String> nameSet = new TreeSet<String>();
+        hasUnknownTreatType = false;
 
         for (File file: files) {
             final FileType fileType = FileType.guess(file);
@@ -230,6 +231,8 @@ public class Suite {
             }
         }
         setCurrentSampleIndex(0);
+        if (hasUnknownTreatType)
+            loadWarnings.add("One or more treatment types were not recognized.");
         for (Sample s : getSamples()) s.doPca();
         if (files.size() == 1 &&
                 FileType.guess(files.get(0)) == FileType.PUFFINPLOT_1 &&
