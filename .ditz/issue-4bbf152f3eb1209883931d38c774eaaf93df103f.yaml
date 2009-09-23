@@ -19,3 +19,16 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2009-08-24 21:45:39.317922 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    The Apple equivalent of a * in the title bar seems to be the the
+    Window.documentModified client property, documented at
+    http://developer.apple.com/technotes/tn2007/tn2196.html#WINDOW_DOCUMENTMODIFIED .
+    On Macs, the menu title should also flash briefly when a hotkey is
+    pressed, which would also give useful visual feedback that saving is
+    taking place. But this isn't implemented in Apple Java and I can't think
+    of any way to work around it.
+    http://lists.apple.com/archives/Java-dev/2008/Nov/msg00239.html seems
+    to confirm this.

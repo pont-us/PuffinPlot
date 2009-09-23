@@ -1,0 +1,22 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Export intensity in CSV file
+desc: |-
+  Christian says: I have not managed to save a file containing the NRM intensity. I
+  think this may have never been a feature but it would help because it
+  will remove one more step in the shagging around process of going back
+  and forth between xcel files etc etc.
+type: :feature
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2009-09-08 03:56:29.672582 Z
+references: []
+
+id: e1a484461db541ac4fa680ef1a48aa82eaa70d62
+log_events: 
+- - 2009-09-08 03:56:30.212175 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

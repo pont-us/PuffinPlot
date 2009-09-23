@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Mag. Sus. units are wrong
+desc: ""
+type: :bugfix
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2009-09-15 02:27:49.071549 Z
+references: []
+
+id: e0cfb3fd5366bb42451dbb5f6525eb16fa04cd0d
+log_events: 
+- - 2009-09-15 02:27:49.591294 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

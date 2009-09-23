@@ -1,0 +1,21 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Apple menu bar should be per-application, not per-window
+desc: |-
+  According to http://developer.apple.com/technotes/tn/tn2042.html#TNTAG12 ,
+  the way to work around this is to add identical menu bars to all
+  windows. Ugh.
+type: :feature
+component: PuffinPlot
+release: "1.2"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2009-08-24 21:47:35.772226 Z
+references: []
+
+id: 418b63765b6f7b8876526dc046b14358a6b535e9
+log_events: 
+- - 2009-08-24 21:47:36.047909 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
