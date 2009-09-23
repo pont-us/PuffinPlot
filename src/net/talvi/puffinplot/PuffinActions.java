@@ -102,11 +102,9 @@ public class PuffinActions {
 
     public final Action close = new PuffinAction("Close",
             "Close this suite of data", 'W', false, KeyEvent.VK_C) {
-
         public void actionPerformed(ActionEvent e) {
             app.closeCurrentSuite();
         }
-
     };
 
     private String getSavePath(final String title, final String extension,

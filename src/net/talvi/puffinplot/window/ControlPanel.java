@@ -27,7 +27,6 @@ public class ControlPanel extends JPanel
    implements ActionListener, ItemListener {
 
     private static final long serialVersionUID = 1L;
-
     private final JLabel correctionField;
     JComboBox suiteBox;
     private CorrectionBox correctionBox;
@@ -43,7 +42,7 @@ public class ControlPanel extends JPanel
     
     public ControlPanel() {
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-        add(suiteBox = new JComboBox(new String[] {"no samples loaded"}));
+        add(suiteBox = new JComboBox(new String[] {"no files loaded"}));
         add(correctionBox = new CorrectionBox());
         add(vVsBox = new VVsBox());
 

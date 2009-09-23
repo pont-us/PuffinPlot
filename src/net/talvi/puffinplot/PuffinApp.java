@@ -43,9 +43,9 @@ public class PuffinApp {
             new ByteArrayOutputStream();
     private static final MemoryHandler logMemoryHandler;
     private final PuffinActions actions;
-    List<Suite> suites;
+    private List<Suite> suites;
     private final MainWindow mainWindow;
-    private int currentSuiteIndex;
+    private Suite currentSuite;
     private PageFormat currentPageFormat;
     public static final boolean MAC_OS_X =
             System.getProperty("os.name").toLowerCase().startsWith("mac os x");
@@ -205,7 +205,13 @@ public class PuffinApp {
 
     public void closeCurrentSuite() {
         if (suites == null || suites.isEmpty()) return;
-        suites.remove(currentSuiteIndex);
+        int index = suites.indexOf(currentSuite);
+        suites.remove(currentSuite);
+        // Set new current suite to previous (if any), else next (if any),
+        // or none.
+        if (index > 0) index--;
+        if (suites.size() > 0) currentSuite = suites.get(index);
+        else currentSuite = null;
         getMainWindow().suitesChanged();
     }
 
@@ -241,7 +247,7 @@ public class PuffinApp {
                 suites.add(suite);
             }
             if (suites.size() > 0) {
-                currentSuiteIndex = suites.size()-1;
+                currentSuite = suites.get(suites.size()-1);
                 getMainWindow().suitesChanged();
             }
         } catch (FileNotFoundException e) {
@@ -295,8 +301,7 @@ public class PuffinApp {
     }
 
     public Suite getSuite() {
-        if (suites==null) return null;
-        return suites.isEmpty() ? null : suites.get(currentSuiteIndex);
+        return currentSuite;
     }
     
     public Sample getSample() {
@@ -309,9 +314,11 @@ public class PuffinApp {
         return getMainWindow().getSampleChooser().getSelectedSamples();
     }
 
-    public void setSuite(int selectedIndex) {
-        currentSuiteIndex = selectedIndex;
-        if (getSuite() != null) getMainWindow().suitesChanged();
+    public void setSuite(int index) {
+        if (index >= 0 && index < suites.size()) {
+            currentSuite = suites.get(index);
+            getMainWindow().suitesChanged();
+        }
     }
     
     public void quit() {

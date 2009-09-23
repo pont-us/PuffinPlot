@@ -1,6 +1,5 @@
 package net.talvi.puffinplot.window;
 
-import javax.swing.ListModel;
 import net.talvi.puffinplot.*;
 import net.talvi.puffinplot.data.Suite;
 import java.awt.Toolkit;

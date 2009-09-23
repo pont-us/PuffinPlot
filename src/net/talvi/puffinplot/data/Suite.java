@@ -203,6 +203,14 @@ public class Suite {
         hasUnknownTreatType = false;
 
         for (File file: files) {
+            if (!file.exists()) {
+                loadWarnings.add(String.format("File \"%s\" does not exist.", file.getName()));
+                continue;
+            }
+            if (!file.canRead()) {
+                loadWarnings.add(String.format("File \"%s\" is unreadable.", file.getName()));
+                continue;
+            }
             final FileType fileType = FileType.guess(file);
             FileLoader loader = null;
             switch (fileType) {
