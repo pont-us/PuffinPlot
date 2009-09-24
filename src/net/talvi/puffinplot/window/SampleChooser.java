@@ -133,7 +133,7 @@ public class SampleChooser extends JPanel {
                 DefaultListModel model = sampleList.model;
                 model.clear();
                 for (Sample s: suite.getSamples())
-                    model.addElement(s.getName());
+                    model.addElement(s.getNameOrDepth());
                 sampleList.setSelectedIndex(0);
                 setVisibility(false, true);
                 break;

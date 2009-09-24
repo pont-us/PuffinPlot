@@ -113,6 +113,15 @@ public class TwoGeeLoader extends AbstractFileLoader {
             catch (NumberFormatException e) { return Double.NaN; }
         }
 
+
+        private int getInt(String name) {
+            String v = values[fields.get(name)];
+            // catch the common case without using an expensive exception
+            if ("NA".equals(v)) return 0;
+            try { return Integer.parseInt(v); }
+            catch (NumberFormatException e) { return 0; }
+        }
+
         private String getString(String name) {
             return values[fields.get(name)];
         }
@@ -154,6 +163,11 @@ public class TwoGeeLoader extends AbstractFileLoader {
         d.setFormAz(r.getDouble("Formation Dip Azimuth"));
         d.setFormDip(r.getDouble("Formation Dip"));
         if (fieldExists("Mag Dev")) d.setMagDev(r.getDouble("Mag Dev"));
+        if (fieldExists("Run #")) d.setRunNumber(r.getInt("Run #"));
+        if (fieldExists("Sample Timestamp")) d.setTimestamp(r.getString("Sample Timestamp"));
+        if (fieldExists("X drift")) d.setXDrift(r.getDouble("X drift"));
+        if (fieldExists("Y drift")) d.setYDrift(r.getDouble("Y drift"));
+        if (fieldExists("Z drift")) d.setZDrift(r.getDouble("Z drift"));
         return d;
     }
 }

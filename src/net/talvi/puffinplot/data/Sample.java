@@ -8,26 +8,16 @@ import net.talvi.puffinplot.PuffinApp;
 public class Sample {
     
     private final List<Datum> data;
-    private final double depth;
-    private final String name;
+    private final String nameOrDepth;
     private FisherValues fisher = null;
     private boolean emptySlot = false;
     private PcaAnnotated pca;
     private MDF mdf;
     private boolean hasMsData = false;
 
-    private Sample(double depth, String name) {
-        this.depth = depth;
-        this.name = name;
-        this.data = new ArrayList<Datum>();
-    }
-
-    public Sample(double depth) {
-        this(depth, null);
-    }
-
     public Sample(String name) {
-        this(Double.NaN, name);
+        this.nameOrDepth = name;
+        this.data = new ArrayList<Datum>();
     }
     
     public void clear() {
@@ -97,10 +87,6 @@ public class Sample {
         d.setSample(this);
     }
 
-    public double getDepth() {
-        return depth;
-    }
-
     public boolean hasMsData() {
         return hasMsData;
     }
@@ -155,10 +141,6 @@ public class Sample {
     public void doPca() {
         doPca(getData().get(0).isPcaAnchored());
     }
-    
-    public String getName() {
-        return name;
-    }
 
     public MeasType getMeasType() {
         for (Datum d: getData())
@@ -167,9 +149,7 @@ public class Sample {
     }
 
     public String getNameOrDepth() {
-        return getMeasType() == MeasType.CONTINUOUS ?
-                    String.format("%f", getDepth()) :
-                    getName();
+        return nameOrDepth;
     }
 
     private void checkDiscrete() {
@@ -179,19 +159,19 @@ public class Sample {
 
     private int getSiteSplit() {
         checkDiscrete();
-        String n = getName();
+        String n = getNameOrDepth();
         int len = n.length();
         return len - n.charAt(len-2) == '.' ? 4 : 3;
     }
 
     public String getSiteId() {
         checkDiscrete();
-        return getName().substring(0, getSiteSplit());
+        return getNameOrDepth().substring(0, getSiteSplit());
     }
 
     public String getSampleId() {
         checkDiscrete();
-        return getName().substring(getSiteSplit());
+        return getNameOrDepth().substring(getSiteSplit());
     }
 
     public FisherValues getFisher() {

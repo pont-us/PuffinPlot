@@ -26,11 +26,14 @@ public class Datum {
     private int runNumber = -1;
     private double volume = DEFAULT_VOLUME;
     private double area = DEFAULT_AREA;
-    private String timeStamp = "UNSET";
+    private String timestamp = "UNSET";
+    private double xDrift, yDrift, zDrift;
+
     private Line line;
     private boolean selected = false;
     private boolean pcaAnchored = true;
     private boolean hidden = false;
+
     private Sample sample;
     private static final List<String> fieldNames;
     private static final List<DatumField> fields;
@@ -103,6 +106,16 @@ public class Datum {
     public void setArea(double v)      { area = v; }
     public double getVolume()          { return volume; }
     public void setVolume(double v)    { volume = v; }
+    public int getRunNumber()          { return runNumber; }
+    public void setRunNumber(int v)    { runNumber = v; }
+    public String getTimestamp()       { return timestamp; }
+    public void setTimestamp(String v) { timestamp = v; }
+    public double getXDrift()          { return xDrift; }
+    public void setXDrift(double v)    { xDrift = v; }
+    public double getYDrift()          { return yDrift; }
+    public void setYDrift(double v)    { yDrift = v; }
+    public double getZDrift()          { return zDrift; }
+    public void setZDrift(double v)    { zDrift = v; }
 
     public String getIdOrDepth() {
         return measType == MeasType.CONTINUOUS ? depth : discreteId;
@@ -227,7 +240,7 @@ public class Datum {
         case MEAS_TYPE: return measType.toString();
         case TREATMENT: return treatType.toString();
         case ARM_AXIS: return armAxis.toString();
-        case TIMESTAMP: return timeStamp;
+        case TIMESTAMP: return timestamp;
         case RUN_NUMBER: return Integer.toString(runNumber);
         case AREA: return fmt(area);
         case PP_SELECTED: return Boolean.toString(selected);
@@ -260,7 +273,7 @@ public class Datum {
         case MEAS_TYPE: measType = MeasType.fromString(s); break;
         case TREATMENT: treatType = TreatType.fromString(s); break;
         case ARM_AXIS: armAxis = ArmAxis.fromString(s); break;
-        case TIMESTAMP: timeStamp = s; break;
+        case TIMESTAMP: timestamp = s; break;
         case RUN_NUMBER: runNumber = Integer.parseInt(s); break;
         case AREA: area = Double.parseDouble(s); break;
         case PP_SELECTED: selected = Boolean.parseBoolean(s); break;
