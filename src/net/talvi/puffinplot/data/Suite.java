@@ -264,14 +264,15 @@ public class Suite {
             }
 
             writer = new CsvWriter(new FileWriter(file));
-            writer.writeCsv(measType.getColumnHeader(),
+            writer.writeCsv(measType.getColumnHeader(), "NRM intensity",
                     FisherValues.getHeaders(), PcaAnnotated.getHeaders(),
                     MDF.getHeaders());
             for (Sample sample: samples) {
                 PcaAnnotated pca = sample.getPca();
                 FisherValues fish = sample.getFisher();
-                MDF mdf = sample.getMidpoint();
+                MDF mdf = sample.getMDF();
                 writer.writeCsv(sample.getNameOrDepth(),
+                        String.format("%.4g", sample.getNRM()),
                         fish == null ? FisherValues.getEmptyFields() : fish.toStrings(),
                         pca == null ? PcaAnnotated.getEmptyFields() : pca.toStrings(),
                         mdf == null ? MDF.getEmptyFields() : mdf.toStrings());

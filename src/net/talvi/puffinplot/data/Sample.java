@@ -31,8 +31,12 @@ public class Sample {
         mdf = MDF.calculate(getVisibleData(), useEmptyCorrection);
     }
 
-    public MDF getMidpoint() {
+    public MDF getMDF() {
         return mdf;
+    }
+
+    public double getNRM() {
+        return data.get(0).getIntensity(emptySlot);
     }
 
     /*

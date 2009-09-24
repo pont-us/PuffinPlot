@@ -66,7 +66,7 @@ public class DemagPlot extends Plot {
         AxisParameters hAxisParams = new AxisParameters(xAxisLength, Direction.RIGHT).
                 withLabel(xAxisLabel);
 
-        final MDF midpoint = sample.getMidpoint();
+        final MDF midpoint = sample.getMDF();
         if (midpoint != null) {
             hAxisParams.markedPosition = midpoint.getDemagLevel();
         }
