@@ -8,7 +8,6 @@ import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 import net.talvi.puffinplot.data.Sample;
-import sun.awt.motif.MTextAreaPeer;
 
 public class SampleTable extends Plot {
 
