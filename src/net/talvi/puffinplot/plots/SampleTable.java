@@ -40,7 +40,7 @@ public class SampleTable extends Plot {
         Font biggerFont = oldFont.deriveFont(getFontSize()*1.5f);
         g.setFont(biggerFont);
         
-        final boolean discrete = sample.getMeasType() == MeasType.DISCRETE;
+        final boolean discrete = sample.getMeasType().isDiscrete();
 
         String line = (discrete ? "Sample: " : "Depth: ")
                 + sample.getNameOrDepth()

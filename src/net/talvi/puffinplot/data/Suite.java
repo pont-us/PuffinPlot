@@ -32,6 +32,7 @@ public class Suite {
     private MeasType measType;
     private String suiteName;
     private List<FisherForSite> siteFishers;
+    private List<Sample> emptyTraySamples;
     private FisherValues suiteFisher;
     final private PuffinApp app;
     private List<String> loadWarnings;
@@ -180,13 +181,13 @@ public class Suite {
         return result;
     }
 
-    /*
+    /**
      * Note that this may return an empty suite, in which case it is the
      * caller's responsibility to notice this and deal with it.
      * We can't just throw an exception if the suite's empty,
      * because then we lose the load warnings (which will probably explain
      * to the user *why* the suite's empty and are thus quite important).
-     **/
+     */
     public Suite(List<File> files) throws IOException {
         app = PuffinApp.getInstance();
         assert(files.size() > 0);
@@ -248,6 +249,16 @@ public class Suite {
             app.getRecentFiles().add(files);
             app.getMainWindow().getMainMenuBar().updateRecentFiles();
             puffinFile = files.get(0);
+        }
+        if (measType.isDiscrete()) {
+            emptyTraySamples = new ArrayList<Sample>();
+            int slot = 1;
+            while (true) {
+                String slotId = "TRAY" + slot;
+                if (!samplesById.containsKey(slotId)) break;
+                emptyTraySamples.add(samplesById.get(slotId));
+                slot++;
+            }
         }
     }
     
@@ -382,6 +393,17 @@ public class Suite {
 
     public Sample getSampleByIndex(int i) {
         return samples.get(i);
+    }
+
+    public Datum getTrayCorrection(Datum d) {
+        Sample s = d.getSample();
+        int slot = s.getSlotNumber();
+        if (emptyTraySamples != null && emptyTraySamples.size()>slot) {
+            Sample empty = emptyTraySamples.get(slot);
+            return empty.getDatumByRunNumber(d.getRunNumber());
+        } else {
+            return null;
+        }
     }
 
     @Override

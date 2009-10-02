@@ -42,10 +42,10 @@ public class ZPlot extends Plot {
         final boolean ec = emptyCorrection;
         Comparator<Datum> xComp = new DatumComparator(axis1, corr, ec);
         Comparator<Datum> yComp = new DatumComparator(axis2, corr, ec);
-        double xMin = Collections.min(sample, xComp).getPoint(corr,ec).getComponent(axis1);
-        double xMax = Collections.max(sample, xComp).getPoint(corr,ec).getComponent(axis1);
-        double yMin = Collections.min(sample, yComp).getPoint(corr,ec).getComponent(axis2);
-        double yMax = Collections.max(sample, yComp).getPoint(corr,ec).getComponent(axis2);
+        double xMin = Collections.min(sample, xComp).getMoment(corr,ec).getComponent(axis1);
+        double xMax = Collections.max(sample, xComp).getMoment(corr,ec).getComponent(axis1);
+        double yMin = Collections.min(sample, yComp).getMoment(corr,ec).getComponent(axis2);
+        double yMax = Collections.max(sample, yComp).getMoment(corr,ec).getComponent(axis2);
         return new Rectangle2D.Double(xMin, yMin, xMax-xMin, yMax-yMin);
     }
     
@@ -101,7 +101,7 @@ public class ZPlot extends Plot {
         
         boolean first = true;
         for (Datum d: data) {
-            Vec3 p = d.getPoint(correction, emptyC);
+            Vec3 p = d.getMoment(correction, emptyC);
             // Plot the point in the horizontal plane
             double x1 = xOffset + p.y * scale;
             double y1 = yOffset - p.x * scale;
@@ -110,7 +110,7 @@ public class ZPlot extends Plot {
         }
         first = true;
         for (Datum d: data) {
-            Vec3 p = d.getPoint(correction, emptyC);
+            Vec3 p = d.getMoment(correction, emptyC);
             // Now plot the point in the vertical plane
             double x2 = xOffset + p.getComponent(vVs) * scale;
             double y2 = yOffset - p.getComponent(MeasurementAxis.MINUSZ) * scale;

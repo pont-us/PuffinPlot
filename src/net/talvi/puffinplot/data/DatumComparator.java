@@ -16,8 +16,8 @@ public class DatumComparator implements Comparator<Datum>, Serializable {
 	}
 	
 	public int compare(Datum d1, Datum d2) {
-		return Double.compare(d1.getPoint(corr, emptyCorrection).getComponent(axis),
-				d2.getPoint(corr, emptyCorrection).getComponent(axis));
+		return Double.compare(d1.getMoment(corr, emptyCorrection).getComponent(axis),
+				d2.getMoment(corr, emptyCorrection).getComponent(axis));
 				//getValue(d1), getValue(d2));
 	}
 }

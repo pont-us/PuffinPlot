@@ -67,7 +67,7 @@ public class DataTable extends Plot {
         float yPos = 2 * ySpacing;
         for (Datum d: data) {
             final List<String> values = new ArrayList<String>(4);
-            final Vec3 p = d.getPoint(params.getCorrection(), params.isEmptyCorrectionActive());
+            final Vec3 p = d.getMoment(params.getCorrection(), params.isEmptyCorrectionActive());
             final String demag = useSequence ? Integer.toString(sequence)
                     : format("%.0f", d.getDemagLevel());
             values.add(demag);

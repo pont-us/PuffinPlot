@@ -114,7 +114,7 @@ public class Sample {
         PuffinApp app = PuffinApp.getInstance();
         for (Datum d: getData())
             if (d.isSelected())
-                points.add(d.getPoint(app.getCorrection(),
+                points.add(d.getMoment(app.getCorrection(),
                         app.isEmptyCorrectionActive()));
         return points;
     }

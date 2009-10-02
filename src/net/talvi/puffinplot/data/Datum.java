@@ -36,6 +36,7 @@ public class Datum {
     private boolean hidden = false;
 
     private Sample sample;
+    private Suite suite;
     private static final List<String> fieldNames;
     private static final List<DatumField> fields;
 
@@ -119,6 +120,8 @@ public class Datum {
     public void setZDrift(double v)    { zDrift = v; }
     public int getSlotNumber()         { return slotNumber; }
     public void setSlotNumber(int v)   { slotNumber = v; }
+    public Suite getSuite()            { return suite; }
+    public void setSuite(Suite v)      { suite = v; }
 
     public String getIdOrDepth() {
         return measType == MeasType.CONTINUOUS ? depth : discreteId;
@@ -129,31 +132,32 @@ public class Datum {
         return moment == null && hasMagSus();
     }
 
-    private Vec3 getFc(boolean emptyCorr) {
-        return Double.isNaN(formAz) || Double.isNaN(formDip)
-                ? getSc(emptyCorr)
-                : getSc(emptyCorr).correctForm(toRadians(formAz - magDev), toRadians(formDip));
+    private boolean sampleCorrectionExists() {
+        return (!Double.isNaN(sampAz)) && (!Double.isNaN(sampDip));
     }
 
-    private Vec3 getSc(boolean emptyCorr) {
-        return Double.isNaN(sampAz) || Double.isNaN(sampDip)
-                ? getUc(emptyCorr)
-                : getUc(emptyCorr).correctSample(toRadians(sampAz - magDev), toRadians(sampDip));
+    private boolean formationCorrectionExists() {
+        return (!Double.isNaN(formAz)) && (!Double.isNaN(formDip));
     }
 
-    private Vec3 getUc(boolean emptyCorr) {
-        return (!emptyCorr) || getLine().getEmptySlot() == null
-                ? moment
-                : moment.minus(getLine().getEmptySlot().getUc(false));
-    }
-    
-    public Vec3 getPoint(Correction c, boolean emptyCorrection) {
-        switch (c) {
-            case FORMATION: return getFc(emptyCorrection);
-            case SAMPLE: return getSc(emptyCorrection);
-            case NONE: return getUc(emptyCorrection);
-            default: throw new IllegalArgumentException("unknown correction");
+    public Vec3 getMoment(Correction c, boolean emptyCorrection) {
+        Vec3 result = moment;
+        if (emptyCorrection) {
+            result = result.minus(getLine().getEmptySlot().moment);
         }
+        if (false /* tray correction */) {
+            Datum tray = getSuite().getTrayCorrection(this);
+            if (tray != null) result = result.minus(tray.moment);
+        }
+        if (c.includesSample() && sampleCorrectionExists()) {
+            result = result.correctSample(toRadians(sampAz - magDev),
+                                          toRadians(sampDip));
+            if (c.includesFormation() && formationCorrectionExists()) {
+                result = result.correctForm(toRadians(formAz - magDev),
+                                            toRadians(formDip));
+            }
+        }
+        return result;
     }
     
     /*
@@ -208,7 +212,7 @@ public class Datum {
     }
 
     public double getIntensity(boolean emptyCorrection) {
-        return getUc(emptyCorrection).mag();
+        return getMoment(Correction.NONE, emptyCorrection).mag();
     }
 
     public boolean ignoreOnLoading() {

@@ -12,4 +12,12 @@ public enum Correction {
     public String getNiceName() {
         return niceName;
     }
+
+    public boolean includesSample() {
+        return (this == SAMPLE || this == FORMATION);
+    }
+
+    public boolean includesFormation() {
+        return (this == FORMATION);
+    }
 }

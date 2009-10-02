@@ -41,7 +41,7 @@ public class SampleEqAreaPlot extends EqAreaPlot {
         boolean first = true;
         Vec3 prev = null;
         for (Datum d: sample.getVisibleData()) {
-            final Vec3 p = d.getPoint(params.getCorrection(),
+            final Vec3 p = d.getMoment(params.getCorrection(),
                     params.isEmptyCorrectionActive()).normalize();
             addPoint(d, project(p, xo, yo, radius), p.z>0, first, false);
             if (!first) {
