@@ -1,0 +1,25 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Point selection duplication should have a copy/paste interface
+desc: |-
+  Currently copying a point selection is a single-step process --
+  select a set of samples, and use "copy point selection" to transfer
+  the current selection to all of them. It's clearly quicker than copy/paste,
+  but less intuitive since the copy/paste paradigm is *very* well-
+  entrenched. Christian couldn't figure it out by himself, and he's one
+  of PuffinPlot's more assiduous users, so this should clearly be changed
+  before PuffinPlot gets a wider release.
+type: :feature
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2009-09-28 05:36:03.891958 Z
+references: []
+
+id: 6cf1ddea51800b2625095cfabb5c75cfd9faa706
+log_events: 
+- - 2009-09-28 05:36:04.125320 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
