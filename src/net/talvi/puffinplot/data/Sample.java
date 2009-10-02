@@ -190,6 +190,38 @@ public class Sample {
         for (Datum d: getData()) d.setPcaAnchored(pcaAnchored);
     }
 
+    public int getSlotNumber() {
+        return getData().get(0).getSlotNumber();
+    }
+
+    public int getFirstRunNumber() {
+        return getData().get(0).getRunNumber();
+    }
+
+    public int getLastRunNumber() {
+        return getData().get(getData().size()-1).getRunNumber();
+    }
+
+    /**
+     * Returns the datum with the highest run number which is less
+     * than the supplied run number. Intended to be used in applying
+     * tray corrections.
+     *
+     * @param maxRunNumber
+     * @return the Datum in this sample which has the highest
+     * run number smaller than the supplied run number, or null if
+     * this sample contains no such Datum.
+     */
+    public Datum getDatumByRunNumber(int maxRunNumber) {
+        Datum result = null;
+        for (Datum d: getData()) {
+            if (d.getRunNumber() < maxRunNumber) {
+                result = d;
+            }
+        }
+        return result;
+    }
+
     public boolean isEmptySlot() {
         return emptySlot;
     }

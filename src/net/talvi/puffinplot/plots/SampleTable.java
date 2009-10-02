@@ -40,13 +40,20 @@ public class SampleTable extends Plot {
         Font biggerFont = oldFont.deriveFont(getFontSize()*1.5f);
         g.setFont(biggerFont);
         
-        String line = (params.getMeasType() == MeasType.DISCRETE ?
-            "Sample: " : "Depth: ") + sample.getNameOrDepth()
+        final boolean discrete = sample.getMeasType() == MeasType.DISCRETE;
+
+        String line = (discrete ? "Sample: " : "Depth: ")
+                + sample.getNameOrDepth()
                 + ", Correction: " + params.getCorrection();
         if (params.isEmptyCorrectionActive()) line = line + " E";
         g.drawString(line, (int) getDimensions().getMinX(), 
                 (int) getDimensions().getMinY() + 16);
         g.setFont(oldFont);
+        if (discrete) g.drawString("Slot: "+sample.getSlotNumber()+
+                ", Runs: " + sample.getFirstRunNumber() +
+                "-" + sample.getLastRunNumber(),
+                (int) getDimensions().getMinX(),
+                (int) getDimensions().getMinY() + 32);
     }
     
 }

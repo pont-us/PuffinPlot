@@ -40,10 +40,6 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
                 return app.getMainWindow().controlPanel.getAxis();
             }
 
-            public MeasType getMeasType() {
-                return app.getSuite().getMeasType();
-            }
-
             public boolean isEmptyCorrectionActive() {
                 return app.isEmptyCorrectionActive();
             }

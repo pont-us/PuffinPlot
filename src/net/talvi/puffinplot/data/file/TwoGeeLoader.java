@@ -151,7 +151,17 @@ public class TwoGeeLoader extends AbstractFileLoader {
         }
         d.setMagSus(r.getDouble("MS corr"));
         if (fieldExists("Sample ID")) d.setDiscreteId(r.getString("Sample ID"));
-        if (fieldExists("Depth")) d.setDepth(r.getString("Depth"));
+        if (fieldExists("Depth")) {
+            if (measType == MeasType.DISCRETE) {
+                // For a discrete measurement, "Depth" actually contains the
+                // sum of the (meaningless) depth field and the slot number.
+                // We assume that the depth field was set to 1 (TODO: make
+                // this configurable) and use it to set the slot number.
+                d.setSlotNumber((int) (r.getDouble("Depth") - 1.0));
+            } else {
+                d.setDepth(r.getString("Depth"));
+            }
+        }
         d.setMeasType(measType);
         d.setTreatType(TreatType.fromString(r.getString("Treatment Type")));
         d.setAfX(r.getDouble("AF X"));
@@ -163,7 +173,22 @@ public class TwoGeeLoader extends AbstractFileLoader {
         d.setFormAz(r.getDouble("Formation Dip Azimuth"));
         d.setFormDip(r.getDouble("Formation Dip"));
         if (fieldExists("Mag Dev")) d.setMagDev(r.getDouble("Mag Dev"));
-        if (fieldExists("Run #")) d.setRunNumber(r.getInt("Run #"));
+        if (fieldExists("Run #")) {
+            /* 2G discrete files don't store the run number; they store the
+             * sum of the run number and the slot number in the run number
+             * field. The slot number is not explicitly stored; fortunately,
+             * for discrete samples, the depth field contains the slot 
+             * number plus (I think) whatever number was entered for "depth"
+             * in the sample data table. So provided that this field is
+             * always given the same value, we can produce a corrected run
+             * number.
+             */
+            int runNumber = r.getInt("Run #");
+            if (measType == MeasType.DISCRETE && d.getSlotNumber() != -1) {
+                runNumber -= d.getSlotNumber();
+            }
+            d.setRunNumber(runNumber);
+        }
         if (fieldExists("Sample Timestamp")) d.setTimestamp(r.getString("Sample Timestamp"));
         if (fieldExists("X drift")) d.setXDrift(r.getDouble("X drift"));
         if (fieldExists("Y drift")) d.setYDrift(r.getDouble("Y drift"));

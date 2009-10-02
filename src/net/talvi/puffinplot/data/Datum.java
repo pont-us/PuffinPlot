@@ -28,6 +28,7 @@ public class Datum {
     private double area = DEFAULT_AREA;
     private String timestamp = "UNSET";
     private double xDrift, yDrift, zDrift;
+    private int slotNumber = -1;
 
     private Line line;
     private boolean selected = false;
@@ -116,6 +117,8 @@ public class Datum {
     public void setYDrift(double v)    { yDrift = v; }
     public double getZDrift()          { return zDrift; }
     public void setZDrift(double v)    { zDrift = v; }
+    public int getSlotNumber()         { return slotNumber; }
+    public void setSlotNumber(int v)   { slotNumber = v; }
 
     public String getIdOrDepth() {
         return measType == MeasType.CONTINUOUS ? depth : discreteId;
