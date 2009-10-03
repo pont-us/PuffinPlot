@@ -140,12 +140,12 @@ public class Datum {
         return (!Double.isNaN(formAz)) && (!Double.isNaN(formDip));
     }
 
-    public Vec3 getMoment(Correction c, boolean emptyCorrection) {
+    public Vec3 getMoment(Correction c) {
         Vec3 result = moment;
-        if (emptyCorrection) {
+        if (c.includesEmpty()) {
             result = result.minus(getLine().getEmptySlot().moment);
         }
-        if (false /* tray correction */) {
+        if (c.includesTray()) {
             Datum tray = getSuite().getTrayCorrection(this);
             if (tray != null) result = result.minus(tray.moment);
         }
@@ -212,7 +212,7 @@ public class Datum {
     }
 
     public double getIntensity(boolean emptyCorrection) {
-        return getMoment(Correction.NONE, emptyCorrection).mag();
+        return getMoment(Correction.NONE).mag();
     }
 
     public boolean ignoreOnLoading() {

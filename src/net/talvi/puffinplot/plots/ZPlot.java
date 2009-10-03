@@ -3,6 +3,8 @@ package net.talvi.puffinplot.plots;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.atan;
+import static java.util.Collections.min;
+import static java.util.Collections.max;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -36,25 +38,23 @@ public class ZPlot extends Plot {
         legend = new ZplotLegend(parent, params, prefs);
     }
 
-    private static Rectangle2D extent(List<Datum> sample, Correction corr,
-            boolean emptyCorrection,
+    private static Rectangle2D extent(List<Datum> sample, Correction c,
             MeasurementAxis axis1, MeasurementAxis axis2) {
-        final boolean ec = emptyCorrection;
-        Comparator<Datum> xComp = new DatumComparator(axis1, corr, ec);
-        Comparator<Datum> yComp = new DatumComparator(axis2, corr, ec);
-        double xMin = Collections.min(sample, xComp).getMoment(corr,ec).getComponent(axis1);
-        double xMax = Collections.max(sample, xComp).getMoment(corr,ec).getComponent(axis1);
-        double yMin = Collections.min(sample, yComp).getMoment(corr,ec).getComponent(axis2);
-        double yMax = Collections.max(sample, yComp).getMoment(corr,ec).getComponent(axis2);
+        final Comparator<Datum> xComp = new DatumComparator(axis1, c);
+        final Comparator<Datum> yComp = new DatumComparator(axis2, c);
+        final double xMin = min(sample, xComp).getMoment(c).getComponent(axis1);
+        final double xMax = max(sample, xComp).getMoment(c).getComponent(axis1);
+        final double yMin = min(sample, yComp).getMoment(c).getComponent(axis2);
+        final double yMax = max(sample, yComp).getMoment(c).getComponent(axis2);
         return new Rectangle2D.Double(xMin, yMin, xMax-xMin, yMax-yMin);
     }
     
     private void drawLine(Graphics2D g, double x, double y,
             double angleRad, ZplotAxes axes, Color colour) {
-        Rectangle oldClip = g.getClipBounds();
+        final Rectangle oldClip = g.getClipBounds();
         g.setClip(axes.getBounds());
-        double dx = 800*sin(angleRad);
-        double dy = 800*cos(angleRad);
+        final double dx = 800*sin(angleRad);
+        final double dy = 800*cos(angleRad);
         g.setStroke(getStroke());
         g.setColor(colour);
         g.draw(new Line2D.Double(x-dx, y+dy, x+dx, y-dy));
@@ -72,22 +72,21 @@ public class ZPlot extends Plot {
     }
 
     public void draw(Graphics2D g) {
-        Sample sample = params.getSample();
+        final Sample sample = params.getSample();
         if (sample==null) return;
-        List<Datum> data = sample.getVisibleData();
+        final List<Datum> data = sample.getVisibleData();
         if (data.size() == 0) return;
         
         clearPoints();
-        Correction correction = params.getCorrection();
-        MeasurementAxis vVs = params.getAxis();
-        boolean emptyC = params.isEmptyCorrectionActive();
+        final Correction correction = params.getCorrection();
+        final MeasurementAxis vVs = params.getAxis();
 
-        Rectangle2D extent1 =
-                extent(data, correction, emptyC, MeasurementAxis.Y, MeasurementAxis.X);
-        Rectangle2D extent2 =
-                extent(data, correction, emptyC, vVs, MeasurementAxis.MINUSZ);
+        final Rectangle2D extent1 =
+                extent(data, correction, MeasurementAxis.Y, MeasurementAxis.X);
+        final Rectangle2D extent2 =
+                extent(data, correction, vVs, MeasurementAxis.MINUSZ);
 
-        Rectangle2D dim = cropRectangle(getDimensions(), 250, 250, 200, 200);
+        final Rectangle2D dim = cropRectangle(getDimensions(), 250, 250, 200, 200);
 
         axes = new ZplotAxes(extent1.createUnion(extent2), dim, vVs, this);
         
@@ -101,42 +100,46 @@ public class ZPlot extends Plot {
         
         boolean first = true;
         for (Datum d: data) {
-            Vec3 p = d.getMoment(correction, emptyC);
+            final Vec3 p = d.getMoment(correction);
             // Plot the point in the horizontal plane
-            double x1 = xOffset + p.y * scale;
-            double y1 = yOffset - p.x * scale;
+            final double x1 = xOffset + p.y * scale;
+            final double y1 = yOffset - p.x * scale;
             addPoint(d, new Point2D.Double(x1, y1), true, first, !first);
             first = false;
         }
         first = true;
         for (Datum d: data) {
-            Vec3 p = d.getMoment(correction, emptyC);
+            Vec3 p = d.getMoment(correction);
             // Now plot the point in the vertical plane
-            double x2 = xOffset + p.getComponent(vVs) * scale;
-            double y2 = yOffset - p.getComponent(MeasurementAxis.MINUSZ) * scale;
+            final double x2 = xOffset + p.getComponent(vVs) * scale;
+            final double y2 = yOffset - p.getComponent(MeasurementAxis.MINUSZ) * scale;
             addPoint(d, new Point2D.Double(x2, y2), false, first, !first);
             first = false;
         }
         
         final PcaValues pca = sample.getPcaValues();
         if (pca != null) {
-            double x1 = pca.getOrigin().y * scale;
-            double y1 = - pca.getOrigin().x * scale;
+            final double x1 = pca.getOrigin().y * scale;
+            final double y1 = - pca.getOrigin().x * scale;
             drawLine(g, xOffset + x1, yOffset + y1,pca.getDecRadians(), axes, Color.BLUE);
             
-            double x2 = pca.getOrigin().getComponent(vVs) * scale;
-            double y2 = - pca.getOrigin().getComponent(MeasurementAxis.MINUSZ) * scale;
+            final double x2 = pca.getOrigin().getComponent(vVs) * scale;
+            final double y2 = - pca.getOrigin().getComponent(MeasurementAxis.MINUSZ) * scale;
             double incCorr = 0;
             switch (vVs) {
                 // We don't necessarily want the actual line of inclination; we
                 // want the projection of that line onto the appropriate plane.
                 case X:
-                    incCorr = atan(sin(pca.getIncRadians()) / (cos(pca.getIncRadians()) * cos(pca.getDecRadians())));
+                    incCorr = atan(sin(pca.getIncRadians()) /
+                            (cos(pca.getIncRadians()) * cos(pca.getDecRadians())));
                     break;
                 case Y:
-                    incCorr = atan(sin(pca.getIncRadians()) / (cos(pca.getIncRadians()) * sin(pca.getDecRadians())));
+                    incCorr = atan(sin(pca.getIncRadians()) /
+                            (cos(pca.getIncRadians()) * sin(pca.getDecRadians())));
                     break;
-                case H: incCorr = pca.getIncRadians(); break;
+                case H:
+                    incCorr = pca.getIncRadians();
+                    break;
             }
             drawLine(g, xOffset + x2, yOffset + y2, Math.PI/2 + incCorr, axes, Color.BLUE);
         }
@@ -172,10 +175,10 @@ public class ZPlot extends Plot {
         public void draw(Graphics2D g) {
             final Rectangle2D dims = getDimensions();
             clearPoints();
-            double xOrig = dims.getMinX() + getMargin() + getUnitSize() * 50;
-            double yOrig = dims.getMinY() + getMargin();
-            double textOffs = 25 * getUnitSize();
-            double lineOffs = 150 * getUnitSize();
+            final double xOrig = dims.getMinX() + getMargin() + getUnitSize() * 50;
+            final double yOrig = dims.getMinY() + getMargin();
+            final double textOffs = 25 * getUnitSize();
+            final double lineOffs = 150 * getUnitSize();
 
             g.setColor(Color.BLACK);
             addPoint(null, new Point2D.Double(xOrig, yOrig), false, false, false);

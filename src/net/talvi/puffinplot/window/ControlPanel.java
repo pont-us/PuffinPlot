@@ -22,6 +22,7 @@ import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;
+import static net.talvi.puffinplot.data.Correction.Rotation;
 
 public class ControlPanel extends JPanel 
    implements ActionListener, ItemListener {
@@ -136,20 +137,21 @@ public class ControlPanel extends JPanel
 
         CorrectionBox() {
             super(new String[] {"uncorrected", "samp. corr.", "form. corr."});
-            Correction[] cs = Correction.values();
-            for (int i=0; i<cs.length; i++)
-                if (cs[i] == app.getPrefs().getCorrection())
-                    setSelectedIndex(i);
+            setCorrection(app.getPrefs().getCorrection());
             addItemListener(ControlPanel.this);
         }
         
         public void setCorrection(Correction c) {
-            Correction[] cs = Correction.values();
-            for (int i=0; i<cs.length; i++) if (c==cs[i]) setSelectedIndex(i);
+            setSelectedIndex(c.includesFormation() ? 2 :
+                c.includesSample() ? 1 : 0);
         }
         
         public Correction getCorrection() {
-            return Correction.values()[getSelectedIndex()];
+            int i = getSelectedIndex();
+            return new Correction(false, false,
+                                  i == 0 ? Rotation.NONE :
+                                  i == 1 ? Rotation.SAMPLE :
+                               /* i == 2*/ Rotation.FORMATION);
         }
         
     }

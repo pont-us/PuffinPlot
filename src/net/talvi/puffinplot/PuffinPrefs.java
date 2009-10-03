@@ -51,14 +51,14 @@ public class PuffinPrefs {
 
     public void load() {
         PuffinApp.getInstance().setRecentFiles(new RecentFileList(getPrefs()));
-        correction = Correction.valueOf(getPrefs().get("correction", "NONE"));
+        correction = Correction.fromString(getPrefs().get("correction", "false false NONE"));
         setUseOldSquidOrientations(Boolean.parseBoolean(getPrefs().get("useOldSquidOrientations", "false")));
     }
     
     public void save() {
         PuffinApp.getInstance().getRecentFiles().save(getPrefs());
         getPrefs().put("plotSizes", PuffinApp.getInstance().getMainWindow().getGraphDisplay().getPlotSizeString());
-        getPrefs().put("correction", PuffinApp.getInstance().getCorrection().name());
+        getPrefs().put("correction", PuffinApp.getInstance().getCorrection().toString());
         getPrefs().put("useOldSquidOrientations", Boolean.toString(isUseOldSquidOrientations()));
     }
 

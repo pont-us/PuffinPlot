@@ -1,7 +1,6 @@
 package net.talvi.puffinplot.plots;
 
 import java.awt.Graphics2D;
-import java.awt.font.FontRenderContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,23 +21,6 @@ public class DataTable extends Plot {
     
     public DataTable(GraphDisplay parent, PlotParams params, Preferences prefs) {
         super(parent, params, prefs);
-    }
-
-    private void writeLine(Graphics2D g, float yPos, Datum d, List<String> values) {
-
-        final float xMin = (float) getDimensions().getMinX();
-        final float yMin = (float) getDimensions().getMinY();
-
-        if (d != null) {
-            if (d.isSelected()) writeString(g, "‣", xMin, yMin + yPos);
-            if (d.isHidden()) writeString(g, "-", xMin, yMin + yPos);
-        }
-
-        float xPos = 10;
-        for (String s: values) {
-            writeString(g, s, xMin + xPos, yMin + yPos);
-            xPos += xSpacing;
-        }
     }
 
     @Override
@@ -67,7 +49,7 @@ public class DataTable extends Plot {
         float yPos = 2 * ySpacing;
         for (Datum d: data) {
             final List<String> values = new ArrayList<String>(4);
-            final Vec3 p = d.getMoment(params.getCorrection(), params.isEmptyCorrectionActive());
+            final Vec3 p = d.getMoment(params.getCorrection());
             final String demag = useSequence ? Integer.toString(sequence)
                     : format("%.0f", d.getDemagLevel());
             values.add(demag);
