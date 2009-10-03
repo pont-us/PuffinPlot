@@ -168,6 +168,7 @@ public class Suite {
             samplesById.put(name, s);
             samples.add(s);
         }
+        d.setSuite(this);
         s.addDatum(d);
     }
 
