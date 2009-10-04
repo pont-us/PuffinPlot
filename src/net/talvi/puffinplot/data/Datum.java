@@ -193,10 +193,10 @@ public class Datum {
         return max;
     }
 
-    public static double maximumIntensity(List<Datum> ds, boolean emptyCorr) {
+    public static double maximumIntensity(List<Datum> ds, Correction corr) {
         double max = 0;
         for (Datum d: ds) {
-            double i = d.getIntensity(emptyCorr);
+            double i = d.getIntensity(corr);
             if (i > max) max = i;
         }
         return max;
@@ -211,8 +211,8 @@ public class Datum {
         return max;
     }
 
-    public double getIntensity(boolean emptyCorrection) {
-        return getMoment(Correction.NONE).mag();
+    public double getIntensity(Correction correction) {
+        return getMoment(correction).mag();
     }
 
     public boolean ignoreOnLoading() {

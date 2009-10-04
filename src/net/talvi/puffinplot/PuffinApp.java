@@ -68,6 +68,7 @@ public class PuffinApp {
 
     public static String getBuildDate() { return buildDate; }
     private boolean emptyCorrectionActive;
+    private Correction correction;
 
     public List<Suite> getSuites() {
         return suites;
@@ -128,6 +129,7 @@ public class PuffinApp {
         // NB main window must be instantiated last, as
         // the Window menu references the other windows
         mainWindow = new MainWindow();
+        setCorrection(Correction.fromString(prefs.getPrefs().get("correction", "false false NONE")));
         suites = new ArrayList<Suite>();
         if (MAC_OS_X) createAppleEventListener();
         currentPageFormat = PrinterJob.getPrinterJob().defaultPage();
@@ -189,10 +191,11 @@ public class PuffinApp {
     }
  
     public Correction getCorrection() {
-        return getMainWindow().controlPanel.getCorrection();
+        return correction;
     }
     
     public void setCorrection(Correction c) {
+        correction = c;
         getMainWindow().controlPanel.setCorrection(c);
     }
     

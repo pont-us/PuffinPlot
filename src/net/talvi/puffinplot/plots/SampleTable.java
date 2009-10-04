@@ -45,7 +45,6 @@ public class SampleTable extends Plot {
         String line = (discrete ? "Sample: " : "Depth: ")
                 + sample.getNameOrDepth()
                 + ", Correction: " + params.getCorrection().getDescription();
-        if (params.isEmptyCorrectionActive()) line = line + " E";
         g.drawString(line, (int) getDimensions().getMinX(), 
                 (int) getDimensions().getMinY() + 16);
         g.setFont(oldFont);

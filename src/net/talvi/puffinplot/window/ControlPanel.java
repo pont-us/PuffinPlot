@@ -16,6 +16,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import javax.swing.JRadioButton;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import net.talvi.puffinplot.data.Correction;
@@ -30,9 +31,8 @@ public class ControlPanel extends JPanel
     private static final long serialVersionUID = 1L;
     private final JLabel correctionField;
     JComboBox suiteBox;
-    private CorrectionBox correctionBox;
+    private RotationBox rotationBox;
     VVsBox vVsBox;
-    // private JButton pcaButton;
     private static final PuffinApp app = PuffinApp.getInstance();
     
     private Action toggleZplotAction = new AbstractAction() {
@@ -40,13 +40,19 @@ public class ControlPanel extends JPanel
             vVsBox.toggle();
         }
     };
+    private final JRadioButton trayButton;
+    private final JRadioButton emptyButton;
     
     public ControlPanel() {
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         add(suiteBox = new JComboBox(new String[] {"no files loaded"}));
-        add(correctionBox = new CorrectionBox());
+        add(rotationBox = new RotationBox());
+        add(new JLabel("T"));
+        add(trayButton = new JRadioButton());
+        trayButton.addItemListener(this);
+        add(new JLabel("E"));
+        add(emptyButton = new JRadioButton());
         add(vVsBox = new VVsBox());
-
         add(new JToolBar.Separator());
         add(correctionField = new JLabel());
         add(new JToolBar.Separator());
@@ -101,11 +107,13 @@ public class ControlPanel extends JPanel
     }
     
     public Correction getCorrection() {
-        return correctionBox.getCorrection();
+        return new Correction(trayButton.isSelected(),
+                emptyButton.isSelected(),
+                rotationBox.getRotation());
     }
     
     public void setCorrection(Correction c) {
-        correctionBox.setCorrection(c);
+        rotationBox.setRotation(c.getRotation());
     }
     
     private class VVsBox extends JComboBox {
@@ -131,33 +139,33 @@ public class ControlPanel extends JPanel
         }
     }
     
-    class CorrectionBox extends JComboBox {
-        
+    class RotationBox extends JComboBox {
         private static final long serialVersionUID = 1L;
 
-        CorrectionBox() {
+        RotationBox() {
             super(new String[] {"uncorrected", "samp. corr.", "form. corr."});
-            setCorrection(app.getPrefs().getCorrection());
             addItemListener(ControlPanel.this);
         }
         
-        public void setCorrection(Correction c) {
-            setSelectedIndex(c.includesFormation() ? 2 :
-                c.includesSample() ? 1 : 0);
+        public void setRotation(Rotation c) {
+            setSelectedIndex(c == Rotation.FORMATION ? 2 :
+                c == Rotation.SAMPLE ? 1 : 0);
         }
         
-        public Correction getCorrection() {
+        public Rotation getRotation() {
             int i = getSelectedIndex();
-            return new Correction(false, false,
-                                  i == 0 ? Rotation.NONE :
+            return                i == 0 ? Rotation.NONE :
                                   i == 1 ? Rotation.SAMPLE :
-                               /* i == 2*/ Rotation.FORMATION);
+                               /* i == 2*/ Rotation.FORMATION;
         }
-        
     }
 
     public void itemStateChanged(ItemEvent e) {
-        if (e.getSource() == correctionBox) app.redoCalculations();
-        app.getMainWindow().repaint();
+        final Object s = e.getSource();
+        if (s == rotationBox || s == trayButton || s == emptyButton) {
+            app.setCorrection(getCorrection());
+            app.redoCalculations();
+            app.getMainWindow().repaint();
+        }
     }
 }

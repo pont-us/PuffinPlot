@@ -3,7 +3,6 @@ package net.talvi.puffinplot;
 import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.prefs.Preferences;
-import net.talvi.puffinplot.data.Correction;
 
 public class PuffinPrefs {
 
@@ -11,15 +10,14 @@ public class PuffinPrefs {
     private boolean pcaAnchored;
     private HashMap<String,Rectangle2D> plotSizes =
             new HashMap<String, Rectangle2D>();
-    private static Preferences prefs = Preferences.userNodeForPackage(PuffinPrefs.class);
-    private Correction correction;
+    private Preferences prefs = Preferences.userNodeForPackage(PuffinPrefs.class);
     private boolean useOldSquidOrientations;
     
     public PuffinPrefs() {
         load();
     }
 
-    public static Preferences getPrefs() {
+    public Preferences getPrefs() {
         return prefs;
     }
 
@@ -39,10 +37,6 @@ public class PuffinPrefs {
         this.pcaAnchored = pcaThroughOrigin;
     }
     
-    public Correction getCorrection() {
-        return correction;
-    }
-    
     public Rectangle2D getPlotSize(String plotName) {
         if (!plotSizes.containsKey(plotName))
             plotSizes.put(plotName, new Rectangle2D.Double(100, 100, 100, 100));
@@ -51,7 +45,6 @@ public class PuffinPrefs {
 
     public void load() {
         PuffinApp.getInstance().setRecentFiles(new RecentFileList(getPrefs()));
-        correction = Correction.fromString(getPrefs().get("correction", "false false NONE"));
         setUseOldSquidOrientations(Boolean.parseBoolean(getPrefs().get("useOldSquidOrientations", "false")));
     }
     

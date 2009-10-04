@@ -45,7 +45,7 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
             }
         };
 
-        Preferences pref = PuffinPrefs.getPrefs();
+        Preferences pref = app.getPrefs().getPrefs();
 
         String[] plotNames = {"SampleEqAreaPlot", "ZPlot", "DemagPlot",
             "DataTable", "PcaTable", "SampleTable", "FisherTable"};

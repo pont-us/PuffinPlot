@@ -158,7 +158,8 @@ public class PuffinActions {
                     "Comma Separated Values");
 
             if (pathname != null)
-                app.getSuite().saveCalcsSample(new File(pathname));
+                app.getSuite().saveCalcsSample(new File(pathname),
+                        app.getCorrection());
         }
     };
 
@@ -307,7 +308,7 @@ public class PuffinActions {
             "Calculate median destructive field (or temperature) on selected samples",
             'M', false, KeyEvent.VK_M) {
         public void actionPerformed(ActionEvent e) {
-            for (Sample s: app.getSelectedSamples()) s.calculateMdf(app.isEmptyCorrectionActive());
+            for (Sample s: app.getSelectedSamples()) s.calculateMdf(app.getCorrection());
             app.getMainWindow().repaint();
         }
     };

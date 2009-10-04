@@ -7,16 +7,24 @@ import java.util.logging.Logger;
 public class Correction {
 
     private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
-    final private boolean tray;
-    final private boolean empty;
-    final private Rotation rotation;
-    public final static Correction NONE =
+    private boolean tray;
+    private boolean empty;
+    private Rotation rotation;
+    public static final Correction NONE =
             new Correction(false, false, Rotation.NONE);
 
     public Correction(boolean tray, boolean empty, Rotation rotation) {
         this.tray = tray;
         this.empty = empty;
         this.rotation = rotation;
+    }
+
+    public void setRotation(Rotation rotation) {
+        this.rotation = rotation;
+    }
+
+    public Rotation getRotation() {
+        return rotation;
     }
 
     public static enum Rotation {
@@ -28,17 +36,17 @@ public class Correction {
     }
     
     public String getDescription() {
-        return rotation.niceName +
+        return getRotation().niceName +
                 (empty ? " E" : "") +
                 (tray ? " T" : "");
     }
 
     public boolean includesSample() {
-        return (rotation == Rotation.SAMPLE || rotation == Rotation.FORMATION);
+        return (getRotation() == Rotation.SAMPLE || getRotation() == Rotation.FORMATION);
     }
 
     public boolean includesFormation() {
-        return (rotation == Rotation.FORMATION);
+        return (getRotation() == Rotation.FORMATION);
     }
 
     public boolean includesTray() {
@@ -51,7 +59,7 @@ public class Correction {
 
     @Override
     public String toString() {
-        return String.format("%b %b %s", tray, empty, rotation.name());
+        return String.format("%b %b %s", tray, empty, getRotation().name());
     }
 
     public static Correction fromString(String string) {

@@ -266,7 +266,7 @@ public class Suite {
     /*
      * Save calculations per-sample.
      */
-    public void saveCalcsSample(File file) {
+    public void saveCalcsSample(File file, Correction correction) {
         CsvWriter writer = null;
         try {
             if (samples.size()==0) {
@@ -284,7 +284,7 @@ public class Suite {
                 FisherValues fish = sample.getFisher();
                 MDF mdf = sample.getMDF();
                 writer.writeCsv(sample.getNameOrDepth(),
-                        String.format("%.4g", sample.getNRM()),
+                        String.format("%.4g", sample.getNRM(correction)),
                         fish == null ? FisherValues.getEmptyFields() : fish.toStrings(),
                         pca == null ? PcaAnnotated.getEmptyFields() : pca.toStrings(),
                         mdf == null ? MDF.getEmptyFields() : mdf.toStrings());

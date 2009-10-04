@@ -10,7 +10,7 @@ public class Sample {
     private final List<Datum> data;
     private final String nameOrDepth;
     private FisherValues fisher = null;
-    private boolean emptySlot = false;
+    private boolean isEmptySlot = false;
     private PcaAnnotated pca;
     private MDF mdf;
     private boolean hasMsData = false;
@@ -27,16 +27,16 @@ public class Sample {
         selectNone();
     }
 
-    public void calculateMdf(boolean useEmptyCorrection) {
-        mdf = MDF.calculate(getVisibleData(), useEmptyCorrection);
+    public void calculateMdf(Correction correction) {
+        mdf = MDF.calculate(getVisibleData(), correction);
     }
 
     public MDF getMDF() {
         return mdf;
     }
 
-    public double getNRM() {
-        return data.get(0).getIntensity(emptySlot);
+    public double getNRM(Correction correction) {
+        return data.get(0).getIntensity(correction);
     }
 
     /*
@@ -222,11 +222,11 @@ public class Sample {
     }
 
     public boolean isEmptySlot() {
-        return emptySlot;
+        return isEmptySlot;
     }
 
     public void setEmptySlot(boolean isEmptySlot) {
-        this.emptySlot = isEmptySlot;
+        this.isEmptySlot = isEmptySlot;
     }
 
     public void unhideAllPoints() {
