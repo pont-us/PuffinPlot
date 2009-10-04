@@ -1,0 +1,23 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Move most preferences to Suite?
+desc: |-
+  It seems that all the preferences except maybe plot layout would
+  be more sensibly housed in the Suite than in PuffinPlot. This would
+  finally force a file format evolution, since they need to be saved,
+  and could be usefully combined with bumping various other things,
+  like sample ID or magnetic deviation, up from Datum to Sample or Suite.
+type: :task
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2009-10-04 00:52:26.694068 Z
+references: []
+
+id: 8e36308e112a37f2d138173d7fe34d2bd1340b9f
+log_events: 
+- - 2009-10-04 00:52:27.212443 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
