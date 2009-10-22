@@ -1,0 +1,20 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Check that tray correction is correct
+desc: |-
+  Is the tray correction being applied to the raw SQUID readings (before
+  volume correction)? It should be.
+type: :task
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2009-10-19 04:04:06.018148 Z
+references: []
+
+id: bdb9b309ca5db12a72a276e98089405f593db4fe
+log_events: 
+- - 2009-10-19 04:04:07.235567 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
