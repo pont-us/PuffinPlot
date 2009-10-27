@@ -19,11 +19,13 @@ public class TwoGeeLoader extends AbstractFileLoader {
     private Map<String,Integer> fields;
     private static final Pattern emptyLine = Pattern.compile("^\\s*$");
     private static final int MAX_WARNINGS = 10;
-    private File file;
+    private final File file;
     private LineNumberReader reader;
+    private final boolean twoPosition;
 
-    public TwoGeeLoader(File file) {
+    public TwoGeeLoader(File file, boolean twoPosition) {
         this.file = file;
+        this.twoPosition = twoPosition;
         try {
             reader = new LineNumberReader(new FileReader(file));
             readFile();
@@ -49,7 +51,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
         data = new LinkedList<Datum>();
         String line;
         while ((line = reader.readLine()) != null) {
-            Datum d = readDatum(line, reader.getLineNumber());
+            final Datum d = readDatum(line, reader.getLineNumber());
             if (d != null) {
                 if (d.isMagSusOnly()) {
                     /* The only way we can tie a mag. sus. value to a
@@ -67,7 +69,17 @@ public class TwoGeeLoader extends AbstractFileLoader {
                         }
                     }
                 } else {
-                    data.add(d);
+                    if (twoPosition) {
+                    /* We're using the two-position measurement protocol,
+                     * so we will read three lines (tray, normal, y-flipped)
+                     * and synthesize a Datum from them. */
+                    final Datum tray = d;
+                    final Datum normal = readDatum(line, reader.getLineNumber());
+                    final Datum reversed = readDatum(line, reader.getLineNumber());
+                    data.add(combine(tray, normal, reversed));
+                    } else {
+                        data.add(d);
+                    }
                 }
             }
             if (messages.size() > MAX_WARNINGS) {
@@ -75,6 +87,11 @@ public class TwoGeeLoader extends AbstractFileLoader {
                 break;
             }
         }
+    }
+
+    private Datum combine(Datum tray, Datum normal, Datum reversed) {
+        // TODO write this method.
+        return null;
     }
 
     public void setSensorLengths(Vec3 v) {

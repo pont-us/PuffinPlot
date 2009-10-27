@@ -218,7 +218,7 @@ public class Suite {
             switch (fileType) {
             case TWOGEE:
             case PUFFINPLOT_1:
-                TwoGeeLoader twoGeeLoader = new TwoGeeLoader(file);
+                TwoGeeLoader twoGeeLoader = new TwoGeeLoader(file, false);
                 twoGeeLoader.setSensorLengths(SENSOR_LENGTHS_NEW);
                 loader = twoGeeLoader;
                 break;
