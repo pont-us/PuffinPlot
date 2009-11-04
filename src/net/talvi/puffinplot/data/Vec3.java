@@ -9,6 +9,7 @@ import static java.lang.Math.toDegrees;
 import static java.lang.Math.toRadians;
 import static java.lang.Math.signum;
 import Jama.Matrix;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -203,7 +204,7 @@ public class Vec3 {
     }
 
     public double mag() {
-        return Math.sqrt(x * x + y * y + z * z);
+        return sqrt(x * x + y * y + z * z);
     }
 
     public Vec3 plus(Vec3 p) {
@@ -303,26 +304,37 @@ public class Vec3 {
     public double getDecDeg() {
         return toDegrees(getDecRad());
     }
-    
-    public static double vectorSumLength(Collection<Vec3> points) {
-        double xs=0, ys=0, zs=0;
-        for (Vec3 p: points) {
-            xs += p.x;
-            ys += p.y;
-            zs += p.z;
-        }
-        return sqrt(xs*xs + ys*ys + zs*zs);
-    }
-    
-    public static Vec3 meanDirection(Collection<Vec3> points) {
+
+    public static Vec3 sum(Collection<Vec3> points) {
         double xs = 0, ys = 0, zs = 0;
         for (Vec3 p: points) {
             xs += p.x;
             ys += p.y;
             zs += p.z;
         }
-        final double R = sqrt(xs*xs + ys*ys + zs*zs);
-        return new Vec3(xs/R, ys/R, zs/R);
+        return new Vec3(xs, ys, zs);
+    }
+
+    public static double vectorSumLength(Collection<Vec3> points) {
+        return sum(points).mag();
+    }
+
+    /**
+     * Note that this assumes unit vectors.
+     *
+     * @param points a collection of unit vectors
+     * @return a vector representing their mean direction
+     */
+    public static Vec3 meanDirection(Collection<Vec3> points) {
+        return sum(points).normalize();
+    }
+
+    public static Vec3 mean(Collection<Vec3> points) {
+        return sum(points).divideBy(points.size());
+    }
+
+    public static Vec3 mean(Vec3... points) {
+        return mean(Arrays.asList(points));
     }
 
     Vec3 setX(double newX) {

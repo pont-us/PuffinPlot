@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.regex.Pattern;
+import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.TreatType;
@@ -74,8 +75,8 @@ public class TwoGeeLoader extends AbstractFileLoader {
                      * so we will read three lines (tray, normal, y-flipped)
                      * and synthesize a Datum from them. */
                     final Datum tray = d;
-                    final Datum normal = readDatum(line, reader.getLineNumber());
-                    final Datum reversed = readDatum(line, reader.getLineNumber());
+                    final Datum normal = readDatum(reader.readLine(), reader.getLineNumber());
+                    final Datum reversed = readDatum(reader.readLine(), reader.getLineNumber());
                     data.add(combine(tray, normal, reversed));
                     } else {
                         data.add(d);
@@ -90,8 +91,30 @@ public class TwoGeeLoader extends AbstractFileLoader {
     }
 
     private Datum combine(Datum tray, Datum normal, Datum reversed) {
-        // TODO write this method.
-        return null;
+        /* We'll keep the rest of the data from the first (tray)
+         * measurement, and just poke in the magnetic moment vector
+         * calculated from the three readings.
+         */
+
+        final Vec3 trayV = tray.getMoment(Correction.NONE);
+        final Vec3 normV = normal.getMoment(Correction.NONE);
+        final Vec3 revV = reversed.getMoment(Correction.NONE);
+
+        // The volume correction's already been applied on loading.
+
+        // calculate estimates of the true magnetic moment
+        final Vec3 norm_tray = normV.minus(trayV);
+        final Vec3 norm_rev = normV.minus(revV).divideBy(2);
+        final Vec3 rev_tray = revV.invert().minus(trayV);
+
+        // average the relevant estimates for each axis
+        final Vec3 avg_x_z = Vec3.mean(norm_tray, norm_rev, rev_tray);
+        final Vec3 avg_y = Vec3.mean(norm_tray, rev_tray.minus(normV));
+
+        // combine the axis estimates into a single vector
+        Vec3 avg = new Vec3(avg_x_z.x, avg_y.y, avg_x_z.z);
+        tray.setMoment(avg);
+        return tray;
     }
 
     public void setSensorLengths(Vec3 v) {
@@ -206,7 +229,8 @@ public class TwoGeeLoader extends AbstractFileLoader {
             }
             d.setRunNumber(runNumber);
         }
-        if (fieldExists("Sample Timestamp")) d.setTimestamp(r.getString("Sample Timestamp"));
+        if (fieldExists("Sample Timestamp"))
+            d.setTimestamp(r.getString("Sample Timestamp"));
         if (fieldExists("X drift")) d.setXDrift(r.getDouble("X drift"));
         if (fieldExists("Y drift")) d.setYDrift(r.getDouble("Y drift"));
         if (fieldExists("Z drift")) d.setZDrift(r.getDouble("Z drift"));

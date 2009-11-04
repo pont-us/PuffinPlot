@@ -235,7 +235,8 @@ public class Sample {
 
     public void copySelectionFrom(Sample s) {
         List<Datum> otherData = s.getData();
-        for (int i=0; i<getNumData(); i++)
+        for (int i=0; i<Math.min(getNumData(),s.getNumData()); i++) {
             getData().get(i).setSelected(otherData.get(i).isSelected());
+        }
     }
 }
