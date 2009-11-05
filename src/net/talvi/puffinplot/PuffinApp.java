@@ -43,7 +43,7 @@ public class PuffinApp {
             new ByteArrayOutputStream();
     private static final MemoryHandler logMemoryHandler;
     private final PuffinActions actions;
-    private List<Suite> suites;
+    private List<Suite> suites = new ArrayList<Suite>();
     private final MainWindow mainWindow;
     private Suite currentSuite;
     private PageFormat currentPageFormat;
@@ -129,8 +129,10 @@ public class PuffinApp {
         // NB main window must be instantiated last, as
         // the Window menu references the other windows
         mainWindow = new MainWindow();
-        setCorrection(Correction.fromString(prefs.getPrefs().get("correction", "false false NONE")));
-        suites = new ArrayList<Suite>();
+        Correction corr =
+                Correction.fromString(prefs.getPrefs().get("correction", "false false NONE"));
+        setCorrection(corr);
+        getMainWindow().controlPanel.setCorrection(corr);
         if (MAC_OS_X) createAppleEventListener();
         currentPageFormat = PrinterJob.getPrinterJob().defaultPage();
         currentPageFormat.setOrientation(PageFormat.LANDSCAPE);
@@ -196,7 +198,7 @@ public class PuffinApp {
     
     public void setCorrection(Correction c) {
         correction = c;
-        getMainWindow().controlPanel.setCorrection(c);
+        
     }
     
     public void updateDisplay() {
