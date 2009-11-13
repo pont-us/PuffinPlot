@@ -11,6 +11,8 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
@@ -46,9 +48,14 @@ public abstract class EqAreaPlot extends Plot {
 
      private void drawGreatCircleSubsegment(Graphics2D g,
             int xo, int yo, int radius, Vec3[] vs) {
-         double checkHemisphere = vs[0].z;
-         if (abs(checkHemisphere) < 1e-10) checkHemisphere = vs[vs.length-1].z;
-         Stroke stroke = checkHemisphere<0 ? getStroke() : getDashedStroke();
+         boolean upper = true;
+         for (Vec3 v: vs) {
+             if (v.z > 1e-10) {
+                 upper = false;
+                 break;
+             }
+         }
+         Stroke stroke = upper ? getStroke() : getDashedStroke();
          GeneralPath path = new GeneralPath();
          boolean first = true;
          for (Vec3 v : vs) {
@@ -64,7 +71,7 @@ public abstract class EqAreaPlot extends Plot {
          g.draw(path);
      }
 
-     protected void drawGreatCircleSegment(Graphics2D g,
+    protected void drawGreatCircleSegment(Graphics2D g,
             int xo, int yo, int radius, Vec3 p1, Vec3 p2) {
         if (p1.sameHemisphere(p2)) {
             drawGreatCircleSubsegment(g, xo, yo, radius,
@@ -75,7 +82,55 @@ public abstract class EqAreaPlot extends Plot {
                     Vec3.spherInterpolate(p1, equator, 0.05));
             drawGreatCircleSubsegment(g, xo, yo, radius,
                     Vec3.spherInterpolate(equator, p2, 0.05));
+         }
+    }
+
+    protected void drawGreatCircle(Graphics2D g, int xo, int yo, int radius,
+            Vec3 pole) {
+        int n = 40;
+        List<Vec3> vs = pole.greatCirclePoints(n);
+        List<Vec3> bottom = new ArrayList<Vec3>(vs.size());
+        List<Vec3> top = new ArrayList<Vec3>(vs.size());
+        int i=1;
+        int state = 0;
+        Vec3 prev = vs.get(0);
+        // 0: seeking start of top; 1: processing top;
+        // 2: processing bottom; 3: finish
+        while (state < 3) {
+            Vec3 v = vs.get(i);
+            i = (i+1) % n;
+            switch (state) {
+                case 0:
+                    if (prev.z < 0 && v.z >= 0) {
+                        top.add(Vec3.equatorPoint(prev, v));
+                        top.add(v);
+                        state = 1;
+                    }
+                    break;
+                case 1:
+                    if (v.z < 0) {
+                        Vec3 eq = Vec3.equatorPoint(prev, v);
+                        top.add(eq);
+                        bottom.add(eq);
+                        bottom.add(v);
+                        state = 2;
+                    } else {
+                        top.add(v);
+                    }
+                    break;
+                case 2:
+                    if (v.z >= 0) {
+                        bottom.add(top.get(0));
+                        state = 3;
+                    } else {
+                        bottom.add(v);
+                    }
+                    break;
+            }
+            prev = v;
         }
+        drawGreatCircleSubsegment(g, xo, yo, radius, top.toArray(new Vec3[]{}));
+        drawGreatCircleSubsegment(g, xo, yo, radius, bottom.toArray(new Vec3[]{}));
     }
 
     protected static Point2D project(Vec3 p, int xo, int yo, int radius) {

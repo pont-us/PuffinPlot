@@ -3,6 +3,7 @@ package net.talvi.puffinplot.plots;
 import static java.lang.Math.min;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import java.util.List;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
@@ -49,6 +50,9 @@ public class SampleEqAreaPlot extends EqAreaPlot {
             prev = p;
             first = false;
         }
+        //if (sample.getPca() != null) {
+        //    drawGreatCircle(g, xo, yo, radius, sample.getPca().getPcaValues().);
+        //}
         drawPoints(g);
     }
 }

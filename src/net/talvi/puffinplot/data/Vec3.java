@@ -9,6 +9,7 @@ import static java.lang.Math.toDegrees;
 import static java.lang.Math.toRadians;
 import static java.lang.Math.signum;
 import Jama.Matrix;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -171,6 +172,41 @@ public class Vec3 {
         final double cd = cos(dip);
         final double ca = cos(az);
         
+        return correctPlane(sd, sa, cd, ca);
+    }
+
+    /**
+     * Rotates a given vector by the same rotation which would
+     * bring this vector vertical. In other words, performs a
+     * tilt correction on the supplied vector, with this vector
+     * defining the normal of the tilted plane. Assumes that this
+     * is a unit vector.
+     *
+     * @param v vector to rotate
+     * @return rotated vector
+     */
+    private Vec3 correctTilt(Vec3 v) {
+        double d = sqrt(x*x + y*y);
+        return v.correctPlane(d, y/d, z, x/d);
+    }
+
+    /**
+     * Returns a list of equally spaced points around a great circle
+     * having this vector as its pole. Assumes that this is a unit
+     * vector.
+     * 
+     * @param n number of points to return
+     * @return list of points on great circle
+     */
+    public List<Vec3> greatCirclePoints(int n) {
+        List<Vec3> points = new ArrayList<Vec3>(n);
+        for (int i=0; i<n; i++) {
+            points.add(correctTilt(Vec3.fromPolarRadians(1, 0, 2*PI*i/n)));
+        }
+        return points;
+    }
+
+    private Vec3 correctPlane(double sd, double sa, double cd, double ca) {
         double[][] matrix =
             {{ca*cd*ca+sa*sa, cd*sa*ca-sa*ca, sd*ca},
             {sa*cd*ca-ca*sa, cd*sa*sa+ca*ca, sd*sa},
