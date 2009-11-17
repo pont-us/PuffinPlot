@@ -304,6 +304,21 @@ public class PuffinActions {
         }
     };
 
+    public final Action circleFit = new PuffinAction("Fit circle",
+            "Fit great circle to selected points", 'L', false, KeyEvent.VK_C) {
+        public void actionPerformed(ActionEvent e) {
+        app.fitCircle();
+        app.getMainWindow().repaint();
+        }
+    };
+
+    public final Action greatCircleAnalysis = new PuffinAction("Great circles",
+            "Great circle analysis for site", 'I', false, KeyEvent.VK_L) {
+        public void actionPerformed(ActionEvent e) {
+        app.doGreatCircles();
+        }
+    };
+
     public final Action mdf = new PuffinAction("MDF",
             "Calculate median destructive field (or temperature) on selected samples",
             'M', false, KeyEvent.VK_M) {
@@ -321,8 +336,8 @@ public class PuffinActions {
         }
     };
     
-    public final Action clear = new PuffinAction("Clear",
-            "Clear selection and calculations for selected samples",
+    public final Action clear = new PuffinAction("Clear calculations",
+            "Clear point selections and calculations for selected samples",
             'Z', false, KeyEvent.VK_C) {
         public void actionPerformed(ActionEvent e) {
             for (Sample s: app.getSelectedSamples()) s.clear();
@@ -334,6 +349,14 @@ public class PuffinActions {
             "Select all points in selected samples", 'D', false, KeyEvent.VK_A) {
         public void actionPerformed(ActionEvent e) {
             for (Sample s: app.getSelectedSamples()) s.selectAll();
+                app.getMainWindow().repaint();
+        }
+    };
+
+    public final Action clearSelection = new PuffinAction("Clear selection",
+            "Unselect all points in selected samples", 'D', true, KeyEvent.VK_L) {
+        public void actionPerformed(ActionEvent e) {
+            for (Sample s: app.getSelectedSamples()) s.selectNone();
                 app.getMainWindow().repaint();
         }
     };

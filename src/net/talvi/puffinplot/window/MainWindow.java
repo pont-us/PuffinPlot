@@ -41,7 +41,7 @@ public class MainWindow extends JFrame {
         // jsp.setMaximumSize(new Dimension(1000,700));
         mainPanel.add(jsp);
         mainPanel.add(welcomeMessage =
-                new JLabel("Welcome to PuffinPlot. This puffin was born on "+
+                new JLabel("Welcome to PuffinPlot. This puffin hatched on "+
                 PuffinApp.getBuildDate()+"."), BorderLayout.NORTH);
         graphDisplay.setVisible(false);
         mainPanel.add(sampleChooser = new SampleChooser(), BorderLayout.WEST);

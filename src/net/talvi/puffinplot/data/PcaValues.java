@@ -31,40 +31,6 @@ public class PcaValues {
         this.anchored = anchored;
     }
 
-    private static int[] order(double[] x) {
-        class Pair implements Comparable<Pair> {
-            private final int index;
-            private final double value;
-            Pair(int index, double value) {
-                this.index = index;
-                this.value = value;
-            }            
-            public int compareTo(Pair p) {
-                return Double.compare(p.value, value);
-            }
-            @Override
-            public boolean equals(Object o) {
-                return (o==null)
-                        ? false
-                        : (o instanceof Pair)
-                        ? (compareTo((Pair) o)==0)
-                        : false;
-            }
-            @Override
-            public int hashCode() {
-                assert false : "hashCode not designed";
-                return 42; // any arbitrary constant will do 
-            }
-        }
-        
-        ArrayList<Pair> ps = new ArrayList<Pair>(x.length);
-        for (int i=0; i<x.length; i++) ps.add(new Pair(i, x[i]));
-        Collections.sort(ps);
-        int[] result = new int[x.length];
-        for (int i=0; i<x.length; i++) result[i] = ps.get(i).index;
-        return result;
-    }
-    
     public static PcaValues calculate(List<Vec3> points, boolean anchored) {
         // We use Kirschvink's procedure but append a direction correction.
 
@@ -75,26 +41,10 @@ public class PcaValues {
             movedPoints = new ArrayList<Vec3>(points.size());
             for (Vec3 p: points) movedPoints.add(p.minus(origin));
         }
-        
-        // construct the orientation tensor
-        Matrix oTensor = new Matrix(3,3); // zeros
-        for (Vec3 p: movedPoints) oTensor.plusEquals(p.oTensor());
-        
-        EigenvalueDecomposition eigDecomp = oTensor.eig();
-        double[] eigenvalues = eigDecomp.getRealEigenvalues();
-        int[] eigenOrder = order(eigenvalues);
-        
-        int[] rowIndices = {0, 1, 2};
-        int[] colIndices = {eigenOrder[0]};
-        double[] vmax = eigDecomp.getV().
-            getMatrix(rowIndices, colIndices).getColumnPackedCopy();
-        
-        Vec3 pComp = new Vec3(vmax[0], vmax[1], vmax[2]);
-        
-        double lmax = abs(eigenvalues[eigenOrder[0]]);
-        double lint = abs(eigenvalues[eigenOrder[1]]);
-        double lmin = abs(eigenvalues[eigenOrder[2]]);
-        
+
+        Eigens eigen = new Eigens(movedPoints, false);
+        Vec3 pComp = eigen.vectors.get(0);
+
         /*
          * If the points are linearly arranged, the first eigenvector should now
          * give us the direction of the line; however, we want to make sure that
@@ -108,8 +58,11 @@ public class PcaValues {
         // We want these in opposite directions, thus negative scalar product
         Vec3 trend = movedPoints.get(movedPoints.size()-1).
             minus(movedPoints.get(0));
-        if (trend.scalarProduct(pComp) > 0) pComp = pComp.invert();
+        if (trend.dot(pComp) > 0) pComp = pComp.invert();
 
+        double lmax = eigen.values.get(0);
+        double lint = eigen.values.get(1);
+        double lmin = eigen.values.get(2);
         double mad3 = toDegrees(atan(sqrt((lint + lmin) / lmax)));
         double mad1 = (lint != 0 && lmax != 0) ?
                 toDegrees(atan(sqrt(lmin/lint + lmin/lmax))) : 0;

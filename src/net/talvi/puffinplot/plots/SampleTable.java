@@ -50,7 +50,8 @@ public class SampleTable extends Plot {
         g.setFont(oldFont);
         if (discrete) g.drawString("Slot: "+sample.getSlotNumber()+
                 ", Runs: " + sample.getFirstRunNumber() +
-                "-" + sample.getLastRunNumber(),
+                "-" + sample.getLastRunNumber() + " "+
+                "Site: "+sample.getSite(),
                 (int) getDimensions().getMinX(),
                 (int) getDimensions().getMinY() + 32);
     }

@@ -2,6 +2,7 @@ package net.talvi.puffinplot.data;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.atan2;
+import static java.lang.Math.asin;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
@@ -28,7 +29,6 @@ public class Vec3 {
     public Vec3(Vec3 p) {
         this(p.x, p.y, p.z);
     }
-
     /*
      * Returns a new vector equals to this vector with the specified
      * angle added to the declination.
@@ -90,7 +90,7 @@ public class Vec3 {
     public static Vec3[] spherInterpolate(Vec3 v0, Vec3 v1, double stepSize) {
         Vec3 v0n = v0.normalize();
         Vec3 v1n = v1.normalize();
-        double omega = Math.acos(v0n.scalarProduct(v1n));
+        double omega = Math.acos(v0n.dot(v1n));
         if (omega < stepSize) return new Vec3[] {v0n, v1n};
         int steps = (int) (omega / stepSize) + 1;
         final Vec3[] result = new Vec3[steps];
@@ -171,7 +171,6 @@ public class Vec3 {
         final double sa = sin(az);
         final double cd = cos(dip);
         final double ca = cos(az);
-        
         return correctPlane(sd, sa, cd, ca);
     }
 
@@ -186,7 +185,7 @@ public class Vec3 {
      * @return rotated vector
      */
     private Vec3 correctTilt(Vec3 v) {
-        double d = sqrt(x*x + y*y);
+        final double d = sqrt(x*x + y*y);
         return v.correctPlane(d, y/d, z, x/d);
     }
 
@@ -199,7 +198,7 @@ public class Vec3 {
      * @return list of points on great circle
      */
     public List<Vec3> greatCirclePoints(int n) {
-        List<Vec3> points = new ArrayList<Vec3>(n);
+        final List<Vec3> points = new ArrayList<Vec3>(n);
         for (int i=0; i<n; i++) {
             points.add(correctTilt(Vec3.fromPolarRadians(1, 0, 2*PI*i/n)));
         }
@@ -207,20 +206,36 @@ public class Vec3 {
     }
 
     private Vec3 correctPlane(double sd, double sa, double cd, double ca) {
-        double[][] matrix =
+        final double[][] matrix =
             {{ca*cd*ca+sa*sa, cd*sa*ca-sa*ca, sd*ca},
             {sa*cd*ca-ca*sa, cd*sa*sa+ca*ca, sd*sa},
             {-ca*sd, -sa*sd, cd}};
-        
         return transform(matrix);
     }
     
     public Vec3 transform(double[][] matrix) {
-        double[][] m = matrix;
+        final double[][] m = matrix;
         return new Vec3(
                 x * m[0][0] + y * m[0][1] + z * m[0][2],
                 x * m[1][0] + y * m[1][1] + z * m[1][2],
                 x * m[2][0] + y * m[2][1] + z * m[2][2]);
+    }
+
+
+    /**
+     * Using the enclosing vector to define the pole of a great circle G, this
+     * method accepts another unit vector v and returns the nearest
+     * unit vector to v which lies on G. Algorithm from McFadden and
+     * McElhinny 1988, p. 165.
+     *
+     * @param v a unit vector
+     * @return the nearest point to v which lies on this great circle
+     */
+    public Vec3 nearestOnCircle(Vec3 v) {
+        final double tau = this.dot(v);
+        final double rho = sqrt(1 - tau * tau);
+        return new Vec3(v.x - tau * x, v.y - tau * y, v.z - tau * z).
+                divideBy(rho);
     }
 
     public Vec3 normalize() {
@@ -267,8 +282,12 @@ public class Vec3 {
         return new Vec3(x / p.x, y / p.y, z / p.z);
     }
 
-    public double scalarProduct(Vec3 p) {
+    public double dot(Vec3 p) {
         return (x * p.x + y * p.y + z * p.z);
+    }
+
+    public Vec3 cross(Vec3 p) {
+        return new Vec3(y*p.z - z*p.y, z*p.x - x*p.z, x*p.y - y*p.x);
     }
 
     public Vec3 invert() {
@@ -281,7 +300,15 @@ public class Vec3 {
             {z * x, z * y, z * z}});
     }
 
-    
+    public double angleTo(Vec3 v) {
+        // Uses a cross product to get a signed angle.
+        Vec3 cross = cross(v);
+        double sign = cross.z;
+        if (sign == 0) sign = cross.y;
+        if (sign == 0) sign = cross.x;
+        return asin(cross.mag()) * signum(sign);
+    }
+
     public static Vec3 centreOfMass(List<Vec3> points) {
         double xs = 0, ys = 0, zs = 0;
         int i = 0;
@@ -383,5 +410,10 @@ public class Vec3 {
 
     Vec3 setZ(double newZ) {
         return new Vec3(x, y, newZ);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%.2f %.2f %.2f", x, y, z);
     }
 }

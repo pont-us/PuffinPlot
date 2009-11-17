@@ -89,7 +89,8 @@ public class MainMenuBar extends JMenuBar {
                 pa.exportCalcsSite, pa.exportCalcsSuite),
                 pa.pageSetup, pa.print, pa.printFisher, new OldSquidItem(),
                 pa.prefs, pa.quit));
-        add(makeMenu("Edit", pa.selectAll, movePlotsItem, pa.resetLayout,
+        add(makeMenu("Edit", pa.selectAll, pa.clearSelection,
+                movePlotsItem, pa.resetLayout,
                 pa.editCorrections, pa.copyPointSelection, pa.flipSample,
                 pa.hideSelectedPoints, pa.unhideAllPoints,
                 pa.useAsEmptySlot, pa.unsetEmptySlot,
@@ -97,7 +98,7 @@ public class MainMenuBar extends JMenuBar {
         add(makeMenu("Calculations",
                 pa.pcaOnSelection, anchorItem = new AnchorItem(),
                 pa.fisher, pa.fisherBySite, pa.fisherOnSuite,
-                pa.mdf, pa.clear));
+                pa.mdf, pa.clear, pa.circleFit, pa.greatCircleAnalysis));
         add(makeMenu("Window",
                 new WindowMenuItem("Data table")
                 { JFrame window(PuffinApp a) {return a.getTableWindow();}},

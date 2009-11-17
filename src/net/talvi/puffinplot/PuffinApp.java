@@ -19,8 +19,11 @@ import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,7 +35,11 @@ import javax.swing.JOptionPane;
 import static java.lang.Thread.UncaughtExceptionHandler;
 
 import net.talvi.puffinplot.data.Correction;
+import net.talvi.puffinplot.data.GreatCircles;
 import net.talvi.puffinplot.data.Sample;
+import net.talvi.puffinplot.data.Site;
+import net.talvi.puffinplot.data.Vec3;
+import net.talvi.puffinplot.window.GreatCircleWindow;
 
 public class PuffinApp {
 
@@ -69,6 +76,7 @@ public class PuffinApp {
     public static String getBuildDate() { return buildDate; }
     private boolean emptyCorrectionActive;
     private Correction correction;
+    private final GreatCircleWindow greatCircleWindow;
 
     public List<Suite> getSuites() {
         return suites;
@@ -125,6 +133,7 @@ public class PuffinApp {
         actions = new PuffinActions(this);
         tableWindow = new TableWindow();
         fisherWindow = new FisherWindow();
+        greatCircleWindow = new GreatCircleWindow();
         correctionWindow = new CorrectionWindow();
         // NB main window must be instantiated last, as
         // the Window menu references the other windows
@@ -140,6 +149,20 @@ public class PuffinApp {
         mainWindow.getMainMenuBar().updateRecentFiles();
         mainWindow.setVisible(true);
         logger.info("PuffinApp instantiation complete.");
+    }
+
+    void doGreatCircles() {
+        for (Site site: getSelectedSites()) {
+            site.doGreatCircle();
+        }
+        greatCircleWindow.setVisible(true);
+    }
+
+    void fitCircle() {
+        for (Sample sample: getSelectedSamples()) {
+            sample.useSelectionForCircleFit();
+            sample.fitGreatCircle();
+        }
     }
 
     private static class ExceptionHandler implements UncaughtExceptionHandler {
@@ -317,6 +340,16 @@ public class PuffinApp {
 
     public List<Sample> getSelectedSamples() {
         return getMainWindow().getSampleChooser().getSelectedSamples();
+    }
+
+    public List<Site> getSelectedSites() {
+        List<Sample> samples = getSelectedSamples();
+        Set<Site> siteSet = new LinkedHashSet<Site>();
+        for (Sample sample: samples) {
+            // re-insertion doesn't affect iteration order
+            siteSet.add(sample.getSite());
+        }
+        return new ArrayList<Site>(siteSet);
     }
 
     public void setSuite(int index) {

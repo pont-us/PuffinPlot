@@ -8,9 +8,11 @@ import net.talvi.puffinplot.PuffinApp;
 public class Sample {
     
     private final List<Datum> data;
+    private Site site;
     private final String nameOrDepth;
     private FisherValues fisher = null;
     private boolean isEmptySlot = false;
+    public Vec3 greatCircle;
     private PcaAnnotated pca;
     private MDF mdf;
     private boolean hasMsData = false;
@@ -24,7 +26,9 @@ public class Sample {
         pca = null;
         fisher = null;
         mdf = null;
+        greatCircle = null;
         selectNone();
+        for (Datum d: getData()) d.setOnCircle(false);
     }
 
     public void calculateMdf(Correction correction) {
@@ -141,6 +145,29 @@ public class Sample {
         pca = PcaAnnotated.calculate(this);
     }
 
+    public void useSelectionForCircleFit() {
+        for (Datum d : getData()) d.setOnCircle(d.isSelected());
+    }
+
+    public void useSelectionForPca() {
+        for (Datum d : getData()) d.setInPca(d.isSelected());
+    }
+
+    public List<Vec3> getCirclePoints() {
+        List<Vec3> result = new ArrayList<Vec3>(getData().size());
+        PuffinApp app = PuffinApp.getInstance();
+        for (Datum d: getData()) {
+            if (d.isOnCircle()) result.add(d.getMoment(app.getCorrection()));
+        }
+        return result;
+    }
+
+    public void fitGreatCircle() {
+        List<Vec3> points = getCirclePoints();
+        if (points.size() < 3) return;
+        greatCircle = new Eigens(points, true).vectors.get(2);
+    }
+
     public void doPca() {
         doPca(getData().get(0).isPcaAnchored());
     }
@@ -156,7 +183,7 @@ public class Sample {
     }
 
     private void checkDiscrete() {
-        if (getMeasType().isDiscrete())
+        if (!getMeasType().isDiscrete())
             throw new UnsupportedOperationException("Only discrete measurements can have sites.");
     }
 
@@ -164,7 +191,7 @@ public class Sample {
         checkDiscrete();
         String n = getNameOrDepth();
         int len = n.length();
-        return len - n.charAt(len-2) == '.' ? 4 : 3;
+        return len - n.charAt(len-2) == '.' ? len-5 : len-4;
     }
 
     public String getSiteId() {
@@ -238,5 +265,19 @@ public class Sample {
         for (int i=0; i<Math.min(getNumData(),s.getNumData()); i++) {
             getData().get(i).setSelected(otherData.get(i).isSelected());
         }
+    }
+
+    /**
+     * @return the site
+     */
+    public Site getSite() {
+        return site;
+    }
+
+    /**
+     * @param site the site to set
+     */
+    public void setSite(Site site) {
+        this.site = site;
     }
 }

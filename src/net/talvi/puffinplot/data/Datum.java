@@ -32,6 +32,8 @@ public class Datum {
 
     private Line line;
     private boolean selected = false;
+    private boolean inPca = false;
+    private boolean onCircle = false;
     private boolean pcaAnchored = true;
     private boolean hidden = false;
 
@@ -122,6 +124,10 @@ public class Datum {
     public void setSlotNumber(int v)   { slotNumber = v; }
     public Suite getSuite()            { return suite; }
     public void setSuite(Suite v)      { suite = v; }
+    public boolean isOnCircle()        { return onCircle; }
+    public void setOnCircle(boolean v) { onCircle = v; }
+    public boolean isInPca()           { return inPca; }
+    public void setInPca(boolean v)    { inPca = v; }
 
     public String getIdOrDepth() {
         return measType == MeasType.CONTINUOUS ? depth : discreteId;
@@ -150,10 +156,10 @@ public class Datum {
             if (tray != null) result = result.minus(tray.moment);
         }
         if (c.includesSample() && sampleCorrectionExists()) {
-            result = result.correctSample(toRadians(sampAz - magDev),
+            result = result.correctSample(toRadians(sampAz + magDev),
                                           toRadians(sampDip));
             if (c.includesFormation() && formationCorrectionExists()) {
-                result = result.correctForm(toRadians(formAz - magDev),
+                result = result.correctForm(toRadians(formAz + magDev),
                                             toRadians(formDip));
             }
         }
@@ -253,6 +259,8 @@ public class Datum {
         case PP_SELECTED: return Boolean.toString(selected);
         case PP_ANCHOR_PCA: return Boolean.toString(isPcaAnchored());
         case PP_HIDDEN: return Boolean.toString(isHidden());
+        case PP_ONCIRCLE: return Boolean.toString(isOnCircle());
+        case PP_INPCA: return Boolean.toString(isInPca());
         default: throw new IllegalArgumentException("Unknown field "+field);
         }
     }
@@ -286,9 +294,13 @@ public class Datum {
         case PP_SELECTED: selected = Boolean.parseBoolean(s); break;
         case PP_ANCHOR_PCA: setPcaAnchored(Boolean.parseBoolean(s)); break;
         case PP_HIDDEN: setHidden(Boolean.parseBoolean(s)); break;
+        case PP_ONCIRCLE: setOnCircle(Boolean.parseBoolean(s)); break;
+        case PP_INPCA: setInPca(Boolean.parseBoolean(s)); break;
         default: throw new IllegalArgumentException("Unknown field "+field);
         }
     }
+
+
 
     public static class Reader {
 

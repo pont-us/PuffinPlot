@@ -1,5 +1,7 @@
 package net.talvi.puffinplot.plots;
 
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
@@ -11,6 +13,7 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
+import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.prefs.Preferences;
@@ -46,7 +49,7 @@ public abstract class EqAreaPlot extends Plot {
         g.drawLine(xo - l, yo, xo + l, yo);
     }
 
-     private void drawGreatCircleSubsegment(Graphics2D g,
+     private void drawLineSegments(Graphics2D g,
             int xo, int yo, int radius, Vec3[] vs) {
          boolean upper = true;
          for (Vec3 v: vs) {
@@ -56,9 +59,11 @@ public abstract class EqAreaPlot extends Plot {
              }
          }
          Stroke stroke = upper ? getStroke() : getDashedStroke();
+
          GeneralPath path = new GeneralPath();
          boolean first = true;
          for (Vec3 v : vs) {
+             // g.setStroke(new BasicStroke(getUnitSize() * (1-(float)v.z) *20.0f));
              Point2D p = project(v, xo, yo, radius);
              if (first) {
                  path.moveTo((float) p.getX(), (float) p.getY());
@@ -71,23 +76,50 @@ public abstract class EqAreaPlot extends Plot {
          g.draw(path);
      }
 
+     /**
+      * Currently unused but should be plumbed in as a user preference
+      * at some point. Draws line segments using an unconventional
+      * three-dimensional effect, whereby more distant segments thinner
+      * and lighter in colour.
+      *
+      */
+    private void drawTaperedLineSegments(Graphics2D g,
+            int xo, int yo, int radius, Vec3[] vs) {
+         boolean first = true;
+         Point2D pPrev = null;
+         for (Vec3 v : vs) {
+             Point2D p = project(v, xo, yo, radius);
+             if (!first) {
+                 g.setColor(Color.BLACK);
+                 float w = (1.0f-(float)v.z)/2f;
+                 g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
+                         0.6f + w*0.4f));
+                 g.setStroke(new BasicStroke(getUnitSize() * w * 30.0f,
+                         BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
+                 g.draw(new Line2D.Double(pPrev, p));
+             }
+             first = false;
+             pPrev = p;
+         }
+     }
+
     protected void drawGreatCircleSegment(Graphics2D g,
             int xo, int yo, int radius, Vec3 p1, Vec3 p2) {
         if (p1.sameHemisphere(p2)) {
-            drawGreatCircleSubsegment(g, xo, yo, radius,
+            drawLineSegments(g, xo, yo, radius,
                     Vec3.spherInterpolate(p1, p2, 0.05));
         } else {
             Vec3 equator = Vec3.equatorPoint(p1, p2);
-            drawGreatCircleSubsegment(g, xo, yo, radius,
+            drawLineSegments(g, xo, yo, radius,
                     Vec3.spherInterpolate(p1, equator, 0.05));
-            drawGreatCircleSubsegment(g, xo, yo, radius,
+            drawLineSegments(g, xo, yo, radius,
                     Vec3.spherInterpolate(equator, p2, 0.05));
          }
     }
 
     protected void drawGreatCircle(Graphics2D g, int xo, int yo, int radius,
             Vec3 pole) {
-        int n = 40;
+        int n = 48;
         List<Vec3> vs = pole.greatCirclePoints(n);
         List<Vec3> bottom = new ArrayList<Vec3>(vs.size());
         List<Vec3> top = new ArrayList<Vec3>(vs.size());
@@ -129,8 +161,8 @@ public abstract class EqAreaPlot extends Plot {
             }
             prev = v;
         }
-        drawGreatCircleSubsegment(g, xo, yo, radius, top.toArray(new Vec3[]{}));
-        drawGreatCircleSubsegment(g, xo, yo, radius, bottom.toArray(new Vec3[]{}));
+        drawLineSegments(g, xo, yo, radius, top.toArray(new Vec3[]{}));
+        drawLineSegments(g, xo, yo, radius, bottom.toArray(new Vec3[]{}));
     }
 
     protected static Point2D project(Vec3 p, int xo, int yo, int radius) {

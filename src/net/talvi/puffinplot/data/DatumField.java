@@ -45,6 +45,8 @@ public enum DatumField {
     PP_SELECTED("PUFFIN selected"),
     PP_ANCHOR_PCA("PUFFIN anchor PCA"),
     PP_HIDDEN("PUFFIN hidden"),
+    PP_ONCIRCLE("PUFFIN on circle"),
+    PP_INPCA("PUFFIN in PCA"),
     UNKNOWN(null);
     
     private final String heading;

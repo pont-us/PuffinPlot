@@ -3,7 +3,7 @@ package net.talvi.puffinplot.window;
 import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import net.talvi.puffinplot.plots.FisherEqAreaPlot;
+import net.talvi.puffinplot.plots.FisherPlot;
 
 public class FisherWindow extends JFrame {
     private FisherGraphDisplay graphDisplay;
@@ -17,8 +17,8 @@ public class FisherWindow extends JFrame {
         pack();
     }
 
-    public FisherEqAreaPlot getPlot() {
-        return (FisherEqAreaPlot) graphDisplay.plots.get("fisherplot");
+    public FisherPlot getPlot() {
+        return (FisherPlot) graphDisplay.plots.get("fisherplot");
     }
     
 }

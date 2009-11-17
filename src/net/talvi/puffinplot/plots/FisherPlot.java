@@ -20,7 +20,7 @@ import net.talvi.puffinplot.data.PcaValues;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Vec3;
 
-public class FisherEqAreaPlot extends EqAreaPlot {
+public class FisherPlot extends EqAreaPlot {
 
     private final Stroke dashedStroke =
             new BasicStroke(0.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL,
@@ -31,7 +31,7 @@ public class FisherEqAreaPlot extends EqAreaPlot {
     
     private boolean groupedBySite = true;
     
-    public FisherEqAreaPlot(GraphDisplay parent, PlotParams params,
+    public FisherPlot(GraphDisplay parent, PlotParams params,
             Rectangle2D dimensions) {
         super(parent, params, null);
         this.dimensions = dimensions;

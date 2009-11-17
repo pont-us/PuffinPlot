@@ -6,7 +6,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
-import net.talvi.puffinplot.plots.FisherEqAreaPlot;
+import net.talvi.puffinplot.plots.FisherPlot;
 import net.talvi.puffinplot.plots.Plot;
 
 public class FisherGraphDisplay extends GraphDisplay implements Printable {
@@ -14,7 +14,7 @@ public class FisherGraphDisplay extends GraphDisplay implements Printable {
     public FisherGraphDisplay() {
         super();
         zoomTransform = AffineTransform.getScaleInstance(1.0, 1.0);
-        Plot plot = new FisherEqAreaPlot(
+        Plot plot = new FisherPlot(
                 null, null, new Rectangle2D.Double(50, 50, 600, 600));
         plots.put(plot.getName(), plot);
     }

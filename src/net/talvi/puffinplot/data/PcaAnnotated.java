@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import net.talvi.puffinplot.PuffinApp;
 
 public class PcaAnnotated {
 
@@ -29,7 +30,11 @@ public class PcaAnnotated {
     }
 
     static PcaAnnotated calculate(Sample s) {
-        List<Vec3> points = s.getSelectedPoints();
+        PuffinApp app = PuffinApp.getInstance();
+        List<Vec3> points = new ArrayList<Vec3>(s.getData().size());
+        for (Datum d: s.getData()) {
+            if (d.isInPca()) points.add(d.getMoment(app.getCorrection()));
+        }
         if (points.size() < 2) return null;
         PcaValues pca = PcaValues.calculate(points, s.isPcaAnchored());
         List<Datum> selection = s.getSelectedData();

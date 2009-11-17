@@ -5,15 +5,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Map.Entry;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.file.FileLoader;
 import net.talvi.puffinplot.data.file.Ppl2Loader;
@@ -23,6 +21,7 @@ import net.talvi.puffinplot.data.file.ZplotLoader;
 public class Suite {
 
     private List<Datum> data;
+    private List<Site> sites;
     private final List<File> inputFiles;
     private File puffinFile;
     private List<Sample> samples = new ArrayList<Sample>(); // samples in order
@@ -31,7 +30,6 @@ public class Suite {
     private int currentSampleIndex = 0;
     private MeasType measType;
     private String suiteName;
-    private List<FisherForSite> siteFishers;
     private List<Sample> emptyTraySamples;
     private FisherValues suiteFisher;
     final private PuffinApp app;
@@ -50,16 +48,6 @@ public class Suite {
         return loadWarnings;
     }
 
-    private static class FisherForSite {
-        String site;
-        FisherValues fisher;
-
-        public FisherForSite(String site, FisherValues fisher) {
-            this.site = site;
-            this.fisher = fisher;
-        }
-    }
-
     public void doFisherOnSuite() {
         List<Sample> selected = PuffinApp.getInstance().getSelectedSamples();
         List<PcaValues> pcas = new ArrayList<PcaValues>(selected.size());
@@ -72,39 +60,35 @@ public class Suite {
         suiteFisher = FisherValues.calculate(directions);
     }
 
+    private void guessSites() {
+        Map<String, List<Sample>> siteMap =
+                new LinkedHashMap<String, List<Sample>>();
+        for (Sample sample : samples) {
+            String siteName = sample.getSiteId();
+            if (!siteMap.containsKey(siteName))
+                siteMap.put(siteName, new LinkedList<Sample>());
+            siteMap.get(siteName).add(sample);
+        }
+        sites = new ArrayList<Site>(siteMap.size());
+        for (Entry<String, List<Sample>> entry: siteMap.entrySet()) {
+            List<Sample> siteSamples = entry.getValue();
+            Site site = new Site(entry.getKey(), siteSamples);
+            sites.add(site);
+            for (Sample s: siteSamples) s.setSite(site);
+        }
+    }
+    
     public void doFisherOnSites() {
         if (!getMeasType().isDiscrete())
             throw new UnsupportedOperationException("Only discrete suites can have sites.");
-        Map<String, Set<PcaValues>> sitePcas =
-                new LinkedHashMap<String, Set<PcaValues>>();
-
-        // Chuck PCA values into buckets
-        for (Sample sample : PuffinApp.getInstance().getSelectedSamples()) {
-            String site = sample.getSiteId();
-            PcaValues pca = sample.getPcaValues();
-            if (pca != null) {
-                if (!sitePcas.containsKey(site))
-                    sitePcas.put(site, new HashSet<PcaValues>());
-                sitePcas.get(site).add(pca);
-            }
-        }
-
-        siteFishers = new ArrayList<FisherForSite>(sitePcas.size());
-        // Go through them doing Fisher calculations
-        for (Map.Entry<String, Set<PcaValues>> entry: sitePcas.entrySet()) {
-            Collection<Vec3> directions =
-                    new ArrayList<Vec3>(entry.getValue().size());
-            for (PcaValues pca: entry.getValue())
-                directions.add(pca.getDirection());
-            siteFishers.add(new FisherForSite(entry.getKey(),
-                    FisherValues.calculate(directions)));
-        }
+        for (Site site: sites) site.doFisher();
     }
 
     public List<FisherValues> getFishers() {
-        if (siteFishers==null) return null;
-        List<FisherValues> result = new ArrayList<FisherValues>(siteFishers.size());
-        for (FisherForSite f: siteFishers) result.add(f.fisher);
+        List<FisherValues> result = new ArrayList<FisherValues>(sites.size());
+        for (Site site: sites) {
+            if (site.fisher != null) result.add(site.fisher);
+        }
         return result;
     }
 
@@ -261,6 +245,7 @@ public class Suite {
                 slot++;
             }
         }
+        guessSites();
     }
     
     /*
@@ -301,21 +286,21 @@ public class Suite {
     }
 
     /*
-     * Save [Fisher] calculations per site. Only works for discrete.
+     * Save [Fisher and great-circle] calculations per site. Only works for discrete.
      */
     public void saveCalcsSite(File file) {
         CsvWriter writer = null;
         try {
-            if (siteFishers==null || siteFishers.size() == 0) {
-                app.errorDialog("Error saving calculations",
-                        "No calculations to save!");
-                return;
-            }
-
             writer = new CsvWriter(new FileWriter(file));
-            writer.writeCsv("site", FisherValues.getHeaders());
-            for (FisherForSite f: siteFishers) {
-                writer.writeCsv(f.site, f.fisher.toStrings());
+            writer.writeCsv("site", FisherValues.getHeaders(), GreatCircles.getHeaders());
+            for (Site site: sites) {
+                List<String> fisherCsv = (site.fisher == null)
+                        ? FisherValues.getEmptyFields()
+                        : site.fisher.toStrings();
+                List<String> gcCsv = (site.greatCircles == null)
+                        ? GreatCircles.getEmptyFields()
+                        : site.greatCircles.toStrings();
+                writer.writeCsv(site, fisherCsv, gcCsv);
             }
         } catch (IOException ex) {
            throw new Error(ex);
