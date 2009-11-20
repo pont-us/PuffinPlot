@@ -87,7 +87,9 @@ public class MainMenuBar extends JMenuBar {
                 pa.close,
                 makeMenu("Export calculations", pa.exportCalcsSample,
                 pa.exportCalcsSite, pa.exportCalcsSuite),
-                pa.pageSetup, pa.print, pa.printFisher, new OldSquidItem(),
+                pa.pageSetup, pa.print, pa.printFisher, pa.printGc,
+                new OldSquidItem(),
+                pa.importAms,
                 pa.prefs, pa.quit));
         add(makeMenu("Edit", pa.selectAll, pa.clearSelection,
                 movePlotsItem, pa.resetLayout,

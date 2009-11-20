@@ -1,9 +1,11 @@
 package net.talvi.puffinplot.data;
 
+import Jama.Matrix;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import net.talvi.puffinplot.PuffinApp;
+import static java.lang.Math.toRadians;
 
 public class Sample {
     
@@ -16,6 +18,9 @@ public class Sample {
     private PcaAnnotated pca;
     private MDF mdf;
     private boolean hasMsData = false;
+    private Matrix ams;
+    private Eigens amsEigens;
+    public List<Vec3> amsAxes;
 
     public Sample(String name) {
         this.nameOrDepth = name;
@@ -164,8 +169,8 @@ public class Sample {
 
     public void fitGreatCircle() {
         List<Vec3> points = getCirclePoints();
-        if (points.size() < 3) return;
-        greatCircle = new Eigens(points, true).vectors.get(2);
+        if (points.size() < 2) return;
+        greatCircle = Eigens.fromVectors(points, true).vectors.get(2);
     }
 
     public void doPca() {
@@ -279,5 +284,47 @@ public class Sample {
      */
     public void setSite(Site site) {
         this.site = site;
+    }
+
+    public void setAms(double k11, double k22, double k33,
+            double k12, double k23, double k13) {
+        double[] elts = {k11, k12, k13, k12, k22, k23, k13, k23, k33};
+        ams = new Matrix(elts, 3);
+        amsEigens = new Eigens(ams);
+    }
+
+    public void setAms2(double i1, double d1, double i2, double d2, double i3, double d3) {
+        amsAxes = new ArrayList<Vec3>(3);
+        amsAxes.add(Vec3.fromPolarDegrees(1, i1, d1));
+        amsAxes.add(Vec3.fromPolarDegrees(1, i2, d2));
+        amsAxes.add(Vec3.fromPolarDegrees(1, i3, d3));
+    }
+
+    public Vec3 getAmsAxis(int axis, Correction c) {
+        /* This is a horrendous fudge to deal with AGICO's... interesting
+         * policies on data retention. AMS tensors from SAFYR are
+         * sample corrected, so we just apply a magnetic declination
+         * correction here.
+         *
+         * Addendum: we're now using incs and decs from ASC file without
+         * sample correction, so I've re-added it here.
+         */
+        // Vec3 result = amsEigens.vectors.get(axis);
+        Vec3 result = amsAxes.get(axis);
+        Datum d = getData().get(0);
+        double sampAz = d.getSampAz();
+        double sampDip = d.getSampDip();
+        double formAz = d.getFormAz();
+        double formDip = d.getFormDip();
+        double magDev = d.getMagDev();
+       result = result.correctSample(toRadians(sampAz + magDev),
+               toRadians(sampDip));
+       result = result.correctForm(toRadians(formAz + magDev),
+               toRadians(formDip));
+        return result;
+    }
+
+    public Matrix getAms() {
+        return ams;
     }
 }

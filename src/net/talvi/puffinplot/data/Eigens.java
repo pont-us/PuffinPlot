@@ -20,13 +20,8 @@ public class Eigens {
     public final List<Vec3> vectors ;
     public final List<Double> values;
 
-    public Eigens(Collection<Vec3> vs, boolean normalize) {
-        Matrix oTensor = new Matrix(3,3); // zeros
-        for (Vec3 p: vs) 
-            oTensor.plusEquals(normalize ?
-                p.normalize().oTensor() : p.oTensor());
-
-        EigenvalueDecomposition eigDecomp = oTensor.eig();
+    public Eigens(Matrix m) {
+        EigenvalueDecomposition eigDecomp = m.eig();
         double[] eigenvalues = eigDecomp.getRealEigenvalues();
 
         /* There has to be a less horrific method of arranging the
@@ -49,6 +44,14 @@ public class Eigens {
 
         vectors = Collections.unmodifiableList(vectorsTmp);
         values = Collections.unmodifiableList(valuesTmp);
+    }
+    
+    public static Eigens fromVectors(Collection<Vec3> vs, boolean normalize) {
+        Matrix oTensor = new Matrix(3,3); // zeros
+        for (Vec3 p: vs) 
+            oTensor.plusEquals(normalize ?
+                p.normalize().oTensor() : p.oTensor());
+        return new Eigens(oTensor);
     }
 
     private static int[] order(double[] x) {

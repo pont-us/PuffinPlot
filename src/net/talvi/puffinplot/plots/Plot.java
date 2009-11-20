@@ -49,7 +49,7 @@ public abstract class Plot
             "demag 374 85 348 311 zplot 736 85 456 697 zplotlegend 1060 30 " +
             "130 49 sampletable 14 14 462 57 fishertable 550 14 178 61 " +
             "pcatable 736 14 193 64 equarea 376 398 346 389 datatable 14 83 " +
-            "356 706 ";
+            "356 706 ams 50 50 100 100";
 
     static {
         final AffineTransform at = AffineTransform.getTranslateInstance(0, 0.18);

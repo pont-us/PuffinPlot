@@ -48,7 +48,8 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
         Preferences pref = app.getPrefs().getPrefs();
 
         String[] plotNames = {"SampleEqAreaPlot", "ZPlot", "DemagPlot",
-            "DataTable", "PcaTable", "SampleTable", "FisherTable"};
+            "DataTable", "PcaTable", "SampleTable", "FisherTable",
+            "AmsPlot"};
 
         try {
             for (String plotName : plotNames) {

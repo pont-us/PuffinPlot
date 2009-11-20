@@ -91,12 +91,7 @@ public class PuffinApp {
     }
 
     public void redoCalculations() {
-        for (Suite suite: suites) {
-            for (Sample sample: suite.getSamples()) {
-                sample.calculateFisher();
-                sample.doPca();
-            }
-        }
+        for (Suite suite: suites) suite.doSampleCalculations();
     }
 
     private void loadBuildProperties() {
@@ -152,9 +147,7 @@ public class PuffinApp {
     }
 
     void doGreatCircles() {
-        for (Site site: getSelectedSites()) {
-            site.doGreatCircle();
-        }
+        for (Site site: getSelectedSites()) site.doGreatCircle();
         greatCircleWindow.setVisible(true);
     }
 
@@ -163,6 +156,19 @@ public class PuffinApp {
             sample.useSelectionForCircleFit();
             sample.fitGreatCircle();
         }
+    }
+
+    void doPcaOnSelection() {
+        for (Sample sample : getSelectedSamples()) {
+            if (sample.getSelectedPoints().size() > 1) {
+                sample.useSelectionForPca();
+                sample.doPca();
+            }
+        }
+    }
+
+    GreatCircleWindow getGreatCircleWindow() {
+        return greatCircleWindow;
     }
 
     private static class ExceptionHandler implements UncaughtExceptionHandler {
@@ -221,7 +227,6 @@ public class PuffinApp {
     
     public void setCorrection(Correction c) {
         correction = c;
-        
     }
     
     public void updateDisplay() {
@@ -245,7 +250,6 @@ public class PuffinApp {
 
     public void openFiles(List<File> files) {
         if (files.size() == 0) return;
-
         try {
             // If this fileset is already in the recent-files list,
             // it will be bumped up to the top; otherwise it will be

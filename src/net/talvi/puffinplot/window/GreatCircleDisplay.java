@@ -31,7 +31,7 @@ public class GreatCircleDisplay extends GraphDisplay implements Printable {
         };
 
         Plot plot = new GreatCirclePlot(this, params,
-                new Rectangle2D.Double(50, 50, 600, 600));
+                new Rectangle2D.Double(50, 50, 450, 450));
         
         plots.put(plot.getName(), plot);
     }

@@ -77,6 +77,7 @@ public class GreatCircles {
         k = (2*M()+N()-2)/(2*(M()+N()-R));
 
         direction = Vec3.sum(D).plus(Vec3.sum(G)).normalize();
+        logger.log(Level.INFO, "a95 "+alpha(0.95));
     }
 
     private int M() {
@@ -89,8 +90,9 @@ public class GreatCircles {
 
     private double alpha(double p) {
         double NN = M() + N() / 2.0;
-        double v = 1 - ((NN-1)*(k*R)) *
+        double v = 1 - ((NN-1)/(k*R)) *
                 ( Math.pow(1/p, 1/(NN-1)) - 1 );
+        logger.log(Level.INFO, String.format("%d %d %f %f %f %f", M(), N(), NN, k, R, v));
         return Math.toDegrees(Math.acos(v));
     }
 

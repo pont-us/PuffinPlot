@@ -30,8 +30,9 @@ public abstract class EqAreaPlot extends Plot {
     }
     
     protected void drawAxes(Graphics2D g, int xo, int yo, int radius) {
+        g.setColor(Color.WHITE);
+        g.fillArc(xo - radius, yo - radius, radius * 2, radius * 2, 0, 360);
         g.setColor(Color.BLACK);
-
         g.drawArc(xo - radius, yo - radius, radius * 2, radius * 2, 0, 360);
         for (int theta = 0; theta < 360; theta += decTickStep) {
             double x = cos(toRadians(theta));

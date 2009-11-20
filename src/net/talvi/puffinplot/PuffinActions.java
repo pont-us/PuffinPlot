@@ -234,9 +234,7 @@ public class PuffinActions {
     public final Action pcaOnSelection = new PuffinAction("PCA",
             "Perform PCA on selected points", 'R', false, KeyEvent.VK_P) {
         public void actionPerformed(ActionEvent e) {
-            for (Sample sample: app.getSelectedSamples())
-                if (sample.getSelectedPoints().size()>1)
-                    sample.doPca();
+            app.doPcaOnSelection();
             app.updateDisplay();
         }
     };
@@ -462,6 +460,40 @@ public class PuffinActions {
             KeyEvent.VK_L) {
         public void actionPerformed(ActionEvent e) {
             app.getMainWindow().getGraphDisplay().resetLayout();
+        }
+    };
+
+    public final Action importAms = new PuffinAction("Import AMS",
+            "Import AMS data", null, false,
+            KeyEvent.VK_L) {
+        public void actionPerformed(ActionEvent e) {
+            app.getSuite().importAms2();
+        }
+    };
+
+    public final Action printGc = new PuffinAction("Print GC",
+            "Print GC", null, false,
+            KeyEvent.VK_N) {
+        public void actionPerformed(ActionEvent e) {
+
+            PrinterJob job = PrinterJob.getPrinterJob();
+            job.setPrintable((Printable) app.getGreatCircleWindow().getContentPane(),
+                    app.getCurrentPageFormat());
+
+            PrintService[] services = PrinterJob.lookupPrintServices();
+
+            if (services.length > 0) {
+                try {
+                    job.setPrintService(services[0]);
+                    /* Note: if we pass an attribute set to printDialog(),
+                     * it forces the use of a cross-platform Swing print
+                     * dialog rather than the default native one.
+                    */
+                    if (job.printDialog()) job.print();
+                } catch (PrinterException pe) {
+                    System.err.println(pe);
+                }
+            }
         }
     };
 }

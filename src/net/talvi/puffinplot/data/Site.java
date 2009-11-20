@@ -19,8 +19,8 @@ public class Site {
 
     public void doFisher() {
         Collection<Vec3> directions =
-                new ArrayList<Vec3>(samples.size());
-        for (Sample s: samples) {
+                new ArrayList<Vec3>(getSamples().size());
+        for (Sample s: getSamples()) {
             s.doPca();
             if (s.getPca() != null) directions.add(s.getPcaValues().getDirection());
         }
@@ -30,7 +30,7 @@ public class Site {
     public void doGreatCircle() {
         List<Vec3> endpoints = new LinkedList<Vec3>();
         LinkedList<List<Vec3>> circles = new LinkedList<List<Vec3>>();
-        for (Sample sample: samples) {
+        for (Sample sample: getSamples()) {
             if (sample.getPca() != null) {
                 endpoints.add(sample.getPcaValues().getDirection());
             } else if (sample.greatCircle != null) {
@@ -43,5 +43,12 @@ public class Site {
     @Override
     public String toString() {
         return name;
+    }
+
+    /**
+     * @return the samples
+     */
+    public List<Sample> getSamples() {
+        return samples;
     }
 }

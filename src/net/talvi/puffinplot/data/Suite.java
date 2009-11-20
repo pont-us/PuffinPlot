@@ -1,6 +1,9 @@
 package net.talvi.puffinplot.data;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,6 +15,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.file.FileLoader;
 import net.talvi.puffinplot.data.file.Ppl2Loader;
@@ -166,6 +172,14 @@ public class Suite {
         return result;
     }
 
+    public void doSampleCalculations() {
+        for (Sample sample : getSamples()) {
+            sample.calculateFisher();
+            sample.doPca();
+            sample.fitGreatCircle();
+        }
+    }
+
     /**
      * Note that this may return an empty suite, in which case it is the
      * caller's responsibility to notice this and deal with it.
@@ -245,7 +259,8 @@ public class Suite {
                 slot++;
             }
         }
-        guessSites();
+        guessSites(); // sites aren't saved yet so we just re-guess on load
+        doSampleCalculations();
     }
     
     /*
@@ -396,4 +411,48 @@ public class Suite {
     public String toString() {
         return getName();
     }
+
+    public void importAms() {
+        try {
+            BufferedReader reader =
+                    new BufferedReader(new FileReader("/home/pont/ams.txt"));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                Scanner s = new Scanner(line);
+                String name = s.next();
+                double k11 = s.nextDouble();
+                double k22 = s.nextDouble();
+                double k33 = s.nextDouble();
+                double k12 = s.nextDouble();
+                double k23 = s.nextDouble();
+                double k13 = s.nextDouble();
+                Sample sample = getSampleByName(name);
+                if (sample != null) {
+                    sample.setAms(k11, k22, k33, k12, k23, k13);
+                }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(Suite.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void importAms2() {
+        try {
+            BufferedReader reader =
+                    new BufferedReader(new FileReader("/home/pont/ams.txt"));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                Scanner s = new Scanner(line);
+                String name = s.next();
+                Sample sample = getSampleByName(name);
+                if (sample != null) {
+                    sample.setAms2(s.nextDouble(), s.nextDouble(), s.nextDouble(),
+                            s.nextDouble(), s.nextDouble(), s.nextDouble());
+                }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(Suite.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
 }

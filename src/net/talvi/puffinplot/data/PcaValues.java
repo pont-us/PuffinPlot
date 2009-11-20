@@ -42,7 +42,7 @@ public class PcaValues {
             for (Vec3 p: points) movedPoints.add(p.minus(origin));
         }
 
-        Eigens eigen = new Eigens(movedPoints, false);
+        Eigens eigen = Eigens.fromVectors(movedPoints, false);
         Vec3 pComp = eigen.vectors.get(0);
 
         /*

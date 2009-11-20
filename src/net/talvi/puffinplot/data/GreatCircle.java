@@ -24,7 +24,7 @@ public class GreatCircle {
         for (Vec3 p: pointsUnscaled) {
             this.points.add(p.normalize());
         }
-        this.pole = new Eigens(points, true).vectors.get(2).normalize();
+        this.pole = Eigens.fromVectors(points, true).vectors.get(2).normalize();
         // Calculate the direction of the point trend along the circle
         // (clockwise / anticlockwise). Can't be sure that all points
         // will be strictly in the right direction, so we'll add up

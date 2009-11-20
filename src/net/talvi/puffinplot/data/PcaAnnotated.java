@@ -32,16 +32,29 @@ public class PcaAnnotated {
     static PcaAnnotated calculate(Sample s) {
         PuffinApp app = PuffinApp.getInstance();
         List<Vec3> points = new ArrayList<Vec3>(s.getData().size());
+        List<Datum> data = new ArrayList<Datum>(s.getData().size());
+        
+        int runEndsSeen = 0;
+        boolean thisIsPca = false, lastWasPca = false;
         for (Datum d: s.getData()) {
-            if (d.isInPca()) points.add(d.getMoment(app.getCorrection()));
+            thisIsPca = d.isInPca();
+            if (thisIsPca) {
+                points.add(d.getMoment(app.getCorrection()));
+                data.add(d);
+            } else {
+                if (lastWasPca) runEndsSeen++;
+            }
+            lastWasPca = thisIsPca;
         }
+        if (thisIsPca) runEndsSeen++;
+        boolean contiguous = (runEndsSeen <= 1);
         if (points.size() < 2) return null;
         PcaValues pca = PcaValues.calculate(points, s.isPcaAnchored());
-        List<Datum> selection = s.getSelectedData();
+        
         return new PcaAnnotated(pca,
-                selection.get(0).getDemagLevel(),
-                selection.get(selection.size() - 1).getDemagLevel(),
-                s.isSelectionContiguous());
+                data.get(0).getDemagLevel(),
+                data.get(data.size() - 1).getDemagLevel(),
+                contiguous);
     }
 
     public PcaValues getPcaValues() {
