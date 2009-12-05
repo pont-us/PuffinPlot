@@ -37,6 +37,7 @@ import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Site;
 import net.talvi.puffinplot.window.GreatCircleWindow;
+import net.talvi.puffinplot.window.PrefsWindow;
 
 public class PuffinApp {
 
@@ -74,6 +75,7 @@ public class PuffinApp {
     private boolean emptyCorrectionActive;
     private Correction correction;
     private final GreatCircleWindow greatCircleWindow;
+    private final PrefsWindow prefsWindow;
 
     public List<Suite> getSuites() {
         return suites;
@@ -127,6 +129,7 @@ public class PuffinApp {
         fisherWindow = new FisherWindow();
         greatCircleWindow = new GreatCircleWindow();
         correctionWindow = new CorrectionWindow();
+        prefsWindow = new PrefsWindow();
         // NB main window must be instantiated last, as
         // the Window menu references the other windows
         mainWindow = new MainWindow();
@@ -374,7 +377,11 @@ public class PuffinApp {
         getActions().prefs.actionPerformed
         (new ActionEvent(this, ActionEvent.ACTION_PERFORMED, ""));
     }
-    
+
+    public void showPreferences() {
+        prefsWindow.setVisible(true);
+    }
+
     public void showPageSetupDialog() {
         PrinterJob job = PrinterJob.getPrinterJob();
         currentPageFormat = job.pageDialog(currentPageFormat);

@@ -396,7 +396,7 @@ public class PuffinActions {
     public final Action prefs = new PuffinAction("Preferences…",
             "Show the preferences window", ',', false, KeyEvent.VK_R, true) {
         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(app.getMainWindow(), "This is the preferences dialog.");
+            app.showPreferences();
         }
     };
     
