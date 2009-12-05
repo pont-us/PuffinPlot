@@ -19,7 +19,6 @@ public class Sample {
     private MDF mdf;
     private boolean hasMsData = false;
     private Matrix ams;
-    private Eigens amsEigens;
     public List<Vec3> amsAxes;
 
     public Sample(String name) {
@@ -272,28 +271,24 @@ public class Sample {
         }
     }
 
-    /**
-     * @return the site
-     */
     public Site getSite() {
         return site;
     }
 
-    /**
-     * @param site the site to set
-     */
     public void setSite(Site site) {
         this.site = site;
     }
 
-    public void setAms(double k11, double k22, double k33,
+    public void setAmsFromTensor(double k11, double k22, double k33,
             double k12, double k23, double k13) {
         double[] elts = {k11, k12, k13, k12, k22, k23, k13, k23, k33};
         ams = new Matrix(elts, 3);
-        amsEigens = new Eigens(ams);
+        Eigens amsEigens = new Eigens(ams);
+        // For the present, we just keep the directionsq
+        amsAxes = amsEigens.vectors;
     }
 
-    public void setAms2(double i1, double d1, double i2, double d2, double i3, double d3) {
+    public void setAmsDirections(double i1, double d1, double i2, double d2, double i3, double d3) {
         amsAxes = new ArrayList<Vec3>(3);
         amsAxes.add(Vec3.fromPolarDegrees(1, i1, d1));
         amsAxes.add(Vec3.fromPolarDegrees(1, i2, d2));

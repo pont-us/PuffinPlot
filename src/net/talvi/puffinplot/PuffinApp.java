@@ -19,7 +19,6 @@ import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Properties;
@@ -35,10 +34,8 @@ import javax.swing.JOptionPane;
 import static java.lang.Thread.UncaughtExceptionHandler;
 
 import net.talvi.puffinplot.data.Correction;
-import net.talvi.puffinplot.data.GreatCircles;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Site;
-import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.window.GreatCircleWindow;
 
 public class PuffinApp {

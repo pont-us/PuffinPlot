@@ -10,9 +10,12 @@ import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.print.PrintService;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -467,7 +470,12 @@ public class PuffinActions {
             "Import AMS data", null, false,
             KeyEvent.VK_L) {
         public void actionPerformed(ActionEvent e) {
-            app.getSuite().importAms2();
+            try {
+                app.getSuite().importAms("/home/pont/ams.txt", false);
+            } catch (IOException ex) {
+                Logger.getLogger(PuffinActions.class.getName()).log(Level.SEVERE, null, ex);
+                app.errorDialog("Error importing AMS", ex.getLocalizedMessage());
+            }
         }
     };
 

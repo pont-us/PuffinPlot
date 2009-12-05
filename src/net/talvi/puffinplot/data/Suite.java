@@ -2,7 +2,6 @@ package net.talvi.puffinplot.data;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -412,47 +411,31 @@ public class Suite {
         return getName();
     }
 
-    public void importAms() {
-        try {
-            BufferedReader reader =
-                    new BufferedReader(new FileReader("/home/pont/ams.txt"));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                Scanner s = new Scanner(line);
-                String name = s.next();
-                double k11 = s.nextDouble();
-                double k22 = s.nextDouble();
-                double k33 = s.nextDouble();
-                double k12 = s.nextDouble();
-                double k23 = s.nextDouble();
-                double k13 = s.nextDouble();
-                Sample sample = getSampleByName(name);
-                if (sample != null) {
-                    sample.setAms(k11, k22, k33, k12, k23, k13);
+    /**
+     *  Import AMS data from a file. If directions==false, line format is
+     *  k11 k22 k33 k12 k23 k13  (tensor components)
+     * otherwise it's
+     * inc1 dec1 inc2 dec2 inc3 dec3 (axis directions, decreasing magnitude)
+     */
+
+    public void importAms(String fileName, boolean directions)
+            throws IOException {
+        BufferedReader reader =
+                new BufferedReader(new FileReader(fileName));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            final double[] v = new double[6];
+            Scanner s = new Scanner(line);
+            String name = s.next();
+            Sample sample = getSampleByName(name);
+            for (int i=0; i<6; i++) v[i] = s.nextDouble();
+            if (sample != null) {
+                if (directions) {
+                    sample.setAmsDirections(v[0], v[1], v[2], v[3], v[4], v[5]);
+                } else {
+                    sample.setAmsFromTensor(v[0], v[1], v[2], v[3], v[4], v[5]);
                 }
             }
-        } catch (IOException ex) {
-            Logger.getLogger(Suite.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
-    public void importAms2() {
-        try {
-            BufferedReader reader =
-                    new BufferedReader(new FileReader("/home/pont/ams.txt"));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                Scanner s = new Scanner(line);
-                String name = s.next();
-                Sample sample = getSampleByName(name);
-                if (sample != null) {
-                    sample.setAms2(s.nextDouble(), s.nextDouble(), s.nextDouble(),
-                            s.nextDouble(), s.nextDouble(), s.nextDouble());
-                }
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(Suite.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
 }
