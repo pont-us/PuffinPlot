@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
@@ -19,6 +20,7 @@ import net.talvi.puffinplot.data.Sample;
 
 public class MainMenuBar extends JMenuBar {
 
+    private static final Logger logger = Logger.getLogger("MainMenuBar");
     private static final long serialVersionUID = 1L;
     final static private JMenuItem noRecentFiles =
             new JMenuItem("No recent files");
@@ -32,14 +34,17 @@ public class MainMenuBar extends JMenuBar {
     private static JMenu makeMenu(String name, Object... things) {
         JMenu menu = new JMenu(name);
         for (Object thing: things) {
-            if (thing instanceof PuffinActions) {
+            if (thing instanceof PuffinAction) {
                 PuffinAction puffinAction = (PuffinAction) thing;
-                if (!puffinAction.excludeFromMenu())
-                    menu.add(puffinAction);
+                if (!puffinAction.excludeFromMenu()) menu.add(puffinAction);
             } else if (thing instanceof Action) {
                 menu.add((Action) thing);
             } else if (thing instanceof JMenuItem) {
+                // JMenu is a subclass of JMenuItem so this handles submenus
+                // as well as `raw' JMenuItems
                 menu.add((JMenuItem) thing);
+            } else {
+                logger.warning("Unknown menu item "+thing);
             }
         }
         return menu;

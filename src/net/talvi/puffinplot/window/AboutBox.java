@@ -63,12 +63,12 @@ public class AboutBox extends javax.swing.JDialog {
         getContentPane().add(jScrollPane1);
 
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("jLabel3");
+        jLabel3.setText("Build date");
         jLabel3.setAlignmentX(0.5F);
         jLabel3.setMaximumSize(new java.awt.Dimension(500, 30));
         jLabel3.setMinimumSize(new java.awt.Dimension(45, 30));
         jLabel3.setPreferredSize(new java.awt.Dimension(500, 30));
-        jLabel3.setText(PuffinApp.getBuildDate());
+        jLabel3.setText(PuffinApp.getInstance().getBuildDate());
         getContentPane().add(jLabel3);
 
         jButton1.setText("Close");

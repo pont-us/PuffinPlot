@@ -26,8 +26,6 @@ public class GreatCircleDisplay extends GraphDisplay implements Printable {
                 throw new UnsupportedOperationException(); }
             public MeasurementAxis getAxis() {
                 throw new UnsupportedOperationException(); }
-            public boolean isEmptyCorrectionActive() {
-                throw new UnsupportedOperationException(); }
         };
 
         Plot plot = new GreatCirclePlot(this, params,

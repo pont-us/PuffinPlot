@@ -77,10 +77,9 @@ public class FisherPlot extends EqAreaPlot {
                         (Vec3.fromPolarDegrees(1, 90-fisher.getA95(), dec));
                 Vec3 w = circlePoint.rotY(Math.PI / 2 - v.getIncRad());
                 w = w.rotZ(v.getDecRad());
-                Point2D p = project(w, xo, yo, radius);
-                if (firstEllipsePoint)
-                    ellipse.moveTo((float) p.getX(), (float) p.getY());
-                else ellipse.lineTo((float) p.getX(), (float) p.getY());
+                Point2D.Double p = project(w, xo, yo, radius);
+                if (firstEllipsePoint) ellipse.moveTo((float) p.x, (float) p.y);
+                else ellipse.lineTo((float) p.x, (float) p.y);
                 firstEllipsePoint = false;
             }
             ellipse.closePath();
@@ -101,12 +100,14 @@ public class FisherPlot extends EqAreaPlot {
             } else {
                 g.setStroke(thinStroke);
                 for (Sample s: PuffinApp.getInstance().getSelectedSamples()) {
-                    PcaValues pca = s.getPcaValues();
-                    if (s != null && pca != null && pca.getDirection() != null) {
-                        Point2D p = project(pca.getDirection(), xo, yo, radius);
-                        g.draw(new Line2D.Double(p.getX() - 10, p.getY(), p.getX() + 10, p.getY()));
-                        g.draw(new Line2D.Double(p.getX(), p.getY() - 10, p.getX(), p.getY() + 10));
-                    }
+                    if (s == null) continue;
+                    final PcaValues pca = s.getPcaValues();
+                    if (pca == null) continue;
+                    final Vec3 direction = pca.getDirection();
+                    if (direction == null) continue;
+                    Point2D.Double p = project(direction, xo, yo, radius);
+                    g.draw(new Line2D.Double(p.x - 10, p.y, p.x + 10, p.y));
+                    g.draw(new Line2D.Double(p.x, p.y - 10, p.x, p.y + 10));
                 }
             }
 

@@ -36,7 +36,12 @@ public class ZplotLoader extends AbstractFileLoader {
 
     private void readFile() throws IOException {
         // Check first line for magic string
-        if (!reader.readLine().startsWith("File Name:")) {
+        final String firstLine = reader.readLine();
+        if (firstLine == null) {
+            addMessage("%s is empty", file.getName());
+            return;
+        }
+        if (!firstLine.startsWith("File Name:")) {
             addMessage("Ignoring unrecognized file %s", file.getName());
             return;
         }

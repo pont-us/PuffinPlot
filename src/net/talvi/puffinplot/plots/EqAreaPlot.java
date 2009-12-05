@@ -164,7 +164,7 @@ public abstract class EqAreaPlot extends Plot {
         drawLineSegments(g, xo, yo, radius, bottom.toArray(new Vec3[]{}));
     }
 
-    protected static Point2D project(Vec3 p, int xo, int yo, int radius) {
+    protected static Point2D.Double project(Vec3 p, int xo, int yo, int radius) {
         final double h2 = p.x * p.x + p.y * p.y;
         final double L = (h2 > 0) ? sqrt(1 - abs(p.z)) / sqrt(h2) : 0;
 

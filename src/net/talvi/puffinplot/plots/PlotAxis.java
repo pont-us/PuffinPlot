@@ -17,19 +17,26 @@ class PlotAxis {
     private final AxisParameters ap;
 
     static enum Direction {
-        RIGHT("R","E"), DOWN("D","S"),
-        LEFT("L","W"), UP("U","N");
+        RIGHT("R","E", 0), UP("D","S", 1),
+        LEFT("L","W", 2), DOWN("U","N", 3);
         
-        private String letter;
-        private String compassDir;
-        
-        private Direction(String letter, String compassDir) {
+        private final String letter;
+        private final String compassDir;
+        private final int position;
+        private final static Direction[] ordering = new Direction[4];
+
+        static {
+            for (Direction d: values()) ordering[d.position] = d;
+        }
+
+        private Direction(String letter, String compassDir, int position) {
             this.letter = letter;
             this.compassDir = compassDir;
+            this.position = position;
         }
         
         boolean isHorizontal() {
-            return this==LEFT || this==RIGHT;
+            return (position % 2) == 0;
         }
         
         Direction labelPos(boolean farSide) {
@@ -38,9 +45,13 @@ class PlotAxis {
         }
         
         Direction rotAcw90() {
-            return this==RIGHT ? UP : this==UP ? LEFT : this==LEFT ? DOWN : RIGHT;
+            return ordering[(position + 1) % 4];
         }
-        
+
+        public Direction opposite() {
+            return ordering[(position + 2) % 4];
+        }
+
         double labelRot() {
             return this.isHorizontal() ? 0 : -Math.PI/2;
         }
@@ -51,13 +62,6 @@ class PlotAxis {
 
         public String getLetter() {
             return letter;
-        }
-
-        public Direction opposite() {
-            return this == LEFT ? RIGHT
-                    : this == RIGHT ? LEFT
-                    : this == UP ? DOWN
-                    : DOWN;
         }
     }
 

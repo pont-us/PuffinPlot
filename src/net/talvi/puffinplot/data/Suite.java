@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.file.FileLoader;
 import net.talvi.puffinplot.data.file.Ppl2Loader;
@@ -108,19 +106,20 @@ public class Suite {
     public void saveAs(File file) {
         List<String> fields = Datum.getFieldNames();
 
-        CsvWriter writer = null;
+        FileWriter fileWriter = null;
+        CsvWriter csvWriter = null;
         try {
-            FileWriter fileWriter = new FileWriter(file);
+            fileWriter = new FileWriter(file);
             fileWriter.write("PuffinPlot file. Version 2\n");
-            writer = new CsvWriter(fileWriter, "\t");
-            writer.writeCsv(fields);
+            csvWriter = new CsvWriter(fileWriter, "\t");
+            csvWriter.writeCsv(fields);
 
             for (Sample sample : getSamples()) {
                 for (Datum datum : sample.getData()) {
-                    writer.writeCsv(datum.toStrings());
+                    csvWriter.writeCsv(datum.toStrings());
                 }
             }
-            writer.close();
+            csvWriter.close();
             puffinFile = file;
             suiteName = file.getName();
             app.getRecentFiles().add(Collections.singletonList(file));
@@ -128,11 +127,11 @@ public class Suite {
         } catch (IOException e) {
             app.errorDialog("Error saving file", e.getLocalizedMessage());
         } finally {
-            if (writer != null)  {
-                try { writer.close(); }
-                catch (IOException e) {
-                    app.errorDialog("Error closing saved file", e.getLocalizedMessage());
-                }
+            try {
+                if (fileWriter != null) fileWriter.close();
+                if (csvWriter != null) csvWriter.close();
+            } catch (IOException e) {
+                app.errorDialog("Error closing saved file", e.getLocalizedMessage());
             }
         }
     }
@@ -420,22 +419,26 @@ public class Suite {
 
     public void importAms(String fileName, boolean directions)
             throws IOException {
-        BufferedReader reader =
-                new BufferedReader(new FileReader(fileName));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            final double[] v = new double[6];
-            Scanner s = new Scanner(line);
-            String name = s.next();
-            Sample sample = getSampleByName(name);
-            for (int i=0; i<6; i++) v[i] = s.nextDouble();
-            if (sample != null) {
-                if (directions) {
-                    sample.setAmsDirections(v[0], v[1], v[2], v[3], v[4], v[5]);
-                } else {
-                    sample.setAmsFromTensor(v[0], v[1], v[2], v[3], v[4], v[5]);
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(fileName));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                final double[] v = new double[6];
+                Scanner s = new Scanner(line);
+                String name = s.next();
+                Sample sample = getSampleByName(name);
+                for (int i = 0; i < 6; i++) v[i] = s.nextDouble();
+                if (sample != null) {
+                    if (directions) {
+                        sample.setAmsDirections(v[0], v[1], v[2], v[3], v[4], v[5]);
+                    } else {
+                        sample.setAmsFromTensor(v[0], v[1], v[2], v[3], v[4], v[5]);
+                    }
                 }
             }
+        } finally {
+            if (reader != null) reader.close();
         }
     }
 }

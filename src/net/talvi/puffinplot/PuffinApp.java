@@ -42,7 +42,7 @@ import net.talvi.puffinplot.window.PrefsWindow;
 public class PuffinApp {
 
     private static PuffinApp app;
-    private static String buildDate;
+    private String buildDate;
     private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
     private static final ByteArrayOutputStream logStream =
             new ByteArrayOutputStream();
@@ -71,7 +71,7 @@ public class PuffinApp {
 
     public static PuffinApp getInstance() { return app; }
 
-    public static String getBuildDate() { return buildDate; }
+    public String getBuildDate() { return buildDate; }
     private boolean emptyCorrectionActive;
     private Correction correction;
     private final GreatCircleWindow greatCircleWindow;
@@ -102,16 +102,16 @@ public class PuffinApp {
             props.load(propStream);
             buildDateTmp = props.getProperty("build.date");
         } catch (IOException ex) {
-            ex.printStackTrace();
+            logger.log(Level.WARNING, "Failed to get build date", ex);
             /* The only effect of this on the user is a lack of build date
-             * in the about box, so we can get away with just printing a stack trace.
+             * in the about box, so we can get away with just logging it.
              */
         } finally {
             if (propStream != null)
                 try {propStream.close();} catch (IOException e) {}
             buildDate = buildDateTmp;
         }
-        System.out.println(getBuildDate());
+        logger.info("Build date: "+getBuildDate());
     }
     private final AboutBox aboutBox;
     
@@ -180,7 +180,7 @@ public class PuffinApp {
             try {
                 final PrintWriter w = new PrintWriter(new FileWriter(f));
                 w.println("PuffinPlot error file");
-                w.println("Build date: " + buildDate);
+                w.println("Build date: " + getInstance().getBuildDate());
                 final Date now = new Date();
                 final SimpleDateFormat df =
                         new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

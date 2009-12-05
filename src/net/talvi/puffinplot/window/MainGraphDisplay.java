@@ -8,7 +8,6 @@ import java.awt.print.PrinterException;
 import java.util.List;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.data.Correction;
-import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.plots.Plot;
@@ -25,23 +24,16 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
         super();
         final PuffinApp app = PuffinApp.getInstance();
         PlotParams params = new PlotParams() {
-
             public Sample getSample() {
                 return samplesForPrinting == null
                         ? app.getSample()
                         : samplesForPrinting.get(printPageIndex);
             }
-
             public Correction getCorrection() {
                 return app.getCorrection();
             }
-
             public MeasurementAxis getAxis() {
                 return app.getMainWindow().controlPanel.getAxis();
-            }
-
-            public boolean isEmptyCorrectionActive() {
-                return app.isEmptyCorrectionActive();
             }
         };
 

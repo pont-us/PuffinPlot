@@ -42,7 +42,7 @@ public class MainWindow extends JFrame {
         mainPanel.add(jsp);
         mainPanel.add(welcomeMessage =
                 new JLabel("Welcome to PuffinPlot. This puffin hatched on "+
-                PuffinApp.getBuildDate()+"."), BorderLayout.NORTH);
+                PuffinApp.getInstance().getBuildDate()+"."), BorderLayout.NORTH);
         graphDisplay.setVisible(false);
         mainPanel.add(sampleChooser = new SampleChooser(), BorderLayout.WEST);
         Container cp = getContentPane();

@@ -1,9 +1,8 @@
 package net.talvi.puffinplot.data;
 
-import java.io.Serializable;
 import java.util.Comparator;
 
-public class DatumComparator implements Comparator<Datum>, Serializable {
+public class DatumComparator implements Comparator<Datum> {
 
     private final MeasurementAxis axis;
     private final Correction corr;

@@ -83,6 +83,7 @@ public class Datum {
     public boolean isPcaAnchored()     { return pcaAnchored; }
     public void setPcaAnchored(boolean v) { pcaAnchored = v; }
     public Line getLine()              { return line; }
+    public void setLine(Line v)        { line = v; }
     public Sample getSample()          { return sample; }
     public boolean isHidden()          { return hidden; }
     public void setHidden(boolean v)   { hidden = v; }
