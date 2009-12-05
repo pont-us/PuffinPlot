@@ -34,32 +34,31 @@ public abstract class EqAreaPlot extends Plot {
         g.fillArc(xo - radius, yo - radius, radius * 2, radius * 2, 0, 360);
         g.setColor(Color.BLACK);
         g.drawArc(xo - radius, yo - radius, radius * 2, radius * 2, 0, 360);
+        final double r = radius;
         for (int theta = 0; theta < 360; theta += decTickStep) {
-            double x = cos(toRadians(theta));
-            double y = sin(toRadians(theta));
-            g.drawLine((int) (xo + x * radius), (int) (yo + y * radius),
-                    (int) (xo + x * (radius - getTickLength())),
-                    (int) (yo + y * (radius - getTickLength())));
+            final double x = cos(toRadians(theta));
+            final double y = sin(toRadians(theta));
+            g.draw(new Line2D.Double(xo + x * r, yo + y * r,
+                    xo + x * (r - getTickLength()),
+                    yo + y * (r - getTickLength())));
         }
 
-        final int l = (int) (getTickLength() / 2.0);
+        final double l = getTickLength() / 2.0;
         for (int i = 0; i < incTickNum; i++) {
-            int x = (int) ((i * radius) / incTickNum);
-            g.drawLine(xo + x, yo - l, xo + x, yo + l);
+            double x = (i * r) / incTickNum;
+            g.draw(new Line2D.Double(xo + x, yo - l, xo + x, yo + l));
         }
-        g.drawLine(xo - l, yo, xo + l, yo);
+        g.draw(new Line2D.Double(xo - l, yo, xo + l, yo));
     }
 
      private void drawLineSegments(Graphics2D g,
             int xo, int yo, int radius, Vec3[] vs) {
-         boolean upper = true;
-         for (Vec3 v: vs) {
-             if (v.z > 1e-10) {
-                 upper = false;
-                 break;
-             }
-         }
-         Stroke stroke = upper ? getStroke() : getDashedStroke();
+         // determine whether we're in upper hemisphere, ignoring
+         // z co-ordinates very close to zero. Assumes all segments
+         // in same hemisphere.
+         boolean upperHemisph = true;
+         for (Vec3 v: vs) { if (v.z > 1e-10) { upperHemisph = false; break; } }
+         Stroke stroke = upperHemisph ? getStroke() : getDashedStroke();
 
          GeneralPath path = new GeneralPath();
          boolean first = true;
@@ -79,9 +78,8 @@ public abstract class EqAreaPlot extends Plot {
 
      /**
       * Currently unused but should be plumbed in as a user preference
-      * at some point. Draws line segments using an unconventional
-      * three-dimensional effect, whereby more distant segments thinner
-      * and lighter in colour.
+      * at some point. Draws line segments using a three-dimensional effect,
+      * whereby more distant segments appear thinner and lighter in colour.
       *
       */
     private void drawTaperedLineSegments(Graphics2D g,

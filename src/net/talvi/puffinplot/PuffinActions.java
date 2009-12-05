@@ -479,8 +479,8 @@ public class PuffinActions {
         }
     };
 
-    public final Action printGc = new PuffinAction("Print GC",
-            "Print GC", null, false,
+    public final Action printGc = new PuffinAction("Print Great Circles…",
+            "Print Great Circles", null, false,
             KeyEvent.VK_N) {
         public void actionPerformed(ActionEvent e) {
 
