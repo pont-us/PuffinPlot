@@ -17,7 +17,10 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.print.Printable;
 import java.text.AttributedString;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -70,6 +73,13 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         return sb.toString();
     }
 
+    public List<Plot> getVisiblePlots() {
+        Collection<Plot> ps = plots.values();
+        List<Plot> result = new ArrayList<Plot>(ps.size());
+        for (Plot p: ps) if (p.isVisible()) result.add(p);
+        return result;
+    }
+
     @Override
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
@@ -79,6 +89,7 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         g2.setRenderingHints(renderingHints);
         g2.setPaint(Color.BLACK);
         g2.setPaintMode();
+        final List<Plot> visiblePlots = getVisiblePlots();
 
         if (!isDragPlotMode()) {
             if (draggingSelection) {
@@ -88,18 +99,18 @@ public abstract class GraphDisplay extends JPanel implements Printable {
                 Rectangle2D rUnzoomed = new Rectangle2D.Double();
                 rUnzoomed.setFrameFromDiagonal(getAntiZoom().transform(mouseListener.startPoint, null),
                         getAntiZoom().transform(mouseListener.currentDragPoint, null));
-                for (Plot plot : plots.values()) plot.selectByRectangle(rUnzoomed);
-                for (Plot plot : plots.values()) plot.draw(g2);
+                for (Plot plot : visiblePlots) plot.selectByRectangle(rUnzoomed);
+                for (Plot plot : visiblePlots) plot.draw(g2);
                 g2.setColor(Color.ORANGE);
                 g2.setComposite(WEAK_COMPOSITE);
                 g2.fill(r);
                 g2.setComposite(STRONG_COMPOSITE);
                 g2.draw(r);
             } else {
-                for (Plot plot : plots.values()) plot.draw(g2);
+                for (Plot plot : visiblePlots) plot.draw(g2);
             }
         } else {
-            for (Plot plot : plots.values()) {
+            for (Plot plot : visiblePlots) {
                 float fontSize = plot.getFontSize() * 2;
                 int margin = plot.getMargin();
                 g2.setPaint(Color.ORANGE);
@@ -179,7 +190,7 @@ public abstract class GraphDisplay extends JPanel implements Printable {
 
         private void updateDraggingPlot() {
             double smallestSize = Double.MAX_VALUE; // when plots overlap, pick the smallest
-            for (Plot plot : plots.values()) {
+            for (Plot plot : getVisiblePlots()) {
                 Rectangle2D dims = plot.getDimensions();
                 if (dims.contains(startPoint)) {
                     double size = dims.getWidth() * dims.getHeight();
@@ -265,7 +276,7 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         g2.scale(scale, scale);
         g2.setPaint(Color.BLACK);
         g2.setPaintMode();
-        for (Plot plot: plots.values()) plot.draw(g2);
+        for (Plot plot: getVisiblePlots()) plot.draw(g2);
         printChildren(graphics);
         setDoubleBuffered(true);
     }

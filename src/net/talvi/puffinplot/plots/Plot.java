@@ -30,7 +30,6 @@ import static java.awt.font.TextAttribute.SUPERSCRIPT_SUPER;
 
 public abstract class Plot
 {
-    private final GraphDisplay parent;
     protected final PlotParams params;
     protected Rectangle2D dimensions;
     List<PlotPoint> points = new LinkedList<PlotPoint>();
@@ -44,6 +43,7 @@ public abstract class Plot
     private Map<Attribute,Object> attributeMap
      = new HashMap<Attribute, Object>();
     private static final TransformAttribute MAC_SUPERSCRIPT_TRANSFORM;
+    private boolean visible;
 
     protected static final String DEFAULT_PLOT_POSITIONS =
             "demag 374 85 348 311 zplot 736 85 456 697 zplotlegend 1060 30 " +
@@ -163,7 +163,6 @@ public abstract class Plot
     
     public Plot(GraphDisplay parent, PlotParams params, Preferences prefs) {
         this.params = params;
-        this.parent = parent;
         String sizesString = DEFAULT_PLOT_POSITIONS;
         if (prefs != null) sizesString = prefs.get("plotSizes", DEFAULT_PLOT_POSITIONS);
         dimensions = dimensionsFromPrefsString(sizesString);
@@ -179,10 +178,9 @@ public abstract class Plot
         stroke = new BasicStroke(getUnitSize() * LINE_WIDTH_IN_UNITS);
         dashedStroke = new BasicStroke(getUnitSize() * LINE_WIDTH_IN_UNITS,
                 0, 0, 1, new float[]{2, 2}, 0);
-
         attributeMap.put(TextAttribute.FAMILY, "SansSerif");
         attributeMap.put(TextAttribute.SIZE, getFontSize());
-
+        setVisible(true);
     }
 
     private Rectangle2D dimensionsFromPrefsString(String spec) {
@@ -260,4 +258,12 @@ public abstract class Plot
     }
         
     public abstract void draw(Graphics2D g);
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
 }
