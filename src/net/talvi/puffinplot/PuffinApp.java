@@ -129,10 +129,11 @@ public class PuffinApp {
         fisherWindow = new FisherWindow();
         greatCircleWindow = new GreatCircleWindow();
         correctionWindow = new CorrectionWindow();
-        prefsWindow = new PrefsWindow();
         // NB main window must be instantiated last, as
         // the Window menu references the other windows
         mainWindow = new MainWindow();
+        // prefs window needs the graph list from MainGraphDisplay from MainWindow
+        prefsWindow = new PrefsWindow();
         Correction corr =
                 Correction.fromString(prefs.getPrefs().get("correction", "false false NONE"));
         setCorrection(corr);
