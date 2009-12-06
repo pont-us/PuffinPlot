@@ -1,8 +1,12 @@
 package net.talvi.puffinplot;
 
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.prefs.Preferences;
+import net.talvi.puffinplot.data.SensorLengths;
+import net.talvi.puffinplot.data.Vec3;
 
 public class PuffinPrefs {
 
@@ -11,7 +15,6 @@ public class PuffinPrefs {
     private HashMap<String,Rectangle2D> plotSizes =
             new HashMap<String, Rectangle2D>();
     private Preferences prefs = Preferences.userNodeForPackage(PuffinPrefs.class);
-    private boolean useOldSquidOrientations;
     
     public PuffinPrefs() {
         load();
@@ -45,21 +48,15 @@ public class PuffinPrefs {
 
     public void load() {
         PuffinApp.getInstance().setRecentFiles(new RecentFileList(getPrefs()));
-        setUseOldSquidOrientations(Boolean.parseBoolean(getPrefs().get("useOldSquidOrientations", "false")));
+        PuffinApp.getInstance().setSensorLengths(SensorLengths.fromPrefs(prefs));
     }
     
     public void save() {
-        PuffinApp.getInstance().getRecentFiles().save(getPrefs());
-        getPrefs().put("plotSizes", PuffinApp.getInstance().getMainWindow().getGraphDisplay().getPlotSizeString());
-        getPrefs().put("correction", PuffinApp.getInstance().getCorrection().toString());
-        getPrefs().put("useOldSquidOrientations", Boolean.toString(isUseOldSquidOrientations()));
-    }
-
-    public boolean isUseOldSquidOrientations() {
-        return useOldSquidOrientations;
-    }
-
-    public void setUseOldSquidOrientations(boolean useOldSquidOrientations) {
-        this.useOldSquidOrientations = useOldSquidOrientations;
+        Preferences p = getPrefs();
+        PuffinApp app = PuffinApp.getInstance();
+        app.getRecentFiles().save(p);
+        p.put("plotSizes", app.getMainWindow().getGraphDisplay().getPlotSizeString());
+        p.put("correction", app.getCorrection().toString());
+        app.getSensorLengths().save(prefs);
     }
 }

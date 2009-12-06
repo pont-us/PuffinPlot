@@ -93,7 +93,6 @@ public class MainMenuBar extends JMenuBar {
                 makeMenu("Export calculations", pa.exportCalcsSample,
                 pa.exportCalcsSite, pa.exportCalcsSuite),
                 pa.pageSetup, pa.print, pa.printFisher, pa.printGc,
-                new OldSquidItem(),
                 pa.importAms,
                 pa.prefs, pa.quit));
         add(makeMenu("Edit", pa.selectAll, pa.clearSelection,
@@ -163,30 +162,4 @@ public class MainMenuBar extends JMenuBar {
         }
     }
     
-    private class OldSquidItem extends JCheckBoxMenuItem {
-
-        public OldSquidItem() {
-            super("Use old SQUID orientations");
-            final JCheckBoxMenuItem item = this;
-            addItemListener(new ItemListener() {
-                public void itemStateChanged(ItemEvent event) {
-                    setValue(item.isSelected());
-                }
-            });
-            setSelected(getValue());
-        }
-
-        @Override
-        public boolean getState() {
-            return getValue();
-        }
-
-        private void setValue(boolean b) {
-            app.getPrefs().setUseOldSquidOrientations(b);
-        }
-
-        private boolean getValue() {
-            return app.getPrefs().isUseOldSquidOrientations();
-        }
-    }
 }

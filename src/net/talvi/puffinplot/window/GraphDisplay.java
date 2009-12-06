@@ -74,10 +74,14 @@ public abstract class GraphDisplay extends JPanel implements Printable {
     }
 
     public List<Plot> getVisiblePlots() {
-        Collection<Plot> ps = plots.values();
-        List<Plot> result = new ArrayList<Plot>(ps.size());
+        final Collection<Plot> ps = getPlots();
+        final List<Plot> result = new ArrayList<Plot>(ps.size());
         for (Plot p: ps) if (p.isVisible()) result.add(p);
         return result;
+    }
+
+    public Collection<Plot> getPlots() {
+        return plots.values();
     }
 
     @Override

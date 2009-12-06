@@ -35,6 +35,7 @@ import static java.lang.Thread.UncaughtExceptionHandler;
 
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Sample;
+import net.talvi.puffinplot.data.SensorLengths;
 import net.talvi.puffinplot.data.Site;
 import net.talvi.puffinplot.window.GreatCircleWindow;
 import net.talvi.puffinplot.window.PrefsWindow;
@@ -59,6 +60,7 @@ public class PuffinApp {
     private final FisherWindow fisherWindow;
     private final CorrectionWindow correctionWindow;
     private RecentFileList recentFiles;
+    private SensorLengths sensorLengths;
 
     static {
         final Handler logStringHandler =
@@ -170,6 +172,14 @@ public class PuffinApp {
 
     GreatCircleWindow getGreatCircleWindow() {
         return greatCircleWindow;
+    }
+
+    public SensorLengths getSensorLengths() {
+        return sensorLengths;
+    }
+
+    public void setSensorLengths(SensorLengths sensorLengths) {
+        this.sensorLengths = sensorLengths;
     }
 
     private static class ExceptionHandler implements UncaughtExceptionHandler {

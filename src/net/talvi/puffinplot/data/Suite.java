@@ -37,10 +37,6 @@ public class Suite {
     private FisherValues suiteFisher;
     final private PuffinApp app;
     private List<String> loadWarnings;
-    private static final Vec3 SENSOR_LENGTHS_OLD =
-            new Vec3(-4.628, 4.404, -6.280);
-    private static final Vec3 SENSOR_LENGTHS_NEW =
-            new Vec3(4.628, -4.404, -6.280);
     private boolean hasUnknownTreatType;
 
     public FisherValues getSuiteFisher() {
@@ -215,7 +211,7 @@ public class Suite {
             case TWOGEE:
             case PUFFINPLOT_1:
                 TwoGeeLoader twoGeeLoader = new TwoGeeLoader(file, true);
-                twoGeeLoader.setSensorLengths(SENSOR_LENGTHS_NEW);
+                twoGeeLoader.setSensorLengths(PuffinApp.getInstance().getSensorLengths().toVector());
                 loader = twoGeeLoader;
                 break;
             case PUFFINPLOT_2:

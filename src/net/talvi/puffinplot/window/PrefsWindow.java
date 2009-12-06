@@ -1,12 +1,8 @@
 package net.talvi.puffinplot.window;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BoxLayout;
@@ -42,6 +38,7 @@ public class PrefsWindow extends JFrame {
         gbc2.anchor = GridBagConstraints.LINE_START;
         loadingPanel.add(new JLabel("SQUID sensor lengths"), gbc2);
         String[] labels = {"x", "y", "z"};
+        String[] lengths = PuffinApp.getInstance().getSensorLengths().toStrings();
         for (int i=0; i<3; i++) {
             final GridBagConstraints c = new GridBagConstraints();
             c.gridy = i + 1;
@@ -52,7 +49,7 @@ public class PrefsWindow extends JFrame {
             loadingPanel.add(label, c);
             c.anchor = GridBagConstraints.WEST;
             c.gridx = 1;
-            final JTextField textField = new JTextField(6);
+            final JTextField textField = new JTextField(lengths[i], 7);
             loadingPanel.add(textField, c);
         }
         gbc2.gridy = 5;
@@ -61,8 +58,8 @@ public class PrefsWindow extends JFrame {
         JPanel plotsPanel = new JPanel(false);
         plotsPanel.setLayout(new BoxLayout(plotsPanel, BoxLayout.Y_AXIS));
         plotsPanel.add(new JLabel("Visible plots"));
-        for (Plot plot: PuffinApp.getInstance().getMainWindow().getGraphDisplay().getVisiblePlots()) {
-            plotsPanel.add(new JLabel(plot.getNiceName()));
+        for (Plot plot: PuffinApp.getInstance().getMainWindow().getGraphDisplay().getPlots()) {
+            plotsPanel.add(new JCheckBox(plot.getNiceName(), plot.isVisible()));
         }
         tp.addTab("Loading", null, loadingPanel,  "File loading");
         tp.addTab("Plots", null, plotsPanel, "Graph plotting");

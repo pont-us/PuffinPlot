@@ -24,3 +24,10 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2009-12-05 23:39:27.861147 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    Perhaps the answer is a listener architecture, where other classes
+    register with PuffinPrefs and are called back to save their preferences
+    at the appropriate time.
