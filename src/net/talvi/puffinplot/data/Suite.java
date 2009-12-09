@@ -413,28 +413,34 @@ public class Suite {
      * inc1 dec1 inc2 dec2 inc3 dec3 (axis directions, decreasing magnitude)
      */
 
-    public void importAms(String fileName, boolean directions)
+    public void importAms(List<File> files, boolean directions)
             throws IOException {
         BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(new FileReader(fileName));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                final double[] v = new double[6];
-                Scanner s = new Scanner(line);
-                String name = s.next();
-                Sample sample = getSampleByName(name);
-                for (int i = 0; i < 6; i++) v[i] = s.nextDouble();
-                if (sample != null) {
-                    if (directions) {
-                        sample.setAmsDirections(v[0], v[1], v[2], v[3], v[4], v[5]);
-                    } else {
-                        sample.setAmsFromTensor(v[0], v[1], v[2], v[3], v[4], v[5]);
+        for (File file: files) {
+            try {
+                reader = new BufferedReader(new FileReader(file));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    final double[] v = new double[6];
+                    Scanner s = new Scanner(line);
+                    String name = s.next();
+                    Sample sample = getSampleByName(name);
+                    for (int i = 0; i < 6; i++) v[i] = s.nextDouble();
+                    if (sample != null) {
+                        if (directions) {
+                            sample.setAmsDirections(v[0], v[1], v[2],
+                                    v[3], v[4], v[5]);
+                        } else {
+                            sample.setAmsFromTensor(v[0], v[1], v[2],
+                                    v[3], v[4], v[5]);
+                        }
                     }
                 }
+            } finally {
+                if (reader != null) {
+                    reader.close();
+                }
             }
-        } finally {
-            if (reader != null) reader.close();
         }
     }
 }

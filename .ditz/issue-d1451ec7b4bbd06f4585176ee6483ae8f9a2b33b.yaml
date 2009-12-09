@@ -1,9 +1,14 @@
 --- !ditz.rubyforge.org,2008-03-06/issue 
-title: Start thinking about units
+title: Standardize units for internal representation
 desc: |-
+  The units for PuffinPlot's internal data representation are at present
+  implicitly defined as `whatever comes out of the 2G software'. They
+  should be well-defined as the appropriate SI units, and converted on
+  loading from whichever file format is being imported.
+  (Original description was:
   These need to be explicitly represented at some point, to allow for
   cgs/si conversions in PuffinPlot, loading from datafiles with different
-  conventions, etc.
+  conventions, etc.)
 type: :task
 component: PuffinPlot
 release: "1.0"
@@ -19,3 +24,20 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2009-12-09 22:16:08.105934 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    Actually explicit representation would be overkill; Puffin's internal
+    representation just needs to be well-defined. In a sense it is already
+    well-defined as "whatever comes out of the 2G software" but it would
+    be neater to convert these to standard SI units upon loading. As soon
+    as Puffin grows the ability to import other data formats, using the
+    fairly arbitrary 2G units (CGS, implicit orders of magnitude, etc.)
+    for internal representation becomes a little ridiculous.
+- - 2009-12-09 22:38:05.108980 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - edited title, description
+  - |-
+    Changed title and description to reflect a rethink on how to deal
+    with this.

@@ -20,7 +20,6 @@ import javax.print.PrintService;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileFilter;
 import net.talvi.puffinplot.data.Sample;
@@ -28,7 +27,8 @@ import net.talvi.puffinplot.data.Suite;
 
 public class PuffinActions {
 
-    private PuffinApp app;
+    private static final Logger logger = Logger.getLogger(PuffinActions.class.getName());
+    private final PuffinApp app;
     private static final boolean useSwingChooserForOpen = true;
     private static final boolean useSwingChooserForSave = !PuffinApp.MAC_OS_X;
     // control or apple key as appropriate
@@ -75,30 +75,34 @@ public class PuffinActions {
         }
     };
     
+    private List<File> openFileDialog(String title) {
+        List<File> files = null;
+        if (useSwingChooserForOpen) {
+            JFileChooser chooser = new JFileChooser();
+            chooser.setMultiSelectionEnabled(true);
+            chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+            int choice = chooser.showOpenDialog(app.getMainWindow());
+            if (choice == JFileChooser.APPROVE_OPTION)
+                files = Arrays.asList(chooser.getSelectedFiles());
+        } else {
+            FileDialog fd = new FileDialog(app.getMainWindow(), title,
+                    FileDialog.LOAD);
+            fd.setVisible(true);
+            String filename = fd.getFile();
+            if (filename != null) {
+                File file = new File(fd.getDirectory(), fd.getFile());
+                files = Collections.singletonList(file);
+            }
+        }
+        return files;
+    }
+    
     public final Action open = new PuffinAction("Open…",
             "Open a 2G, PPL, or ZPlot data file.", 'O', false,
             KeyEvent.VK_O) {
 
         public void actionPerformed(ActionEvent e) {
-
-            List<File> files = null;
-            if (useSwingChooserForOpen) {
-                JFileChooser chooser = new JFileChooser();
-                chooser.setMultiSelectionEnabled(true);
-                chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-                int choice = chooser.showOpenDialog(app.getMainWindow());
-                if (choice == JFileChooser.APPROVE_OPTION)
-                    files = Arrays.asList(chooser.getSelectedFiles());
-            } else {
-                FileDialog fd = new FileDialog(app.getMainWindow(), "Open file(s)",
-                        FileDialog.LOAD);
-                fd.setVisible(true);
-                String filename = fd.getFile();
-                if (filename != null) {
-                    File file = new File(fd.getDirectory(), fd.getFile());
-                    files = Collections.singletonList(file);
-                }
-            }
+            List<File> files = openFileDialog("Open file(s)");
             if (files != null) app.openFiles(files);
         }
     };
@@ -214,7 +218,6 @@ public class PuffinActions {
 
     public final Action saveAs = new PuffinAction("Save as…",
             "Save this suite of data in a new file.", 'S', true, KeyEvent.VK_S) {
-
         public void actionPerformed(ActionEvent arg0) {
             Suite suite = app.getSuite();
             if (suite != null) doSaveAs(suite);
@@ -471,9 +474,10 @@ public class PuffinActions {
             KeyEvent.VK_L) {
         public void actionPerformed(ActionEvent e) {
             try {
-                app.getSuite().importAms("/home/pont/ams.txt", false);
+                List<File> files = openFileDialog("Select AMS files");
+                app.getSuite().importAms(files, false);
             } catch (IOException ex) {
-                Logger.getLogger(PuffinActions.class.getName()).log(Level.SEVERE, null, ex);
+                logger.log(Level.SEVERE, null, ex);
                 app.errorDialog("Error importing AMS", ex.getLocalizedMessage());
             }
         }
