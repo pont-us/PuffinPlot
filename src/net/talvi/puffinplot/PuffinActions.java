@@ -76,7 +76,7 @@ public class PuffinActions {
     };
     
     private List<File> openFileDialog(String title) {
-        List<File> files = null;
+        List<File> files = Collections.emptyList();
         if (useSwingChooserForOpen) {
             JFileChooser chooser = new JFileChooser();
             chooser.setMultiSelectionEnabled(true);
