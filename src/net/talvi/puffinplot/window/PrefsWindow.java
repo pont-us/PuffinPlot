@@ -10,8 +10,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.awt.event.WindowStateListener;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -32,6 +31,9 @@ import net.talvi.puffinplot.plots.Plot;
 public class PrefsWindow extends JFrame {
 
     private final JTextField[] sensorLengthField = new JTextField[3];
+    private final PresetsBox presetsBox;
+    private final JCheckBox twoPosBox;
+    private List<PlotBox> plotBoxes = new ArrayList<PlotBox>(24);
     private final PuffinPrefs prefs =
             PuffinApp.getInstance().getPrefs();
     
@@ -49,13 +51,12 @@ public class PrefsWindow extends JFrame {
         JPanel squidPanel = new JPanel(new GridBagLayout());
         squidPanel.setBorder(BorderFactory.createTitledBorder("SQUID sensor lengths"));
         String[] labels = {"x", "y", "z"};
-        List<String> lengths = PuffinApp.getInstance().getPrefs().
-                getSensorLengths().getLengths();
+        List<String> lengths = prefs.getSensorLengths().getLengths();
         squidPanel.add(new JLabel("Presets"),
                 new GridBagConstraints(0, 0, 1, 1, 0.5, 0.5, CENTER,
                 BOTH, insets, 4, 4));
         for (int i=0; i<3; i++) sensorLengthField[i] = new JTextField(lengths.get(i), 7);
-        final PresetsBox presetsBox = new PresetsBox();
+        presetsBox = new PresetsBox();
 
         squidPanel.add(presetsBox,
                 new GridBagConstraints(1, 0, 1, 1, 0.5, 0.5, CENTER,
@@ -78,12 +79,17 @@ public class PrefsWindow extends JFrame {
         gbc2.fill = BOTH;
         loadingPanel.add(squidPanel, gbc2);
         gbc2.gridy = 5;
-        loadingPanel.add(new JCheckBox("Use 2-position protocol"), gbc2);
+        loadingPanel.add(twoPosBox = new JCheckBox("Use 2-position protocol",
+                prefs.getTwoPosProtocol()), gbc2);
+        twoPosBox.setToolTipText("If you don't know what this does, you " +
+                "probably shouldn't select it.");
         JPanel plotsPanel = new JPanel(false);
         plotsPanel.setLayout(new BoxLayout(plotsPanel, BoxLayout.Y_AXIS));
         plotsPanel.add(new JLabel("Visible plots"));
         for (Plot plot: PuffinApp.getInstance().getMainWindow().getGraphDisplay().getPlots()) {
-            plotsPanel.add(new JCheckBox(plot.getNiceName(), plot.isVisible()));
+            PlotBox pb = new PlotBox(plot);
+            plotsPanel.add(pb);
+            plotBoxes.add(pb);
         }
         tp.addTab("Loading", null, loadingPanel,  "File loading");
         tp.addTab("Plots", null, plotsPanel, "Graph plotting");
@@ -92,14 +98,14 @@ public class PrefsWindow extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 // window closing event isn't triggered by a setVisible(false),
                 // so we have to update the SensorLengths here.
-                presetsBox.set();
+                applySettings();
                 setVisible(false);
             }
         });
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                presetsBox.set();
+                applySettings();
             }
         });
         add(button, new GridBagConstraints(
@@ -107,7 +113,26 @@ public class PrefsWindow extends JFrame {
                 GridBagConstraints.VERTICAL, insets, 4, 4));
         pack();
     }
-    
+
+    private void applySettings() {
+        presetsBox.applySettings();
+        prefs.setTwoPosProtocol(twoPosBox.isSelected());
+        for (PlotBox plotBox: plotBoxes) plotBox.applySetting();
+        PuffinApp.getInstance().updateDisplay();
+    }
+
+    private class PlotBox extends JCheckBox {
+        private final Plot plot;
+        public PlotBox(Plot plot) {
+            super(plot.getNiceName(), plot.isVisible());
+            this.plot = plot;
+        }
+
+        public void applySetting() {
+            plot.setVisible(isSelected());
+        }
+    }
+
     private class PresetsBox extends JComboBox implements ItemListener {
 
         public PresetsBox() {
@@ -130,7 +155,7 @@ public class PrefsWindow extends JFrame {
                     slf.setText(sl.getLengths().get(i));
                 }
             }
-            set();
+            applySettings();
         }
         
         private void updateWith(SensorLengths sl) {
@@ -143,7 +168,7 @@ public class PrefsWindow extends JFrame {
             }
         }
         
-        public void set() {
+        public void applySettings() {
             String name = (String) getSelectedItem();
             prefs.setSensorLengths(name.equals("Custom")
                     ? SensorLengths.fromStrings(sensorLengthField[0].getText(),

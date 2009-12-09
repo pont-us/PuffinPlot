@@ -1,5 +1,6 @@
 package net.talvi.puffinplot.plots;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,7 +63,7 @@ public class DataTable extends Plot {
             yPos += ySpacing;
             sequence++;
         }
+        g.setColor(Color.BLACK);
         drawPoints(g);
-
     }
 }

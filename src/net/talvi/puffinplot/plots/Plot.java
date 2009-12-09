@@ -19,7 +19,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
@@ -30,6 +33,7 @@ import static java.awt.font.TextAttribute.SUPERSCRIPT_SUPER;
 
 public abstract class Plot
 {
+    private static final Logger logger = Logger.getLogger(Plot.class.getName());
     protected final PlotParams params;
     protected Rectangle2D dimensions;
     List<PlotPoint> points = new LinkedList<PlotPoint>();
@@ -46,10 +50,11 @@ public abstract class Plot
     private boolean visible;
 
     protected static final String DEFAULT_PLOT_POSITIONS =
-            "demag 374 85 348 311 zplot 736 85 456 697 zplotlegend 1060 30 " +
-            "130 49 sampletable 14 14 462 57 fishertable 550 14 178 61 " +
-            "pcatable 736 14 193 64 equarea 376 398 346 389 datatable 14 83 " +
-            "356 706 ams 50 50 100 100";
+            "demag true 374 85 348 311 zplot true 736 85 456 697 " +
+            "zplotlegend true 1060 14 130 49 sampletable true 14 14 462 57 " +
+            "fishertable true 550 14 178 61 pcatable true 736 14 193 64 " +
+            "equarea true 376 398 346 389 datatable true 14 83 356 543 " +
+            "ams true 222 633 147 154";
 
     static {
         final AffineTransform at = AffineTransform.getTranslateInstance(0, 0.18);
@@ -66,7 +71,7 @@ public abstract class Plot
     }
 
     public void setDimensionsToDefault() {
-        this.dimensions = dimensionsFromPrefsString(DEFAULT_PLOT_POSITIONS);
+        setDimensionsFromPrefsString(DEFAULT_PLOT_POSITIONS);
     }
 
     public int getMargin() {
@@ -165,9 +170,14 @@ public abstract class Plot
         this.params = params;
         String sizesString = DEFAULT_PLOT_POSITIONS;
         if (prefs != null) sizesString = prefs.get("plotSizes", DEFAULT_PLOT_POSITIONS);
-        dimensions = dimensionsFromPrefsString(sizesString);
+        try {
+            setDimensionsFromPrefsString(sizesString);
+        } catch (NoSuchElementException e) {
+            logger.log(Level.WARNING, "Error parsing plot size", e);
+            // safe to continue, default will be set below
+        }
         // We may have a sizes string in the prefs but without this specific plot
-        if (dimensions==null) dimensions = dimensionsFromPrefsString(DEFAULT_PLOT_POSITIONS);
+        if (dimensions==null) setDimensionsFromPrefsString(DEFAULT_PLOT_POSITIONS);
         float maxDim = 800;
         // TODO fix this; parent should never be null (see FisherEqAreaPlot).
         if (parent != null) {
@@ -180,31 +190,31 @@ public abstract class Plot
                 0, 0, 1, new float[]{2, 2}, 0);
         attributeMap.put(TextAttribute.FAMILY, "SansSerif");
         attributeMap.put(TextAttribute.SIZE, getFontSize());
-        setVisible(true);
     }
 
-    private Rectangle2D dimensionsFromPrefsString(String spec) {
+    private void setDimensionsFromPrefsString(String spec) {
         final Scanner scanner = new Scanner(spec);
         scanner.useLocale(Locale.ENGLISH); // use `.' for decimals
         while (scanner.hasNext()) {
             String plotName = scanner.next();
             if (getName().equals(plotName)) {
+                setVisible(scanner.nextBoolean());
                 double x = scanner.nextDouble();
                 double y = scanner.nextDouble();
                 double w = scanner.nextDouble();
                 double h = scanner.nextDouble();
-                return new Rectangle2D.Double(x, y, w, h);
+                dimensions = new Rectangle2D.Double(x, y, w, h);
             } else {
-                for (int i=0; i<4; i++) scanner.next();
+                for (int i=0; i<5; i++) scanner.next();
             }
         }
-        return null;
     }
 
     public String dimensionsAsString() {
         Rectangle2D r = dimensions;
         // Explicit locale to ensure . for decimal separator
-        return String.format(Locale.ENGLISH, "%f %f %f %f ",
+        return String.format(Locale.ENGLISH, "%b %f %f %f %f ",
+                isVisible(),
                 r.getMinX(), r.getMinY(),
                 r.getWidth(), r.getHeight());
     }
