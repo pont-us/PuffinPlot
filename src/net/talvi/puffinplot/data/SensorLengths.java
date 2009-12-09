@@ -1,51 +1,91 @@
 package net.talvi.puffinplot.data;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Scanner;
 import java.util.prefs.Preferences;
 import static java.lang.Double.parseDouble;
 
 public class SensorLengths {
 
-    private final String[] lengths;
-    private final static HashMap<String, SensorLengths> PRESETS =
-            new LinkedHashMap<String, SensorLengths>();
+    private String preset;
+    private final List<String> lengths;
+    private final static HashMap<String, List<String>> PRESETS =
+            new LinkedHashMap<String, List<String>>();
 
     static {
-        PRESETS.put("Equal", new SensorLengths("1", "1", "1"));
-        PRESETS.put("OPRF (old)", new SensorLengths("-4.628", "4.404", "-6.280"));
-        PRESETS.put("OPRF (new)", new SensorLengths("4.628", "-4.404", "-6.280"));
+        addPreset("1:1:1", "1", "1", "1");
+        addPreset("OPRF (old)", "-4.628", "4.404", "-6.280");
+        addPreset("OPRF (new)", "4.628", "-4.404", "-6.280");
     }
 
-    private SensorLengths(String[] lengths) {
-        this.lengths = lengths;
+    private static void addPreset(String name, String x, String y, String z) {
+        PRESETS.put(name, Arrays.asList(x, y, z));
+    }
+
+    private SensorLengths(String preset) {
+        this.preset = preset;
+        lengths = null;
     }
 
     private SensorLengths(String x, String y, String z) {
-        this.lengths = new String[] {x, y, z};
+        this.lengths = Arrays.asList(x, y, z);
     }
 
-    public String[] toStrings() {
-        return lengths;
+    public List<String> getLengths() {
+        return (preset == null) ? lengths : PRESETS.get(preset);
     }
 
     public Vec3 toVector() {
-        return new Vec3(parseDouble(lengths[0]),
-                parseDouble(lengths[1]), parseDouble(lengths[2]));
+        return new Vec3(parseDouble(lengths.get(0)),
+                parseDouble(lengths.get(1)), parseDouble(lengths.get(2)));
     }
 
     public void save(Preferences prefs) {
-        prefs.put("sensorLengthX", lengths[0]);
-        prefs.put("sensorLengthY", lengths[1]);
-        prefs.put("sensorLengthZ", lengths[2]);
+        prefs.put("sensorLengths", toString());
     }
 
     public static SensorLengths fromPrefs(Preferences prefs) {
-        final String[] l = new String[] {
-            prefs.get("sensorLengthX", "1"),
-            prefs.get("sensorLengthY", "1"),
-            prefs.get("sensorLengthZ", "1"),
-        };
-        return new SensorLengths(l);
+        return fromString(prefs.get("sensorLengths", "PRESET\t1:1:1"));
+    }
+
+    @Override
+    public String toString() {
+        return preset != null
+                ? "PRESET\t" + preset
+                : String.format("CUSTOM\t%s\t%s\t%s", lengths.get(0),
+                lengths.get(1), lengths.get(2));
+    }
+
+    public static SensorLengths fromString(String s) {
+        Scanner sc = new Scanner(s);
+        sc.useDelimiter("\t");
+        String type = sc.next();
+        if ("PRESET".equals(type)) {
+            String preset = sc.next();
+            return SensorLengths.fromPresetName(preset);
+        } else if ("CUSTOM".equals(type)) {
+            return SensorLengths.fromStrings(sc.next(), sc.next(), sc.next());
+        } else {
+            throw new IllegalArgumentException("Unknown SensorLengths type "+type);
+        }
+    }
+
+    public static SensorLengths fromStrings(String x, String y, String z) {
+        return new SensorLengths(x, y, z);
+    }
+
+    public static String[] getPresetNames() {
+        return PRESETS.keySet().toArray(new String[] {});
+    }
+
+    public static SensorLengths fromPresetName(String name) {
+        return new SensorLengths(name);
+    }
+
+    public String getPreset() {
+        return preset;
     }
 }

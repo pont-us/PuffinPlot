@@ -15,7 +15,9 @@ public class PuffinPrefs {
     private HashMap<String,Rectangle2D> plotSizes =
             new HashMap<String, Rectangle2D>();
     private Preferences prefs = Preferences.userNodeForPackage(PuffinPrefs.class);
-    
+    private SensorLengths sensorLengths;
+    private boolean twoPosProtocol;
+
     public PuffinPrefs() {
         load();
     }
@@ -30,6 +32,14 @@ public class PuffinPrefs {
 
     public void setAxisScaleLocked(boolean axisScaleLocked) {
         this.axisScaleLocked = axisScaleLocked;
+    }
+
+    public SensorLengths getSensorLengths() {
+        return sensorLengths;
+    }
+
+    public void setSensorLengths(SensorLengths sensorLengths) {
+        this.sensorLengths = sensorLengths;
     }
 
     public boolean isPcaAnchored() {
@@ -48,7 +58,8 @@ public class PuffinPrefs {
 
     public void load() {
         PuffinApp.getInstance().setRecentFiles(new RecentFileList(getPrefs()));
-        PuffinApp.getInstance().setSensorLengths(SensorLengths.fromPrefs(prefs));
+        setSensorLengths(SensorLengths.fromPrefs(prefs));
+        twoPosProtocol = prefs.getBoolean("twoPosProtocol", false);
     }
     
     public void save() {
@@ -57,6 +68,15 @@ public class PuffinPrefs {
         app.getRecentFiles().save(p);
         p.put("plotSizes", app.getMainWindow().getGraphDisplay().getPlotSizeString());
         p.put("correction", app.getCorrection().toString());
-        app.getSensorLengths().save(prefs);
+        getSensorLengths().save(prefs);
+        p.putBoolean("twoPosProtocol", twoPosProtocol);
+    }
+
+    public boolean getTwoPosProtocol() {
+        return twoPosProtocol;
+    }
+
+    public void setTwoPosProtocol(boolean twoPosProtocol) {
+        this.twoPosProtocol = twoPosProtocol;
     }
 }

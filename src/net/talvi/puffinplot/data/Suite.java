@@ -211,7 +211,7 @@ public class Suite {
             case TWOGEE:
             case PUFFINPLOT_1:
                 TwoGeeLoader twoGeeLoader = new TwoGeeLoader(file, true);
-                twoGeeLoader.setSensorLengths(PuffinApp.getInstance().getSensorLengths().toVector());
+                twoGeeLoader.setSensorLengths(PuffinApp.getInstance().getPrefs().getSensorLengths().toVector());
                 loader = twoGeeLoader;
                 break;
             case PUFFINPLOT_2:

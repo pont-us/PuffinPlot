@@ -60,7 +60,7 @@ public class PuffinApp {
     private final FisherWindow fisherWindow;
     private final CorrectionWindow correctionWindow;
     private RecentFileList recentFiles;
-    private SensorLengths sensorLengths;
+
 
     static {
         final Handler logStringHandler =
@@ -172,14 +172,6 @@ public class PuffinApp {
 
     GreatCircleWindow getGreatCircleWindow() {
         return greatCircleWindow;
-    }
-
-    public SensorLengths getSensorLengths() {
-        return sensorLengths;
-    }
-
-    public void setSensorLengths(SensorLengths sensorLengths) {
-        this.sensorLengths = sensorLengths;
     }
 
     private static class ExceptionHandler implements UncaughtExceptionHandler {
