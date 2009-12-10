@@ -26,3 +26,25 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - assigned to release 1.1 from unassigned
   - ""
+- - 2009-12-09 23:03:31.131139 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    Would JavaHelp be the right thing to use for displaying the
+    documentation? Could just do it in HTML and put it online, but users
+    may want to read it offline.
+- - 2009-12-09 23:18:59.872660 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    JavaHelp looks a little heavyweight -- even the jhbasic jar is ~400kB,
+    around twice the size of PuffinPlot! What about writing docs in
+    AsciiDoc or similar, putting HTML version online, and providing
+    HTML and PDF versions for download?
+- - 2009-12-09 23:33:32.637277 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    AsciiDoc looks promising actually -- can generate chunked HTML via
+    DocBook. Processing will obviously be a bit heavyweight since it needs
+    a DocBook toolchain, but output shouldn't be too big.
