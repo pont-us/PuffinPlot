@@ -123,6 +123,9 @@ public class TwoGeeLoader extends AbstractFileLoader {
 
     private Datum readDatum(String line, int lineNumber) {
         Datum d = null;
+        if (line == null) {
+            throw new IllegalArgumentException("null line in readDatum");
+        }
         if (emptyLine.matcher(line).matches()) return null;
         try {
             d = lineToDatum(line, lineNumber);

@@ -39,8 +39,9 @@ public class SensorLengths {
     }
 
     public Vec3 toVector() {
-        return new Vec3(parseDouble(lengths.get(0)),
-                parseDouble(lengths.get(1)), parseDouble(lengths.get(2)));
+        List<String> l = getLengths();
+        return new Vec3(parseDouble(l.get(0)), parseDouble(l.get(1)),
+                parseDouble(l.get(2)));
     }
 
     public void save(Preferences prefs) {

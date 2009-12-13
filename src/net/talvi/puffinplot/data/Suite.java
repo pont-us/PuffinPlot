@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
 import net.talvi.puffinplot.PuffinApp;
+import net.talvi.puffinplot.PuffinPrefs;
 import net.talvi.puffinplot.data.file.FileLoader;
 import net.talvi.puffinplot.data.file.Ppl2Loader;
 import net.talvi.puffinplot.data.file.TwoGeeLoader;
@@ -183,6 +184,7 @@ public class Suite {
      */
     public Suite(List<File> files) throws IOException {
         app = PuffinApp.getInstance();
+        final PuffinPrefs prefs = app.getPrefs();
         assert(files.size() > 0);
         if (files.size() == 1) suiteName = files.get(0).getName();
         else suiteName = files.get(0).getParentFile().getName();
@@ -210,8 +212,8 @@ public class Suite {
             switch (fileType) {
             case TWOGEE:
             case PUFFINPLOT_1:
-                TwoGeeLoader twoGeeLoader = new TwoGeeLoader(file, true);
-                twoGeeLoader.setSensorLengths(PuffinApp.getInstance().getPrefs().getSensorLengths().toVector());
+                TwoGeeLoader twoGeeLoader = new TwoGeeLoader(file, prefs.getTwoPosProtocol());
+                twoGeeLoader.setSensorLengths(prefs.getSensorLengths().toVector());
                 loader = twoGeeLoader;
                 break;
             case PUFFINPLOT_2:
