@@ -18,3 +18,11 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2009-12-13 08:45:48.231479 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    Also, is the correct run number being picked for the tray reading?
+    -- that is, the most recent one before the datum for which the correction
+    is needed. I see some odd behaviour when toggling the tray correction for
+    the tray samples themselves.
