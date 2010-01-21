@@ -254,8 +254,8 @@ public class Suite {
                 emptyTraySamples.add(samplesById.get(slotId));
                 slot++;
             }
+            guessSites(); // sites aren't saved yet so we just re-guess on load
         }
-        guessSites(); // sites aren't saved yet so we just re-guess on load
         doSampleCalculations();
     }
     

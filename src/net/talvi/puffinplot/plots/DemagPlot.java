@@ -92,7 +92,7 @@ public class DemagPlot extends Plot {
             i++;
         }
 
-        if (midpoint != null) {
+        if (midpoint != null && midpoint.isHalfIntReached()) {
             final double xPos = dim.getMinX() + midpoint.getDemagLevel() * hScale;
             final double yPos = dim.getMaxY() - midpoint.getIntensity() * vScale;
             g.draw(new Line2D.Double(dim.getMinX(), yPos,
