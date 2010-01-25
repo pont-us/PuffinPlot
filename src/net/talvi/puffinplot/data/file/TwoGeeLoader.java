@@ -24,9 +24,10 @@ public class TwoGeeLoader extends AbstractFileLoader {
     private LineNumberReader reader;
     private final boolean twoPosition;
 
-    public TwoGeeLoader(File file, boolean twoPosition) {
+    public TwoGeeLoader(File file, boolean twoPosition, Vec3 sensorLengths) {
         this.file = file;
         this.twoPosition = twoPosition;
+        setSensorLengths(sensorLengths);
         try {
             reader = new LineNumberReader(new FileReader(file));
             readFile();
@@ -117,7 +118,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
         return tray;
     }
 
-    public void setSensorLengths(Vec3 v) {
+    private void setSensorLengths(Vec3 v) {
         sensorLengths = v;
     }
 
