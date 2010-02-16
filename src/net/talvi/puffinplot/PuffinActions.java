@@ -508,4 +508,12 @@ public class PuffinActions {
             }
         }
     };
+
+        public final Action reversalTest = new PuffinAction("Reversal test",
+            "Perform reversal test on all loaded suites", null, false,
+            KeyEvent.VK_V) {
+        public void actionPerformed(ActionEvent e) {
+            Suite.doReversalsTest(app.getSuites());
+        }
+    };
 }

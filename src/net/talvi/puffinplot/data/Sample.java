@@ -195,7 +195,8 @@ public class Sample {
         checkDiscrete();
         String n = getNameOrDepth();
         int len = n.length();
-        return len - n.charAt(len-2) == '.' ? len-5 : len-4;
+        int splitAt =  len - n.charAt(len-2) == '.' ? len-5 : len-4;
+        return (splitAt >= 0) ? splitAt : 0;
     }
 
     public String getSiteId() {

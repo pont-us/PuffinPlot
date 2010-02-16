@@ -446,4 +446,18 @@ public class Suite {
             }
         }
     }
+
+    public static void doReversalsTest(List<Suite> suites) {
+        List<Vec3> normal = new ArrayList<Vec3>(), reversed = new ArrayList<Vec3>();
+        for (Suite suite: suites) {
+            for (Sample sample: suite.getSamples()) {
+                PcaValues pca = sample.getPcaValues();
+                if (pca != null) {
+                 (pca.getDirection().z > 0 ? normal : reversed).add(pca.getDirection());
+                }
+            }
+        }
+        FisherValues fisherNormal = FisherValues.calculate(normal);
+        FisherValues fisherReversed = FisherValues.calculate(reversed);
+    }
 }
