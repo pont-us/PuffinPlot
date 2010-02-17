@@ -1,12 +1,10 @@
 package net.talvi.puffinplot;
 
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.data.SensorLengths;
-import net.talvi.puffinplot.data.Vec3;
+import net.talvi.puffinplot.data.file.TwoGeeLoader;
 
 public class PuffinPrefs {
 
@@ -16,7 +14,7 @@ public class PuffinPrefs {
             new HashMap<String, Rectangle2D>();
     private Preferences prefs = Preferences.userNodeForPackage(PuffinPrefs.class);
     private SensorLengths sensorLengths;
-    private boolean twoPosProtocol;
+    private TwoGeeLoader.Protocol twoGeeProtocol;
 
     public PuffinPrefs() {
         load();
@@ -59,7 +57,7 @@ public class PuffinPrefs {
     public void load() {
         PuffinApp.getInstance().setRecentFiles(new RecentFileList(getPrefs()));
         setSensorLengths(SensorLengths.fromPrefs(prefs));
-        twoPosProtocol = prefs.getBoolean("twoPosProtocol", false);
+        twoGeeProtocol = TwoGeeLoader.Protocol.valueOf(prefs.get("measurementProtocol", "NORMAL"));
     }
     
     public void save() {
@@ -69,14 +67,14 @@ public class PuffinPrefs {
         p.put("plotSizes", app.getMainWindow().getGraphDisplay().getPlotSizeString());
         p.put("correction", app.getCorrection().toString());
         getSensorLengths().save(prefs);
-        p.putBoolean("twoPosProtocol", twoPosProtocol);
+        p.put("measurementProtocol", twoGeeProtocol.name());
     }
 
-    public boolean getTwoPosProtocol() {
-        return twoPosProtocol;
+    public TwoGeeLoader.Protocol get2gProtocol() {
+        return twoGeeProtocol;
     }
 
-    public void setTwoPosProtocol(boolean twoPosProtocol) {
-        this.twoPosProtocol = twoPosProtocol;
+    public void set2gProtocol(TwoGeeLoader.Protocol p) {
+        this.twoGeeProtocol = p;
     }
 }

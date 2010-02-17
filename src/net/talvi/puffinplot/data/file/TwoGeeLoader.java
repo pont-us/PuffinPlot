@@ -22,11 +22,17 @@ public class TwoGeeLoader extends AbstractFileLoader {
     private static final int MAX_WARNINGS = 10;
     private final File file;
     private LineNumberReader reader;
-    private final boolean twoPosition;
+    private final Protocol protocol;
 
-    public TwoGeeLoader(File file, boolean twoPosition, Vec3 sensorLengths) {
+    public enum Protocol {
+        NORMAL,
+        TRAY_NORMAL,
+        TRAY_NORMAL_YFLIP;
+    }
+    
+    public TwoGeeLoader(File file, Protocol protocol, Vec3 sensorLengths) {
         this.file = file;
-        this.twoPosition = twoPosition;
+        this.protocol = protocol;
         setSensorLengths(sensorLengths);
         try {
             reader = new LineNumberReader(new FileReader(file));
@@ -71,16 +77,24 @@ public class TwoGeeLoader extends AbstractFileLoader {
                         }
                     }
                 } else {
-                    if (twoPosition) {
-                    /* We're using the two-position measurement protocol,
-                     * so we will read three lines (tray, normal, y-flipped)
-                     * and synthesize a Datum from them. */
-                    final Datum tray = d;
-                    final Datum normal = readDatum(reader.readLine(), reader.getLineNumber());
-                    final Datum reversed = readDatum(reader.readLine(), reader.getLineNumber());
-                    data.add(combine(tray, normal, reversed));
-                    } else {
-                        data.add(d);
+                    Datum tray, normal, yflip;
+                    switch (protocol) {
+                        case NORMAL:
+                            data.add(d);
+                            break;
+                        case TRAY_NORMAL:
+                            tray = d;
+                            normal = readDatum(reader.readLine(), reader.getLineNumber());
+                            data.add(combine2(tray, normal));
+                            break;
+                        case TRAY_NORMAL_YFLIP:
+                            tray = d;
+                            normal = readDatum(reader.readLine(), reader.getLineNumber());
+                            /* We're using the two-position measurement protocol,
+                             * so we will read three lines (tray, normal, y-flipped)
+                             * and synthesize a Datum from them. */
+                            yflip = readDatum(reader.readLine(), reader.getLineNumber());
+                            data.add(combine3(tray, normal, yflip));
                     }
                 }
             }
@@ -91,7 +105,21 @@ public class TwoGeeLoader extends AbstractFileLoader {
         }
     }
 
-    private Datum combine(Datum tray, Datum normal, Datum reversed) {
+    private Datum combine2(Datum tray, Datum normal) {
+        /* Subtract a tray measurement from a sample measurement
+         */
+
+        final Vec3 trayV = tray.getMoment(Correction.NONE);
+        final Vec3 normV = normal.getMoment(Correction.NONE);
+        // The volume correction's already been applied on loading.
+
+        // Just change the moment in the tray datum, retain all other
+        // fields, and return the tray datum.
+        tray.setMoment(normV.minus(trayV));
+        return tray;
+    }
+
+    private Datum combine3(Datum tray, Datum normal, Datum reversed) {
         /* We'll keep the rest of the data from the first (tray)
          * measurement, and just poke in the magnetic moment vector
          * calculated from the three readings.

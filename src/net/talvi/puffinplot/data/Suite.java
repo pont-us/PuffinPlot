@@ -213,7 +213,7 @@ public class Suite {
             case TWOGEE:
             case PUFFINPLOT_1:
                 TwoGeeLoader twoGeeLoader =
-                        new TwoGeeLoader(file, prefs.getTwoPosProtocol(),
+                        new TwoGeeLoader(file, prefs.get2gProtocol(),
                         prefs.getSensorLengths().toVector());
                 loader = twoGeeLoader;
                 break;
