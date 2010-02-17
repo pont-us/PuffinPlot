@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Shortcut key for copy point selection
+desc: ""
+type: :feature
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2010-02-17 23:00:48.503194 Z
+references: []
+
+id: 0207227d628dc475120a9b4e5abd9241d7cc7f0d
+log_events: 
+- - 2010-02-17 23:00:48.957921 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

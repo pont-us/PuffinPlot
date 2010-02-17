@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Add a hysteresis plot
+desc: ""
+type: :feature
+component: PuffinPlot
+release: "1.1"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2009-12-02 22:37:23.845682 Z
+references: []
+
+id: 64d20b8de2efa18780ee819dda877c2ddc5d586c
+log_events: 
+- - 2009-12-02 22:37:24.232197 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
