@@ -366,7 +366,7 @@ public class PuffinActions {
     };
 
     public final Action copyPointSelection = new PuffinAction("Copy point selection",
-            "Select these points for every selected sample", null, false, KeyEvent.VK_P) {
+            "Select these points for every selected sample", 'C', true, KeyEvent.VK_P) {
         public void actionPerformed(ActionEvent e) {
             Sample source = app.getSample();
             if (source != null) {
