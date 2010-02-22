@@ -17,8 +17,8 @@ class PlotAxis {
     private final AxisParameters ap;
 
     static enum Direction {
-        RIGHT("R","E", 0), UP("D","S", 1),
-        LEFT("L","W", 2), DOWN("U","N", 3);
+        RIGHT("R","E", 0), UP("U","N", 1),
+        LEFT("L","W", 2), DOWN("D","S", 3);
         
         private final String letter;
         private final String compassDir;
