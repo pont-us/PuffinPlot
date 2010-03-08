@@ -158,12 +158,13 @@ public class Suite {
     }
 
     private List<File> expandDirs(List<File> files) {
-        List<File> result = new LinkedList<File>();
+        List<File> result = new ArrayList<File>();
         for (File file: files) {
             if (file.isDirectory())
                 result.addAll(expandDirs(Arrays.asList(file.listFiles())));
             else result.add(file);
         }
+        Collections.sort(result);
         return result;
     }
 

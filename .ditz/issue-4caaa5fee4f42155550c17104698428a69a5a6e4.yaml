@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Improve slot number calculation
+desc: ""
+type: :bugfix
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2010-03-08 19:59:45.812198 Z
+references: []
+
+id: 4caaa5fee4f42155550c17104698428a69a5a6e4
+log_events: 
+- - 2010-03-08 19:59:47.228139 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

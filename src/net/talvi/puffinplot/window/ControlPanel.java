@@ -162,7 +162,8 @@ public class ControlPanel extends JPanel
 
     public void itemStateChanged(ItemEvent e) {
         final Object s = e.getSource();
-        if (s == rotationBox || s == trayButton || s == emptyButton) {
+        if (s == rotationBox || s == trayButton || s == emptyButton ||
+                s == vVsBox) {
             app.setCorrection(getCorrection());
             app.redoCalculations();
             app.getMainWindow().repaint();

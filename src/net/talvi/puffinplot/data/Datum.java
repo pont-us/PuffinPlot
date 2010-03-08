@@ -256,6 +256,7 @@ public class Datum {
         case ARM_AXIS: return armAxis.toString();
         case TIMESTAMP: return timestamp;
         case RUN_NUMBER: return Integer.toString(runNumber);
+        case SLOT_NUMBER: return Integer.toString(slotNumber);
         case AREA: return fmt(area);
         case PP_SELECTED: return Boolean.toString(selected);
         case PP_ANCHOR_PCA: return Boolean.toString(isPcaAnchored());
@@ -290,6 +291,7 @@ public class Datum {
         case TREATMENT: treatType = TreatType.fromString(s); break;
         case ARM_AXIS: armAxis = ArmAxis.fromString(s); break;
         case TIMESTAMP: timestamp = s; break;
+        case SLOT_NUMBER: slotNumber = Integer.parseInt(s); break;
         case RUN_NUMBER: runNumber = Integer.parseInt(s); break;
         case AREA: area = Double.parseDouble(s); break;
         case PP_SELECTED: selected = Boolean.parseBoolean(s); break;
@@ -300,8 +302,6 @@ public class Datum {
         default: throw new IllegalArgumentException("Unknown field "+field);
         }
     }
-
-
 
     public static class Reader {
 

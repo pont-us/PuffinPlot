@@ -14,6 +14,7 @@ public enum DatumField {
     DEPTH("Depth"),
     RUN_NUMBER("Run #"),
     TIMESTAMP("Sample Timestamp"),
+    SLOT_NUMBER("Tray slot number"),
 
     // Lab measurements
     MEAS_TYPE("Measurement type"),
