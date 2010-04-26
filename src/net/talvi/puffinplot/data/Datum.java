@@ -227,6 +227,10 @@ public class Datum {
                 getMeasType() == MeasType.NONE;
     }
 
+    public boolean hasMagMoment() {
+        return moment != null;
+    }
+
     private String fmt(Double d) {
         return Double.toString(d);
     }

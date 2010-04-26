@@ -27,6 +27,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
     public enum Protocol {
         NORMAL,
         TRAY_NORMAL,
+        NORMAL_TRAY,
         TRAY_NORMAL_YFLIP;
     }
     
@@ -60,6 +61,8 @@ public class TwoGeeLoader extends AbstractFileLoader {
         String line;
         while ((line = reader.readLine()) != null) {
             final Datum d = readDatum(line, reader.getLineNumber());
+            // skip lines containing no data at all
+            if (!d.hasMagSus() && !d.hasMagMoment()) continue;
             if (d != null) {
                 if (d.isMagSusOnly()) {
                     /* The only way we can tie a mag. sus. value to a
@@ -85,6 +88,11 @@ public class TwoGeeLoader extends AbstractFileLoader {
                         case TRAY_NORMAL:
                             tray = d;
                             normal = readDatum(reader.readLine(), reader.getLineNumber());
+                            data.add(combine2(tray, normal));
+                            break;
+                        case NORMAL_TRAY:
+                            normal = d;
+                            tray = readDatum(reader.readLine(), reader.getLineNumber());
                             data.add(combine2(tray, normal));
                             break;
                         case TRAY_NORMAL_YFLIP:
