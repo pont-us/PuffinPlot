@@ -88,12 +88,12 @@ public class TwoGeeLoader extends AbstractFileLoader {
                         case TRAY_NORMAL:
                             tray = d;
                             normal = readDatum(reader.readLine(), reader.getLineNumber());
-                            data.add(combine2(tray, normal));
+                            data.add(combine2(tray, normal, true));
                             break;
                         case NORMAL_TRAY:
                             normal = d;
                             tray = readDatum(reader.readLine(), reader.getLineNumber());
-                            data.add(combine2(tray, normal));
+                            data.add(combine2(tray, normal, false));
                             break;
                         case TRAY_NORMAL_YFLIP:
                             tray = d;
@@ -113,18 +113,14 @@ public class TwoGeeLoader extends AbstractFileLoader {
         }
     }
 
-    private Datum combine2(Datum tray, Datum normal) {
-        /* Subtract a tray measurement from a sample measurement
-         */
-
+    /** Subtract a tray measurement from a sample measurement */
+    private Datum combine2(Datum tray, Datum normal, boolean useTrayData) {
         final Vec3 trayV = tray.getMoment(Correction.NONE);
         final Vec3 normV = normal.getMoment(Correction.NONE);
         // The volume correction's already been applied on loading.
-
-        // Just change the moment in the tray datum, retain all other
-        // fields, and return the tray datum.
-        tray.setMoment(normV.minus(trayV));
-        return tray;
+        Datum result = useTrayData ? tray : normal;
+        result.setMoment(normV.minus(trayV));
+        return result;
     }
 
     private Datum combine3(Datum tray, Datum normal, Datum reversed) {
