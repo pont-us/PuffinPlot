@@ -77,7 +77,6 @@ public class Vec3 {
 
     /* Return true iff the supplied vector is in the same (upper/lower)
      * hemisphere as this one.
-     *
      */
     public boolean sameHemisphere(Vec3 v) {
         return signum(z) == signum(v.z);
@@ -86,7 +85,6 @@ public class Vec3 {
     /* Given two vectors, interpolates unit vectors along a great circle.
      * Uses Shoemake's Slerp algorithm.
      */
-
     public static Vec3[] spherInterpolate(Vec3 v0, Vec3 v1, double stepSize) {
         Vec3 v0n = v0.normalize();
         Vec3 v1n = v1.normalize();
@@ -165,13 +163,8 @@ public class Vec3 {
         
         return transform(m3).transform(m2).transform(m1);
      */
-    
     public Vec3 correctForm(double az, double dip) {
-        final double sd = sin(dip);
-        final double sa = sin(az);
-        final double cd = cos(dip);
-        final double ca = cos(az);
-        return correctPlane(sd, sa, cd, ca);
+        return correctPlane(sin(dip), sin(az), cos(dip), cos(az));
     }
 
     /**
@@ -189,6 +182,14 @@ public class Vec3 {
         return v.correctPlane(d, y/d, z, x/d);
     }
 
+    private Vec3 correctPlane(double sd, double sa, double cd, double ca) {
+        final double[][] matrix =
+            {{ ca*cd*ca+sa*sa,  cd*sa*ca-sa*ca, sd*ca},
+            {  sa*cd*ca-ca*sa,  cd*sa*sa+ca*ca, sd*sa},
+            { -ca*sd,          -sa*sd,          cd}};
+        return transform(matrix);
+    }
+    
     /**
      * Returns a list of equally spaced points around a great circle
      * having this vector as its pole. Assumes that this is a unit
@@ -205,14 +206,6 @@ public class Vec3 {
         return points;
     }
 
-    private Vec3 correctPlane(double sd, double sa, double cd, double ca) {
-        final double[][] matrix =
-            {{ca*cd*ca+sa*sa, cd*sa*ca-sa*ca, sd*ca},
-            {sa*cd*ca-ca*sa, cd*sa*sa+ca*ca, sd*sa},
-            {-ca*sd, -sa*sd, cd}};
-        return transform(matrix);
-    }
-    
     public Vec3 transform(double[][] matrix) {
         final double[][] m = matrix;
         return new Vec3(
@@ -220,7 +213,6 @@ public class Vec3 {
                 x * m[1][0] + y * m[1][1] + z * m[1][2],
                 x * m[2][0] + y * m[2][1] + z * m[2][2]);
     }
-
 
     /**
      * Using the enclosing vector to define the pole of a great circle G, this
