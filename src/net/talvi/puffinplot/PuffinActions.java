@@ -263,7 +263,7 @@ public class PuffinActions {
     };
 
     public final Action fisher = new PuffinAction("Fisher on sample",
-            "Calculate Fisher statistics for selected points", null, false,
+            "Calculate Fisher statistics for selected points", 'F', true,
             KeyEvent.VK_A) {
         public void actionPerformed(ActionEvent e) {
             Sample s = app.getSample();
