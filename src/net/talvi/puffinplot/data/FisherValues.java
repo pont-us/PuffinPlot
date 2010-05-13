@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import static java.lang.Math.acos;
 import static java.lang.Math.pow;
@@ -60,6 +59,19 @@ public class FisherValues {
         return Arrays.asList(fmt(getMeanDirection().getIncDeg()),
                 fmt(getMeanDirection().getDecDeg()), fmt(getA95()),
                 fmt(getK()));
+    }
+
+    @Override
+    public String toString() {
+        List<String> values = toStrings();
+        StringBuilder result = new StringBuilder();
+        boolean first = true;
+        for (int i=0; i<values.size(); i++) {
+            if (!first) result.append(" / ");
+            result.append(getHeaders().get(i).replace("Fisher ", "") + " " + values.get(i));
+            first = false;
+        }
+        return result.toString();
     }
 
     public static List<String> getHeaders() {

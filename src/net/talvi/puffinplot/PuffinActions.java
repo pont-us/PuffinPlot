@@ -20,8 +20,11 @@ import javax.print.PrintService;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileFilter;
+import net.talvi.puffinplot.data.FisherValues;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
 
@@ -509,11 +512,17 @@ public class PuffinActions {
         }
     };
 
-        public final Action reversalTest = new PuffinAction("Reversal test",
+    public final Action reversalTest = new PuffinAction("Reversal test",
             "Perform reversal test on all loaded suites", null, false,
             KeyEvent.VK_V) {
         public void actionPerformed(ActionEvent e) {
-            Suite.doReversalsTest(app.getSuites());
+            List<FisherValues> fv = Suite.doReversalsTest(app.getSuites());
+            System.out.println(fv.get(0));
+            System.out.println(fv.get(1));
+                    JOptionPane.showMessageDialog
+        (app.getMainWindow(), new JTextArea("Normal " +fv.get(0).toString() +
+                            "\nReversed: "+fv.get(1).toString()),
+                            "Reversals test", JOptionPane.INFORMATION_MESSAGE);
         }
     };
 }

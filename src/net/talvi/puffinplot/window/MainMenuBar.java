@@ -104,7 +104,8 @@ public class MainMenuBar extends JMenuBar {
         add(makeMenu("Calculations",
                 pa.pcaOnSelection, anchorItem = new AnchorItem(),
                 pa.fisher, pa.fisherBySite, pa.fisherOnSuite,
-                pa.mdf, pa.clear, pa.circleFit, pa.greatCircleAnalysis));
+                pa.mdf, pa.clear, pa.circleFit, pa.greatCircleAnalysis,
+                pa.reversalTest));
         add(makeMenu("Window",
                 new WindowMenuItem("Data table")
                 { JFrame window(PuffinApp a) {return a.getTableWindow();}},

@@ -35,7 +35,6 @@ import static java.lang.Thread.UncaughtExceptionHandler;
 
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Sample;
-import net.talvi.puffinplot.data.SensorLengths;
 import net.talvi.puffinplot.data.Site;
 import net.talvi.puffinplot.window.GreatCircleWindow;
 import net.talvi.puffinplot.window.PrefsWindow;
