@@ -1,0 +1,23 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Redo the 2G file loader
+desc: |-
+  2G file loader is the right place to have things like
+  sensor lengths and measurement protocol. Christian also wants it
+  to be able to recalculate the moments from the ind/dec/int data,
+  since the file doesn't (I believe) store the sensor-length-corrected
+  cartesian components of the moment.
+type: :task
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2010-05-13 06:02:56.686559 Z
+references: []
+
+id: f16d4796d205c97daeb5ecf17a69a3c27b1c8ca6
+log_events: 
+- - 2010-05-13 06:02:57.578448 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
