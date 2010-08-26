@@ -198,6 +198,9 @@ public class DepthSlider extends JPanel
             if (v - getRangeStart() < getRangeEnd() - v) rangeStart = v;
             else rangeEnd = v;
         } else if (v > getRangeEnd()) rangeEnd = v;
+        value = v;
+        notifyChangeListeners();
+        repaint();
     }
 
     private int yposToValue(double yPos) {
