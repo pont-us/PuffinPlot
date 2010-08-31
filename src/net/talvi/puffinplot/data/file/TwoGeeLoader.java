@@ -4,9 +4,14 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Datum;
@@ -16,6 +21,7 @@ import net.talvi.puffinplot.data.Vec3;
 
 public class TwoGeeLoader extends AbstractFileLoader {
 
+    private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
     private Vec3 sensorLengths = new Vec3(1, 1, 1);
     private Map<String,Integer> fields;
     private static final Pattern emptyLine = Pattern.compile("^\\s*$");
@@ -23,6 +29,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
     private final File file;
     private LineNumberReader reader;
     private final Protocol protocol;
+    private Set<String> requestedFields = new HashSet<String>();
 
     public enum Protocol {
         NORMAL,
@@ -111,6 +118,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
                 break;
             }
         }
+        correlateFields();
     }
 
     private Datum combine2(Datum tray, Datum normal) {
@@ -154,6 +162,24 @@ public class TwoGeeLoader extends AbstractFileLoader {
         return tray;
     }
 
+    /**
+     * Cross-correlate which fields have been requested during loading
+     * with which fields were present in the file, to produce a report
+     * on which fields which were (1) in the file but not requested and
+     * (2) requested but not found
+     */
+    private void correlateFields() {
+        Set<String> fileFieldSet = new HashSet(fields.keySet());
+        Set<String> notUsed = new HashSet(fileFieldSet);
+        notUsed.removeAll(requestedFields);
+        Set<String> notInFile = new HashSet(requestedFields);
+        notInFile.removeAll(fileFieldSet);
+        logger.info(String.format("Field headers in file %s\n" +
+                "Not found in file: %s\nIn file but ignored: %s", file,
+                Arrays.toString(notInFile.toArray()),
+                Arrays.toString(notUsed.toArray())));
+    }
+
     private void setSensorLengths(Vec3 v) {
         sensorLengths = v;
     }
@@ -174,18 +200,32 @@ public class TwoGeeLoader extends AbstractFileLoader {
     }
 
     private boolean fieldExists(String name) {
+        requestedFields.add(name);
         return fields.containsKey(name);
     }
 
     private class FieldReader {
 
         private String[] values;
+        
+        private class UnknownFieldException extends Exception {
+            private final String fieldName;
+            public UnknownFieldException(String fieldName) {
+                this.fieldName = fieldName;
+            }
+            public String getFieldName() {
+                return fieldName;
+            }
+        }
 
         FieldReader(String line) {
             values = line.split("\\t");
         }
 
-        private double getDouble(String name) {
+        private double getDouble(String name, double defaultValue) {
+            if (!fieldExists(name)) {
+                return defaultValue;
+            }
             String v = values[fields.get(name)];
             // catch the common case without using an expensive exception
             if ("NA".equals(v)) return Double.NaN;
@@ -193,8 +233,10 @@ public class TwoGeeLoader extends AbstractFileLoader {
             catch (NumberFormatException e) { return Double.NaN; }
         }
 
-
-        private int getInt(String name) {
+        private int getInt(String name, int defaultValue) {
+                        if (!fieldExists(name)) {
+                return defaultValue;
+            }
             String v = values[fields.get(name)];
             // catch the common case without using an expensive exception
             if ("NA".equals(v)) return 0;
@@ -202,7 +244,10 @@ public class TwoGeeLoader extends AbstractFileLoader {
             catch (NumberFormatException e) { return 0; }
         }
 
-        private String getString(String name) {
+        private String getString(String name, String defaultValue) {
+                        if (!fieldExists(name)) {
+                return defaultValue;
+            }
             return values[fields.get(name)];
         }
     }
@@ -211,14 +256,16 @@ public class TwoGeeLoader extends AbstractFileLoader {
         FieldReader r = new FieldReader(line);
         Datum d = new Datum();
 
-        final MeasType measType = MeasType.fromString(r.getString("Meas. type"));
+        final MeasType measType =
+                MeasType.fromString(r.getString("Meas. type", "DISCRETE"));
 
-        if (fieldExists("Area")) d.setArea(r.getDouble("Area"));
-        if (fieldExists("Volume")) d.setVolume(r.getDouble("Volume"));
-        if (fieldExists("X corr") && ! r.getString("X corr").equals("NA")) {
-            Vec3 moment = new Vec3(r.getDouble("X corr"),
-                    r.getDouble("Y corr"),
-                    r.getDouble("Z corr"));
+        d.setArea(r.getDouble("Area", d.getArea()));
+        d.setVolume(r.getDouble("Volume", d.getVolume()));
+        if (fieldExists("X corr") &&
+                !r.getString("X corr", "dummy").equals("NA")) {
+            Vec3 moment = new Vec3(r.getDouble("X corr", 0),
+                    r.getDouble("Y corr", 0),
+                    r.getDouble("Z corr", 0));
             switch (measType) {
             case CONTINUOUS:
                 moment = moment.divideBy(sensorLengths.times(d.getArea()));
@@ -229,30 +276,32 @@ public class TwoGeeLoader extends AbstractFileLoader {
             }
             d.setMoment(moment);
         }
-        d.setMagSus(r.getDouble("MS corr"));
-        if (fieldExists("Sample ID")) d.setDiscreteId(r.getString("Sample ID"));
+        d.setMagSus(r.getDouble("MS corr", d.getMagSus()));
+        d.setDiscreteId(r.getString("Sample ID", d.getDiscreteId()));
         if (fieldExists("Depth")) {
             if (measType == MeasType.DISCRETE) {
                 // For a discrete measurement, "Depth" actually contains the
                 // sum of the (meaningless) depth field and the slot number.
                 // We assume that the depth field was set to 1 (TODO: make
                 // this configurable) and use it to set the slot number.
-                d.setSlotNumber((int) (r.getDouble("Depth") - 1.0));
+                String depthString = r.getString("Depth", d.getDepth());
+                int depth = Integer.parseInt(depthString);
+                d.setSlotNumber(depth - 1);
             } else {
-                d.setDepth(r.getString("Depth"));
+                d.setDepth(r.getString("Depth", d.getDepth()));
             }
         }
         d.setMeasType(measType);
-        d.setTreatType(TreatType.fromString(r.getString("Treatment Type")));
-        d.setAfX(r.getDouble("AF X"));
-        d.setAfY(r.getDouble("AF Y"));
-        d.setAfZ(r.getDouble("AF Z"));
-        d.setTemp(r.getDouble("Temp C"));
-        d.setSampAz(r.getDouble("Sample Azimiuth")); // sic
-        d.setSampDip(r.getDouble("Sample Dip"));
-        d.setFormAz(r.getDouble("Formation Dip Azimuth"));
-        d.setFormDip(r.getDouble("Formation Dip"));
-        if (fieldExists("Mag Dev")) d.setMagDev(r.getDouble("Mag Dev"));
+        d.setTreatType(TreatType.fromString(r.getString("Treatment Type", "AF")));
+        d.setAfX(r.getDouble("AF X", d.getAfX()));
+        d.setAfY(r.getDouble("AF Y", d.getAfY()));
+        d.setAfZ(r.getDouble("AF Z", d.getAfZ()));
+        d.setTemp(r.getDouble("Temp C", d.getTemp()));
+        d.setSampAz(r.getDouble("Sample Azimiuth", d.getSampAz())); // sic
+        d.setSampDip(r.getDouble("Sample Dip", d.getSampDip()));
+        d.setFormAz(r.getDouble("Formation Dip Azimuth", d.getFormAz()));
+        d.setFormDip(r.getDouble("Formation Dip", d.getFormDip()));
+        d.setMagDev(r.getDouble("Mag Dev", d.getMagDev()));
         if (fieldExists("Run #")) {
             /* 2G discrete files don't store the run number; they store the
              * sum of the run number and the slot number in the run number
@@ -263,17 +312,17 @@ public class TwoGeeLoader extends AbstractFileLoader {
              * always given the same value, we can produce a corrected run
              * number.
              */
-            int runNumber = r.getInt("Run #");
+            int runNumber = r.getInt("Run #", 0);
             if (measType == MeasType.DISCRETE && d.getSlotNumber() != -1) {
                 runNumber -= d.getSlotNumber();
             }
             d.setRunNumber(runNumber);
         }
         if (fieldExists("Sample Timestamp"))
-            d.setTimestamp(r.getString("Sample Timestamp"));
-        if (fieldExists("X drift")) d.setXDrift(r.getDouble("X drift"));
-        if (fieldExists("Y drift")) d.setYDrift(r.getDouble("Y drift"));
-        if (fieldExists("Z drift")) d.setZDrift(r.getDouble("Z drift"));
+            d.setTimestamp(r.getString("Sample Timestamp", "UNKNOWN"));
+        d.setXDrift(r.getDouble("X drift", d.getXDrift()));
+        d.setYDrift(r.getDouble("Y drift", d.getYDrift()));
+        d.setZDrift(r.getDouble("Z drift", d.getZDrift()));
         return d;
     }
 }
