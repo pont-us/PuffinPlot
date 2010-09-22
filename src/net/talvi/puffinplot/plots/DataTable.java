@@ -11,6 +11,7 @@ import net.talvi.puffinplot.window.PlotParams;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.data.Sample;
+import net.talvi.puffinplot.data.TreatType;
 import static java.lang.String.format;
 
 public class DataTable extends Plot {
@@ -41,7 +42,7 @@ public class DataTable extends Plot {
         final Sample sample = params.getSample();
         if (sample==null) return;
         final List<Datum> data = sample.getData();
-        if (data.size() == 0) return;
+        if (data.isEmpty()) return;
 
         // final FontRenderContext frc = g.getFontRenderContext();
         points.add(new TextLinePoint(this, g, 0, null, headers, xSpacing));
@@ -51,8 +52,12 @@ public class DataTable extends Plot {
         for (Datum d: data) {
             final List<String> values = new ArrayList<String>(4);
             final Vec3 p = d.getMoment(params.getCorrection());
-            final String demag = useSequence ? Integer.toString(sequence)
+            String demag = useSequence ? Integer.toString(sequence)
                     : format("%.0f", d.getDemagLevel());
+            if (d.getTreatType() == TreatType.IRM) {
+                // turn T into mT
+                demag = format("%.0f", d.getDemagLevel() * 1000);
+            }
             values.add(demag);
             values.add(format("%.1f", p.getDecDeg()));
             values.add(format("%.1f", p.getIncDeg()));

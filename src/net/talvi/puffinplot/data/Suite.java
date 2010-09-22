@@ -267,7 +267,7 @@ public class Suite {
     public void saveCalcsSample(File file, Correction correction) {
         CsvWriter writer = null;
         try {
-            if (samples.size()==0) {
+            if (samples.isEmpty()) {
                 app.errorDialog("Error saving calculations",
                         "No calculations to save!");
                 return;

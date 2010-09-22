@@ -75,7 +75,7 @@ public class ZPlot extends Plot {
         final Sample sample = params.getSample();
         if (sample==null) return;
         final List<Datum> data = sample.getVisibleData();
-        if (data.size() == 0) return;
+        if (data.isEmpty()) return;
         
         clearPoints();
         final Correction correction = params.getCorrection();

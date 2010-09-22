@@ -6,7 +6,7 @@ import java.util.prefs.Preferences;
 import net.talvi.puffinplot.data.SensorLengths;
 import net.talvi.puffinplot.data.file.TwoGeeLoader;
 
-public class PuffinPrefs {
+public final class PuffinPrefs {
 
     private boolean axisScaleLocked;
     private boolean pcaAnchored;

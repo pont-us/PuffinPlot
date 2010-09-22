@@ -91,7 +91,7 @@ public class RecentFileList {
         @Override
         public String toString() {
             List<String> pathNames = getPathNames();
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append(pathNames.size());
             sb.append(" ");
             for (String path: pathNames) {

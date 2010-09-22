@@ -86,7 +86,7 @@ public abstract class Plot
         return dashedStroke;
     }
 
-    public float getUnitSize() {
+    public final float getUnitSize() {
         return unitSize;
     }
 
@@ -94,7 +94,7 @@ public abstract class Plot
         return TICK_LENGTH_IN_UNITS * getUnitSize();
     }
 
-    public float getFontSize() {
+    public final float getFontSize() {
         return FONT_SIZE_IN_UNITS * getUnitSize();
     }
 

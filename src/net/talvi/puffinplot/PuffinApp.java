@@ -39,7 +39,7 @@ import net.talvi.puffinplot.data.Site;
 import net.talvi.puffinplot.window.GreatCircleWindow;
 import net.talvi.puffinplot.window.PrefsWindow;
 
-public class PuffinApp {
+public final class PuffinApp {
 
     private static PuffinApp app;
     private String buildDate;
@@ -112,7 +112,7 @@ public class PuffinApp {
                 try {propStream.close();} catch (IOException e) {}
             buildDate = buildDateTmp;
         }
-        logger.info("Build date: "+getBuildDate());
+        logger.log(Level.INFO, "Build date: {0}", getBuildDate());
     }
     private final AboutBox aboutBox;
     
@@ -251,7 +251,7 @@ public class PuffinApp {
     }
 
     public void openFiles(List<File> files) {
-        if (files.size() == 0) return;
+        if (files.isEmpty()) return;
         try {
             // If this fileset is already in the recent-files list,
             // it will be bumped up to the top; otherwise it will be

@@ -32,10 +32,11 @@ public class TwoGeeLoader extends AbstractFileLoader {
     private Set<String> requestedFields = new HashSet<String>();
 
     public enum Protocol {
-        NORMAL,
-        TRAY_NORMAL,
-        NORMAL_TRAY,
-        TRAY_NORMAL_YFLIP;
+        NORMAL, // just a sample measurement
+        TRAY_NORMAL, // tray measurement then sample measurement
+        NORMAL_TRAY, // sample measurement then tray measurement
+        TRAY_NORMAL_YFLIP, // tray, sample, sample flipped around Y axis
+        TRAY_FIRST; // single tray measurement, then sample measurements
     }
     
     public TwoGeeLoader(File file, Protocol protocol, Vec3 sensorLengths) {
@@ -53,6 +54,8 @@ public class TwoGeeLoader extends AbstractFileLoader {
     }
 
     private void readFile() throws IOException {
+        logger.log(Level.INFO,
+                "Reading 2G file {0}.", file.toString());
         String fileName = file.getName();
         String fieldsLine = reader.readLine();
         if (fieldsLine == null) {
@@ -65,11 +68,17 @@ public class TwoGeeLoader extends AbstractFileLoader {
                 fields.put(fieldNames[i], i);
         }
         data = new LinkedList<Datum>();
+        Vec3 trayMoment = null; // only used for TRAY_FIRST
         String line;
         while ((line = reader.readLine()) != null) {
             final Datum d = readDatum(line, reader.getLineNumber());
             // skip lines containing no data at all
-            if (!d.hasMagSus() && !d.hasMagMoment()) continue;
+            if (d == null || (!d.hasMagSus() && !d.hasMagMoment())) continue;
+            // if the first line only is tray data, save it
+            if (protocol == Protocol.TRAY_FIRST && reader.getLineNumber() == 2) {
+                trayMoment = d.getMoment(Correction.NONE);
+                continue;
+            }
             if (d != null) {
                 if (d.isMagSusOnly()) {
                     /* The only way we can tie a mag. sus. value to a
@@ -110,6 +119,14 @@ public class TwoGeeLoader extends AbstractFileLoader {
                              * and synthesize a Datum from them. */
                             yflip = readDatum(reader.readLine(), reader.getLineNumber());
                             data.add(combine3(tray, normal, yflip));
+                            break;
+                        case TRAY_FIRST:
+                            // can't use combine2 as we want the rest of the
+                            // data from d, not the tray measurement
+                            final Vec3 normV = d.getMoment(Correction.NONE);
+                            d.setMoment(normV.minus(trayMoment));
+                            data.add(d);
+                            break;
                     }
                 }
             }
@@ -124,11 +141,9 @@ public class TwoGeeLoader extends AbstractFileLoader {
     private Datum combine2(Datum tray, Datum normal) {
         /* Subtract a tray measurement from a sample measurement
          */
-
         final Vec3 trayV = tray.getMoment(Correction.NONE);
         final Vec3 normV = normal.getMoment(Correction.NONE);
         // The volume correction's already been applied on loading.
-
         // Just change the moment in the tray datum, retain all other
         // fields, and return the tray datum.
         tray.setMoment(normV.minus(trayV));
@@ -234,7 +249,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
         }
 
         private int getInt(String name, int defaultValue) {
-                        if (!fieldExists(name)) {
+            if (!fieldExists(name)) {
                 return defaultValue;
             }
             String v = values[fields.get(name)];
@@ -245,7 +260,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
         }
 
         private String getString(String name, String defaultValue) {
-                        if (!fieldExists(name)) {
+            if (!fieldExists(name)) {
                 return defaultValue;
             }
             return values[fields.get(name)];
@@ -280,13 +295,23 @@ public class TwoGeeLoader extends AbstractFileLoader {
         d.setDiscreteId(r.getString("Sample ID", d.getDiscreteId()));
         if (fieldExists("Depth")) {
             if (measType == MeasType.DISCRETE) {
+                final int USER_SPECIFIED_DEPTH = 1;
                 // For a discrete measurement, "Depth" actually contains the
-                // sum of the (meaningless) depth field and the slot number.
-                // We assume that the depth field was set to 1 (TODO: make
-                // this configurable) and use it to set the slot number.
+                // sum of the (meaningless) user-specified data table depth
+                // field and the slot number.
+                // We assume that the data table depth field was set to 1
+                // (TODO: make this configurable) and use this depth value
+                // to set the slot number.
                 String depthString = r.getString("Depth", d.getDepth());
-                int depth = Integer.parseInt(depthString);
-                d.setSlotNumber(depth - 1);
+                // The depth value is represented as a float (it has
+                // a trailing .0 even if integral); if the depth field
+                // in the data table were a non-integral value, this
+                // presumably would also be one. Since I just want the
+                // slot number and can't think of a case where a non-
+                // integral depth would be useful in a discrete file,
+                // I'm going to discard the fractional part here.
+                int depth = (int) Double.parseDouble(depthString);
+                d.setSlotNumber(depth - USER_SPECIFIED_DEPTH);
             } else {
                 d.setDepth(r.getString("Depth", d.getDepth()));
             }
@@ -297,6 +322,11 @@ public class TwoGeeLoader extends AbstractFileLoader {
         d.setAfY(r.getDouble("AF Y", d.getAfY()));
         d.setAfZ(r.getDouble("AF Z", d.getAfZ()));
         d.setTemp(r.getDouble("Temp C", d.getTemp()));
+        double irmField = r.getDouble("IRM Gauss", Double.NaN);
+        if ((!Double.isInfinite(irmField)) && (!Double.isNaN(irmField))) {
+            irmField = irmField / 10000; // Gauss to Tesla
+        }
+        d.setIrmField(irmField);
         d.setSampAz(r.getDouble("Sample Azimiuth", d.getSampAz())); // sic
         d.setSampDip(r.getDouble("Sample Dip", d.getSampDip()));
         d.setFormAz(r.getDouble("Formation Dip Azimuth", d.getFormAz()));

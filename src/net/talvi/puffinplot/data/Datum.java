@@ -20,7 +20,7 @@ public class Datum {
     private double sampAz=NaN, sampDip=NaN, formAz=NaN, formDip=NaN;
     private double magDev=0;
     private String depth=null;
-    private double irmGauss=NaN, armGauss=NaN;
+    private double irmField=NaN, armGauss=NaN;
     private ArmAxis armAxis = ArmAxis.UNKNOWN;
     private Vec3 moment = null;
     private int runNumber = -1;
@@ -184,8 +184,8 @@ public class Datum {
         case DEGAUSS_XYZ: return afx>0?afx : afy>0?afy : afz;
         case DEGAUSS_Z: return afz;
         case THERMAL: return temp;
-        case ARM: return armGauss;
-        case IRM: return irmGauss;
+        case ARM: return afz; //usually we vary this & keep bias field constant
+        case IRM: return getIrmField();
         case UNKNOWN: return 0;
         default: throw new IllegalArgumentException("unhandled treatment type");
         }
@@ -223,7 +223,7 @@ public class Datum {
     }
 
     public boolean ignoreOnLoading() {
-        return getTreatType() == TreatType.ARM ||
+        return /* getTreatType() == TreatType.ARM || */
                 getMeasType() == MeasType.NONE;
     }
 
@@ -251,7 +251,7 @@ public class Datum {
         case Y_MOMENT: return fmt(moment.y);
         case Z_MOMENT: return fmt(moment.z);
         case DEPTH: return depth;
-        case IRM_FIELD: return fmt(irmGauss);
+        case IRM_FIELD: return fmt(getIrmField());
         case ARM_FIELD: return fmt(armGauss);
         case VOLUME: return fmt(volume);
         case DISCRETE_ID: return discreteId;
@@ -287,7 +287,7 @@ public class Datum {
         case Y_MOMENT: moment = moment.setY(Double.parseDouble(s)); break;
         case Z_MOMENT: moment = moment.setZ(Double.parseDouble(s)); break;
         case DEPTH: depth = (String) s; break;
-        case IRM_FIELD: irmGauss = Double.parseDouble(s); break;
+        case IRM_FIELD: setIrmField(Double.parseDouble(s)); break;
         case ARM_FIELD: armGauss = Double.parseDouble(s); break;
         case VOLUME: volume = Double.parseDouble(s); break;
         case DISCRETE_ID: discreteId = s; break;
@@ -305,6 +305,20 @@ public class Datum {
         case PP_INPCA: setInPca(Boolean.parseBoolean(s)); break;
         default: throw new IllegalArgumentException("Unknown field "+field);
         }
+    }
+
+    /**
+     * @return the irmField
+     */
+    public double getIrmField() {
+        return irmField;
+    }
+
+    /**
+     * @param irmField the irmField to set
+     */
+    public void setIrmField(double irmField) {
+        this.irmField = irmField;
     }
 
     public static class Reader {

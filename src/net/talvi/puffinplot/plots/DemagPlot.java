@@ -37,7 +37,7 @@ public class DemagPlot extends Plot {
         Sample sample = params.getSample();
         if (sample==null) return;
         List<Datum> data = sample.getVisibleData();
-        if (data.size() == 0) return;
+        if (data.isEmpty()) return;
 
         Rectangle2D dim = cropRectangle(getDimensions(), 270, 200, 50, 230);
         Correction correction = params.getCorrection();
