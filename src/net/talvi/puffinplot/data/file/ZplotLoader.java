@@ -14,6 +14,7 @@ import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.Vec3;
+import static net.talvi.puffinplot.data.file.TwoGeeHelper.*;
 
 public class ZplotLoader extends AbstractFileLoader {
 
@@ -106,7 +107,7 @@ public class ZplotLoader extends AbstractFileLoader {
         double intens = s.nextDouble();
         String operation = s.next();
 
-        Datum d = new Datum(Vec3.fromPolarDegrees(intens, inc, dec));
+        Datum d = new Datum(gaussToAm(Vec3.fromPolarDegrees(intens, inc, dec)));
         if (measType == MeasType.UNSET) {
          measType = (numberPattern.matcher(depthOrSample).matches())
                 ? MeasType.CONTINUOUS
@@ -127,9 +128,9 @@ public class ZplotLoader extends AbstractFileLoader {
             ? TreatType.THERMAL : TreatType.DEGAUSS_XYZ);
         switch (d.getTreatType()) {
         case DEGAUSS_XYZ:
-            d.setAfX(demag);
-            d.setAfY(demag);
-            d.setAfZ(demag);
+            d.setAfX(oerstedToTesla(demag));
+            d.setAfY(oerstedToTesla(demag));
+            d.setAfZ(oerstedToTesla(demag));
             break;
         case THERMAL:
             d.setTemp(demag);
