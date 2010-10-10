@@ -63,7 +63,7 @@ public class DataTable extends Plot {
             values.add(format("%.1f", p.getIncDeg()));
             // Don't use .1g, it tickles a bug in Java (#6469160) which
             // throws an ArrayFormatException (at least in Sun Java 5 & 6)
-            values.add(format("%.3g", p.mag()));
+            values.add(format("%.3e", p.mag()));
             points.add(new TextLinePoint(this, g, yPos, d, values, xSpacing));
             yPos += ySpacing;
             sequence++;

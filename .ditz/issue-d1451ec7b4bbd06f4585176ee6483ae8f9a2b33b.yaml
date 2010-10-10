@@ -13,7 +13,7 @@ type: :task
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
+status: :in_progress
 disposition: 
 creation_time: 2009-08-15 03:29:25.760581 Z
 references: []
@@ -41,3 +41,10 @@ log_events:
   - |-
     Changed title and description to reflect a rethink on how to deal
     with this.
+- - 2010-10-10 08:55:38.178832 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - |-
+    Most internal representations now converted to SI;
+    appropriate conversions implemented for 2G and old Puffin file
+    loading. Leaving open until I've checked the mag. sus. units.

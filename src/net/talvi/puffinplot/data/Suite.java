@@ -18,7 +18,7 @@ import java.util.Scanner;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.PuffinPrefs;
 import net.talvi.puffinplot.data.file.FileLoader;
-import net.talvi.puffinplot.data.file.Ppl2Loader;
+import net.talvi.puffinplot.data.file.PplLoader;
 import net.talvi.puffinplot.data.file.TwoGeeLoader;
 import net.talvi.puffinplot.data.file.ZplotLoader;
 
@@ -107,7 +107,7 @@ public class Suite {
         CsvWriter csvWriter = null;
         try {
             fileWriter = new FileWriter(file);
-            fileWriter.write("PuffinPlot file. Version 2\n");
+            fileWriter.write("PuffinPlot file. Version 3\n");
             csvWriter = new CsvWriter(fileWriter, "\t");
             csvWriter.writeCsv(fields);
 
@@ -212,14 +212,14 @@ public class Suite {
             FileLoader loader = null;
             switch (fileType) {
             case TWOGEE:
-            case PUFFINPLOT_1:
+            case PUFFINPLOT_OLD:
                 TwoGeeLoader twoGeeLoader =
                         new TwoGeeLoader(file, prefs.get2gProtocol(),
                         prefs.getSensorLengths().toVector());
                 loader = twoGeeLoader;
                 break;
-            case PUFFINPLOT_2:
-                loader = new Ppl2Loader(file);
+            case PUFFINPLOT_NEW:
+                loader = new PplLoader(file);
                 break;
             case ZPLOT:
                 loader = new ZplotLoader(file);
@@ -241,7 +241,7 @@ public class Suite {
             loadWarnings.add("One or more treatment types were not recognized.");
         for (Sample s : getSamples()) s.doPca();
         if (files.size() == 1 &&
-                FileType.guess(files.get(0)) == FileType.PUFFINPLOT_1 &&
+                FileType.guess(files.get(0)) == FileType.PUFFINPLOT_OLD &&
                 getNumSamples() > 0) {
             app.getRecentFiles().add(files);
             app.getMainWindow().getMainMenuBar().updateRecentFiles();

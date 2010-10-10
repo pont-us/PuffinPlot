@@ -7,7 +7,7 @@ import java.io.IOException;
 import net.talvi.puffinplot.PuffinApp;
 
 public enum FileType {
-	TWOGEE, ZPLOT, PUFFINPLOT_1, PUFFINPLOT_2, UNKNOWN;
+	TWOGEE, ZPLOT, PUFFINPLOT_OLD, PUFFINPLOT_NEW, UNKNOWN;
 	
 	static public FileType guess(File file) {
 		String name = file.getName().toLowerCase();
@@ -15,12 +15,12 @@ public enum FileType {
 		else if (name.endsWith(".txt")) return ZPLOT;
 		else if (name.endsWith(".ppl")) {
                     BufferedReader reader = null;
-                    FileType result = PUFFINPLOT_1;
+                    FileType result = PUFFINPLOT_OLD;
                     try {
                          reader = new BufferedReader(new FileReader(file));
                          String line = reader.readLine();
-                         if ("PuffinPlot file. Version 2".equals(line))
-                             result = PUFFINPLOT_2;
+                         if (line.startsWith("PuffinPlot file."))
+                             result = PUFFINPLOT_NEW;
                     } catch (IOException e) {
                         PuffinApp.getInstance().
                                 errorDialog("Error opening file",

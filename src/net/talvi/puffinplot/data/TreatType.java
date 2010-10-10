@@ -1,55 +1,36 @@
 package net.talvi.puffinplot.data;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public enum TreatType {
-    NONE("none", "No demagnetization"),
-    DEGAUSS_XYZ("degauss x, y, & z", "3-axis AF strength (G)"),
-    DEGAUSS_Z("degauss z", "Z-axis AF strength (G)"),
-    ARM("degauss z - arm axial", "ARM field strength"),
-    IRM("irm", "IRM field strength"),
-    THERMAL("thermal demag", "Temperature (°C)"),
-    UNKNOWN("", "Unknown treatment");
-	
-    private final String axisLabel;
+    NONE("No treatment", "", ""),
+    DEGAUSS_XYZ("3-axis degauss", "3-axis AF field", "T"),
+    DEGAUSS_Z("z-axis degauss", "Z-axis AF field", "T"),
+    ARM("z-axis ARM", "AF field", "T"), //AF usually more interesting than bias
+    IRM("IRM", "IRM field", "T"),
+    THERMAL("Heating", "Temperature", "°C"),
+    UNKNOWN("Unknown", "Unknown treatment", "?");
+
+    // Human-friendly name for treatment
     private final String name;
-    private final static Map<String, TreatType> nameMap =
-            new HashMap<String, TreatType>();
+    // The actual quantifiable `thing' applied (temperature or field)
+    private final String treatment;
+    // Unit name for the applied `thing'
+    private String unit;
 
-    static {
-         // See Effective Java, 2nd ed., item 30, p. 154 for this technique
-         for (TreatType t: values()) nameMap.put(t.toString().toLowerCase(), t);
-    }
-    
-    private TreatType() {
-        name = null;
-        axisLabel = null;
-    }
-    
-    private TreatType(String name, String axisLabel) {
+    private TreatType(String name, String treatment, String unit) {
         this.name = name;
-        this.axisLabel = axisLabel;
+        this.treatment = treatment;
+        this.unit = unit;
     }
 
-    private static String normalizeString(String s) {
-        s = s.toLowerCase();
-        if (s.startsWith("\"")) s = s.substring(1);
-        if (s.endsWith("\"")) s = s.substring(0, s.length()-1);
-        return s;
-    }
-    
-    public static TreatType fromString(String s) {
-        TreatType t = nameMap.get(normalizeString(s));
-        return t != null ? t : UNKNOWN;
-    }
-
-    @Override
-    public String toString() {
+    public String getNiceName() {
         return name;
     }
     
     public String getAxisLabel() {
-        return axisLabel;
+        return treatment;
+    }
+
+    public String getUnit() {
+        return unit;
     }
 }

@@ -152,7 +152,8 @@ public class ZPlot extends Plot {
 
     public class ZplotLegend extends Plot {
 
-        public ZplotLegend(GraphDisplay parent, PlotParams params, Preferences prefs) {
+        public ZplotLegend(GraphDisplay parent, PlotParams params,
+                Preferences prefs) {
             super(parent, params, prefs);
         }
 
@@ -188,8 +189,8 @@ public class ZPlot extends Plot {
             writeString(g, "horizontal", (float) (xOrig + 50 * getUnitSize()),
                     (float) (yOrig + lineOffs + textOffs));
             final AttributedString units = axes != null
-                    ? timesTenToThe("Units: Gauss", axes.getMagnitude())
-                    : timesTenToThe("Units: Gauss", "?");
+                    ? timesTenToThe("Units: A/m", axes.getMagnitude())
+                    : timesTenToThe("Units: A/m", "?");
             writeString(g, units, (float) xOrig,
                     (float) (yOrig + 2 * lineOffs + textOffs));
             drawPoints(g);

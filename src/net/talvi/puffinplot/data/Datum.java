@@ -20,7 +20,7 @@ public class Datum {
     private double sampAz=NaN, sampDip=NaN, formAz=NaN, formDip=NaN;
     private double magDev=0;
     private String depth=null;
-    private double irmField=NaN, armGauss=NaN;
+    private double irmField=NaN, armField=NaN;
     private ArmAxis armAxis = ArmAxis.UNKNOWN;
     private Vec3 moment = null;
     private int runNumber = -1;
@@ -93,9 +93,9 @@ public class Datum {
     public double getMagSus()          { return magSus; }
     public void setMagSus(double v)    { magSus = v; }
     public MeasType getMeasType()      { return measType; }
-    public void setMeasType(MeasType v) { measType = v; }
-    public String getDiscreteId()        { return discreteId; }
-    public void setDiscreteId(String v)  { discreteId = v; }
+    public void setMeasType(MeasType v){ measType = v; }
+    public String getDiscreteId()      { return discreteId; }
+    public void setDiscreteId(String v){ discreteId = v; }
     public TreatType getTreatType()    { return treatType; }
     public void setTreatType(TreatType v) { treatType = v; }
     public double getAfX()             { return afx; }
@@ -104,6 +104,12 @@ public class Datum {
     public void setAfY(double v)       { afy = v; }
     public double getAfZ()             { return afz; }
     public void setAfZ(double v)       { afz = v; }
+    public double getIrmField()        { return irmField; }
+    public void setIrmField(double v)  { irmField = v; }
+    public double getArmField()        { return armField; }
+    public void setArmField(double v)  { armField = v; }
+    public ArmAxis getArmAxis()        { return armAxis; }
+    public void setArmAxis(ArmAxis v)  { armAxis = v; }
     public double getTemp()            { return temp; }
     public void setTemp(double v)      { temp = v; }
     public void setMoment(Vec3 v)      { moment = v; }
@@ -252,7 +258,7 @@ public class Datum {
         case Z_MOMENT: return fmt(moment.z);
         case DEPTH: return depth;
         case IRM_FIELD: return fmt(getIrmField());
-        case ARM_FIELD: return fmt(armGauss);
+        case ARM_FIELD: return fmt(armField);
         case VOLUME: return fmt(volume);
         case DISCRETE_ID: return discreteId;
         case MEAS_TYPE: return measType.toString();
@@ -288,11 +294,11 @@ public class Datum {
         case Z_MOMENT: moment = moment.setZ(Double.parseDouble(s)); break;
         case DEPTH: depth = (String) s; break;
         case IRM_FIELD: setIrmField(Double.parseDouble(s)); break;
-        case ARM_FIELD: armGauss = Double.parseDouble(s); break;
+        case ARM_FIELD: armField = Double.parseDouble(s); break;
         case VOLUME: volume = Double.parseDouble(s); break;
         case DISCRETE_ID: discreteId = s; break;
-        case MEAS_TYPE: measType = MeasType.fromString(s); break;
-        case TREATMENT: treatType = TreatType.fromString(s); break;
+        case MEAS_TYPE: measType = MeasType.valueOf(s); break;
+        case TREATMENT: treatType = TreatType.valueOf(s); break;
         case ARM_AXIS: armAxis = ArmAxis.fromString(s); break;
         case TIMESTAMP: timestamp = s; break;
         case SLOT_NUMBER: slotNumber = Integer.parseInt(s); break;
@@ -307,22 +313,7 @@ public class Datum {
         }
     }
 
-    /**
-     * @return the irmField
-     */
-    public double getIrmField() {
-        return irmField;
-    }
-
-    /**
-     * @param irmField the irmField to set
-     */
-    public void setIrmField(double irmField) {
-        this.irmField = irmField;
-    }
-
     public static class Reader {
-
         private List<DatumField> fields;
 
         public Reader(List<String> headers) {

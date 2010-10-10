@@ -1,5 +1,6 @@
 package net.talvi.puffinplot.plots;
 
+import net.talvi.puffinplot.data.TreatType;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
@@ -60,9 +61,10 @@ public class DemagPlot extends Plot {
         }
         if (maxIntens == 0) maxIntens = 1;
 
+        TreatType treatType = sample.getDatum(sample.getNumData() - 1).getTreatType();
         final String xAxisLabel = xBySequence
                 ? "Measurement number"
-                : sample.getDatum(sample.getNumData() - 1).getTreatType().getAxisLabel();
+                : String.format("%s (%s)", treatType.getAxisLabel(), treatType.getUnit());
 
         AxisParameters hAxisParams = new AxisParameters(xAxisLength, Direction.RIGHT).
                 withLabel(xAxisLabel);
@@ -74,7 +76,7 @@ public class DemagPlot extends Plot {
         final PlotAxis hAxis = new PlotAxis(hAxisParams, this);
         final PlotAxis vAxis =
                 new PlotAxis(new AxisParameters(maxIntens, Direction.UP).
-                withLabel("Intensity (Gauss)"), this);
+                withLabel("Magnetization (A/m)"), this);
         
         final double hScale = dim.getWidth() / hAxis.getLength();
         final double vScale = dim.getHeight() / vAxis.getLength();

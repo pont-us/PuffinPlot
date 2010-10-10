@@ -13,11 +13,12 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import net.talvi.puffinplot.data.ArmAxis;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.MeasType;
-import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.Vec3;
+import static net.talvi.puffinplot.data.file.TwoGeeHelper.*;
 
 public class TwoGeeLoader extends AbstractFileLoader {
 
@@ -30,6 +31,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
     private LineNumberReader reader;
     private final Protocol protocol;
     private Set<String> requestedFields = new HashSet<String>();
+
 
     public enum Protocol {
         NORMAL, // just a sample measurement
@@ -155,7 +157,6 @@ public class TwoGeeLoader extends AbstractFileLoader {
          * measurement, and just poke in the magnetic moment vector
          * calculated from the three readings.
          */
-
         final Vec3 trayV = tray.getMoment(Correction.NONE);
         final Vec3 normV = normal.getMoment(Correction.NONE);
         final Vec3 revV = reversed.getMoment(Correction.NONE);
@@ -222,16 +223,6 @@ public class TwoGeeLoader extends AbstractFileLoader {
     private class FieldReader {
 
         private String[] values;
-        
-        private class UnknownFieldException extends Exception {
-            private final String fieldName;
-            public UnknownFieldException(String fieldName) {
-                this.fieldName = fieldName;
-            }
-            public String getFieldName() {
-                return fieldName;
-            }
-        }
 
         FieldReader(String line) {
             values = line.split("\\t");
@@ -246,6 +237,16 @@ public class TwoGeeLoader extends AbstractFileLoader {
             if ("NA".equals(v)) return Double.NaN;
             try { return Double.parseDouble(v); }
             catch (NumberFormatException e) { return Double.NaN; }
+        }
+
+        private boolean hasDouble(String name) {
+            if (!fieldExists(name)) return false;
+            try {
+                Double.parseDouble(values[fields.get(name)]);
+                return true;
+            } catch (NumberFormatException e) {
+                return false;
+            }
         }
 
         private int getInt(String name, int defaultValue) {
@@ -272,7 +273,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
         Datum d = new Datum();
 
         final MeasType measType =
-                MeasType.fromString(r.getString("Meas. type", "DISCRETE"));
+                measTypeFromString(r.getString("Meas. type", "SAMPLE/DISCRETE"));
 
         d.setArea(r.getDouble("Area", d.getArea()));
         d.setVolume(r.getDouble("Volume", d.getVolume()));
@@ -281,6 +282,8 @@ public class TwoGeeLoader extends AbstractFileLoader {
             Vec3 moment = new Vec3(r.getDouble("X corr", 0),
                     r.getDouble("Y corr", 0),
                     r.getDouble("Z corr", 0));
+            // Gauss to A/m
+            moment = gaussToAm(moment);
             switch (measType) {
             case CONTINUOUS:
                 moment = moment.divideBy(sensorLengths.times(d.getArea()));
@@ -312,21 +315,33 @@ public class TwoGeeLoader extends AbstractFileLoader {
                 // I'm going to discard the fractional part here.
                 int depth = (int) Double.parseDouble(depthString);
                 d.setSlotNumber(depth - USER_SPECIFIED_DEPTH);
-            } else {
+            } else /* assume continuous measurement */ {
                 d.setDepth(r.getString("Depth", d.getDepth()));
             }
         }
         d.setMeasType(measType);
-        d.setTreatType(TreatType.fromString(r.getString("Treatment Type", "AF")));
-        d.setAfX(r.getDouble("AF X", d.getAfX()));
-        d.setAfY(r.getDouble("AF Y", d.getAfY()));
-        d.setAfZ(r.getDouble("AF Z", d.getAfZ()));
-        d.setTemp(r.getDouble("Temp C", d.getTemp()));
-        double irmField = r.getDouble("IRM Gauss", Double.NaN);
-        if ((!Double.isInfinite(irmField)) && (!Double.isNaN(irmField))) {
-            irmField = irmField / 10000; // Gauss to Tesla
+        d.setTreatType(treatTypeFromString(r.getString("Treatment Type", "AF")));
+        if (r.hasDouble("AF X")) {
+            d.setAfX(oerstedToTesla(r.getDouble("AF X", Double.NaN)));
         }
-        d.setIrmField(irmField);
+        if (r.hasDouble("AF Y")) {
+            d.setAfY(oerstedToTesla(r.getDouble("AF Y", Double.NaN)));
+        }
+        if (r.hasDouble("AF Z")) {
+            d.setAfZ(oerstedToTesla(r.getDouble("AF Z", Double.NaN)));
+        }
+        if (r.hasDouble("IRM Gauss")) {
+            // Yes, they say Gauss, but I think they mean Oersted.
+            d.setIrmField(oerstedToTesla(r.getDouble("IRM Gauss", Double.NaN)));
+        }
+        if (r.hasDouble("ARM Gauss")) {
+            // Yes, they say Gauss, but I think they mean Oersted.
+            d.setIrmField(oerstedToTesla(r.getDouble("aRM Gauss", Double.NaN)));
+        }
+        d.setArmAxis(ArmAxis.fromString(r.getString("ARM axis", "UNKNOWN")));
+        // TODO better default ARM axis
+        d.setTemp(r.getDouble("Temp C", d.getTemp()));
+        d.setArmField(r.getDouble("ARM Gauss", d.getArmField()));
         d.setSampAz(r.getDouble("Sample Azimiuth", d.getSampAz())); // sic
         d.setSampDip(r.getDouble("Sample Dip", d.getSampDip()));
         d.setFormAz(r.getDouble("Formation Dip Azimuth", d.getFormAz()));
@@ -355,4 +370,6 @@ public class TwoGeeLoader extends AbstractFileLoader {
         d.setZDrift(r.getDouble("Z drift", d.getZDrift()));
         return d;
     }
+
+
 }
