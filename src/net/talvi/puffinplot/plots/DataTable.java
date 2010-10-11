@@ -54,13 +54,14 @@ public class DataTable extends Plot {
             final Vec3 p = d.getMoment(params.getCorrection());
             String demag = useSequence ? Integer.toString(sequence)
                     : format("%.0f", d.getDemagLevel());
-            if (d.getTreatType() == TreatType.IRM) {
+            if (d.getTreatType().getUnit().equals("T")) {
                 // turn T into mT
-                demag = format("%.0f", d.getDemagLevel() * 1000);
+                // TODO: right-justify (non-trivial in non-fixed font)
+                demag = format("%-4.0f", d.getDemagLevel() * 1000);
             }
             values.add(demag);
             values.add(format("%.1f", p.getDecDeg()));
-            values.add(format("%.1f", p.getIncDeg()));
+            values.add(format("% .1f", p.getIncDeg()));
             // Don't use .1g, it tickles a bug in Java (#6469160) which
             // throws an ArrayFormatException (at least in Sun Java 5 & 6)
             values.add(format("%.3e", p.mag()));
