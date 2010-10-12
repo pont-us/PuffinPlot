@@ -16,6 +16,7 @@ public class FisherGraphDisplay extends GraphDisplay implements Printable {
         zoomTransform = AffineTransform.getScaleInstance(1.0, 1.0);
         Plot plot = new FisherPlot(
                 null, null, new Rectangle2D.Double(50, 50, 600, 600));
+        plot.setVisible(true);
         plots.put(plot.getName(), plot);
     }
 

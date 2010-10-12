@@ -10,10 +10,6 @@ import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 import static java.lang.Math.min;
 
-/**
- *
- * @author pont
- */
 public class GreatCirclePlot extends EqAreaPlot {
     public GreatCirclePlot(GraphDisplay parent, PlotParams params,
             Rectangle2D dimensions) {
