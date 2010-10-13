@@ -279,20 +279,31 @@ public class TwoGeeLoader extends AbstractFileLoader {
         d.setVolume(r.getDouble("Volume", d.getVolume()));
         if (fieldExists("X corr") &&
                 !r.getString("X corr", "dummy").equals("NA")) {
-            Vec3 moment = new Vec3(r.getDouble("X corr", 0),
+            final Vec3 momentGaussCm3 = new Vec3(r.getDouble("X corr", 0),
                     r.getDouble("Y corr", 0),
                     r.getDouble("Z corr", 0));
-            // Gauss to A/m
-            moment = gaussToAm(moment);
+            // we have a raw magnetic moment in gauss * cm^3.
+            // First we divide it by the sample volume in cm^3 to get a
+            // magnetization in gauss.
+            final Vec3 magnetizationGauss;
             switch (measType) {
             case CONTINUOUS:
-                moment = moment.divideBy(sensorLengths.times(d.getArea()));
+                magnetizationGauss = momentGaussCm3.divideBy(sensorLengths.times(d.getArea()));
                 break;
             case DISCRETE:
-                moment = moment.divideBy(d.getVolume());
+                magnetizationGauss = momentGaussCm3.divideBy(d.getVolume());
                 break;
+            default:
+                magnetizationGauss = Vec3.ORIGIN;
             }
-            d.setMoment(moment);
+            // To avoid unpleasant 4pi factors, we follow common
+            // palaeomagnetic practice and don't convert the cgs
+            // magnetization to an SI magnetization (which would be
+            // in Tesla). Instead we convert it to an equivalent
+            // magnetic dipole moment per unit volume, expressed
+            // in A/m.
+            Vec3 momentPerUnitVolumeAm = gaussToAm(magnetizationGauss);
+            d.setMoment(momentPerUnitVolumeAm);
         }
         d.setMagSus(r.getDouble("MS corr", d.getMagSus()));
         d.setDiscreteId(r.getString("Sample ID", d.getDiscreteId()));

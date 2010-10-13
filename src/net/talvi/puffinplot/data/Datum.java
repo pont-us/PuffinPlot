@@ -112,7 +112,6 @@ public class Datum {
     public void setArmAxis(ArmAxis v)  { armAxis = v; }
     public double getTemp()            { return temp; }
     public void setTemp(double v)      { temp = v; }
-    public void setMoment(Vec3 v)      { moment = v; }
     public double getArea()            { return area; }
     public void setArea(double v)      { area = v; }
     public double getVolume()          { return volume; }
@@ -153,6 +152,23 @@ public class Datum {
         return (!Double.isNaN(formAz)) && (!Double.isNaN(formDip));
     }
 
+    /**
+    * Sets the sample's magnetic dipole moment per unit volume
+    * in A/m.
+    * @param v
+    */
+    public void setMoment(Vec3 v)      { moment = v; }
+
+    /**
+     * The name is slightly misleading: we do not deal with magnetic
+     * moment (which would be in Am^2) but in magnetic dipole moment
+     * per unit volume (in A/m). But
+     * getMagneticDipoleMomentPerUnitVolumeInAm would be an inconveniently
+     * long method name.
+     *
+     * @param c
+     * @return
+     */
     public Vec3 getMoment(Correction c) {
         Vec3 result = moment;
         if (c.includesEmpty()) {
@@ -224,6 +240,13 @@ public class Datum {
         return max;
     }
 
+    /**
+     * Returns magnetic dipole moment per unit volume in A/m.
+     * The correction should not, of course, matter.
+     * TODO: verify this empirically and remove the parameter.
+     * @param correction
+     * @return
+     */
     public double getIntensity(Correction correction) {
         return getMoment(correction).mag();
     }
