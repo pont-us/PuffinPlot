@@ -45,7 +45,7 @@ public class DataTable extends Plot {
         if (data.isEmpty()) return;
 
         // final FontRenderContext frc = g.getFontRenderContext();
-        points.add(new TextLinePoint(this, g, 0, null, headers, xSpacing));
+        points.add(new TextLinePoint(this, g, 10, null, headers, xSpacing));
         final boolean useSequence = (Datum.maximumDemag(data) == 0);
         int sequence = 1;
         float yPos = 2 * ySpacing;

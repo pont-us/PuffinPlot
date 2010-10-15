@@ -244,7 +244,7 @@ class PlotAxis {
                 xOrig+xLen, yOrig+yLen, ap.direction.labelPos(ap.farSide), 0, 5);
             if (ap.markedPosition != null) {
                 AttributedString mark = new AttributedString
-                        (String.format("%.0f", ap.markedPosition));
+                        (String.format("%.2f", ap.markedPosition * Math.pow(10, -getMagnitude())));
                 putText(g, mark,
                         xOrig + x * ap.markedPosition * scale,
                         yOrig + y * ap.markedPosition * scale,
@@ -257,7 +257,7 @@ class PlotAxis {
                     : new AttributedString(ap.label);
 
             putText(g, as, xOrig + xLen / 2, yOrig + yLen / 2,
-                    ap.direction.labelPos(ap.farSide), ap.direction.labelRot(), 15);
+                    ap.direction.labelPos(ap.farSide), ap.direction.labelRot(), 20);
         }
         
         if (ap.endLabel != null) {

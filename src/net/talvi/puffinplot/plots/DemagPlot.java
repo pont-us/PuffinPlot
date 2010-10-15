@@ -40,7 +40,7 @@ public class DemagPlot extends Plot {
         List<Datum> data = sample.getVisibleData();
         if (data.isEmpty()) return;
 
-        Rectangle2D dim = cropRectangle(getDimensions(), 270, 200, 50, 230);
+        Rectangle2D dim = cropRectangle(getDimensions(), 270, 200, 50, 250);
         Correction correction = params.getCorrection();
 
         g.setColor(Color.BLACK);

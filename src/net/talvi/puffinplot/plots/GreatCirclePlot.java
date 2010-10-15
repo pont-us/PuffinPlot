@@ -38,7 +38,7 @@ public class GreatCirclePlot extends EqAreaPlot {
             drawGreatCircle(g, xo, yo, radius, pole);
             boolean first = true;
             for (Vec3 p: circle.getPoints()) {
-                addPoint(null, project(p, xo, yo, radius), p.z>=0, false, !first);
+                //addPoint(null, project(p, xo, yo, radius), p.z>=0, false, !first);
                 first = false;
             }
             g.setColor(Color.RED);
