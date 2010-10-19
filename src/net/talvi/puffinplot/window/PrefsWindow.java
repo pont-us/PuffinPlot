@@ -12,7 +12,11 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.prefs.BackingStoreException;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -31,10 +35,12 @@ import net.talvi.puffinplot.plots.Plot;
 
 public class PrefsWindow extends JFrame {
 
+    private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
     private final JTextField[] sensorLengthField = new JTextField[3];
     private final PresetsBox presetsBox;
     private final JTextField protocolBox;
     private List<PlotBox> plotBoxes = new ArrayList<PlotBox>(24);
+    private List<PrefBox> prefBoxes = new ArrayList<PrefBox>();
     private final PuffinPrefs prefs =
             PuffinApp.getInstance().getPrefs();
     
@@ -104,8 +110,27 @@ public class PrefsWindow extends JFrame {
             plotsPanel.add(pb);
             plotBoxes.add(pb);
         }
-        tp.addTab("Loading", null, loadingPanel,  "File loading");
-        tp.addTab("Plots", null, plotsPanel, "Graph plotting");
+        JPanel labelsPanel = new JPanel(false);
+        labelsPanel.setLayout(new BoxLayout(labelsPanel, BoxLayout.Y_AXIS));
+        JPanel labelsInnerPanel = new JPanel(false);
+        labelsInnerPanel.setLayout(new BoxLayout(labelsInnerPanel, BoxLayout.X_AXIS));
+        JLabel demagVAxisLabel = new JLabel("Demag y axis");
+        demagVAxisLabel.setMaximumSize(new Dimension(200, 30));
+        //demagVAxisLabel.setPreferredSize(new Dimension(200, 30));
+        labelsInnerPanel.add(demagVAxisLabel);
+        JTextField demagVAxisField = new PrefBox("plots.demag.vAxisLabel",
+                "Magnetization (A/M)");
+        demagVAxisField.setMaximumSize(new Dimension(300, 50));
+        //demagVAxisField.setPreferredSize(new Dimension(200, 30));
+        labelsInnerPanel.add(demagVAxisField);
+        labelsPanel.add(Box.createVerticalGlue());
+        labelsPanel.add(labelsInnerPanel);
+        labelsPanel.add(Box.createVerticalGlue());
+
+        tp.addTab("Loading", null, loadingPanel, "File loading");
+        tp.addTab("Plots", null, plotsPanel, "Active plots");
+        tp.addTab("Labels", null, labelsPanel, "Graph labels");
+
         JButton button = new JButton("Close");
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -131,6 +156,14 @@ public class PrefsWindow extends JFrame {
         presetsBox.applySettings();
         prefs.set2gProtocol(TwoGeeLoader.Protocol.valueOf(protocolBox.getText()));
         for (PlotBox plotBox: plotBoxes) plotBox.applySetting();
+        for (PrefBox prefBox: prefBoxes) prefBox.storeValue();
+        try {
+            prefs.getPrefs().flush();
+        } catch (BackingStoreException ex) {
+            logger.log(Level.WARNING, null, ex);
+            PuffinApp.getInstance().errorDialog("PuffinPlot error",
+                    "The preferences could not be saved.");
+        }
         PuffinApp.getInstance().updateDisplay();
     }
 
@@ -143,6 +176,18 @@ public class PrefsWindow extends JFrame {
 
         public void applySetting() {
             plot.setVisible(isSelected());
+        }
+    }
+
+    private class PrefBox extends JTextField {
+        final private String key;
+        public PrefBox(String key, String def) {
+            super(prefs.getPrefs().get(key, def));
+            this.key = key;
+            prefBoxes.add(this);
+        }
+        public void storeValue() {
+            prefs.getPrefs().put(key, getText());
         }
     }
 

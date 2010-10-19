@@ -20,8 +20,11 @@ import static net.talvi.puffinplot.plots.PlotAxis.Direction;
 
 public class DemagPlot extends Plot {
 
+    private final Preferences prefs;
+
     public DemagPlot(GraphDisplay parent, PlotParams params, Preferences prefs) {
         super(parent, params, prefs);
+        this.prefs = prefs;
     }
 
     public String getName() {
@@ -74,9 +77,11 @@ public class DemagPlot extends Plot {
             hAxisParams.markedPosition = midpoint.getDemagLevel();
         }
         final PlotAxis hAxis = new PlotAxis(hAxisParams, this);
+        final String vAxisLabel = prefs.get("plots."+getName()+".vAxisLabel",
+                "Magnetization (A/m)");
         final PlotAxis vAxis =
                 new PlotAxis(new AxisParameters(maxIntens, Direction.UP).
-                withLabel("Magnetization (A/m)"), this);
+                withLabel(vAxisLabel), this);
         
         final double hScale = dim.getWidth() / hAxis.getLength();
         final double vScale = dim.getHeight() / vAxis.getLength();

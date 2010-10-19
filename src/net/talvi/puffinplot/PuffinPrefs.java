@@ -77,4 +77,5 @@ public final class PuffinPrefs {
     public void set2gProtocol(TwoGeeLoader.Protocol p) {
         this.twoGeeProtocol = p;
     }
+
 }

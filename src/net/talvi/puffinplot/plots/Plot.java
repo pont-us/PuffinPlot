@@ -213,7 +213,7 @@ public abstract class Plot
     public String dimensionsAsString() {
         Rectangle2D r = dimensions;
         // Explicit locale to ensure . for decimal separator
-        return String.format(Locale.ENGLISH, "%b %f %f %f %f ",
+        return String.format(Locale.ENGLISH, "%b %g %g %g %g ",
                 isVisible(),
                 r.getMinX(), r.getMinY(),
                 r.getWidth(), r.getHeight());
