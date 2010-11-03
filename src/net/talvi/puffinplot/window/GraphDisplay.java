@@ -142,15 +142,15 @@ public abstract class GraphDisplay extends JPanel implements Printable {
     }
 
     protected AffineTransform getAntiZoom() {
-            try {
-                return zoomTransform.createInverse();
-            } catch (NoninvertibleTransformException ex) {
-                Logger.getLogger(GraphDisplay.class.getName()).log(Level.SEVERE, null, ex);
-                // This is a "can't-happen" so rethrowing an error is appropriate.
-                // It will be caught by the default handler.
-                throw new Error(ex);
-            }
+        try {
+            return zoomTransform.createInverse();
+        } catch (NoninvertibleTransformException ex) {
+            Logger.getLogger(GraphDisplay.class.getName()).log(Level.SEVERE, null, ex);
+            // This is a "can't-happen" so rethrowing an error is appropriate.
+            // It will be caught by the default handler.
+            throw new Error(ex);
         }
+    }
     
     protected boolean isDragPlotMode() {
         return dragPlotMode;

@@ -1,5 +1,6 @@
 package net.talvi.puffinplot.plots;
 
+import net.talvi.puffinplot.data.Site;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -37,11 +38,12 @@ public class AmsPlot extends EqAreaPlot {
         clearPoints();
         final Sample sample = params.getSample();
         if (sample == null) return;
+        final Site site = sample.getSite();
+        if (site==null) return;
 
         drawAxes(g, xo, yo, radius);
         g.setStroke(getStroke());
-        // for (Sample s: PuffinApp.getInstance().getSuite().getSamples()) {
-        for (Sample s: sample.getSite().getSamples()) {
+        for (Sample s: site.getSamples()) {
             if (s.getAms() != null &&
                     sample.getNameOrDepth().regionMatches(0, s.getNameOrDepth(), 0, 3)) {
                     Point2D prevp = null;
