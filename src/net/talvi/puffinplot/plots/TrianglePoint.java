@@ -37,6 +37,8 @@ public class TrianglePoint implements PlotPoint {
     }
 
     public void drawWithPossibleLine(Graphics2D g, PlotPoint prev) {
+        // TODO: implement properly!
+        draw(g);
     }
 
     public Datum getDatum() {

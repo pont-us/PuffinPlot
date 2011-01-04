@@ -1,5 +1,6 @@
 package net.talvi.puffinplot.window;
 
+import java.util.logging.Level;
 import net.talvi.puffinplot.*;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -44,7 +45,7 @@ public class MainMenuBar extends JMenuBar {
                 // as well as `raw' JMenuItems
                 menu.add((JMenuItem) thing);
             } else {
-                logger.warning("Unknown menu item "+thing);
+                logger.log(Level.WARNING, "Unknown menu item {0}", thing);
             }
         }
         return menu;
@@ -90,8 +91,8 @@ public class MainMenuBar extends JMenuBar {
         
         add(makeMenu("File", pa.open, recentFilesMenu, pa.save, pa.saveAs,
                 pa.close,
-                makeMenu("Export calculations", pa.exportCalcsSample,
-                pa.exportCalcsSite, pa.exportCalcsSuite),
+                makeMenu("Export data", pa.exportCalcsSample,
+                pa.exportCalcsSite, pa.exportCalcsSuite, pa.exportIrm),
                 pa.pageSetup, pa.print, pa.printFisher, pa.printGc,
                 pa.importAms,
                 pa.prefs, pa.quit));

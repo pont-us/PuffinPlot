@@ -137,11 +137,16 @@ public class ZPlot extends Plot {
                     incCorr = atan(sin(pca.getIncRadians()) /
                             (cos(pca.getIncRadians()) * sin(pca.getDecRadians())));
                     break;
-                case H:
-                    incCorr = pca.getIncRadians();
-                    break;
             }
-            drawLine(g, xOffset + x2, yOffset + y2, Math.PI/2 + incCorr, axes, Color.BLUE);
+            if (vVs== MeasurementAxis.X || vVs == MeasurementAxis.Y) {
+                /* If we're plotting vertical projections vs. `H', there's
+                 * no meaningful way to display the vertical component of the
+                 * PCA: the projection plane is changing with every point
+                 * so there is no meaningful plane onto which the PCA line
+                 * can be projected.
+                 */
+                drawLine(g, xOffset + x2, yOffset + y2, Math.PI/2 + incCorr, axes, Color.BLUE);
+            }
         }
         drawPoints(g);
     }

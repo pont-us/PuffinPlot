@@ -1,6 +1,8 @@
 package net.talvi.puffinplot.data;
 
+import java.util.Collection;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import static java.lang.Double.NaN;
 import static java.lang.Math.toRadians;
@@ -39,19 +41,11 @@ public class Datum {
 
     private Sample sample;
     private Suite suite;
-    private static final List<String> fieldNames;
-    private static final List<DatumField> fields;
+
+    private LinkedHashMap<String, String> h;
 
     static {
-        DatumField[] dfs = DatumField.values();
-        fields = new ArrayList<DatumField>(dfs.length-1);
-        fieldNames = new ArrayList<String>(dfs.length-1);
-        for (DatumField df : dfs) {
-            if (df != DatumField.UNKNOWN) {
-                fields.add(df);
-                fieldNames.add(df.toString());
-            }
-        }
+
     }
 
     public Datum(double x, double y, double z) {
@@ -60,10 +54,6 @@ public class Datum {
     
     public Datum(Vec3 v) {
         moment = v; // v is immutable so it's OK not to copy it
-    }
-
-    public static List<String> getFieldNames() {
-        return fieldNames;
     }
 
     public Datum() {}
@@ -178,6 +168,12 @@ public class Datum {
             Datum tray = getSuite().getTrayCorrection(this);
             if (tray != null) result = result.minus(tray.moment);
         }
+        result = correctVector(result, c);
+        return result;
+    }
+
+    public Vec3 correctVector(Vec3 v, Correction c) {
+        Vec3 result = v;
         if (c.includesSample() && sampleCorrectionExists()) {
             result = result.correctSample(toRadians(sampAz + magDev),
                                           toRadians(sampDip));
@@ -296,6 +292,7 @@ public class Datum {
         case PP_HIDDEN: return Boolean.toString(isHidden());
         case PP_ONCIRCLE: return Boolean.toString(isOnCircle());
         case PP_INPCA: return Boolean.toString(isInPca());
+        case VIRT_MAGNETIZATION: return fmt(getIntensity(Correction.NONE));
         default: throw new IllegalArgumentException("Unknown field "+field);
         }
     }
@@ -354,10 +351,22 @@ public class Datum {
     }
 
     public List<String> toStrings() {
-        List<String> result = new ArrayList<String>(fields.size());
-        for (DatumField df : fields) {
+        List<String> result =
+                new ArrayList<String>(DatumField.getRealFields().size());
+        for (DatumField df : DatumField.getRealFields()) {
             result.add(getValue(df));
         }
         return result;
+    }
+
+    public String exportFields(Collection<DatumField> fields, String separator) {
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        for (DatumField field: fields) {
+            if (!first) sb.append(separator);
+            sb.append(getValue(field));
+            first = false;
+        }
+        return sb.toString();
     }
 }

@@ -1,0 +1,21 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Tidy up `flip sample' feature
+desc: |-
+  This was added ad hoc to correct one of my mis-loaded samples;
+  it's a bit arbitrary that only one axis is supported. I should support
+  all three axes, or none!
+type: :feature
+component: PuffinPlot
+release: "1.1"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2010-10-24 00:35:51.241824 Z
+references: []
+
+id: 8277fb5aafae15c2b458aaa1d4e327511967aa03
+log_events: 
+- - 2010-10-24 00:35:52.093713 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

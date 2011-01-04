@@ -41,7 +41,7 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
 
         String[] plotNames = {"SampleEqAreaPlot", "ZPlot", "DemagPlot",
             "DataTable", "PcaTable", "SampleTable", "FisherTable",
-            "AmsPlot"};
+            "AmsPlot", "TernaryPlot"};
 
         try {
             for (String plotName : plotNames) {

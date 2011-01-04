@@ -51,7 +51,7 @@ public class TableWindow extends JFrame {
         public int getRowCount() {
             if (PuffinApp.getInstance() != null &&
                     PuffinApp.getInstance().getSample() != null)
-                return PuffinApp.getInstance().getSample().getAllData().size();
+                return PuffinApp.getInstance().getSample().getData().size();
             else return 0;
         }
 
@@ -62,7 +62,7 @@ public class TableWindow extends JFrame {
 
         public Object getValueAt(int row, int col) {
             try {
-                Datum d = PuffinApp.getInstance().getSample().getAllData().get(row);
+                Datum d = PuffinApp.getInstance().getSample().getData().get(row);
                 return d.getValue(DatumField.values()[col]);
             } catch (NullPointerException e) {
                 throw new RuntimeException("row " + row + " col " + col, e);

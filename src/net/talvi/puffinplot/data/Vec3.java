@@ -19,6 +19,9 @@ public class Vec3 {
 
     public final double x, y, z;
     public static final Vec3 ORIGIN = new Vec3(0,0,0);
+    public static final Vec3 NORTH = new Vec3(1,0,0);
+    public static final Vec3 EAST = new Vec3(0,1,0);
+    public static final Vec3 DOWN = new Vec3(0,0,1);
     
     public Vec3(double x, double y, double z) {
         this.x = x;

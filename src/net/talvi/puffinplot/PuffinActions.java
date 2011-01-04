@@ -24,6 +24,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileFilter;
+import net.talvi.puffinplot.data.DatumField;
 import net.talvi.puffinplot.data.FisherValues;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
@@ -122,8 +123,8 @@ public class PuffinActions {
         String pathname = null;
         if (useSwingChooserForSave) {
             JFileChooser chooser = new JFileChooser();
-            chooser.setFileFilter(new FileFilter() {
-
+            if (extension != null && type != null) {
+                chooser.setFileFilter(new FileFilter() {
                 @Override
                 public boolean accept(File f) {
                     return f.getName().toLowerCase().endsWith(extension);
@@ -133,18 +134,19 @@ public class PuffinActions {
                 public String getDescription() {
                     return type;
                 }
-            });
+            });}
             int choice = chooser.showSaveDialog(app.getMainWindow());
             if (choice == JFileChooser.APPROVE_OPTION)
                 pathname = chooser.getSelectedFile().getPath();
         } else {
             FileDialog fd = new FileDialog(app.getMainWindow(), title,
                     FileDialog.SAVE);
+            if (extension != null) {
             fd.setFilenameFilter(new FilenameFilter() {
                 public boolean accept(File dir, String name) {
                     return name.toLowerCase().endsWith(extension);
                 }
-            });
+            });}
             fd.setVisible(true);
             if (fd.getFile() == null) { // "cancel" selected
                 pathname = null;
@@ -152,7 +154,8 @@ public class PuffinActions {
                pathname = new File(fd.getDirectory(), fd.getFile()).getPath();
             }
         }
-        if (pathname != null && !pathname.toLowerCase().endsWith(extension))
+        if (pathname != null && extension != null &&
+                !pathname.toLowerCase().endsWith(extension))
             pathname += extension;
         return pathname;
     }
@@ -523,6 +526,17 @@ public class PuffinActions {
         (app.getMainWindow(), new JTextArea("Normal " +fv.get(0).toString() +
                             "\nReversed: "+fv.get(1).toString()),
                             "Reversals test", JOptionPane.INFORMATION_MESSAGE);
+        }
+    };
+
+    public final Action exportIrm = new PuffinAction("Export IRM data",
+            "Export IRM field/remanence for this suite", null, false, 0) {
+        public void actionPerformed(ActionEvent e) {
+            String pathname = getSavePath("Export site calculations", null,
+                    null);
+            app.getSuite().exportToFiles(new File(pathname),
+                    Arrays.asList(new DatumField[] {DatumField.IRM_FIELD,
+                    DatumField.VIRT_MAGNETIZATION}));
         }
     };
 }

@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -15,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.PuffinPrefs;
 import net.talvi.puffinplot.data.file.FileLoader;
@@ -39,6 +42,7 @@ public class Suite {
     final private PuffinApp app;
     private List<String> loadWarnings;
     private boolean hasUnknownTreatType;
+    private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
 
     public FisherValues getSuiteFisher() {
         return suiteFisher;
@@ -101,7 +105,7 @@ public class Suite {
     }
 
     public void saveAs(File file) {
-        List<String> fields = Datum.getFieldNames();
+        List<String> fields = DatumField.getRealFieldHeaders();
 
         FileWriter fileWriter = null;
         CsvWriter csvWriter = null;
@@ -462,4 +466,43 @@ public class Suite {
         FisherValues fisherReversed = FisherValues.calculate(reversed);
         return Arrays.asList(fisherNormal, fisherReversed);
     }
+
+    public void exportToFiles(File directory, Collection<DatumField> fields) {
+        if (directory.exists()) {
+            if (!directory.isDirectory()) {
+                logger.info(String.format("exportToFiles: %s is not a directory",
+                        directory.toString()));
+                return;
+            }
+        } else {
+            if (!directory.mkdirs()) {
+                logger.info(String.format("exportToFiles: couldn't create %s",
+                        directory.toString()));
+                return;
+            }
+        }
+        for (Sample s: getSamples()) {
+            final List<String> lines = s.exportFields(fields);
+            final File outFile = new File(directory, s.getSampleId());
+            FileWriter fw = null;
+            try {
+                fw = new FileWriter(outFile);
+                for (String line : lines) {
+                    fw.write(line);
+                    fw.write("\n");
+                }
+            } catch (IOException e) {
+                logger.log(Level.WARNING,
+                        "exportToFiles: exception writing file.", e);
+            } finally {
+                try {
+                    if (fw != null) fw.close();
+                } catch (IOException e2) {
+                    logger.log(Level.WARNING, 
+                            "exportToFiles: exception closing file.", e2);
+                }
+            }
+        }
+    }
+
 }

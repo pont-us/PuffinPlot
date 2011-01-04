@@ -4,6 +4,7 @@ import static java.lang.Math.min;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.prefs.Preferences;
+import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 import net.talvi.puffinplot.data.Datum;
@@ -52,6 +53,11 @@ public class SampleEqAreaPlot extends EqAreaPlot {
         if (sample.greatCircle != null) {
             drawGreatCircle(g, xo, yo, radius, sample.greatCircle);
         }
+
+        Datum anyOldDatum = sample.getVisibleData().get(0);
+        Vec3 north = anyOldDatum.correctVector(Vec3.NORTH, params.getCorrection());
+        points.add(new TrianglePoint(this, null,
+                project(north, xo, yo, radius)));
         drawPoints(g);
     }
 }

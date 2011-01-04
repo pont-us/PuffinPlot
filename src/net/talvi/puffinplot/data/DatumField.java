@@ -1,6 +1,10 @@
 package net.talvi.puffinplot.data;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public enum DatumField {
@@ -48,20 +52,44 @@ public enum DatumField {
     PP_HIDDEN("PUFFIN hidden"),
     PP_ONCIRCLE("PUFFIN on circle"),
     PP_INPCA("PUFFIN in PCA"),
-    UNKNOWN(null);
+
+    // Virtual parameters (calculated from real ones)
+    VIRT_MAGNETIZATION("Magnetization", "Magnetization", true);
     
     private final String heading;
     private final String niceName;
+    private final boolean virtual;
     private final static Map<String, DatumField> nameMap
             = new HashMap<String, DatumField>();
+    private static final List<String> realFieldHeaders;
+    private static final List<DatumField> realFields;
     
     static {
-         for (DatumField f: values()) nameMap.put(f.getHeading(), f);
+        final List<DatumField> realFieldsTmp =
+                new ArrayList<DatumField>(values().length - 1);
+        final List<String> realFieldHeadersTmp =
+                new ArrayList<String>(values().length-1);
+        for (DatumField f : values())
+        {
+            nameMap.put(f.getHeading(), f);
+            DatumField[] dfs = DatumField.values();
+            if (!f.isVirtual()) {
+                realFieldsTmp.add(f);
+                realFieldHeadersTmp.add(f.toString());
+            }
+        }
+        realFields = Collections.unmodifiableList(realFieldsTmp);
+        realFieldHeaders = Collections.unmodifiableList(realFieldHeadersTmp);
+    }
+
+    private DatumField(String heading, String niceName, boolean virtual) {
+        this.heading = heading;
+        this.niceName = niceName;
+        this.virtual = virtual;
     }
 
     private DatumField(String heading, String niceName) {
-        this.heading = heading;
-        this.niceName = niceName;
+        this(heading, niceName, false);
     }
 
     private DatumField(String heading) {
@@ -69,8 +97,7 @@ public enum DatumField {
     }
 
     public static DatumField getByHeader(String h) {
-        DatumField f =  nameMap.get(h);
-        return f!=null ? f : UNKNOWN;
+        return nameMap.get(h);
     }
 
     public String getHeading() {
@@ -79,5 +106,17 @@ public enum DatumField {
     
     public String getNiceName() {
         return niceName;
+    }
+
+    public boolean isVirtual() {
+        return virtual;
+    }
+
+    public static List<DatumField> getRealFields() {
+        return realFields;
+    }
+
+    public static List<String> getRealFieldHeaders() {
+        return realFieldHeaders;
     }
 }

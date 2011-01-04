@@ -1,5 +1,6 @@
 package net.talvi.puffinplot.data;
 
+import java.util.Collection;
 import Jama.Matrix;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -78,10 +79,6 @@ public class Sample {
     }
 
     public List<Datum> getData() {
-        return data;
-    }
-
-    public List<Datum> getAllData() {
         return data;
     }
 
@@ -322,5 +319,14 @@ public class Sample {
 
     public Matrix getAms() {
         return ams;
+    }
+
+    public List<String> exportFields(Collection<DatumField> fields) {
+        final List<Datum> ds = getData();
+        List<String> result = new ArrayList<String>(ds.size());
+        for (Datum d: ds) {
+            result.add(d.exportFields(fields, "\t"));
+        }
+        return result;
     }
 }

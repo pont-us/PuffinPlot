@@ -31,12 +31,13 @@ public class PcaAnnotated {
 
     static PcaAnnotated calculate(Sample s) {
         PuffinApp app = PuffinApp.getInstance();
-        List<Vec3> points = new ArrayList<Vec3>(s.getData().size());
-        List<Datum> data = new ArrayList<Datum>(s.getData().size());
+        List<Datum> rawData = s.getVisibleData();
+        List<Vec3> points = new ArrayList<Vec3>(rawData.size());
+        List<Datum> data = new ArrayList<Datum>(rawData.size());
         
         int runEndsSeen = 0;
         boolean thisIsPca = false, lastWasPca = false;
-        for (Datum d: s.getData()) {
+        for (Datum d: rawData) {
             thisIsPca = d.isInPca();
             if (thisIsPca) {
                 points.add(d.getMoment(app.getCorrection()));
