@@ -1,0 +1,22 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: More flexible export
+desc: |-
+  Really we need a fully customizable exporter to fit with the
+  varied workflows that people have. Selectable fields, units, and
+  separators. Shouldn't be too hard to bolt on to the existing framework,
+  especially with virtual fields.
+type: :feature
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2011-01-24 23:05:27.871852 Z
+references: []
+
+id: e2c79e8cef26bb70893ee2ec6059424fc49511fe
+log_events: 
+- - 2011-01-24 23:05:28.879855 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
