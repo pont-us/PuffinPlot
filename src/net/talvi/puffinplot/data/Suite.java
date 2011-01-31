@@ -278,14 +278,14 @@ public class Suite {
             }
 
             writer = new CsvWriter(new FileWriter(file));
-            writer.writeCsv(measType.getColumnHeader(), "NRM intensity",
+            writer.writeCsv("Suite", measType.getColumnHeader(), "NRM intensity",
                     FisherValues.getHeaders(), PcaAnnotated.getHeaders(),
                     MDF.getHeaders());
             for (Sample sample: samples) {
                 PcaAnnotated pca = sample.getPca();
                 FisherValues fish = sample.getFisher();
                 MDF mdf = sample.getMDF();
-                writer.writeCsv(sample.getNameOrDepth(),
+                writer.writeCsv(getName(), sample.getNameOrDepth(),
                         String.format("%.4g", sample.getNRM(correction)),
                         fish == null ? FisherValues.getEmptyFields() : fish.toStrings(),
                         pca == null ? PcaAnnotated.getEmptyFields() : pca.toStrings(),
@@ -307,6 +307,10 @@ public class Suite {
      */
     public void saveCalcsSite(File file) {
         CsvWriter writer = null;
+        if (sites == null) {
+            app.errorDialog("Error saving file", "No sites are defined.");
+            return;
+        }
         try {
             writer = new CsvWriter(new FileWriter(file));
             writer.writeCsv("site", FisherValues.getHeaders(), GreatCircles.getHeaders());
