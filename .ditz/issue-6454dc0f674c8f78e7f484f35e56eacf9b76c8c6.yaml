@@ -1,0 +1,28 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Fisher on Sample for entire selection
+desc: |-
+  `Fisher on Sample' should operate on the entire selection,
+  not just on the current sample.
+type: :feature
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :closed
+disposition: :fixed
+creation_time: 2011-02-07 06:50:40.436727 Z
+references: []
+
+id: 6454dc0f674c8f78e7f484f35e56eacf9b76c8c6
+log_events: 
+- - 2011-02-07 06:50:41.768719 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
+- - 2011-02-07 06:51:03.584755 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2011-02-07 06:51:15.500719 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - Implemented as specified.

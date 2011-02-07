@@ -268,15 +268,17 @@ public class PuffinActions {
         }
     };
 
-    public final Action fisher = new PuffinAction("Fisher on sample",
-            "Calculate Fisher statistics for selected points", 'F', true,
+    public final Action fisherBySample = new PuffinAction("Fisher by sample",
+            "Calculate Fisher statistics for each individual sample", 'F', true,
             KeyEvent.VK_A) {
         public void actionPerformed(ActionEvent e) {
-            Sample s = app.getSample();
-            if (s == null) {
+            List<Sample> samples = app.getSelectedSamples();
+            if (samples == null || samples.isEmpty()) {
                 app.errorDialog("Fisher on sample", "No sample selected.");
             } else {
-                app.getSample().calculateFisher();
+                for (Sample s: samples) {
+                    s.calculateFisher();
+                }
                 app.getMainWindow().repaint();
             }
         }
