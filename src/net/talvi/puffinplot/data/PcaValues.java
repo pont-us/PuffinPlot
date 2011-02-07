@@ -1,15 +1,9 @@
 package net.talvi.puffinplot.data;
 
-import static java.lang.Math.abs;
 import static java.lang.Math.atan;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.toDegrees;
-
 import java.util.ArrayList;
-import java.util.Collections;
-
-import Jama.EigenvalueDecomposition;
-import Jama.Matrix;
 import java.util.Arrays;
 import java.util.List;
 

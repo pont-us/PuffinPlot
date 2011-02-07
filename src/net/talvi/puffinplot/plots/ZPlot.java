@@ -13,7 +13,6 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.text.AttributedString;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 

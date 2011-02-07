@@ -4,7 +4,6 @@ import static java.lang.Math.min;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.prefs.Preferences;
-import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 import net.talvi.puffinplot.data.Datum;

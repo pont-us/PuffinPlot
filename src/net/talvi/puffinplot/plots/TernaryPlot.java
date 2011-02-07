@@ -9,7 +9,6 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.prefs.Preferences;
-import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 import static java.lang.Math.cos;

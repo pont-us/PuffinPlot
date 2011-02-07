@@ -11,7 +11,6 @@ import net.talvi.puffinplot.window.PlotParams;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.data.Sample;
-import net.talvi.puffinplot.data.TreatType;
 import static java.lang.String.format;
 
 public class DataTable extends Plot {
