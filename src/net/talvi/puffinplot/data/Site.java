@@ -9,8 +9,8 @@ public class Site {
 
     private final String name;
     private final List<Sample> samples;
-    public FisherValues fisher;
-    public GreatCircles greatCircles;
+    private FisherValues fisher;
+    private GreatCircles greatCircles;
 
     public Site(String name, List<Sample> samples) {
         this.name = name;
@@ -50,5 +50,19 @@ public class Site {
      */
     public List<Sample> getSamples() {
         return samples;
+    }
+
+    /**
+     * @return the fisher
+     */
+    public FisherValues getFisher() {
+        return fisher;
+    }
+
+    /**
+     * @return the greatCircles
+     */
+    public GreatCircles getGreatCircles() {
+        return greatCircles;
     }
 }

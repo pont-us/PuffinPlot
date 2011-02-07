@@ -54,10 +54,14 @@ public class SampleEqAreaPlot extends EqAreaPlot {
             drawGreatCircle(g, xo, yo, radius, sample.greatCircle);
         }
 
+        /* Some code to show where North gets projected to.
+         * Probably not very useful in general.
         Datum anyOldDatum = sample.getVisibleData().get(0);
         Vec3 north = anyOldDatum.correctVector(Vec3.NORTH, params.getCorrection());
         points.add(new TrianglePoint(this, null,
                 project(north, xo, yo, radius)));
+        */
+
         drawPoints(g);
     }
 }

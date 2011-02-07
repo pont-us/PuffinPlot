@@ -1,5 +1,6 @@
 package net.talvi.puffinplot.plots;
 
+import net.talvi.puffinplot.data.Site;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
@@ -24,7 +25,12 @@ public class GreatCirclePlot extends EqAreaPlot {
 
     @Override
     public void draw(Graphics2D g) {
-        GreatCircles circles = params.getSample().getSite().greatCircles;
+        Site site = params.getSample().getSite();
+        if (site == null) {
+            writeString(g, "No sites defined.", 100, 100);
+            return;
+        }
+        GreatCircles circles = site.getGreatCircles();
         if (circles == null) return;
         final Rectangle2D dims = getDimensions();
         final int radius = (int) (min(dims.getWidth(), dims.getHeight()) / 2);

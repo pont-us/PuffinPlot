@@ -353,7 +353,10 @@ public final class PuffinApp {
         Set<Site> siteSet = new LinkedHashSet<Site>();
         for (Sample sample: samples) {
             // re-insertion doesn't affect iteration order
-            siteSet.add(sample.getSite());
+            Site site = sample.getSite();
+            if (site != null) {
+                siteSet.add(sample.getSite());
+            }
         }
         return new ArrayList<Site>(siteSet);
     }

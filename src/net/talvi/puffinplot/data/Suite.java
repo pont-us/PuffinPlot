@@ -91,7 +91,7 @@ public class Suite {
     public List<FisherValues> getFishers() {
         List<FisherValues> result = new ArrayList<FisherValues>(sites.size());
         for (Site site: sites) {
-            if (site.fisher != null) result.add(site.fisher);
+            if (site.getFisher() != null) result.add(site.getFisher());
         }
         return result;
     }
@@ -315,12 +315,12 @@ public class Suite {
             writer = new CsvWriter(new FileWriter(file));
             writer.writeCsv("site", FisherValues.getHeaders(), GreatCircles.getHeaders());
             for (Site site: sites) {
-                List<String> fisherCsv = (site.fisher == null)
+                List<String> fisherCsv = (site.getFisher() == null)
                         ? FisherValues.getEmptyFields()
-                        : site.fisher.toStrings();
-                List<String> gcCsv = (site.greatCircles == null)
+                        : site.getFisher().toStrings();
+                List<String> gcCsv = (site.getGreatCircles() == null)
                         ? GreatCircles.getEmptyFields()
-                        : site.greatCircles.toStrings();
+                        : site.getGreatCircles().toStrings();
                 writer.writeCsv(site, fisherCsv, gcCsv);
             }
         } catch (IOException ex) {
