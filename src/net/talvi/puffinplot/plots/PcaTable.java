@@ -44,13 +44,14 @@ public class PcaTable extends Plot {
                 String.format("Dec %.2f", pca.getDecDegrees()),
                 String.format("Inc %.2f", pca.getIncDegrees()),
                 String.format("MAD1 %.2f", pca.getMad1()),
-                String.format("MAD3 %.2f", pca.getMad3())
+                String.format("MAD3 %.2f", pca.getMad3()),
+                pca.getEquation(), ""
             };
             
             g.setColor(Color.BLACK);
 
             for (int x=0; x<2; x++)
-                for (int y=0; y<2; y++)
+                for (int y=0; y<3; y++)
                     writeString(g, strings[2*y+x],
                             (int) getDimensions().getMinX() + x * X_SPACE,
                             (int) getDimensions().getMinY() + (y+1) * Y_SPACE);

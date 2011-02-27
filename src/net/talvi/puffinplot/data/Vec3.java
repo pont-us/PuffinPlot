@@ -9,6 +9,8 @@ import static java.lang.Math.sqrt;
 import static java.lang.Math.toDegrees;
 import static java.lang.Math.toRadians;
 import static java.lang.Math.signum;
+import static java.lang.Math.log10;
+import static java.lang.Math.pow;
 import Jama.Matrix;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -405,6 +407,28 @@ public class Vec3 {
 
     Vec3 setZ(double newZ) {
         return new Vec3(x, y, newZ);
+    }
+
+    String toCustomString(String pre, String post, String sep, int dp,
+            boolean scale) {
+        // TODO tidy up: this code's a mess.
+        final String format = String.format("%s%%.%df%s%%.%df%s%%.%df%s",
+                    pre, dp, sep, dp, sep, dp, post);
+        final Vec3 vec;
+        int oom = 0;
+        if (scale) {
+            oom = (int) (log10(mag())) - 1;
+            double sf = pow(10, oom);
+            Vec3 fixed = this.divideBy(sf);
+            vec = fixed;
+        } else {
+            vec = this;
+        }
+        String result = String.format(format, vec.x, vec.y, vec.z);
+        if (scale) {
+            result += String.format("e%d", oom);
+        }
+        return result;
     }
 
     @Override

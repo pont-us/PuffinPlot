@@ -108,7 +108,9 @@ public abstract class Plot
     }
 
     protected void writeString(Graphics2D g, String text, float x, float y) {
-        writeString(g, new AttributedString(text), x, y);
+        if (text != null && !"".equals(text)) {
+            writeString(g, new AttributedString(text), x, y);
+        }
     }
 
     protected void writeString(Graphics2D g, AttributedString as, float x, float y) {

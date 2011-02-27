@@ -104,6 +104,22 @@ public class PcaValues {
         return HEADERS;
     }
 
+    /**
+     * Return a Cartesian equation describing the PCA line.
+     *
+     * @return a String giving an equation for the PCA
+     */
+    public String getEquation() {
+        StringBuilder sb = new StringBuilder();
+        if (origin != Vec3.ORIGIN) {
+            sb.append(origin.toCustomString("(", ")", " ", 2, true));
+            sb.append(" + ");
+        }
+        sb.append(direction.toCustomString("(", ")", " ", 2, false));
+        sb.append("t");
+        return sb.toString();
+    }
+
     public List<String> toStrings() {
         return Arrays.asList(fmt(getIncDegrees()), fmt(getDecDegrees()),
             fmt(getMad1()), fmt(getMad3()), anchored ? "yes" : "no");
