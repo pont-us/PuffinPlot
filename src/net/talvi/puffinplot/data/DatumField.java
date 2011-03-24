@@ -1,7 +1,6 @@
 package net.talvi.puffinplot.data;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -54,7 +53,8 @@ public enum DatumField {
     PP_INPCA("PUFFIN in PCA"),
 
     // Virtual parameters (calculated from real ones)
-    VIRT_MAGNETIZATION("Magnetization", "Magnetization", true);
+    VIRT_MAGNETIZATION("Magnetization", "Magnetization", true),
+    VIRT_MSJUMP("MS jump temp.", "MS jump temp.", true);
     
     private final String heading;
     private final String niceName;

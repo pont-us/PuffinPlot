@@ -177,6 +177,7 @@ public class Suite {
             sample.calculateFisher();
             sample.doPca();
             sample.fitGreatCircle();
+            sample.calculateMagSusJump();
         }
     }
 
@@ -279,6 +280,7 @@ public class Suite {
 
             writer = new CsvWriter(new FileWriter(file));
             writer.writeCsv("Suite", measType.getColumnHeader(), "NRM intensity",
+                    "MS jump temp.",
                     FisherValues.getHeaders(), PcaAnnotated.getHeaders(),
                     MDF.getHeaders());
             for (Sample sample: samples) {
@@ -287,6 +289,7 @@ public class Suite {
                 MDF mdf = sample.getMDF();
                 writer.writeCsv(getName(), sample.getNameOrDepth(),
                         String.format("%.4g", sample.getNRM(correction)),
+                        String.format("%.4g", sample.getMagSusJump()),
                         fish == null ? FisherValues.getEmptyFields() : fish.toStrings(),
                         pca == null ? PcaAnnotated.getEmptyFields() : pca.toStrings(),
                         mdf == null ? MDF.getEmptyFields() : mdf.toStrings());

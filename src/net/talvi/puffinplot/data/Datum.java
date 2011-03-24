@@ -293,6 +293,7 @@ public class Datum {
         case PP_ONCIRCLE: return Boolean.toString(isOnCircle());
         case PP_INPCA: return Boolean.toString(isInPca());
         case VIRT_MAGNETIZATION: return fmt(getIntensity(Correction.NONE));
+        case VIRT_MSJUMP: return fmt(getSample().getMagSusJump());
         default: throw new IllegalArgumentException("Unknown field "+field);
         }
     }

@@ -21,6 +21,7 @@ public class Sample {
     private boolean hasMsData = false;
     private Matrix ams;
     public List<Vec3> amsAxes;
+    private double magSusJump = 0; // temperature at which mag. sus. jumps
 
     public Sample(String name) {
         this.nameOrDepth = name;
@@ -46,6 +47,27 @@ public class Sample {
 
     public double getNRM(Correction correction) {
         return data.get(0).getIntensity(correction);
+    }
+
+    public void calculateMagSusJump() {
+        final double limit = 2.5;
+        double msj = 0;
+        double prevMagSus = 1e200;
+        for (Datum d: data) {
+            double magSus = d.getMagSus();
+            if (!Double.isNaN(magSus)) {
+                if (magSus > prevMagSus * limit) {
+                    msj = d.getTemp();
+                    break;
+                }
+                prevMagSus = magSus;
+            }
+        }
+        magSusJump = msj;
+    }
+
+    public double getMagSusJump() {
+        return magSusJump;
     }
 
     /*
