@@ -7,7 +7,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.talvi.puffinplot.data.Correction;
@@ -25,6 +28,7 @@ public class PplLoader extends AbstractFileLoader {
     private Reader datumReader;
     private int treatmentField;
     private int version;
+    private List<String> extraLines = Collections.EMPTY_LIST;
 
     public PplLoader(File file) {
         try {
@@ -67,6 +71,7 @@ public class PplLoader extends AbstractFileLoader {
     private void readFile() throws IOException {
         String line;
         while ((line = reader.readLine()) != null) {
+            if ("".equals(line)) break;
             List<String> values = Arrays.asList(line.split("\t"));
             if (version==2) {
                 // Ppl 2 files still use the 2G strings for treatment types,
@@ -92,5 +97,16 @@ public class PplLoader extends AbstractFileLoader {
             }
             addDatum(d);
         }
+        if (line != null) {
+            extraLines = new ArrayList<String>();
+            while ((line = reader.readLine()) != null) {
+                extraLines.add(line);
+            }
+        }
+    }
+
+    @Override
+    public List<String> getExtraLines() {
+        return extraLines;
     }
 }

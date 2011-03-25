@@ -1,5 +1,6 @@
 package net.talvi.puffinplot.data;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Collection;
 import Jama.Matrix;
@@ -7,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import javax.management.ImmutableDescriptor;
 import net.talvi.puffinplot.PuffinApp;
 import static java.lang.Math.toRadians;
 
@@ -24,14 +26,15 @@ public class Sample {
     private Matrix ams;
     public List<Vec3> amsAxes;
     private double magSusJump = 0; // temperature at which mag. sus. jumps
-    private Map<String,Boolean> customFlags;
-    // private Map<String,String> customNotes;
+    private List<Boolean> customFlags;
+    private final Suite suite;
 
-    public Sample(String name) {
+    public Sample(String name, Suite suite) {
         this.nameOrDepth = name;
+        this.suite = suite;
         this.data = new ArrayList<Datum>();
         // this.customNotes = new HashMap<String, String>();
-        this.customFlags = new HashMap<String, Boolean>();
+        this.customFlags = new ArrayList<Boolean>();
     }
     
     public void clear() {
@@ -358,27 +361,54 @@ public class Sample {
         return result;
     }
 
-    public void defineCustomFlags(List<String> flagNames) {
-        for (String name: flagNames) {
-            if (!customFlags.containsKey(name)) {
-                customFlags.put(name, false);
+    public void setCustomFlag(int flagNum, boolean value) {
+        customFlags.set(flagNum, value);
+    }
+
+    public boolean getCustomFlag(int flagNum) {
+        return customFlags.get(flagNum);
+    }
+
+    public void addCustomFlag(int position) {
+        customFlags.add(position, false);
+    }
+
+    public void removeCustomFlag(int flagNum) {
+        customFlags.remove(flagNum);
+    }
+
+    public void setNumberOfCustomFlags(int size) {
+        customFlags = new ArrayList<Boolean>(size);
+        customFlags.addAll(Collections.nCopies(size, Boolean.FALSE));
+    }
+
+    public Suite getSuite() {
+        return suite;
+    }
+    
+    /**
+     * Produce a list of Strings representing daa pertaining to this sample.
+     * (Sample-level data only; Datum-level stuff handled separately.)
+     */
+    public List<String> toStrings() {
+        StringBuilder sb = new StringBuilder("CUSTOM_FLAGS\t");
+        for (boolean b: customFlags) {
+            sb.append(b ? "1" : "0");
+        }
+        return Collections.singletonList(sb.toString());
+    }
+    
+    /*
+     * Set internal data based on a supplied string.
+     */
+    public void fromString(String string) {
+        String[] parts = string.split("\t");
+        if ("CUSTOM_FLAGS".equals(parts[0])) {
+            int numFlags = parts[1].length();
+            setNumberOfCustomFlags(numFlags);
+            for (int i=0; i<numFlags; i++) {
+                setCustomFlag(i, parts[1].charAt(i) == '1');
             }
         }
-    }
-
-    public void setCustomFlag(String flagName, boolean value) {
-        customFlags.put(flagName, value);
-    }
-
-    public boolean getCustomFlag(String flagName) {
-        return customFlags.get(flagName);
-    }
-
-    public List<String> getCustomFlagNames() {
-        return new ArrayList(customFlags.keySet());
-    }
-
-    public void removeCustomFlag(String name) {
-        customFlags.remove(name);
     }
 }

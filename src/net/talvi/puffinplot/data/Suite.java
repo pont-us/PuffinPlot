@@ -43,8 +43,6 @@ public class Suite {
     private List<String> loadWarnings;
     private boolean hasUnknownTreatType;
     private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
-    private static final List<String> customFlagTest = 
-            Arrays.asList(new String[] {"flag1", "flag2"});
     private List<String> customFlagNames =
             Arrays.asList(new String[] {"flagA", "flagB"});
 
@@ -124,7 +122,20 @@ public class Suite {
                     csvWriter.writeCsv(datum.toStrings());
                 }
             }
-            csvWriter.close();
+            // csvWriter.close();
+            fileWriter.write("\n");
+            for (Sample sample: getSamples()) {
+                List<String> lines = sample.toStrings();
+                for (String line: lines) {
+                    String w = String.format("SAMPLE\t%s\t%s\n",
+                            sample.getNameOrDepth(), line);
+                    fileWriter.write(w);
+                }
+            }
+            for (String line: toStrings()) {
+                fileWriter.write(String.format("SUITE\t%s\n", line));
+            }
+            fileWriter.close();
             puffinFile = file;
             suiteName = file.getName();
             app.getRecentFiles().add(Collections.singletonList(file));
@@ -157,7 +168,8 @@ public class Suite {
         String name = d.getIdOrDepth();
         Sample s = samplesById.get(name);
         if (s == null) {
-            s = new Sample(name);
+            s = new Sample(name, this);
+            s.setNumberOfCustomFlags(customFlagNames.size());
             samplesById.put(name, s);
             samples.add(s);
         }
@@ -207,6 +219,7 @@ public class Suite {
         measType = MeasType.UNSET;
         loadWarnings = new ArrayList<String>();
         hasUnknownTreatType = false;
+        List<String> puffinLines = Collections.EMPTY_LIST;
 
         for (File file: files) {
             if (!file.exists()) {
@@ -243,6 +256,7 @@ public class Suite {
                     if (!d.ignoreOnLoading()) addDatum(d);
                 }
                 loadWarnings.addAll(loader.getMessages());
+                puffinLines = loader.getExtraLines();
             }
         }
         setCurrentSampleIndex(0);
@@ -268,9 +282,7 @@ public class Suite {
             guessSites(); // sites aren't saved yet so we just re-guess on load
         }
         doSampleCalculations();
-        for (Sample s: samples) {
-            s.defineCustomFlags(customFlagTest);
-        }
+        processPuffinLines(puffinLines);
     }
     
     /*
@@ -428,6 +440,24 @@ public class Suite {
         return getName();
     }
 
+    public List<String> toStrings() {
+        StringBuilder sb = new StringBuilder("CUSTOM_FLAG_NAMES");
+        for (String s: customFlagNames) {
+            sb.append("\t" + s);
+        }
+        return Collections.singletonList(sb.toString());
+    }
+
+    public void fromString(String string) {
+        String[] parts = string.split("\t");
+        if ("CUSTOM_FLAG_NAMES".equals(parts[0])) {
+            customFlagNames = new ArrayList<String>(parts.length-1);
+            for (int i=1; i<parts.length; i++) {
+                customFlagNames.add(parts[i]);
+            }
+        }
+    }
+
     /**
      *  Import AMS data from a file. If directions==false, line format is
      *  k11 k22 k33 k12 k23 k13  (tensor components)
@@ -515,6 +545,26 @@ public class Suite {
                     logger.log(Level.WARNING, 
                             "exportToFiles: exception closing file.", e2);
                 }
+            }
+        }
+    }
+
+    /**
+     * @return the customFlagNames
+     */
+    public List<String> getCustomFlagNames() {
+        return customFlagNames;
+    }
+
+    private void processPuffinLines(List<String> lines) {
+        for (String line: lines) {
+            String[] parts = line.split("\t");
+            if ("SUITE".equals(parts[0])) {
+                fromString(line.substring(6));
+            } else if ("SAMPLE".equals(parts[0])) {
+                String sampleId = parts[1];
+                Sample sample = getSampleByName(sampleId);
+                sample.fromString(line.substring(8+sampleId.length()));
             }
         }
     }

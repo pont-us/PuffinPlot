@@ -3,7 +3,9 @@ package net.talvi.puffinplot.window;
 import java.awt.Component;
 import java.util.EventListener;
 import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -31,30 +33,30 @@ public class SampleDataPanel extends JPanel {
 
     private void doUpdate() {
         removeAll(); // remove all components
-        for (String name: sample.getCustomFlagNames()) {
-            add(new SampleRadioButton(sample, name));
+        for (int i=0; i<sample.getSuite().getCustomFlagNames().size(); i++) {
+            add(new SampleCheckBox(sample, i));
         }
         revalidate();
     }
 
-    private class SampleRadioButton extends JRadioButton {
+    private class SampleCheckBox extends JCheckBox {
         private final Sample sample;
-        private final String flagName;
-        public SampleRadioButton(Sample sample, String flagName) {
-            super(flagName);
+        private final int flagNum;
+        public SampleCheckBox(Sample sample, int flagNum) {
+            super(sample.getSuite().getCustomFlagNames().get(flagNum));
             this.sample = sample;
-            this.flagName = flagName;
+            this.flagNum = flagNum;
             addChangeListener(new ChangeListener() {
                 public void stateChanged(ChangeEvent e) {
-                    SampleRadioButton srb = SampleRadioButton.this;
-                    srb.sample.setCustomFlag(srb.flagName, isSelected());
+                    SampleCheckBox scb = SampleCheckBox.this;
+                    scb.sample.setCustomFlag(scb.flagNum, isSelected());
                 }
             });
             updateState();
         }
 
         private void updateState() {
-            setSelected(sample.getCustomFlag(flagName));
+            setSelected(sample.getCustomFlag(flagNum));
         }
         
     }

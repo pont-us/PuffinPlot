@@ -23,6 +23,10 @@ public abstract class AbstractFileLoader implements FileLoader {
         return data;
     }
 
+    public List<String> getExtraLines() {
+        return Collections.EMPTY_LIST;
+    }
+
     public List<String> getMessages() {
         return Collections.unmodifiableList(messages);
     }

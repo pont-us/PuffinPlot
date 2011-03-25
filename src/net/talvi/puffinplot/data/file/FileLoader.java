@@ -6,4 +6,5 @@ import net.talvi.puffinplot.data.Datum;
 public interface FileLoader {
     public List<Datum> getData();
     public List<String> getMessages();
+    public List<String> getExtraLines();
 }
