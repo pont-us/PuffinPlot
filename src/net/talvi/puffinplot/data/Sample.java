@@ -26,7 +26,7 @@ public class Sample {
     private Matrix ams;
     public List<Vec3> amsAxes;
     private double magSusJump = 0; // temperature at which mag. sus. jumps
-    private List<Boolean> customFlags;
+    private CustomFields<Boolean> customFlags;
     private final Suite suite;
 
     public Sample(String name, Suite suite) {
@@ -34,7 +34,7 @@ public class Sample {
         this.suite = suite;
         this.data = new ArrayList<Datum>();
         // this.customNotes = new HashMap<String, String>();
-        this.customFlags = new ArrayList<Boolean>();
+        this.customFlags = new CustomFields<Boolean>();
     }
     
     public void clear() {
@@ -361,27 +361,6 @@ public class Sample {
         return result;
     }
 
-    public void setCustomFlag(int flagNum, boolean value) {
-        customFlags.set(flagNum, value);
-    }
-
-    public boolean getCustomFlag(int flagNum) {
-        return customFlags.get(flagNum);
-    }
-
-    public void addCustomFlag(int position) {
-        customFlags.add(position, false);
-    }
-
-    public void removeCustomFlag(int flagNum) {
-        customFlags.remove(flagNum);
-    }
-
-    public void setNumberOfCustomFlags(int size) {
-        customFlags = new ArrayList<Boolean>(size);
-        customFlags.addAll(Collections.nCopies(size, Boolean.FALSE));
-    }
-
     public Suite getSuite() {
         return suite;
     }
@@ -391,11 +370,7 @@ public class Sample {
      * (Sample-level data only; Datum-level stuff handled separately.)
      */
     public List<String> toStrings() {
-        StringBuilder sb = new StringBuilder("CUSTOM_FLAGS\t");
-        for (boolean b: customFlags) {
-            sb.append(b ? "1" : "0");
-        }
-        return Collections.singletonList(sb.toString());
+        return Collections.singletonList("CUSTOM_FLAGS\t"+customFlags.exportAsString());
     }
     
     /*
@@ -404,11 +379,18 @@ public class Sample {
     public void fromString(String string) {
         String[] parts = string.split("\t");
         if ("CUSTOM_FLAGS".equals(parts[0])) {
-            int numFlags = parts[1].length();
-            setNumberOfCustomFlags(numFlags);
-            for (int i=0; i<numFlags; i++) {
-                setCustomFlag(i, parts[1].charAt(i) == '1');
+            ArrayList<Boolean> flags = new ArrayList<Boolean>(parts.length-1);
+            for (int i=1; i<parts.length; i++) {
+                flags.add(Boolean.parseBoolean(parts[i]));
             }
+            customFlags = new CustomFields<Boolean>(flags);
         }
+    }
+
+    /**
+     * @return the customFlags
+     */
+    public CustomFields<Boolean> getCustomFlags() {
+        return customFlags;
     }
 }

@@ -36,6 +36,7 @@ import static java.lang.Thread.UncaughtExceptionHandler;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Site;
+import net.talvi.puffinplot.window.CustomFieldEditor;
 import net.talvi.puffinplot.window.GreatCircleWindow;
 import net.talvi.puffinplot.window.PrefsWindow;
 
@@ -145,6 +146,7 @@ public final class PuffinApp {
         aboutBox = new AboutBox(mainWindow);
         mainWindow.getMainMenuBar().updateRecentFiles();
         mainWindow.setVisible(true);
+        CustomFieldEditor cfe = new CustomFieldEditor();
         logger.info("PuffinApp instantiation complete.");
     }
 

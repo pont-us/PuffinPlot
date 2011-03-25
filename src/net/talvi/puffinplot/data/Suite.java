@@ -43,8 +43,7 @@ public class Suite {
     private List<String> loadWarnings;
     private boolean hasUnknownTreatType;
     private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
-    private List<String> customFlagNames =
-            Arrays.asList(new String[] {"flagA", "flagB"});
+    private List<String> customFlagNames = Collections.EMPTY_LIST;
 
     public FisherValues getSuiteFisher() {
         return suiteFisher;
@@ -169,7 +168,6 @@ public class Suite {
         Sample s = samplesById.get(name);
         if (s == null) {
             s = new Sample(name, this);
-            s.setNumberOfCustomFlags(customFlagNames.size());
             samplesById.put(name, s);
             samples.add(s);
         }

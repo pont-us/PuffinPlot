@@ -1,14 +1,8 @@
 package net.talvi.puffinplot.window;
 
-import java.awt.Component;
-import java.util.EventListener;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import net.talvi.puffinplot.data.Sample;
@@ -49,14 +43,14 @@ public class SampleDataPanel extends JPanel {
             addChangeListener(new ChangeListener() {
                 public void stateChanged(ChangeEvent e) {
                     SampleCheckBox scb = SampleCheckBox.this;
-                    scb.sample.setCustomFlag(scb.flagNum, isSelected());
+                    scb.sample.getCustomFlags().set(scb.flagNum, isSelected());
                 }
             });
             updateState();
         }
 
         private void updateState() {
-            setSelected(sample.getCustomFlag(flagNum));
+            setSelected(sample.getCustomFlags().get(flagNum));
         }
         
     }
