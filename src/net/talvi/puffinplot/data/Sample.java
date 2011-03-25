@@ -1,8 +1,10 @@
 package net.talvi.puffinplot.data;
 
+import java.util.Map;
 import java.util.Collection;
 import Jama.Matrix;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import net.talvi.puffinplot.PuffinApp;
@@ -22,10 +24,14 @@ public class Sample {
     private Matrix ams;
     public List<Vec3> amsAxes;
     private double magSusJump = 0; // temperature at which mag. sus. jumps
+    private Map<String,Boolean> customFlags;
+    // private Map<String,String> customNotes;
 
     public Sample(String name) {
         this.nameOrDepth = name;
         this.data = new ArrayList<Datum>();
+        // this.customNotes = new HashMap<String, String>();
+        this.customFlags = new HashMap<String, Boolean>();
     }
     
     public void clear() {
@@ -350,5 +356,29 @@ public class Sample {
             result.add(d.exportFields(fields, "\t"));
         }
         return result;
+    }
+
+    public void defineCustomFlags(List<String> flagNames) {
+        for (String name: flagNames) {
+            if (!customFlags.containsKey(name)) {
+                customFlags.put(name, false);
+            }
+        }
+    }
+
+    public void setCustomFlag(String flagName, boolean value) {
+        customFlags.put(flagName, value);
+    }
+
+    public boolean getCustomFlag(String flagName) {
+        return customFlags.get(flagName);
+    }
+
+    public List<String> getCustomFlagNames() {
+        return new ArrayList(customFlags.keySet());
+    }
+
+    public void removeCustomFlag(String name) {
+        customFlags.remove(name);
     }
 }

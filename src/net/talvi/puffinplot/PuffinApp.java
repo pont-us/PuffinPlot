@@ -232,9 +232,7 @@ public final class PuffinApp {
     }
     
     public void updateDisplay() {
-        getMainWindow().controlPanel.updateSample();
-        getMainWindow().repaint(100);
-        getMainWindow().getMainMenuBar().sampleChanged();
+        getMainWindow().sampleChanged();
         getTableWindow().dataChanged();
     }
 

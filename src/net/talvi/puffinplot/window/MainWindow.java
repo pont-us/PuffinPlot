@@ -24,6 +24,7 @@ public class MainWindow extends JFrame {
     SampleChooser sampleChooser;
     private final MainMenuBar menuBar;
     private JLabel welcomeMessage;
+    private final SampleDataPanel sampleDataPanel;
 
     public MainWindow() {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -45,6 +46,7 @@ public class MainWindow extends JFrame {
                 PuffinApp.getInstance().getBuildDate()+"."), BorderLayout.NORTH);
         graphDisplay.setVisible(false);
         mainPanel.add(sampleChooser = new SampleChooser(), BorderLayout.WEST);
+        mainPanel.add(sampleDataPanel = new SampleDataPanel(), BorderLayout.EAST);
         Container cp = getContentPane();
         cp.setLayout(new BoxLayout(cp, BoxLayout.Y_AXIS));
         cp.add(controlPanel = new ControlPanel());
@@ -64,6 +66,14 @@ public class MainWindow extends JFrame {
         welcomeMessage.setVisible(numSuites == 0);
         getGraphDisplay().setVisible(numSuites > 0);
         repaint();
+    }
+
+    public void sampleChanged() {
+        controlPanel.updateSample();
+        sampleDataPanel.setSample(PuffinApp.getInstance().getSample());
+        //pack();
+        repaint(100);
+        getMainMenuBar().sampleChanged();
     }
     
     public MainMenuBar getMainMenuBar() {

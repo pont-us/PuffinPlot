@@ -43,6 +43,10 @@ public class Suite {
     private List<String> loadWarnings;
     private boolean hasUnknownTreatType;
     private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
+    private static final List<String> customFlagTest = 
+            Arrays.asList(new String[] {"flag1", "flag2"});
+    private List<String> customFlagNames =
+            Arrays.asList(new String[] {"flagA", "flagB"});
 
     public FisherValues getSuiteFisher() {
         return suiteFisher;
@@ -264,6 +268,9 @@ public class Suite {
             guessSites(); // sites aren't saved yet so we just re-guess on load
         }
         doSampleCalculations();
+        for (Sample s: samples) {
+            s.defineCustomFlags(customFlagTest);
+        }
     }
     
     /*
