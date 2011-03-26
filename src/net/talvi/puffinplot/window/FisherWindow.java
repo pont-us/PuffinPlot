@@ -3,6 +3,7 @@ package net.talvi.puffinplot.window;
 import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.plots.FisherPlot;
 
 public class FisherWindow extends JFrame {
@@ -15,6 +16,7 @@ public class FisherWindow extends JFrame {
         contentPane.setOpaque(true); //content panes must be opaque
         setContentPane(contentPane);
         pack();
+        setLocationRelativeTo(PuffinApp.getInstance().getMainWindow());
     }
 
     public FisherPlot getPlot() {

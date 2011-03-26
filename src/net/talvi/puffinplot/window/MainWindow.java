@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import net.talvi.puffinplot.data.Sample;
 
 public class MainWindow extends JFrame {
 
@@ -53,6 +54,7 @@ public class MainWindow extends JFrame {
         cp.add(mainPanel);
         setMaximumSize(jsp.getMaximumSize());
         pack();
+        setLocationRelativeTo(null); // centre on screen
     }
 
     public SampleChooser getSampleChooser() {
@@ -70,7 +72,9 @@ public class MainWindow extends JFrame {
 
     public void sampleChanged() {
         controlPanel.updateSample();
-        sampleDataPanel.setSample(PuffinApp.getInstance().getSample());
+        Sample sample = PuffinApp.getInstance().getSample();
+        if (sample==null) return;
+        sampleDataPanel.setSample(sample);
         //pack();
         repaint(100);
         getMainMenuBar().sampleChanged();

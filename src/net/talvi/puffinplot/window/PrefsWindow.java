@@ -150,6 +150,7 @@ public class PrefsWindow extends JFrame {
                 0, 1, 1, 1, 0.01, 0.01, GridBagConstraints.LINE_END,
                 GridBagConstraints.VERTICAL, insets, 4, 4));
         pack();
+        setLocationRelativeTo(PuffinApp.getInstance().getMainWindow());
     }
 
     private void applySettings() {

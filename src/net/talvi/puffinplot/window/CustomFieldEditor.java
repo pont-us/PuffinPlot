@@ -1,6 +1,7 @@
 package net.talvi.puffinplot.window;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
@@ -16,10 +17,10 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.CustomFields;
 
-public class CustomFieldEditor extends JFrame
-                      implements ListSelectionListener {
+public class CustomFieldEditor extends JFrame {
 
     private JPanel contentPane;
     private JList list;
@@ -43,8 +44,8 @@ public class CustomFieldEditor extends JFrame
         list = new JList(listModel);
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         list.setSelectedIndex(0);
-        list.addListSelectionListener(this);
         list.setVisibleRowCount(5);
+        list.setPreferredSize(new Dimension(150, list.getPreferredSize().height));
         JScrollPane listScrollPane = new JScrollPane(list);
 
         addButton = new JButton(addString);
@@ -71,9 +72,6 @@ public class CustomFieldEditor extends JFrame
         buttonPane.add(renameButton);
         addVstrut(buttonPane);
         buttonPane.add(removeButton);
-        //buttonPane.add(Box.createVerticalStrut(5));
-        // buttonPane.add(customFieldName);
-
         buttonPane.setBorder(BorderFactory.createEmptyBorder(6,6,6,6));
 
         // Add list and buttons to the content pane
@@ -83,6 +81,7 @@ public class CustomFieldEditor extends JFrame
         contentPane.setOpaque(true); // (compulsory)
         setContentPane(contentPane);
         pack();
+        setLocationRelativeTo(PuffinApp.getInstance().getMainWindow());
         setVisible(true);
     }
 
@@ -111,7 +110,7 @@ public class CustomFieldEditor extends JFrame
     class MoveDownListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             int index = list.getSelectedIndex();
-            if (index>=fields.size()-1) return;
+            if (index>=fields.size()-1 || index==-1) return;
             fields.swapAdjacent(index);
             setFromFields();
             list.setSelectedIndex(index+1);
@@ -122,13 +121,11 @@ public class CustomFieldEditor extends JFrame
     class RemoveFieldListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             int index = list.getSelectedIndex();
+            if (index==-1) return;
             listModel.remove(index);
             fields.remove(index);
             int size = listModel.getSize();
-            if (size == 0) {
-                // grey out the remove button
-                removeButton.setEnabled(false);
-            } else {
+            if (size > 0) {
                 if (index == size) {
                     // last item removed, adjust current index
                     index--;
@@ -161,12 +158,12 @@ public class CustomFieldEditor extends JFrame
             list.setSelectedIndex(newIndex);
             list.ensureIndexIsVisible(newIndex);
         }
-
     }
 
     class RenameListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             int index = list.getSelectedIndex();
+            if (index==-1) return;
             String name = fields.get(index);
             String newName = (String) JOptionPane.showInputDialog(
                     CustomFieldEditor.this,
@@ -183,11 +180,5 @@ public class CustomFieldEditor extends JFrame
             listModel.set(index, newName);
         }
 
-    }
-
-    public void valueChanged(ListSelectionEvent e) {
-        if (e.getValueIsAdjusting() == false) {
-            removeButton.setEnabled(list.getSelectedIndex() != -1);
-        }
     }
 }

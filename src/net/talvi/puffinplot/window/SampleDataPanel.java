@@ -33,6 +33,7 @@ public class SampleDataPanel extends JPanel {
 
     private void doUpdate() {
         removeAll(); // remove all components
+        if (sample==null) return;
         Suite suite = sample.getSuite();
         for (int i=0; i<suite.getCustomFlagNames().size(); i++) {
             add(new SampleCheckBox(sample, i));
