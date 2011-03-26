@@ -1,7 +1,6 @@
 package net.talvi.puffinplot.window;
 
 import java.awt.BorderLayout;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
@@ -9,22 +8,15 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.talvi.puffinplot.data.CustomFields;
-import net.talvi.puffinplot.data.Suite;
 
 public class CustomFieldEditor extends JFrame
                       implements ListSelectionListener {
@@ -56,27 +48,27 @@ public class CustomFieldEditor extends JFrame
         JScrollPane listScrollPane = new JScrollPane(list);
 
         addButton = new JButton(addString);
-        AddFieldListener addListener = new AddFieldListener(addButton);
-        //addButton.setActionCommand(addString);
+        AddFieldListener addListener = new AddFieldListener();
         addButton.addActionListener(addListener);
-
         removeButton = new JButton(removeString);
-        //removeButton.setActionCommand(removeString);
         removeButton.addActionListener(new RemoveFieldListener());
-
+        renameButton = new JButton("Rename...");
+        renameButton.addActionListener(new RenameListener());
         upButton = new JButton("Move up");
         upButton.addActionListener(new MoveUpListener());
+        downButton = new JButton("Move down");
+        downButton.addActionListener(new MoveDownListener());
 
         // Stack up the buttons
         JPanel buttonPane = new JPanel();
         buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.PAGE_AXIS));
         buttonPane.add(upButton);
         addVstrut(buttonPane);
-        buttonPane.add(new JButton("Move down"));
+        buttonPane.add(downButton);
         addVstrut(buttonPane);
         buttonPane.add(addButton);
         addVstrut(buttonPane);
-        buttonPane.add(new JButton("Rename"));
+        buttonPane.add(renameButton);
         addVstrut(buttonPane);
         buttonPane.add(removeButton);
         //buttonPane.add(Box.createVerticalStrut(5));
@@ -116,6 +108,17 @@ public class CustomFieldEditor extends JFrame
         }
     }
 
+    class MoveDownListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            int index = list.getSelectedIndex();
+            if (index>=fields.size()-1) return;
+            fields.swapAdjacent(index);
+            setFromFields();
+            list.setSelectedIndex(index+1);
+            list.ensureIndexIsVisible(index+1);
+        }
+    }
+
     class RemoveFieldListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             int index = list.getSelectedIndex();
@@ -137,9 +140,6 @@ public class CustomFieldEditor extends JFrame
     }
 
     class AddFieldListener implements ActionListener {
-        public AddFieldListener(JButton button) {
-        }
-
         public void actionPerformed(ActionEvent e) {
             //String name = customFieldName.getText();
             String name = (String) JOptionPane.showInputDialog(
@@ -160,6 +160,27 @@ public class CustomFieldEditor extends JFrame
             fields.add(newIndex, name);
             list.setSelectedIndex(newIndex);
             list.ensureIndexIsVisible(newIndex);
+        }
+
+    }
+
+    class RenameListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            int index = list.getSelectedIndex();
+            String name = fields.get(index);
+            String newName = (String) JOptionPane.showInputDialog(
+                    CustomFieldEditor.this,
+                    "Please enter a new name for ‘"+name+"’.",
+                    "Rename field",
+                    JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    null,
+                    "");
+            if (newName==null || newName.equals("") || listModel.contains(newName)) {
+                return;
+            }
+            fields.set(index, newName);
+            listModel.set(index, newName);
         }
 
     }
