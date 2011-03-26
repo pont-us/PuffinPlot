@@ -43,7 +43,8 @@ public class Suite {
     private List<String> loadWarnings;
     private boolean hasUnknownTreatType;
     private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
-    private List<String> customFlagNames = Collections.EMPTY_LIST;
+    private CustomFields customFlagNames;
+    private CustomFields customNoteNames;
 
     public FisherValues getSuiteFisher() {
         return suiteFisher;
@@ -217,6 +218,8 @@ public class Suite {
         measType = MeasType.UNSET;
         loadWarnings = new ArrayList<String>();
         hasUnknownTreatType = false;
+        customFlagNames = new CustomFlagNames(Collections.EMPTY_LIST);
+        customNoteNames = new CustomNoteNames(Collections.EMPTY_LIST);
         List<String> puffinLines = Collections.EMPTY_LIST;
 
         for (File file: files) {
@@ -439,20 +442,22 @@ public class Suite {
     }
 
     public List<String> toStrings() {
-        StringBuilder sb = new StringBuilder("CUSTOM_FLAG_NAMES");
-        for (String s: customFlagNames) {
-            sb.append("\t" + s);
+        List<String> result = new ArrayList<String>();
+        if (customFlagNames.size()>0) {
+            result.add("CUSTOM_FLAG_NAMES\t"+customFlagNames.exportAsString());
         }
-        return Collections.singletonList(sb.toString());
+        if (customNoteNames.size()>0) {
+            result.add("CUSTOM_NOTE_NAMES\t"+customNoteNames.exportAsString());
+        }
+        return result;
     }
 
     public void fromString(String string) {
         String[] parts = string.split("\t");
         if ("CUSTOM_FLAG_NAMES".equals(parts[0])) {
-            customFlagNames = new ArrayList<String>(parts.length-1);
-            for (int i=1; i<parts.length; i++) {
-                customFlagNames.add(parts[i]);
-            }
+            customFlagNames = new CustomFlagNames(Arrays.asList(parts).subList(1, parts.length));
+        } else if ("CUSTOM_NOTE_NAMES".equals(parts[0])) {
+            customNoteNames = new CustomNoteNames(Arrays.asList(parts).subList(1, parts.length));
         }
     }
 
@@ -550,7 +555,7 @@ public class Suite {
     /**
      * @return the customFlagNames
      */
-    public List<String> getCustomFlagNames() {
+    public CustomFields<String> getCustomFlagNames() {
         return customFlagNames;
     }
 
@@ -564,6 +569,55 @@ public class Suite {
                 Sample sample = getSampleByName(sampleId);
                 sample.fromString(line.substring(8+sampleId.length()));
             }
+        }
+    }
+
+    /**
+     * @return the customNoteNames
+     */
+    public CustomFields<String> getCustomNoteNames() {
+        return customNoteNames;
+    }
+
+    private class CustomFlagNames extends CustomFields<String> {
+        public CustomFlagNames(List<String> list) {
+            super(list);
+        }
+        @Override
+        public void add(int position, String value) {
+            super.add(position, value);
+            for (Sample s: getSamples()) s.getCustomFlags().add(position, Boolean.FALSE);
+        }
+        @Override
+        public void remove(int position) {
+            super.remove(position);
+            for (Sample s: getSamples()) s.getCustomFlags().remove(position);
+        }
+        @Override
+        public void swapAdjacent(int position) {
+            super.swapAdjacent(position);
+            for (Sample s: getSamples()) s.getCustomFlags().swapAdjacent(position);
+        }
+    }
+
+        private class CustomNoteNames extends CustomFields<String> {
+        public CustomNoteNames(List<String> list) {
+            super(list);
+        }
+        @Override
+        public void add(int position, String value) {
+            super.add(position, value);
+            for (Sample s: getSamples()) s.getCustomNotes().add(position, "");
+        }
+        @Override
+        public void remove(int position) {
+            super.remove(position);
+            for (Sample s: getSamples()) s.getCustomNotes().remove(position);
+        }
+        @Override
+        public void swapAdjacent(int position) {
+            super.swapAdjacent(position);
+            for (Sample s: getSamples()) s.getCustomNotes().swapAdjacent(position);
         }
     }
 

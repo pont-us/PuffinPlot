@@ -1,5 +1,6 @@
 package net.talvi.puffinplot.data;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Collection;
@@ -27,6 +28,7 @@ public class Sample {
     public List<Vec3> amsAxes;
     private double magSusJump = 0; // temperature at which mag. sus. jumps
     private CustomFields<Boolean> customFlags;
+    private CustomFields<String> customNotes;
     private final Suite suite;
 
     public Sample(String name, Suite suite) {
@@ -35,6 +37,7 @@ public class Sample {
         this.data = new ArrayList<Datum>();
         // this.customNotes = new HashMap<String, String>();
         this.customFlags = new CustomFields<Boolean>();
+        this.customNotes = new CustomFields<String>();
     }
     
     public void clear() {
@@ -366,24 +369,37 @@ public class Sample {
     }
     
     /**
-     * Produce a list of Strings representing daa pertaining to this sample.
+     * Produce a list of Strings representing data pertaining to this sample.
      * (Sample-level data only; Datum-level stuff handled separately.)
      */
     public List<String> toStrings() {
-        return Collections.singletonList("CUSTOM_FLAGS\t"+customFlags.exportAsString());
+        List<String> result = new ArrayList<String>();
+        if (customFlags.size()>0) {
+            result.add("CUSTOM_FLAGS\t" + customFlags.exportAsString());
+        }
+        if (customNotes.size()>0) {
+            result.add("CUSTOM_NOTES\t" + customNotes.exportAsString());
+        }
+        return result;
     }
     
     /*
      * Set internal data based on a supplied string.
      */
     public void fromString(String string) {
-        String[] parts = string.split("\t");
+        String[] parts = string.split("\t", -1); // don't discard trailing empty strings
         if ("CUSTOM_FLAGS".equals(parts[0])) {
-            ArrayList<Boolean> flags = new ArrayList<Boolean>(parts.length-1);
+            List<Boolean> flags = new ArrayList<Boolean>(parts.length-1);
             for (int i=1; i<parts.length; i++) {
                 flags.add(Boolean.parseBoolean(parts[i]));
             }
             customFlags = new CustomFields<Boolean>(flags);
+        } else if ("CUSTOM_NOTES".equals(parts[0])) {
+            List<String> notes = new ArrayList<String>(parts.length-1);
+            for (int i=1; i<parts.length; i++) {
+                notes.add(parts[i]);
+            }
+            customNotes = new CustomFields<String>(notes);
         }
     }
 
@@ -392,5 +408,9 @@ public class Sample {
      */
     public CustomFields<Boolean> getCustomFlags() {
         return customFlags;
+    }
+
+    public CustomFields<String> getCustomNotes() {
+        return customNotes;
     }
 }

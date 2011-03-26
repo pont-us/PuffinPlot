@@ -40,6 +40,12 @@ public class CustomFields<T> {
         values.remove(position);
     }
 
+    public void swapAdjacent(int position) {
+        final T temp = get(position);
+        set(position, get(position+1));
+        set(position+1, temp);
+    }
+
     public String exportAsString() {
         StringBuilder sb = new StringBuilder();
         boolean first = true;
@@ -49,6 +55,10 @@ public class CustomFields<T> {
             first = false;
         }
         return sb.toString();
+    }
+
+    public int size() {
+        return values.size();
     }
 
 }

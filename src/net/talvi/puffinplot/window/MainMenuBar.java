@@ -101,7 +101,7 @@ public class MainMenuBar extends JMenuBar {
                 pa.editCorrections, pa.copyPointSelection, pa.flipSample,
                 pa.hideSelectedPoints, pa.unhideAllPoints,
                 pa.useAsEmptySlot, pa.unsetEmptySlot,
-                useEmptyItem));
+                useEmptyItem, pa.showCustomFlagsWindow, pa.showCustomNotesWindow));
         add(makeMenu("Calculations",
                 pa.pcaOnSelection, anchorItem = new AnchorItem(),
                 pa.fisherBySample, pa.fisherBySite, pa.fisherOnSuite,

@@ -12,6 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -22,6 +23,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import net.talvi.puffinplot.data.CustomFields;
+import net.talvi.puffinplot.data.Suite;
 
 public class CustomFieldEditor extends JFrame
                       implements ListSelectionListener {
@@ -29,14 +32,20 @@ public class CustomFieldEditor extends JFrame
     private JPanel contentPane;
     private JList list;
     private DefaultListModel listModel;
-    private static final String addString = "Add";
-    private static final String removeLabel = "Remove";
-    private JButton removeFieldButton;
-    private JTextField customFieldName;
+    private static final String addString = "Add...";
+    private static final String removeString = "Remove";
+    private JButton removeButton;
+    private JButton addButton;
+    private JButton renameButton;
+    private JButton upButton;
+    private JButton downButton;
+    private final CustomFields<String> fields;
 
-    public CustomFieldEditor() {
-        super();
+    public CustomFieldEditor(CustomFields<String> fields, String title) {
+        super(title);
+        this.fields = fields;
         listModel = new DefaultListModel();
+        setFromFields();
 
         // Create the widgets
         list = new JList(listModel);
@@ -46,50 +55,76 @@ public class CustomFieldEditor extends JFrame
         list.setVisibleRowCount(5);
         JScrollPane listScrollPane = new JScrollPane(list);
 
-        JButton addFieldButton = new JButton(addString);
-        AddFieldListener addListener = new AddFieldListener(addFieldButton);
-        addFieldButton.setActionCommand(addString);
-        addFieldButton.addActionListener(addListener);
-        addFieldButton.setEnabled(false);
+        addButton = new JButton(addString);
+        AddFieldListener addListener = new AddFieldListener(addButton);
+        //addButton.setActionCommand(addString);
+        addButton.addActionListener(addListener);
 
-        removeFieldButton = new JButton(removeLabel);
-        removeFieldButton.setActionCommand(removeLabel);
-        removeFieldButton.addActionListener(new RemoveFieldListener());
+        removeButton = new JButton(removeString);
+        //removeButton.setActionCommand(removeString);
+        removeButton.addActionListener(new RemoveFieldListener());
 
-        customFieldName = new JTextField(12);
-        customFieldName.addActionListener(addListener);
-        customFieldName.getDocument().addDocumentListener(addListener);
+        upButton = new JButton("Move up");
+        upButton.addActionListener(new MoveUpListener());
 
         // Stack up the buttons
         JPanel buttonPane = new JPanel();
-        buttonPane.setLayout(new BoxLayout(buttonPane,
-                                           BoxLayout.LINE_AXIS));
-        buttonPane.add(removeFieldButton);
-        buttonPane.add(Box.createHorizontalStrut(5));
-        buttonPane.add(new JSeparator(SwingConstants.VERTICAL));
-        buttonPane.add(Box.createHorizontalStrut(5));
-        buttonPane.add(customFieldName);
-        buttonPane.add(addFieldButton);
-        buttonPane.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.PAGE_AXIS));
+        buttonPane.add(upButton);
+        addVstrut(buttonPane);
+        buttonPane.add(new JButton("Move down"));
+        addVstrut(buttonPane);
+        buttonPane.add(addButton);
+        addVstrut(buttonPane);
+        buttonPane.add(new JButton("Rename"));
+        addVstrut(buttonPane);
+        buttonPane.add(removeButton);
+        //buttonPane.add(Box.createVerticalStrut(5));
+        // buttonPane.add(customFieldName);
+
+        buttonPane.setBorder(BorderFactory.createEmptyBorder(6,6,6,6));
 
         // Add list and buttons to the content pane
         contentPane = new JPanel(new BorderLayout());
         contentPane.add(listScrollPane, BorderLayout.CENTER);
-        contentPane.add(buttonPane, BorderLayout.PAGE_END);
-                contentPane.setOpaque(true); //content panes must be opaque
+        contentPane.add(buttonPane, BorderLayout.LINE_END);
+        contentPane.setOpaque(true); // (compulsory)
         setContentPane(contentPane);
         pack();
         setVisible(true);
+    }
+
+    private void setFromFields() {
+        listModel.removeAllElements();
+        for (int i = 0; i < fields.size(); i++) {
+            listModel.addElement(fields.get(i));
+        }
+    }
+
+    private void addVstrut(JPanel p) {
+        p.add(Box.createVerticalStrut(4));
+    }
+
+    class MoveUpListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            int index = list.getSelectedIndex() - 1;
+            if (index<0) return;
+            fields.swapAdjacent(index);
+            setFromFields();
+            list.setSelectedIndex(index);
+            list.ensureIndexIsVisible(index);
+        }
     }
 
     class RemoveFieldListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             int index = list.getSelectedIndex();
             listModel.remove(index);
+            fields.remove(index);
             int size = listModel.getSize();
             if (size == 0) {
                 // grey out the remove button
-                removeFieldButton.setEnabled(false);
+                removeButton.setEnabled(false);
             } else {
                 if (index == size) {
                     // last item removed, adjust current index
@@ -101,66 +136,37 @@ public class CustomFieldEditor extends JFrame
         }
     }
 
-    // listener for both the text field and the add button
-    class AddFieldListener implements ActionListener, DocumentListener {
-        private boolean alreadyEnabled = false;
-        private JButton button;
-
+    class AddFieldListener implements ActionListener {
         public AddFieldListener(JButton button) {
-            this.button = button;
         }
 
         public void actionPerformed(ActionEvent e) {
-            String name = customFieldName.getText();
-
-            if (name.equals("") || listModel.contains(name)) {
-                customFieldName.requestFocusInWindow();
-                customFieldName.selectAll();
+            //String name = customFieldName.getText();
+            String name = (String) JOptionPane.showInputDialog(
+                    CustomFieldEditor.this,
+                    "Name for new field",
+                    "Add custom field",
+                    JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    null,
+                    "");
+            if (name==null || name.equals("") || listModel.contains(name)) {
                 return;
             }
 
             int newIndex = list.getSelectedIndex() + 1;
             // "no selection" == -1, so in that case it goes at the start
-            listModel.insertElementAt(customFieldName.getText(), newIndex);
-            customFieldName.requestFocusInWindow();
-            customFieldName.setText("");
+            listModel.insertElementAt(name, newIndex);
+            fields.add(newIndex, name);
             list.setSelectedIndex(newIndex);
             list.ensureIndexIsVisible(newIndex);
         }
 
-        public void insertUpdate(DocumentEvent e) {
-            enableButton();
-        }
-
-        public void removeUpdate(DocumentEvent e) {
-            handleEmptyTextField(e);
-        }
-
-        public void changedUpdate(DocumentEvent e) {
-            if (!handleEmptyTextField(e)) {
-                enableButton();
-            }
-        }
-
-        private void enableButton() {
-            if (!alreadyEnabled) {
-                button.setEnabled(true);
-            }
-        }
-
-        private boolean handleEmptyTextField(DocumentEvent e) {
-            if (e.getDocument().getLength() <= 0) {
-                button.setEnabled(false);
-                alreadyEnabled = false;
-                return true;
-            }
-            return false;
-        }
     }
 
     public void valueChanged(ListSelectionEvent e) {
         if (e.getValueIsAdjusting() == false) {
-            removeFieldButton.setEnabled(list.getSelectedIndex() != -1);
+            removeButton.setEnabled(list.getSelectedIndex() != -1);
         }
     }
 }

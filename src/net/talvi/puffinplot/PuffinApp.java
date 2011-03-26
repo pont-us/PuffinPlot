@@ -60,7 +60,14 @@ public final class PuffinApp {
     private final FisherWindow fisherWindow;
     private final CorrectionWindow correctionWindow;
     private RecentFileList recentFiles;
-
+    private CustomFieldEditor customFlagsWindow = null;
+    private CustomFieldEditor customNotesWindow;
+    public static PuffinApp getInstance() { return app; }
+    public String getBuildDate() { return buildDate; }
+    private boolean emptyCorrectionActive;
+    private Correction correction;
+    private final GreatCircleWindow greatCircleWindow;
+    private final PrefsWindow prefsWindow;
 
     static {
         final Handler logStringHandler =
@@ -70,15 +77,7 @@ public final class PuffinApp {
                 new MemoryHandler(logStringHandler, 100, Level.OFF));
         logMemoryHandler.setLevel(Level.ALL);
     }
-
-    public static PuffinApp getInstance() { return app; }
-
-    public String getBuildDate() { return buildDate; }
-    private boolean emptyCorrectionActive;
-    private Correction correction;
-    private final GreatCircleWindow greatCircleWindow;
-    private final PrefsWindow prefsWindow;
-
+    
     public List<Suite> getSuites() {
         return suites;
     }
@@ -146,7 +145,6 @@ public final class PuffinApp {
         aboutBox = new AboutBox(mainWindow);
         mainWindow.getMainMenuBar().updateRecentFiles();
         mainWindow.setVisible(true);
-        CustomFieldEditor cfe = new CustomFieldEditor();
         logger.info("PuffinApp instantiation complete.");
     }
 
@@ -290,6 +288,7 @@ public final class PuffinApp {
             errorDialog("Error reading file", e.getMessage());
         }
         mainWindow.getMainMenuBar().updateRecentFiles();
+
     }
     
     public void errorDialog(String title, String message) {
@@ -422,5 +421,19 @@ public final class PuffinApp {
 
     public void setRecentFiles(RecentFileList recentFiles) {
         this.recentFiles = recentFiles;
+    }
+
+    public void showCustomFlagsWindow() {
+        if (currentSuite == null) return;
+        customFlagsWindow =
+                new CustomFieldEditor(currentSuite.getCustomFlagNames(),
+                "Edit custom flags");
+    }
+    
+    public void showCustomNotesWindow() {
+        if (currentSuite == null) return;
+        customNotesWindow =
+                new CustomFieldEditor(currentSuite.getCustomNoteNames(),
+                "Edit custom notes");
     }
 }

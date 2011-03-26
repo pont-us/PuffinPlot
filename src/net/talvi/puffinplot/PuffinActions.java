@@ -541,4 +541,20 @@ public class PuffinActions {
                     DatumField.VIRT_MAGNETIZATION}));
         }
     };
+
+    public final Action showCustomFlagsWindow = new PuffinAction("Edit custom flags",
+            "Edit user-defined flags for samples",
+            null, false, 0) {
+        public void actionPerformed(ActionEvent e) {
+           PuffinApp.getInstance().showCustomFlagsWindow();
+        }
+    };
+
+    public final Action showCustomNotesWindow = new PuffinAction("Edit custom notes",
+            "Edit user-defined notes for samples",
+            null, false, 0) {
+        public void actionPerformed(ActionEvent e) {
+           PuffinApp.getInstance().showCustomNotesWindow();
+        }
+    };
 }
