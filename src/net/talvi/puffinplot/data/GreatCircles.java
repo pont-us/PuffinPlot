@@ -48,7 +48,7 @@ public class GreatCircles {
             // Let's use the resultant direction of the last moments
             // in the great circle paths.
             Vec3 guess = Vec3.ORIGIN;
-            for (GreatCircle c: circles) guess = guess.plus(c.lastPoint());
+            for (GreatCircle c: circles) guess = guess.plus(c.lastPoint().minus(c.getPoints().get(0)));
             D.add(guess.normalize()); // todo: better guess
         } 
 

@@ -106,6 +106,27 @@ public class Vec3 {
         return result;
     }
 
+    /**
+     * TODO: interpolate spherically from start to end; onPath indicates
+     * the direction. Of the two possible circular arcs, choose the one
+     * that passes closest to onPath.
+     */
+    public static Vec3[] spherInterpDir(Vec3 start, Vec3 end, Vec3 onPath, double stepSize) {
+        final Vec3 avgDir = start.plus(end).normalize();
+        if (avgDir.dot(onPath) > 0) {
+            return spherInterpolate(start, end, stepSize);
+        } else {
+            Vec3[] a = spherInterpolate(start, end.invert(), stepSize);
+            Vec3[] b = spherInterpolate(end.invert(), start.invert(), stepSize);
+            Vec3[] c = spherInterpolate(start.invert(), end, stepSize);
+            List<Vec3> result = new ArrayList<Vec3>(a.length + b.length + c.length);
+            result.addAll(Arrays.asList(a));
+            result.addAll(Arrays.asList(b));
+            result.addAll(Arrays.asList(c));
+            return result.toArray(a);
+        }
+    }
+
     /*
      * Rotate about the Y axis
      */
@@ -397,15 +418,15 @@ public class Vec3 {
         return mean(Arrays.asList(points));
     }
 
-    Vec3 setX(double newX) {
+    public Vec3 setX(double newX) {
         return new Vec3(newX, y, z);
     }
 
-    Vec3 setY(double newY) {
+    public Vec3 setY(double newY) {
         return new Vec3(x, newY, z);
     }
 
-    Vec3 setZ(double newZ) {
+    public Vec3 setZ(double newZ) {
         return new Vec3(x, y, newZ);
     }
 

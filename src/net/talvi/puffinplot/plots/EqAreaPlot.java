@@ -24,9 +24,16 @@ import net.talvi.puffinplot.data.Vec3;
 public abstract class EqAreaPlot extends Plot {
     private static final int decTickStep = 10;
     private static final int incTickNum = 9;
-
-    protected EqAreaPlot(GraphDisplay parent, PlotParams params, Preferences prefs) {
+    private boolean taperingEnabled;
+    private final static boolean TAPERED_LINES = true;
+    
+    protected EqAreaPlot(GraphDisplay parent, PlotParams params, Preferences prefs,
+            boolean taperingEnabled) {
         super(parent, params, prefs);
+        this.taperingEnabled = taperingEnabled;
+    }
+    protected EqAreaPlot(GraphDisplay parent, PlotParams params, Preferences prefs) {
+        this(parent, params, prefs, false);
     }
     
     protected void drawAxes(Graphics2D g, int xo, int yo, int radius) {
@@ -51,7 +58,7 @@ public abstract class EqAreaPlot extends Plot {
         g.draw(new Line2D.Double(xo - l, yo, xo + l, yo));
     }
 
-     private void drawLineSegments(Graphics2D g,
+     private void drawStandardLineSegments(Graphics2D g,
             int xo, int yo, int radius, Vec3[] vs) {
          // determine whether we're in upper hemisphere, ignoring
          // z co-ordinates very close to zero. Assumes all segments
@@ -92,8 +99,10 @@ public abstract class EqAreaPlot extends Plot {
                  g.setColor(Color.BLACK);
                  float w = (1.0f-(float)v.z)/2f;
                  g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
-                         0.6f + w*0.4f));
-                 g.setStroke(new BasicStroke(getUnitSize() * w * 30.0f,
+                         0.8f + w*0.2f));
+                 float width = w * 20.0f;
+                 if (width < 4) {width = 4f;}
+                 g.setStroke(new BasicStroke(getUnitSize() * width,
                          BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
                  g.draw(new Line2D.Double(pPrev, p));
              }
@@ -101,6 +110,15 @@ public abstract class EqAreaPlot extends Plot {
              pPrev = p;
          }
      }
+
+    private void drawLineSegments(Graphics2D g,
+            int xo, int yo, int radius, Vec3[] vs) {
+        if (isTaperingEnabled()) {
+            drawTaperedLineSegments(g, xo, yo, radius, vs);
+        } else {
+            drawStandardLineSegments(g, xo, yo, radius, vs);
+        }
+    }
 
     protected void drawGreatCircleSegment(Graphics2D g,
             int xo, int yo, int radius, Vec3 p1, Vec3 p2) {
@@ -114,6 +132,11 @@ public abstract class EqAreaPlot extends Plot {
             drawLineSegments(g, xo, yo, radius,
                     Vec3.spherInterpolate(equator, p2, 0.05));
          }
+    }
+
+    protected void drawGreatCircleSegment2(Graphics2D g,
+            int xo, int yo, int radius, Vec3 p1, Vec3 p2, Vec3 dir) {
+        drawLineSegments(g, xo, yo, radius, Vec3.spherInterpDir(p1, p2, dir, 0.05));
     }
 
     protected void drawGreatCircle(Graphics2D g, int xo, int yo, int radius,
@@ -180,4 +203,7 @@ public abstract class EqAreaPlot extends Plot {
                 yo + radius * (-p.x) * L);
     }
 
+    public boolean isTaperingEnabled() {
+        return taperingEnabled;
+    }
 }
