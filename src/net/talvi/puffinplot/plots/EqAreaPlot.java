@@ -59,7 +59,7 @@ public abstract class EqAreaPlot extends Plot {
     }
 
      private void drawStandardLineSegments(Graphics2D g,
-            int xo, int yo, int radius, Vec3[] vs) {
+            int xo, int yo, int radius, List<Vec3> vs) {
          // determine whether we're in upper hemisphere, ignoring
          // z co-ordinates very close to zero. Assumes all segments
          // in same hemisphere.
@@ -90,7 +90,7 @@ public abstract class EqAreaPlot extends Plot {
       *
       */
     private void drawTaperedLineSegments(Graphics2D g,
-            int xo, int yo, int radius, Vec3[] vs) {
+            int xo, int yo, int radius, List<Vec3> vs) {
          boolean first = true;
          Point2D pPrev = null;
          for (Vec3 v : vs) {
@@ -112,7 +112,7 @@ public abstract class EqAreaPlot extends Plot {
      }
 
     private void drawLineSegments(Graphics2D g,
-            int xo, int yo, int radius, Vec3[] vs) {
+            int xo, int yo, int radius, List<Vec3> vs) {
         if (isTaperingEnabled()) {
             drawTaperedLineSegments(g, xo, yo, radius, vs);
         } else {
@@ -126,6 +126,8 @@ public abstract class EqAreaPlot extends Plot {
             drawLineSegments(g, xo, yo, radius,
                     Vec3.spherInterpolate(p1, p2, 0.05));
         } else {
+            // If we're using the solid/dashed line convention,
+            // we need to split the line across the z=0 plane
             Vec3 equator = Vec3.equatorPoint(p1, p2);
             drawLineSegments(g, xo, yo, radius,
                     Vec3.spherInterpolate(p1, equator, 0.05));
@@ -134,7 +136,7 @@ public abstract class EqAreaPlot extends Plot {
          }
     }
 
-    protected void drawGreatCircleSegment2(Graphics2D g,
+    protected void drawGreatCircleSegment(Graphics2D g,
             int xo, int yo, int radius, Vec3 p1, Vec3 p2, Vec3 dir) {
         drawLineSegments(g, xo, yo, radius, Vec3.spherInterpDir(p1, p2, dir, 0.05));
     }
@@ -183,8 +185,8 @@ public abstract class EqAreaPlot extends Plot {
             }
             prev = v;
         }
-        drawLineSegments(g, xo, yo, radius, top.toArray(new Vec3[]{}));
-        drawLineSegments(g, xo, yo, radius, bottom.toArray(new Vec3[]{}));
+        drawLineSegments(g, xo, yo, radius, top);
+        drawLineSegments(g, xo, yo, radius, bottom);
     }
 
     protected static Point2D.Double project(Vec3 p, int xo, int yo, int radius) {

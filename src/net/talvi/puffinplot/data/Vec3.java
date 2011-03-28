@@ -90,18 +90,25 @@ public class Vec3 {
     /* Given two vectors, interpolates unit vectors along a great circle.
      * Uses Shoemake's Slerp algorithm.
      */
-    public static Vec3[] spherInterpolate(Vec3 v0, Vec3 v1, double stepSize) {
+    public static List<Vec3> spherInterpolate(Vec3 v0, Vec3 v1, double stepSize) {
         Vec3 v0n = v0.normalize();
         Vec3 v1n = v1.normalize();
         double omega = Math.acos(v0n.dot(v1n));
-        if (omega < stepSize) return new Vec3[] {v0n, v1n};
+        // TODO fix this for equator-crossing case?
+        if (omega < stepSize) return Arrays.asList(new Vec3[] {v0n, v1n});
         int steps = (int) (omega / stepSize) + 1;
-        final Vec3[] result = new Vec3[steps];
+        final List<Vec3> result = new ArrayList<Vec3>(steps+1);
+        Vec3 prevVec = null;
         for (int i=0; i<steps; i++) {
             final double t = (double) i / (double) (steps-1);
             double scale0 = (sin((1.0-t)*omega)) / sin(omega);
             double scale1 = sin(t*omega) / sin(omega);
-            result[i] = v0n.times(scale0).plus(v1n.times(scale1));
+            Vec3 thisVec = v0n.times(scale0).plus(v1n.times(scale1));
+            if (i>0 && !thisVec.sameHemisphere(prevVec)) {
+                result.add(equatorPoint(prevVec, thisVec));
+            }
+            result.add(thisVec);
+            prevVec = thisVec;
         }
         return result;
     }
@@ -111,19 +118,20 @@ public class Vec3 {
      * the direction. Of the two possible circular arcs, choose the one
      * that passes closest to onPath.
      */
-    public static Vec3[] spherInterpDir(Vec3 start, Vec3 end, Vec3 onPath, double stepSize) {
+    public static List<Vec3> spherInterpDir(Vec3 start, Vec3 end, Vec3 onPath,
+            double stepSize) {
         final Vec3 avgDir = start.plus(end).normalize();
         if (avgDir.dot(onPath) > 0) {
             return spherInterpolate(start, end, stepSize);
         } else {
-            Vec3[] a = spherInterpolate(start, end.invert(), stepSize);
-            Vec3[] b = spherInterpolate(end.invert(), start.invert(), stepSize);
-            Vec3[] c = spherInterpolate(start.invert(), end, stepSize);
-            List<Vec3> result = new ArrayList<Vec3>(a.length + b.length + c.length);
-            result.addAll(Arrays.asList(a));
-            result.addAll(Arrays.asList(b));
-            result.addAll(Arrays.asList(c));
-            return result.toArray(a);
+            List<Vec3> a = spherInterpolate(start, end.invert(), stepSize);
+            List<Vec3> b = spherInterpolate(end.invert(), start.invert(), stepSize);
+            List<Vec3> c = spherInterpolate(start.invert(), end, stepSize);
+            List<Vec3> result = new ArrayList<Vec3>(a.size() + b.size() + c.size());
+            result.addAll(a);
+            result.addAll(b);
+            result.addAll(c);
+            return result;
         }
     }
 

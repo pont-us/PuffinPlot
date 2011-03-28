@@ -45,7 +45,7 @@ public class GreatCirclePlot extends EqAreaPlot {
             //drawGreatCircle(g, xo, yo, radius, pole);
             Vec3 segmentStart = pole.nearestOnCircle(circle.getPoints().get(0));
             Vec3 segmentEnd = pole.nearestOnCircle(endpoint);
-            drawGreatCircleSegment2(g, xo, yo, radius, segmentStart,
+            drawGreatCircleSegment(g, xo, yo, radius, segmentStart,
                     segmentEnd,circle.lastPoint());
             boolean first = true;
             for (Vec3 p: circle.getPoints()) {
