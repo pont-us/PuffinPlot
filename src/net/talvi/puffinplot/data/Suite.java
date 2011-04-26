@@ -10,12 +10,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.talvi.puffinplot.PuffinApp;
@@ -196,6 +198,16 @@ public class Suite {
         }
     }
 
+    public void doSiteCalculations() {
+        Set<Site> sites = new HashSet<Site>();
+        for (Sample sample : getSamples()) {
+            Site site = sample.getSite();
+            if (sites.contains(site)) continue;
+            site.doFisher();
+            site.doGreatCircle();
+        }
+    }
+
     /**
      * Note that this may return an empty suite, in which case it is the
      * caller's responsibility to notice this and deal with it.
@@ -243,6 +255,7 @@ public class Suite {
                 break;
             case PUFFINPLOT_NEW:
                 loader = new PplLoader(file);
+                if (files.size()==1) puffinFile = file;
                 break;
             case ZPLOT:
                 loader = new ZplotLoader(file);
@@ -283,6 +296,7 @@ public class Suite {
             guessSites(); // sites aren't saved yet so we just re-guess on load
         }
         doSampleCalculations();
+        doSiteCalculations();
         processPuffinLines(puffinLines);
     }
     

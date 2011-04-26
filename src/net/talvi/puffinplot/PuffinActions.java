@@ -358,7 +358,7 @@ public class PuffinActions {
     };
     
     public final Action selectAll = new PuffinAction("Select all",
-            "Select all points in selected samples", 'D', false, KeyEvent.VK_A) {
+            "Select all visible points in selected samples", 'D', false, KeyEvent.VK_A) {
         public void actionPerformed(ActionEvent e) {
             for (Sample s: app.getSelectedSamples()) s.selectAll();
                 app.getMainWindow().repaint();
@@ -483,7 +483,7 @@ public class PuffinActions {
         public void actionPerformed(ActionEvent e) {
             try {
                 List<File> files = openFileDialog("Select AMS files");
-                app.getSuite().importAms(files, false);
+                app.getSuite().importAms(files, true);
             } catch (IOException ex) {
                 logger.log(Level.SEVERE, null, ex);
                 app.errorDialog("Error importing AMS", ex.getLocalizedMessage());

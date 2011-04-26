@@ -32,8 +32,6 @@ import java.util.logging.StreamHandler;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import static java.lang.Thread.UncaughtExceptionHandler;
-import javax.swing.UIManager;
-
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Site;
@@ -297,7 +295,6 @@ public final class PuffinApp {
             errorDialog("Error reading file", e.getMessage());
         }
         mainWindow.getMainMenuBar().updateRecentFiles();
-
     }
     
     public void errorDialog(String title, String message) {

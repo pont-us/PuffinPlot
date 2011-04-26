@@ -24,7 +24,9 @@ public class Site {
             s.doPca();
             if (s.getPca() != null) directions.add(s.getPcaValues().getDirection());
         }
-        fisher = FisherValues.calculate(directions);
+        if (!directions.isEmpty()) {
+            fisher = FisherValues.calculate(directions);
+        }
     }
 
     public void doGreatCircle() {
@@ -37,31 +39,24 @@ public class Site {
                 circles.add(sample.getCirclePoints());
             }
         }
-        greatCircles = new GreatCircles(endpoints, circles);
-    }
+        if (!circles.isEmpty()) {
+            greatCircles = new GreatCircles(endpoints, circles);
+        }
+        }
 
     @Override
     public String toString() {
         return name;
     }
 
-    /**
-     * @return the samples
-     */
     public List<Sample> getSamples() {
         return samples;
     }
 
-    /**
-     * @return the fisher
-     */
     public FisherValues getFisher() {
         return fisher;
     }
 
-    /**
-     * @return the greatCircles
-     */
     public GreatCircles getGreatCircles() {
         return greatCircles;
     }

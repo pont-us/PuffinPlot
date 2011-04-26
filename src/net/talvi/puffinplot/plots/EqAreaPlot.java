@@ -96,10 +96,12 @@ public abstract class EqAreaPlot extends Plot {
          for (Vec3 v : vs) {
              Point2D p = project(v, xo, yo, radius);
              if (!first) {
-                 g.setColor(Color.BLACK);
+                 //g.setColor(Color.BLACK);
                  float w = (1.0f-(float)v.z)/2f;
-                 g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
-                         0.8f + w*0.2f));
+                 float colour = 0.3f*(1f-w);
+                 g.setColor(new Color(colour,colour,colour));
+                 //g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
+                 //        0.8f + w*0.2f));
                  float width = w * 20.0f;
                  if (width < 4) {width = 4f;}
                  g.setStroke(new BasicStroke(getUnitSize() * width,

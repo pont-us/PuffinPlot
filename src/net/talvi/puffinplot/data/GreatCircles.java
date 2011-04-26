@@ -75,9 +75,9 @@ public class GreatCircles {
         logger.log(Level.INFO, "{0} iterations", iter);
         R = Vec3.sum(D).plus(Vec3.sum(G)).mag();
         k = (2*M()+N()-2)/(2*(M()+N()-R));
-
         direction = Vec3.sum(D).plus(Vec3.sum(G)).normalize();
-        logger.log(Level.INFO, "a95 {0}", alpha(0.95));
+        a95 = alpha(0.95);
+        logger.log(Level.INFO, "a95 {0}", a95);
     }
 
     private int M() {

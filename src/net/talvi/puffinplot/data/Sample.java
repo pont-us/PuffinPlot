@@ -101,7 +101,14 @@ public class Sample {
     public void selectAll() {
         for (Datum d : getData()) d.setSelected(true);
     }
-    
+
+    public void selectVisible() {
+        for (Datum d : getData()) {
+            if (!d.isHidden()) d.setSelected(true);
+        }
+    }
+
+
     public void selectNone() {
         for (Datum d : getData()) d.setSelected(false);
     }
