@@ -94,7 +94,7 @@ public class MainMenuBar extends JMenuBar {
                 makeMenu("Export data", pa.exportCalcsSample,
                 pa.exportCalcsSite, pa.exportCalcsSuite, pa.exportIrm),
                 pa.pageSetup, pa.print, pa.printFisher, pa.printGc,
-                pa.importAms,
+                pa.importAms, pa.exportSvg,
                 pa.prefs, pa.quit));
         add(makeMenu("Edit", pa.selectAll, pa.clearSelection,
                 movePlotsItem, pa.resetLayout,
@@ -106,7 +106,7 @@ public class MainMenuBar extends JMenuBar {
                 pa.pcaOnSelection, anchorItem = new AnchorItem(),
                 pa.fisherBySample, pa.fisherBySite, pa.fisherOnSuite,
                 pa.mdf, pa.clear, pa.circleFit, pa.greatCircleAnalysis,
-                pa.reversalTest));
+                pa.reversalTest, pa.bootstrapAms, pa.hextAms));
         add(makeMenu("Window",
                 new WindowMenuItem("Data table")
                 { JFrame window(PuffinApp a) {return a.getTableWindow();}},

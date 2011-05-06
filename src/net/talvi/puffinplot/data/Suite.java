@@ -34,7 +34,7 @@ public class Suite {
     private final List<File> inputFiles;
     private File puffinFile;
     private List<Sample> samples = new ArrayList<Sample>(); // samples in order
-    private Map<String, Sample> samplesById; // name or depth as appropriate
+    private LinkedHashMap<String, Sample> samplesById; // name or depth as appropriate
     private Map<Integer, Line> dataByLine;
     private int currentSampleIndex = 0;
     private MeasType measType;
@@ -47,6 +47,8 @@ public class Suite {
     private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
     private CustomFields customFlagNames;
     private CustomFields customNoteNames;
+    private List<KentParams> amsBootstrapParams;
+    private List<KentParams> hextParams;
 
     public FisherValues getSuiteFisher() {
         return suiteFisher;
@@ -204,7 +206,7 @@ public class Suite {
             Site site = sample.getSite();
             if (sites.contains(site)) continue;
             site.doFisher();
-            site.doGreatCircle();
+            // site.doGreatCircle();
         }
     }
 
@@ -485,6 +487,7 @@ public class Suite {
     public void importAms(List<File> files, boolean directions)
             throws IOException {
         BufferedReader reader = null;
+        directions = false;
         for (File file: files) {
             try {
                 reader = new BufferedReader(new FileReader(file));
@@ -493,16 +496,22 @@ public class Suite {
                     final double[] v = new double[6];
                     Scanner s = new Scanner(line);
                     String name = s.next();
+                    if (!containsSample(name)) {
+                        insertNewSample(name);
+                    }
                     Sample sample = getSampleByName(name);
                     for (int i = 0; i < 6; i++) v[i] = s.nextDouble();
-                    if (sample != null) {
-                        if (directions) {
-                            sample.setAmsDirections(v[0], v[1], v[2],
-                                    v[3], v[4], v[5]);
-                        } else {
-                            sample.setAmsFromTensor(v[0], v[1], v[2],
-                                    v[3], v[4], v[5]);
+                    if (directions) {
+                        sample.setAmsDirections(v[0], v[1], v[2],
+                                v[3], v[4], v[5]);
+                    } else {
+                        if (!sample.hasData()) {
+                            sample.setCorrections(s.nextDouble(),
+                                    s.nextDouble(), s.nextDouble(),
+                                    s.nextDouble(), s.nextDouble());
                         }
+                        sample.setAmsFromTensor(v[0], v[1], v[2],
+                                v[3], v[4], v[5]);
                     }
                 }
             } finally {
@@ -593,6 +602,17 @@ public class Suite {
         return customNoteNames;
     }
 
+    /**
+     * @return the amsBootstrapParams
+     */
+    public List<KentParams> getAmsBootstrapParams() {
+        return amsBootstrapParams;
+    }
+
+    public List<KentParams> getAmsHextParams() {
+        return hextParams;
+    }
+
     private class CustomFlagNames extends CustomFields<String> {
         public CustomFlagNames(List<String> list) {
             super(list);
@@ -633,6 +653,40 @@ public class Suite {
             super.swapAdjacent(position);
             for (Sample s: getSamples()) s.getCustomNotes().swapAdjacent(position);
         }
+    }
+
+    public void bootstrapAms(List<Sample> samples) {
+        List<Tensor> tensors = new ArrayList<Tensor>();
+        for (Sample s: samples) {
+            if (s.getAms() != null) tensors.add(s.getAms());
+        }
+        amsBootstrapParams = KentParams.calculateBootstrap(tensors);
+    }
+
+    public void calculateHextOnAms(List<Sample> samples) {
+        List<Tensor> tensors = new ArrayList<Tensor>();
+        for (Sample s: samples) {
+            if (s.getAms() != null) tensors.add(s.getAms());
+        }
+        hextParams = KentParams.calculateHext(tensors);
+    }
+    
+    public Sample insertNewSample(String id) {
+        Sample newSample = new Sample(id, this);
+        boolean done = false;
+        int position = -1;
+        do {
+            position++;
+        } while (position<samples.size() &&
+                    samples.get(position).getNameOrDepth().
+                    compareTo(newSample.getNameOrDepth()) < 0);
+        samples.add(position, newSample);
+        samplesById.put(newSample.getNameOrDepth(), newSample);
+        return newSample;
+    }
+
+    public boolean containsSample(String id) {
+        return samplesById.containsKey(id);
     }
 
 }

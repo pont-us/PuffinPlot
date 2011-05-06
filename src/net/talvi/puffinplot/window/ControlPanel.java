@@ -82,13 +82,11 @@ public class ControlPanel extends JPanel
     
     public void updateSample() {
         Sample s = app.getSample();
-        Datum d = null;
-        if (s != null) d = s.getDatum(0);
-        if (d != null)
+        if (s != null) 
             correctionField.setText(String.format(
                     "Samp. %.1f/%.1f Form. %.1f/%.1f Dev. %.1f Anc:%s",
-                    d.getSampAz(), d.getSampDip(), d.getFormAz(), d.getFormDip(),
-                    d.getMagDev(), d.isPcaAnchored() ? "Y" : "N"));
+                    s.getSampAz(), s.getSampDip(), s.getFormAz(), s.getFormDip(),
+                    s.getMagDev(), s.isPcaAnchored() ? "Y" : "N"));
     }
 
     public void actionPerformed(ActionEvent e) {

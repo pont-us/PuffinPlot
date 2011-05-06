@@ -58,7 +58,23 @@ public abstract class EqAreaPlot extends Plot {
         g.draw(new Line2D.Double(xo - l, yo, xo + l, yo));
     }
 
-     private void drawStandardLineSegments(Graphics2D g,
+    protected GeneralPath vectorsToPath(List<Vec3> vectors, int xo, int yo, int radius) {
+        GeneralPath path = new GeneralPath();
+        boolean first = true;
+        for (Vec3 v : vectors) {
+            // g.setStroke(new BasicStroke(getUnitSize() * (1-(float)v.z) *20.0f));
+            Point2D p = project(v, xo, yo, radius);
+            if (first) {
+                path.moveTo((float) p.getX(), (float) p.getY());
+                first = false;
+            } else {
+                path.lineTo((float) p.getX(), (float) p.getY());
+            }
+        }
+        return path;
+    }
+
+     protected void drawStandardLineSegments(Graphics2D g,
             int xo, int yo, int radius, List<Vec3> vs) {
          // determine whether we're in upper hemisphere, ignoring
          // z co-ordinates very close to zero. Assumes all segments
@@ -66,21 +82,8 @@ public abstract class EqAreaPlot extends Plot {
          boolean upperHemisph = true;
          for (Vec3 v: vs) { if (v.z > 1e-10) { upperHemisph = false; break; } }
          Stroke stroke = upperHemisph ? getStroke() : getDashedStroke();
-
-         GeneralPath path = new GeneralPath();
-         boolean first = true;
-         for (Vec3 v : vs) {
-             // g.setStroke(new BasicStroke(getUnitSize() * (1-(float)v.z) *20.0f));
-             Point2D p = project(v, xo, yo, radius);
-             if (first) {
-                 path.moveTo((float) p.getX(), (float) p.getY());
-                 first = false;
-             } else {
-                 path.lineTo((float) p.getX(), (float) p.getY());
-             }
-         }
          g.setStroke(stroke);
-         g.draw(path);
+         g.draw(vectorsToPath(vs, xo, yo, radius));
      }
 
      /**

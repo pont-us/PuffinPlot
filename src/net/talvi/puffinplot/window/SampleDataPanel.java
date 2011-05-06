@@ -62,7 +62,8 @@ public class SampleDataPanel extends JPanel {
         }
 
         private void updateState() {
-            setSelected(sample.getCustomFlags().get(flagNum));
+            Boolean state = sample.getCustomFlags().get(flagNum);
+            if (state != null) setSelected(state);
         }
     }
 
@@ -70,7 +71,8 @@ public class SampleDataPanel extends JPanel {
         private final Sample sample;
         private final int flagNum;
         public SampleField(final Sample sample, final int noteNum) {
-            super(sample.getCustomNotes().get(noteNum));
+            super(sample.getCustomNotes().get(noteNum)==null ? "?" :
+                sample.getCustomNotes().get(noteNum));
             setMaximumSize(new Dimension(200, 30));
             this.sample = sample;
             this.flagNum = noteNum;

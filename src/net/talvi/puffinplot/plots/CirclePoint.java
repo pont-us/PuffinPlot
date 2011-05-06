@@ -11,21 +11,24 @@ public class CirclePoint implements PlotPoint {
 
     private final Shape shape;
     private final Point2D centre;
-    private static final double PLOT_POINT_SIZE = 24;
 
-    CirclePoint(Plot plot, Datum datum, Point2D centre) {
+    CirclePoint(Plot plot, Datum datum, Point2D centre, double size) {
         super();
         this.centre = centre;
-        double m = PLOT_POINT_SIZE * plot.getUnitSize();
+        double m = size * plot.getUnitSize();
         double xo = centre.getX();
         double yo = centre.getY();
         shape = new Ellipse2D.Double(xo-m, yo-m, m*2, m*2);
     }
 
+    CirclePoint(Plot plot, Datum datum, Point2D centre) {
+        this(plot, datum, centre, Plot.PLOT_POINT_SIZE);
+    }
+
     public void draw(Graphics2D g) {
         g.setColor(Color.BLACK);
         g.draw(shape);
-        g.setColor(Color.RED);
+        //g.setColor(Color.LIGHT_GRAY);
         g.fill(shape);
     }
 

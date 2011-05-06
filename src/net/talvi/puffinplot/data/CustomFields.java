@@ -20,10 +20,11 @@ public class CustomFields<T> {
     }
 
     public void set(int number, T value) {
-        values.set(number, value);
+        if (number < values.size()) values.set(number, value);
     }
 
     public T get(int number) {
+        if (number >= values.size()) return null;
         return values.get(number);
     }
 

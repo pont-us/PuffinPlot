@@ -54,6 +54,14 @@ public class Eigens {
         return new Eigens(oTensor);
     }
 
+    public Matrix toMatrix() {
+        Vec3 v1 = vectors.get(0);
+        Vec3 v2 = vectors.get(1);
+        Vec3 v3 = vectors.get(2);
+        double[] elts = {v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, v3.x, v3.y, v3.z};
+        return new Matrix(elts, 3);
+    }
+
     private static int[] order(double[] x) {
         class Pair implements Comparable<Pair> {
             private final int index;

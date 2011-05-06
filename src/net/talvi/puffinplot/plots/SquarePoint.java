@@ -18,19 +18,26 @@ class SquarePoint implements PlotPoint {
     private final boolean special;
     private final Point2D centre;
     private static final double HIGHLIGHT_SCALE = 1.6;
-    private static final double PLOT_POINT_SIZE = 24;
 
-    SquarePoint(Plot plot, Datum datum, Point2D centre, boolean filled, boolean lineToHere, boolean special) {
+    SquarePoint(Plot plot, Datum datum, Point2D centre, boolean filled,
+            boolean lineToHere, boolean special, double size) {
         super();
-        double size = PLOT_POINT_SIZE * plot.getUnitSize();
+        double s = size * plot.getUnitSize();
         this.centre = centre;
         this.datum = datum;
-        shape = new Rectangle2D.Double(centre.getX() - size, centre.getY() - size, 2 * size, 2 * size);
+        shape = new Rectangle2D.Double(centre.getX() - s, centre.getY() - s,
+                2 * s, 2 * s);
         final double hs = HIGHLIGHT_SCALE;
-        highlight = new Rectangle2D.Double(centre.getX() - size * hs, centre.getY() - size * hs, 2 * size * hs, 2 * size * hs);
+        highlight = new Rectangle2D.Double(centre.getX() - s * hs,
+                centre.getY() - s * hs, 2 * s * hs, 2 * s * hs);
         this.filled = filled;
         this.lineToHere = lineToHere;
         this.special = special;
+    }
+
+    SquarePoint(Plot plot, Datum datum, Point2D centre, boolean filled,
+            boolean lineToHere, boolean special) {
+        this(plot, datum, centre, filled, lineToHere, special, Plot.PLOT_POINT_SIZE);
     }
 
     public void draw(Graphics2D g) {

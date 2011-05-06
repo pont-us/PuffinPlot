@@ -1,15 +1,10 @@
 package net.talvi.puffinplot.data;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
 import java.util.Collection;
 import Jama.Matrix;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import javax.management.ImmutableDescriptor;
 import net.talvi.puffinplot.PuffinApp;
 import static java.lang.Math.toRadians;
 
@@ -24,12 +19,15 @@ public class Sample {
     private PcaAnnotated pca;
     private MDF mdf;
     private boolean hasMsData = false;
-    private Matrix ams;
-    public List<Vec3> amsAxes;
+    private Tensor ams;
+    // public List<Vec3> amsAxes;
     private double magSusJump = 0; // temperature at which mag. sus. jumps
     private CustomFields<Boolean> customFlags;
     private CustomFields<String> customNotes;
     private final Suite suite;
+    private double sampAz = Double.NaN, sampDip = Double.NaN;
+    private double formAz = Double.NaN, formDip = Double.NaN;
+    private double magDev = Double.NaN;
 
     public Sample(String name, Suite suite) {
         this.nameOrDepth = name;
@@ -132,9 +130,25 @@ public class Sample {
     }
     
     public void addDatum(Datum d) {
+        if (data.isEmpty()) {
+            setSampAz(d.getSampAz());
+            setSampDip(d.getSampDip());
+            setFormAz(d.getFormAz());
+            setFormDip(d.getFormDip());
+            setMagDev(d.getMagDev());
+        }
         data.add(d);
         if (d.hasMagSus()) hasMsData = true;
         d.setSample(this);
+    }
+
+    public void setCorrections(double sampleAz, double sampleDip,
+            double formAz, double formDip, double magDev) {
+        this.setSampAz(sampleAz);
+        this.setSampDip(sampleDip);
+        this.setFormAz(formAz);
+        this.setFormDip(formDip);
+        this.setMagDev(magDev);
     }
 
     public boolean hasMsData() {
@@ -183,6 +197,7 @@ public class Sample {
     }
 
     public void doPca(boolean anchored) {
+        if (!hasData()) return;
         for (Datum d: getData()) d.setPcaAnchored(anchored);
         pca = PcaAnnotated.calculate(this);
     }
@@ -211,13 +226,14 @@ public class Sample {
     }
 
     public void doPca() {
+        if (!hasData()) return;
         doPca(getData().get(0).isPcaAnchored());
     }
 
     public MeasType getMeasType() {
         for (Datum d: getData())
             if (d.getMeasType().isActualMeasurement()) return d.getMeasType();
-        return MeasType.UNKNOWN;
+        return MeasType.DISCRETE;
     }
 
     public String getNameOrDepth() {
@@ -252,8 +268,8 @@ public class Sample {
     }
     
     public boolean isPcaAnchored() {
-        return getData().get(0).isPcaAnchored();
-    }
+        return data.isEmpty() ? false : data.get(0).isPcaAnchored();
+   }
     
     public void setPcaAnchored(boolean pcaAnchored) {
         for (Datum d: getData()) d.setPcaAnchored(pcaAnchored);
@@ -320,45 +336,42 @@ public class Sample {
 
     public void setAmsFromTensor(double k11, double k22, double k33,
             double k12, double k23, double k13) {
-        double[] elts = {k11, k12, k13, k12, k22, k23, k13, k23, k33};
-        ams = new Matrix(elts, 3);
-        Eigens amsEigens = new Eigens(ams);
-        // For the present, we just keep the directionsq
-        amsAxes = amsEigens.vectors;
+        Matrix scm = new Matrix(Vec3.getSampleCorrectionMatrix(toRadians(getSampAz() + getMagDev()),
+               toRadians(getSampDip())));
+        Matrix fcm = new Matrix(Vec3.getFormationCorrectionMatrix(toRadians(getFormAz() + getMagDev()),
+               toRadians(getFormDip())));
+        ams = new Tensor(k11, k22, k33, k12, k23, k13, scm, fcm);
     }
 
-    public void setAmsDirections(double i1, double d1, double i2, double d2, double i3, double d3) {
-        amsAxes = new ArrayList<Vec3>(3);
-        amsAxes.add(Vec3.fromPolarDegrees(1, i1, d1));
-        amsAxes.add(Vec3.fromPolarDegrees(1, i2, d2));
-        amsAxes.add(Vec3.fromPolarDegrees(1, i3, d3));
+    public void setAmsDirections(double i1, double d1, double i2, double d2,
+            double i3, double d3) {
+        // ams = Tensor.fromDirections(i1, d1, i2, d2, i3, d3);
+        Vec3 k1 = correctFully(Vec3.fromPolarDegrees(1., i1, d1));
+        Vec3 k2 = correctFully(Vec3.fromPolarDegrees(1., i2, d2));
+        Vec3 k3 = correctFully(Vec3.fromPolarDegrees(1., i3, d3));
+        ams = Tensor.fromDirections(k1, k2, k3);
+        System.out.println(ams.toTensorComponentString());
+    }
+    
+    public Vec3 correctFully(Vec3 v) {
+       final Vec3 sc  = v.correctSample(toRadians(getSampAz() + getMagDev()),
+               toRadians(getSampDip()));
+       final Vec3 fc = sc.correctForm(toRadians(getFormAz() + getMagDev()),
+               toRadians(getFormDip()));
+        return fc;
     }
 
-    public Vec3 getAmsAxis(int axis, Correction c) {
-        /* This is a horrendous fudge to deal with AGICO's... interesting
-         * policies on data retention. AMS tensors from SAFYR are
-         * sample corrected, so we just apply a magnetic declination
-         * correction here.
-         *
-         * Addendum: we're now using incs and decs from ASC file without
-         * sample correction, so I've re-added it here.
-         */
-        // Vec3 result = amsEigens.vectors.get(axis);
-        Vec3 result = amsAxes.get(axis);
-        Datum d = getData().get(0);
-        double sampAz = d.getSampAz();
-        double sampDip = d.getSampDip();
-        double formAz = d.getFormAz();
-        double formDip = d.getFormDip();
-        double magDev = d.getMagDev();
-       result = result.correctSample(toRadians(sampAz + magDev),
-               toRadians(sampDip));
-       result = result.correctForm(toRadians(formAz + magDev),
-               toRadians(formDip));
-        return result;
+    public Vec3 correctSample(Vec3 v) {
+        final Vec3 sc = v.correctSample(toRadians(getSampAz() + getMagDev()),
+               toRadians(getSampDip()));
+        return sc;
     }
 
-    public Matrix getAms() {
+    public Vec3 getAmsAxis(int axis) {
+        return ams.getAxis(axis);
+    }
+
+    public Tensor getAms() {
         return ams;
     }
 
@@ -420,4 +433,49 @@ public class Sample {
     public CustomFields<String> getCustomNotes() {
         return customNotes;
     }
+
+    public boolean hasData() {
+        return !data.isEmpty();
+    }
+
+    public double getSampAz() {
+        return sampAz;
+    }
+
+    public void setSampAz(double sampAz) {
+        this.sampAz = sampAz;
+    }
+
+    public double getSampDip() {
+        return sampDip;
+    }
+
+    public void setSampDip(double sampDip) {
+        this.sampDip = sampDip;
+    }
+
+    public double getFormAz() {
+        return formAz;
+    }
+
+    public void setFormAz(double formAz) {
+        this.formAz = formAz;
+    }
+
+    public double getFormDip() {
+        return formDip;
+    }
+
+    public void setFormDip(double formDip) {
+        this.formDip = formDip;
+    }
+
+    public double getMagDev() {
+        return magDev;
+    }
+
+    public void setMagDev(double magDev) {
+        this.magDev = magDev;
+    }
+
 }

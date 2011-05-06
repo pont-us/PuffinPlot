@@ -12,13 +12,12 @@ public class TrianglePoint implements PlotPoint {
 
     private final Shape shape;
     private final Point2D centre;
-    private static final double PLOT_POINT_SIZE = 24;
 
-    TrianglePoint(Plot plot, Datum datum, Point2D centre) {
+    TrianglePoint(Plot plot, Datum datum, Point2D centre, double size) {
         super();
         this.centre = centre;
         GeneralPath path = new GeneralPath();
-        double m = PLOT_POINT_SIZE * plot.getUnitSize();
+        double m = size * plot.getUnitSize();
         double xo = centre.getX();
         double yo = centre.getY();
         path.moveTo(xo - m, yo + m * (1/sqrt(3)));
@@ -28,10 +27,14 @@ public class TrianglePoint implements PlotPoint {
         shape = path;
     }
 
+    TrianglePoint(Plot plot, Datum datum, Point2D centre) {
+            this(plot, datum, centre, Plot.PLOT_POINT_SIZE);
+    }
+
     public void draw(Graphics2D g) {
         g.setColor(Color.BLACK);
         g.draw(shape);
-        g.setColor(Color.GREEN);
+        // g.setColor(Color.DARK_GRAY);
         g.fill(shape);
     }
 

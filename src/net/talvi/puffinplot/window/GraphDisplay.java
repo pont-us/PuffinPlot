@@ -16,6 +16,9 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.print.Printable;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,6 +29,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
 import net.talvi.puffinplot.plots.Plot;
+import org.apache.batik.dom.GenericDOMImplementation;
+import org.apache.batik.svggen.SVGGraphics2D;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
 
 public abstract class GraphDisplay extends JPanel implements Printable {
 
@@ -283,5 +290,32 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         for (Plot plot: getVisiblePlots()) plot.draw(g2);
         printChildren(graphics);
         setDoubleBuffered(true);
+    }
+
+    public void printToSvg() {
+
+        // Get a DOMImplementation.
+        DOMImplementation domImpl =
+            GenericDOMImplementation.getDOMImplementation();
+
+        // Create an instance of org.w3c.dom.Document.
+        String svgNS = "http://www.w3.org/2000/svg";
+        Document document = domImpl.createDocument(svgNS, "svg", null);
+
+        // Create an instance of the SVG Generator.
+        SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
+        for (Plot plot: getVisiblePlots()) plot.draw(svgGenerator);
+
+        // Finally, stream out SVG to the standard output using
+        // UTF-8 encoding.
+        boolean useCSS = true; // we want to use CSS style attributes
+        Writer out;
+        try {
+            out = new FileWriter("/home/pont/puffin.svg");
+            svgGenerator.stream(out, useCSS);
+        } catch (IOException ex) {
+            Logger.getLogger(GraphDisplay.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 }

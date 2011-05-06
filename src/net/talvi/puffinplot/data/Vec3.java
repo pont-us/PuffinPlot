@@ -11,6 +11,7 @@ import static java.lang.Math.toRadians;
 import static java.lang.Math.signum;
 import static java.lang.Math.log10;
 import static java.lang.Math.pow;
+import static java.lang.Math.abs;
 import Jama.Matrix;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -87,6 +88,41 @@ public class Vec3 {
         return signum(z) == signum(v.z);
     }
 
+    /**
+     * Given a list of points, return a list containing the same points
+     * plus possible extras. The extras are inserted on the equator line
+     * wherever the sequence of points crosses the equator.
+     *
+     * @param vs
+     * @return
+     */
+    public static List<List<Vec3>> interpolateEquatorPoints(List<Vec3> vs) {
+        List<List<Vec3>> result = new ArrayList<List<Vec3>>();
+        List<Vec3> currentSegment = new ArrayList<Vec3>();
+        Vec3 prev = null;
+        for (Vec3 v: vs) {
+            if (prev == null) {
+                currentSegment.add(v);
+                prev = v;
+            } else {
+                if (prev.sameHemisphere(v)) {
+                    currentSegment.add(v);
+                    prev = v;
+                } else {
+                    Vec3 between = Vec3.equatorPoint(prev, v);
+                    currentSegment.add(between);
+                    result.add(currentSegment);
+                    currentSegment = new ArrayList<Vec3>();
+                    currentSegment.add(between);
+                    result.add(currentSegment);
+                    prev = null;
+                }
+            }
+        }
+        result.add(currentSegment);
+        return result;
+    }
+
     /* Given two vectors, interpolates unit vectors along a great circle.
      * Uses Shoemake's Slerp algorithm.
      */
@@ -156,13 +192,17 @@ public class Vec3 {
          { 0      ,  0      , 1 }};
         return transform(m);
     }
-    
-    public Vec3 correctSample(double az, double dip) {
+
+    public static double[][] getSampleCorrectionMatrix(double az, double dip) {
         final double[][] matrix =
         {{ sin(dip)*cos(az) , -sin(az) , cos(dip)*cos(az)  },
          { sin(dip)*sin(az) ,  cos(az) , cos(dip)*sin(az)  },
          { -cos(dip)        , 0        , sin(dip)          }};
-        return transform(matrix);
+        return matrix;
+    }
+
+    public Vec3 correctSample(double az, double dip) {
+        return transform(Vec3.getSampleCorrectionMatrix(az, dip));
     }
     
     /*
@@ -198,7 +238,7 @@ public class Vec3 {
         return transform(m3).transform(m2).transform(m1);
      */
     public Vec3 correctForm(double az, double dip) {
-        return correctPlane(sin(dip), sin(az), cos(dip), cos(az));
+        return transform(Vec3.getFormationCorrectionMatrix(az, dip));
     }
 
     /**
@@ -216,12 +256,20 @@ public class Vec3 {
         return v.correctPlane(d, y/d, z, x/d);
     }
 
-    private Vec3 correctPlane(double sd, double sa, double cd, double ca) {
+    public static double[][] getFormationCorrectionMatrix(double az, double dip) {
+        return getPlaneCorrectionMatrix(sin(dip), sin(az), cos(dip), cos(az));
+    }
+
+    private static double[][] getPlaneCorrectionMatrix(double sd, double sa, double cd, double ca) {
         final double[][] matrix =
             {{ ca*cd*ca+sa*sa,  cd*sa*ca-sa*ca, sd*ca},
             {  sa*cd*ca-ca*sa,  cd*sa*sa+ca*ca, sd*sa},
             { -ca*sd,          -sa*sd,          cd}};
-        return transform(matrix);
+        return matrix;
+    }
+
+    private Vec3 correctPlane(double sd, double sa, double cd, double ca) {
+        return transform(Vec3.getPlaneCorrectionMatrix(sd, sa, cd, ca));
     }
     
     /**
@@ -436,6 +484,92 @@ public class Vec3 {
 
     public Vec3 setZ(double newZ) {
         return new Vec3(x, y, newZ);
+    }
+
+    public static List<Vec3> ellipse(double dec, double inc,
+            double eta, double etad, double etai,
+            double zeta, double zetad, double zetai) {
+        final int N = 64;
+        List<Vec3> vs = new ArrayList<Vec3>(N);
+        // we're going to draw the ellipse at the top of the unit
+        // sphere, then rotate it down into position.
+
+        // ed and ei tell us which way the ellipse is pointing.
+        // (zd and zi are orthogonal so we'll ignore them.)
+        // TODO
+        Vec3 centre = Vec3.fromPolarDegrees(1., inc, dec);
+        Vec3 etaDir = Vec3.fromPolarDegrees(1., etai, etad);
+        Vec3 etaDirTop =
+                etaDir.rotZ(-centre.getDecRad()).rotY(centre.getIncRad()-PI/2.).
+                rotZ(centre.getDecRad());
+
+        // draw the ellipse at the top
+        double stepSize = 2.*PI / N;
+        for (int i=0; i<N; i++) {
+            double theta = i * stepSize;
+            double a = (eta*sin(theta));
+            double b = zeta*cos(theta);
+            double r = eta*zeta/sqrt(a*a+b*b);
+            Vec3 v1 = Vec3.fromPolarRadians(1., 0.5*PI-r, theta + etaDirTop.getDecRad());
+            Vec3 v2 = v1.
+                    rotZ(-centre.getDecRad()).rotY(PI/2.-centre.getIncRad()).
+                    rotZ(centre.getDecRad());
+            vs.add(v2);
+        }
+        vs.add(centre);
+
+        return vs;
+    }
+
+    public static List<Vec3> ellipse(KentParams kp) {
+        double eta = kp.getEtaMag();
+        // if (eta>PI/2) eta = PI/2+0.1;
+        final double zeta = kp.getZetaMag();
+        // final int N = (int) (1000*sqrt(1+eta*eta+zeta*zeta));
+        List<Vec3> vs = new ArrayList<Vec3>(1000);
+        // we're going to draw the ellipse at the bottom of the unit
+        // sphere, then rotate it down into position.
+
+        // ed and ei tell us which way the ellipse is pointing.
+        // (zd and zi are orthogonal so we'll ignore them.)
+        Vec3 centre = kp.getMean();
+        Vec3 etaDir = kp.getEtaDir();
+        // calculate the direction of the eta axis
+        Vec3 etaDirTop =
+                etaDir.rotZ(-centre.getDecRad()).rotY(centre.getIncRad()-PI/2.).
+                rotZ(centre.getDecRad());
+
+        // draw the ellipse
+        double stepSize = 1e-4;
+        double stepLimit = 1e-2;
+        double thetaLimit = 2*PI/50.;
+        Vec3 vPrev = null;
+        double thetaPrev = -100;
+        int n=0;
+        for (double theta=0; theta<2*PI; theta += stepSize) {
+            // final double theta = i * stepSize;
+            final double a = eta*sin(theta);
+            final double b = zeta*cos(theta);
+            final double r = eta*zeta/sqrt(a*a+b*b);
+            // Calculate a point centred around zero
+            Vec3 v1 = Vec3.fromPolarRadians(1., 0.5*PI-r, theta + etaDirTop.getDecRad());
+            // rotate it into position
+
+            //v2 = v1;
+            if (vPrev==null || abs(vPrev.angleTo(v1)) > stepLimit ||
+                        (theta - thetaPrev) > thetaLimit) {
+                    Vec3 v2 = v1.rotZ(-centre.getDecRad()).
+                            rotY(PI / 2. - centre.getIncRad()).
+                        rotZ(centre.getDecRad());
+                    //System.out.println(":"+v2.z);
+                    vs.add(v2);
+                    vPrev = v1;
+                    thetaPrev = theta;
+                    n++;
+                }
+            }
+        vs.add(vs.get(0)); // close the path
+        return vs;
     }
 
     String toCustomString(String pre, String post, String sep, int dp,

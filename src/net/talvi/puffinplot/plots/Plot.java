@@ -44,6 +44,7 @@ public abstract class Plot
     private static final float TICK_LENGTH_IN_UNITS = 48.0f;
     private static final float FONT_SIZE_IN_UNITS = 100.0f;
     private static final float SLOPPY_SELECTION_RADIUS_IN_UNITS = 128.0f;
+    protected static final double PLOT_POINT_SIZE = 24.;
     private Map<Attribute,Object> attributeMap
      = new HashMap<Attribute, Object>();
     private static final TransformAttribute MAC_SUPERSCRIPT_TRANSFORM;

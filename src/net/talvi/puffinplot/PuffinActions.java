@@ -557,4 +557,30 @@ public class PuffinActions {
            PuffinApp.getInstance().showCustomNotesWindow();
         }
     };
+
+    public final Action exportSvg = new PuffinAction("Export SVG",
+            "Save current display to an SVG file",
+            '9', false, 0) {
+        public void actionPerformed(ActionEvent e) {
+           PuffinApp.getInstance().getMainWindow().getGraphDisplay().printToSvg();
+        }
+    };
+
+    public final Action bootstrapAms = new PuffinAction("Calculate bootstrap AMS",
+            "Calculate bootstrap statistics for AMS data of selected samples",
+            null, false, 0) {
+        public void actionPerformed(ActionEvent e) {
+            PuffinApp pa = PuffinApp.getInstance();
+            pa.getSuite().bootstrapAms(pa.getSelectedSamples());
+        }
+    };
+
+    public final Action hextAms = new PuffinAction("Calculate Hext on AMS",
+            "Calculate Hext statistics for AMS data of selected samples",
+            null, false, 0) {
+        public void actionPerformed(ActionEvent e) {
+            PuffinApp pa = PuffinApp.getInstance();
+            pa.getSuite().calculateHextOnAms(pa.getSelectedSamples());
+        }
+    };
 }
