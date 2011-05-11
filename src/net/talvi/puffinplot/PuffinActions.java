@@ -161,7 +161,6 @@ public class PuffinActions {
     }
 
     public final Action exportCalcsSample = new AbstractAction("Export sample calculations…") {
-
         public void actionPerformed(ActionEvent arg0) {
             if (app.getSuite() == null) {
                 app.errorDialog("Error saving calculation", "No file loaded.");
@@ -169,7 +168,6 @@ public class PuffinActions {
             }
             String pathname = getSavePath("Export sample calculations", ".csv",
                     "Comma Separated Values");
-
             if (pathname != null)
                 app.getSuite().saveCalcsSample(new File(pathname),
                         app.getCorrection());
@@ -484,6 +482,7 @@ public class PuffinActions {
             try {
                 List<File> files = openFileDialog("Select AMS files");
                 app.getSuite().importAms(files, true);
+                app.updateDisplay();
             } catch (IOException ex) {
                 logger.log(Level.SEVERE, null, ex);
                 app.errorDialog("Error importing AMS", ex.getLocalizedMessage());
@@ -562,7 +561,10 @@ public class PuffinActions {
             "Save current display to an SVG file",
             '9', false, 0) {
         public void actionPerformed(ActionEvent e) {
-           PuffinApp.getInstance().getMainWindow().getGraphDisplay().printToSvg();
+            String pathname = getSavePath("Export preferences", ".xml",
+                    "eXtensible Markup Language");
+            if (pathname != null)
+                PuffinApp.getInstance().getMainWindow().getGraphDisplay().printToSvg(pathname);
         }
     };
 
@@ -581,6 +583,35 @@ public class PuffinActions {
         public void actionPerformed(ActionEvent e) {
             PuffinApp pa = PuffinApp.getInstance();
             pa.getSuite().calculateHextOnAms(pa.getSelectedSamples());
+        }
+    };
+
+    public final Action fixBartington = new PuffinAction("Fix Bartington MS",
+            "Convert Bartington loop sensor mag. sus. to SI (whole suite)",
+            null, false, 0) {
+        public void actionPerformed(ActionEvent e) {
+            PuffinApp pa = PuffinApp.getInstance();
+            pa.getSuite().convertBartingtonMagSus();
+        }
+    };
+
+    public final Action exportPrefs = new AbstractAction("Export preferences…") {
+        public void actionPerformed(ActionEvent arg0) {
+            String pathname = getSavePath("Export preferences", ".xml",
+                    "eXtensible Markup Language");
+            if (pathname != null)
+                app.getPrefs().exportToFile(new File(pathname));
+        }
+    };
+
+    public final Action importPrefs = new AbstractAction("Import preferences…") {
+        public void actionPerformed(ActionEvent arg0) {
+            List<File> files = openFileDialog("Import preferences file");
+            if (files != null && files.size() > 0) {
+                app.getPrefs().importFromFile(files.get(0));
+                app.getMainWindow().getGraphDisplay().recreatePlots();
+                app.updateDisplay();
+            }
         }
     };
 }

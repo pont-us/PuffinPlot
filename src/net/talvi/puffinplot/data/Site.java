@@ -1,9 +1,13 @@
 package net.talvi.puffinplot.data;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import static java.util.Collections.min;
+import static java.util.Collections.max;
 
 public class Site {
 
@@ -60,4 +64,28 @@ public class Site {
     public GreatCircles getGreatCircles() {
         return greatCircles;
     }
+
+    private String fmt(double x) {
+        return String.format("%g", x);
+    }
+    
+    /**
+     * Return, as a list of strings:
+     * minFirstGc, maxFirstGc, minLastGc, MaxLastGc
+     * minimum (among samples in this site) first treatment step
+     * value for great-circle fit, etc.
+     */
+    public List<String> getGreatCircleLimitStrings() {
+        final List<Double> firsts = new ArrayList<Double>(samples.size());
+        final List<Double> lasts = new ArrayList<Double>(samples.size());
+        for (Sample s: samples) {
+            final double first = s.getFirstGcStep();
+            if (first != -1) firsts.add(first);
+            final double last = s.getLastGcStep();
+            if (last != -1) lasts.add(s.getLastGcStep());
+        }
+        return Arrays.asList(new String[] {fmt(min(firsts)),
+                fmt(max(firsts)), fmt(min(lasts)), fmt(max(lasts))});
+    }
+
 }

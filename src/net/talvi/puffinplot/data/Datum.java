@@ -334,6 +334,21 @@ public class Datum {
         }
     }
 
+    double getTreatmentStep() {
+        switch (getTreatType()) {
+            case ARM:
+            case DEGAUSS_XYZ:
+            case DEGAUSS_Z:
+                return afz;
+            case IRM:
+                return irmField;
+            case THERMAL:
+                return temp;
+            default:
+                return 0;
+        }
+    }
+
     public static class Reader {
         private List<DatumField> fields;
 

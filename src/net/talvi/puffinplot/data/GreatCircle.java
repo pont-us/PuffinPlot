@@ -29,7 +29,9 @@ public class GreatCircle {
         // will be strictly in the right direction, so we'll add up
         // the offsets of all the point pairs and take the sign of the sum.
         // (Can't just take angle between first and last point, since
-        // the path might over more than 180 degrees.)
+        // the path might be more than 180 degrees -- though of course
+        // that would imply something more complex than a single component
+        // peeling off.)
         double total = 0;
         for (int i=1; i<points.size(); i++) {
             total += nearestOnCircle(points.get(i-1)).
@@ -37,7 +39,7 @@ public class GreatCircle {
         }
         direction = Math.signum(total);
         for (Vec3 p: points) {
-            logger.info(p.toString() + "   " + angleFromLast(nearestOnCircle(p)));
+            logger.fine(p.toString() + "   " + angleFromLast(nearestOnCircle(p)));
         }
     }
 

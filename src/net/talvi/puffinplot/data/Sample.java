@@ -478,4 +478,18 @@ public class Sample {
         this.magDev = magDev;
     }
 
+    public double getFirstGcStep() {
+        for (Datum d: data) {
+            if (d.isOnCircle()) return d.getTreatmentStep();
+        }
+        return -1;
+    }
+
+    public double getLastGcStep() {
+        double result = -1;
+        for (Datum d : data) {
+            if (d.isOnCircle()) result = d.getTreatmentStep();
+        }
+        return result;
+    }
 }

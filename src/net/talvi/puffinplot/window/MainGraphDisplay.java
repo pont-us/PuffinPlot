@@ -18,12 +18,15 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
     // samplesForPrinting is only non-null during printing.
     private List<Sample> samplesForPrinting = null;
     private int printPageIndex = -1;
+    private final static String[] plotNames = {"SampleEqAreaPlot", "ZPlot", "DemagPlot",
+        "DataTable", "PcaTable", "SampleTable", "FisherTable",
+        "AmsPlot", "TernaryPlot"};
+    private final PlotParams params;
 
     MainGraphDisplay() {
-
         super();
         final PuffinApp app = PuffinApp.getInstance();
-        PlotParams params = new PlotParams() {
+        params = new PlotParams() {
             public Sample getSample() {
                 return samplesForPrinting == null
                         ? app.getSample()
@@ -36,13 +39,17 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
                 return app.getMainWindow().controlPanel.getAxis();
             }
         };
+        createPlots();
+    }
 
-        Preferences pref = app.getPrefs().getPrefs();
+    @Override
+    public void recreatePlots() {
+        plots.clear();
+        createPlots();
+    }
 
-        String[] plotNames = {"SampleEqAreaPlot", "ZPlot", "DemagPlot",
-            "DataTable", "PcaTable", "SampleTable", "FisherTable",
-            "AmsPlot", "TernaryPlot"};
-
+    private void createPlots() {
+        Preferences pref = PuffinApp.getInstance().getPrefs().getPrefs();
         try {
             for (String plotName : plotNames) {
                 plots.put(plotName,

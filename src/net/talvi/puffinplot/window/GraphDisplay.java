@@ -49,7 +49,6 @@ public abstract class GraphDisplay extends JPanel implements Printable {
             AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .8f);
          
     GraphDisplay() {
-        
         setPreferredSize(new Dimension(1200, 800));
         setMaximumSize(getPreferredSize());
         zoomTransform = AffineTransform.getScaleInstance(1.0, 1.0);
@@ -89,6 +88,10 @@ public abstract class GraphDisplay extends JPanel implements Printable {
 
     public Collection<Plot> getPlots() {
         return plots.values();
+    }
+
+    public void recreatePlots() {
+        // does nothing in this abstract class
     }
 
     @Override
@@ -292,26 +295,22 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         setDoubleBuffered(true);
     }
 
-    public void printToSvg() {
-
+    public void printToSvg(String filename) {
         // Get a DOMImplementation.
         DOMImplementation domImpl =
             GenericDOMImplementation.getDOMImplementation();
-
         // Create an instance of org.w3c.dom.Document.
         String svgNS = "http://www.w3.org/2000/svg";
         Document document = domImpl.createDocument(svgNS, "svg", null);
-
         // Create an instance of the SVG Generator.
         SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
         for (Plot plot: getVisiblePlots()) plot.draw(svgGenerator);
-
         // Finally, stream out SVG to the standard output using
         // UTF-8 encoding.
         boolean useCSS = true; // we want to use CSS style attributes
         Writer out;
         try {
-            out = new FileWriter("/home/pont/puffin.svg");
+            out = new FileWriter(filename);
             svgGenerator.stream(out, useCSS);
         } catch (IOException ex) {
             Logger.getLogger(GraphDisplay.class.getName()).log(Level.SEVERE, null, ex);

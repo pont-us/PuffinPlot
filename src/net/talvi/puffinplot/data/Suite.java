@@ -206,7 +206,7 @@ public class Suite {
             Site site = sample.getSite();
             if (sites.contains(site)) continue;
             site.doFisher();
-            // site.doGreatCircle();
+            site.doGreatCircle();
         }
     }
 
@@ -360,7 +360,10 @@ public class Suite {
                 List<String> gcCsv = (site.getGreatCircles() == null)
                         ? GreatCircles.getEmptyFields()
                         : site.getGreatCircles().toStrings();
-                writer.writeCsv(site, fisherCsv, gcCsv);
+                List<String> gcCsv2 = (site.getGreatCircles() == null)
+                        ? Collections.nCopies(4, "")
+                        : site.getGreatCircleLimitStrings();
+                writer.writeCsv(site, fisherCsv, gcCsv, gcCsv2);
             }
         } catch (IOException ex) {
            throw new Error(ex);
@@ -689,4 +692,9 @@ public class Suite {
         return samplesById.containsKey(id);
     }
 
+    public void convertBartingtonMagSus() {
+        for (Datum d: data) {
+            d.setMagSus(d.getMagSus() * 4.3e-5);
+        }
+    }
 }

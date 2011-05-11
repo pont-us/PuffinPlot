@@ -108,6 +108,7 @@ class PlotAxis {
             // farside: true for an axis at top or right.
             // used to draw label on correct side.
             public boolean farSide = false;
+            public boolean numberEachTick = false;
 
             public AxisParameters(double extent, Direction direction) {
                 this.extent = extent;
@@ -126,6 +127,7 @@ class PlotAxis {
                 magnitude = p.magnitude;
                 markedPosition = p.markedPosition;
                 farSide = p.farSide;
+                numberEachTick = p.numberEachTick;
             }
 
             public AxisParameters withEndLabel(String endLabel) {
@@ -135,6 +137,11 @@ class PlotAxis {
 
             public AxisParameters withLabel(String label) {
                 this.label = label;
+                return this;
+            }
+
+            public AxisParameters withNumberEachTick() {
+                this.numberEachTick = true;
                 return this;
             }
 
@@ -226,22 +233,25 @@ class PlotAxis {
             double pos = i*getStepSize()*scale;
             g.draw(new Line2D.Double(xOrig+x*pos+y*t, yOrig+y*pos+x*t,
                     xOrig+x*pos-y*t, yOrig+y*pos-x*t));
+            if (ap.numberEachTick || i==ap.numSteps) {
+                double length = getNormalizedLength() * (double) i / ap.numSteps;
+                int length_int = (int) length;
+                String text = Math.abs(length - length_int) < 0.0001
+                        ? Integer.toString(length_int)
+                        : String.format("%.1f", length);
+                AttributedString as = (ap.magnitudeOnTicks && getMagnitude() != 0)
+                    ? plot.timesTenToThe(text, getMagnitude())
+                    : new AttributedString(text);
+                putText(g, as,
+                        xOrig + x * pos, yOrig + y * pos,
+                        ap.direction.labelPos(ap.farSide), 0, 5);
+            }
         }
         
         double xLen = x*getLength()*scale;
         double yLen = y*getLength()*scale;
         g.draw(new Line2D.Double(xOrig, yOrig, xOrig+xLen, yOrig+yLen));
         if (getLength()!=0) {
-            double length = getNormalizedLength();
-            int length_int = (int) length;
-            String text =  Math.abs(length-length_int) < 0.0001
-                ? Integer.toString(length_int)
-                : String.format("%.1f", length);
-            AttributedString as = (ap.magnitudeOnTicks && getMagnitude() != 0)
-                    ? plot.timesTenToThe(text, getMagnitude())
-                    : new AttributedString(text);
-            putText(g, as,
-                xOrig+xLen, yOrig+yLen, ap.direction.labelPos(ap.farSide), 0, 5);
             if (ap.markedPosition != null) {
                 AttributedString mark = new AttributedString
                         (String.format("%.2f", ap.markedPosition * Math.pow(10, -getMagnitude())));

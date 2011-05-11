@@ -52,8 +52,10 @@ public abstract class EqAreaPlot extends Plot {
 
         final double l = getTickLength() / 2.0;
         for (int i = 0; i < incTickNum; i++) {
-            double x = (i * r) / incTickNum;
-            g.draw(new Line2D.Double(xo + x, yo - l, xo + x, yo + l));
+            Point2D p =  project(Vec3.fromPolarDegrees(1., 90 - i * (90./(double)incTickNum), 90.),
+                    xo, yo, radius);
+            double x = p.getX();
+            g.draw(new Line2D.Double(x, yo - l, x, yo + l));
         }
         g.draw(new Line2D.Double(xo - l, yo, xo + l, yo));
     }

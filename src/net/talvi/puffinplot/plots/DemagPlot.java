@@ -70,7 +70,7 @@ public class DemagPlot extends Plot {
                 : String.format("%s (%s)", treatType.getAxisLabel(), treatType.getUnit());
 
         AxisParameters hAxisParams = new AxisParameters(xAxisLength, Direction.RIGHT).
-                withLabel(xAxisLabel);
+                withLabel(xAxisLabel).withNumberEachTick();
 
         final MDF midpoint = sample.getMDF();
         if (midpoint != null) {
@@ -81,7 +81,7 @@ public class DemagPlot extends Plot {
                 "Magnetization (A/m)");
         final PlotAxis vAxis =
                 new PlotAxis(new AxisParameters(maxIntens, Direction.UP).
-                withLabel(vAxisLabel), this);
+                withLabel(vAxisLabel).withNumberEachTick(), this);
         
         final double hScale = dim.getWidth() / hAxis.getLength();
         final double vScale = dim.getHeight() / vAxis.getLength();
@@ -111,7 +111,7 @@ public class DemagPlot extends Plot {
         if (sample.hasMsData()) {
             final AxisParameters msAxisParams =
                     new AxisParameters(Datum.maximumMagSus(data),
-                    Direction.UP);
+                    Direction.UP).withNumberEachTick();
             msAxisParams.label = "Magnetic susceptibility (S.I.)";
             msAxisParams.farSide = true;
             final PlotAxis msAxis = new PlotAxis(msAxisParams, this);

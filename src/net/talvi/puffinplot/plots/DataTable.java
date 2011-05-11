@@ -15,10 +15,10 @@ import static java.lang.String.format;
 
 public class DataTable extends Plot {
 
-    private final int xSpacing = (int) (600 * getUnitSize());
+    private final int xSpacing = (int) (450 * getUnitSize());
     private final int ySpacing = (int) (120 * getUnitSize());
     private final List<String> headers = 
-            Arrays.asList(new String[] {"demag.", "dec.", "inc.", "int."});
+            Arrays.asList(new String[] {"demag.", "dec.", "inc.", "int.", "m.s."});
     
     public DataTable(GraphDisplay parent, PlotParams params, Preferences prefs) {
         super(parent, params, prefs);
@@ -63,7 +63,8 @@ public class DataTable extends Plot {
             values.add(format("% .1f", p.getIncDeg()));
             // Don't use .1g, it tickles a bug in Java (#6469160) which
             // throws an ArrayFormatException (at least in Sun Java 5 & 6)
-            values.add(format("%.3e", p.mag()));
+            values.add(format("%.2e", p.mag()));
+            values.add(format("%.1e", d.getMagSus()));
             points.add(new TextLinePoint(this, g, yPos, d, values, xSpacing));
             yPos += ySpacing;
             sequence++;
