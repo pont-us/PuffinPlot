@@ -1,5 +1,6 @@
 package net.talvi.puffinplot.plots;
 
+import java.util.prefs.Preferences;
 import net.talvi.puffinplot.data.Site;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -12,10 +13,16 @@ import net.talvi.puffinplot.window.PlotParams;
 import static java.lang.Math.min;
 
 public class GreatCirclePlot extends EqAreaPlot {
+
     public GreatCirclePlot(GraphDisplay parent, PlotParams params,
             Rectangle2D dimensions) {
         super(parent, params, null, true);
         this.dimensions = dimensions;
+    }
+
+    public GreatCirclePlot(GraphDisplay parent, PlotParams params,
+            Preferences prefs) {
+        super(parent, params, prefs);
     }
     
     @Override
@@ -48,6 +55,7 @@ public class GreatCirclePlot extends EqAreaPlot {
             drawGreatCircleSegment(g, xo, yo, radius, segmentStart,
                     segmentEnd,circle.lastPoint());
             boolean first = true;
+            g.setColor(Color.BLUE);
             for (Vec3 p: circle.getPoints()) {
                 addPoint(null, project(p, xo, yo, radius), p.z>=0, false, false);
                 drawGreatCircleSegment(g, xo, yo, radius, p,

@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import net.talvi.puffinplot.PuffinApp;
 import static java.lang.Math.toRadians;
+import static java.lang.Double.parseDouble;
 
 public class Sample {
     
@@ -491,5 +492,18 @@ public class Sample {
             if (d.isOnCircle()) result = d.getTreatmentStep();
         }
         return result;
+    }
+
+    public void setValue(DatumField field, String value) {
+        switch (field) {
+            case SAMPLE_AZ: setSampAz(parseDouble(value)); break;
+            case SAMPLE_DIP: setSampDip(parseDouble(value)); break;
+            case FORM_AZ: setFormAz(parseDouble(value)); break;
+            case FORM_DIP: setFormDip(parseDouble(value)); break;
+            case MAG_DEV: setMagDev(parseDouble(value)); break;
+        }
+        for (Datum d: getData()) {
+            d.setValue(field, value);
+        }
     }
 }

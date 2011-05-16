@@ -20,7 +20,7 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
     private int printPageIndex = -1;
     private final static String[] plotNames = {"SampleEqAreaPlot", "ZPlot", "DemagPlot",
         "DataTable", "PcaTable", "SampleTable", "FisherTable",
-        "AmsPlot", "TernaryPlot"};
+        "AmsPlot", "TernaryPlot", "GreatCirclePlot"};
     private final PlotParams params;
 
     MainGraphDisplay() {

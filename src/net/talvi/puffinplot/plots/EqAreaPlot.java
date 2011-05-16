@@ -32,6 +32,7 @@ public abstract class EqAreaPlot extends Plot {
         super(parent, params, prefs);
         this.taperingEnabled = taperingEnabled;
     }
+    
     protected EqAreaPlot(GraphDisplay parent, PlotParams params, Preferences prefs) {
         this(parent, params, prefs, false);
     }
@@ -123,7 +124,10 @@ public abstract class EqAreaPlot extends Plot {
         if (isTaperingEnabled()) {
             drawTaperedLineSegments(g, xo, yo, radius, vs);
         } else {
-            drawStandardLineSegments(g, xo, yo, radius, vs);
+            List<List<Vec3>> vss =  Vec3.interpolateEquatorPoints(vs);
+            for (List<Vec3> part: vss) {
+                drawStandardLineSegments(g, xo, yo, radius, part);
+            }
         }
     }
 
@@ -150,51 +154,10 @@ public abstract class EqAreaPlot extends Plot {
 
     protected void drawGreatCircle(Graphics2D g, int xo, int yo, int radius,
             Vec3 pole) {
-        int n = 48;
-        List<Vec3> vs = pole.greatCirclePoints(n);
-        List<Vec3> bottom = new ArrayList<Vec3>(vs.size());
-        List<Vec3> top = new ArrayList<Vec3>(vs.size());
-        int i=1;
-        int state = 0;
-        Vec3 prev = vs.get(0);
-        // 0: seeking start of top; 1: processing top;
-        // 2: processing bottom; 3: finish
-        while (state < 3) {
-            Vec3 v = vs.get(i);
-            i = (i+1) % n;
-            switch (state) {
-                case 0:
-                    if (prev.z < 0 && v.z >= 0) {
-                        top.add(Vec3.equatorPoint(prev, v));
-                        top.add(v);
-                        state = 1;
-                    }
-                    break;
-                case 1:
-                    if (v.z < 0) {
-                        Vec3 eq = Vec3.equatorPoint(prev, v);
-                        top.add(eq);
-                        bottom.add(eq);
-                        bottom.add(v);
-                        state = 2;
-                    } else {
-                        top.add(v);
-                    }
-                    break;
-                case 2:
-                    if (v.z >= 0) {
-                        bottom.add(top.get(0));
-                        state = 3;
-                    } else {
-                        bottom.add(v);
-                    }
-                    break;
-            }
-            prev = v;
-        }
-        drawLineSegments(g, xo, yo, radius, top);
-        drawLineSegments(g, xo, yo, radius, bottom);
-    }
+        int n = 64;
+        List<Vec3> vs = pole.greatCirclePoints(n, true);
+        drawLineSegments(g, xo, yo, radius, vs);
+   }
 
     protected static Point2D.Double project(Vec3 p, int xo, int yo, int radius) {
         final double h2 = p.x * p.x + p.y * p.y;

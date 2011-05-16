@@ -52,7 +52,7 @@ public class TextLinePoint implements PlotPoint {
     public void draw(Graphics2D g) {
         if (datum != null) {
             if (datum.isSelected()) {
-                plot.writeString(g, "‣", (float) xMin, (float) yPos);
+                plot.writeString(g, "π"/*"‣"*/, (float) xMin, (float) yPos);
             }
             if (datum.isHidden()) {
                 plot.writeString(g, "-", (float) xMin, (float) yPos);

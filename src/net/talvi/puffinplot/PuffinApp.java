@@ -147,9 +147,9 @@ public final class PuffinApp {
         logger.info("PuffinApp instantiation complete.");
     }
 
-    void doGreatCircles() {
+    void doGreatCircles(boolean popUpWindow) {
         for (Site site: getSelectedSites()) site.doGreatCircle();
-        greatCircleWindow.setVisible(true);
+        if (popUpWindow) greatCircleWindow.setVisible(true);
     }
 
     void fitCircle() {

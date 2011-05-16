@@ -89,9 +89,11 @@ public class Vec3 {
     }
 
     /**
-     * Given a list of points, return a list containing the same points
-     * plus possible extras. The extras are inserted on the equator line
-     * wherever the sequence of points crosses the equator.
+     * Given a list of points, return a a list of lists containing the same points
+     * plus possible extras. Each sublist of the returned list is guaranteed
+     * only to contain points in one hemisphere. Where the original list
+     * crosses the equator, an extra point is interpolated exactly on the
+     * equator.
      *
      * @param vs
      * @return
@@ -103,21 +105,19 @@ public class Vec3 {
         for (Vec3 v: vs) {
             if (prev == null) {
                 currentSegment.add(v);
-                prev = v;
             } else {
                 if (prev.sameHemisphere(v)) {
                     currentSegment.add(v);
-                    prev = v;
                 } else {
                     Vec3 between = Vec3.equatorPoint(prev, v);
                     currentSegment.add(between);
                     result.add(currentSegment);
                     currentSegment = new ArrayList<Vec3>();
                     currentSegment.add(between);
-                    result.add(currentSegment);
-                    prev = null;
+                    currentSegment.add(v);
                 }
             }
+            prev = v;
         }
         result.add(currentSegment);
         return result;
@@ -135,17 +135,20 @@ public class Vec3 {
         int steps = (int) (omega / stepSize) + 1;
         final List<Vec3> result = new ArrayList<Vec3>(steps+1);
         Vec3 prevVec = null;
+
         for (int i=0; i<steps; i++) {
             final double t = (double) i / (double) (steps-1);
             double scale0 = (sin((1.0-t)*omega)) / sin(omega);
             double scale1 = sin(t*omega) / sin(omega);
             Vec3 thisVec = v0n.times(scale0).plus(v1n.times(scale1));
-            if (i>0 && !thisVec.sameHemisphere(prevVec)) {
-                result.add(equatorPoint(prevVec, thisVec));
-            }
+            //There's now a separate routine for interpolating equator points.
+            //if (i>0 && !thisVec.sameHemisphere(prevVec)) {
+            // result.add(equatorPoint(prevVec, thisVec));
+            //}
             result.add(thisVec);
             prevVec = thisVec;
         }
+                result.add(v1n);
         return result;
     }
 
@@ -278,13 +281,16 @@ public class Vec3 {
      * vector.
      * 
      * @param n number of points to return
+     * @param closed if true, first point will also be appended to end of list,
+     * giving n+1 points, but only n unique ones, creating a closed circle.
      * @return list of points on great circle
      */
-    public List<Vec3> greatCirclePoints(int n) {
-        final List<Vec3> points = new ArrayList<Vec3>(n);
+    public List<Vec3> greatCirclePoints(int n, boolean closed) {
+        final List<Vec3> points = new ArrayList<Vec3>(n+1);
         for (int i=0; i<n; i++) {
             points.add(correctTilt(Vec3.fromPolarRadians(1, 0, 2*PI*i/n)));
         }
+        if (closed) points.add(points.get(0));
         return points;
     }
 

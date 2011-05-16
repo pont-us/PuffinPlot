@@ -99,8 +99,9 @@ public class CorrectionWindow extends JFrame implements ActionListener {
             for (DatumField field : fields) {
                 if (checkBoxMap.get(field).isSelected()) {
                     String value = textFieldMap.get(field).getText();
-                    for (Sample s: samples)
-                        for (Datum d: s.getData()) d.setValue(field, value);
+                    for (Sample s: samples) {
+                        s.setValue(field, value);
+                    }
                 }
             }
             setVisible(false);

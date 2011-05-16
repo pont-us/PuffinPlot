@@ -318,6 +318,7 @@ public class PuffinActions {
             "Fit great circle to selected points", 'L', false, KeyEvent.VK_C) {
         public void actionPerformed(ActionEvent e) {
         app.fitCircle();
+        app.doGreatCircles(false);
         app.getMainWindow().repaint();
         }
     };
@@ -325,7 +326,7 @@ public class PuffinActions {
     public final Action greatCircleAnalysis = new PuffinAction("Great circles",
             "Great circle analysis for site", 'I', false, KeyEvent.VK_L) {
         public void actionPerformed(ActionEvent e) {
-        app.doGreatCircles();
+        app.doGreatCircles(true);
         }
     };
 
@@ -481,7 +482,8 @@ public class PuffinActions {
         public void actionPerformed(ActionEvent e) {
             try {
                 List<File> files = openFileDialog("Select AMS files");
-                app.getSuite().importAms(files, true);
+                //app.getSuite().importAms(files, true);
+                app.getSuite().importAmsFromAsc(files);
                 app.updateDisplay();
             } catch (IOException ex) {
                 logger.log(Level.SEVERE, null, ex);
