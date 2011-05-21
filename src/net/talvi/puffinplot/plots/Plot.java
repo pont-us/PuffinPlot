@@ -56,7 +56,8 @@ public abstract class Plot
             "fishertable true 550 14 178 61 pcatable true 736 14 193 64 " +
             "equarea true 376 398 346 389 datatable true 14 83 356 543 " +
             "ams false 222 633 147 154 ternarytest false 500 500 300 300 " +
-            "greatcircles false 422 633 147 154";
+            "greatcircles false 422 633 147 154 " +
+            "suite_directions false 422 733 147 154";
 
     static {
         final AffineTransform at = AffineTransform.getTranslateInstance(0, 0.18);

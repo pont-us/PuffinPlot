@@ -133,18 +133,7 @@ public abstract class EqAreaPlot extends Plot {
 
     protected void drawGreatCircleSegment(Graphics2D g,
             int xo, int yo, int radius, Vec3 p1, Vec3 p2) {
-        if (p1.sameHemisphere(p2)) {
-            drawLineSegments(g, xo, yo, radius,
-                    Vec3.spherInterpolate(p1, p2, 0.05));
-        } else {
-            // If we're using the solid/dashed line convention,
-            // we need to split the line across the z=0 plane
-            Vec3 equator = Vec3.equatorPoint(p1, p2);
-            drawLineSegments(g, xo, yo, radius,
-                    Vec3.spherInterpolate(p1, equator, 0.05));
-            drawLineSegments(g, xo, yo, radius,
-                    Vec3.spherInterpolate(equator, p2, 0.05));
-         }
+        drawLineSegments(g, xo, yo, radius, Vec3.spherInterpolate(p1, p2, 0.05));
     }
 
     protected void drawGreatCircleSegment(Graphics2D g,

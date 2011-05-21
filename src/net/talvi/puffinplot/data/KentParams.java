@@ -1,5 +1,7 @@
 package net.talvi.puffinplot.data;
 
+import java.util.Collections;
+import java.util.Arrays;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.util.List;
@@ -18,7 +20,6 @@ import static java.lang.Math.toRadians;
  */
 public class KentParams {
 
-    // private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
     private double tau;
     private double tauSigma;
     private Vec3 mean;
@@ -78,9 +79,9 @@ public class KentParams {
         return output;
     }
 
-    public static List<KentParams> calculateBootstrap(List<Tensor> tensors) {
-        //final String cmdPath = "/home/pont/files/phd/programs/tauxe-bootstrap.py";
-        final String cmdPath = "/home/pont/Downloads/pmagpy-2.66/bootams.py";
+    public static List<KentParams> calculateBootstrap(List<Tensor> tensors,
+            boolean parametric, String bootamsPath) {
+        // final String cmdPath = "";
         try {
             File tempFile = File.createTempFile("puffin", "tensors");
             FileWriter writer = new FileWriter(tempFile);
@@ -88,9 +89,10 @@ public class KentParams {
                 writer.write(t.toTensorComponentString() + "\n");
             }
             writer.close();
-            String[] args = {cmdPath, "-f", tempFile.getAbsolutePath()/*, "-par"*/};
-            // args = new String[] {"/home/pont/ams/print-site-b-bootstrap.py"};
-            List<String> output = execute(args);
+            ArrayList<String> args = new ArrayList<String>(4);
+            Collections.addAll(args, bootamsPath, "-f", tempFile.getAbsolutePath());
+            if (parametric) args.add("-par");
+            List<String> output = execute(args.toArray(new String[] {}));
             tempFile.delete();
             System.out.println("N ="+tensors.size());
             for (String s : output) {
@@ -111,7 +113,7 @@ public class KentParams {
     }
 
    public static List<KentParams> calculateHext(List<Tensor> tensors) {
-        final String cmdPath = "/home/pont/Downloads/pmagpy-2.66/s_hext.py";
+        final String cmdPath = "/home/pont/files/phd/software/tauxe/pmagpy-2.66/s_hext.py";
         try {
             File tempFile = File.createTempFile("puffin", "hext");
             FileWriter writer = new FileWriter(tempFile);

@@ -172,6 +172,12 @@ public final class PuffinApp {
         return greatCircleWindow;
     }
 
+    Site getCurrentSite() {
+        Sample sample = getSample();
+        if (sample==null) return null;
+        return sample.getSite();
+    }
+
     private static class ExceptionHandler implements UncaughtExceptionHandler {
         public void uncaughtException(Thread thread, Throwable exception) {
             final String ERROR_FILE = "PUFFIN-ERROR.txt";

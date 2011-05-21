@@ -27,6 +27,7 @@ import javax.swing.filechooser.FileFilter;
 import net.talvi.puffinplot.data.DatumField;
 import net.talvi.puffinplot.data.FisherValues;
 import net.talvi.puffinplot.data.Sample;
+import net.talvi.puffinplot.data.Site;
 import net.talvi.puffinplot.data.Suite;
 
 public class PuffinActions {
@@ -127,7 +128,8 @@ public class PuffinActions {
                 chooser.setFileFilter(new FileFilter() {
                 @Override
                 public boolean accept(File f) {
-                    return f.getName().toLowerCase().endsWith(extension);
+                    return f.getName().toLowerCase().endsWith(extension) ||
+                            f.isDirectory();
                 }
 
                 @Override
@@ -144,7 +146,8 @@ public class PuffinActions {
             if (extension != null) {
             fd.setFilenameFilter(new FilenameFilter() {
                 public boolean accept(File dir, String name) {
-                    return name.toLowerCase().endsWith(extension);
+                    return name.toLowerCase().endsWith(extension) ||
+                            (new File(dir, name)).isDirectory();
                 }
             });}
             fd.setVisible(true);
@@ -330,6 +333,15 @@ public class PuffinActions {
         }
     };
 
+    public final Action clearGcFit = new PuffinAction("Clear GC fit for site",
+            "Clear the great-circle analysis for the site", 'I', true, 0) {
+        public void actionPerformed(ActionEvent e) {
+        Site site = app.getCurrentSite();
+        site.clearGcFit();
+        app.updateDisplay();
+        }
+    };
+
     public final Action mdf = new PuffinAction("MDF",
             "Calculate median destructive field (or temperature) on selected samples",
             'M', false, KeyEvent.VK_M) {
@@ -483,7 +495,7 @@ public class PuffinActions {
             try {
                 List<File> files = openFileDialog("Select AMS files");
                 //app.getSuite().importAms(files, true);
-                app.getSuite().importAmsFromAsc(files);
+                app.getSuite().importAmsFromAsc(files, false);
                 app.updateDisplay();
             } catch (IOException ex) {
                 logger.log(Level.SEVERE, null, ex);
@@ -570,12 +582,23 @@ public class PuffinActions {
         }
     };
 
-    public final Action bootstrapAms = new PuffinAction("Calculate bootstrap AMS",
+    public final Action bootAmsNaive = new PuffinAction("Calculate bootstrap AMS",
             "Calculate bootstrap statistics for AMS data of selected samples",
             null, false, 0) {
         public void actionPerformed(ActionEvent e) {
             PuffinApp pa = PuffinApp.getInstance();
-            pa.getSuite().bootstrapAms(pa.getSelectedSamples());
+            String path = "/home/pont/files/phd/software/tauxe/pmagpy-2.66/bootams.py";
+            pa.getSuite().bootstrapAms(pa.getSelectedSamples(), false, path);
+        }
+    };
+
+    public final Action bootAmsParam = new PuffinAction("Parametric bootstrap AMS",
+            "Calculate parametric bootstrap statistics for AMS data of selected samples",
+            null, false, 0) {
+        public void actionPerformed(ActionEvent e) {
+            PuffinApp pa = PuffinApp.getInstance();
+            String path = "/home/pont/files/phd/software/tauxe/pmagpy-2.66/bootams.py";
+            pa.getSuite().bootstrapAms(pa.getSelectedSamples(), true, path);
         }
     };
 
@@ -614,6 +637,12 @@ public class PuffinActions {
                 app.getMainWindow().getGraphDisplay().recreatePlots();
                 app.updateDisplay();
             }
+        }
+    };
+
+    public final Action clearAmsCalcs = new AbstractAction("Clear AMS calculations") {
+        public void actionPerformed(ActionEvent arg0) {
+            app.getSuite().clearAmsCalculations();
         }
     };
 }

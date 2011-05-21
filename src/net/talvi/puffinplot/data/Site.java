@@ -88,4 +88,8 @@ public class Site {
                 fmt(max(firsts)), fmt(min(lasts)), fmt(max(lasts))});
     }
 
+    public void clearGcFit() {
+        greatCircles = null;
+    }
+
 }

@@ -1,5 +1,6 @@
 package net.talvi.puffinplot.plots;
 
+import java.awt.geom.Point2D;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.data.Site;
 import java.awt.Color;
@@ -66,7 +67,10 @@ public class GreatCirclePlot extends EqAreaPlot {
             drawGreatCircleSegment(g, xo, yo, radius, endpoint,
                     pole.nearestOnCircle(endpoint));
         }
-        addPoint(null, project(circles.getDirection(), xo, yo, radius), true, true, false);
+        // addPoint(null, project(circles.getDirection(), xo, yo, radius), true, true, false);
+        Point2D meanPos = project(circles.getDirection(), xo, yo, radius);
+        PlotPoint meanPoint = new CirclePoint(this, null, meanPos, PLOT_POINT_SIZE*1.5);
+        meanPoint.draw(g);
         drawPoints(g);
     }
 }

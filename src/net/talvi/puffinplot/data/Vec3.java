@@ -492,6 +492,18 @@ public class Vec3 {
         return new Vec3(x, y, newZ);
     }
 
+    public List<Vec3> makeSmallCircle(double radiusDegrees) {
+        List<Vec3> result = new ArrayList<Vec3>();
+        for (double dec = 0; dec < 360; dec += 5) {
+            final Vec3 v1 = Vec3.fromPolarDegrees(1, 90 - radiusDegrees, dec);
+            final Vec3 v2 = v1.rotY(Math.PI / 2 - getIncRad());
+            final Vec3 v3 = v2.rotZ(getDecRad());
+            result.add(v3);
+        }
+        result.add(result.get(0));
+        return result;
+    }
+
     public static List<Vec3> ellipse(double dec, double inc,
             double eta, double etad, double etai,
             double zeta, double zetad, double zetai) {

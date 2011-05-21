@@ -95,7 +95,7 @@ public class AmsPlot extends EqAreaPlot {
         List<KentParams> bootstrapParams = suite.getAmsBootstrapParams();
         List<KentParams> hextParams = suite.getAmsHextParams();
         if (bootstrapParams != null) {
-            for (int i=0; i<3; i++) {
+            for (int i=0; i<3; i+=1) {
                 final KentParams kp = bootstrapParams.get(i);
                 final Point2D pos = project(kp.getMean(), xo, yo, radius);
                 getPointForAxis(pos, PLOT_POINT_SIZE*3, i).draw(g);

@@ -1,5 +1,7 @@
 package net.talvi.puffinplot.data.file;
 
+import java.util.regex.Pattern;
+import java.util.Arrays;
 import net.talvi.puffinplot.data.AmsData;
 import java.util.ArrayList;
 import java.io.BufferedReader;
@@ -20,9 +22,41 @@ import static java.lang.Double.parseDouble;
 public class AmsLoader {
     private final File ascFile;
     private static final String tensorLabel = "Specimen";
+    private static final Pattern lastLine =
+            Pattern.compile("^\\d\\d-\\d\\d-\\d\\d\\d\\d$");
 
     public AmsLoader(File ascFile) {
         this.ascFile = ascFile;
+    }
+
+    private String[][] readFileChunk(BufferedReader reader) throws IOException {
+        ArrayList<String[]> result = new ArrayList<String[]>(64);
+        do {
+            String line = reader.readLine();
+            if (line==null) break;
+            line = line.replace("\f", "");
+            result.add(line.split("\\s+"));
+            if (lastLine.matcher(line).matches()) break;
+        } while (true);
+        return result.toArray(new String[][] {});
+    }
+
+    public List<AmsData> readFile2() throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(ascFile));
+        List<AmsData> result = new ArrayList<AmsData>();
+        do {
+            String[][] chunk = readFileChunk(reader);
+            if (chunk.length<39) break;
+            double[] tensor = {parseDouble(chunk[37][5]),
+                parseDouble(chunk[37][6]), parseDouble(chunk[37][7]),
+                parseDouble(chunk[38][5]),
+                parseDouble(chunk[38][6]), parseDouble(chunk[38][7])};
+            AmsData amsData = new AmsData(chunk[0][0], tensor,
+                    parseDouble(chunk[3][1]), parseDouble(chunk[5][1]),
+                    parseDouble(chunk[16][5]));
+            result.add(amsData);
+        } while (true);
+        return result;
     }
 
     public List<AmsData> readFile() throws IOException {
@@ -56,7 +90,7 @@ public class AmsLoader {
                 double k13 = parseDouble(parts[7]);
                 final double[] tensor =
                         new double[] {k11, k22, k33, k12, k23, k13};
-                result.add(new AmsData(name, tensor, sampleAz, sampleDip));
+                result.add(new AmsData(name, tensor, sampleAz, sampleDip, 10.));
             }
             if (parts.length > 0 && tensorLabel.equals(parts[0])) {
                 tensorFound = true;

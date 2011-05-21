@@ -84,7 +84,7 @@ public class Suite {
         for (Entry<String, List<Sample>> entry: siteMap.entrySet()) {
             List<Sample> siteSamples = entry.getValue();
             Site site = new Site(entry.getKey(), siteSamples);
-            sites.add(site);
+            getSites().add(site);
             for (Sample s: siteSamples) s.setSite(site);
         }
     }
@@ -92,12 +92,12 @@ public class Suite {
     public void doFisherOnSites() {
         if (!getMeasType().isDiscrete())
             throw new UnsupportedOperationException("Only discrete suites can have sites.");
-        for (Site site: sites) site.doFisher();
+        for (Site site: getSites()) site.doFisher();
     }
 
     public List<FisherValues> getFishers() {
-        List<FisherValues> result = new ArrayList<FisherValues>(sites.size());
-        for (Site site: sites) {
+        List<FisherValues> result = new ArrayList<FisherValues>(getSites().size());
+        for (Site site: getSites()) {
             if (site.getFisher() != null) result.add(site.getFisher());
         }
         return result;
@@ -347,14 +347,14 @@ public class Suite {
      */
     public void saveCalcsSite(File file) {
         CsvWriter writer = null;
-        if (sites == null) {
+        if (getSites() == null) {
             app.errorDialog("Error saving file", "No sites are defined.");
             return;
         }
         try {
             writer = new CsvWriter(new FileWriter(file));
             writer.writeCsv("site", FisherValues.getHeaders(), GreatCircles.getHeaders());
-            for (Site site: sites) {
+            for (Site site: getSites()) {
                 List<String> fisherCsv = (site.getFisher() == null)
                         ? FisherValues.getEmptyFields()
                         : site.getFisher().toStrings();
@@ -481,6 +481,30 @@ public class Suite {
         }
     }
 
+    public double getFormAz() {
+        for (Sample s: samples) {
+            final double v = s.getFormAz();
+            if (!Double.isNaN(v)) return v;
+        }
+        return 0;
+    }
+
+    public double getFormDip() {
+        for (Sample s: samples) {
+            final double v = s.getFormDip();
+            if (!Double.isNaN(v)) return v;
+        }
+        return 0;
+    }
+
+    public double getMagDev() {
+        for (Sample s: samples) {
+            final double v = s.getMagDev();
+            if (!Double.isNaN(v)) return v;
+        }
+        return 0;
+    }
+
     /**
      *  Import AMS data from a file. If directions==false, line format is
      *  k11 k22 k33 k12 k23 k13  (tensor components)
@@ -529,22 +553,26 @@ public class Suite {
         }
     }
 
-    public void importAmsFromAsc(List<File> files) throws IOException {
+    public void importAmsFromAsc(List<File> files, boolean magneticNorth)
+            throws IOException {
         List<AmsData> allData = new ArrayList<AmsData>();
         for (File file: files) {
             AmsLoader amsLoader = new AmsLoader(file);
-            allData.addAll(amsLoader.readFile());
+            allData.addAll(amsLoader.readFile2());
         }
         for (AmsData ad: allData) {
             String name = ad.getName();
+            if (ad.getfTest() < 3.9715) continue;
             if (!containsSample(name)) {
                 insertNewSample(name);
             }
             Sample sample = getSampleByName(name);
             if (!sample.hasData()) {
-                sample.setCorrections(ad.getSampleAz(), ad.getSampleDip(),
-                        0,0,0);
-                        }
+                double azimuth = ad.getSampleAz();
+                if (!magneticNorth) azimuth -= getMagDev();
+                sample.setCorrections(azimuth, ad.getSampleDip(),
+                        getFormAz(), getFormDip(), getMagDev());
+            }
             double[] v = ad.getTensor();
             sample.setAmsFromTensor(v[0], v[1], v[2], v[3], v[4], v[5]);
         }
@@ -641,6 +669,15 @@ public class Suite {
         return hextParams;
     }
 
+    public void clearAmsCalculations() {
+        amsBootstrapParams = null;
+        hextParams = null;
+    }
+
+    public List<Site> getSites() {
+        return sites;
+    }
+
     private class CustomFlagNames extends CustomFields<String> {
         public CustomFlagNames(List<String> list) {
             super(list);
@@ -683,12 +720,14 @@ public class Suite {
         }
     }
 
-    public void bootstrapAms(List<Sample> samples) {
+    public void bootstrapAms(List<Sample> samples, boolean parametric,
+            String bootamsPath) {
         List<Tensor> tensors = new ArrayList<Tensor>();
         for (Sample s: samples) {
             if (s.getAms() != null) tensors.add(s.getAms());
         }
-        amsBootstrapParams = KentParams.calculateBootstrap(tensors);
+        amsBootstrapParams = KentParams.calculateBootstrap(tensors,
+                parametric, bootamsPath);
     }
 
     public void calculateHextOnAms(List<Sample> samples) {

@@ -70,7 +70,6 @@ public class FisherPlot extends EqAreaPlot {
             addPoint(null, meanPoint, v.z>0, firstPoint, !firstPoint);
 
             GeneralPath ellipse = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 72);
-
             boolean firstEllipsePoint = true;
             for (double dec = 0; dec < 360; dec += 5) {
                 Vec3 circlePoint =
