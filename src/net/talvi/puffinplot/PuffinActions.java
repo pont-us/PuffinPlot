@@ -575,8 +575,8 @@ public class PuffinActions {
             "Save current display to an SVG file",
             '9', false, 0) {
         public void actionPerformed(ActionEvent e) {
-            String pathname = getSavePath("Export preferences", ".xml",
-                    "eXtensible Markup Language");
+            String pathname = getSavePath("Export preferences", ".svg",
+                    "Scalable Vector Graphics");
             if (pathname != null)
                 PuffinApp.getInstance().getMainWindow().getGraphDisplay().printToSvg(pathname);
         }

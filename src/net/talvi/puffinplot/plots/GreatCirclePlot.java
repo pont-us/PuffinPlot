@@ -1,5 +1,6 @@
 package net.talvi.puffinplot.plots;
 
+import java.util.List;
 import java.awt.geom.Point2D;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.data.Site;
@@ -47,6 +48,7 @@ public class GreatCirclePlot extends EqAreaPlot {
         clearPoints();
         drawAxes(g, xo, yo, radius);
         final Vec3 endpoint = circles.getDirection();
+        double maxRadius = 0;
         for (GreatCircle circle: circles.getCircles()) {
             final Vec3 pole = circle.getPole();
             g.setColor(Color.BLACK);
@@ -56,21 +58,30 @@ public class GreatCirclePlot extends EqAreaPlot {
             drawGreatCircleSegment(g, xo, yo, radius, segmentStart,
                     segmentEnd,circle.lastPoint());
             boolean first = true;
-            g.setColor(Color.BLUE);
+            //g.setColor(Color.BLUE);
             for (Vec3 p: circle.getPoints()) {
                 addPoint(null, project(p, xo, yo, radius), p.z>=0, false, false);
                 drawGreatCircleSegment(g, xo, yo, radius, p,
                         pole.nearestOnCircle(p));
                 first = false;
             }
-            g.setColor(Color.RED);
-            drawGreatCircleSegment(g, xo, yo, radius, endpoint,
-                    pole.nearestOnCircle(endpoint));
+            //g.setColor(Color.RED);
+            final Vec3 nearestPoint = pole.nearestOnCircle(endpoint);
+            double thisRadius = Math.abs(endpoint.angleTo(nearestPoint));
+            if (thisRadius > maxRadius) maxRadius = thisRadius;
+            drawGreatCircleSegment(g, xo, yo, radius, endpoint, nearestPoint);
         }
         // addPoint(null, project(circles.getDirection(), xo, yo, radius), true, true, false);
         Point2D meanPos = project(circles.getDirection(), xo, yo, radius);
         PlotPoint meanPoint = new CirclePoint(this, null, meanPos, PLOT_POINT_SIZE*1.5);
         meanPoint.draw(g);
+        //g.setColor(Color.GREEN);
+        drawLineSegments(g, xo, yo, radius,
+                circles.getDirection().makeSmallCircle(Math.toDegrees(maxRadius)));
+        drawLineSegments(g, xo, yo, radius,
+                circles.getDirection().makeSmallCircle(circles.getA95()));
         drawPoints(g);
+        List<String> ss = circles.toStrings();
+        writeString(g, ss.get(3)+"/"+ss.get(4), xo-radius, yo-radius);
     }
 }

@@ -119,7 +119,7 @@ public abstract class EqAreaPlot extends Plot {
          }
      }
 
-    private void drawLineSegments(Graphics2D g,
+    protected void drawLineSegments(Graphics2D g,
             int xo, int yo, int radius, List<Vec3> vs) {
         if (isTaperingEnabled()) {
             drawTaperedLineSegments(g, xo, yo, radius, vs);
@@ -163,6 +163,23 @@ public abstract class EqAreaPlot extends Plot {
         return new Point2D.Double(xo + radius * p.y * L,
                 yo + radius * (-p.x) * L);
     }
+//
+//    protected static GeneralPath project(List<Vec3> vs, int xo, int yo,
+//            int radius, boolean closed) {
+//        GeneralPath projection = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 72);
+//        boolean firstPoint = true;
+//        for (Vec3 v: vs) {
+//            Point2D.Double p = project(v, xo, yo, radius);
+//            if (firstPoint) {
+//                projection.moveTo((float) p.x, (float) p.y);
+//            } else {
+//                projection.lineTo((float) p.x, (float) p.y);
+//            }
+//            firstPoint = false;
+//        }
+//        if (closed) projection.closePath();
+//        return projection;
+//    }
 
     public boolean isTaperingEnabled() {
         return taperingEnabled;

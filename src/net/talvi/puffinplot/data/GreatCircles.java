@@ -23,7 +23,7 @@ public class GreatCircles {
     private static final double STABLE_LIMIT = Math.PI / 1800; // 0.1 degree
 
     private static final List<String> HEADERS =
-        Arrays.asList("GC inc.", "GC dec.", "GC a95", "GC k", "GC N", "GC M");
+        Arrays.asList("GC valid","GC inc.", "GC dec.", "GC a95", "GC k", "GC N", "GC M");
 
     public GreatCircles(List<Vec3> endpoints,
             List<List<Vec3>> circlePoints) {
@@ -109,7 +109,7 @@ public class GreatCircles {
     }
 
     public List<String> toStrings() {
-        return Arrays.asList(
+        return Arrays.asList(isValid() ? "Y" : "",
                 fmt(direction.getIncDeg()), fmt(direction.getDecDeg()),
                 fmt(a95), fmt(k), fmt(N()), fmt(M()));
     }
@@ -120,5 +120,13 @@ public class GreatCircles {
 
     public static List<String> getHeaders() {
         return HEADERS;
+    }
+
+    public boolean isValid() {
+        return N()>3 && a95<3.5 && k>3;
+    }
+
+    public double getA95() {
+        return a95;
     }
 }

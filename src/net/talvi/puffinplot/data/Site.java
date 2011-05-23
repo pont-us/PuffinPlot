@@ -68,7 +68,11 @@ public class Site {
     private String fmt(double x) {
         return String.format("%g", x);
     }
-    
+
+    public static List<String> getGreatCircleLimitHeader() {
+        return Arrays.asList(new String[] {"T1min","T1max","T2min","T2max"});
+    }
+
     /**
      * Return, as a list of strings:
      * minFirstGc, maxFirstGc, minLastGc, MaxLastGc

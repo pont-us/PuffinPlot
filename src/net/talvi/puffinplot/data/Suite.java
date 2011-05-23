@@ -353,7 +353,8 @@ public class Suite {
         }
         try {
             writer = new CsvWriter(new FileWriter(file));
-            writer.writeCsv("site", FisherValues.getHeaders(), GreatCircles.getHeaders());
+            writer.writeCsv("site", FisherValues.getHeaders(), GreatCircles.getHeaders(),
+                    Site.getGreatCircleLimitHeader());
             for (Site site: getSites()) {
                 List<String> fisherCsv = (site.getFisher() == null)
                         ? FisherValues.getEmptyFields()
