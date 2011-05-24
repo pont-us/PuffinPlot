@@ -109,6 +109,7 @@ class PlotAxis {
             // used to draw label on correct side.
             public boolean farSide = false;
             public boolean numberEachTick = false;
+            public double startValue = 0;
 
             public AxisParameters(double extent, Direction direction) {
                 this.extent = extent;
@@ -142,6 +143,11 @@ class PlotAxis {
 
             public AxisParameters withNumberEachTick() {
                 this.numberEachTick = true;
+                return this;
+            }
+
+            public AxisParameters withStartValue(double startValue) {
+                this.startValue = startValue;
                 return this;
             }
 

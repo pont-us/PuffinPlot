@@ -65,11 +65,19 @@ public class DemagPlot extends Plot {
         if (maxIntens == 0) maxIntens = 1;
 
         TreatType treatType = sample.getDatum(sample.getNumData() - 1).getTreatType();
-        final String xAxisLabel = xBySequence
-                ? "Measurement number"
-                : String.format("%s (%s)", treatType.getAxisLabel(), treatType.getUnit());
-
-        AxisParameters hAxisParams = new AxisParameters(xAxisLength, Direction.RIGHT).
+        final String xAxisLabel;
+        if (xBySequence) {
+            xAxisLabel = "Measurement number";
+        } else {
+            String unit = treatType.getUnit();
+            if (treatType == TreatType.DEGAUSS_XYZ) {
+                unit = "m" + unit;
+            }
+            xAxisLabel = String.format("%s (%s)", treatType.getAxisLabel(), unit);
+        }
+        double demagRescale = 1;
+        if (treatType == TreatType.DEGAUSS_XYZ) demagRescale = 1000;
+        AxisParameters hAxisParams = new AxisParameters(xAxisLength * demagRescale, Direction.RIGHT).
                 withLabel(xAxisLabel).withNumberEachTick();
 
         final MDF midpoint = sample.getMDF();
@@ -83,7 +91,8 @@ public class DemagPlot extends Plot {
                 new PlotAxis(new AxisParameters(maxIntens, Direction.UP).
                 withLabel(vAxisLabel).withNumberEachTick(), this);
         
-        final double hScale = dim.getWidth() / hAxis.getLength();
+        double hScale = dim.getWidth() / hAxis.getLength();
+        //hScale *= 1000;
         final double vScale = dim.getHeight() / vAxis.getLength();
         
         vAxis.draw(g, vScale, (int)dim.getMinX(), (int)dim.getMaxY());
@@ -91,8 +100,9 @@ public class DemagPlot extends Plot {
         
         int i = 0;
         for (Datum d: data) {
+            double demagLevel = d.getDemagLevel() * demagRescale;
             double xPos = dim.getMinX() +
-                    (xBySequence ? (i + 1) : d.getDemagLevel()) * hScale;
+                    (xBySequence ? (i + 1) : demagLevel) * hScale;
             addPoint(d, new Point2D.Double(xPos,
                     dim.getMaxY() - d.getIntensity(correction) * vScale),
                     true, false, i>0);
