@@ -333,11 +333,12 @@ public class PuffinActions {
         }
     };
 
-    public final Action clearGcFit = new PuffinAction("Clear GC fit for site",
-            "Clear the great-circle analysis for the site", 'I', true, 0) {
+    public final Action clearSiteCalcs = new PuffinAction("Clear site calculations",
+            "Clear site Fisher and Great Circle calculations", 'I', true, 0) {
         public void actionPerformed(ActionEvent e) {
         Site site = app.getCurrentSite();
         site.clearGcFit();
+        site.clearFisher();
         app.updateDisplay();
         }
     };
@@ -371,7 +372,7 @@ public class PuffinActions {
     public final Action selectAll = new PuffinAction("Select all",
             "Select all visible points in selected samples", 'D', false, KeyEvent.VK_A) {
         public void actionPerformed(ActionEvent e) {
-            for (Sample s: app.getSelectedSamples()) s.selectAll();
+            for (Sample s: app.getSelectedSamples()) s.selectVisible();
                 app.getMainWindow().repaint();
         }
     };

@@ -38,7 +38,8 @@ public class TwoGeeLoader extends AbstractFileLoader {
         TRAY_NORMAL, // tray measurement then sample measurement
         NORMAL_TRAY, // sample measurement then tray measurement
         TRAY_NORMAL_YFLIP, // tray, sample, sample flipped around Y axis
-        TRAY_FIRST; // single tray measurement, then sample measurements
+        TRAY_FIRST, // single tray measurement, then sample measurements
+        TRAY_NORMAL_IGNORE; // as TRAY_NORMAL but only use first tray correction
     }
     
     public TwoGeeLoader(File file, Protocol protocol, Vec3 sensorLengths) {
@@ -70,7 +71,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
                 fields.put(fieldNames[i], i);
         }
         data = new LinkedList<Datum>();
-        Vec3 trayMoment = null; // only used for TRAY_FIRST
+        Vec3 trayMoment = null; // only used for TRAY_FIRST and TRAY_NORMAL_IGNORE
         String line;
         while ((line = reader.readLine()) != null) {
             final Datum d = readDatum(line, reader.getLineNumber());
@@ -107,6 +108,13 @@ public class TwoGeeLoader extends AbstractFileLoader {
                             tray = d;
                             normal = readDatum(reader.readLine(), reader.getLineNumber());
                             data.add(combine2(tray, normal, true));
+                            break;
+                        case TRAY_NORMAL_IGNORE:
+                            tray = d;
+                            normal = readDatum(reader.readLine(), reader.getLineNumber());
+                            if (trayMoment == null) trayMoment = tray.getMoment(Correction.NONE);
+                            normal.setMoment(normal.getMoment(Correction.NONE).minus(trayMoment));
+                            data.add(normal);
                             break;
                         case NORMAL_TRAY:
                             normal = d;

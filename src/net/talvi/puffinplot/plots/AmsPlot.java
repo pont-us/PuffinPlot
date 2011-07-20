@@ -1,5 +1,7 @@
 package net.talvi.puffinplot.plots;
 
+import java.util.Set;
+import java.util.HashSet;
 import java.util.ArrayList;
 import java.awt.Stroke;
 import java.awt.Color;
@@ -80,12 +82,17 @@ public class AmsPlot extends EqAreaPlot {
         if (sample == null) return;
 
         g.setStroke(getStroke());
+        final Set<Sample> samplesToPlot = new HashSet<Sample>();
         for (Sample s: PuffinApp.getInstance().getSelectedSamples()) {
+            samplesToPlot.addAll(s.getSite().getSamples());
+        }
+        for (Sample s: samplesToPlot) {
             if (s.getAms() != null) {
                 for (int i=0; i<3; i++) {
                     Vec3 v = s.getAmsAxis(i).normalize();
                     if (v.z < 0) v = v.invert(); // ensure lower hemisphere
                     final Point2D pos = project(v, xo, yo, radius);
+                    g.setColor(Color.GRAY);
                     getPointForAxis(pos, PLOT_POINT_SIZE, i).draw(g);
                 }
             }

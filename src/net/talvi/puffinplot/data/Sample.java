@@ -57,6 +57,7 @@ public class Sample {
     }
 
     public double getNRM(Correction correction) {
+        if (data.isEmpty()) return Double.NaN;
         return data.get(0).getIntensity(correction);
     }
 
@@ -401,6 +402,9 @@ public class Sample {
         if (customNotes.size()>0) {
             result.add("CUSTOM_NOTES\t" + customNotes.exportAsString());
         }
+        if (site != null) {
+            result.add("SITE\t" + site.getName());
+        }
         return result;
     }
     
@@ -421,6 +425,9 @@ public class Sample {
                 notes.add(parts[i]);
             }
             customNotes = new CustomFields<String>(notes);
+        } else if ("SITE".equals(parts[0])) {
+            Site mySite = suite.getOrCreateSite(parts[1]);
+            mySite.addSample(this);
         }
     }
 

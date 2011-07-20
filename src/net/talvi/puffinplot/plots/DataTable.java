@@ -11,6 +11,7 @@ import net.talvi.puffinplot.window.PlotParams;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.data.Sample;
+import net.talvi.puffinplot.data.TreatType;
 import static java.lang.String.format;
 
 public class DataTable extends Plot {
@@ -44,11 +45,15 @@ public class DataTable extends Plot {
         if (data.isEmpty()) return;
 
         // final FontRenderContext frc = g.getFontRenderContext();
-        points.add(new TextLinePoint(this, g, 10, null, headers, xSpacing));
+        List<String> headers2 = new ArrayList<String>(headers);
+        if (sample.getDatum(0).getTreatType() == TreatType.THERMAL)
+            headers2.set(0, "temp.");
+        points.add(new TextLinePoint(this, g, 10, null, headers2, xSpacing));
         final boolean useSequence = (Datum.maximumDemag(data) == 0);
         int sequence = 1;
         float yPos = 2 * ySpacing;
         for (Datum d: data) {
+            if (yPos > getDimensions().getHeight()) break;
             final List<String> values = new ArrayList<String>(4);
             final Vec3 p = d.getMoment(params.getCorrection());
             String demag = useSequence ? Integer.toString(sequence)

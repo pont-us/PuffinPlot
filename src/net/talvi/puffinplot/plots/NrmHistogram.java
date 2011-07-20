@@ -42,12 +42,14 @@ public class NrmHistogram extends Plot {
         Suite suite = sample.getSuite();
         List<Double> nrms = new ArrayList<Double>(suite.getSamples().size());
         for (Sample s: suite.getSamples()) {
-            nrms.add(s.getNRM(Correction.NONE));
+            if (s.hasData()) {
+                nrms.add(s.getNRM(Correction.NONE));
+            }
         }
         final double minimum = 0; //Collections.min(nrms);
         final double maximum = Collections.max(nrms);
         final double range = maximum-minimum;
-        final int nBuckets = 80;
+        final int nBuckets = 50;
         Rectangle2D dim = cropRectangle(getDimensions(), 270, 200, 50, 250);
         List<Integer> buckets = new ArrayList<Integer>(Collections.nCopies(nBuckets, 0));
         for (double nrm: nrms) {

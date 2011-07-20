@@ -107,7 +107,7 @@ public class MainMenuBar extends JMenuBar {
                 pa.pcaOnSelection, anchorItem = new AnchorItem(),
                 pa.fisherBySample, pa.fisherBySite, pa.fisherOnSuite,
                 pa.mdf, pa.clear, pa.circleFit, pa.greatCircleAnalysis,
-                pa.clearGcFit,
+                pa.clearSiteCalcs,
                 pa.reversalTest, pa.bootAmsNaive, pa.bootAmsParam, pa.hextAms,
                 pa.clearAmsCalcs));
         add(makeMenu("Window",

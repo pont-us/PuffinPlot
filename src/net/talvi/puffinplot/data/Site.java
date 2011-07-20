@@ -3,7 +3,6 @@ package net.talvi.puffinplot.data;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import static java.util.Collections.min;
@@ -15,10 +14,16 @@ public class Site {
     private final List<Sample> samples;
     private FisherValues fisher;
     private GreatCircles greatCircles;
+    private double height = Double.NaN;
 
     public Site(String name, List<Sample> samples) {
         this.name = name;
         this.samples = samples;
+    }
+
+    public Site(String name) {
+        this.name = name;
+        this.samples = new ArrayList<Sample>();
     }
 
     public void doFisher() {
@@ -31,6 +36,10 @@ public class Site {
         if (!directions.isEmpty()) {
             fisher = FisherValues.calculate(directions);
         }
+    }
+
+    public void clearFisher() {
+        fisher = null;
     }
 
     public void doGreatCircle() {
@@ -96,4 +105,29 @@ public class Site {
         greatCircles = null;
     }
 
+    void addSample(Sample sample) {
+        if (!samples.contains(sample)) {
+            samples.add(sample);
+            sample.setSite(this);
+        }
+    }
+
+    Object getName() {
+        return name;
+    }
+
+    public List<String> toStrings() {
+        List<String> result = new ArrayList<String>();
+        if (!Double.isNaN(height)) {
+            result.add("HEIGHT\t" + Double.toString(height));
+        }
+        return result;
+    }
+
+    public void fromString(String string) {
+        String[] parts = string.split("\t", -1); // don't discard trailing empty strings
+        if ("HEIGHT".equals(parts[0])) {
+            height = Double.parseDouble(parts[1]);
+        }
+    }
 }

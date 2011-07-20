@@ -123,7 +123,7 @@ public class GreatCircles {
     }
 
     public boolean isValid() {
-        return N()>3 && a95<3.5 && k>3;
+        return N()>=3 && a95<3.5 && k>3;
     }
 
     public double getA95() {

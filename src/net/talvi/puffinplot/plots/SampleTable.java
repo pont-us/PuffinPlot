@@ -34,7 +34,8 @@ public class SampleTable extends Plot {
     public void draw(Graphics2D g) {
         Sample sample = params.getSample();
         if (sample==null || !sample.hasData()) return;
-                
+
+        g.setFont(Font.getFont(getTextAttributes()));
         g.setColor(Color.BLACK);
         Font oldFont = g.getFont();
         Font biggerFont = oldFont.deriveFont(getFontSize()*1.5f);
@@ -43,15 +44,15 @@ public class SampleTable extends Plot {
         final boolean discrete = sample.getMeasType().isDiscrete();
 
         String line = (discrete ? "Sample: " : "Depth: ")
-                + sample.getNameOrDepth()
-                + ", Correction: " + params.getCorrection().getDescription();
+                + sample.getNameOrDepth().substring(0);
+        //        + ", Correction: " + params.getCorrection().getDescription();
         g.drawString(line, (int) getDimensions().getMinX(), 
                 (int) getDimensions().getMinY() + 16);
         g.setFont(oldFont);
-        if (discrete) g.drawString("Slot: "+sample.getSlotNumber()+
-                ", Runs: " + sample.getFirstRunNumber() +
-                "-" + sample.getLastRunNumber() + " "+
-                "Site: "+sample.getSite(),
+        if (discrete) g.drawString(//"Slot: "+sample.getSlotNumber()+
+                //", Runs: " + sample.getFirstRunNumber() +
+                //"-" + sample.getLastRunNumber() + " "+
+                "Site: "+sample.getSite().toString().substring(0),
                 (int) getDimensions().getMinX(),
                 (int) getDimensions().getMinY() + 32);
     }

@@ -273,7 +273,7 @@ class PlotAxis {
                     : new AttributedString(ap.label);
 
             putText(g, as, xOrig + xLen / 2, yOrig + yLen / 2,
-                    ap.direction.labelPos(ap.farSide), ap.direction.labelRot(), 20);
+                    ap.direction.labelPos(ap.farSide), ap.direction.labelRot(), 22);
         }
         
         if (ap.endLabel != null) {

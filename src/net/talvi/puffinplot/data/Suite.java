@@ -137,6 +137,14 @@ public class Suite {
                     fileWriter.write(w);
                 }
             }
+            for (Site site: getSites()) {
+                List<String> lines = site.toStrings();
+                for (String line: lines) {
+                    String w = String.format("SITE\t%s\t%s\n",
+                            site.getName(), line);
+                    fileWriter.write(w);
+                }
+            }
             for (String line: toStrings()) {
                 fileWriter.write(String.format("SUITE\t%s\n", line));
             }
@@ -576,6 +584,7 @@ public class Suite {
             }
             double[] v = ad.getTensor();
             sample.setAmsFromTensor(v[0], v[1], v[2], v[3], v[4], v[5]);
+            guessSites();
         }
     }
 
@@ -648,6 +657,9 @@ public class Suite {
                 String sampleId = parts[1];
                 Sample sample = getSampleByName(sampleId);
                 sample.fromString(line.substring(8+sampleId.length()));
+            } else if ("SITE".equals(parts[0])) {
+                Site site = getOrCreateSite(parts[1]);
+                site.fromString(line.substring(6+parts[1].length()));
             }
         }
     }
@@ -677,6 +689,24 @@ public class Suite {
 
     public List<Site> getSites() {
         return sites;
+    }
+
+    public Site getSiteByName(String siteName) {
+        for (Site site: sites) {
+            if (siteName.equals(site.getName())) {
+                return site;
+            }
+        }
+        return null;
+    }
+
+    Site getOrCreateSite(String siteName) {
+        Site site = getSiteByName(siteName);
+        if (site==null) {
+            site = new Site(siteName);
+            sites.add(site);
+        }
+        return site;
     }
 
     private class CustomFlagNames extends CustomFields<String> {
