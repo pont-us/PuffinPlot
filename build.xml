@@ -5,8 +5,7 @@
 <project name="PuffinPlot" default="default" basedir=".">
     <description>Builds, tests, and runs the project PuffinPlot.</description>
     <import file="nbproject/build-impl.xml"/>
-
-    <import file="nbproject/profiler-build-impl.xml"/>    
+    
     <target name="-pre-jar">
         <propertyfile file="build/classes/net/talvi/puffinplot/build.properties">
             <entry  key="build.date" type="date" value="now" pattern="yyyy-MM-dd HH:mm"/>
@@ -14,7 +13,7 @@
     </target>
     
     <target name="macbundle" depends="jar"
-            description="Bundle the application for Macs">
+            description="Build an example application">
         <taskdef name="jarbundler"
                  classpath="${jarbundler.jar}"
                  classname="net.sourceforge.jarbundler.JarBundler"/>
@@ -36,17 +35,20 @@
     <target name="upload">
         <exec executable="scp" resultproperty="scp.result">
             <arg file="${ant.project.name}.zip"/>
-            <arg file="dist/${ant.project.name}.jar"/>
+            <arg value="ou094053:~" />
+        </exec>
+        <echo message="scp hemulen: ${scp.result}" />
+        <exec executable="scp" resultproperty="scp.result">
+            <arg file="${ant.project.name}.zip"/>
             <arg value="feather:/puysegur/scratch/" />
         </exec>
         <echo message="scp feather: ${scp.result}" />
         <exec executable="scp" resultproperty="scp.result">
 	    <arg value="-P57047"/>
             <arg file="${ant.project.name}.zip"/>
-            <arg file="dist/${ant.project.name}.jar"/>
-            <arg value="rae.vm.bytemark.co.uk:/srv/talvi.net/public/htdocs/" />
+            <arg value="lumi:www.talvi.net/public_html/" />
         </exec>
-        <echo message="scp rae: ${scp.result}" />
+        <echo message="scp lumi: ${scp.result}" />
     </target>
     
     
