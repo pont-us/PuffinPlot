@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.talvi.puffinplot.data.Correction;
-import net.talvi.puffinplot.data.Datum.Reader;
+import net.talvi.puffinplot.data.Datum;
 import java.util.regex.Pattern;
 import static net.talvi.puffinplot.data.file.TwoGeeHelper.*;
 import static java.lang.Double.isNaN;
@@ -25,12 +25,14 @@ public class PplLoader extends AbstractFileLoader {
     private static final Pattern puffinHeader =
             Pattern.compile("^PuffinPlot file. Version (\\d+)");
     private LineNumberReader reader;
-    private Reader datumReader;
+    private Datum.Reader datumReader;
     private int treatmentField;
     private int version;
     private List<String> extraLines = Collections.EMPTY_LIST;
+    private final File file;
 
     public PplLoader(File file) {
+        this.file = file;
         try {
             reader = new LineNumberReader(new FileReader(file));
             final String firstLine = reader.readLine();
@@ -55,9 +57,11 @@ public class PplLoader extends AbstractFileLoader {
             }
             List<String> headers = Arrays.asList(headerLine.split("\t"));
             treatmentField = headers.indexOf("TREATMENT");
-            datumReader = new Reader(headers);
+            datumReader = new Datum.Reader(headers);
             readFile();
         } catch (IOException e) {
+            addMessage(e.getMessage());
+        } catch (MalformedFileException e) {
             addMessage(e.getMessage());
         } finally {
             try {
@@ -68,7 +72,7 @@ public class PplLoader extends AbstractFileLoader {
         }
     }
 
-    private void readFile() throws IOException {
+    private void readFile() throws IOException, MalformedFileException {
         String line;
         while ((line = reader.readLine()) != null) {
             if ("".equals(line)) break;
@@ -82,7 +86,15 @@ public class PplLoader extends AbstractFileLoader {
                 // Fortunately, measurement type strings happen to carry
                 // across so we don't need to munge them.
             }
-            Datum d = datumReader.fromStrings(values);
+            Datum d = null;
+            try {
+                d = datumReader.fromStrings(values);
+            } catch (NumberFormatException e) {
+                final String msg = String.format("Error at line %d "+
+                        "of file %s:\n%s", reader.getLineNumber(),
+                        file.getName(), e.getMessage());
+                throw new MalformedFileException(msg);
+            }
             if (version==2) {
                 // Ppl 2 files store magnetic data (except susceptibility)
                 // in cgs units, which must be corrected on loading.

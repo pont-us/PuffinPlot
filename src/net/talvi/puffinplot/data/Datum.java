@@ -299,6 +299,17 @@ public class Datum {
     }
 
     public void setValue(DatumField field, String s) {
+        try {
+            doSetValue(field, s);
+        } catch (NumberFormatException e) {
+            final String msg = String.format("Invalid number "+
+                    "when setting field '%s' to value '%s':\n%s",
+                    field.toString(), s, e.getMessage());
+            throw new NumberFormatException(msg);
+        }
+    }
+    
+    private void doSetValue(DatumField field, String s) {
         switch (field) {
         case AF_X: afx = Double.parseDouble(s); break;
         case AF_Y: afy = Double.parseDouble(s); break;
