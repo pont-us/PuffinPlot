@@ -210,12 +210,14 @@ public class Suite {
     }
 
     public void doSiteCalculations() {
-        Set<Site> sites = new HashSet<Site>();
+        final Set<Site> sitesDone = new HashSet<Site>();
         for (Sample sample : getSamples()) {
-            Site site = sample.getSite();
-            if (sites.contains(site)) continue;
+            final Site site = sample.getSite();
+            if (site == null) continue;
+            if (sitesDone.contains(site)) continue;
             site.doFisher();
             site.doGreatCircle();
+            sitesDone.add(site);
         }
     }
 
@@ -244,6 +246,7 @@ public class Suite {
         customFlagNames = new CustomFlagNames(Collections.EMPTY_LIST);
         customNoteNames = new CustomNoteNames(Collections.EMPTY_LIST);
         List<String> puffinLines = Collections.EMPTY_LIST;
+        sites = Collections.EMPTY_LIST;
 
         for (File file: files) {
             if (!file.exists()) {
@@ -307,7 +310,9 @@ public class Suite {
             guessSites(); // sites aren't saved yet so we just re-guess on load
         }
         doSampleCalculations();
-        doSiteCalculations();
+        if (measType.isDiscrete()) {
+            doSiteCalculations();
+        }
         processPuffinLines(puffinLines);
     }
     

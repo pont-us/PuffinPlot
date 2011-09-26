@@ -84,6 +84,8 @@ public class AmsPlot extends EqAreaPlot {
         g.setStroke(getStroke());
         final Set<Sample> samplesToPlot = new HashSet<Sample>();
         for (Sample s: PuffinApp.getInstance().getSelectedSamples()) {
+            final Site site = s.getSite();
+            if (site==null) continue;
             samplesToPlot.addAll(s.getSite().getSamples());
         }
         for (Sample s: samplesToPlot) {
