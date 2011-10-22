@@ -112,24 +112,19 @@ public class PrefsWindow extends JFrame {
         }
         JPanel labelsPanel = new JPanel(false);
         labelsPanel.setLayout(new BoxLayout(labelsPanel, BoxLayout.Y_AXIS));
-        JPanel labelsInnerPanel = new JPanel(false);
-        labelsInnerPanel.setLayout(new BoxLayout(labelsInnerPanel, BoxLayout.X_AXIS));
-        JLabel demagVAxisLabel = new JLabel("Demag y axis");
-        demagVAxisLabel.setMaximumSize(new Dimension(200, 30));
-        //demagVAxisLabel.setPreferredSize(new Dimension(200, 30));
-        labelsInnerPanel.add(demagVAxisLabel);
-        JTextField demagVAxisField = new PrefBox("plots.demag.vAxisLabel",
-                "Magnetization (A/M)");
-        demagVAxisField.setMaximumSize(new Dimension(300, 50));
-        //demagVAxisField.setPreferredSize(new Dimension(200, 30));
-        labelsInnerPanel.add(demagVAxisField);
+        
         labelsPanel.add(Box.createVerticalGlue());
-        labelsPanel.add(labelsInnerPanel);
+        labelsPanel.add(makeLabelledPrefBox("Demag y axis",
+                "plots.demag.vAxisLabel", "Magnetization (A/M)"));
+        labelsPanel.add(makeLabelledPrefBox("PmagPy folder",
+                "data.pmagPyPath", "/usr/local/bin"));
+        labelsPanel.add(makeLabelledPrefBox("Font",
+                "plots.fontFamily", "Arial"));
         labelsPanel.add(Box.createVerticalGlue());
 
         tp.addTab("Loading", null, loadingPanel, "File loading");
         tp.addTab("Plots", null, plotsPanel, "Active plots");
-        tp.addTab("Labels", null, labelsPanel, "Graph labels");
+        tp.addTab("Misc.", null, labelsPanel, "Miscellaneous");
 
         JButton button = new JButton("Close");
         button.addActionListener(new ActionListener() {
@@ -153,6 +148,21 @@ public class PrefsWindow extends JFrame {
         setLocationRelativeTo(PuffinApp.getInstance().getMainWindow());
     }
 
+    private JPanel makeLabelledPrefBox(String labelString, String pref,
+            String defaultValue) {
+        final JPanel panel = new JPanel(false);
+        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+        final JLabel label = new JLabel(labelString);
+        label.setMaximumSize(new Dimension(200, 30));
+        //demagVAxisLabel.setPreferredSize(new Dimension(200, 30));
+        panel.add(label);
+        JTextField field = new PrefBox(pref, defaultValue);
+        field.setMaximumSize(new Dimension(300, 50));
+        //demagVAxisField.setPreferredSize(new Dimension(200, 30));
+        panel.add(field);
+        return panel;
+    }
+    
     private void applySettings() {
         presetsBox.applySettings();
         prefs.set2gProtocol(TwoGeeLoader.Protocol.valueOf(protocolBox.getText()));

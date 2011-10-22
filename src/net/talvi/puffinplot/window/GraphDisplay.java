@@ -304,7 +304,10 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         Document document = domImpl.createDocument(svgNS, "svg", null);
         // Create an instance of the SVG Generator.
         SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
-        for (Plot plot: getVisiblePlots()) plot.draw(svgGenerator);
+        // svgGenerator.setUnsupportedAttributes(null);
+        // TODO work out why setUnsupportedAttributes doesn't work.
+        paint(svgGenerator);
+        //for (Plot plot: getVisiblePlots()) plot.draw(svgGenerator);
         // Finally, stream out SVG to the standard output using
         // UTF-8 encoding.
         boolean useCSS = true; // we want to use CSS style attributes

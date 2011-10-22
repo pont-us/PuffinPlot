@@ -11,9 +11,11 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Collections;
 import java.util.List;
+import java.util.prefs.Preferences;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 import net.talvi.puffinplot.PuffinApp;
+import net.talvi.puffinplot.PuffinPrefs;
 import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.data.FisherValues;
 import net.talvi.puffinplot.data.PcaValues;
@@ -32,8 +34,8 @@ public class FisherPlot extends EqAreaPlot {
     private boolean groupedBySite = true;
     
     public FisherPlot(GraphDisplay parent, PlotParams params,
-            Rectangle2D dimensions) {
-        super(parent, params, null);
+            Rectangle2D dimensions, Preferences prefs) {
+        super(parent, params, prefs);
         this.dimensions = dimensions;
     }
 

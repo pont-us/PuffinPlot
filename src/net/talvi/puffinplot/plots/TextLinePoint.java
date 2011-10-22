@@ -16,13 +16,13 @@ public class TextLinePoint implements PlotPoint {
     private final Plot plot;
     private final Datum datum;
     private final double yPos;
-    private double xSpacing;
+    private List<Double> xSpacing;
     private Rectangle2D bbox;
     private final List<AttributedCharacterIterator> strings;
     private final double xMin;
 
     public TextLinePoint(Plot plot, Graphics2D g, double yOffset, Datum d,
-            List<String> values, double xSpacing) {
+            List<String> values, List<Double> xSpacing) {
         this.plot = plot;
         this.datum = d;
         this.yPos = yOffset + plot.getDimensions().getMinY();
@@ -31,7 +31,9 @@ public class TextLinePoint implements PlotPoint {
         double xPos = 10;
         xMin = plot.getDimensions().getMinX();
         final FontMetrics metrics = g.getFontMetrics();
-        for (String s : values) {
+        for (int i=0; i<values.size(); i++) {
+            final String s = values.get(i);
+            final double space = xSpacing.get(i);
             AttributedString as = new AttributedString(s);
             plot.applyTextAttributes(as);
             AttributedCharacterIterator ai = as.getIterator();
@@ -45,14 +47,14 @@ public class TextLinePoint implements PlotPoint {
             } else {
                 bbox.add(b2);
             }
-            xPos += xSpacing;
+            xPos += space;
         }
     }
 
     public void draw(Graphics2D g) {
         if (datum != null) {
             if (datum.isSelected()) {
-                plot.writeString(g, "π"/*"‣"*/, (float) xMin, (float) yPos);
+                plot.writeString(g, "*"/*"π‣"*/, (float) xMin, (float) yPos);
             }
             if (datum.isHidden()) {
                 plot.writeString(g, "-", (float) xMin, (float) yPos);
@@ -63,9 +65,11 @@ public class TextLinePoint implements PlotPoint {
         }
 
         double x = xMin + 10;
-        for (AttributedCharacterIterator s : strings) {
+        for (int i=0; i<strings.size(); i++) {
+            final AttributedCharacterIterator s = strings.get(i);
+            final double space = xSpacing.get(i);
             g.drawString(s, (float) x, (float) yPos);
-            x += xSpacing;
+            x += space;
         }
     }
 

@@ -25,8 +25,8 @@ import static java.lang.Math.min;
 public class GreatCirclePlot extends EqAreaPlot {
 
     public GreatCirclePlot(GraphDisplay parent, PlotParams params,
-            Rectangle2D dimensions) {
-        super(parent, params, null, true);
+            Rectangle2D dimensions, Preferences prefs) {
+        super(parent, params, prefs, true);
         this.dimensions = dimensions;
     }
 

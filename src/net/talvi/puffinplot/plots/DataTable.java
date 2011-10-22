@@ -16,7 +16,9 @@ import static java.lang.String.format;
 
 public class DataTable extends Plot {
 
-    private final int xSpacing = (int) (450 * getUnitSize());
+    private final double us = getUnitSize();
+    private final List<Double> xSpacing =
+            Arrays.asList(420*us, 420*us, 420*us, 550*us, 480*us);
     private final int ySpacing = (int) (120 * getUnitSize());
     private final List<String> headers = 
             Arrays.asList(new String[] {"demag.", "dec.", "inc.", "int.", "m.s."});

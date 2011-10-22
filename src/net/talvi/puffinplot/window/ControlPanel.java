@@ -47,11 +47,14 @@ public class ControlPanel extends JPanel
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         add(suiteBox = new JComboBox(new String[] {"no files loaded"}));
         add(rotationBox = new RotationBox());
-        add(new JLabel("T"));
-        add(trayButton = new JRadioButton());
-        trayButton.addItemListener(this);
-        add(new JLabel("E"));
-        add(emptyButton = new JRadioButton());
+        trayButton = emptyButton = null;
+        // Tray correction applied on loading; empty-slot correction
+        // needs re-architecting if it's to be used -- 2011-10-09.
+//        add(new JLabel("T"));
+//        add(trayButton = new JRadioButton());
+//        trayButton.addItemListener(this);
+//        add(new JLabel("E"));
+//        add(emptyButton = new JRadioButton());
         add(vVsBox = new VVsBox());
         add(new JToolBar.Separator());
         add(correctionField = new JLabel());
@@ -105,8 +108,8 @@ public class ControlPanel extends JPanel
     }
     
     public Correction getCorrection() {
-        return new Correction(trayButton.isSelected(),
-                emptyButton.isSelected(),
+        return new Correction(false /*trayButton.isSelected()*/,
+                false /*emptyButton.isSelected()*/,
                 rotationBox.getRotation());
     }
     

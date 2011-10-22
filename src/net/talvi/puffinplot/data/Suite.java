@@ -316,6 +316,10 @@ public class Suite {
         processPuffinLines(puffinLines);
     }
     
+    public void saveCalcsSample(File file) {
+        saveCalcsSample(file, Correction.NONE);
+    }
+    
     /*
      * Save calculations per-sample.
      */
@@ -757,21 +761,21 @@ public class Suite {
     }
 
     public void bootstrapAms(List<Sample> samples, boolean parametric,
-            String bootamsPath) {
+            String scriptPath) {
         List<Tensor> tensors = new ArrayList<Tensor>();
         for (Sample s: samples) {
             if (s.getAms() != null) tensors.add(s.getAms());
         }
         amsBootstrapParams = KentParams.calculateBootstrap(tensors,
-                parametric, bootamsPath);
+                parametric, scriptPath);
     }
 
-    public void calculateHextOnAms(List<Sample> samples) {
+    public void calculateHextOnAms(List<Sample> samples, String scriptPath) {
         List<Tensor> tensors = new ArrayList<Tensor>();
         for (Sample s: samples) {
             if (s.getAms() != null) tensors.add(s.getAms());
         }
-        hextParams = KentParams.calculateHext(tensors);
+        hextParams = KentParams.calculateHext(tensors, scriptPath);
     }
     
     public Sample insertNewSample(String id) {
@@ -792,9 +796,9 @@ public class Suite {
         return samplesById.containsKey(id);
     }
 
-    public void convertBartingtonMagSus() {
+    public void rescaleMagSus(double factor) {
         for (Datum d: data) {
-            d.setMagSus(d.getMagSus() * 4.3e-5);
+            d.setMagSus(d.getMagSus() * factor);
         }
     }
 }

@@ -60,6 +60,10 @@ public class Sample {
         if (data.isEmpty()) return Double.NaN;
         return data.get(0).getIntensity(correction);
     }
+    
+    public double getNRM() {
+        return getNRM(Correction.NONE);
+    }
 
     public void calculateMagSusJump() {
         final double limit = 2.5;

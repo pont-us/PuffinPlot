@@ -32,6 +32,7 @@ import java.util.logging.StreamHandler;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import static java.lang.Thread.UncaughtExceptionHandler;
+import javax.swing.UIManager;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Site;
@@ -115,7 +116,7 @@ public final class PuffinApp {
     }
     private final AboutBox aboutBox;
     
-    private PuffinApp() {
+    public PuffinApp() {
         logger.info("Instantiating PuffinApp.");
         // have to set app here (not in main) since we need it during initialization
         PuffinApp.app = this;
@@ -214,15 +215,16 @@ public final class PuffinApp {
     }
 
     public static void main(String[] args) {
+        logger.setLevel(Level.ALL);
         logger.info("Entering main method.");
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
         
         // Set GTK look-and-feel. TODO: make a user-settable option for this.
-        /*
+        // /*
         try {
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
         } catch (Exception e) {}
-        */
+        // */
 
         java.awt.EventQueue.invokeLater(
                 new Runnable() { public void run() { new PuffinApp(); } });

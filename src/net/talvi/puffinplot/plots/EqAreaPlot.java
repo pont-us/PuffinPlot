@@ -1,6 +1,5 @@
 package net.talvi.puffinplot.plots;
 
-import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.cos;
@@ -14,7 +13,6 @@ import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.Line2D;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.window.GraphDisplay;

@@ -34,16 +34,23 @@ public class MainMenuBar extends JMenuBar {
 
     private static JMenu makeMenu(String name, Object... things) {
         JMenu menu = new JMenu(name);
+        logger.log(Level.INFO, "makeMenu {0}", name);
         for (Object thing: things) {
             if (thing instanceof PuffinAction) {
                 PuffinAction puffinAction = (PuffinAction) thing;
                 if (!puffinAction.excludeFromMenu()) menu.add(puffinAction);
+                logger.log(Level.FINE,
+                        puffinAction.getValue(Action.NAME).toString());
             } else if (thing instanceof Action) {
-                menu.add((Action) thing);
+                Action a = (Action) thing;
+                menu.add(a);
+                logger.log(Level.FINE, a.getValue(Action.NAME).toString());
             } else if (thing instanceof JMenuItem) {
                 // JMenu is a subclass of JMenuItem so this handles submenus
                 // as well as `raw' JMenuItems
-                menu.add((JMenuItem) thing);
+                final JMenuItem jmi = (JMenuItem) thing;
+                menu.add(jmi);
+                logger.log(Level.FINE, jmi.getText());
             } else {
                 logger.log(Level.WARNING, "Unknown menu item {0}", thing);
             }
@@ -102,7 +109,7 @@ public class MainMenuBar extends JMenuBar {
                 pa.hideSelectedPoints, pa.unhideAllPoints,
                 pa.useAsEmptySlot, pa.unsetEmptySlot,
                 useEmptyItem, pa.showCustomFlagsWindow, pa.showCustomNotesWindow,
-                pa.fixBartington));
+                pa.rescaleMagSus));
         add(makeMenu("Calculations",
                 pa.pcaOnSelection, anchorItem = new AnchorItem(),
                 pa.fisherBySample, pa.fisherBySite, pa.fisherOnSuite,
@@ -113,7 +120,7 @@ public class MainMenuBar extends JMenuBar {
         add(makeMenu("Window",
                 new WindowMenuItem("Data table")
                 { JFrame window(PuffinApp a) {return a.getTableWindow();}},
-                new WindowMenuItem("Fisher EA plot")
+                new WindowMenuItem("Suite PCA plot")
                 { JFrame window(PuffinApp a) {return a.getFisherWindow();}}));
         add(makeMenu("Help", pa.about));
     }

@@ -489,7 +489,7 @@ public class PuffinActions {
         }
     };
 
-    public final Action importAms = new PuffinAction("Import AMS",
+    public final Action importAms = new PuffinAction("Import AMS…",
             "Import AMS data", null, false,
             KeyEvent.VK_L) {
         public void actionPerformed(ActionEvent e) {
@@ -545,10 +545,11 @@ public class PuffinActions {
         }
     };
 
-    public final Action exportIrm = new PuffinAction("Export IRM data",
+    public final Action exportIrm = new PuffinAction("Export IRM data…",
             "Export IRM field/remanence for this suite", null, false, 0) {
         public void actionPerformed(ActionEvent e) {
-            String pathname = getSavePath("Export site calculations", null,
+            if (app.getSuite() == null) return;
+            String pathname = getSavePath("Export IRM data", null,
                     null);
             app.getSuite().exportToFiles(new File(pathname),
                     Arrays.asList(new DatumField[] {DatumField.IRM_FIELD,
@@ -556,40 +557,47 @@ public class PuffinActions {
         }
     };
 
-    public final Action showCustomFlagsWindow = new PuffinAction("Edit custom flags",
+    public final Action showCustomFlagsWindow = new PuffinAction("Edit custom flags…",
             "Edit user-defined flags for samples",
             null, false, 0) {
         public void actionPerformed(ActionEvent e) {
-           PuffinApp.getInstance().showCustomFlagsWindow();
+           app.showCustomFlagsWindow();
         }
     };
 
-    public final Action showCustomNotesWindow = new PuffinAction("Edit custom notes",
+    public final Action showCustomNotesWindow = new PuffinAction("Edit custom notes…",
             "Edit user-defined notes for samples",
             null, false, 0) {
         public void actionPerformed(ActionEvent e) {
-           PuffinApp.getInstance().showCustomNotesWindow();
+           app.showCustomNotesWindow();
         }
     };
 
-    public final Action exportSvg = new PuffinAction("Export SVG",
+    public final Action exportSvg = new PuffinAction("Export SVG…",
             "Save current display to an SVG file",
             '9', false, 0) {
         public void actionPerformed(ActionEvent e) {
             String pathname = getSavePath("Export preferences", ".svg",
                     "Scalable Vector Graphics");
             if (pathname != null)
-                PuffinApp.getInstance().getMainWindow().getGraphDisplay().printToSvg(pathname);
+                app.getMainWindow().getGraphDisplay().printToSvg(pathname);
         }
     };
 
+    private String constructAmsScriptPath(String scriptName) {
+        final String directory =
+                app.getPrefs().getPrefs().get("data.pmagPyPath",
+                "/usr/local/bin");
+        File f = new File(directory, scriptName);
+        return f.getAbsolutePath();
+    }
+    
     public final Action bootAmsNaive = new PuffinAction("Calculate bootstrap AMS",
             "Calculate bootstrap statistics for AMS data of selected samples",
             null, false, 0) {
         public void actionPerformed(ActionEvent e) {
-            PuffinApp pa = PuffinApp.getInstance();
-            String path = "/home/pont/files/phd/software/tauxe/pmagpy-2.66/bootams.py";
-            pa.getSuite().bootstrapAms(pa.getSelectedSamples(), false, path);
+            String path = constructAmsScriptPath("bootams.py");
+            app.getSuite().bootstrapAms(app.getSelectedSamples(), false, path);
         }
     };
 
@@ -597,9 +605,8 @@ public class PuffinActions {
             "Calculate parametric bootstrap statistics for AMS data of selected samples",
             null, false, 0) {
         public void actionPerformed(ActionEvent e) {
-            PuffinApp pa = PuffinApp.getInstance();
-            String path = "/home/pont/files/phd/software/tauxe/pmagpy-2.66/bootams.py";
-            pa.getSuite().bootstrapAms(pa.getSelectedSamples(), true, path);
+            String path = constructAmsScriptPath("bootams.py");
+            app.getSuite().bootstrapAms(app.getSelectedSamples(), true, path);
         }
     };
 
@@ -607,17 +614,25 @@ public class PuffinActions {
             "Calculate Hext statistics for AMS data of selected samples",
             null, false, 0) {
         public void actionPerformed(ActionEvent e) {
-            PuffinApp pa = PuffinApp.getInstance();
-            pa.getSuite().calculateHextOnAms(pa.getSelectedSamples());
+            String path = constructAmsScriptPath("s_hext.py");
+            app.getSuite().calculateHextOnAms(app.getSelectedSamples(), path);
         }
     };
 
-    public final Action fixBartington = new PuffinAction("Fix Bartington MS",
-            "Convert Bartington loop sensor mag. sus. to SI (whole suite)",
+    public final Action rescaleMagSus = new PuffinAction("Rescale mag. sus. …",
+            "Scale magnetic susceptibility by a constant factor (whole suite)",
             null, false, 0) {
         public void actionPerformed(ActionEvent e) {
-            PuffinApp pa = PuffinApp.getInstance();
-            pa.getSuite().convertBartingtonMagSus();
+            final String factorString = (String)JOptionPane.showInputDialog(
+                    app.getMainWindow(),
+                    "Please enter magnetic susceptibility scaling factor.");
+            // my empirically determined value for the Bartington is 4.3e-5.
+            try {
+                final double factor = Double.parseDouble(factorString);
+                app.getSuite().rescaleMagSus(factor);
+            } catch (NumberFormatException exception) {
+                app.errorDialog("Input error", "That didn't look like a number.");
+            }
         }
     };
 

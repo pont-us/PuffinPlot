@@ -194,8 +194,8 @@ public abstract class Plot
         stroke = new BasicStroke(getUnitSize() * LINE_WIDTH_IN_UNITS);
         dashedStroke = new BasicStroke(getUnitSize() * LINE_WIDTH_IN_UNITS,
                 0, 0, 1, new float[]{2, 2}, 0);
-        // attributeMap.put(TextAttribute.FAMILY, "SansSerif");
-        attributeMap.put(TextAttribute.FAMILY, "DeliciousGraph");
+        final String fontFamily = prefs.get("plots.fontFamily", "Arial");
+        attributeMap.put(TextAttribute.FAMILY, fontFamily);
         // attributeMap.put(TextAttribute.SIZE, getFontSize());
         attributeMap.put(TextAttribute.SIZE, 120 * getUnitSize());
     }

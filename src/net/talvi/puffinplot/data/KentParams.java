@@ -80,8 +80,7 @@ public class KentParams {
     }
 
     public static List<KentParams> calculateBootstrap(List<Tensor> tensors,
-            boolean parametric, String bootamsPath) {
-        // final String cmdPath = "";
+            boolean parametric, String scriptPath) {
         try {
             File tempFile = File.createTempFile("puffin", "tensors");
             FileWriter writer = new FileWriter(tempFile);
@@ -90,7 +89,7 @@ public class KentParams {
             }
             writer.close();
             ArrayList<String> args = new ArrayList<String>(4);
-            Collections.addAll(args, bootamsPath, "-f", tempFile.getAbsolutePath());
+            Collections.addAll(args, scriptPath, "-f", tempFile.getAbsolutePath());
             if (parametric) args.add("-par");
             List<String> output = execute(args.toArray(new String[] {}));
             tempFile.delete();
@@ -112,8 +111,8 @@ public class KentParams {
         }
     }
 
-   public static List<KentParams> calculateHext(List<Tensor> tensors) {
-        final String cmdPath = "/home/pont/files/phd/software/tauxe/pmagpy-2.66/s_hext.py";
+   public static List<KentParams> calculateHext(List<Tensor> tensors,
+           String scriptPath) {
         try {
             File tempFile = File.createTempFile("puffin", "hext");
             FileWriter writer = new FileWriter(tempFile);
@@ -121,7 +120,7 @@ public class KentParams {
                 writer.write(t.toTensorComponentString() + "\n");
             }
             writer.close();
-            String[] args = {cmdPath, "-f", tempFile.getAbsolutePath()};
+            String[] args = {scriptPath, "-f", tempFile.getAbsolutePath()};
             List<String> output = execute(args);
             tempFile.delete();
             List<KentParams> result = new ArrayList<KentParams>(3);

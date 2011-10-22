@@ -169,15 +169,22 @@ public class TwoGeeLoader extends AbstractFileLoader {
         final Vec3 revV = reversed.getMoment(Correction.NONE);
 
         // The volume correction's already been applied on loading.
-
+        // revV has the X and Z axes flipped, but Y axis the same.
+        
         // calculate estimates of the true magnetic moment
+        // norm_tray: tray-corrected normal measurement
         final Vec3 norm_tray = normV.minus(trayV);
+        // norm_rev: average x and z from normal/reverse; y =~ 0
         final Vec3 norm_rev = normV.minus(revV).divideBy(2);
-        final Vec3 rev_tray = revV.invert().minus(trayV);
-
+        // rev_tray: tray-corrected reverse measurement
+        final Vec3 rev_tray = revV.minus(trayV);
+        
         // average the relevant estimates for each axis
-        final Vec3 avg_x_z = Vec3.mean(norm_tray, norm_rev, rev_tray);
-        final Vec3 avg_y = Vec3.mean(norm_tray, rev_tray.minus(normV));
+        // for x and z, average tray-corr. norm, tc rev, and norm/rev average 
+        final Vec3 avg_x_z = Vec3.mean(norm_tray, norm_rev, rev_tray.invert());
+        // for y, average tray-corrected normal and reversed
+        // (since 'reversed' doesn't flip the Y axis)
+        final Vec3 avg_y = Vec3.mean(norm_tray, rev_tray);
 
         // combine the axis estimates into a single vector
         Vec3 avg = new Vec3(avg_x_z.x, avg_y.y, avg_x_z.z);
