@@ -535,7 +535,7 @@ public class PuffinActions {
             "Perform reversal test on all loaded suites", null, false,
             KeyEvent.VK_V) {
         public void actionPerformed(ActionEvent e) {
-            List<FisherValues> fv = Suite.doReversalsTest(app.getSuites());
+            List<FisherValues> fv = Suite.doReversalTest(app.getSuites());
             System.out.println(fv.get(0));
             System.out.println(fv.get(1));
                     JOptionPane.showMessageDialog

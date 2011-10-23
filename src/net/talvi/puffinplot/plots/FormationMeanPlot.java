@@ -19,16 +19,21 @@ import static java.lang.Math.min;
  * Displays directions for great-circle fits for whole suite.
  * 
  */
-public class SuiteEqAreaPlot extends EqAreaPlot {
+public class FormationMeanPlot extends EqAreaPlot {
 
-    public SuiteEqAreaPlot(GraphDisplay parent, PlotParams params,
+    public FormationMeanPlot(GraphDisplay parent, PlotParams params,
             Preferences prefs) {
         super(parent, params, prefs);
     }
 
     @Override
     public String getName() {
-        return "suite_directions";
+        return "formation_mean";
+    }
+    
+    @Override
+    public String getNiceName() {
+        return "Formation mean";
     }
 
     private void drawFisher(FisherValues fv,
@@ -56,17 +61,17 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
         List<Vec3> vs_n = new ArrayList<Vec3>();
         List<Vec3> vs_r = new ArrayList<Vec3>();
         for (Site site: sites) {
-            Vec3 vgp = null;
+            Vec3 siteMean = null;
             GreatCircles circles = site.getGreatCircles();
             if (circles != null && circles.isValid())
-                vgp = circles.getDirection();
-            if (vgp == null) {
+                siteMean = circles.getDirection();
+            if (siteMean == null) {
                 FisherValues fv = site.getFisher();
-                if (fv != null) vgp = fv.getMeanDirection();
+                if (fv != null) siteMean = fv.getMeanDirection();
             }
-            if (vgp==null) continue;
-            addPoint(null, project(vgp, xo, yo, radius), vgp.z>0, false, false);
-            (vgp.z>0 ? vs_r : vs_n).add(vgp);
+            if (siteMean==null) continue;
+            addPoint(null, project(siteMean, xo, yo, radius), siteMean.z>0, false, false);
+            (siteMean.z>0 ? vs_r : vs_n).add(siteMean);
         }
         if (vs_n.size()>1)
             drawFisher(FisherValues.calculate(vs_n), g, xo, yo, radius);

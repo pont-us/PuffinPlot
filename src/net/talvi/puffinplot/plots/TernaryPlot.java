@@ -66,6 +66,11 @@ public class TernaryPlot extends Plot {
     public String getName() {
         return "ternarytest";
     }
+    
+    @Override
+    public String getNiceName() {
+        return "Ternary demag.";
+    }
 
     @Override
     public void draw(Graphics2D g) {

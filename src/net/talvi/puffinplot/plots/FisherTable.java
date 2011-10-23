@@ -50,7 +50,8 @@ public class FisherTable extends Plot {
                     String.format("Dec %.2f  Inc %.2f",
                     fish.getMeanDirection().getDecDeg(),
                     fish.getMeanDirection().getIncDeg()), xOrig, yOrig+16);
-            String s = String.format("α95 %.2f  k %.2f"
+            // I love alphas but we can't guarantee to have them in the font :-(
+            String s = String.format("a95 %.2f  k %.2f"
                     ,fish.getA95(), fish.getK());
             AttributedString as = new AttributedString(s);
             as.addAttributes(getTextAttributes(), 0, s.length());

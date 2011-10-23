@@ -597,7 +597,7 @@ public class Suite {
         }
     }
 
-    public static List<FisherValues> doReversalsTest(List<Suite> suites) {
+    public static List<FisherValues> doReversalTest(List<Suite> suites) {
         List<Vec3> normal = new ArrayList<Vec3>(), reversed = new ArrayList<Vec3>();
         for (Suite suite: suites) {
             for (Sample sample: suite.getSamples()) {

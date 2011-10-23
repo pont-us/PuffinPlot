@@ -48,7 +48,7 @@ public class PrefsWindow extends JFrame {
         super("Preferences");
         final Insets insets = new Insets(0,0,0,0);
         final int CENTER = GridBagConstraints.CENTER, BOTH = GridBagConstraints.BOTH;
-        setPreferredSize(new Dimension(300, 400));
+        setPreferredSize(new Dimension(300, 500));
         setLayout(new GridBagLayout());
         JTabbedPane tp = new JTabbedPane();
         add(tp, new GridBagConstraints(0, 0, 2, 1, 0.99, 0.99, GridBagConstraints.LINE_START, BOTH,

@@ -39,6 +39,11 @@ public class GreatCirclePlot extends EqAreaPlot {
     public String getName() {
         return "greatcircles";
     }
+    
+    @Override
+    public String getNiceName() {
+        return "Great circles";
+    }
 
     private void drawGreatCircles(Graphics2D g) {
                 Site site = params.getSample().getSite();
