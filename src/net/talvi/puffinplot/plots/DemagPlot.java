@@ -48,7 +48,7 @@ public class DemagPlot extends Plot {
 
         g.setColor(Color.BLACK);
         double maxDemag = Datum.maximumDemag(data);
-        double maxIntens = Datum.maximumIntensity(data, correction);
+        double maxIntens = Datum.maximumIntensity(data);
 
         // If all the measurements have the same demag level, we'll
         // just plot them in sequence to avoid giving them all the same
@@ -106,7 +106,7 @@ public class DemagPlot extends Plot {
             double xPos = dim.getMinX() +
                     (xBySequence ? (i + 1) : demagLevel) * hScale;
             addPoint(d, new Point2D.Double(xPos,
-                    dim.getMaxY() - d.getIntensity(correction) * vScale),
+                    dim.getMaxY() - d.getIntensity() * vScale),
                     true, false, i>0);
             i++;
         }

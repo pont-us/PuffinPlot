@@ -49,20 +49,16 @@ public class Sample {
     }
 
     public void calculateMdf(Correction correction) {
-        mdf = MDF.calculate(getVisibleData(), correction);
+        mdf = MDF.calculate(getVisibleData());
     }
 
     public MDF getMDF() {
         return mdf;
     }
 
-    public double getNRM(Correction correction) {
-        if (data.isEmpty()) return Double.NaN;
-        return data.get(0).getIntensity(correction);
-    }
-    
     public double getNRM() {
-        return getNRM(Correction.NONE);
+        if (data.isEmpty()) return Double.NaN;
+        return data.get(0).getIntensity();
     }
 
     public void calculateMagSusJump() {

@@ -1,0 +1,20 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Number of points as site parameter
+desc: |-
+  make Puffin give minimum number of points used in great-circle
+  fit as a per-site parameter
+type: :feature
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2011-10-30 16:54:07.243144 Z
+references: []
+
+id: 1ff9cc5d121c138c198434884b9742bb4dc51ffa
+log_events: 
+- - 2011-10-30 16:54:08.739072 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

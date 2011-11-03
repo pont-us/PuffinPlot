@@ -26,10 +26,9 @@ public class MDF {
         return x;
     }
 
-    public static MDF calculate(List<Datum> data, Correction correction) {
+    public static MDF calculate(List<Datum> data) {
         if (data.size() < 2) return null;
-        final Correction corr = correction;
-        final double initialIntensity = data.get(0).getIntensity(corr);
+        final double initialIntensity = data.get(0).getIntensity();
         final double halfIntensity = initialIntensity / 2;
         boolean halfIntReached = false;
         int i = 1;
@@ -38,15 +37,15 @@ public class MDF {
             d = data.get(i);
             i++;
         } while (i < data.size() &&
-                d.getIntensity(corr) > halfIntensity);
-        if (d.getIntensity(corr) <= halfIntensity) {
+                d.getIntensity() > halfIntensity);
+        if (d.getIntensity() <= halfIntensity) {
             halfIntReached = true;
         }
         Datum dPrev = data.get(i-2); // i can't be <=1 at this point
 
         return new MDF(
                 interpolate(dPrev.getDemagLevel(), d.getDemagLevel(),
-                d.getIntensity(corr), dPrev.getIntensity(corr), halfIntensity),
+                d.getIntensity(), dPrev.getIntensity(), halfIntensity),
                 halfIntensity,
                 halfIntReached);
     }

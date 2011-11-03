@@ -342,7 +342,7 @@ public class Suite {
                 FisherValues fish = sample.getFisher();
                 MDF mdf = sample.getMDF();
                 writer.writeCsv(getName(), sample.getNameOrDepth(),
-                        String.format("%.4g", sample.getNRM(correction)),
+                        String.format("%.4g", sample.getNRM()),
                         String.format("%.4g", sample.getMagSusJump()),
                         fish == null ? FisherValues.getEmptyFields() : fish.toStrings(),
                         pca == null ? PcaAnnotated.getEmptyFields() : pca.toStrings(),

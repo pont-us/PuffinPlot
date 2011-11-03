@@ -1,9 +1,12 @@
 package net.talvi.puffinplot.data;
 
+import java.util.logging.Logger;
+import java.util.logging.Level;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import net.talvi.puffinplot.PuffinApp;
 import static java.lang.Double.NaN;
 import static java.lang.Math.toRadians;
 
@@ -31,6 +34,7 @@ public class Datum {
     private String timestamp = "UNSET";
     private double xDrift, yDrift, zDrift;
     private int slotNumber = -1;
+    private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
 
     private Line line;
     private boolean selected = false;
@@ -218,10 +222,10 @@ public class Datum {
         return max;
     }
 
-    public static double maximumIntensity(List<Datum> ds, Correction corr) {
+    public static double maximumIntensity(List<Datum> ds) {
         double max = 0;
         for (Datum d: ds) {
-            double i = d.getIntensity(corr);
+            double i = d.getIntensity();
             if (i > max) max = i;
         }
         return max;
@@ -243,13 +247,12 @@ public class Datum {
      * @param correction
      * @return
      */
-    public double getIntensity(Correction correction) {
-        return getMoment(correction).mag();
+    public double getIntensity() {
+        return getMoment(Correction.NONE).mag();
     }
 
     public boolean ignoreOnLoading() {
-        return /* getTreatType() == TreatType.ARM || */
-                getMeasType() == MeasType.NONE;
+        return getMeasType() == MeasType.NONE;
     }
 
     public boolean hasMagMoment() {
@@ -292,7 +295,7 @@ public class Datum {
         case PP_HIDDEN: return Boolean.toString(isHidden());
         case PP_ONCIRCLE: return Boolean.toString(isOnCircle());
         case PP_INPCA: return Boolean.toString(isInPca());
-        case VIRT_MAGNETIZATION: return fmt(getIntensity(Correction.NONE));
+        case VIRT_MAGNETIZATION: return fmt(getIntensity());
         case VIRT_MSJUMP: return fmt(getSample().getMagSusJump());
         default: throw new IllegalArgumentException("Unknown field "+field);
         }
