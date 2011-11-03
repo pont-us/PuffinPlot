@@ -3,6 +3,7 @@ package net.talvi.puffinplot;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
@@ -68,6 +69,57 @@ public class RecentFileList {
         public List<File> getFiles() {
             return files;
         }
+        
+        private int longestCommonPrefix(List<String> strings) {
+            final List<Integer> lengths = new ArrayList<Integer>(strings.size());
+            for (String string: strings) {
+                lengths.add(string.length());
+            }
+            final int minLength = Collections.min(lengths);
+            int i=0;
+            outer: while (i<minLength) {
+                int firstValue = strings.get(0).codePointAt(i);
+                for (String string: strings) {
+                    if (string.codePointAt(i) != firstValue) {
+                        break outer;
+                    }
+                }
+                i++;
+            }
+            return i;
+        }
+        
+        /**
+         * Get the list of pathnames in a compressed format, where the
+         * first string in the list is the longest common prefix of the
+         * pathnames, and the other entries are the unique suffixes 
+         * which may be appended to this prefix to reconstruct the 
+         * full pathnames. This procedure is necessary because the length
+         * of a Java Preferences value is limited.
+         * 
+         * @return a list of compressed pathnames as described above
+         */
+        private List<String> getCompressedPathNames() {
+            final List<String> pathNames = getPathNames();
+            final int prefixLength = longestCommonPrefix(pathNames);
+            final List<String> cPathNames =
+                    new ArrayList<String>(pathNames.size()+1);
+            cPathNames.add(pathNames.get(0).substring(0, prefixLength));
+            for (String path: pathNames) {
+                cPathNames.add(path.substring(prefixLength));
+            }
+            return cPathNames;
+        }
+        
+        private static List<String> decompressPathNames(List<String> compressed) {
+            final List<String> result =
+                    new ArrayList<String>(compressed.size()-1);
+            String prefix = compressed.get(0);
+            for (String path: compressed.subList(1, compressed.size())) {
+                result.add(prefix+path);
+            }
+            return result;
+        }
 
         private List<String> getPathNames() {
             List<String> pathNames = new ArrayList<String>(files.size());
@@ -86,11 +138,17 @@ public class RecentFileList {
          * (i.e. one which can be handled by the Preferences API on all
          * platforms, and will never appear in a pathname on any platform).
          *
+         * Note that, to avoid overrunning the size limit for a Preferences
+         * value, path1 is the longest common prefix of the paths, and
+         * the other paths are unique suffixes which, along with path1,
+         * make up the full pathnames. getCompressedPathNames and
+         * decompressPathNames deal with this encoding scheme.
+         * 
          * @return a string representation of this class
          */
         @Override
         public String toString() {
-            List<String> pathNames = getPathNames();
+            List<String> pathNames = getCompressedPathNames();
             StringBuilder sb = new StringBuilder();
             sb.append(pathNames.size());
             sb.append(" ");
@@ -109,14 +167,19 @@ public class RecentFileList {
             Scanner scanner = new Scanner(s);
             final int numPaths = scanner.nextInt();
             List<Integer> lengths = new ArrayList<Integer>(numPaths);
-            List<File> files = new ArrayList<File>(numPaths);
+            List<String> compressed = new ArrayList<String>(numPaths);
             for (int i=0; i<numPaths; i++) lengths.add(scanner.nextInt());
             String allThePaths = scanner.findInLine(".*$");
             int pos=1;
             for (Integer length: lengths) {
                 String path = allThePaths.substring(pos, pos + length);
-                files.add(new File(path));
+                compressed.add(path);
                 pos += length;
+            }
+            List<String> decompressed = decompressPathNames(compressed);
+            List<File> files = new ArrayList<File>(compressed.size());
+            for (String filename: decompressed) {
+                files.add(new File(filename));
             }
             return new FileSet(files);
         }
