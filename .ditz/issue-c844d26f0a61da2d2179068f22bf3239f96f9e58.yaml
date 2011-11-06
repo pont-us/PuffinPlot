@@ -5,8 +5,8 @@ type: :feature
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@ou094023>
-status: :in_progress
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2008-10-31 03:34:30.129899 Z
 references: []
 
@@ -36,3 +36,10 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - commented
   - Largely working now.
+- - 2011-11-03 23:17:21.589934 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    I think this is now working well enough to close the issue, though
+    it still doesn't implement the manual range selection described in
+    the paper. Any further required improvements can get their own ticket.

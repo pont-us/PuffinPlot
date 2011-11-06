@@ -10,7 +10,7 @@ desc: |-
   for little practical benefit).
 type: :task
 component: PuffinPlot
-release: "1.0"
+release: "1.1"
 reporter: Pontus Lurcock <pont@talvi.net>
 status: :unstarted
 disposition: 
@@ -32,3 +32,9 @@ log_events:
     bumping per-sample properties up to the Sample object, even if they
     will be flattened out and repeated in every Datum line on saving
     (and read from the first one on loading).
+- - 2011-11-06 22:25:52.617426 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.1 from 1.0
+  - |-
+    Empty-slot corrections deferred to later release; see bug #82
+    for rationale.

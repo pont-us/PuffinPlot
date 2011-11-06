@@ -3,7 +3,7 @@ title: Improve slot number calculation
 desc: ""
 type: :bugfix
 component: PuffinPlot
-release: "1.0"
+release: "1.1"
 reporter: Pontus Lurcock <pont@talvi.net>
 status: :unstarted
 disposition: 
@@ -16,3 +16,9 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2011-11-06 22:27:21.209333 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.1 from 1.0
+  - |-
+    Empty-slot corrections deferred to later release; see bug #82
+    for rationale.

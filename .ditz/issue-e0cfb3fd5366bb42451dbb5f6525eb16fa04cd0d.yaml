@@ -5,8 +5,8 @@ type: :bugfix
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2009-09-15 02:27:49.071549 Z
 references: []
 
@@ -16,3 +16,13 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2011-11-06 22:02:01.113385 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    There's no perfect fix for this -- the conversion factor to
+    S.I. can't be inferred from the data file. I've added a feature to
+    let the user rescale the magnetic susceptibility data by a 
+    specified value, which is probably the best that can be done.
+    (Actually, if there's AMS data, that might be used to derive a scaling
+    factor -- I will open this as a feature request.)
