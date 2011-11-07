@@ -29,6 +29,7 @@ import net.talvi.puffinplot.data.FisherValues;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Site;
 import net.talvi.puffinplot.data.Suite;
+import net.talvi.puffinplot.data.Suite.AmsCalcType;
 
 public class PuffinActions {
 
@@ -584,20 +585,11 @@ public class PuffinActions {
         }
     };
 
-    private String constructAmsScriptPath(String scriptName) {
-        final String directory =
-                app.getPrefs().getPrefs().get("data.pmagPyPath",
-                "/usr/local/bin");
-        File f = new File(directory, scriptName);
-        return f.getAbsolutePath();
-    }
-    
     public final Action bootAmsNaive = new PuffinAction("Calculate bootstrap AMS",
             "Calculate bootstrap statistics for AMS data of selected samples",
             null, false, 0) {
         public void actionPerformed(ActionEvent e) {
-            String path = constructAmsScriptPath("bootams.py");
-            app.getSuite().bootstrapAms(app.getSelectedSamples(), false, path);
+            app.doAmsCalc(AmsCalcType.BOOT, "bootams.py");
         }
     };
 
@@ -605,8 +597,7 @@ public class PuffinActions {
             "Calculate parametric bootstrap statistics for AMS data of selected samples",
             null, false, 0) {
         public void actionPerformed(ActionEvent e) {
-            String path = constructAmsScriptPath("bootams.py");
-            app.getSuite().bootstrapAms(app.getSelectedSamples(), true, path);
+            app.doAmsCalc(AmsCalcType.PARA_BOOT, "bootams.py");
         }
     };
 
@@ -614,8 +605,7 @@ public class PuffinActions {
             "Calculate Hext statistics for AMS data of selected samples",
             null, false, 0) {
         public void actionPerformed(ActionEvent e) {
-            String path = constructAmsScriptPath("s_hext.py");
-            app.getSuite().calculateHextOnAms(app.getSelectedSamples(), path);
+            app.doAmsCalc(AmsCalcType.HEXT, "s_hext.py");
         }
     };
 

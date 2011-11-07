@@ -1,14 +1,10 @@
 package net.talvi.puffinplot.plots;
 
-import java.util.Set;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.ArrayList;
-import java.awt.Stroke;
 import java.awt.Color;
 import java.util.List;
 import net.talvi.puffinplot.data.Suite;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Line2D;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.Site;
 import java.awt.Graphics2D;
@@ -82,13 +78,8 @@ public class AmsPlot extends EqAreaPlot {
         if (sample == null) return;
 
         g.setStroke(getStroke());
-        final Set<Sample> samplesToPlot = new HashSet<Sample>();
-        for (Sample s: PuffinApp.getInstance().getSelectedSamples()) {
-            final Site site = s.getSite();
-            if (site==null) continue;
-            samplesToPlot.addAll(s.getSite().getSamples());
-        }
-        for (Sample s: samplesToPlot) {
+
+        for (Sample s: PuffinApp.getInstance().getAllSamplesInSelectedSites()) {
             if (s.getAms() != null) {
                 for (int i=0; i<3; i++) {
                     Vec3 v = s.getAmsAxis(i).normalize();

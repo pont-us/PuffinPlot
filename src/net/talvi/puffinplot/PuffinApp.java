@@ -36,6 +36,7 @@ import javax.swing.UIManager;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Site;
+import net.talvi.puffinplot.data.Suite.AmsCalcType;
 import net.talvi.puffinplot.window.CustomFieldEditor;
 import net.talvi.puffinplot.window.GreatCircleWindow;
 import net.talvi.puffinplot.window.PrefsWindow;
@@ -373,6 +374,14 @@ public final class PuffinApp {
         }
         return new ArrayList<Site>(siteSet);
     }
+    
+    public List<Sample> getAllSamplesInSelectedSites() {
+        final List<Sample> samples = new ArrayList<Sample>();
+        for (Site s: PuffinApp.getInstance().getSelectedSites()) {
+            samples.addAll(s.getSamples());
+        }
+        return samples;
+    }
 
     public void setSuite(int index) {
         if (index >= 0 && index < suites.size()) {
@@ -449,5 +458,26 @@ public final class PuffinApp {
         customNotesWindow =
                 new CustomFieldEditor(currentSuite.getCustomNoteNames(),
                 "Edit custom notes");
+    }
+    
+    public void doAmsCalc(AmsCalcType calcType, String scriptName) {
+        try {
+            final String directory =
+                    app.getPrefs().getPrefs().get("data.pmagPyPath",
+                    "/usr/local/bin");
+            File f = new File(directory, scriptName);
+            final String scriptPath = f.getAbsolutePath();
+         app.getSuite().doAmsStatistics(app.getAllSamplesInSelectedSites(),
+                 calcType, scriptPath);
+        } catch (IOException ioe) {
+            app.errorDialog("Error running AMS script", "The following error "+
+                    "occurred:\n" + ioe.getLocalizedMessage()+"\n" +
+                    "Please check that the script path is correctly set in "+
+                    "the preferences.");
+        } catch (IllegalArgumentException iae) {
+            app.errorDialog("Error running AMS script", "The following error "+
+                    "occurred:\n" + iae.getLocalizedMessage());
+        }
+        app.updateDisplay();
     }
 }

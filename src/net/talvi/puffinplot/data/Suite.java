@@ -759,23 +759,33 @@ public class Suite {
             for (Sample s: getSamples()) s.getCustomNotes().swapAdjacent(position);
         }
     }
+        
+    public enum AmsCalcType { HEXT, BOOT, PARA_BOOT }; 
 
-    public void bootstrapAms(List<Sample> samples, boolean parametric,
-            String scriptPath) {
+    public void doAmsStatistics(List<Sample> samples, AmsCalcType calcType,
+            String scriptPath) throws IOException, IllegalArgumentException {
         List<Tensor> tensors = new ArrayList<Tensor>();
         for (Sample s: samples) {
             if (s.getAms() != null) tensors.add(s.getAms());
         }
-        amsBootstrapParams = KentParams.calculateBootstrap(tensors,
-                parametric, scriptPath);
-    }
-
-    public void calculateHextOnAms(List<Sample> samples, String scriptPath) {
-        List<Tensor> tensors = new ArrayList<Tensor>();
-        for (Sample s: samples) {
-            if (s.getAms() != null) tensors.add(s.getAms());
+        if (tensors.isEmpty()) {
+            throw new IllegalArgumentException("No AMS data in specified samples.");
+        } else if (tensors.size()<3) {
+            throw new IllegalArgumentException("Too few samples with AMS data.");
         }
-        hextParams = KentParams.calculateHext(tensors, scriptPath);
+        switch (calcType) {
+            case HEXT:
+                hextParams = KentParams.calculateHext(tensors, scriptPath);
+                break;
+            case BOOT:
+                amsBootstrapParams = KentParams.calculateBootstrap(tensors,
+                        false, scriptPath);
+                break;
+            case PARA_BOOT:
+                amsBootstrapParams = KentParams.calculateBootstrap(tensors,
+                        true, scriptPath);
+                break;
+        }
     }
     
     public Sample insertNewSample(String id) {

@@ -80,10 +80,13 @@ public class KentParams {
     }
 
     public static List<KentParams> calculateBootstrap(List<Tensor> tensors,
-            boolean parametric, String scriptPath) {
+            boolean parametric, String scriptPath) throws IOException {
+        File tempFile = null;
+        FileWriter writer = null;
+        List<KentParams> result = new ArrayList<KentParams>(3);
         try {
-            File tempFile = File.createTempFile("puffin", "tensors");
-            FileWriter writer = new FileWriter(tempFile);
+            tempFile = File.createTempFile("puffin", "tensors");
+            writer = new FileWriter(tempFile);
             for (Tensor t: tensors) {
                 writer.write(t.toTensorComponentString() + "\n");
             }
@@ -97,7 +100,6 @@ public class KentParams {
             for (String s : output) {
                 System.out.println(s);
             }
-            List<KentParams> result = new ArrayList<KentParams>(3);
             for (int i=4; i<7; i++) {
                 Scanner s = new Scanner(output.get(i));
                 result.add(new KentParams(s.nextDouble(), s.nextDouble(),
@@ -105,36 +107,40 @@ public class KentParams {
                         s.nextDouble(), s.nextDouble(), s.nextDouble(),
                         s.nextDouble(), s.nextDouble(), s.nextDouble()));
             }
-            return result;
-        } catch (IOException e) {
-            return null;
+        } finally {
+            if (tempFile != null && tempFile.exists()) tempFile.delete();
+            if (writer != null) writer.close();
         }
+        return result;
     }
 
    public static List<KentParams> calculateHext(List<Tensor> tensors,
-           String scriptPath) {
-        try {
-            File tempFile = File.createTempFile("puffin", "hext");
-            FileWriter writer = new FileWriter(tempFile);
-            for (Tensor t: tensors) {
-                writer.write(t.toTensorComponentString() + "\n");
-            }
-            writer.close();
-            String[] args = {scriptPath, "-f", tempFile.getAbsolutePath()};
-            List<String> output = execute(args);
-            tempFile.delete();
-            List<KentParams> result = new ArrayList<KentParams>(3);
-            for (int i=2; i<5; i++) {
-                Scanner s = new Scanner(output.get(i));
-                result.add(new KentParams(s.nextDouble(), 0.,
-                        s.nextDouble(), s.nextDouble(),
-                        s.nextDouble(), s.nextDouble(), s.nextDouble(),
-                        s.nextDouble(), s.nextDouble(), s.nextDouble()));
-            }
-            return result;
-        } catch (IOException e) {
-            return null;
-        }
+           String scriptPath) throws IOException {
+       final List<KentParams> result = new ArrayList<KentParams>(3);
+       File tempFile = null;
+       FileWriter writer = null;
+       try {
+           tempFile = File.createTempFile("puffin", "hext");
+           writer = new FileWriter(tempFile);
+           for (Tensor t: tensors) {
+               writer.write(t.toTensorComponentString() + "\n");
+           }
+           writer.close();
+           String[] args = {scriptPath, "-f", tempFile.getAbsolutePath()};
+           List<String> output = execute(args);
+           tempFile.delete();
+           for (int i=2; i<5; i++) {
+               final Scanner s = new Scanner(output.get(i));
+               result.add(new KentParams(s.nextDouble(), 0.,
+                       s.nextDouble(), s.nextDouble(),
+                       s.nextDouble(), s.nextDouble(), s.nextDouble(),
+                       s.nextDouble(), s.nextDouble(), s.nextDouble()));
+           }
+       } finally {
+           if (tempFile != null && tempFile.exists()) tempFile.delete();
+           if (writer != null) writer.close();
+       }
+       return result;
     }
 
     public double getTau() {
