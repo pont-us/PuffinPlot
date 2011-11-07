@@ -3,8 +3,6 @@ package net.talvi.puffinplot.plots;
 import net.talvi.puffinplot.data.FisherValues;
 import java.util.ArrayList;
 import net.talvi.puffinplot.data.PcaValues;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.List;
 import java.awt.geom.Point2D;
 import java.util.prefs.Preferences;
@@ -13,10 +11,8 @@ import net.talvi.puffinplot.data.Site;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.util.Collection;
 import net.talvi.puffinplot.data.GreatCircle;
 import net.talvi.puffinplot.data.GreatCircles;
-import net.talvi.puffinplot.data.PcaAnnotated;
 import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
@@ -131,7 +127,9 @@ public class GreatCirclePlot extends EqAreaPlot {
 
     @Override
     public void draw(Graphics2D g) {
-        final Site site = params.getSample().getSite();
+        final Sample sample = params.getSample();
+        if (sample==null) return;
+        final Site site = sample.getSite();
         if (site == null) {
             writeString(g, "No sites defined.", 100, 100);
             return;

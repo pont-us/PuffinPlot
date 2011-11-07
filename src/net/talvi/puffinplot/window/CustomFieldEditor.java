@@ -15,8 +15,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.CustomFields;
 
@@ -104,6 +102,7 @@ public class CustomFieldEditor extends JFrame {
             setFromFields();
             list.setSelectedIndex(index);
             list.ensureIndexIsVisible(index);
+            PuffinApp.getInstance().updateDisplay();
         }
     }
 
@@ -115,6 +114,7 @@ public class CustomFieldEditor extends JFrame {
             setFromFields();
             list.setSelectedIndex(index+1);
             list.ensureIndexIsVisible(index+1);
+            PuffinApp.getInstance().updateDisplay();
         }
     }
 
@@ -133,6 +133,7 @@ public class CustomFieldEditor extends JFrame {
                 list.setSelectedIndex(index);
                 list.ensureIndexIsVisible(index);
             }
+            PuffinApp.getInstance().updateDisplay();
         }
     }
 
@@ -157,6 +158,7 @@ public class CustomFieldEditor extends JFrame {
             fields.add(newIndex, name);
             list.setSelectedIndex(newIndex);
             list.ensureIndexIsVisible(newIndex);
+            PuffinApp.getInstance().updateDisplay();
         }
     }
 
@@ -178,6 +180,7 @@ public class CustomFieldEditor extends JFrame {
             }
             fields.set(index, newName);
             listModel.set(index, newName);
+            PuffinApp.getInstance().updateDisplay();
         }
 
     }
