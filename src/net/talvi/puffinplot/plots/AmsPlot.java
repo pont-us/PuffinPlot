@@ -1,12 +1,10 @@
 package net.talvi.puffinplot.plots;
 
-import java.util.Collection;
 import java.util.ArrayList;
 import java.awt.Color;
 import java.util.List;
 import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.PuffinApp;
-import net.talvi.puffinplot.data.Site;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -20,6 +18,11 @@ import static java.lang.Math.min;
 
 public class AmsPlot extends EqAreaPlot {
 
+    private List<KentParams> cachedBootstrapParams;
+    private List<KentParams> cachedHextParams;
+    private List<List<Vec3>> cachedBootstrapRegions = new ArrayList<List<Vec3>>();
+    private List<List<Vec3>> cachedHextRegions = new ArrayList<List<Vec3>>();    
+    
     public AmsPlot(GraphDisplay parent, PlotParams params, Preferences prefs) {
         super(parent, params, prefs);
     }
@@ -34,11 +37,28 @@ public class AmsPlot extends EqAreaPlot {
         return "AMS";
     }
 
-    private void drawConfidenceEllipse(Graphics2D g, int radius, int xo, int yo,
-            KentParams kp) {
-        List<List<Vec3>> segments = Vec3.interpolateEquatorPoints(Vec3.ellipse(kp));
-        for (List<Vec3> segment: segments) {
-            drawLhLineSegments(g, xo, yo, radius, segment);
+    private List<List<Vec3>> paramsToSegments(List<KentParams> kps) {
+        List<List<Vec3>> result = new ArrayList<List<Vec3>>();
+        if (kps != null) {
+            for (KentParams kp: kps) {
+                List<List<Vec3>> segments =
+                        Vec3.interpolateEquatorPoints(Vec3.ellipse(kp));
+                result.addAll(segments);
+            }
+        }
+        return result;
+    }
+    
+    private void cacheConfidenceRegionsIfRequired(Suite suite) {
+        final List<KentParams> bootstrapParams = suite.getAmsBootstrapParams();     
+        if (bootstrapParams != cachedBootstrapParams) {
+            cachedBootstrapParams = bootstrapParams;
+            cachedBootstrapRegions = paramsToSegments(bootstrapParams);
+        }
+        final List<KentParams> hextParams = suite.getAmsHextParams();
+        if (hextParams != cachedHextParams) {
+            cachedHextParams = hextParams;
+            cachedHextRegions = paramsToSegments(hextParams);
         }
     }
 
@@ -91,24 +111,28 @@ public class AmsPlot extends EqAreaPlot {
             }
         }
 
-        Suite suite = sample.getSuite();
-        List<KentParams> bootstrapParams = suite.getAmsBootstrapParams();
-        List<KentParams> hextParams = suite.getAmsHextParams();
-        if (bootstrapParams != null) {
+        cacheConfidenceRegionsIfRequired(sample.getSuite());
+        // Mean directions should be same for Hext and bootstrap
+        final List<KentParams> meanDirections = 
+                cachedBootstrapParams != null ?
+                cachedBootstrapParams :
+                cachedHextParams;
+        if (meanDirections != null) {
             for (int i=0; i<3; i+=1) {
-                final KentParams kp = bootstrapParams.get(i);
+                final KentParams kp = meanDirections.get(i);
                 final Point2D pos = project(kp.getMean(), xo, yo, radius);
                 getPointForAxis(pos, PLOT_POINT_SIZE*3, i).draw(g);
-                g.setStroke(getStroke());
-                g.setColor(Color.BLACK);
-                drawConfidenceEllipse(g, radius, xo, yo, kp);
             }
         }
-        if (hextParams != null) {
-            g.setStroke(getDashedStroke());
-            for (KentParams kp: hextParams) {
-                drawConfidenceEllipse(g, radius, xo, yo, kp);
-            }
+        
+        g.setStroke(getStroke());
+        g.setColor(Color.BLACK);
+        for (List<Vec3> segment: cachedBootstrapRegions) {
+            drawLhLineSegments(g, xo, yo, radius, segment);
+        }
+        g.setStroke(getDashedStroke());
+        for (List<Vec3> segment: cachedHextRegions) {
+            drawLhLineSegments(g, xo, yo, radius, segment);
         }
     }
 }

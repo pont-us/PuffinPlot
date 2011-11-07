@@ -649,6 +649,7 @@ public class PuffinActions {
     public final Action clearAmsCalcs = new AbstractAction("Clear AMS calculations") {
         public void actionPerformed(ActionEvent arg0) {
             app.getSuite().clearAmsCalculations();
+            app.updateDisplay();
         }
     };
 }

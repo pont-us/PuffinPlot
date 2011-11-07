@@ -1,0 +1,24 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Separate data manipulation from GUI
+desc: |-
+  A few of the classes in puffinplot.data make reference to PuffinApp.
+  This is conceptually messy, and (more pragmatically) requires the
+  GUI to be instantiated even for script-driven manipulation of data
+  structures. It should be possible to load, manipulate, and save
+  data from the exposed APIs without having to instantiate a 
+  PuffinApp first.
+type: :task
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2011-11-07 07:51:24.885394 Z
+references: []
+
+id: 4cd35d5d70abe16f7448f4ff6654be2a1cdcd9aa
+log_events: 
+- - 2011-11-07 07:51:25.217276 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
