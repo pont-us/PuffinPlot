@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import net.talvi.puffinplot.PuffinApp;
 
 public class PcaAnnotated {
 
@@ -29,8 +28,7 @@ public class PcaAnnotated {
         this.contiguous = contiguous;
     }
 
-    static PcaAnnotated calculate(Sample s) {
-        PuffinApp app = PuffinApp.getInstance();
+    static PcaAnnotated calculate(Sample s, Correction correction) {
         List<Datum> rawData = s.getVisibleData();
         List<Vec3> points = new ArrayList<Vec3>(rawData.size());
         List<Datum> data = new ArrayList<Datum>(rawData.size());
@@ -40,7 +38,7 @@ public class PcaAnnotated {
         for (Datum d: rawData) {
             thisIsPca = d.isInPca();
             if (thisIsPca) {
-                points.add(d.getMoment(app.getCorrection()));
+                points.add(d.getMoment(correction));
                 data.add(d);
             } else {
                 if (lastWasPca) runEndsSeen++;

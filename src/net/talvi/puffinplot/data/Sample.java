@@ -5,7 +5,6 @@ import Jama.Matrix;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import net.talvi.puffinplot.PuffinApp;
 import static java.lang.Math.toRadians;
 import static java.lang.Double.parseDouble;
 
@@ -171,12 +170,11 @@ public class Sample {
         return selData;
     }
 
-    public List<Vec3> getSelectedPoints() {
+    public List<Vec3> getSelectedPoints(Correction correction) {
         LinkedList<Vec3> points = new LinkedList<Vec3>();
-        PuffinApp app = PuffinApp.getInstance();
         for (Datum d: getData())
             if (d.isSelected())
-                points.add(d.getMoment(app.getCorrection()));
+                points.add(d.getMoment(correction));
         return points;
     }
 
@@ -192,16 +190,16 @@ public class Sample {
         return (runEndsSeen <= 1);
     }
     
-    public void calculateFisher() {
-        List<Vec3> points = getSelectedPoints();
+    public void calculateFisher(Correction correction) {
+        List<Vec3> points = getSelectedPoints(correction);
         if (points.size() > 1)
             fisher = FisherValues.calculate(points);
     }
 
-    public void doPca(boolean anchored) {
+    public void doPca(boolean anchored, Correction correction) {
         if (!hasData()) return;
         for (Datum d: getData()) d.setPcaAnchored(anchored);
-        pca = PcaAnnotated.calculate(this);
+        pca = PcaAnnotated.calculate(this, correction);
     }
 
     public void useSelectionForCircleFit() {
@@ -212,24 +210,23 @@ public class Sample {
         for (Datum d : getData()) d.setInPca(d.isSelected());
     }
 
-    public List<Vec3> getCirclePoints() {
+    public List<Vec3> getCirclePoints(Correction correction) {
         List<Vec3> result = new ArrayList<Vec3>(getData().size());
-        PuffinApp app = PuffinApp.getInstance();
         for (Datum d: getData()) {
-            if (d.isOnCircle()) result.add(d.getMoment(app.getCorrection()));
+            if (d.isOnCircle()) result.add(d.getMoment(correction));
         }
         return result;
     }
 
-    public void fitGreatCircle() {
-        List<Vec3> points = getCirclePoints();
+    public void fitGreatCircle(Correction correction) {
+        List<Vec3> points = getCirclePoints(correction);
         if (points.size() < 2) return;
         greatCircle = Eigens.fromVectors(points, true).vectors.get(2);
     }
 
-    public void doPca() {
+    public void doPca(Correction correction) {
         if (!hasData()) return;
-        doPca(getData().get(0).isPcaAnchored());
+        doPca(getData().get(0).isPcaAnchored(), correction);
     }
 
     public MeasType getMeasType() {

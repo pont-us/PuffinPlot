@@ -1,0 +1,22 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Clip PCA lines on Zplot
+desc: |-
+  I suspect that PCA line projections on the Zplot are still relying
+  on the window clip area for truncation, meaning that they're
+  far too long when exported or printed. Look into this and clip
+  them explicitly if necessary.
+type: :bugfix
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2011-11-07 21:36:55.323080 Z
+references: []
+
+id: 8c36366fd22acd5af8e6e3ec970ccf2841bdfb41
+log_events: 
+- - 2011-11-07 21:36:56.362992 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

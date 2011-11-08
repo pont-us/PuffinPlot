@@ -132,7 +132,7 @@ public class MainMenuBar extends JMenuBar {
             public void itemStateChanged(ItemEvent event) {
                 for (Sample s: app.getSelectedSamples()) {
                     s.setPcaAnchored(isSelected());
-                    s.doPca();
+                    s.doPca(app.getCorrection());
                 }
                 app.updateDisplay();
             }});

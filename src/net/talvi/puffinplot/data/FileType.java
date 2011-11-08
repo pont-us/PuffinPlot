@@ -4,12 +4,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import net.talvi.puffinplot.PuffinApp;
+import java.util.logging.Logger;
 
 public enum FileType {
 	TWOGEE, ZPLOT, PUFFINPLOT_OLD, PUFFINPLOT_NEW, UNKNOWN;
-	
-	static public FileType guess(File file) {
+
+    private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
+    
+	static public FileType guess(File file) throws IOException {
 		String name = file.getName().toLowerCase();
 		if (name.endsWith(".dat")) return TWOGEE;
 		else if (name.endsWith(".txt")) return ZPLOT;
@@ -21,14 +23,11 @@ public enum FileType {
                          String line = reader.readLine();
                          if (line.startsWith("PuffinPlot file."))
                              result = PUFFINPLOT_NEW;
-                    } catch (IOException e) {
-                        PuffinApp.getInstance().
-                                errorDialog("Error opening file",
-                                e.getLocalizedMessage());
-                        return UNKNOWN;
                     } finally {
                         try { if (reader != null) reader.close(); }
-                        catch (IOException e2) {}  
+                        catch (IOException ex) {
+                            logger.warning(ex.getLocalizedMessage());
+                        }
                     }
                     return result;
                 }

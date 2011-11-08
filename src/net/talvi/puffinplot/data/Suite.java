@@ -22,6 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.PuffinPrefs;
+import net.talvi.puffinplot.PuffinUserException;
 import net.talvi.puffinplot.data.file.AmsLoader;
 import net.talvi.puffinplot.data.file.FileLoader;
 import net.talvi.puffinplot.data.file.PplLoader;
@@ -32,7 +33,6 @@ public class Suite {
 
     private List<Datum> data;
     private List<Site> sites;
-    private final List<File> inputFiles;
     private File puffinFile;
     private List<Sample> samples = new ArrayList<Sample>(); // samples in order
     private LinkedHashMap<String, Sample> samplesById; // name or depth as appropriate
@@ -42,7 +42,6 @@ public class Suite {
     private String suiteName;
     private List<Sample> emptyTraySamples;
     private FisherValues suiteFisher;
-    final private PuffinApp app;
     private List<String> loadWarnings;
     private boolean hasUnknownTreatType;
     private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
@@ -89,10 +88,12 @@ public class Suite {
         }
     }
     
-    public void doFisherOnSites() {
-        if (!getMeasType().isDiscrete())
-            throw new UnsupportedOperationException("Only discrete suites can have sites.");
-        for (Site site: getSites()) site.doFisher();
+    public void doFisherOnSites(Correction correction) {
+        if (!getMeasType().isDiscrete()) {
+            throw new UnsupportedOperationException("Only discrete suites "
+                    + "can have sites.");
+        }
+        for (Site site: getSites()) site.doFisher(correction);
     }
 
     public List<FisherValues> getFishers() {
@@ -104,14 +105,14 @@ public class Suite {
     }
 
     public boolean isFilenameSet() {
-        return puffinFile != null;
+        return getPuffinFile() != null;
     }
 
-    public void save() {
-        if (puffinFile != null) saveAs(puffinFile);
+    public void save() throws PuffinUserException {
+        if (getPuffinFile() != null) saveAs(getPuffinFile());
     }
 
-    public void saveAs(File file) {
+    public void saveAs(File file) throws PuffinUserException {
         List<String> fields = DatumField.getRealFieldHeaders();
 
         FileWriter fileWriter = null;
@@ -151,16 +152,14 @@ public class Suite {
             fileWriter.close();
             puffinFile = file;
             suiteName = file.getName();
-            app.getRecentFiles().add(Collections.singletonList(file));
-            app.getMainWindow().getMainMenuBar().updateRecentFiles();
-        } catch (IOException e) {
-            app.errorDialog("Error saving file", e.getLocalizedMessage());
+        } catch (IOException ex) {
+            throw new PuffinUserException(ex);
         } finally {
             try {
                 if (fileWriter != null) fileWriter.close();
                 if (csvWriter != null) csvWriter.close();
-            } catch (IOException e) {
-                app.errorDialog("Error closing saved file", e.getLocalizedMessage());
+            } catch (IOException ex) {
+                throw new PuffinUserException(ex);
             }
         }
     }
@@ -200,23 +199,23 @@ public class Suite {
         return result;
     }
 
-    public void doSampleCalculations() {
+    public void doSampleCalculations(Correction correction) {
         for (Sample sample : getSamples()) {
-            sample.calculateFisher();
-            sample.doPca();
-            sample.fitGreatCircle();
+            sample.calculateFisher(correction);
+            sample.doPca(correction);
+            sample.fitGreatCircle(correction);
             sample.calculateMagSusJump();
         }
     }
 
-    public void doSiteCalculations() {
+    public void doSiteCalculations(Correction correction) {
         final Set<Site> sitesDone = new HashSet<Site>();
         for (Sample sample : getSamples()) {
             final Site site = sample.getSite();
             if (site == null) continue;
             if (sitesDone.contains(site)) continue;
-            site.doFisher();
-            site.doGreatCircle();
+            site.doFisher(correction);
+            site.doGreatCircle(correction);
             sitesDone.add(site);
         }
     }
@@ -228,14 +227,12 @@ public class Suite {
      * because then we lose the load warnings (which will probably explain
      * to the user *why* the suite's empty and are thus quite important).
      */
-    public Suite(List<File> files) throws IOException {
-        app = PuffinApp.getInstance();
-        final PuffinPrefs prefs = app.getPrefs();
+    public Suite(List<File> files, SensorLengths sensorLengths,
+            TwoGeeLoader.Protocol protocol) throws IOException {
         assert(files.size() > 0);
         if (files.size() == 1) suiteName = files.get(0).getName();
         else suiteName = files.get(0).getParentFile().getName();
         files = expandDirs(files);
-        this.inputFiles = files;
         final ArrayList dataArray = new ArrayList<Datum>();
         data = dataArray;
         samplesById = new LinkedHashMap<String, Sample>();
@@ -257,15 +254,21 @@ public class Suite {
                 loadWarnings.add(String.format("File \"%s\" is unreadable.", file.getName()));
                 continue;
             }
-            final FileType fileType = FileType.guess(file);
+            FileType fileType = null;
+            try {
+                fileType = FileType.guess(file);
+            } catch (IOException ex) {
+                loadWarnings.add(String.format("Error guessing type of file \"%s\": %s",
+                        file.getName(), ex.getLocalizedMessage()));
+            }
             FileLoader loader = null;
             switch (fileType) {
             case TWOGEE:
             case PUFFINPLOT_OLD:
                 TwoGeeLoader twoGeeLoader =
-                        new TwoGeeLoader(file, prefs.get2gProtocol(),
-                        prefs.getSensorLengths().toVector());
+                        new TwoGeeLoader(file, protocol, sensorLengths.toVector());
                 loader = twoGeeLoader;
+                if (files.size()==1) puffinFile = file;
                 break;
             case PUFFINPLOT_NEW:
                 loader = new PplLoader(file);
@@ -290,14 +293,6 @@ public class Suite {
         setCurrentSampleIndex(0);
         if (hasUnknownTreatType)
             loadWarnings.add("One or more treatment types were not recognized.");
-        for (Sample s : getSamples()) s.doPca();
-        if (files.size() == 1 &&
-                FileType.guess(files.get(0)) == FileType.PUFFINPLOT_OLD &&
-                getNumSamples() > 0) {
-            app.getRecentFiles().add(files);
-            app.getMainWindow().getMainMenuBar().updateRecentFiles();
-            puffinFile = files.get(0);
-        }
         if (measType.isDiscrete()) {
             emptyTraySamples = new ArrayList<Sample>();
             int slot = 1;
@@ -309,27 +304,33 @@ public class Suite {
             }
             guessSites(); // sites aren't saved yet so we just re-guess on load
         }
-        doSampleCalculations();
-        if (measType.isDiscrete()) {
-            doSiteCalculations();
-        }
+
         processPuffinLines(puffinLines);
     }
     
-    public void saveCalcsSample(File file) {
-        saveCalcsSample(file, Correction.NONE);
+    /**
+     *  Intended to be called after instantiating a new Suite from a file.
+     */
+    public void doAllCalculations(Correction correction) {
+        doSampleCalculations(correction);
+        if (measType.isDiscrete()) {
+            doSiteCalculations(correction);
+        }
     }
+    
+//    public void saveCalcsSample(File file) throws PuffinUserException {
+//        saveCalcsSample(file, Correction.NONE);
+//    }
     
     /*
      * Save calculations per-sample.
      */
-    public void saveCalcsSample(File file, Correction correction) {
+    public void saveCalcsSample(File file, Correction correction) 
+            throws PuffinUserException {
         CsvWriter writer = null;
         try {
             if (samples.isEmpty()) {
-                app.errorDialog("Error saving calculations",
-                        "No calculations to save!");
-                return;
+                throw new PuffinUserException("No calculations to save.");
             }
 
             writer = new CsvWriter(new FileWriter(file));
@@ -349,12 +350,12 @@ public class Suite {
                         mdf == null ? MDF.getEmptyFields() : mdf.toStrings());
             }
         } catch (IOException ex) {
-            app.errorDialog("Error saving file", ex.getMessage());
+            throw new PuffinUserException(ex);
         } finally {
             try {
                 if (writer != null) writer.close();
             } catch (IOException ex) {
-                app.errorDialog("Error closing file", ex.getLocalizedMessage());
+                throw new PuffinUserException(ex);
             }
         }
     }
@@ -362,11 +363,10 @@ public class Suite {
     /*
      * Save [Fisher and great-circle] calculations per site. Only works for discrete.
      */
-    public void saveCalcsSite(File file) {
+    public void saveCalcsSite(File file) throws PuffinUserException {
         CsvWriter writer = null;
         if (getSites() == null) {
-            app.errorDialog("Error saving file", "No sites are defined.");
-            return;
+            throw new PuffinUserException("No sites are defined.");
         }
         try {
             writer = new CsvWriter(new FileWriter(file));
@@ -397,23 +397,21 @@ public class Suite {
     /*
      * Save a single Fisher calculation for the suite.
      */
-    public void saveCalcsSuite(File file) {
+    public void saveCalcsSuite(File file) throws PuffinUserException {
         CsvWriter writer = null;
         try {
             if (suiteFisher == null) {
-                app.errorDialog("Error saving calculations",
-                        "No calculations to save!");
-                return;
+                throw new PuffinUserException("There are no calculations to save.");
             }
             writer = new CsvWriter(new FileWriter(file));
             writer.writeCsv(FisherValues.getHeaders());
             writer.writeCsv(suiteFisher.toStrings());
         } catch (IOException ex) {
-           throw new Error(ex);
+           throw new PuffinUserException(ex);
         } finally {
             if (writer != null) {
                 try { writer.close(); }
-                catch (IOException e) { throw new Error(e); }
+                catch (IOException e) { logger.warning(e.getLocalizedMessage()); }
             }
         }
     }
@@ -716,6 +714,10 @@ public class Suite {
             sites.add(site);
         }
         return site;
+    }
+
+    public File getPuffinFile() {
+        return puffinFile;
     }
 
     private class CustomFlagNames extends CustomFields<String> {

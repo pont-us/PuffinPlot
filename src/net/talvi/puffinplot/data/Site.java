@@ -26,11 +26,11 @@ public class Site {
         this.samples = new ArrayList<Sample>();
     }
 
-    public void doFisher() {
+    public void doFisher(Correction correction) {
         Collection<Vec3> directions =
                 new ArrayList<Vec3>(getSamples().size());
         for (Sample s: getSamples()) {
-            s.doPca();
+            s.doPca(correction);
             if (s.getPca() != null) directions.add(s.getPcaValues().getDirection());
         }
         if (!directions.isEmpty()) {
@@ -42,14 +42,14 @@ public class Site {
         fisher = null;
     }
 
-    public void doGreatCircle() {
+    public void doGreatCircle(Correction correction) {
         List<Vec3> endpoints = new LinkedList<Vec3>();
         LinkedList<List<Vec3>> circles = new LinkedList<List<Vec3>>();
         for (Sample sample: getSamples()) {
             if (sample.getPca() != null) {
                 endpoints.add(sample.getPcaValues().getDirection());
             } else if (sample.greatCircle != null) {
-                circles.add(sample.getCirclePoints());
+                circles.add(sample.getCirclePoints(correction));
             }
         }
         if (!circles.isEmpty()) {

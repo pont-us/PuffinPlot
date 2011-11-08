@@ -173,8 +173,12 @@ public class PuffinActions {
             String pathname = getSavePath("Export sample calculations", ".csv",
                     "Comma Separated Values");
             if (pathname != null)
-                app.getSuite().saveCalcsSample(new File(pathname),
-                        app.getCorrection());
+                try {
+                    app.getSuite().saveCalcsSample(new File(pathname),
+                            app.getCorrection());
+                } catch (PuffinUserException ex) {
+                    app.errorDialog("Error saving calculations", ex);
+                }
         }
     };
 
@@ -188,8 +192,13 @@ public class PuffinActions {
             String pathname = getSavePath("Export site calculations", ".csv",
                     "Comma Separated Values");
 
-            if (pathname != null)
-                app.getSuite().saveCalcsSite(new File(pathname));
+            if (pathname != null) {
+                try {
+                    app.getSuite().saveCalcsSite(new File(pathname));
+                } catch (PuffinUserException ex) {
+                    app.errorDialog("Error saving calculations", ex);
+                }
+            }
         }
     };
 
@@ -203,14 +212,27 @@ public class PuffinActions {
             String pathname = getSavePath("Export suite calculations", ".csv",
                     "Comma Separated Values");
 
-            if (pathname != null)
-                app.getSuite().saveCalcsSuite(new File(pathname));
+            if (pathname != null) {
+                try {
+                    app.getSuite().saveCalcsSuite(new File(pathname));
+                } catch (PuffinUserException ex) {
+                    app.errorDialog("Error saving calculations",
+                            ex.getLocalizedMessage());
+                }
+            }
         }
     };
 
     private void doSaveAs(Suite suite) {
         String pathname = getSavePath("Save data", ".ppl", "PuffinPlot data");
-        if (pathname != null) suite.saveAs(new File(pathname));
+        if (pathname != null) try {
+            final File file = new File(pathname);
+            suite.saveAs(file);
+            app.getRecentFiles().add(Collections.singletonList(file));
+            app.getMainWindow().getMainMenuBar().updateRecentFiles();
+        } catch (PuffinUserException ex) {
+            app.errorDialog("Error saving file", ex);
+        }
     }
 
     public final Action save = new PuffinAction("Save",
@@ -218,7 +240,14 @@ public class PuffinActions {
         public void actionPerformed(ActionEvent e) {
             Suite suite = app.getSuite();
             if (suite != null) {
-                if (suite.isFilenameSet()) suite.save();
+                if (suite.isFilenameSet()) try {
+                    suite.save();
+                    final File file = suite.getPuffinFile();
+                    app.getRecentFiles().add(Collections.singletonList(file));
+                    app.getMainWindow().getMainMenuBar().updateRecentFiles();
+                } catch (PuffinUserException ex) {
+                    app.errorDialog("Error saving file", ex);
+                }
                 else doSaveAs(suite);
             }
         }
@@ -279,7 +308,7 @@ public class PuffinActions {
                 app.errorDialog("Fisher on sample", "No sample selected.");
             } else {
                 for (Sample s: samples) {
-                    s.calculateFisher();
+                    s.calculateFisher(app.getCorrection());
                 }
                 app.getMainWindow().repaint();
             }
@@ -296,7 +325,7 @@ public class PuffinActions {
             } else if (!suite.getMeasType().isDiscrete()) {
                 app.errorDialog("Fisher by site", "Only discrete suites can have sites.");
             } else {
-                suite.doFisherOnSites();
+                suite.doFisherOnSites(app.getCorrection());
                 app.getFisherWindow().getPlot().setGroupedBySite(true);
                 app.getFisherWindow().setVisible(true);
             }

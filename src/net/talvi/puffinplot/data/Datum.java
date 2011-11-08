@@ -1,12 +1,10 @@
 package net.talvi.puffinplot.data;
 
 import java.util.logging.Logger;
-import java.util.logging.Level;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import net.talvi.puffinplot.PuffinApp;
 import static java.lang.Double.NaN;
 import static java.lang.Math.toRadians;
 

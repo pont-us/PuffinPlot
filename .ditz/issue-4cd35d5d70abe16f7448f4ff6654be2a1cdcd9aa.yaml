@@ -11,8 +11,8 @@ type: :task
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2011-11-07 07:51:24.885394 Z
 references: []
 
@@ -22,3 +22,11 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2011-11-08 00:03:08.831018 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    This took a moderate amount of work. There are now more Correction
+    objects being passed around than before. I have also created a
+    PuffinUserException to wrap exceptions raised during e.g. file loading
+    and saving for reporting to the user.

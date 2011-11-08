@@ -92,7 +92,7 @@ public final class PuffinApp {
     }
 
     public void redoCalculations() {
-        for (Suite suite: suites) suite.doSampleCalculations();
+        for (Suite suite: suites) suite.doSampleCalculations(getCorrection());
     }
 
     private void loadBuildProperties() {
@@ -150,22 +150,22 @@ public final class PuffinApp {
     }
 
     void doGreatCircles(boolean popUpWindow) {
-        for (Site site: getSelectedSites()) site.doGreatCircle();
+        for (Site site: getSelectedSites()) site.doGreatCircle(getCorrection());
         if (popUpWindow) greatCircleWindow.setVisible(true);
     }
 
     void fitCircle() {
         for (Sample sample: getSelectedSamples()) {
             sample.useSelectionForCircleFit();
-            sample.fitGreatCircle();
+            sample.fitGreatCircle(getCorrection());
         }
     }
 
     void doPcaOnSelection() {
         for (Sample sample : getSelectedSamples()) {
-            if (sample.getSelectedPoints().size() > 1) {
+            if (sample.getSelectedPoints(getCorrection()).size() > 1) {
                 sample.useSelectionForPca();
-                sample.doPca();
+                sample.doPca(getCorrection());
             }
         }
     }
@@ -178,6 +178,10 @@ public final class PuffinApp {
         Sample sample = getSample();
         if (sample==null) return null;
         return sample.getSite();
+    }
+
+    void errorDialog(String title, PuffinUserException ex) {
+        errorDialog(title, ex.getLocalizedMessage());
     }
 
     private static class ExceptionHandler implements UncaughtExceptionHandler {
@@ -266,17 +270,15 @@ public final class PuffinApp {
 
     public void openFiles(List<File> files) {
         if (files.isEmpty()) return;
-        try {
-            // If this fileset is already in the recent-files list,
-            // it will be bumped up to the top; otherwise it will be
-            // added to the top and the last member removed.
-            recentFiles.add(files);
-        } catch (IOException ex) {
-            errorDialog("Error updating recent files list", ex.getLocalizedMessage());
-        }
+        // If this fileset is already in the recent-files list,
+        // it will be bumped up to the top; otherwise it will be
+        // added to the top and the last member removed.
+        recentFiles.add(files);
         
         try {
-            Suite suite = new Suite(files);
+            Suite suite = new Suite(files, prefs.getSensorLengths(),
+                    prefs.get2gProtocol());
+            suite.doAllCalculations(getCorrection());
             List<String> warnings = suite.getLoadWarnings();
             if (warnings.size() > 0) {
                 StringBuilder sb =

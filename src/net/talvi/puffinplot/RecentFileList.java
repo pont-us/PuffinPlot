@@ -49,7 +49,7 @@ public class RecentFileList {
         return result.getFiles();
     }
 
-    public void add(List<File> files) throws IOException {
+    public void add(List<File> files) {
         FileSet f = new FileSet(files);
         fileSets.remove(f);
         fileSets.add(0, f);
