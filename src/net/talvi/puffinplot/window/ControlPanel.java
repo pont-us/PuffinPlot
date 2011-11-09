@@ -81,6 +81,7 @@ public class ControlPanel extends JPanel
         updatingSuites = false;
         Suite currentSuite = app.getSuite();
         if (currentSuite != null) suiteBox.setSelectedItem(currentSuite);
+        app.getMainWindow().updateSampleDataPanel();
     }
     
     public void updateSample() {

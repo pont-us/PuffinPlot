@@ -9,8 +9,8 @@ type: :bugfix
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2011-11-07 21:36:55.323080 Z
 references: []
 
@@ -20,3 +20,13 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2011-11-09 03:23:46.608718 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Looks as though this was already fixed some time ago -- there is
+    definitely an explicit clip being applied in ZPlot.drawLine, and it 
+    seems to be fine in PDF and SVG exports as tested by both me and 
+    Faye. The only niggle is that the PCA line can sometimes overwrite
+    the window scroll bars, but this is relatively minor. I'll open a 
+    new bug for it.

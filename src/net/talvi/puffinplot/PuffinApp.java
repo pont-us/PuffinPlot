@@ -306,6 +306,7 @@ public final class PuffinApp {
             errorDialog("Error reading file", e.getMessage());
         }
         mainWindow.getMainMenuBar().updateRecentFiles();
+        mainWindow.updateSampleDataPanel();
     }
     
     public void errorDialog(String title, String message) {

@@ -31,16 +31,26 @@ public class SampleDataPanel extends JPanel {
         doUpdate();
     }
 
-    private void doUpdate() {
+    public void doUpdate() {
         removeAll(); // remove all components
         if (sample==null) return;
         Suite suite = sample.getSuite();
+        int totalObjects = 0;
         for (int i=0; i<suite.getCustomFlagNames().size(); i++) {
             add(new SampleCheckBox(sample, i));
+            totalObjects++;
         }
-        for (int i = 0; i < suite.getCustomNoteNames().size(); i++) {
+        for (int i=0; i < suite.getCustomNoteNames().size(); i++) {
             add(new JLabel(suite.getCustomNoteNames().get(i)));
             add(new SampleField(sample, i));
+            totalObjects++;
+        }
+        if (totalObjects>0) {
+            setMinimumSize(new Dimension(50,100));
+            setPreferredSize(new Dimension(150,100));
+            setVisible(true);
+        } else {
+            setVisible(false);
         }
         revalidate();
     }
@@ -68,14 +78,14 @@ public class SampleDataPanel extends JPanel {
     }
 
     private class SampleField extends JTextField {
-        private final Sample sample;
-        private final int flagNum;
+        //private final Sample sample;
+        //private final int flagNum;
         public SampleField(final Sample sample, final int noteNum) {
             super(sample.getCustomNotes().get(noteNum)==null ? "?" :
                 sample.getCustomNotes().get(noteNum));
-            setMaximumSize(new Dimension(200, 30));
-            this.sample = sample;
-            this.flagNum = noteNum;
+            setMaximumSize(new Dimension(2000, 30));
+            //this.sample = sample;
+            //this.flagNum = noteNum;
             getDocument().addDocumentListener(new DocumentListener() {
                 public void insertUpdate(DocumentEvent e) {
                     sample.getCustomNotes().set(noteNum, getText());

@@ -1,0 +1,24 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Make SampleDataPanel updating more efficient
+desc: |-
+  At present, SampleDataPanel destroys and recreates all its components
+  on every update, even if it's just an update to a different sample
+  within a Suite. Check whether this is taking significant time, and
+  if so, implement separate sample-update and suite-update functions,
+  with sample-update just updating the contents of the pre-existing 
+  components.
+type: :task
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2011-11-09 05:52:54.576767 Z
+references: []
+
+id: c2b31de1d64709fdaabd98f3c51c78a0d33efd53
+log_events: 
+- - 2011-11-09 05:52:55.216681 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import net.talvi.puffinplot.data.Sample;
 
 public class MainWindow extends JFrame {
@@ -21,11 +22,13 @@ public class MainWindow extends JFrame {
 
     private final GraphDisplay graphDisplay;
     public final ControlPanel controlPanel;
-    private JScrollPane jsp;
+    private JScrollPane scrollPane;
     SampleChooser sampleChooser;
     private final MainMenuBar menuBar;
     private JLabel welcomeMessage;
     private final SampleDataPanel sampleDataPanel;
+    public final JSplitPane splitPane;
+    private int splitPaneDividerWidth;
 
     public MainWindow() {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -39,20 +42,26 @@ public class MainWindow extends JFrame {
         mainPanel.setLayout(new BorderLayout());
         // mainPanel.add(graphDisplay = new GraphDisplay(), BorderLayout.CENTER);
         graphDisplay = new MainGraphDisplay();
-        jsp = new JScrollPane(getGraphDisplay());
+        scrollPane = new JScrollPane(getGraphDisplay());
+        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+                scrollPane, sampleDataPanel = new SampleDataPanel());
+        splitPane.setResizeWeight(1.0);
+        splitPane.setOneTouchExpandable(true);
+        splitPaneDividerWidth = splitPane.getDividerSize();
+        splitPane.setDividerSize(0);
         // jsp.setMaximumSize(new Dimension(1000,700));
-        mainPanel.add(jsp);
+        mainPanel.add(splitPane);
         mainPanel.add(welcomeMessage =
                 new JLabel("Welcome to PuffinPlot. This puffin hatched on "+
                 PuffinApp.getInstance().getBuildDate()+"."), BorderLayout.NORTH);
-        graphDisplay.setVisible(false);
+        splitPane.setVisible(false);
         mainPanel.add(sampleChooser = new SampleChooser(), BorderLayout.WEST);
-        mainPanel.add(sampleDataPanel = new SampleDataPanel(), BorderLayout.EAST);
+        // mainPanel.add(sampleDataPanel = new SampleDataPanel(), BorderLayout.EAST);
         Container cp = getContentPane();
         cp.setLayout(new BoxLayout(cp, BoxLayout.Y_AXIS));
         cp.add(controlPanel = new ControlPanel());
         cp.add(mainPanel);
-        setMaximumSize(jsp.getMaximumSize());
+        setMaximumSize(scrollPane.getMaximumSize());
         pack();
         setLocationRelativeTo(null); // centre on screen
     }
@@ -61,12 +70,18 @@ public class MainWindow extends JFrame {
         return sampleChooser;
     }
     
+    public void updateSampleDataPanel() {
+        splitPane.setDividerSize(sampleDataPanel.isVisible() ? 
+                splitPaneDividerWidth : 0);
+        splitPane.resetToPreferredSizes();
+    }
+    
     public void suitesChanged() {
         sampleChooser.updateSuite();
         controlPanel.updateSuites();
         int numSuites = PuffinApp.getInstance().getSuites().size();
         welcomeMessage.setVisible(numSuites == 0);
-        getGraphDisplay().setVisible(numSuites > 0);
+        splitPane.setVisible(numSuites > 0);
         repaint();
     }
 

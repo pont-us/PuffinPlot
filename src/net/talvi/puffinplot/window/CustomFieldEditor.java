@@ -23,7 +23,7 @@ public class CustomFieldEditor extends JFrame {
     private JPanel contentPane;
     private JList list;
     private DefaultListModel listModel;
-    private static final String addString = "Add...";
+    private static final String addString = "Add…";
     private static final String removeString = "Remove";
     private JButton removeButton;
     private JButton addButton;
@@ -51,7 +51,7 @@ public class CustomFieldEditor extends JFrame {
         addButton.addActionListener(addListener);
         removeButton = new JButton(removeString);
         removeButton.addActionListener(new RemoveFieldListener());
-        renameButton = new JButton("Rename...");
+        renameButton = new JButton("Rename…");
         renameButton.addActionListener(new RenameListener());
         upButton = new JButton("Move up");
         upButton.addActionListener(new MoveUpListener());
@@ -134,6 +134,7 @@ public class CustomFieldEditor extends JFrame {
                 list.ensureIndexIsVisible(index);
             }
             PuffinApp.getInstance().updateDisplay();
+            PuffinApp.getInstance().getMainWindow().updateSampleDataPanel();
         }
     }
 
@@ -159,6 +160,7 @@ public class CustomFieldEditor extends JFrame {
             list.setSelectedIndex(newIndex);
             list.ensureIndexIsVisible(newIndex);
             PuffinApp.getInstance().updateDisplay();
+            PuffinApp.getInstance().getMainWindow().updateSampleDataPanel();
         }
     }
 
@@ -182,6 +184,5 @@ public class CustomFieldEditor extends JFrame {
             listModel.set(index, newName);
             PuffinApp.getInstance().updateDisplay();
         }
-
     }
 }
