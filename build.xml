@@ -32,7 +32,7 @@
         </exec>
     </target>
     
-    <target name="upload" depends="macbundle">
+    <target name="upload">
         <exec executable="scp" resultproperty="scp.result">
             <arg file="store/${ant.project.name}.jar"/>
             <arg file="${ant.project.name}.zip"/>

@@ -28,6 +28,9 @@ public class RecentFileList {
     }
 
     public void save(Preferences prefs) {
+        for (int i = 0; i < MAX_LENGTH; i++) {
+            prefs.remove("recentFile" + i);
+        }
         for (int i = 0; i < fileSets.size(); i++) {
             prefs.put("recentFile" + i, fileSets.get(i).toString());
         }
@@ -166,6 +169,7 @@ public class RecentFileList {
             if (s==null) return null;
             Scanner scanner = new Scanner(s);
             final int numPaths = scanner.nextInt();
+            if (numPaths<2) return null;
             List<Integer> lengths = new ArrayList<Integer>(numPaths);
             List<String> compressed = new ArrayList<String>(numPaths);
             for (int i=0; i<numPaths; i++) lengths.add(scanner.nextInt());
@@ -181,7 +185,11 @@ public class RecentFileList {
             for (String filename: decompressed) {
                 files.add(new File(filename));
             }
-            return new FileSet(files);
+            FileSet fileSet = null;
+            if (files != null && files.size()>0) {
+                fileSet = new FileSet(files);
+            }
+            return fileSet;
         }
 
         public String getName() {

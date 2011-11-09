@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1">
+        <file>
+            <url>src/net/talvi/puffinplot/window/MainWindow.java</url>
+            <line>50</line>
+        </file>
+    </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
         <file>file:/home/pont/files/phd/puffinplot/PuffinPlot/src/net/talvi/puffinplot/data/file/TwoGeeLoader.java</file>
     </open-files>
