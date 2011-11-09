@@ -264,7 +264,10 @@ class PlotAxis {
                 putText(g, mark,
                         xOrig + x * ap.markedPosition * scale,
                         yOrig + y * ap.markedPosition * scale,
-                        ap.direction.labelPos(ap.farSide), 0, 5);
+                        ap.direction.labelPos(!ap.farSide), 0, 5);
+                double pos = ap.markedPosition * scale;
+                g.draw(new Line2D.Double(xOrig+x*pos+y*t, yOrig+y*pos+x*t,
+                    xOrig+x*pos-y*t, yOrig+y*pos-x*t));
             }
         }
         if (ap.label != null) {

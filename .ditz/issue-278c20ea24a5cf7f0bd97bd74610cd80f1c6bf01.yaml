@@ -1,0 +1,21 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Make user annotation sidebar resizeable
+desc: |-
+  Add a tab or similar between the user annotation sidebar and the 
+  main part of the window, to let the user drag it out to a preferred
+  size.
+type: :feature
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2011-11-08 06:00:46.987077 Z
+references: []
+
+id: 278c20ea24a5cf7f0bd97bd74610cd80f1c6bf01
+log_events: 
+- - 2011-11-08 06:00:47.299072 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

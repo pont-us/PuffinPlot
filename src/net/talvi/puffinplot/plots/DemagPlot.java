@@ -81,8 +81,8 @@ public class DemagPlot extends Plot {
                 withLabel(xAxisLabel).withNumberEachTick();
 
         final MDF midpoint = sample.getMDF();
-        if (midpoint != null) {
-            hAxisParams.markedPosition = midpoint.getDemagLevel();
+        if (midpoint != null && midpoint.isHalfIntReached()) {
+            hAxisParams.markedPosition = midpoint.getDemagLevel() * demagRescale;
         }
         final PlotAxis hAxis = new PlotAxis(hAxisParams, this);
         final String vAxisLabel = prefs.get("plots."+getName()+".vAxisLabel",
@@ -111,12 +111,12 @@ public class DemagPlot extends Plot {
             i++;
         }
 
-        if (midpoint != null && midpoint.isHalfIntReached()) {
-            final double xPos = dim.getMinX() + midpoint.getDemagLevel() * hScale;
+        if (hAxisParams.markedPosition != null) {
+            final double xPos = dim.getMinX() + hScale * hAxisParams.markedPosition;
             final double yPos = dim.getMaxY() - midpoint.getIntensity() * vScale;
             g.draw(new Line2D.Double(dim.getMinX(), yPos,
                     xPos, yPos));
-            g.draw(new Line2D.Double(xPos, dim.getMaxY(),
+            g.draw(new Line2D.Double(xPos, dim.getMaxY()-getFontSize()*1.5,
                     xPos, yPos));
         }
 
