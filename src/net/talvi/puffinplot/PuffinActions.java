@@ -35,7 +35,6 @@ public class PuffinActions {
 
     private static final Logger logger = Logger.getLogger(PuffinActions.class.getName());
     private final PuffinApp app;
-    private static final boolean useSwingChooserForOpen = true;
     private static final boolean useSwingChooserForSave = !PuffinApp.MAC_OS_X;
     // control or apple key as appropriate
     private static final int modifierKey =
@@ -80,35 +79,13 @@ public class PuffinActions {
             app.getAboutBox().setVisible(true);
         }
     };
-    
-    private List<File> openFileDialog(String title) {
-        List<File> files = Collections.emptyList();
-        if (useSwingChooserForOpen) {
-            JFileChooser chooser = new JFileChooser();
-            chooser.setMultiSelectionEnabled(true);
-            chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-            int choice = chooser.showOpenDialog(app.getMainWindow());
-            if (choice == JFileChooser.APPROVE_OPTION)
-                files = Arrays.asList(chooser.getSelectedFiles());
-        } else {
-            FileDialog fd = new FileDialog(app.getMainWindow(), title,
-                    FileDialog.LOAD);
-            fd.setVisible(true);
-            String filename = fd.getFile();
-            if (filename != null) {
-                File file = new File(fd.getDirectory(), fd.getFile());
-                files = Collections.singletonList(file);
-            }
-        }
-        return files;
-    }
-    
+
     public final Action open = new PuffinAction("Open…",
             "Open a 2G, PPL, or ZPlot data file.", 'O', false,
             KeyEvent.VK_O) {
 
         public void actionPerformed(ActionEvent e) {
-            List<File> files = openFileDialog("Open file(s)");
+            List<File> files = app.openFileDialog("Open file(s)");
             if (files != null) app.openFiles(files);
         }
     };
@@ -524,7 +501,7 @@ public class PuffinActions {
             KeyEvent.VK_L) {
         public void actionPerformed(ActionEvent e) {
             try {
-                List<File> files = openFileDialog("Select AMS files");
+                List<File> files = app.openFileDialog("Select AMS files");
                 //app.getSuite().importAms(files, true);
                 app.getSuite().importAmsFromAsc(files, false);
                 app.updateDisplay();
@@ -666,7 +643,7 @@ public class PuffinActions {
 
     public final Action importPrefs = new AbstractAction("Import preferences…") {
         public void actionPerformed(ActionEvent arg0) {
-            List<File> files = openFileDialog("Import preferences file");
+            List<File> files = app.openFileDialog("Import preferences file");
             if (files != null && files.size() > 0) {
                 app.getPrefs().importFromFile(files.get(0));
                 app.getMainWindow().getGraphDisplay().recreatePlots();

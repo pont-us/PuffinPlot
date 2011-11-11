@@ -1,0 +1,21 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Refactor great-circle fits
+desc: |-
+  It looks as though great circles are actually calculated and stored
+  twice -- once in the sample and once in the site. Work out whether
+  this makes any sense. If so, document; if not, fix.
+type: :task
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2011-11-11 08:14:40.087004 Z
+references: []
+
+id: 4f6055563621e1ae4beca1a86e95f99ca150b31c
+log_events: 
+- - 2011-11-11 08:14:40.366923 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

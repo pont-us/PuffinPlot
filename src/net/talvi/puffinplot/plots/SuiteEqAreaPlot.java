@@ -1,10 +1,7 @@
 package net.talvi.puffinplot.plots;
 
-import java.awt.geom.Point2D;
-import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
 import java.util.List;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.data.FisherValues;
@@ -13,7 +10,6 @@ import net.talvi.puffinplot.data.Site;
 import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
-import static java.lang.Math.min;
 
 /**
  * Displays directions for great-circle fits for whole suite.
@@ -33,11 +29,10 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
     
     @Override
     public String getNiceName() {
-        return "Formation mean";
+        return "Suite directions";
     }
 
-    private void drawFisher(FisherValues fv,
-                Graphics2D g, int xo, int yo, int radius) {
+    private void drawFisher(FisherValues fv) {
         final Vec3 mean = fv.getMeanDirection();
         drawLineSegments(mean.makeSmallCircle(fv.getA95()));
         PlotPoint meanPoint = 
@@ -49,14 +44,14 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
 
     @Override
     public void draw(Graphics2D g) {
-        List<Site> sites = params.getSample().getSuite().getSites();
-        if (sites == null || sites.isEmpty()) {
-            writeString(g, "No sites defined.", 100, 100);
-            return;
-        }
         updatePlotDimensions(g);
         clearPoints();
         drawAxes();
+        List<Site> sites = params.getSample().getSuite().getSites();
+        if (sites == null || sites.isEmpty()) {
+            writeString(g, "No sites defined.", xo-40, yo-20);
+            return;
+        }
         List<Vec3> vs_n = new ArrayList<Vec3>();
         List<Vec3> vs_r = new ArrayList<Vec3>();
         for (Site site: sites) {
@@ -73,9 +68,9 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
             (siteMean.z>0 ? vs_r : vs_n).add(siteMean);
         }
         if (vs_n.size()>1)
-            drawFisher(FisherValues.calculate(vs_n), g, xo, yo, radius);
+            drawFisher(FisherValues.calculate(vs_n));
         if (vs_r.size()>1)
-            drawFisher(FisherValues.calculate(vs_r), g, xo, yo, radius);
+            drawFisher(FisherValues.calculate(vs_r));
         //System.out.println(fv.toString());
         drawPoints(g);
     }

@@ -1,5 +1,6 @@
 package net.talvi.puffinplot;
 
+import java.awt.FileDialog;
 import net.talvi.puffinplot.window.CorrectionWindow;
 import net.talvi.puffinplot.window.TableWindow;
 import net.talvi.puffinplot.window.FisherWindow;
@@ -32,6 +33,11 @@ import java.util.logging.StreamHandler;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import static java.lang.Thread.UncaughtExceptionHandler;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.JFileChooser;
 import javax.swing.UIManager;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Sample;
@@ -69,6 +75,9 @@ public final class PuffinApp {
     private Correction correction;
     private final GreatCircleWindow greatCircleWindow;
     private final PrefsWindow prefsWindow;
+    private final Map<String,File> lastUsedFileOpenDirs =
+            new HashMap<String,File>();
+    private static final boolean useSwingChooserForOpen = true;
 
     static {
         final Handler logStringHandler =
@@ -338,10 +347,10 @@ public final class PuffinApp {
     @SuppressWarnings("unchecked")
     private void createAppleEventListener() {
         try {
-            Class appleListener = ClassLoader.getSystemClassLoader()
-            .loadClass("net.talvi.puffinplot.AppleListener");
+            final Class appleListener = ClassLoader.getSystemClassLoader()
+                    .loadClass("net.talvi.puffinplot.AppleListener");
             appleListener.getDeclaredMethod("initialize", PuffinApp.class)
-            .invoke(appleListener, this);
+                    .invoke(appleListener, this);
         } catch (NoClassDefFoundError e) {
             // We couldn't find the ApplicationAdapter class.
             errorDialog("EAWT error", "Apple EAWT not supported: Application" +
@@ -483,5 +492,34 @@ public final class PuffinApp {
                     "occurred:\n" + iae.getLocalizedMessage());
         }
         app.updateDisplay();
+    }
+        
+    List<File> openFileDialog(String title) {
+        if (!lastUsedFileOpenDirs.containsKey(title)) {
+            lastUsedFileOpenDirs.put(title, null);
+        }
+        final File startingDir = lastUsedFileOpenDirs.get(title);
+        List<File> files = Collections.emptyList();
+        if (useSwingChooserForOpen) {
+            final JFileChooser chooser = new JFileChooser(startingDir);
+            chooser.setMultiSelectionEnabled(true);
+            chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+            int choice = chooser.showOpenDialog(app.getMainWindow());
+            if (choice == JFileChooser.APPROVE_OPTION) {
+                files = Arrays.asList(chooser.getSelectedFiles());
+                lastUsedFileOpenDirs.put(title, chooser.getCurrentDirectory());
+            }
+        } else {
+            final FileDialog fd = new FileDialog(app.getMainWindow(), title,
+                    FileDialog.LOAD);
+            fd.setVisible(true);
+            String filename = fd.getFile();
+            if (filename != null) {
+                final File file = new File(fd.getDirectory(), fd.getFile());
+                files = Collections.singletonList(file);
+                lastUsedFileOpenDirs.put(title, new File(fd.getDirectory()));
+            }
+        }
+        return files;
     }
 }

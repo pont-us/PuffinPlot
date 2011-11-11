@@ -38,7 +38,7 @@ public class SiteEqAreaPlot extends EqAreaPlot {
     
     @Override
     public String getNiceName() {
-        return "Great circles";
+        return "Site directions";
     }
 
     private void drawGreatCircles(Site site) {
@@ -98,16 +98,16 @@ public class SiteEqAreaPlot extends EqAreaPlot {
 
     @Override
     public void draw(Graphics2D g) {
+        updatePlotDimensions(g);
+        drawAxes();
+        clearPoints();
         final Sample sample = params.getSample();
         if (sample==null) return;
         final Site site = sample.getSite();
         if (site == null) {
-            writeString(g, "No sites defined.", 100, 100);
+            writeString(g, "No sites defined.", xo-40, yo-20);
             return;
         }
-        updatePlotDimensions(g);
-        drawAxes();
-        clearPoints();
         GreatCircles circles = site.getGreatCircles();
         if (circles != null) {
             drawGreatCircles(site);
