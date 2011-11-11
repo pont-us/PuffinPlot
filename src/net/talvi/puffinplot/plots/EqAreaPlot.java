@@ -23,7 +23,6 @@ public abstract class EqAreaPlot extends Plot {
     private static final int decTickStep = 10;
     private static final int incTickNum = 9;
     private boolean taperingEnabled;
-    private final static boolean TAPERED_LINES = true;
     
     protected EqAreaPlot(GraphDisplay parent, PlotParams params, Preferences prefs,
             boolean taperingEnabled) {
@@ -36,6 +35,7 @@ public abstract class EqAreaPlot extends Plot {
     }
     
     protected void drawAxes(Graphics2D g, int xo, int yo, int radius) {
+        g.setStroke(getStroke());
         g.setColor(Color.WHITE);
         g.fillArc(xo - radius, yo - radius, radius * 2, radius * 2, 0, 360);
         g.setColor(Color.BLACK);
@@ -146,7 +146,8 @@ public abstract class EqAreaPlot extends Plot {
         drawLineSegments(g, xo, yo, radius, vs);
         if (drawPole) {
             final PlotPoint polePoint =
-                    new TrianglePoint(this, null, project(pole, xo, yo, radius));
+                    NewPlotPoint.build(this, project(pole, xo, yo, radius)).
+                    triangle().build();
             polePoint.draw(g);
         }
    }

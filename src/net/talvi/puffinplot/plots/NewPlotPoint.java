@@ -81,8 +81,23 @@ public class NewPlotPoint implements PlotPoint {
             return this;
         }
         
+        public Builder scale(double scale) {
+            this.size = this.size * scale;
+            return this;
+        }
+        
         public Builder pointShape(PointShape pointShape) {
             this.pointShape = pointShape;
+            return this;
+        }
+        
+        public Builder circle() {
+            this.pointShape = PointShape.CIRCLE;
+            return this;
+        }
+        
+        public Builder triangle() {
+            this.pointShape = PointShape.TRIANGLE;
             return this;
         }
         
