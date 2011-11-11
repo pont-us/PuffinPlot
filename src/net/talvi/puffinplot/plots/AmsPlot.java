@@ -64,9 +64,9 @@ public class AmsPlot extends EqAreaPlot {
 
     private PlotPoint getPointForAxis(Point2D pos, double size, int axis) {
         assert(axis>=0 && axis < 3);
-        return axis==0 ? new SquarePoint(this, null, pos, true, false, false, size)
-                : axis==1 ? new TrianglePoint(this, null, pos, size)
-                : new CirclePoint(this, null, pos, size);
+        return new NewPlotPoint.Builder(this, pos).size(size).filled(true).
+                pointShape(NewPlotPoint.PointShape.fromAmsAxis(axis)).
+                build();
     }
 
     protected void drawLhLineSegments(Graphics2D g,

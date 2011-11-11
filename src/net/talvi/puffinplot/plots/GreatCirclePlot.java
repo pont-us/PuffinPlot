@@ -81,7 +81,12 @@ public class GreatCirclePlot extends EqAreaPlot {
         }
         // addPoint(null, project(circles.getDirection(), xo, yo, radius), true, true, false);
         Point2D meanPos = project(circles.getDirection(), xo, yo, radius);
-        PlotPoint meanPoint = new CirclePoint(this, null, meanPos, PLOT_POINT_SIZE*1.5);
+        // PlotPoint meanPoint = new CirclePoint(this, null, meanPos, PLOT_POINT_SIZE*1.5);
+        //PlotPoint meanPoint =
+        //        NewPlotPoint.build(this, meanPos).size(PLOT_POINT_SIZE*1.5).build();
+        PlotPoint meanPoint =
+                NewPlotPoint.build(this, project(circles.getDirection(), xo, yo, radius)).
+                pointShape(NewPlotPoint.PointShape.CIRCLE).filled(circles.getDirection().z>0).build();
         meanPoint.draw(g);
         //g.setColor(Color.GREEN);
         drawLineSegments(g, xo, yo, radius,
@@ -118,9 +123,12 @@ public class GreatCirclePlot extends EqAreaPlot {
         drawLineSegments(g, xo, yo, radius,
                 fisherMean.getMeanDirection().makeSmallCircle(fisherMean.getA95()));
         final Vec3 meanDir = fisherMean.getMeanDirection();
+        //PlotPoint meanPoint =
+        //        new CirclePoint(this, null, project(meanDir, xo, yo, radius),
+        //        PLOT_POINT_SIZE, meanDir.z>0);
         PlotPoint meanPoint =
-                new CirclePoint(this, null, project(meanDir, xo, yo, radius),
-                PLOT_POINT_SIZE, meanDir.z>0);
+                NewPlotPoint.build(this, project(meanDir, xo, yo, radius)).
+                pointShape(NewPlotPoint.PointShape.CIRCLE).filled(meanDir.z>0).build();
         meanPoint.draw(g);
         drawPoints(g);
     }

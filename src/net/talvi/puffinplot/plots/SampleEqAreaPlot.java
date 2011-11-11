@@ -50,7 +50,7 @@ public class SampleEqAreaPlot extends EqAreaPlot {
             first = false;
         }
         if (sample.greatCircle != null) {
-            drawGreatCircle(g, xo, yo, radius, sample.greatCircle);
+            drawGreatCircle(g, xo, yo, radius, sample.greatCircle, true);
         }
 
         /* Some code to show where North gets projected to.

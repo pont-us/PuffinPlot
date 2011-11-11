@@ -1,0 +1,24 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Display and export great-circle poles
+desc: |-
+  Claudio requests that poles to great circles be shown on the 
+  equal-area plots and exported with the sample data.
+type: :feature
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :in_progress
+disposition: 
+creation_time: 2011-11-11 02:11:58.407005 Z
+references: []
+
+id: c957088dc4df9515183e153c0f073479c2c81dac
+log_events: 
+- - 2011-11-11 02:11:58.670928 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
+- - 2011-11-11 02:12:08.147043 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""

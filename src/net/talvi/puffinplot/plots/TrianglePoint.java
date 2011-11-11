@@ -33,6 +33,7 @@ public class TrianglePoint implements PlotPoint {
 
     public void draw(Graphics2D g) {
         g.setColor(Color.BLACK);
+        //g.setStroke(plot.getStroke());
         g.draw(shape);
         // g.setColor(Color.DARK_GRAY);
         g.fill(shape);

@@ -1,0 +1,22 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Produce stand-alone manual
+desc: |-
+  I have now written the PuffinPlot manual, but it is currently
+  inconveniently incarnated as an appendix in my thesis. I need to
+  get the content into a stand-alone form, preferably one that can
+  be processed to both PDF and HTML.
+type: :task
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2011-11-10 04:53:59.255059 Z
+references: []
+
+id: f29c24323f844c59d9a252d00fa61d0fc2301ce2
+log_events: 
+- - 2011-11-10 04:53:59.782938 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

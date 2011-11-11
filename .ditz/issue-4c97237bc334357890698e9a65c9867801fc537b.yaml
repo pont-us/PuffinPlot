@@ -1,0 +1,20 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Remember directory for file open dialog
+desc: "Beth writes: \xE2\x80\x98I think it would be useful if when you asked Puffin\n\
+  to open a file, the dialogue box opened in the last location you opened\n\
+  a file from, not the home directory.\xE2\x80\x99 Fair enough."
+type: :feature
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2011-11-09 22:25:20.743025 Z
+references: []
+
+id: 4c97237bc334357890698e9a65c9867801fc537b
+log_events: 
+- - 2011-11-09 22:25:21.382916 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

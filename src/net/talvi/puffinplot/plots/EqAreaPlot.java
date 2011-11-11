@@ -140,10 +140,15 @@ public abstract class EqAreaPlot extends Plot {
     }
 
     protected void drawGreatCircle(Graphics2D g, int xo, int yo, int radius,
-            Vec3 pole) {
+            Vec3 pole, boolean drawPole) {
         int n = 64;
         List<Vec3> vs = pole.greatCirclePoints(n, true);
         drawLineSegments(g, xo, yo, radius, vs);
+        if (drawPole) {
+            final PlotPoint polePoint =
+                    new TrianglePoint(this, null, project(pole, xo, yo, radius));
+            polePoint.draw(g);
+        }
    }
 
     protected static Point2D.Double project(Vec3 p, int xo, int yo, int radius) {

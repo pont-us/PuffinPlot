@@ -40,7 +40,9 @@ public class FormationMeanPlot extends EqAreaPlot {
                 Graphics2D g, int xo, int yo, int radius) {
         final Vec3 mean = fv.getMeanDirection();
         drawLineSegments(g, xo, yo, radius, mean.makeSmallCircle(fv.getA95()));
-        PlotPoint meanPoint = new CirclePoint(this, null, project(mean, xo, yo, radius));
+        PlotPoint meanPoint = 
+                //new CirclePoint(this, null, project(mean, xo, yo, radius));
+                new NewPlotPoint.Builder(this, project(mean, xo, yo, radius)).build();
         meanPoint.draw(g);
         System.out.println(fv.toString());
     }
