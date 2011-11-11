@@ -4,7 +4,7 @@ import java.awt.Dimension;
 import javax.swing.JFrame;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.GreatCircles;
-import net.talvi.puffinplot.plots.GreatCirclePlot;
+import net.talvi.puffinplot.plots.SiteEqAreaPlot;
 
 public class GreatCircleWindow extends JFrame {
     private GreatCircleDisplay graphDisplay;
@@ -19,7 +19,7 @@ public class GreatCircleWindow extends JFrame {
         setLocationRelativeTo(PuffinApp.getInstance().getMainWindow());
     }
 
-    public GreatCirclePlot getPlot() {
-        return (GreatCirclePlot) graphDisplay.plots.get("greatcircles");
+    public SiteEqAreaPlot getPlot() {
+        return (SiteEqAreaPlot) graphDisplay.plots.get("greatcircles");
     }
 }

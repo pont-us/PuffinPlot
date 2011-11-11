@@ -10,7 +10,7 @@ import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;
-import net.talvi.puffinplot.plots.GreatCirclePlot;
+import net.talvi.puffinplot.plots.SiteEqAreaPlot;
 import net.talvi.puffinplot.plots.Plot;
 
 public class GreatCircleDisplay extends GraphDisplay implements Printable {
@@ -28,7 +28,7 @@ public class GreatCircleDisplay extends GraphDisplay implements Printable {
                 throw new UnsupportedOperationException(); }
         };
 
-        Plot plot = new GreatCirclePlot(this, params,
+        Plot plot = new SiteEqAreaPlot(this, params,
                 new Rectangle2D.Double(50, 50, 450, 450),
                 PuffinApp.getInstance().getPrefs().getPrefs());
         plot.setVisible(true);

@@ -25,8 +25,7 @@ public class GreatCircles {
     private static final List<String> HEADERS =
         Arrays.asList("GC valid","GC inc.", "GC dec.", "GC a95", "GC k", "GC N", "GC M");
 
-    public GreatCircles(List<Vec3> endpoints,
-            List<List<Vec3>> circlePoints) {
+    public GreatCircles(List<Vec3> endpoints, List<List<Vec3>> circlePoints) {
         if (endpoints == null) this.endpoints = Collections.emptyList();
         else this.endpoints = endpoints;
         circles = new ArrayList<GreatCircle>(circlePoints.size());

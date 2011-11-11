@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.talvi.puffinplot.PuffinApp;
-import net.talvi.puffinplot.PuffinPrefs;
 import net.talvi.puffinplot.PuffinUserException;
 import net.talvi.puffinplot.data.file.AmsLoader;
 import net.talvi.puffinplot.data.file.FileLoader;
@@ -318,11 +317,7 @@ public class Suite {
         }
     }
     
-//    public void saveCalcsSample(File file) throws PuffinUserException {
-//        saveCalcsSample(file, Correction.NONE);
-//    }
-    
-    /*
+    /**
      * Save calculations per-sample.
      */
     public void saveCalcsSample(File file, Correction correction) 

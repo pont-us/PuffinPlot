@@ -18,15 +18,15 @@ import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 import static java.lang.Math.min;
 
-public class GreatCirclePlot extends EqAreaPlot {
+public class SiteEqAreaPlot extends EqAreaPlot {
 
-    public GreatCirclePlot(GraphDisplay parent, PlotParams params,
+    public SiteEqAreaPlot(GraphDisplay parent, PlotParams params,
             Rectangle2D dimensions, Preferences prefs) {
         super(parent, params, prefs, true);
         this.dimensions = dimensions;
     }
 
-    public GreatCirclePlot(GraphDisplay parent, PlotParams params,
+    public SiteEqAreaPlot(GraphDisplay parent, PlotParams params,
             Preferences prefs) {
         super(parent, params, prefs);
     }
@@ -41,57 +41,55 @@ public class GreatCirclePlot extends EqAreaPlot {
         return "Great circles";
     }
 
-    private void drawGreatCircles(final Graphics2D g, final Site site,
-            int xo, int yo, int radius) {
-        GreatCircles circles = site.getGreatCircles();
+    private void drawGreatCircles(Site site) {
+        final GreatCircles circles = site.getGreatCircles();
         if (circles == null) return;
-        final Vec3 endpoint = circles.getDirection();
+        final Vec3 meanDir = circles.getDirection();
         double maxRadius = 0;
         for (GreatCircle circle: circles.getCircles()) {
             final Vec3 pole = circle.getPole();
             g.setColor(Color.BLACK);
             final Vec3 segmentStart = pole.nearestOnCircle(circle.getPoints().get(0));
-            final Vec3 segmentEnd = pole.nearestOnCircle(endpoint);
+            final Vec3 segmentEnd = pole.nearestOnCircle(meanDir);
             drawGreatCircleSegment(segmentStart,
                     segmentEnd,circle.lastPoint());
             for (Vec3 p: circle.getPoints()) {
                 addPoint(null, project(p), p.z>=0, false, false);
                 drawGreatCircleSegment(p, pole.nearestOnCircle(p));
             }
-            final Vec3 nearestPoint = pole.nearestOnCircle(endpoint);
-            final double thisRadius = Math.abs(endpoint.angleTo(nearestPoint));
+            final Vec3 nearestPoint = pole.nearestOnCircle(meanDir);
+            final double thisRadius = Math.abs(meanDir.angleTo(nearestPoint));
             if (thisRadius > maxRadius) maxRadius = thisRadius;
-            drawGreatCircleSegment(endpoint, nearestPoint);
+            drawGreatCircleSegment(meanDir, nearestPoint);
+            ShapePoint.build(this, project(pole)).filled(pole.z>0).
+                    triangle().build().draw(g);
         }
-        final Vec3 meanDir = circles.getDirection();
-        PlotPoint meanPoint =
-                ShapePoint.build(this, project(meanDir)).
+        final PlotPoint meanPoint = ShapePoint.build(this, project(meanDir)).
                 circle().scale(1.5).filled(meanDir.z>0).build();
         meanPoint.draw(g);
-        drawLineSegments(circles.getDirection().makeSmallCircle(Math.toDegrees(maxRadius)));
-        drawLineSegments(circles.getDirection().makeSmallCircle(circles.getA95()));
+        drawLineSegments(meanDir.makeSmallCircle(Math.toDegrees(maxRadius)));
+        drawLineSegments(meanDir.makeSmallCircle(circles.getA95()));
         List<String> ss = circles.toStrings();
         writeString(g, ss.get(3)+"/"+ss.get(4), xo-radius, yo-radius);
     }
 
-    private void drawPcas(final Graphics2D g, final Site site,
-            int xo, int yo, int radius) {
-        List<Sample> samples = site.getSamples();
+    private void drawPcas(Site site) {
+        final List<Sample> samples = site.getSamples();
         if (samples==null || samples.isEmpty()) {
             return;
         }
         List<Vec3> pcaDirs = new ArrayList<Vec3>(samples.size());
         for (Sample s: samples) {
-            PcaValues pcaValues = s.getPcaValues();
+            final PcaValues pcaValues = s.getPcaValues();
             if (pcaValues != null) {
                 Vec3 v = pcaValues.getDirection();
                 pcaDirs.add(s.getPcaValues().getDirection());
                 addPoint(null, project(v), v.z>0, false, false);
             }
         }
-        FisherValues fisherMean = FisherValues.calculate(pcaDirs);
-        drawLineSegments(fisherMean.getMeanDirection().makeSmallCircle(fisherMean.getA95()));
+        final FisherValues fisherMean = FisherValues.calculate(pcaDirs);
         final Vec3 meanDir = fisherMean.getMeanDirection();
+        drawLineSegments(meanDir.makeSmallCircle(fisherMean.getA95()));
         PlotPoint meanPoint =
                 ShapePoint.build(this, project(meanDir)).
                 circle().scale(1.5).filled(meanDir.z>0).build();
@@ -112,9 +110,9 @@ public class GreatCirclePlot extends EqAreaPlot {
         clearPoints();
         GreatCircles circles = site.getGreatCircles();
         if (circles != null) {
-            drawGreatCircles(g, site, xo, yo, radius);
+            drawGreatCircles(site);
         } else {
-            drawPcas(g, site, xo, yo, radius);
+            drawPcas(site);
         }
         drawPoints(g);
     }

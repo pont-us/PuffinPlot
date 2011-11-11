@@ -48,7 +48,7 @@ public class Site {
         for (Sample sample: getSamples()) {
             if (sample.getPca() != null) {
                 endpoints.add(sample.getPcaValues().getDirection());
-            } else if (sample.greatCircle != null) {
+            } else if (sample.getGreatCircle() != null) {
                 circles.add(sample.getCirclePoints(correction));
             }
         }

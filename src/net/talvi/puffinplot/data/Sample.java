@@ -15,7 +15,7 @@ public class Sample {
     private final String nameOrDepth;
     private FisherValues fisher = null;
     private boolean isEmptySlot = false;
-    public Vec3 greatCircle;
+    private Vec3 greatCircle;
     private PcaAnnotated pca;
     private MDF mdf;
     private boolean hasMsData = false;
@@ -509,5 +509,9 @@ public class Sample {
         for (Datum d: getData()) {
             d.setValue(field, value);
         }
+    }
+
+    public Vec3 getGreatCircle() {
+        return greatCircle;
     }
 }

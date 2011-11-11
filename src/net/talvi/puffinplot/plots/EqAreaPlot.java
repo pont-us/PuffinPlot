@@ -141,7 +141,7 @@ public abstract class EqAreaPlot extends Plot {
             }
         }
     }
-
+    
     protected void drawGreatCircleSegment(Vec3 p1, Vec3 p2) {
         drawLineSegments(Vec3.spherInterpolate(p1, p2, 0.05));
     }
@@ -150,17 +150,10 @@ public abstract class EqAreaPlot extends Plot {
         drawLineSegments(Vec3.spherInterpDir(p1, p2, dir, 0.05));
     }
 
-    protected void drawGreatCircle(Graphics2D g, int xo, int yo, int radius,
-            Vec3 pole, boolean drawPole) {
+    protected void drawGreatCircle(Vec3 pole, boolean drawPole) {
         int n = 64;
         List<Vec3> vs = pole.greatCirclePoints(n, true);
         drawLineSegments(vs);
-        if (drawPole) {
-            final PlotPoint polePoint =
-                    ShapePoint.build(this, project(pole)).
-                    triangle().build();
-            polePoint.draw(g);
-        }
    }
 
     protected Point2D.Double project(Vec3 p) {

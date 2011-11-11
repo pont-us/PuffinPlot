@@ -1,0 +1,20 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Fix great-circle validity check
+desc: |-
+  GreatCircles.isValid is currently hard-coded to some fairly
+  arbitrary criteria -- make configurable or remove.
+type: :task
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2011-11-11 05:53:54.543084 Z
+references: []
+
+id: 34f9c28b9097fc07e4138b3d83e75b7f25495522
+log_events: 
+- - 2011-11-11 05:53:54.814966 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

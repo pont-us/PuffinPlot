@@ -28,11 +28,6 @@ public class SampleEqAreaPlot extends EqAreaPlot {
     }
 
     public void draw(Graphics2D g) {
-        final Rectangle2D dims = getDimensions();
-        final int radius = (int) (min(dims.getWidth(), dims.getHeight()) / 2);
-        final int xo = (int) dims.getCenterX();
-        final int yo = (int) dims.getCenterY();
-        
         updatePlotDimensions(g);
         clearPoints();
         final Sample sample = params.getSample();
@@ -50,8 +45,11 @@ public class SampleEqAreaPlot extends EqAreaPlot {
             prev = p;
             first = false;
         }
-        if (sample.greatCircle != null) {
-            drawGreatCircle(g, xo, yo, radius, sample.greatCircle, true);
+        final Vec3 gc = sample.getGreatCircle();
+        if (gc != null) {
+            drawGreatCircle(gc, true);
+            ShapePoint.build(this, project(gc)).filled(gc.z>0).
+                    triangle().build().draw(g);
         }
 
         /* Some code to show where North gets projected to.

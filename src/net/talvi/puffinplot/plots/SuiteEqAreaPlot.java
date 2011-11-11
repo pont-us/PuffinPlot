@@ -19,9 +19,9 @@ import static java.lang.Math.min;
  * Displays directions for great-circle fits for whole suite.
  * 
  */
-public class FormationMeanPlot extends EqAreaPlot {
+public class SuiteEqAreaPlot extends EqAreaPlot {
 
-    public FormationMeanPlot(GraphDisplay parent, PlotParams params,
+    public SuiteEqAreaPlot(GraphDisplay parent, PlotParams params,
             Preferences prefs) {
         super(parent, params, prefs);
     }
