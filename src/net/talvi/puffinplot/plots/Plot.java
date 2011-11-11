@@ -238,7 +238,7 @@ public abstract class Plot
         
     protected void addPoint(Datum d, Point2D p, boolean filled,
             boolean special, boolean line) {
-        points.add(NewPlotPoint.build(this, p).
+        points.add(ShapePoint.build(this, p).
                 filled(filled).lineToHere(line).special(special).
                 build());
     }

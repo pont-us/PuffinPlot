@@ -46,13 +46,9 @@ public class FisherPlot extends EqAreaPlot {
 
     @Override
     public void draw(Graphics2D g) {
-        final Rectangle2D dims = getDimensions();
-        final int radius = (int) (min(dims.getWidth(), dims.getHeight()) / 2);
-        final int xo = (int) dims.getCenterX();
-        final int yo = (int) dims.getCenterY();
-        
+        updatePlotDimensions(g);
         clearPoints();
-        drawAxes(g, xo, yo, radius);
+        drawAxes();
         Suite suite = PuffinApp.getInstance().getSuite();
         if (suite==null) return;
         List<FisherValues> fishers = groupedBySite 
@@ -68,7 +64,7 @@ public class FisherPlot extends EqAreaPlot {
         boolean firstPoint = true;
         for (FisherValues fisher: fishers) {
             final Vec3 v = fisher.getMeanDirection();
-            Point2D meanPoint = project(v, xo, yo, radius);
+            Point2D meanPoint = project(v);
             addPoint(null, meanPoint, v.z>0, firstPoint, !firstPoint);
 
             GeneralPath ellipse = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 72);
@@ -78,7 +74,7 @@ public class FisherPlot extends EqAreaPlot {
                         (Vec3.fromPolarDegrees(1, 90-fisher.getA95(), dec));
                 Vec3 w = circlePoint.rotY(Math.PI / 2 - v.getIncRad());
                 w = w.rotZ(v.getDecRad());
-                Point2D.Double p = project(w, xo, yo, radius);
+                Point2D.Double p = project(w);
                 if (firstEllipsePoint) ellipse.moveTo((float) p.x, (float) p.y);
                 else ellipse.lineTo((float) p.x, (float) p.y);
                 firstEllipsePoint = false;
@@ -95,7 +91,7 @@ public class FisherPlot extends EqAreaPlot {
             if (groupedBySite) {
                 g.setStroke(dashedStroke);
                 for (Vec3 w : fisher.getDirections()) {
-                    g.draw(new Line2D.Double(meanPoint, project(w, xo, yo, radius)));
+                    g.draw(new Line2D.Double(meanPoint, project(w)));
                 }
                 g.setStroke(oldStroke);
             } else {
@@ -106,15 +102,13 @@ public class FisherPlot extends EqAreaPlot {
                     if (pca == null) continue;
                     final Vec3 direction = pca.getDirection();
                     if (direction == null) continue;
-                    Point2D.Double p = project(direction, xo, yo, radius);
+                    final Point2D.Double p = project(direction);
                     g.draw(new Line2D.Double(p.x - 10, p.y, p.x + 10, p.y));
                     g.draw(new Line2D.Double(p.x, p.y - 10, p.x, p.y + 10));
                 }
             }
-
             firstPoint = false;
         }
-
         drawPoints(g);
     }
 

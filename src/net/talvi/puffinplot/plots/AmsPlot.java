@@ -64,8 +64,8 @@ public class AmsPlot extends EqAreaPlot {
 
     private PlotPoint getPointForAxis(Point2D pos, double size, int axis) {
         assert(axis>=0 && axis < 3);
-        return new NewPlotPoint.Builder(this, pos).size(size).filled(true).
-                pointShape(NewPlotPoint.PointShape.fromAmsAxis(axis)).
+        return new ShapePoint.Builder(this, pos).size(size).filled(true).
+                pointShape(ShapePoint.PointShape.fromAmsAxis(axis)).
                 build();
     }
 
@@ -83,17 +83,13 @@ public class AmsPlot extends EqAreaPlot {
                  vs2.add(v.invert());
              }
          }
-         g.draw(vectorsToPath(vs2, xo, yo, radius));
+         g.draw(vectorsToPath(vs2));
      }
 
     public void draw(Graphics2D g) {
-        final Rectangle2D dims = getDimensions();
-        final int radius = (int) (min(dims.getWidth(), dims.getHeight()) / 2);
-        final int xo = (int) dims.getCenterX();
-        final int yo = (int) dims.getCenterY();
-
+        updatePlotDimensions(g);
         clearPoints();
-        drawAxes(g, xo, yo, radius);
+        drawAxes();
         final Sample sample = params.getSample();
         if (sample == null) return;
 
@@ -104,7 +100,7 @@ public class AmsPlot extends EqAreaPlot {
                 for (int i=0; i<3; i++) {
                     Vec3 v = s.getAmsAxis(i).normalize();
                     if (v.z < 0) v = v.invert(); // ensure lower hemisphere
-                    final Point2D pos = project(v, xo, yo, radius);
+                    final Point2D pos = project(v);
                     g.setColor(Color.GRAY);
                     getPointForAxis(pos, PLOT_POINT_SIZE, i).draw(g);
                 }
@@ -120,7 +116,7 @@ public class AmsPlot extends EqAreaPlot {
         if (meanDirections != null) {
             for (int i=0; i<3; i+=1) {
                 final KentParams kp = meanDirections.get(i);
-                final Point2D pos = project(kp.getMean(), xo, yo, radius);
+                final Point2D pos = project(kp.getMean());
                 getPointForAxis(pos, PLOT_POINT_SIZE*3, i).draw(g);
             }
         }

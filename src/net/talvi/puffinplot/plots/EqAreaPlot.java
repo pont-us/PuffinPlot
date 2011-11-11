@@ -13,16 +13,22 @@ import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 import java.util.List;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 import net.talvi.puffinplot.data.Vec3;
+import static java.lang.Math.min;
 
 public abstract class EqAreaPlot extends Plot {
     private static final int decTickStep = 10;
     private static final int incTickNum = 9;
     private boolean taperingEnabled;
+    protected Graphics2D g;
+    protected int xo;
+    protected int yo;
+    protected int radius;
     
     protected EqAreaPlot(GraphDisplay parent, PlotParams params, Preferences prefs,
             boolean taperingEnabled) {
@@ -34,7 +40,18 @@ public abstract class EqAreaPlot extends Plot {
         this(parent, params, prefs, false);
     }
     
-    protected void drawAxes(Graphics2D g, int xo, int yo, int radius) {
+    /**
+     *  This should be called before redrawing the plot.
+     */
+    protected void updatePlotDimensions(Graphics2D g) {
+        final Rectangle2D dims = getDimensions();
+        this.g = g;
+        radius = (int) (min(dims.getWidth(), dims.getHeight()) / 2);
+        xo = (int) dims.getCenterX();
+        yo = (int) dims.getCenterY();
+    }
+    
+    protected void drawAxes() {
         g.setStroke(getStroke());
         g.setColor(Color.WHITE);
         g.fillArc(xo - radius, yo - radius, radius * 2, radius * 2, 0, 360);
@@ -51,20 +68,19 @@ public abstract class EqAreaPlot extends Plot {
 
         final double l = getTickLength() / 2.0;
         for (int i = 0; i < incTickNum; i++) {
-            Point2D p =  project(Vec3.fromPolarDegrees(1., 90 - i * (90./(double)incTickNum), 90.),
-                    xo, yo, radius);
+            Point2D p =  project(Vec3.fromPolarDegrees(1., 90 - i * (90./(double)incTickNum), 90.));
             double x = p.getX();
             g.draw(new Line2D.Double(x, yo - l, x, yo + l));
         }
         g.draw(new Line2D.Double(xo - l, yo, xo + l, yo));
     }
 
-    protected GeneralPath vectorsToPath(List<Vec3> vectors, int xo, int yo, int radius) {
+    protected GeneralPath vectorsToPath(List<Vec3> vectors) {
         GeneralPath path = new GeneralPath();
         boolean first = true;
         for (Vec3 v : vectors) {
             // g.setStroke(new BasicStroke(getUnitSize() * (1-(float)v.z) *20.0f));
-            Point2D p = project(v, xo, yo, radius);
+            Point2D p = project(v);
             if (first) {
                 path.moveTo((float) p.getX(), (float) p.getY());
                 first = false;
@@ -75,8 +91,7 @@ public abstract class EqAreaPlot extends Plot {
         return path;
     }
 
-     protected void drawStandardLineSegments(Graphics2D g,
-            int xo, int yo, int radius, List<Vec3> vs) {
+     protected void drawStandardLineSegments(List<Vec3> vs) {
          // determine whether we're in upper hemisphere, ignoring
          // z co-ordinates very close to zero. Assumes all segments
          // in same hemisphere.
@@ -84,7 +99,7 @@ public abstract class EqAreaPlot extends Plot {
          for (Vec3 v: vs) { if (v.z > 1e-10) { upperHemisph = false; break; } }
          Stroke stroke = upperHemisph ? getStroke() : getDashedStroke();
          g.setStroke(stroke);
-         g.draw(vectorsToPath(vs, xo, yo, radius));
+         g.draw(vectorsToPath(vs));
      }
 
      /**
@@ -93,12 +108,11 @@ public abstract class EqAreaPlot extends Plot {
       * whereby more distant segments appear thinner and lighter in colour.
       *
       */
-    private void drawTaperedLineSegments(Graphics2D g,
-            int xo, int yo, int radius, List<Vec3> vs) {
+    private void drawTaperedLineSegments(List<Vec3> vs) {
          boolean first = true;
          Point2D pPrev = null;
          for (Vec3 v : vs) {
-             Point2D p = project(v, xo, yo, radius);
+             final Point2D p = project(v);
              if (!first) {
                  //g.setColor(Color.BLACK);
                  float w = (1.0f-(float)v.z)/2f;
@@ -117,42 +131,39 @@ public abstract class EqAreaPlot extends Plot {
          }
      }
 
-    protected void drawLineSegments(Graphics2D g,
-            int xo, int yo, int radius, List<Vec3> vs) {
+    protected void drawLineSegments(List<Vec3> vs) {
         if (isTaperingEnabled()) {
-            drawTaperedLineSegments(g, xo, yo, radius, vs);
+            drawTaperedLineSegments(vs);
         } else {
             List<List<Vec3>> vss =  Vec3.interpolateEquatorPoints(vs);
             for (List<Vec3> part: vss) {
-                drawStandardLineSegments(g, xo, yo, radius, part);
+                drawStandardLineSegments(part);
             }
         }
     }
 
-    protected void drawGreatCircleSegment(Graphics2D g,
-            int xo, int yo, int radius, Vec3 p1, Vec3 p2) {
-        drawLineSegments(g, xo, yo, radius, Vec3.spherInterpolate(p1, p2, 0.05));
+    protected void drawGreatCircleSegment(Vec3 p1, Vec3 p2) {
+        drawLineSegments(Vec3.spherInterpolate(p1, p2, 0.05));
     }
 
-    protected void drawGreatCircleSegment(Graphics2D g,
-            int xo, int yo, int radius, Vec3 p1, Vec3 p2, Vec3 dir) {
-        drawLineSegments(g, xo, yo, radius, Vec3.spherInterpDir(p1, p2, dir, 0.05));
+    protected void drawGreatCircleSegment(Vec3 p1, Vec3 p2, Vec3 dir) {
+        drawLineSegments(Vec3.spherInterpDir(p1, p2, dir, 0.05));
     }
 
     protected void drawGreatCircle(Graphics2D g, int xo, int yo, int radius,
             Vec3 pole, boolean drawPole) {
         int n = 64;
         List<Vec3> vs = pole.greatCirclePoints(n, true);
-        drawLineSegments(g, xo, yo, radius, vs);
+        drawLineSegments(vs);
         if (drawPole) {
             final PlotPoint polePoint =
-                    NewPlotPoint.build(this, project(pole, xo, yo, radius)).
+                    ShapePoint.build(this, project(pole)).
                     triangle().build();
             polePoint.draw(g);
         }
    }
 
-    protected static Point2D.Double project(Vec3 p, int xo, int yo, int radius) {
+    protected Point2D.Double project(Vec3 p) {
         final double h2 = p.x * p.x + p.y * p.y;
         final double L = (h2 > 0) ? sqrt(1 - abs(p.z)) / sqrt(h2) : 0;
 

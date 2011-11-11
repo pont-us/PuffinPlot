@@ -15,7 +15,7 @@ import java.awt.geom.Rectangle2D;
 import net.talvi.puffinplot.data.Datum;
 import static java.lang.Math.sqrt;
 
-public class NewPlotPoint implements PlotPoint {
+public class ShapePoint implements PlotPoint {
 
     private final Shape shape;
     private final Shape highlight;
@@ -101,8 +101,8 @@ public class NewPlotPoint implements PlotPoint {
             return this;
         }
         
-        public NewPlotPoint build() {
-            return new NewPlotPoint(this);
+        public ShapePoint build() {
+            return new ShapePoint(this);
         }
     }
     
@@ -110,7 +110,7 @@ public class NewPlotPoint implements PlotPoint {
         return new Builder(plot, centre);
     }
     
-    private NewPlotPoint(Builder b) {
+    private ShapePoint(Builder b) {
         this.plot= b.plot;
         double s = b.size * b.plot.getUnitSize();
         this.centre = b.centre;
