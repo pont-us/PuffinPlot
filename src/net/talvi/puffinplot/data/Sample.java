@@ -20,7 +20,6 @@ public class Sample {
     private MDF mdf;
     private boolean hasMsData = false;
     private Tensor ams;
-    // public List<Vec3> amsAxes;
     private double magSusJump = 0; // temperature at which mag. sus. jumps
     private CustomFields<Boolean> customFlags;
     private CustomFields<String> customNotes;
@@ -33,7 +32,6 @@ public class Sample {
         this.nameOrDepth = name;
         this.suite = suite;
         this.data = new ArrayList<Datum>();
-        // this.customNotes = new HashMap<String, String>();
         this.customFlags = new CustomFields<Boolean>();
         this.customNotes = new CustomFields<String>();
     }

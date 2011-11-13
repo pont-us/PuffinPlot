@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Internationalization
+desc: ""
+type: :feature
+component: PuffinPlot
+release: "1.2"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2011-11-12 03:56:01.046911 Z
+references: []
+
+id: 27ba2990ece938031da151e54f84da7647ddb16a
+log_events: 
+- - 2011-11-12 03:56:01.386904 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

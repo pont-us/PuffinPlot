@@ -1,0 +1,22 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Find a free graphic for the icon
+desc: |-
+  I can't remember where I got the current PuffinPlot icon, and
+  I don't know whether it's freely useable. I need a free icon
+  for the public release. http://search.creativecommons.org/ looks
+  like a good place to start.
+type: :task
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2011-11-12 03:54:22.467005 Z
+references: []
+
+id: e1dad3261ffbb1305097f2651e0769a67482cfb7
+log_events: 
+- - 2011-11-12 03:54:22.794832 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

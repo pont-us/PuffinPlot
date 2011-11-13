@@ -1,0 +1,26 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Improve vector export
+desc: |-
+  At the moment we have SVG export via Batik, and PDF export via
+  printing if the OS has a PDF printer driver. It would be good to
+  have built-in PDF export (so e.g. Windows users don't have to 
+  install a PDF printer driver, and so we get consistent output
+  across platforms). The two main options for PDF seem to be iText
+  and FreeHEP. FreeHEP also includes SVG (and several other) export
+  formats, so if it works well, it could potentially also replace
+  Batik.
+type: :feature
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2011-11-12 03:46:38.138911 Z
+references: []
+
+id: 34668004471b0dd54a1c581400b9d60e6bd45884
+log_events: 
+- - 2011-11-12 03:46:38.462832 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

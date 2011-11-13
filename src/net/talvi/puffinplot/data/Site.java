@@ -55,7 +55,7 @@ public class Site {
         if (!circles.isEmpty()) {
             greatCircles = new GreatCircles(endpoints, circles);
         }
-        }
+    }
 
     @Override
     public String toString() {

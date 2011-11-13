@@ -1,0 +1,22 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Host PuffinPlot publicly
+desc: |-
+  I should have the main PuffinPlot repository hosted publicly 
+  somewhere -- possibly also the bugs if I can get them out of Ditz
+  somehow. java.net currently looks like the best option: Mercurial
+  support and good integration with NetBeans, apparently.
+type: :task
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2011-11-12 03:50:45.542931 Z
+references: []
+
+id: 77fdfa0925f89d30539a24f5df2894a76f8e781c
+log_events: 
+- - 2011-11-12 03:50:45.858837 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

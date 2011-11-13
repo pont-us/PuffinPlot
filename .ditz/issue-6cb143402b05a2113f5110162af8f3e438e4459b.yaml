@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Add JavaDoc to sources
+desc: A tedious job but probably worthwhile.
+type: :task
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2011-11-12 03:55:34.130985 Z
+references: []
+
+id: 6cb143402b05a2113f5110162af8f3e438e4459b
+log_events: 
+- - 2011-11-12 03:55:35.894832 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

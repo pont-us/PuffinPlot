@@ -24,3 +24,11 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - edited title, description
   - ""
+- - 2011-11-12 04:03:03.966889 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    Probably the easiest to implement would be a minimal file 
+    description language in which importable file format definitions
+    could be written. Might even be worth porting the 2G and Zplot 
+    importers to this language.
