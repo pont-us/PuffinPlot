@@ -1,5 +1,6 @@
 package net.talvi.puffinplot.data;
 
+import java.util.Locale;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -52,7 +53,7 @@ public class FisherValues {
     }
 
     private String fmt(double d) {
-        return String.format("%.1f", d);
+        return String.format(Locale.ENGLISH, "%.1f", d);
     }
 
     public List<String> toStrings() {
@@ -68,7 +69,8 @@ public class FisherValues {
         boolean first = true;
         for (int i=0; i<values.size(); i++) {
             if (!first) result.append(" / ");
-            result.append(getHeaders().get(i).replace("Fisher ", "") + " " + values.get(i));
+            result.append(getHeaders().get(i).replace("Fisher ", "")).
+                    append(" ").append(values.get(i));
             first = false;
         }
         return result.toString();

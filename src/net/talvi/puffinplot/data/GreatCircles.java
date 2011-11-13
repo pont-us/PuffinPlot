@@ -1,5 +1,6 @@
 package net.talvi.puffinplot.data;
 
+import java.util.Locale;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,14 +24,13 @@ public class GreatCircles {
     private static final double STABLE_LIMIT = Math.PI / 1800; // 0.1 degree
 
     private static final List<String> HEADERS =
-        Arrays.asList("GC valid","GC inc.", "GC dec.", "GC a95", "GC k", "GC N", "GC M");
+        Arrays.asList("GC valid","GC dec", "GC inc", "GC a95", "GC k", "GC N", "GC M");
 
-    public GreatCircles(List<Vec3> endpoints, List<List<Vec3>> circlePoints) {
+    public GreatCircles(List<Vec3> endpoints, List<GreatCircle> circles) {
         if (endpoints == null) this.endpoints = Collections.emptyList();
         else this.endpoints = endpoints;
-        circles = new ArrayList<GreatCircle>(circlePoints.size());
-        for (List<Vec3> points: circlePoints)
-            circles.add(new GreatCircle(points));
+        this.circles = Collections.
+                unmodifiableList(new ArrayList<GreatCircle>(circles));
         findDirection();
     }
     
@@ -104,12 +104,12 @@ public class GreatCircles {
     }
 
     private String fmt(double d) {
-        return String.format("%.1f", d);
+        return String.format(Locale.ENGLISH, "%.1f", d);
     }
 
     public List<String> toStrings() {
         return Arrays.asList(isValid() ? "Y" : "",
-                fmt(direction.getIncDeg()), fmt(direction.getDecDeg()),
+                fmt(direction.getDecDeg()), fmt(direction.getIncDeg()),
                 fmt(a95), fmt(k), fmt(N()), fmt(M()));
     }
 

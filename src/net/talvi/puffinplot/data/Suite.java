@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
@@ -132,7 +133,7 @@ public class Suite {
             for (Sample sample: getSamples()) {
                 List<String> lines = sample.toStrings();
                 for (String line: lines) {
-                    String w = String.format("SAMPLE\t%s\t%s\n",
+                    String w = String.format(Locale.ENGLISH, "SAMPLE\t%s\t%s\n",
                             sample.getNameOrDepth(), line);
                     fileWriter.write(w);
                 }
@@ -140,13 +141,14 @@ public class Suite {
             for (Site site: getSites()) {
                 List<String> lines = site.toStrings();
                 for (String line: lines) {
-                    String w = String.format("SITE\t%s\t%s\n",
+                    String w = String.format(Locale.ENGLISH, "SITE\t%s\t%s\n",
                             site.getName(), line);
                     fileWriter.write(w);
                 }
             }
             for (String line: toStrings()) {
-                fileWriter.write(String.format("SUITE\t%s\n", line));
+                fileWriter.write(String.format(Locale.ENGLISH, "SUITE\t%s\n",
+                        line));
             }
             fileWriter.close();
             puffinFile = file;
@@ -332,16 +334,18 @@ public class Suite {
             writer.writeCsv("Suite", measType.getColumnHeader(), "NRM intensity",
                     "MS jump temp.",
                     FisherValues.getHeaders(), PcaAnnotated.getHeaders(),
-                    MDF.getHeaders());
+                    GreatCircle.getHeaders(), MDF.getHeaders());
             for (Sample sample: samples) {
-                PcaAnnotated pca = sample.getPca();
-                FisherValues fish = sample.getFisher();
-                MDF mdf = sample.getMDF();
+                final PcaAnnotated pca = sample.getPca();
+                final FisherValues fish = sample.getFisher();
+                final MDF mdf = sample.getMDF();
+                final GreatCircle circle = sample.getGreatCircle();
                 writer.writeCsv(getName(), sample.getNameOrDepth(),
-                        String.format("%.4g", sample.getNRM()),
-                        String.format("%.4g", sample.getMagSusJump()),
+                        String.format(Locale.ENGLISH, "%.4g", sample.getNRM()),
+                        String.format(Locale.ENGLISH, "%.4g", sample.getMagSusJump()),
                         fish == null ? FisherValues.getEmptyFields() : fish.toStrings(),
                         pca == null ? PcaAnnotated.getEmptyFields() : pca.toStrings(),
+                        circle == null ? GreatCircle.getEmptyFields() : circle.toStrings(),
                         mdf == null ? MDF.getEmptyFields() : mdf.toStrings());
             }
         } catch (IOException ex) {

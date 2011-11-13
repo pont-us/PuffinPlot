@@ -4,7 +4,10 @@
 package net.talvi.puffinplot.data;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 public class GreatCircle {
@@ -15,10 +18,13 @@ public class GreatCircle {
     private final List<Vec3> points;
     private final Vec3 pole;
     private final double direction;
-    // need a way to represent sector constraints here...
+    // TODO: need a way to represent sector constraints here...
+    
+    private static final List<String> HEADERS =
+            Arrays.asList("GC dec", "GC inc", "GC npoints");
 
     public GreatCircle(List<Vec3> points) {
-        List<Vec3> pointsUnscaled = points;
+        final List<Vec3> pointsUnscaled = points;
         points = this.points = new ArrayList(points.size());
         for (Vec3 p: pointsUnscaled) {
             this.points.add(p.normalize());
@@ -64,5 +70,22 @@ public class GreatCircle {
     public double angleFromLast(Vec3 v) {
         return nearestOnCircle(lastPoint()).angleTo(v)
                 * direction;
+    }
+    
+    private String fmt(double d) {
+        return String.format(Locale.ENGLISH, "%.1f", d);
+    }
+    
+    public List<String> toStrings() {
+        return Arrays.asList(fmt(pole.getDecDeg()), fmt(pole.getIncDeg()),
+                Integer.toString(points.size()));
+    }
+
+    public static List<String> getEmptyFields() {
+        return Collections.nCopies(HEADERS.size(), "");
+    }
+
+    public static List<String> getHeaders() {
+        return HEADERS;
     }
 }

@@ -8,8 +8,8 @@ type: :task
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2011-11-11 08:14:40.087004 Z
 references: []
 
@@ -19,3 +19,15 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2011-11-13 06:36:04.886806 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2011-11-13 06:38:36.738764 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Sample now contains a full GreatCircle object. Site great-circle
+    intersection calculations force a recalculation of these (to
+    ensure that they're up to date relative to the current orientation
+    correction) and use them directly.

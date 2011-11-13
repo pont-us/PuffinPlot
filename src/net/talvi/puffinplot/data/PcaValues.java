@@ -6,6 +6,7 @@ import static java.lang.Math.toDegrees;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class PcaValues {
     private final double mad1;
@@ -14,7 +15,7 @@ public class PcaValues {
     private final Vec3 origin;
     private final boolean anchored;
     private static final List<String> HEADERS =
-        Arrays.asList("PCA inc.", "PCA dec.", "PCA MAD1", "PCA MAD3", "PCA anchored");
+        Arrays.asList("PCA dec", "PCA inc", "PCA MAD1", "PCA MAD3", "PCA anchored");
     
     private PcaValues(Vec3 direction, double mad1, double mad3,
             Vec3 origin, boolean anchored) {
@@ -97,7 +98,7 @@ public class PcaValues {
     }
 
     private String fmt(double d) {
-        return String.format("%.1f", d);
+        return String.format(Locale.ENGLISH, "%.1f", d);
     }
 
     public static List<String> getHeaders() {
@@ -121,7 +122,7 @@ public class PcaValues {
     }
 
     public List<String> toStrings() {
-        return Arrays.asList(fmt(getIncDegrees()), fmt(getDecDegrees()),
+        return Arrays.asList(fmt(getDecDegrees()), fmt(getIncDegrees()),
             fmt(getMad1()), fmt(getMad3()), anchored ? "yes" : "no");
     }
 }

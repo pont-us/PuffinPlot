@@ -7,6 +7,7 @@ import java.util.prefs.Preferences;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 import net.talvi.puffinplot.data.Datum;
+import net.talvi.puffinplot.data.GreatCircle;
 import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.data.Sample;
 
@@ -45,10 +46,11 @@ public class SampleEqAreaPlot extends EqAreaPlot {
             prev = p;
             first = false;
         }
-        final Vec3 gc = sample.getGreatCircle();
+        final GreatCircle gc = sample.getGreatCircle();
         if (gc != null) {
-            drawGreatCircle(gc, true);
-            ShapePoint.build(this, project(gc)).filled(gc.z>0).
+            final Vec3 pole = sample.getGreatCircle().getPole();
+            drawGreatCircle(pole, true);
+            ShapePoint.build(this, project(pole)).filled(pole.z>0).
                     triangle().build().draw(g);
         }
 

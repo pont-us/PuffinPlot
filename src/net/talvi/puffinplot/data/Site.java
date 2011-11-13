@@ -44,12 +44,13 @@ public class Site {
 
     public void doGreatCircle(Correction correction) {
         List<Vec3> endpoints = new LinkedList<Vec3>();
-        LinkedList<List<Vec3>> circles = new LinkedList<List<Vec3>>();
+        LinkedList<GreatCircle> circles = new LinkedList<GreatCircle>();
         for (Sample sample: getSamples()) {
             if (sample.getPca() != null) {
                 endpoints.add(sample.getPcaValues().getDirection());
             } else if (sample.getGreatCircle() != null) {
-                circles.add(sample.getCirclePoints(correction));
+                sample.fitGreatCircle(correction); // make sure it's up to date
+                circles.add(sample.getGreatCircle());
             }
         }
         if (!circles.isEmpty()) {

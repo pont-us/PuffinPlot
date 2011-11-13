@@ -1,5 +1,6 @@
 package net.talvi.puffinplot.data;
 
+import java.util.Locale;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -56,12 +57,13 @@ public class SensorLengths {
     public String toString() {
         return preset != null
                 ? "PRESET\t" + preset
-                : String.format("CUSTOM\t%s\t%s\t%s", lengths.get(0),
+                : String.format(Locale.ENGLISH, "CUSTOM\t%s\t%s\t%s", lengths.get(0),
                 lengths.get(1), lengths.get(2));
     }
 
     public static SensorLengths fromString(String s) {
         Scanner sc = new Scanner(s);
+        sc.useLocale(Locale.ENGLISH);
         sc.useDelimiter("\t");
         String type = sc.next();
         if ("PRESET".equals(type)) {

@@ -3,6 +3,7 @@ package net.talvi.puffinplot.data;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public class MDF {
 
@@ -71,8 +72,8 @@ public class MDF {
     }
     
     public List<String> toStrings() {
-        return Arrays.asList(String.format("%.3g", getIntensity()),
-                String.format("%.3g", getDemagLevel()),
+        return Arrays.asList(String.format(Locale.ENGLISH, "%.3g", getIntensity()),
+                String.format(Locale.ENGLISH, "%.3g", getDemagLevel()),
                 isHalfIntReached() ? "yes" : "no");
     }
 }

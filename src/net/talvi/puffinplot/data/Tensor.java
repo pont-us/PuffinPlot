@@ -3,6 +3,7 @@ package net.talvi.puffinplot.data;
 import Jama.Matrix;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class Tensor {
 
@@ -58,7 +59,7 @@ public class Tensor {
 
     public String toTensorComponentString() {
         String fmt = "%.5f %.5f %.5f %.5f %.5f %.5f";
-        return String.format(fmt, k11, k22, k33, k12, k23, k13);
+        return String.format(Locale.ENGLISH, fmt, k11, k22, k33, k12, k23, k13);
     }
 
     public static Tensor fromDirections(Vec3 k1, Vec3 k2, Vec3 k3) {

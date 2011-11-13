@@ -15,7 +15,7 @@ public class Sample {
     private final String nameOrDepth;
     private FisherValues fisher = null;
     private boolean isEmptySlot = false;
-    private Vec3 greatCircle;
+    private GreatCircle greatCircle;
     private PcaAnnotated pca;
     private MDF mdf;
     private boolean hasMsData = false;
@@ -217,9 +217,9 @@ public class Sample {
     }
 
     public void fitGreatCircle(Correction correction) {
-        List<Vec3> points = getCirclePoints(correction);
+        final List<Vec3> points = getCirclePoints(correction);
         if (points.size() < 2) return;
-        greatCircle = Eigens.fromVectors(points, true).vectors.get(2);
+        greatCircle = new GreatCircle(points);
     }
 
     public void doPca(Correction correction) {
@@ -509,7 +509,7 @@ public class Sample {
         }
     }
 
-    public Vec3 getGreatCircle() {
+    public GreatCircle getGreatCircle() {
         return greatCircle;
     }
 }
