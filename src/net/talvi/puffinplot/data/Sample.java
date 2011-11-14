@@ -13,7 +13,6 @@ public class Sample {
     private final List<Datum> data;
     private Site site;
     private final String nameOrDepth;
-    private FisherValues fisher = null;
     private boolean isEmptySlot = false;
     private GreatCircle greatCircle;
     private PcaAnnotated pca;
@@ -38,7 +37,6 @@ public class Sample {
     
     public void clear() {
         pca = null;
-        fisher = null;
         mdf = null;
         greatCircle = null;
         selectNone();
@@ -188,12 +186,6 @@ public class Sample {
         return (runEndsSeen <= 1);
     }
     
-    public void calculateFisher(Correction correction) {
-        List<Vec3> points = getSelectedPoints(correction);
-        if (points.size() > 1)
-            fisher = FisherValues.calculate(points);
-    }
-
     public void doPca(boolean anchored, Correction correction) {
         if (!hasData()) return;
         for (Datum d: getData()) d.setPcaAnchored(anchored);
@@ -258,10 +250,6 @@ public class Sample {
     public String getSampleId() {
         checkDiscrete();
         return getNameOrDepth().substring(getSiteSplit());
-    }
-
-    public FisherValues getFisher() {
-        return fisher;
     }
     
     public boolean isPcaAnchored() {

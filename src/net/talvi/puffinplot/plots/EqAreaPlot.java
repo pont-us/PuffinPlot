@@ -53,8 +53,8 @@ public abstract class EqAreaPlot extends Plot {
     
     protected void drawAxes() {
         g.setStroke(getStroke());
-        g.setColor(Color.WHITE);
-        g.fillArc(xo - radius, yo - radius, radius * 2, radius * 2, 0, 360);
+        //g.setColor(Color.WHITE);
+        //g.fillArc(xo - radius, yo - radius, radius * 2, radius * 2, 0, 360);
         g.setColor(Color.BLACK);
         g.drawArc(xo - radius, yo - radius, radius * 2, radius * 2, 0, 360);
         final double r = radius;

@@ -9,8 +9,8 @@ type: :task
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2011-11-07 22:42:46.675083 Z
 references: []
 
@@ -20,3 +20,13 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2011-11-14 00:24:16.530691 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2011-11-14 03:06:51.322653 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Neatly excised; Fisher data table repurposed to show site
+    Fisher data.

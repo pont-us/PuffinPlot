@@ -40,14 +40,12 @@ public class ShapePoint implements PlotPoint {
     }
     
     public static class Builder {
-        
         private final Point2D centre;
         private final Plot plot;
         private Datum datum = null;
         private boolean filled = false;
         private boolean lineToHere = false;
         private boolean special = false;
-
         private double size = Plot.PLOT_POINT_SIZE;
         private PointShape pointShape = PointShape.SQUARE;
         
@@ -182,5 +180,4 @@ public class ShapePoint implements PlotPoint {
     public boolean isNear(Point2D point, double distance) {
         return centre.distance(point) < distance;
     }
-    
 }

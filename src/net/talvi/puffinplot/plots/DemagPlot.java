@@ -44,8 +44,6 @@ public class DemagPlot extends Plot {
         if (data.isEmpty()) return;
 
         Rectangle2D dim = cropRectangle(getDimensions(), 270, 200, 50, 250);
-        Correction correction = params.getCorrection();
-
         g.setColor(Color.BLACK);
         double maxDemag = Datum.maximumDemag(data);
         double maxIntens = Datum.maximumIntensity(data);
@@ -92,7 +90,6 @@ public class DemagPlot extends Plot {
                 withLabel(vAxisLabel).withNumberEachTick(), this);
         
         double hScale = dim.getWidth() / hAxis.getLength();
-        //hScale *= 1000;
         final double vScale = dim.getHeight() / vAxis.getLength();
         
         vAxis.draw(g, vScale, (int)dim.getMinX(), (int)dim.getMaxY());

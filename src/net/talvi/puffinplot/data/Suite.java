@@ -201,8 +201,7 @@ public class Suite {
     }
 
     public void doSampleCalculations(Correction correction) {
-        for (Sample sample : getSamples()) {
-            sample.calculateFisher(correction);
+        for (Sample sample: getSamples()) {
             sample.doPca(correction);
             sample.fitGreatCircle(correction);
             sample.calculateMagSusJump();
@@ -333,17 +332,15 @@ public class Suite {
             writer = new CsvWriter(new FileWriter(file));
             writer.writeCsv("Suite", measType.getColumnHeader(), "NRM intensity",
                     "MS jump temp.",
-                    FisherValues.getHeaders(), PcaAnnotated.getHeaders(),
+                    PcaAnnotated.getHeaders(),
                     GreatCircle.getHeaders(), MDF.getHeaders());
             for (Sample sample: samples) {
                 final PcaAnnotated pca = sample.getPca();
-                final FisherValues fish = sample.getFisher();
                 final MDF mdf = sample.getMDF();
                 final GreatCircle circle = sample.getGreatCircle();
                 writer.writeCsv(getName(), sample.getNameOrDepth(),
                         String.format(Locale.ENGLISH, "%.4g", sample.getNRM()),
                         String.format(Locale.ENGLISH, "%.4g", sample.getMagSusJump()),
-                        fish == null ? FisherValues.getEmptyFields() : fish.toStrings(),
                         pca == null ? PcaAnnotated.getEmptyFields() : pca.toStrings(),
                         circle == null ? GreatCircle.getEmptyFields() : circle.toStrings(),
                         mdf == null ? MDF.getEmptyFields() : mdf.toStrings());

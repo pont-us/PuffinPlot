@@ -276,22 +276,6 @@ public class PuffinActions {
         }
     };
 
-    public final Action fisherBySample = new PuffinAction("Fisher by sample",
-            "Calculate Fisher statistics for each individual sample", 'F', true,
-            KeyEvent.VK_A) {
-        public void actionPerformed(ActionEvent e) {
-            List<Sample> samples = app.getSelectedSamples();
-            if (samples == null || samples.isEmpty()) {
-                app.errorDialog("Fisher on sample", "No sample selected.");
-            } else {
-                for (Sample s: samples) {
-                    s.calculateFisher(app.getCorrection());
-                }
-                app.getMainWindow().repaint();
-            }
-        }
-    };
-    
     public final Action fisherBySite = new PuffinAction("Fisher by site",
             "Fisher statistics on PCA directions grouped by site", 'F', false,
             KeyEvent.VK_I) {

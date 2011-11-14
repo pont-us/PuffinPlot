@@ -112,7 +112,7 @@ public class MainMenuBar extends JMenuBar {
                 pa.rescaleMagSus));
         add(makeMenu("Calculations",
                 pa.pcaOnSelection, anchorItem = new AnchorItem(),
-                pa.fisherBySample, pa.fisherBySite, pa.fisherOnSuite,
+                pa.fisherBySite, pa.fisherOnSuite,
                 pa.mdf, pa.clear, pa.circleFit, pa.greatCircleAnalysis,
                 pa.clearSiteCalcs,
                 pa.reversalTest, pa.bootAmsNaive, pa.bootAmsParam, pa.hextAms,
