@@ -50,20 +50,21 @@ public class PuffinActions {
 
         public PuffinAction(String name, String description,
                 Character accelerator, boolean shift, Integer mnemonic,
-                boolean specialMacMenuItem) {
+                boolean specialMacMenuItem, int modifier) {
             super(name);
             this.specialMacMenuItem = specialMacMenuItem;
             putValue(SHORT_DESCRIPTION, description);
             if (accelerator != null) putValue(ACCELERATOR_KEY,
                     KeyStroke.getKeyStroke(accelerator,
-                    modifierKey | (shift ? InputEvent.SHIFT_DOWN_MASK : 0),
+                    modifier | (shift ? InputEvent.SHIFT_DOWN_MASK : 0),
                     false));
             if (mnemonic != null) putValue(MNEMONIC_KEY, mnemonic);
         }
         
         public PuffinAction(String name, String description,
                 Character accelerator, boolean shift, Integer mnemonic) {
-            this(name, description, accelerator, shift, mnemonic, false);
+            this(name, description, accelerator, shift, mnemonic, false,
+                    modifierKey);
         }
 
         public boolean excludeFromMenu() {
@@ -377,30 +378,17 @@ public class PuffinActions {
         }
     };
 
-    public final Action instantCopyPointSelection = new PuffinAction("Instant copy point selection",
-            "Select these points for every selected sample", 'C', true, KeyEvent.VK_P) {
-        public void actionPerformed(ActionEvent e) {
-            Sample source = app.getSample();
-            if (source != null) {
-                for (Sample dest: app.getSelectedSamples()) {
-                    dest.copySelectionFrom(source);
-                }
-                app.getMainWindow().repaint();
-            }
-        }
-    };
-    
     public final Action copyPointSelection =
             new PuffinAction("Copy point selection",
             "Copy the point selection to the clipboard",
-                    '7', true, KeyEvent.VK_7) {
+                    'C', false, KeyEvent.VK_C, false, 0) {
                 public void actionPerformed(ActionEvent e) {
                     app.copyPointSelection(); }};
     
     public final Action pastePointSelection =
-            new PuffinAction("Copy point selection",
-            "Copy the point selection to the clipboard",
-                    '8', true, KeyEvent.VK_8) {
+            new PuffinAction("Paste point selection",
+            "Select the points corresponding to those copied to the clipboard",
+                    'V', false, KeyEvent.VK_P, false, 0) {
                 public void actionPerformed(ActionEvent e) {
                     app.pastePointSelection(); }};
 
@@ -423,7 +411,8 @@ public class PuffinActions {
 
 
     public final Action prefs = new PuffinAction("Preferences…",
-            "Show the preferences window", ',', false, KeyEvent.VK_R, true) {
+            "Show the preferences window", ',', false, KeyEvent.VK_R, true,
+            modifierKey) {
         public void actionPerformed(ActionEvent e) {
             app.showPreferences();
         }
@@ -480,7 +469,7 @@ public class PuffinActions {
     };
     
     public final Action quit = new PuffinAction("Quit",
-            null, 'Q', false, KeyEvent.VK_Q, true) {
+            null, 'Q', false, KeyEvent.VK_Q, true, modifierKey) {
         public void actionPerformed(ActionEvent e) {
             app.getPrefs().save();
             System.exit(0);

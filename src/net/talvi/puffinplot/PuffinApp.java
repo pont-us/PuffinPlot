@@ -235,13 +235,9 @@ public final class PuffinApp {
         logger.info("Entering main method.");
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
         
-        // Set GTK look-and-feel. TODO: make a user-settable option for this.
-        // /*
         try {
-            //UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {}
-        // */
 
         java.awt.EventQueue.invokeLater(
                 new Runnable() { public void run() { new PuffinApp(); } });

@@ -449,11 +449,6 @@ public class Suite {
         return samplesById.size();
     }
 
-    public void applySelectionToAll(Sample sample) {
-        for (Sample mySample: getSamples())
-            mySample.copySelectionFrom(sample);
-    }
-
     public Sample getSampleByIndex(int i) {
         return samples.get(i);
     }

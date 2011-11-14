@@ -305,13 +305,6 @@ public class Sample {
         for (Datum d: getData()) d.setHidden(false);
     }
 
-    public void copySelectionFrom(Sample s) {
-        List<Datum> otherData = s.getData();
-        for (int i=0; i<Math.min(getNumData(),s.getNumData()); i++) {
-            getData().get(i).setSelected(otherData.get(i).isSelected());
-        }
-    }
-    
     public BitSet getSelectionBitSet() {
         final BitSet result = new BitSet(data.size());
         for (int i=0; i<data.size(); i++) {
