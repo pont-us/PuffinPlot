@@ -1,0 +1,31 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: "Reword tool-tip for \xE2\x80\x98hide selected samples\xE2\x80\x99"
+desc: "Faye pointed out that the tool-tip text for the \n\
+  hideSelectedPoints action (\xE2\x80\x98Hide the selected points in \n\
+  all selected samples\xE2\x80\x99) can easily be misconstrued to mean\n\
+  \xE2\x80\x98for each selected sample, hide the points corresponding to\n\
+  the selection within *this* sample\xE2\x80\x99. She suggests rewording\n\
+  to \xE2\x80\x98Hide the selected points\xE2\x80\x99."
+type: :bugfix
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :closed
+disposition: :fixed
+creation_time: 2011-11-14 03:52:51.642546 Z
+references: []
+
+id: a0f1cca6f9269595b79828a6d0ed0a00478c312a
+log_events: 
+- - 2011-11-14 03:52:51.914431 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
+- - 2011-11-14 03:53:28.194781 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2011-11-14 03:55:01.394575 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - Fixed as requested.

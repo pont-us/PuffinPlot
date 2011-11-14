@@ -33,7 +33,8 @@ import net.talvi.puffinplot.data.Suite.AmsCalcType;
 
 public class PuffinActions {
 
-    private static final Logger logger = Logger.getLogger(PuffinActions.class.getName());
+    private static final Logger logger =
+            Logger.getLogger(PuffinActions.class.getName());
     private final PuffinApp app;
     private static final boolean useSwingChooserForSave = !PuffinApp.MAC_OS_X;
     // control or apple key as appropriate
@@ -391,7 +392,7 @@ public class PuffinActions {
 
     // we can't use ctrl-H because Apples use it already.
     public final Action hideSelectedPoints = new PuffinAction("Hide points",
-            "Hide the selected points in all selected samples", 'G', false, KeyEvent.VK_H) {
+            "Hide the selected points", 'G', false, KeyEvent.VK_H) {
         public void actionPerformed(ActionEvent e) {
            for (Sample s: app.getSelectedSamples())  s.hideSelectedPoints();
             app.getMainWindow().repaint();
