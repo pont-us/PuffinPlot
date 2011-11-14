@@ -1,0 +1,21 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Check that PCA directions considered in GC analysis
+desc: |-
+  Claudio seems to think that great-circle site direction
+  calculation only makes use of the circles, not the PCA-determined
+  endpoints. I'm fairly sure he's wrong, but I should check.
+type: :task
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2011-11-14 05:28:45.438718 Z
+references: []
+
+id: b8ba516fa48f4afb2aaa3d407a57bb59187231c3
+log_events: 
+- - 2011-11-14 05:28:45.662550 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

@@ -14,14 +14,12 @@ public class GreatCircle {
 
     private final static Logger logger =
             Logger.getLogger(GreatCircle.class.getName());
-
     private final List<Vec3> points;
     private final Vec3 pole;
     private final double direction;
     // TODO: need a way to represent sector constraints here...
-    
     private static final List<String> HEADERS =
-            Arrays.asList("GC dec", "GC inc", "GC npoints");
+            Arrays.asList("GC dec (°)", "GC inc (°)", "GC npoints");
 
     public GreatCircle(List<Vec3> points) {
         final List<Vec3> pointsUnscaled = points;

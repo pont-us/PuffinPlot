@@ -3,6 +3,7 @@ package net.talvi.puffinplot.data;
 import java.util.Collection;
 import Jama.Matrix;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.List;
 import static java.lang.Math.toRadians;
@@ -308,6 +309,22 @@ public class Sample {
         List<Datum> otherData = s.getData();
         for (int i=0; i<Math.min(getNumData(),s.getNumData()); i++) {
             getData().get(i).setSelected(otherData.get(i).isSelected());
+        }
+    }
+    
+    public BitSet getSelectionBitSet() {
+        final BitSet result = new BitSet(data.size());
+        for (int i=0; i<data.size(); i++) {
+            final Datum datum = data.get(i);
+            result.set(i, datum.isSelected());
+        }
+        return result;
+    }
+    
+    public void setSelectionBitSet(BitSet selection) {
+        for (int i=0; i<Math.min(selection.size(), data.size()); i++) {
+            final Datum datum = data.get(i);
+            datum.setSelected(selection.get(i));
         }
     }
 

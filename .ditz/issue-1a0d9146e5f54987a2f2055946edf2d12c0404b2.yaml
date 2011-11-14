@@ -1,0 +1,29 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Give units in headers of exported data files
+desc: "Faye says: \xE2\x80\x98it might be good to have the units included in\n\
+  the column headers of the exported data file, especially because\n\
+  some things go into Puffin in cgs units and come out in SI units.\xE2\x80\x99\n\
+  As always she is right."
+type: :feature
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :closed
+disposition: :fixed
+creation_time: 2011-11-14 03:58:53.003487 Z
+references: []
+
+id: 1a0d9146e5f54987a2f2055946edf2d12c0404b2
+log_events: 
+- - 2011-11-14 03:58:53.502566 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
+- - 2011-11-14 03:59:00.938693 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2011-11-14 21:03:43.929791 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - Implemented as specified.

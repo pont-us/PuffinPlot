@@ -6,7 +6,7 @@ desc: |-
   all three axes, or none!
 type: :feature
 component: PuffinPlot
-release: "1.1"
+release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
 status: :unstarted
 disposition: 
@@ -19,3 +19,9 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2011-11-14 06:02:58.202683 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.0 from 1.1
+  - |-
+    This needs fixing before first public release, even if
+    only by removing it.

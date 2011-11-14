@@ -24,7 +24,8 @@ public class GreatCircles {
     private static final double STABLE_LIMIT = Math.PI / 1800; // 0.1 degree
 
     private static final List<String> HEADERS =
-        Arrays.asList("GC valid","GC dec", "GC inc", "GC a95", "GC k", "GC N", "GC M");
+        Arrays.asList("GC valid (Y/N)","GC dec (°)", "GC inc (°)",
+            "GC a95 (°)", "GC k", "GC N", "GC M");
 
     public GreatCircles(List<Vec3> endpoints, List<GreatCircle> circles) {
         if (endpoints == null) this.endpoints = Collections.emptyList();
@@ -108,7 +109,7 @@ public class GreatCircles {
     }
 
     public List<String> toStrings() {
-        return Arrays.asList(isValid() ? "Y" : "",
+        return Arrays.asList(isValid() ? "Y" : "N",
                 fmt(direction.getDecDeg()), fmt(direction.getIncDeg()),
                 fmt(a95), fmt(k), fmt(N()), fmt(M()));
     }

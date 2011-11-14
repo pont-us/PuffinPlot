@@ -377,7 +377,7 @@ public class PuffinActions {
         }
     };
 
-    public final Action copyPointSelection = new PuffinAction("Copy point selection",
+    public final Action instantCopyPointSelection = new PuffinAction("Instant copy point selection",
             "Select these points for every selected sample", 'C', true, KeyEvent.VK_P) {
         public void actionPerformed(ActionEvent e) {
             Sample source = app.getSample();
@@ -389,6 +389,20 @@ public class PuffinActions {
             }
         }
     };
+    
+    public final Action copyPointSelection =
+            new PuffinAction("Copy point selection",
+            "Copy the point selection to the clipboard",
+                    '7', true, KeyEvent.VK_7) {
+                public void actionPerformed(ActionEvent e) {
+                    app.copyPointSelection(); }};
+    
+    public final Action pastePointSelection =
+            new PuffinAction("Copy point selection",
+            "Copy the point selection to the clipboard",
+                    '8', true, KeyEvent.VK_8) {
+                public void actionPerformed(ActionEvent e) {
+                    app.pastePointSelection(); }};
 
     // we can't use ctrl-H because Apples use it already.
     public final Action hideSelectedPoints = new PuffinAction("Hide points",

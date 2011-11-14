@@ -17,7 +17,8 @@ public class FisherValues {
     private final List<Vec3> directions;
     private final static double p = 0.05;
     private static final List<String> HEADERS =
-        Arrays.asList("Fisher inc.", "Fisher dec.", "Fisher a95", "Fisher k");
+        Arrays.asList("Fisher dec. (°)", "Fisher inc. (°)",
+            "Fisher a95 (°)", "Fisher k");
 
     private FisherValues(List<Vec3> directions, double a95, double k, Vec3 meanDirection) {
         this.directions = Collections.unmodifiableList(directions);
@@ -57,8 +58,8 @@ public class FisherValues {
     }
 
     public List<String> toStrings() {
-        return Arrays.asList(fmt(getMeanDirection().getIncDeg()),
-                fmt(getMeanDirection().getDecDeg()), fmt(getA95()),
+        return Arrays.asList(fmt(getMeanDirection().getDecDeg()),
+                fmt(getMeanDirection().getIncDeg()), fmt(getA95()),
                 fmt(getK()));
     }
 

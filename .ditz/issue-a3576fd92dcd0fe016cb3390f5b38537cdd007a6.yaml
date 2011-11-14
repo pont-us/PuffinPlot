@@ -1,0 +1,29 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Editable sites
+desc: "Currently site codes are set purely by inference from\n\
+  the sample name, assuming Otago naming conventions. If\n\
+  PuffinPlot's going to be any use to anyone else, we need\n\
+  the capability to set them explicitly! Should be pretty\n\
+  simple. As well as a straight \xE2\x80\x98set this site code for the\n\
+  selected samples\xE2\x80\x99 features, it would be good to have a\n\
+  \xE2\x80\x98use this character range (from the sample name) as the\n\
+  site code\xE2\x80\x99 function."
+type: :feature
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :in_progress
+disposition: 
+creation_time: 2011-11-14 05:32:19.514744 Z
+references: []
+
+id: a3576fd92dcd0fe016cb3390f5b38537cdd007a6
+log_events: 
+- - 2011-11-14 05:32:19.722589 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
+- - 2011-11-14 05:33:06.850782 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""

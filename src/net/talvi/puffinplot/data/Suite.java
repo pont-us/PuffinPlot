@@ -330,8 +330,9 @@ public class Suite {
             }
 
             writer = new CsvWriter(new FileWriter(file));
-            writer.writeCsv("Suite", measType.getColumnHeader(), "NRM intensity",
-                    "MS jump temp.",
+            writer.writeCsv("Suite", measType.getColumnHeader(),
+                    "NRM intensity (A/m)",
+                    "MS jump temp. (°C)",
                     PcaAnnotated.getHeaders(),
                     GreatCircle.getHeaders(), MDF.getHeaders());
             for (Sample sample: samples) {

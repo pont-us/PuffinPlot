@@ -6,16 +6,15 @@ import java.util.List;
 import java.util.Locale;
 
 public class MDF {
-
+    
     private final double demagLevel;
     private final double intensity;
     private final boolean halfIntReached;
     private static final List<String> HEADERS =
-        Arrays.asList("MDF half-intensity", "MDF demagnetization",
-        "MDF midpoint reached");
+        Arrays.asList("MDF half-intensity (A/m)",
+            "MDF demagnetization (°C or mT)", "MDF midpoint reached");
 
-    private MDF(double demagLevel, double intensity,
-            boolean halfIntReached) {
+    private MDF(double demagLevel, double intensity, boolean halfIntReached) {
         this.demagLevel = demagLevel;
         this.intensity = intensity;
         this.halfIntReached = halfIntReached;
@@ -37,18 +36,15 @@ public class MDF {
         do {
             d = data.get(i);
             i++;
-        } while (i < data.size() &&
-                d.getIntensity() > halfIntensity);
+        } while (i < data.size() && d.getIntensity() > halfIntensity);
         if (d.getIntensity() <= halfIntensity) {
             halfIntReached = true;
         }
-        Datum dPrev = data.get(i-2); // i can't be <=1 at this point
-
-        return new MDF(
-                interpolate(dPrev.getDemagLevel(), d.getDemagLevel(),
-                d.getIntensity(), dPrev.getIntensity(), halfIntensity),
-                halfIntensity,
-                halfIntReached);
+        final Datum dPrev = data.get(i-2); // i can't be <=1 at this point
+        final double demagLevel = interpolate(dPrev.getDemagLevel(),
+                d.getDemagLevel(), d.getIntensity(),
+                dPrev.getIntensity(), halfIntensity);
+        return new MDF(demagLevel, halfIntensity, halfIntReached);
     }
 
     public double getDemagLevel() {

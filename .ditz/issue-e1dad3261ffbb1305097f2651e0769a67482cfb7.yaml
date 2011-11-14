@@ -9,8 +9,8 @@ type: :task
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2011-11-12 03:54:22.467005 Z
 references: []
 
@@ -20,3 +20,18 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2011-11-14 20:15:59.045894 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2011-11-14 21:19:18.041863 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    I've found an out-of-copyright puffin picture by 
+    Wilhelm von Wright and converted it to Mac icon format.
+    Will close this bug as soon as I've tested it on a Mac.
+- - 2011-11-14 21:39:08.365802 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - Tested on Mac, seems to work OK.

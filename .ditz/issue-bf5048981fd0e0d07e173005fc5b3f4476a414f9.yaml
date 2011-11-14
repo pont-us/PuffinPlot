@@ -9,7 +9,7 @@ type: :feature
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
+status: :in_progress
 disposition: 
 creation_time: 2009-07-27 21:15:29.980495 Z
 references: []
@@ -33,3 +33,7 @@ log_events:
     Perhaps start expanding the Fisher Stats window into a more general
     `per-suite information' graph display, and implement a new DataTable
     for per-site Fisher stats?
+- - 2011-11-14 05:32:53.462690 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""

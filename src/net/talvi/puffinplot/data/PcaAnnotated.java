@@ -16,7 +16,8 @@ public class PcaAnnotated {
     static {
         List<String> hA = new ArrayList<String>();
         hA.addAll(PcaValues.getHeaders());
-        hA.addAll(Arrays.asList("PCA start", "PCA end", "PCA contiguous"));
+        hA.addAll(Arrays.asList("PCA start (°C or mT)", "PCA end (°C or mT)",
+                "PCA contiguous"));
         HEADERS = Collections.unmodifiableList(hA);
     }
 

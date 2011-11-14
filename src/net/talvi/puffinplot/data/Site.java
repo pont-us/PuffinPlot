@@ -80,7 +80,8 @@ public class Site {
     }
 
     public static List<String> getGreatCircleLimitHeader() {
-        return Arrays.asList(new String[] {"T1min","T1max","T2min","T2max"});
+        return Arrays.asList(new String[] {"GC D1min (°C or mT)",
+            "GC D1max (°C or mT)","GC D2min (°C or mT)","GC D2max (°C or mT)"});
     }
 
     /**

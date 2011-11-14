@@ -105,7 +105,9 @@ public class MainMenuBar extends JMenuBar {
                 pa.prefs, pa.quit));
         add(makeMenu("Edit", pa.selectAll, pa.clearSelection,
                 movePlotsItem, pa.resetLayout,
-                pa.editCorrections, pa.copyPointSelection, pa.flipSample,
+                pa.editCorrections, pa.instantCopyPointSelection,
+                pa.copyPointSelection, pa.pastePointSelection,
+                pa.flipSample,
                 pa.hideSelectedPoints, pa.unhideAllPoints,
                 pa.useAsEmptySlot, pa.unsetEmptySlot,
                 useEmptyItem, pa.showCustomFlagsWindow, pa.showCustomNotesWindow,

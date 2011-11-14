@@ -240,10 +240,7 @@ public class Datum {
 
     /**
      * Returns magnetic dipole moment per unit volume in A/m.
-     * The correction should not, of course, matter.
-     * TODO: verify this empirically and remove the parameter.
-     * @param correction
-     * @return
+     * @return magnetic dipole moment per unit volume in A/m
      */
     public double getIntensity() {
         return getMoment(Correction.NONE).mag();

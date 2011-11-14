@@ -34,6 +34,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import static java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -78,6 +79,7 @@ public final class PuffinApp {
     private final Map<String,File> lastUsedFileOpenDirs =
             new HashMap<String,File>();
     private static final boolean useSwingChooserForOpen = true;
+    private BitSet pointSelectionClipboard = new BitSet(0);
 
     static {
         final Handler logStringHandler =
@@ -521,5 +523,22 @@ public final class PuffinApp {
             }
         }
         return files;
+    }
+    
+    void copyPointSelection() {
+        final Sample sample = getSample();
+        if (sample==null) return;
+        pointSelectionClipboard = sample.getSelectionBitSet();
+        updateDisplay();
+    }
+    
+    void pastePointSelection() {
+        List<Sample> samples = getSelectedSamples();
+        if (samples==null) return; // should never happen, just being paranoid
+        if (pointSelectionClipboard==null) return;
+        for (Sample sample: getSelectedSamples()) {
+            sample.setSelectionBitSet(pointSelectionClipboard);
+        }
+        updateDisplay();
     }
 }
