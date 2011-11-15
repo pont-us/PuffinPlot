@@ -38,8 +38,10 @@ import java.util.BitSet;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.prefs.Preferences;
 import javax.swing.JFileChooser;
 import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Site;
@@ -235,9 +237,30 @@ public final class PuffinApp {
         logger.info("Entering main method.");
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
         
+        final Preferences prefs =
+                Preferences.userNodeForPackage(PuffinPrefs.class);
+        String lnf = prefs.get("lookandfeel", "Default");
         try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {}
+            if ("Native".equals(lnf)) {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } else if ("Metal".equals(lnf)) {
+                UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+            } else if ("Nimbus".equals(lnf)) {
+                /* Nimbus isn't guaranteed to be available on all systems,
+                 * so we make sure it's there before trying to set it.
+                 * If it's not there, nothing will happen so the system
+                 * default will be used.
+                 */
+                for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                    if ("Nimbus".equals(info.getName())) {
+                        UIManager.setLookAndFeel(info.getClassName());
+                        break;
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            logger.log(Level.WARNING, "Error setting look-and-feel", ex);
+        }
 
         java.awt.EventQueue.invokeLater(
                 new Runnable() { public void run() { new PuffinApp(); } });

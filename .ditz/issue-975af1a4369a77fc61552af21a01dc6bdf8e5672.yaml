@@ -5,8 +5,8 @@ type: :feature
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :in_progress
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2011-11-09 03:58:19.588841 Z
 references: []
 
@@ -20,3 +20,11 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - changed status from unstarted to in_progress
   - ""
+- - 2011-11-15 06:59:48.549796 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    There is now a user preference to allow selection of "Native"
+    look and feel (force Aqua, Windows, or GTK+ as appropriate),
+    "Java" (Metal) and "Default" (uses system settings, which default
+    to Metal on Linux and native toolkits on Windows and Mac).

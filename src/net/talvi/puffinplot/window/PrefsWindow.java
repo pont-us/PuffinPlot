@@ -47,7 +47,7 @@ public class PrefsWindow extends JFrame {
     public PrefsWindow() {
         super("Preferences");
         final Insets insets = new Insets(0,0,0,0);
-        final int CENTER = GridBagConstraints.CENTER, BOTH = GridBagConstraints.BOTH;
+        final int BOTH = GridBagConstraints.BOTH;
         setPreferredSize(new Dimension(300, 500));
         setLayout(new GridBagLayout());
         JTabbedPane tp = new JTabbedPane();
@@ -110,21 +110,24 @@ public class PrefsWindow extends JFrame {
             plotsPanel.add(pb);
             plotBoxes.add(pb);
         }
-        JPanel labelsPanel = new JPanel(false);
-        labelsPanel.setLayout(new BoxLayout(labelsPanel, BoxLayout.Y_AXIS));
+        JPanel miscPanel = new JPanel(false);
+        miscPanel.setLayout(new BoxLayout(miscPanel, BoxLayout.Y_AXIS));
         
-        labelsPanel.add(Box.createVerticalGlue());
-        labelsPanel.add(makeLabelledPrefBox("Demag y axis",
+        miscPanel.add(Box.createVerticalGlue());
+        miscPanel.add(makeLabelledPrefBox("Demag y axis",
                 "plots.demag.vAxisLabel", "Magnetization (A/M)"));
-        labelsPanel.add(makeLabelledPrefBox("PmagPy folder",
+        miscPanel.add(makeLabelledPrefBox("PmagPy folder",
                 "data.pmagPyPath", "/usr/local/bin"));
-        labelsPanel.add(makeLabelledPrefBox("Font",
+        miscPanel.add(makeLabelledPrefBox("Font",
                 "plots.fontFamily", "Arial"));
-        labelsPanel.add(Box.createVerticalGlue());
+        miscPanel.add(makeLabelledPrefComboBox("Look and feel",
+                "lookandfeel", new String[] {"Default", "Native", "Metal", "Nimbus"},
+                "Default"));
+        miscPanel.add(Box.createVerticalGlue());
 
         tp.addTab("Loading", null, loadingPanel, "File loading");
         tp.addTab("Plots", null, plotsPanel, "Active plots");
-        tp.addTab("Misc.", null, labelsPanel, "Miscellaneous");
+        tp.addTab("Misc.", null, miscPanel, "Miscellaneous");
 
         JButton button = new JButton("Close");
         button.addActionListener(new ActionListener() {
@@ -154,12 +157,23 @@ public class PrefsWindow extends JFrame {
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
         final JLabel label = new JLabel(labelString);
         label.setMaximumSize(new Dimension(200, 30));
-        //demagVAxisLabel.setPreferredSize(new Dimension(200, 30));
         panel.add(label);
         JTextField field = new PrefBox(pref, defaultValue);
         field.setMaximumSize(new Dimension(300, 50));
-        //demagVAxisField.setPreferredSize(new Dimension(200, 30));
         panel.add(field);
+        return panel;
+    }
+    
+    private JPanel makeLabelledPrefComboBox(String labelString, String pref,
+            String[] values, String defaultValue) {
+        final JPanel panel = new JPanel(false);
+        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+        final JLabel label = new JLabel(labelString);
+        label.setMaximumSize(new Dimension(200, 30));
+        panel.add(label);
+        PrefsComboBox box = new PrefsComboBox(pref, values, defaultValue);
+        box.setMaximumSize(new Dimension(300, 50));
+        panel.add(box);
         return panel;
     }
     
@@ -199,6 +213,28 @@ public class PrefsWindow extends JFrame {
         }
         public void storeValue() {
             prefs.getPrefs().put(key, getText());
+        }
+    }
+    
+    private class PrefsComboBox extends JComboBox implements ItemListener {
+
+        private String prefsKey;
+        
+        public PrefsComboBox(String prefsKey, String[] items,
+                String defaultValue) {
+            super(items);
+            this.prefsKey = prefsKey;
+            final String value = prefs.getPrefs().get(prefsKey, defaultValue);
+            setSelectedItem(value);
+            addItemListener(this);
+        }
+        
+        public void applySettings() {
+            prefs.getPrefs().put(prefsKey, getSelectedItem().toString());
+        }
+
+        public void itemStateChanged(ItemEvent e) {
+            applySettings();
         }
     }
 
