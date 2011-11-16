@@ -25,11 +25,8 @@ import static java.lang.Math.sqrt;
  */
 public class TernaryPlot extends Plot {
 
-    private final Preferences prefs;
-
     public TernaryPlot(GraphDisplay parent, PlotParams params, Preferences prefs) {
         super(parent, params, prefs);
-        this.prefs = prefs;
     }
 
     protected void drawAxes(Graphics2D g) {
@@ -64,7 +61,7 @@ public class TernaryPlot extends Plot {
 
     @Override
     public String getName() {
-        return "ternarytest";
+        return "ternaryplot";
     }
     
     @Override

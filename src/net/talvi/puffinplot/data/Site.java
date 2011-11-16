@@ -46,11 +46,17 @@ public class Site {
         List<Vec3> endpoints = new LinkedList<Vec3>();
         LinkedList<GreatCircle> circles = new LinkedList<GreatCircle>();
         for (Sample sample: getSamples()) {
-            if (sample.getPca() != null) {
-                endpoints.add(sample.getPcaValues().getDirection());
-            } else if (sample.getGreatCircle() != null) {
+            /* We assume that if there's a great circle then it should be
+             * used (and that if a PCA fit is present for the same site, it's
+             * not relevant to the component being examined here). If there
+             * is no great circle but there *is* a PCA fit, then the PCA
+             * direction is used as a stable endpoint.
+             */
+            if (sample.getGreatCircle() != null) {
                 sample.fitGreatCircle(correction); // make sure it's up to date
                 circles.add(sample.getGreatCircle());
+            } else if (sample.getPca() != null) {
+                endpoints.add(sample.getPcaValues().getDirection());
             }
         }
         if (!circles.isEmpty()) {

@@ -45,8 +45,8 @@ public class Suite {
     private List<String> loadWarnings;
     private boolean hasUnknownTreatType;
     private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
-    private CustomFields customFlagNames;
-    private CustomFields customNoteNames;
+    private CustomFields<String> customFlagNames;
+    private CustomFields<String> customNoteNames;
     private List<KentParams> amsBootstrapParams;
     private List<KentParams> hextParams;
 
@@ -55,7 +55,7 @@ public class Suite {
     }
 
     public List<String> getLoadWarnings() {
-        return loadWarnings;
+        return Collections.unmodifiableList(loadWarnings);
     }
 
     public void doFisherOnSuite() {
@@ -233,17 +233,18 @@ public class Suite {
         if (files.size() == 1) suiteName = files.get(0).getName();
         else suiteName = files.get(0).getParentFile().getName();
         files = expandDirs(files);
-        final ArrayList dataArray = new ArrayList<Datum>();
+        final ArrayList<Datum> dataArray = new ArrayList<Datum>();
         data = dataArray;
         samplesById = new LinkedHashMap<String, Sample>();
         dataByLine = new HashMap<Integer, Line>();
         measType = MeasType.UNSET;
         loadWarnings = new ArrayList<String>();
         hasUnknownTreatType = false;
-        customFlagNames = new CustomFlagNames(Collections.EMPTY_LIST);
-        customNoteNames = new CustomNoteNames(Collections.EMPTY_LIST);
-        List<String> puffinLines = Collections.EMPTY_LIST;
-        sites = Collections.EMPTY_LIST;
+        final List<String> emptyStringList = Collections.emptyList();
+        customFlagNames = new CustomFlagNames(emptyStringList);
+        customNoteNames = new CustomNoteNames(emptyStringList);
+        List<String> puffinLines = emptyStringList;
+        sites = Collections.emptyList();
 
         for (File file: files) {
             if (!file.exists()) {
@@ -430,11 +431,11 @@ public class Suite {
     }
 
     public List<Sample> getSamples() {
-        return samples;
+        return Collections.unmodifiableList(samples);
     }
 
     public List<Datum> getData() {
-        return data;
+        return Collections.unmodifiableList(data);
     }
 
     public MeasType getMeasType() {
@@ -733,7 +734,7 @@ public class Suite {
         }
     }
 
-        private class CustomNoteNames extends CustomFields<String> {
+    private class CustomNoteNames extends CustomFields<String> {
         public CustomNoteNames(List<String> list) {
             super(list);
         }

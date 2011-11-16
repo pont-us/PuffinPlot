@@ -9,8 +9,8 @@ type: :feature
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :in_progress
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2009-07-27 21:15:29.980495 Z
 references: []
 
@@ -37,3 +37,10 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - changed status from unstarted to in_progress
   - ""
+- - 2011-11-16 00:53:22.661701 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - "The former \xE2\x80\x98Fisher data\xE2\x80\x99 window now shows Fisherian parameters\n\
+    for both the site Fisher-on-PCA calculation and the great-circle\n\
+    intersection. (It can show both at once, though I expect that \n\
+    this will seldom be necessary.)"

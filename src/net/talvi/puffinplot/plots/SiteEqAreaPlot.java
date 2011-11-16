@@ -4,7 +4,6 @@ import net.talvi.puffinplot.data.FisherValues;
 import java.util.ArrayList;
 import net.talvi.puffinplot.data.PcaValues;
 import java.util.List;
-import java.awt.geom.Point2D;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Site;
@@ -16,7 +15,6 @@ import net.talvi.puffinplot.data.GreatCircles;
 import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
-import static java.lang.Math.min;
 
 public class SiteEqAreaPlot extends EqAreaPlot {
 
@@ -33,7 +31,7 @@ public class SiteEqAreaPlot extends EqAreaPlot {
     
     @Override
     public String getName() {
-        return "greatcircles";
+        return "equarea_site";
     }
     
     @Override
@@ -44,7 +42,7 @@ public class SiteEqAreaPlot extends EqAreaPlot {
     private void drawGreatCircles(Site site) {
         final GreatCircles circles = site.getGreatCircles();
         if (circles == null) return;
-        final Vec3 meanDir = circles.getDirection();
+        final Vec3 meanDir = circles.getMeanDirection();
         double maxRadius = 0;
         for (GreatCircle circle: circles.getCircles()) {
             final Vec3 pole = circle.getPole();
@@ -54,7 +52,9 @@ public class SiteEqAreaPlot extends EqAreaPlot {
             drawGreatCircleSegment(segmentStart,
                     segmentEnd,circle.lastPoint());
             for (Vec3 p: circle.getPoints()) {
-                addPoint(null, project(p), p.z>=0, false, false);
+                ShapePoint.build(this, project(p)).
+                        scale(0.8).filled(p.z>=0).build().draw(g);
+                //addPoint(null, project(p), p.z>=0, false, false);
                 drawGreatCircleSegment(p, pole.nearestOnCircle(p));
             }
             final Vec3 nearestPoint = pole.nearestOnCircle(meanDir);
@@ -78,7 +78,7 @@ public class SiteEqAreaPlot extends EqAreaPlot {
         if (samples==null || samples.isEmpty()) {
             return;
         }
-        List<Vec3> pcaDirs = new ArrayList<Vec3>(samples.size());
+        final List<Vec3> pcaDirs = new ArrayList<Vec3>(samples.size());
         for (Sample s: samples) {
             final PcaValues pcaValues = s.getPcaValues();
             if (pcaValues != null) {
@@ -90,7 +90,7 @@ public class SiteEqAreaPlot extends EqAreaPlot {
         final FisherValues fisherMean = FisherValues.calculate(pcaDirs);
         final Vec3 meanDir = fisherMean.getMeanDirection();
         drawLineSegments(meanDir.makeSmallCircle(fisherMean.getA95()));
-        PlotPoint meanPoint =
+        final PlotPoint meanPoint =
                 ShapePoint.build(this, project(meanDir)).
                 circle().scale(1.5).filled(meanDir.z>0).build();
         meanPoint.draw(g);
@@ -108,12 +108,8 @@ public class SiteEqAreaPlot extends EqAreaPlot {
             writeString(g, "No sites defined.", xo-40, yo-20);
             return;
         }
-        GreatCircles circles = site.getGreatCircles();
-        if (circles != null) {
-            drawGreatCircles(site);
-        } else {
-            drawPcas(site);
-        }
+        drawGreatCircles(site);
+        drawPcas(site);
         drawPoints(g);
     }
 }

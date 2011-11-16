@@ -52,16 +52,16 @@ public abstract class Plot
 
     protected static final String DEFAULT_PLOT_POSITIONS =
             "demag true 374 85 348 311 zplot true 736 85 456 697 " +
-            "zplotlegend true 1060 14 130 49 sampletable true 14 14 462 57 " +
-            "fishertable true 550 14 178 61 pcatable true 736 14 193 64 " +
+            "zplotlegend true 1060 14 130 49 title true 14 14 462 57 " +
+            "sitetable true 550 14 178 61 pcatable true 736 14 193 64 " +
             "equarea true 376 398 346 389 datatable true 14 83 356 543 " +
-            "ams false 222 633 147 154 ternarytest false 500 500 300 300 " +
-            "greatcircles false 422 633 147 154 " +
-            "formation_mean false 422 733 147 154 "+
+            "ams false 222 633 147 154 ternaryplot false 500 500 300 300 " +
+            "equarea_site false 422 533 147 154 " +
+            "equarea_suite false 422 633 147 154 "+
             "nrm_histogram false 422 733 147 154";
 
     static {
-        final AffineTransform at = AffineTransform.getTranslateInstance(0, 0.18);
+        final AffineTransform at = AffineTransform.getTranslateInstance(0, -0.18);
         at.concatenate(AffineTransform.getScaleInstance(0.8, 0.8));
         MAC_SUPERSCRIPT_TRANSFORM = new TransformAttribute(at);
     }
@@ -218,7 +218,8 @@ public abstract class Plot
         }
     }
 
-    public String dimensionsAsString() {
+    public String getDimensionsAsString() {
+        logger.log(Level.INFO, "Getting dimensions for {0}", getName());
         Rectangle2D r = dimensions;
         // Explicit locale to ensure . for decimal separator
         return String.format(Locale.ENGLISH, "%b %g %g %g %g ",

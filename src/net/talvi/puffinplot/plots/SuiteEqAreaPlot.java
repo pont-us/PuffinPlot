@@ -24,7 +24,7 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
 
     @Override
     public String getName() {
-        return "formation_mean";
+        return "equarea_suite";
     }
     
     @Override
@@ -58,7 +58,7 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
             Vec3 siteMean = null;
             GreatCircles circles = site.getGreatCircles();
             if (circles != null && circles.isValid())
-                siteMean = circles.getDirection();
+                siteMean = circles.getMeanDirection();
             if (siteMean == null) {
                 FisherValues fv = site.getFisher();
                 if (fv != null) siteMean = fv.getMeanDirection();

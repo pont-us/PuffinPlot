@@ -9,7 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import static java.lang.Math.acos;
 
-public class GreatCircles {
+public class GreatCircles implements FisherParams {
 
     private static final Logger logger = Logger.getLogger("GreatCircles");
 
@@ -97,10 +97,10 @@ public class GreatCircles {
     }
 
     public List<GreatCircle> getCircles() {
-        return circles;
+        return Collections.unmodifiableList(circles);
     }
 
-    public Vec3 getDirection() {
+    public Vec3 getMeanDirection() {
         return direction;
     }
 
@@ -128,5 +128,9 @@ public class GreatCircles {
 
     public double getA95() {
         return a95;
+    }
+    
+    public double getK() {
+        return k;
     }
 }

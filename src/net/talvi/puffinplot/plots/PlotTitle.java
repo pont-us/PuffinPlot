@@ -9,9 +9,9 @@ import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 import net.talvi.puffinplot.data.Sample;
 
-public class SampleTable extends Plot {
+public class PlotTitle extends Plot {
 
-    public SampleTable(GraphDisplay parent, PlotParams params, Preferences prefs) {
+    public PlotTitle(GraphDisplay parent, PlotParams params, Preferences prefs) {
         super(parent, params, prefs);
     }
     
@@ -22,7 +22,7 @@ public class SampleTable extends Plot {
 
     @Override
     public String getName() {
-        return "sampletable";
+        return "title";
     }
 
     @Override
@@ -32,18 +32,16 @@ public class SampleTable extends Plot {
 
     @Override
     public void draw(Graphics2D g) {
-        Sample sample = params.getSample();
+        final Sample sample = params.getSample();
         if (sample==null || !sample.hasData()) return;
 
         g.setFont(Font.getFont(getTextAttributes()));
         g.setColor(Color.BLACK);
-        Font oldFont = g.getFont();
-        Font biggerFont = oldFont.deriveFont(getFontSize()*1.5f);
+        final Font oldFont = g.getFont();
+        final Font biggerFont = oldFont.deriveFont(getFontSize()*1.5f);
         g.setFont(biggerFont);
-        
         final boolean discrete = sample.getMeasType().isDiscrete();
-
-        String line = (discrete ? "Sample: " : "Depth: ")
+        final String line = (discrete ? "Sample: " : "Depth: ")
                 + sample.getNameOrDepth().substring(0);
         //        + ", Correction: " + params.getCorrection().getDescription();
         g.drawString(line, (int) getDimensions().getMinX(), 

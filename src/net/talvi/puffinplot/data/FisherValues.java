@@ -9,7 +9,7 @@ import java.util.List;
 import static java.lang.Math.acos;
 import static java.lang.Math.pow;
 
-public class FisherValues {
+public class FisherValues implements FisherParams {
 
     private final double a95;
     private final double k;

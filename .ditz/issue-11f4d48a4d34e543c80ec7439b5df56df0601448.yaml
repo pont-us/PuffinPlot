@@ -1,0 +1,23 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Test superscript with latest Mac Java version
+desc: "At present I employ a complex and unreliable hack to simulate\n\
+  superscripts on Mac OS X, because when I last tested it, it had\n\
+  terrible bugs in superscript rendering. Now that Java 6 has finally\n\
+  been released for OS X, I should check whether \xE2\x80\x98proper\xE2\x80\x99 superscript\n\
+  rendering works there. If I'm dropping support for Java 5 anyway,\n\
+  I could dispense with the hack entirely."
+type: :task
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2011-11-15 20:33:26.585756 Z
+references: []
+
+id: 11f4d48a4d34e543c80ec7439b5df56df0601448
+log_events: 
+- - 2011-11-15 20:33:26.797744 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

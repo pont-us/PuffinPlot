@@ -73,7 +73,7 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         for (Plot plot: plots.values()) {
             sb.append(plot.getName());
             sb.append(" ");
-            sb.append(plot.dimensionsAsString());
+            sb.append(plot.getDimensionsAsString());
             sb.append(" ");
         }
         return sb.toString();

@@ -115,7 +115,7 @@ public class PrefsWindow extends JFrame {
         
         miscPanel.add(Box.createVerticalGlue());
         miscPanel.add(makeLabelledPrefBox("Demag y axis",
-                "plots.demag.vAxisLabel", "Magnetization (A/M)"));
+                "plots.demag.vAxisLabel", "Magnetization (A/m)"));
         miscPanel.add(makeLabelledPrefBox("PmagPy folder",
                 "data.pmagPyPath", "/usr/local/bin"));
         miscPanel.add(makeLabelledPrefBox("Font",
