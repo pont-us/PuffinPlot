@@ -8,8 +8,8 @@ type: :feature
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2010-10-24 00:35:51.241824 Z
 references: []
 
@@ -25,3 +25,13 @@ log_events:
   - |-
     This needs fixing before first public release, even if
     only by removing it.
+- - 2011-11-17 21:02:40.948062 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2011-11-17 21:53:26.112069 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    All three axes now flippable, and the user gets a confirmation
+    dialog to avoid accidentally messing up data.

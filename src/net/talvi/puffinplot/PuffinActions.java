@@ -68,6 +68,10 @@ public class PuffinActions {
             this(name, description, accelerator, shift, mnemonic, false,
                     modifierKey);
         }
+        
+        public PuffinAction(String name, String description) {
+            this(name, description, null, false, null);
+        }
 
         public boolean excludeFromMenu() {
             return PuffinApp.MAC_OS_X && specialMacMenuItem;
@@ -253,24 +257,27 @@ public class PuffinActions {
         }
     };
     
-    public final Action flipSampleX = new AbstractAction("Flip samples around X axis") {
+    public final Action flipSampleX = new PuffinAction("Flip samples around X axis",
+            "Rotate selected samples 180° about the X axis") {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent arg0) {
-            for (Sample s: app.getSelectedSamples()) s.flip(MeasurementAxis.X);
+            app.flipSelectedSamples(MeasurementAxis.X);
         }
     };
     
-    public final Action flipSampleY = new AbstractAction("Flip samples around Y axis") {
+    public final Action flipSampleY = new PuffinAction("Flip samples around Y axis",
+            "Rotate selected samples 180° about the Y axis") {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent arg0) {
-            for (Sample s: app.getSelectedSamples()) s.flip(MeasurementAxis.Y);
+            app.flipSelectedSamples(MeasurementAxis.Y);
         }
     };
         
-    public final Action flipSampleZ = new AbstractAction("Flip samples around Z axis") {
+    public final Action flipSampleZ = new PuffinAction("Flip samples around Z axis",
+            "Rotate selected samples 180° about the Z axis") {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent arg0) {
-            for (Sample s: app.getSelectedSamples()) s.flip(MeasurementAxis.Z);
+            app.flipSelectedSamples(MeasurementAxis.Z);
         }
     };
     
@@ -279,7 +286,6 @@ public class PuffinActions {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {
             app.doPcaOnSelection();
-            app.updateDisplay();
         }
     };
 

@@ -43,6 +43,7 @@ import javax.swing.JFileChooser;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import net.talvi.puffinplot.data.Correction;
+import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Site;
 import net.talvi.puffinplot.data.Suite.AmsCalcType;
@@ -183,6 +184,7 @@ public final class PuffinApp {
                 sample.doPca(getCorrection());
             }
         }
+        updateDisplay();
     }
 
     GreatCircleWindow getGreatCircleWindow() {
@@ -396,7 +398,10 @@ public final class PuffinApp {
     }
 
     public List<Sample> getSelectedSamples() {
-        return getMainWindow().getSampleChooser().getSelectedSamples();
+        List<Sample> result =
+                getMainWindow().getSampleChooser().getSelectedSamples();
+        if (result==null) return Collections.emptyList();
+        return result;
     }
 
     public List<Site> getSelectedSites() {
@@ -581,11 +586,30 @@ public final class PuffinApp {
     }
     
     void pastePointSelection() {
-        final List<Sample> samples = getSelectedSamples();
-        if (samples==null) return; // should never happen, just being paranoid
         if (pointSelectionClipboard==null) return;
         for (Sample sample: getSelectedSamples()) {
             sample.setSelectionBitSet(pointSelectionClipboard);
+        }
+        updateDisplay();
+    }
+    
+    public void flipSelectedSamples(MeasurementAxis axis) {
+        final List<Sample> samples = getSelectedSamples();
+        if (samples.isEmpty()) return;
+        final String msgFmt = 
+                "You are about to rotate the data for %d selected sample%s\n"
+                + "by 180° about the %s axis.\n"
+                + "Are you sure you wish to do this?\n"
+                + "Press OK to confirm, or Cancel to abort.";
+        final String msg = String.format(msgFmt, samples.size(),
+                samples.size()==1 ? "" : "s", axis.toString());
+        final int choice = JOptionPane.showConfirmDialog(getMainWindow(), msg,
+                "Flip samples", JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.WARNING_MESSAGE);
+        if (choice == JOptionPane.OK_OPTION) {
+            for (Sample sample: getSelectedSamples()) {
+                sample.flip(axis);
+            }
         }
         updateDisplay();
     }
