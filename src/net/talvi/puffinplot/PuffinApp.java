@@ -53,7 +53,6 @@ import net.talvi.puffinplot.window.PrefsWindow;
 public final class PuffinApp {
 
     private static PuffinApp app;
-    private String buildDate;
     private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
     private static final ByteArrayOutputStream logStream =
             new ByteArrayOutputStream();
@@ -69,19 +68,19 @@ public final class PuffinApp {
     private final PuffinPrefs prefs;
     private final FisherWindow fisherWindow;
     private final CorrectionWindow correctionWindow;
+    private final GreatCircleWindow greatCircleWindow;
+    private final PrefsWindow prefsWindow;
+    private final AboutBox aboutBox;
     private RecentFileList recentFiles;
     private CustomFieldEditor customFlagsWindow = null;
     private CustomFieldEditor customNotesWindow;
-    public static PuffinApp getInstance() { return app; }
-    public String getBuildDate() { return buildDate; }
     private boolean emptyCorrectionActive;
     private Correction correction;
-    private final GreatCircleWindow greatCircleWindow;
-    private final PrefsWindow prefsWindow;
     private final Map<String,File> lastUsedFileOpenDirs =
             new HashMap<String,File>();
     private static final boolean useSwingChooserForOpen = true;
     private BitSet pointSelectionClipboard = new BitSet(0);
+    private Properties buildProperties;
 
     static {
         final Handler logStringHandler =
@@ -92,8 +91,10 @@ public final class PuffinApp {
         logMemoryHandler.setLevel(Level.ALL);
     }
     
+    public static PuffinApp getInstance() { return app; }
+    
     public List<Suite> getSuites() {
-        return suites;
+        return Collections.unmodifiableList(suites);
     }
 
     public boolean isEmptyCorrectionActive() {
@@ -110,12 +111,10 @@ public final class PuffinApp {
 
     private void loadBuildProperties() {
         InputStream propStream = null;
-        String buildDateTmp = "unknown";
         try {
             propStream = PuffinApp.class.getResourceAsStream("build.properties");
-            Properties props = new Properties();
-            props.load(propStream);
-            buildDateTmp = props.getProperty("build.date");
+            buildProperties = new Properties();
+            buildProperties.load(propStream);
         } catch (IOException ex) {
             logger.log(Level.WARNING, "Failed to get build date", ex);
             /* The only effect of this on the user is a lack of build date
@@ -124,11 +123,14 @@ public final class PuffinApp {
         } finally {
             if (propStream != null)
                 try {propStream.close();} catch (IOException e) {}
-            buildDate = buildDateTmp;
         }
-        logger.log(Level.INFO, "Build date: {0}", getBuildDate());
+        logger.log(Level.INFO, "Build date: {0}", getBuildProperty("build.date"));
     }
-    private final AboutBox aboutBox;
+    
+    public String getBuildProperty(String propertyName) {
+        if (buildProperties == null) return "unknown";
+        return buildProperties.getProperty(propertyName, "unknown");
+    }
     
     public PuffinApp() {
         logger.info("Instantiating PuffinApp.");
@@ -205,7 +207,8 @@ public final class PuffinApp {
             try {
                 final PrintWriter w = new PrintWriter(new FileWriter(f));
                 w.println("PuffinPlot error file");
-                w.println("Build date: " + getInstance().getBuildDate());
+                w.println("Build date: " + getInstance().
+                        getBuildProperty("build.date"));
                 final Date now = new Date();
                 final SimpleDateFormat df =
                         new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -426,17 +429,17 @@ public final class PuffinApp {
     
     public void quit() {
         getActions().quit.actionPerformed
-        (new ActionEvent(this, ActionEvent.ACTION_PERFORMED, ""));
+                (new ActionEvent(this, ActionEvent.ACTION_PERFORMED, ""));
     }
     
     public void about() {
         getActions().about.actionPerformed
-        (new ActionEvent(this, ActionEvent.ACTION_PERFORMED, ""));
+                (new ActionEvent(this, ActionEvent.ACTION_PERFORMED, ""));
     }
     
     public void preferences() {
         getActions().prefs.actionPerformed
-        (new ActionEvent(this, ActionEvent.ACTION_PERFORMED, ""));
+                (new ActionEvent(this, ActionEvent.ACTION_PERFORMED, ""));
     }
 
     public void showPreferences() {
@@ -552,7 +555,7 @@ public final class PuffinApp {
     }
     
     void pastePointSelection() {
-        List<Sample> samples = getSelectedSamples();
+        final List<Sample> samples = getSelectedSamples();
         if (samples==null) return; // should never happen, just being paranoid
         if (pointSelectionClipboard==null) return;
         for (Sample sample: getSelectedSamples()) {

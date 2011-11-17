@@ -53,7 +53,8 @@ public class MainWindow extends JFrame {
         mainPanel.add(splitPane);
         mainPanel.add(welcomeMessage =
                 new JLabel("Welcome to PuffinPlot. This puffin hatched on "+
-                PuffinApp.getInstance().getBuildDate()+"."), BorderLayout.NORTH);
+                PuffinApp.getInstance().getBuildProperty("build.date") +"."),
+                BorderLayout.NORTH);
         splitPane.setVisible(false);
         mainPanel.add(sampleChooser = new SampleChooser(), BorderLayout.WEST);
         // mainPanel.add(sampleDataPanel = new SampleDataPanel(), BorderLayout.EAST);

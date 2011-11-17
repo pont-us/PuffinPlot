@@ -15,6 +15,22 @@ import java.awt.Frame;
  */
 public class AboutBox extends javax.swing.JDialog {
 
+    private String gsp(String property) {
+        return System.getProperty(property);
+    }
+    
+    private String getContent() {
+        final String fmt = 
+                "PuffinPlot is a program for showing, exploring, and analysing "
+                + "palæomagnetic data. It is released under the GNU General "
+                + "Public Licence version 3, and is Copyright 2008–%s Pontus "
+                + "Lurcock (pont@talvi.net).\n\n"
+                + "System information: OS %s %s (%s), Java %s (%s)";
+        String year = PuffinApp.getInstance().getBuildProperty("build.year");
+        return String.format(fmt, year, gsp("os.name"), gsp("os.version"),
+                gsp("os.arch"), gsp("java.version"), gsp("java.vendor"));
+    }
+    
     /** Creates new form AboutBox */
     public AboutBox(Frame owner) {
         super(owner, "About PuffinPlot", true);
@@ -54,7 +70,7 @@ public class AboutBox extends javax.swing.JDialog {
         jTextArea1.setEditable(false);
         jTextArea1.setLineWrap(true);
         jTextArea1.setRows(5);
-        jTextArea1.setText("PuffinPlot is a program for showing, exploring, and analysing palæomagnetic data. It is released under the GNU General Public Licence version 3, and is Copyright 2008 Pontus Lurcock (pont@talvi.net).");
+        jTextArea1.setText(getContent());
         jTextArea1.setWrapStyleWord(true);
         jTextArea1.setOpaque(false);
         jTextArea1.setPreferredSize(null);
@@ -63,12 +79,11 @@ public class AboutBox extends javax.swing.JDialog {
         getContentPane().add(jScrollPane1);
 
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("Build date");
+        jLabel3.setText(PuffinApp.getInstance().getBuildProperty("build.date"));
         jLabel3.setAlignmentX(0.5F);
         jLabel3.setMaximumSize(new java.awt.Dimension(500, 30));
         jLabel3.setMinimumSize(new java.awt.Dimension(45, 30));
         jLabel3.setPreferredSize(new java.awt.Dimension(500, 30));
-        jLabel3.setText(PuffinApp.getInstance().getBuildDate());
         getContentPane().add(jLabel3);
 
         jButton1.setText("Close");

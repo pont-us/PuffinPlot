@@ -8,7 +8,8 @@
     
     <target name="-pre-jar">
         <propertyfile file="build/classes/net/talvi/puffinplot/build.properties">
-            <entry  key="build.date" type="date" value="now" pattern="yyyy-MM-dd HH:mm"/>
+            <entry key="build.date" type="date" value="now" pattern="yyyy-MM-dd HH:mm"/>
+            <entry key="build.year" type="date" value="now" pattern="yyyy"/>
         </propertyfile>
     </target>
     

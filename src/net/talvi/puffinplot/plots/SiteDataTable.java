@@ -9,7 +9,6 @@ import java.util.prefs.Preferences;
 import net.talvi.puffinplot.data.FisherParams;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
-import net.talvi.puffinplot.data.FisherValues;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Site;
 
@@ -19,7 +18,8 @@ public class SiteDataTable extends Plot {
      * the real alpha is simply absent from the font, since it should
      * just get substituted from the default font (which does contain it).
      * But buggy fonts can contain an incorrect or blank character in the
-     * alpha position, so it's safer not to use it.
+     * alpha position, so it's safer not to use it. Anyway, if we're doing 
+     * it properly we should subscript the 95 too.
      */
     private static final boolean USE_REAL_ALPHA = false;
     private static final String alpha = USE_REAL_ALPHA ? "α" : "a";
@@ -61,7 +61,7 @@ public class SiteDataTable extends Plot {
             // style run; this means that a font substitution on the alpha
             // won't affect the whole string. (See bug #32.)
             int position = s.indexOf(alpha);
-            as.addAttribute(TextAttribute.SIZE, getFontSize()+0.00001f,
+            as.addAttribute(TextAttribute.SIZE, getFontSize()+.00001f,
                     position, position+1);
         }
         final FontRenderContext frc = g.getFontRenderContext();
