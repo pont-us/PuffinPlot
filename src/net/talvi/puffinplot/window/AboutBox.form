@@ -77,7 +77,7 @@
       <Properties>
         <Property name="horizontalAlignment" type="int" value="0"/>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="PuffinApp.getInstance().getBuildProperty(&quot;build.date&quot;)" type="code"/>
+          <Connection code="&quot;Build date: &quot;+PuffinApp.getInstance().getBuildProperty(&quot;build.date&quot;)" type="code"/>
         </Property>
         <Property name="alignmentX" type="float" value="0.5"/>
         <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">

@@ -62,13 +62,18 @@ public class Vec3 {
     }
     
     /*
-     * Rotate 180 degrees about the X axis. Since X is up in magnetometer
-     * co-ordinates, you can use this to correct a specimen that you put 
-     * into the magnetometer back-to-front.
+     * Rotate 180 degrees about the specified axis. Since X is up in 
+     * magnetometer co-ordinates, specifying the X axis corrects the data for 
+     * a specimen placed in the magnetometer back-to-front.
      * 
      */
-    public Vec3 rotX180() {
-        return new Vec3(x, -y, -z);
+    public Vec3 rot180(MeasurementAxis axis) {
+        switch (axis) {
+            case X: return new Vec3(x, -y, -z);
+            case Y: return new Vec3(-x, y, -z);
+            case Z: return new Vec3(-x, -y, z);
+            default: return this;
+        }
     }
 
     /* Return the unit vector on the intersection of the equator (z=0 line)

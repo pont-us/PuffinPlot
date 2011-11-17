@@ -518,7 +518,7 @@ public final class PuffinApp {
         app.updateDisplay();
     }
         
-    List<File> openFileDialog(String title) {
+    private List<File> openFileDialog(String title) {
         if (!lastUsedFileOpenDirs.containsKey(title)) {
             lastUsedFileOpenDirs.put(title, null);
         }
@@ -545,6 +545,32 @@ public final class PuffinApp {
             }
         }
         return files;
+    }
+    
+    public void openFile() {
+        List<File> files = app.openFileDialog("Open file(s)");
+        if (files != null) app.openFiles(files);
+    }
+    
+    public void importAms() {
+        try {
+            List<File> files = openFileDialog("Select AMS files");
+            // app.getSuite().importAms(files, true);
+            getSuite().importAmsFromAsc(files, false);
+            updateDisplay();
+        } catch (IOException ex) {
+            logger.log(Level.SEVERE, null, ex);
+            errorDialog("Error importing AMS", ex.getLocalizedMessage());
+        }
+    }
+    
+    public void importPreferences() {
+        List<File> files = openFileDialog("Import preferences file");
+        if (files != null && files.size() > 0) {
+            getPrefs().importFromFile(files.get(0));
+            getMainWindow().getGraphDisplay().recreatePlots();
+            updateDisplay();
+        }
     }
     
     void copyPointSelection() {

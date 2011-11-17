@@ -3,7 +3,7 @@ title: Look at ZPLOTIT
 desc: Especially the PCA table.
 type: :task
 component: PuffinPlot
-release: "1.0"
+release: "1.1"
 reporter: Pontus Lurcock <pont@talvi.net>
 status: :unstarted
 disposition: 
@@ -16,3 +16,11 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2011-11-17 01:06:29.333669 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.1 from 1.0
+  - |-
+    I have looked at the PCA table, and it does make me feel that 
+    PuffinPlot should export more data -- e.g. number of points and
+    range of demagnetization steps for PCA fits. But I need to get
+    1.0 released this year, so I'm relegating this to 1.1.

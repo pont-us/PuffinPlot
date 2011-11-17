@@ -81,8 +81,8 @@ public class Sample {
     /*
      * Rotates all data 180 degrees about the X axis.
      */
-    public void flip() {
-        for (Datum d: getData()) d.rotX180();
+    public void flip(MeasurementAxis axis) {
+        for (Datum d: getData()) d.rot180(axis);
     }
 
     public void hideSelectedPoints() {

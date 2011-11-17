@@ -101,12 +101,13 @@ public class MainMenuBar extends JMenuBar {
                 makeMenu("Export data", pa.exportCalcsSample,
                 pa.exportCalcsSite, pa.exportCalcsSuite, pa.exportIrm),
                 pa.pageSetup, pa.print, pa.printFisher, pa.printGc,
-                pa.importAms, pa.exportSvg, pa.exportPrefs, pa.importPrefs,
+                pa.importAms, pa.exportSvg, pa.exportPdf,
+                pa.exportPrefs, pa.importPrefs,
                 pa.prefs, pa.quit));
         add(makeMenu("Edit", pa.selectAll, pa.clearSelection,
                 movePlotsItem, pa.resetLayout, pa.editCorrections,
                 pa.copyPointSelection, pa.pastePointSelection,
-                pa.flipSample, pa.hideSelectedPoints, pa.unhideAllPoints,
+                pa.flipSampleX, pa.hideSelectedPoints, pa.unhideAllPoints,
                 pa.useAsEmptySlot, pa.unsetEmptySlot,
                 useEmptyItem, pa.showCustomFlagsWindow, pa.showCustomNotesWindow,
                 pa.rescaleMagSus));

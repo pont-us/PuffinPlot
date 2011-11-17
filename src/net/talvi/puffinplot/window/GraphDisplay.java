@@ -16,6 +16,7 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.print.Printable;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -32,7 +33,11 @@ import net.talvi.puffinplot.plots.Plot;
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfWriter;
+import java.io.FileOutputStream;
 
 public abstract class GraphDisplay extends JPanel implements Printable {
 
@@ -295,13 +300,14 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         setDoubleBuffered(true);
     }
 
-    public void printToSvg(String filename) {
+    public void saveToSvg(String filename) {
         // Get a DOMImplementation.
         DOMImplementation domImpl =
             GenericDOMImplementation.getDOMImplementation();
         // Create an instance of org.w3c.dom.Document.
         String svgNS = "http://www.w3.org/2000/svg";
-        Document document = domImpl.createDocument(svgNS, "svg", null);
+        org.w3c.dom.Document document =
+                domImpl.createDocument(svgNS, "svg", null);
         // Create an instance of the SVG Generator.
         SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
         // svgGenerator.setUnsupportedAttributes(null);
@@ -318,6 +324,23 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         } catch (IOException ex) {
             Logger.getLogger(GraphDisplay.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+    }
+    
+    public void saveToPdf(String filename) throws DocumentException, FileNotFoundException {
+        com.lowagie.text.Document document =
+                new com.lowagie.text.Document(new Rectangle(2000, 1200));
+        // fonts not working properly yet.
+        // see p. 483 of the itext book for possible fix.
+        // step 2
+        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(filename));
+        // step 3
+        document.open();
+        // step 4
+        PdfContentByte canvas = writer.getDirectContent();
+        Graphics2D g2 = canvas.createGraphics(2000, 1200);
+        paint(g2);
+        g2.dispose();
+        // step 5
+        document.close();
     }
 }

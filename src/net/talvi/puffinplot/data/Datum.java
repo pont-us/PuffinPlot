@@ -190,8 +190,8 @@ public class Datum {
     /*
      *  Rotate orientations 180 degrees about X axis.
      */
-    public void rotX180() {
-        moment = moment.rotX180();
+    public void rot180(MeasurementAxis axis) {
+        moment = moment.rot180(axis);
     }
 
     public void toggleSel() {

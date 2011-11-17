@@ -515,16 +515,16 @@ public class Suite {
     }
 
     /**
-     *  Import AMS data from a file. If directions==false, line format is
-     *  k11 k22 k33 k12 k23 k13  (tensor components)
-     * otherwise it's
+     * Import AMS data from a whitespace-delimited file.
+     * If directions==false, line format is k11 k22 k33 k12 k23 k13 
+     * (tensor components) otherwise it's
      * inc1 dec1 inc2 dec2 inc3 dec3 (axis directions, decreasing magnitude).
      * If there's no sample in the suite from which to take the sample
      * and formation corrections, importAms will try to read them as
      * fields appended to the end of the line.
      */
 
-    public void importAms(List<File> files, boolean directions)
+    public void importAmsFromDelimitedFile(List<File> files, boolean directions)
             throws IOException {
         BufferedReader reader = null;
         directions = false;

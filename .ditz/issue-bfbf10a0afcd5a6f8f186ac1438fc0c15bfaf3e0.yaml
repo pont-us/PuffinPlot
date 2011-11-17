@@ -1,0 +1,26 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Add support for AMS import from non-Agico files
+desc: "Currently, Suite contains importAmsFromDelimitedFile and\n\
+  importAmsFromAsc, but only the latter is actually tied to \n\
+  the user interface. For anyone not using the Agico software,\n\
+  this would mean that the only way to import AMS data would be\n\
+  to mock-up an Agico ASC file (ugh). I should re-add UI support \n\
+  for the \xE2\x80\x98simple\xE2\x80\x99 AMS import. The method supports both raw\n\
+  tensors and principal axes directions, but I should probably\n\
+  check them both before exposing it to the UI, since it hasn't\n\
+  been extensively tested."
+type: :feature
+component: PuffinPlot
+release: "1.1"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2011-11-17 20:48:27.300012 Z
+references: []
+
+id: bfbf10a0afcd5a6f8f186ac1438fc0c15bfaf3e0
+log_events: 
+- - 2011-11-17 20:48:27.607941 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
