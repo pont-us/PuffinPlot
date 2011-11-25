@@ -1,39 +1,31 @@
 \documentclass[a4paper]{article}
-\frenchspacing
 
+% ======== General set-up
+
+\frenchspacing
+\usepackage{ifpdf} % For now, I'm just targeting pdflatex and htlatex.
 \usepackage{calc} % allow infix arithmetic
-%\usepackage{libertine}
-%\usepackage[T1]{fontenc}
-\usepackage[round]{natbib}
-\usepackage{amssymb,amsmath}
-\usepackage{ifxetex,ifluatex,ifpdf}
-\ifxetex
-  \usepackage{fontspec,xltxtra,xunicode}
-  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
-\else
-  \ifluatex
-    \usepackage{fontspec}
-    \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
-  \else
-    \usepackage[utf8]{inputenc}
-  \fi
+\ifpdf
+  \usepackage{libertine}
+  \usepackage[T1]{fontenc}
 \fi
+\usepackage[round]{natbib}
+
+\usepackage[utf8]{inputenc}
 \usepackage{url}
 \usepackage{graphicx}
 \usepackage{textcomp} % for \textdegree
-\ifxetex
-  \usepackage[setpagesize=false, % page size defined by xetex
-              unicode=false, % unicode breaks when used with xetex
-              xetex]{hyperref}
-\else
+\ifpdf
   \usepackage[unicode=true]{hyperref}
+  \hypersetup{breaklinks=true, pdfborder={0 0 0}}
 \fi
-\hypersetup{breaklinks=true, pdfborder={0 0 0}}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{6pt plus 2pt minus 1pt}
 \setlength{\emergencystretch}{3em}  % prevent overfull lines
-\newcommand{\ppcmd}[1]{\textsf{#1}}
 
+% ======== My commands
+
+% Custom definition list for menu items
 \newcommand{\menuitemlabel}[1]{%
 \mbox{\textsf{#1}}\hfil}
 \newenvironment{menuitemlist}%
@@ -44,13 +36,20 @@
              {\labelwidth+\labelsep}}}%
 {\end{list}}
 
-\newcommand{\caps}[1]{\textsc{#1}}
+\newcommand{\ppcmd}[1]{\textsf{#1}} % For `computer' text
+\newcommand{\caps}[1]{\textsc{#1}} % for acronyms and initialisms
+\newcommand{\submenu}{ \textgreater{} } % htlatex doesn't like `>'.
+
+% ======== Title
 
 \title{PuffinPlot User Manual}
 \author{Pontus Lurcock}
 \date{18 November 2011}
 
+% ======== Document starts here.
+
 \begin{document}
+
 \maketitle
 
 \section{Introduction}
@@ -357,30 +356,30 @@ saving files.
 
 \begin{menuitemlist}
 
-\item[File > Open…] loads one or more files of demagnetization data into
+\item[File\submenu Open…] loads one or more files of demagnetization data into
   PuffinPlot as a new suite. See section~\ref{sec:manual-file-types} for
   details of supported filetypes.
 
-\item[File > Open recent file] is a submenu which
+\item[File\submenu Open recent file] is a submenu which
 contains the names of the last eight files which have been opened in
 PuffinPlot, allowing them to be opened again with a single click.
 
-\item[File > Save] saves the current suite as a PuffinPlot file. If
+\item[File\submenu Save] saves the current suite as a PuffinPlot file. If
 the suite was opened from a PuffinPlot file or if it has been previously
 saved as a PuffinPlot file, it will immediately be saved to that file. If no
 PuffinPlot file is associated with this suite yet, a standard ‘save file’
 dialog box will prompt yo for a file name and location.
 
-\item[File > Save as…] allows you to save the current suite to a
+\item[File\submenu Save as…] allows you to save the current suite to a
 different filename or location.
 
-\item[File > Close] closes the current suite, removing it from
+\item[File\submenu Close] closes the current suite, removing it from
 PuffinPlot's data display.
 
-\item[File > Export data] is a submenu allowing the export of
+\item[File\submenu Export data] is a submenu allowing the export of
 various kinds of data to \caps{csv} files.
 
-\item[File > Export data \textgreater sample calculations…] saves a file
+\item[File\submenu Export data\submenu sample calculations…] saves a file
 containing all the data associated with individual samples.
 Table~\ref{tbl:manual-export-sample} describes the fields which make
 up the file.
