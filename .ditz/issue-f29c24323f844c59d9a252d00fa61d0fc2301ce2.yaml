@@ -9,7 +9,7 @@ type: :task
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
+status: :in_progress
 disposition: 
 creation_time: 2011-11-10 04:53:59.255059 Z
 references: []
@@ -20,3 +20,13 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2011-11-18 00:21:02.216040 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - |-
+    The path of least resistance seems to be to convert (and update)
+    the manual from the thesis to MarkDown (by hand), then use that
+    as the source format to produce HTML, PDF and whatever else is
+    needed. ConTeXt-to-HTML is possible but hard compared to pandoc.
+    We lose some typographical beauty but I think maintaining a 
+    ConTeXt version would take too much time and effort.

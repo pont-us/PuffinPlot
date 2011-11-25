@@ -1,10 +1,14 @@
+syntax: regexp
 \.rej$
 \.chg\..*$
 \.orig\..*$
 \.orig$
 \.conflict\~$
-PuffinPlot.zip
-PuffinPlot.app
-dist/
-build/
-store/
+^PuffinPlot.zip$
+^PuffinPlot.app$
+^dist/
+^build/
+^store/
+^manual/manual\.(4ct|4tc|aux|bbl|blg|css|dvi)$
+^manual/manual\.(html|idv|lg|log|out|pdf|tmp|xref)$
+^manual/figures/

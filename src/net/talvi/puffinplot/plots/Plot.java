@@ -13,6 +13,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.text.AttributedString;
+import java.util.Collections;
 import java.util.HashMap;
 import static java.text.AttributedCharacterIterator.Attribute;
 import java.util.LinkedList;
@@ -37,18 +38,19 @@ public abstract class Plot
     protected final PlotParams params;
     protected Rectangle2D dimensions;
     List<PlotPoint> points = new LinkedList<PlotPoint>();
-    private static final float UNIT_SCALE = (float) 0.0001f;
+    private static final float UNIT_SCALE = 0.0001f;
     private Stroke stroke, dashedStroke;
     private float unitSize;
     private static final float LINE_WIDTH_IN_UNITS = 8.0f;
     private static final float TICK_LENGTH_IN_UNITS = 48.0f;
-    private static final float FONT_SIZE_IN_UNITS = 100.0f;
+    private static final float FONT_SIZE_IN_UNITS = 120.0f;
     private static final float SLOPPY_SELECTION_RADIUS_IN_UNITS = 128.0f;
     protected static final double PLOT_POINT_SIZE = 24.;
     private Map<Attribute,Object> attributeMap =
             new HashMap<Attribute, Object>();
     private static final TransformAttribute MAC_SUPERSCRIPT_TRANSFORM;
     private boolean visible;
+    private final boolean useAppleSuperscriptHack;
 
     protected static final String DEFAULT_PLOT_POSITIONS =
             "demag true 374 85 348 311 zplot true 736 85 456 697 " +
@@ -103,7 +105,7 @@ public abstract class Plot
     }
 
     public Map<? extends Attribute,?> getTextAttributes() {
-        return attributeMap;
+        return Collections.unmodifiableMap(attributeMap);
     }
 
     public void applyTextAttributes(AttributedString as) {
@@ -196,8 +198,11 @@ public abstract class Plot
                 0, 0, 1, new float[]{2, 2}, 0);
         final String fontFamily = prefs.get("plots.fontFamily", "Arial");
         attributeMap.put(TextAttribute.FAMILY, fontFamily);
-        // attributeMap.put(TextAttribute.SIZE, getFontSize());
-        attributeMap.put(TextAttribute.SIZE, 120 * getUnitSize());
+        attributeMap.put(TextAttribute.SIZE, getFontSize());
+        useAppleSuperscriptHack = PuffinApp.MAC_OS_X &&
+                (PuffinApp.OSX_POINT_VERSION < 6 ||
+                !System.getProperty("java.version").startsWith("1.5"));
+                
     }
 
     private void setDimensionsFromPrefsString(String spec) {

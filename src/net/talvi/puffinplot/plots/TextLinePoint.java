@@ -59,9 +59,6 @@ public class TextLinePoint implements PlotPoint {
             if (datum.isHidden()) {
                 plot.writeString(g, "-", (float) xMin, (float) yPos);
             }
-            //if (datum.isOnCircle()) {
-             //   plot.writeString(g, "*", (float) xMin+40, (float) yPos);
-            //}
         }
 
         double x = xMin + 10;
