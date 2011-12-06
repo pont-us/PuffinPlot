@@ -1,5 +1,6 @@
 package net.talvi.puffinplot.data;
 
+import com.sun.imageio.plugins.common.BitFile;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -7,10 +8,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -83,7 +86,7 @@ public class Suite {
         for (Entry<String, List<Sample>> entry: siteMap.entrySet()) {
             List<Sample> siteSamples = entry.getValue();
             Site site = new Site(entry.getKey(), siteSamples);
-            getSites().add(site);
+            sites.add(site);
             for (Sample s: siteSamples) s.setSite(site);
         }
     }
@@ -244,7 +247,7 @@ public class Suite {
         customFlagNames = new CustomFlagNames(emptyStringList);
         customNoteNames = new CustomNoteNames(emptyStringList);
         List<String> puffinLines = emptyStringList;
-        sites = Collections.emptyList();
+        sites = new ArrayList<Site>();
 
         for (File file: files) {
             if (!file.exists()) {
@@ -675,11 +678,11 @@ public class Suite {
      * @return the amsBootstrapParams
      */
     public List<KentParams> getAmsBootstrapParams() {
-        return amsBootstrapParams;
+        return Collections.unmodifiableList(amsBootstrapParams);
     }
 
     public List<KentParams> getAmsHextParams() {
-        return hextParams;
+        return Collections.unmodifiableList(hextParams);
     }
 
     public void clearAmsCalculations() {
@@ -688,7 +691,7 @@ public class Suite {
     }
 
     public List<Site> getSites() {
-        return sites;
+        return Collections.unmodifiableList(sites);
     }
 
     public Site getSiteByName(String siteName) {
@@ -755,7 +758,7 @@ public class Suite {
         }
     }
         
-    public enum AmsCalcType { HEXT, BOOT, PARA_BOOT }; 
+    public static enum AmsCalcType { HEXT, BOOT, PARA_BOOT }; 
 
     public void doAmsStatistics(List<Sample> samples, AmsCalcType calcType,
             String scriptPath) throws IOException, IllegalArgumentException {
@@ -783,9 +786,97 @@ public class Suite {
         }
     }
     
+    private void removeEmptySites() {
+        // ‘Iterator.remove is the only safe way to modify a collection 
+        // during iteration’
+        // -- http://docs.oracle.com/javase/tutorial/collections/interfaces/collection.html
+        
+        for (Iterator<Site> it = sites.iterator(); it.hasNext(); ) {
+            if (it.next().isEmpty()) {
+                it.remove();
+            }
+        }
+    }
+    
+    public double getMinDepth() {
+        if (!getMeasType().isContinuous()) return Double.NaN;
+        double minimum = Double.POSITIVE_INFINITY;
+        for (Sample s: getSamples()) {
+            final double depth = s.getDepth();
+            if (depth<minimum) {
+                minimum = depth;
+            }
+        }
+        return minimum;
+    }
+        
+    public double getMaxDepth() {
+        if (!getMeasType().isContinuous()) return Double.NaN;
+        double maximum = Double.NEGATIVE_INFINITY;
+        for (Sample s: getSamples()) {
+            final double depth = s.getDepth();
+            if (depth>maximum) {
+                maximum = depth;
+            }
+        }
+        return maximum;
+    }
+    
+    public static interface SiteNamer {
+        String siteName(Sample sample);
+    }
+    
+    public void setSitesForSamples(Collection<Sample> samples, SiteNamer siteNamer) {
+        for (Sample sample: samples) {
+            final Site oldSite = sample.getSite();
+            final Site newSite = getOrCreateSite(siteNamer.siteName(sample));
+            if (oldSite != null) {
+                oldSite.removeSample(sample);
+            }
+            sample.setSite(newSite);
+            newSite.addSample(sample);
+        }
+        removeEmptySites();
+    }
+    
+    public void setNamedSiteForSamples(Collection<Sample> samples,
+            final String siteName) {
+        setSitesForSamples(samples, new SiteNamer() {
+            public String siteName(Sample sample) {
+                return siteName;
+            }
+        });
+    }
+    
+    public void setSiteNamesBySubstring(Collection<Sample> samples, final BitSet charMask) {
+        setSitesForSamples(samples, new SiteNamer() {
+            public String siteName(Sample sample) {
+                final String sampleName = sample.getNameOrDepth();
+                StringBuilder sb = new StringBuilder(sampleName.length());
+                for (int i=0; i<sampleName.length(); i++) {
+                    if (charMask.get(i)) {
+                        sb.append(sampleName.substring(i, i+1));
+                    }
+                }
+                return sb.toString();
+            }
+        });
+    }
+    
+    public void setSiteNamesByDepth(Collection<Sample> samples, final double thickness) {
+        setSitesForSamples(samples, new SiteNamer() {
+            public String siteName(Sample sample) {
+                double minDepth = getMinDepth();
+                double relDepth = sample.getDepth() - minDepth;
+                double slice = Math.floor(relDepth / thickness);
+                String sliceName = String.format(Locale.ENGLISH, "%.2f", slice*thickness+minDepth);
+                return sliceName;
+            }
+        });
+    }
+    
     public Sample insertNewSample(String id) {
-        Sample newSample = new Sample(id, this);
-        boolean done = false;
+        final Sample newSample = new Sample(id, this);
         int position = -1;
         do {
             position++;

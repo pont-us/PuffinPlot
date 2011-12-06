@@ -191,8 +191,8 @@ public class DepthSlider extends JPanel
     }
 
     private void adjustRange(int v) {
-        if (getRangeStart() == -1) rangeStart = v;
-        if (getRangeEnd() == -1) rangeEnd = v;
+        if (getRangeStart() == -1) rangeStart = value;
+        if (getRangeEnd() == -1) rangeEnd = value;
         if (v < getRangeStart()) rangeStart = v;
         else if (v < getRangeEnd()) {
             if (v - getRangeStart() < getRangeEnd() - v) rangeStart = v;

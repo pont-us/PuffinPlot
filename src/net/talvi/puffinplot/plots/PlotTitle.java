@@ -47,7 +47,7 @@ public class PlotTitle extends Plot {
         g.drawString(line, (int) getDimensions().getMinX(), 
                 (int) getDimensions().getMinY() + 16);
         g.setFont(oldFont);
-        if (discrete) g.drawString(//"Slot: "+sample.getSlotNumber()+
+        if (sample.getSite() != null) g.drawString(//"Slot: "+sample.getSlotNumber()+
                 //", Runs: " + sample.getFirstRunNumber() +
                 //"-" + sample.getLastRunNumber() + " "+
                 "Site: "+sample.getSite().toString().substring(0),

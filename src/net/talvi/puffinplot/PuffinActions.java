@@ -711,4 +711,40 @@ public class PuffinActions {
             app.updateDisplay();
         }
     };
+    
+    public final Action setSiteName = new AbstractAction("Set site name…") {
+        private static final long serialVersionUID = 1L;
+        public void actionPerformed(ActionEvent e) {
+            final String name = JOptionPane.showInputDialog("Site name");
+            if (name==null || "".equals(name)) return;
+            app.getSuite().setNamedSiteForSamples(app.getSelectedSamples(), name);
+        }
+    };
+    
+    public final Action setSitesFromSampleNames = new AbstractAction("Set sites from sample names…") {
+        private static final long serialVersionUID = 1L;
+        public void actionPerformed(ActionEvent e) {
+            final String maskSpec = JOptionPane.showInputDialog("Character positions to use");
+            if (maskSpec==null || "".equals(maskSpec)) return;
+            app.getSuite().setSiteNamesBySubstring(app.getSelectedSamples(),
+                    Util.numberRangeStringToBitSet(maskSpec, 256));
+        }
+    };
+        
+    public final Action setSitesByDepth = new AbstractAction("Set sites by depth…") {
+        private static final long serialVersionUID = 1L;
+        public void actionPerformed(ActionEvent e) {
+            final String thicknessString = JOptionPane.showInputDialog("Thickness of depth slices");
+            if (thicknessString==null || "".equals(thicknessString)) return;
+            float thickness = Float.NaN;
+            try {
+                thickness = Float.parseFloat(thicknessString);
+            } catch (NumberFormatException ex) {
+                app.errorDialog("Invalid number", thicknessString+" is not a number.");
+            }
+            if (Float.isNaN(thickness)) return;
+            app.getSuite().setSiteNamesByDepth(app.getSelectedSamples(),
+                    thickness);
+        }
+    };
 }

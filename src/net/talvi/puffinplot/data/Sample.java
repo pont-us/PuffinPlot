@@ -4,6 +4,7 @@ import java.util.Collection;
 import Jama.Matrix;
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import static java.lang.Math.toRadians;
@@ -14,6 +15,7 @@ public class Sample {
     private final List<Datum> data;
     private Site site;
     private final String nameOrDepth;
+    private final double depth;
     private boolean isEmptySlot = false;
     private GreatCircle greatCircle;
     private PcaAnnotated pca;
@@ -30,6 +32,14 @@ public class Sample {
 
     public Sample(String name, Suite suite) {
         this.nameOrDepth = name;
+        double depthTmp = Double.NaN;
+        try {
+            depthTmp = Double.parseDouble(name);
+        } catch (NumberFormatException ex) {
+            // Nothing to do here: if it's not valid it's probably just
+            // a discrete sample.
+        }
+        this.depth = depthTmp;
         this.suite = suite;
         this.data = new ArrayList<Datum>();
         this.customFlags = new CustomFields<Boolean>();
@@ -50,6 +60,10 @@ public class Sample {
 
     public MDF getMDF() {
         return mdf;
+    }
+    
+    public double getDepth() {
+        return depth;
     }
 
     public double getNRM() {
@@ -116,7 +130,7 @@ public class Sample {
     }
 
     public List<Datum> getData() {
-        return data;
+        return Collections.unmodifiableList(data);
     }
 
     public int getNumData() {

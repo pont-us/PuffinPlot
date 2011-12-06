@@ -1,8 +1,10 @@
 package net.talvi.puffinplot.data;
 
+import java.util.logging.Logger;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import static java.util.Collections.min;
@@ -10,6 +12,7 @@ import static java.util.Collections.max;
 
 public class Site {
 
+    private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
     private final String name;
     private final List<Sample> samples;
     private FisherValues fisher;
@@ -70,7 +73,7 @@ public class Site {
     }
 
     public List<Sample> getSamples() {
-        return samples;
+        return Collections.unmodifiableList(samples);
     }
 
     public FisherValues getFisher() {
@@ -114,14 +117,30 @@ public class Site {
     }
 
     void addSample(Sample sample) {
+        if (sample==null) {
+            logger.warning("null sample passed to Suite.addSample.");
+            return;
+        }
         if (!samples.contains(sample)) {
             samples.add(sample);
             sample.setSite(this);
         }
     }
+    
+    void removeSample(Sample sample) {
+        if (sample==null) {
+            logger.warning("null sample passed to Suite.removeSample.");
+            return;
+        }
+        samples.remove(sample);
+    }
 
     Object getName() {
         return name;
+    }
+    
+    public boolean isEmpty() {
+        return samples.isEmpty();
     }
 
     public List<String> toStrings() {

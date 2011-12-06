@@ -44,6 +44,7 @@ public class SiteEqAreaPlot extends EqAreaPlot {
         if (circles == null) return;
         final Vec3 meanDir = circles.getMeanDirection();
         double maxRadius = 0;
+        Vec3 prevPole = null;
         for (GreatCircle circle: circles.getCircles()) {
             final Vec3 pole = circle.getPole();
             g.setColor(Color.BLACK);
@@ -63,6 +64,8 @@ public class SiteEqAreaPlot extends EqAreaPlot {
             drawGreatCircleSegment(meanDir, nearestPoint);
             ShapePoint.build(this, project(pole)).filled(pole.z>0).
                     triangle().build().draw(g);
+            // if (prevPole != null) drawGreatCircleSegment(prevPole, pole);
+            prevPole = pole;
         }
         final PlotPoint meanPoint = ShapePoint.build(this, project(meanDir)).
                 circle().scale(1.5).filled(meanDir.z>0).build();
