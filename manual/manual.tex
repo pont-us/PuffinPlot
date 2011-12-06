@@ -6,14 +6,16 @@
 \usepackage{ifpdf} % For now, I'm just targeting pdflatex and htlatex.
 \usepackage{calc} % allow infix arithmetic
 \ifpdf
-  \usepackage{libertine}
   \usepackage[T1]{fontenc}
+  \usepackage[bitstream-charter]{mathdesign}
+  \renewcommand{\sfdefault}{fvs}
 \fi
 \usepackage[round]{natbib}
-
 \usepackage[utf8]{inputenc}
 \usepackage{url}
 \usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{placeins}
 \usepackage{textcomp} % for \textdegree
 \ifpdf
   \usepackage[unicode=true]{hyperref}
@@ -22,6 +24,7 @@
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{6pt plus 2pt minus 1pt}
 \setlength{\emergencystretch}{3em}  % prevent overfull lines
+\setlength{\belowcaptionskip}{1ex}
 
 % ======== My commands
 
@@ -39,6 +42,7 @@
 \newcommand{\ppcmd}[1]{\textsf{#1}} % For `computer' text
 \newcommand{\caps}[1]{\textsc{#1}} % for acronyms and initialisms
 \newcommand{\submenu}{ \textgreater{} } % htlatex doesn't like `>'.
+\newcommand{\alnifi}{$\alpha_{95}$}
 
 % ======== Title
 
@@ -133,7 +137,7 @@ command-A, etc.
 
 \subsection{Opening a file}
 
-To open a file, select \textsf{Open…} from the \textsf{File} menu. This
+To open a file, select \textsf{Open\ldots} from the \textsf{File} menu. This
 will allow you to choose one or more files to open from a standard file
 selection window. You may also select an entire folder; in this case
 every file within the folder will be opened.
@@ -356,9 +360,9 @@ saving files.
 
 \begin{menuitemlist}
 
-\item[File\submenu Open…] loads one or more files of demagnetization data into
-  PuffinPlot as a new suite. See section~\ref{sec:manual-file-types} for
-  details of supported filetypes.
+\item[File\submenu Open\ldots] loads one or more files of demagnetization
+  data into PuffinPlot as a new suite. See
+  section~\ref{sec:manual-file-types} for details of supported filetypes.
 
 \item[File\submenu Open recent file] is a submenu which
 contains the names of the last eight files which have been opened in
@@ -370,7 +374,7 @@ saved as a PuffinPlot file, it will immediately be saved to that file. If no
 PuffinPlot file is associated with this suite yet, a standard ‘save file’
 dialog box will prompt you for a file name and location.
 
-\item[File\submenu Save as…] allows you to save the current suite to a
+\item[File\submenu Save as\ldots] allows you to save the current suite to a
 different filename or location.
 
 \item[File\submenu Close] closes the current suite, removing it from
@@ -379,10 +383,331 @@ PuffinPlot's data display.
 \item[File\submenu Export data] is a submenu allowing the export of
 various kinds of data to \caps{csv} files.
 
-\item[File\submenu Export data\submenu sample calculations…] saves a file
+\item[File\submenu Export data\submenu sample calculations\ldots] saves a file
 containing all the data associated with individual samples.
 Table~\ref{tbl:manual-export-sample} describes the fields which make
 up the file.
+
+\begin{table}[p]
+%{Fields for sample data export}
+  \caption{\label{tbl:manual-export-sample} List of fields in exported sample data file, Note that, in addition to the predefined fields, any custom user annotations (see in{section}[sec:manual-annotations]) will also be exported in this file.}
+\begin{tabular}{lp{100mm}}
+Field name          & Description \\
+Suite                & Suite name \\
+sample               & Sample name \\
+\caps{nrm} intensity & \caps{Nrm} intensity (A/m) \\
+\caps{ms} jump temp. & For thermal demagnetization, the
+temperature step at which the first jump in magnetic susceptibility occurs, A
+jump is defined as an increase of 2.5 or more times the previous value.
+\\
+Fisher inc.          & Mean inclination (\textdegree)\\
+Fisher dec.          & Mean declination (\textdegree)\\
+Fisher a95           & \alnifi{} of mean direction (\textdegree)\\
+Fisher k             & $k$-value of mean direction \\
+\caps{pca} inc.      & Inclination of \caps{pca} direction (\textdegree)\\
+\caps{pca} dec.      & Declination of \caps{pca} direction (\textdegree)\\
+\caps{pca} \caps{mad}1 &  The Maximum Angle of Deviation
+for the planar \caps{pca} fit; the smaller the value, the more coplanar the points. \\
+\caps{pca} \caps{mad}3 & The Maximum Angle of Deviation
+for the linear \caps{pca} fit; the smaller the value, the more collinear the points. \\
+\caps{pca} anchored    & `yes' if the
+\caps{pca} fit was anchored; `no' if not \\
+\caps{pca} start       & Field or temperature of
+first demagnetization step used for \caps{pca} analysis (\textdegree C or mT)\\
+\caps{pca} end         & Field or temperature of
+last demagnetization step used for \caps{pca} analysis (\textdegree C or mT)\\
+\caps{pca} contiguous       & `yes' if
+all steps between the first and last were selected for \caps{pca};
+`no' if any were omitted \\
+\caps{mdf} half-intensity   & half of the \caps{nrm} \\
+\caps{mdf} demagnetization  & the demagnetization level
+at which the \caps{nrm} was reduced to half (\textdegree C or mT) \\
+\caps{mdf} midpoint reached & `yes' if magnetization
+intensity reached half the \caps{nrm} intensity during demagnetization;
+`no' otherwise \\
+{\em [annotations]}  & Any user-defined annotations
+are also exported as part of the sample export file. See
+section~\ref{sec:manual-annotations} for details.
+\end{tabular}
+\end{table}
+
+\item[File\submenu Export data\submenu site calculations\ldots] saves a file
+containing (for suites with discrete samples) all the data associated with
+sites. Table~\ref{tbl:manual-export-site} describes the fields
+which make up this file.
+
+\begin{table}[p]
+
+  \caption{\label{tbl:manual-export-site} List of fields in exported site data file}
+
+\begin{tabular}{lp{100mm}}
+  Field name      & Description \\
+  site            & Name of site \\
+  Fisher inc.     & Mean inclination of \caps{pca} directions (\textdegree) \\
+  Fisher dec.     & Mean declination of \caps{pca} directions (\textdegree) \\
+  Fisher a95      & \alnifi{} of mean \caps{pca} direction (\textdegree) \\
+  Fisher k        & {\em k}-value of mean \caps{pca} direction \\
+  \caps{gc} valid & `Y' if the great-circle fit
+  is valid, blank otherwise. A fit is valid if it includes at least three
+  circles, and has $\alpha_{95} < 3.5$ and $k>3$. \\
+  \caps{gc} inc.  & Inclination of great-circle direction (\textdegree) \\
+  \caps{gc} dec.  & Declination of great-circle direction (\textdegree) \\
+  \caps{gc} a95   & \alnifi{} for great-circle direction (\textdegree) \\
+  \caps{gc} k     & {\em k}-value for great-circle direction \\
+  \caps{gc n}     & Number of great circles used in great-circle fit \\
+  \caps{gc m}     & Number of \caps{pca} directions used in great-circle fit \\
+  \caps{t}1min    & \multirow{4}{100mm}{These four parameters give the ranges of demagnetization steps used to fit
+    the circles. \caps{t}1 is the first (lowest) demagnetization step in a circle
+    path for an individual sample, and \caps{t}2 the last (highest). \caps{t}1min
+    is the minimum of the \caps{t}1 values across all the circles for the site,
+    and \caps{t}2 the maximum. Similarly, \caps{t}2 is the last step used in a
+    single circle, and \caps{t}2min--\caps{t}2max is the range of its values
+    across all the samples at a site.} \\
+  \caps{t}1max &   \\
+  \caps{t}2min &   \\
+  \caps{t}2max &   \\
+\end{tabular}
+\end{table}
+
+\item[File\submenu Export data\submenu suite calculations\ldots] saves a
+  \caps{csv} file containing only one line of data, which gives the mean
+  inclination, mean declination, \alnifi{}, and {\em k} for the Fisherian mean
+  direction calculated for the entire suite.
+
+\item[File\submenu Export data\submenu IRM data\ldots] saves files containing
+\caps{irm} acquisition data. It produces a folder of files, one for each
+sample in the suite. Each file is in tab-delimited text format, and each line
+within the file contains the \caps{irm} field strength and the magnetization
+intensity of the sample after application of that field.
+
+\item[File\submenu Page Setup\ldots] opens a window allowing you
+to change the paper size, orientation, and margins for printing.
+
+\item[File\submenu Print\ldots] opens a window allowing you to print the
+selected samples. Note that {\em only} the selected samples will be printed,
+so if you wish to print the whole suite use \ppcmd{Edit\submenu Select all} first.
+On most systems this will also allow you to print to a \caps{pdf} file;
+Windows users may need to install a virtual \caps{pdf} printer, such as
+Cute\caps{pdf} Writer or Bullzip \caps{pdf} Printer, in order to produce
+\caps{pdf} files.
+
+\item[File\submenu Print Fisher\ldots] prints the contents of the separate
+window showing Fisher statistics of \caps{pca} directions through the suite;
+see \ppcmd{Calculations\submenu Fisher on suite} in
+section~\ref{sec:manual-functions-calcs} for more details.
+
+\item[File\submenu Print Great Circles\ldots] prints the contents of the
+  separate great-circle fit window; see \ppcmd{Calculations\submenu Great
+    circles} in section~\ref{sec:manual-functions-calcs} for more details.
+
+\item[File\submenu Import AMS] imports \caps{ams} data from a file. The
+file must be in the \caps{.asc} format produced by the \ppcmd{Safyr} program
+distributed with \caps{Agico} kappabridges. The \caps{ams} data is assigned
+to the appropriate samples within the suite by matching the sample names
+specified in the \caps{asc} file with the sample names for the
+demagnetization data. If the \caps{ams} file contains data for samples not in
+the suite, these samples will be created and added to the suite. \caps{Ams}
+data is not displayed by default; the equal-area plot of \caps{ams} data can
+be activated from the \ppcmd{Preferences} window.
+
+\item[File\submenu Export SVG] saves the current contents of the main
+data display as an \caps{svg} (Scalable Vector Graphics) file. As a vector
+graphics format, \caps{svg} is allows for high-quality reproduction at any
+size. It can also be easily edited and incorporated into other graphics using
+vector graphics programs such as Inkscape and Adobe Illustrator.
+
+\item[File\submenu Export preferences\ldots] saves your current preferences to
+a file. In conjunction with the \ppcmd{Import preferences} feature, this
+allows you to transfer your preferences from one computer to another. It also
+allows you to keep multiple sets of preferences and switch between them as
+needed. Probably the most useful application is to save different plot
+layouts for different sets of data.
+
+\item[File\submenu Import preferences\ldots] sets your preferences from
+a file saved using \ppcmd{Export preferences}. See the description of
+\ppcmd{Export preferences} for details.
+
+\item[File\submenu Preferences\ldots] opens the preferences window. See
+section~\ref{sec:manual-preferences} for details. On Mac OS X, this item is
+found on the \ppcmd{PuffinPlot} menu to the left of the \ppcmd{File} menu,
+rather than on the \ppcmd{File} menu.
+
+\item[File\submenu Quit] terminates PuffinPlot. On Mac OS X, this item is
+found on the \ppcmd{PuffinPlot} menu to the left of the \ppcmd{File} menu,
+rather than on the \ppcmd{File} menu.
+
+\end{menuitemlist}
+
+\FloatBarrier
+\subsubsection{Edit menu}
+
+The \ppcmd{Edit} menu provides various basic functions mainly
+to do with manipulation of data points.
+
+\begin{menuitemlist}
+
+\item[Edit\submenu Select all] selects all the points in all the selected
+samples, excluding points which have been hidden (see \ppcmd{Hide points}
+below).
+
+\item[Edit\submenu Clear selection] de-selects all the points in all
+the selected samples.
+
+\item[Edit\submenu Move plots] allows you to reposition and resize the plots
+  in the main display area. See section~\ref{sec:manual-move-plots} for
+  details.
+
+\item[Edit\submenu Reset layout] resets the sizes and positions of
+all the plots to their default values.
+
+\item[Edit\submenu Corrections\ldots] opens a window which allows you to
+change the sample orientation, formation orientation, and local magnetic
+declination for all the selected samples. Each correction type can be
+individually changed without affecting the values of the others.
+
+\item[Edit\submenu Copy point selection] takes the points which are
+selected for the current sample, and selects the corresponding points
+for all the selected samples. This is useful, for example, for hiding
+the same points in a large number of samples without having to
+manually select them for each sample.
+
+%\item[Edit\submenu Flip sample(s)]
+
+\item[Edit\submenu Hide points] hides all the selected points in all the
+selected samples. This removes them from all the graphical plots (which will
+be rescaled to avoid unnecessary blank space), but not from the data table in
+the main plot window; on the data table, hidden data points are marked with a
+dash symbol (--) to their left. Hidden points can be restored using the
+
+\item[Edit\submenu Show all points] restores all hidden points in all
+the selected samples.
+
+%\item[Edit\submenu Use as empty slot]
+
+%\item[Edit\submenu Unset empty slot]
+
+%\item[Edit\submenu Apply empty correction]
+
+\item[Edit\submenu Edit custom flags\ldots] allows you to add or remove
+user-defined flags for the suite; see section~\ref{sec:manual-annotations}
+for details.
+
+\item[Edit\submenu Edit custom notes\ldots] allows you to add or remove
+  user-defined note categories for the suite; see
+  section~\ref{sec:manual-annotations} for details.
+
+\item[Edit\submenu Rescale mag. sus.] scales all the magnetic
+susceptibility values for the suite by a specified factor. This is
+useful since magnetic susceptibility meters typically do not report
+values in standard S.I. units. Note that, unlike many PuffinPlot operations,
+the scaling is applied to the {\em entire suite}, not just the selected
+samples.
+
+\end{menuitemlist}
+
+\subsubsection{\label{sec:manual-functions-calcs}Calculations menu}
+
+The calculations menu provides facilities for calculating magnetic
+parameters and directions. Note that most calculations operate on
+all the selected samples, not just the current sample.
+
+\begin{menuitemlist}
+
+\item[Calculations\submenu PCA] calculates a best-fitting line to all the
+selected points in all the selected samples, using principal component
+analysis \citep[kirschvink1980least]. The \caps{pca} direction is projected
+onto the Zijderveld plot.
+
+\item[Calculations\submenu Anchor PCA] is a menu item which may be
+toggled on or off. When it is on, \caps{pca} analyses are constrained to pass
+through the origin. In general, the \caps{pca} should be anchored when the
+analysed points are known to represent the final demagnetization component.
+Leaving it unanchored allows analysis of secondary components, provided
+that they are sufficiently well separated from other components.
+
+\item[Calculations\submenu Fisher by sample] calculates, for each
+selected sample, a Fisherian mean direction for all the selected points. This
+can produce reasonable mean directions for origin-trending components, but
+principal component analysis is usually preferable.
+
+\item[Calculations\submenu Fisher by site] calculates a Fisherian
+mean direction for the \caps{pca} directions at each site.
+
+\item[Calculations\submenu Fisher on suite] calculates a Fisherian
+mean of the \caps{pca} directions for all the selected samples, and
+opens a new window showing an equal-area plot of the \caps{pca} directions,
+the mean direction, and the 95\% confidence circle.
+
+\item[Calculations\submenu MDF] calculates the Median Destructive Field
+(or, for thermal demagnetization, the Median Destructive Temperature) of the
+selected samples. This is the field (or temperature) at which the intensity
+of the sample's remanence has been reduced to half of its initial value. Once
+calculated, it is displayed on the demagnetization-intensity plot, and can be
+saved as part of the exported sample data.
+
+\item[Calculations\submenu Clear calculations] de-selects all the points
+in all the selected samples, and clears the results of any calculations done
+on them, such as \caps{pca} or great-circle analysis.
+
+\item[Calculations\submenu Fit circle] calculates and displays a
+best-fitting great circle for all the selected points in all the selected
+samples.
+
+\item[Calculations\submenu Great circles] calculates a best-fitting
+direction for all the great circles fitted at the current site,
+using the algorithm of \cite{mcfadden1988circles}. The great-circle fit
+is shown both in the \ppcmd{Great circles} plot in the main window
+(if the plot has been activated in the preferences), and in
+a separate window which is opened automatically.
+
+\item[Calculations\submenu Clear site calculations] clears the
+results of any calculations associated with the selected {\em sites}
+(as opposed to samples); at present, this amounts to clearing the
+best-fit great-circle direction for each selected site.
+
+\item[Calculations\submenu Reversal test] performs a basic reversal
+test of {\em all} the currently open suites.
+
+\end{menuitemlist}
+
+\paragraph{\caps{Ams} calculations}
+
+PuffinPlot can show the results of statistical calculations on \caps{ams}
+tensors, giving mean directions and confidence ellipses for the principal
+axes by one of three methods; at present, however, these calculations cannot
+be performed by PuffinPlot itself. Instead, it makes use of two Python
+scripts from the PmagPy suite \citep[tauxe2010paleomagnetism],
+\ppcmd{bootams.py} and \ppcmd{s\_hext.py}. In order to calculate \caps{ams}
+statistics, these scripts must first be installed on the computer running
+PuffinPlot, and the folder containing them must be specified in the
+\ppcmd{Preferences} window. The PmagPy programs may be obtained from
+
+All \caps{ams} calculations operate on the currently selected samples.
+\cite{tauxe1998directions} and chapter 13 of \cite{tauxe2010paleomagnetism}
+give more details of tensor statistics, particularly with regard to the
+application of bootstrap methods.
+
+\begin{menuitemlist}
+
+\item[Calculations\submenu Calculate bootstrap \caps{ams}] calculates
+bootstrap statistics using the \ppcmd{bootams.py} program, producing
+Kent error ellipses which are shown on the \caps{ams} plot in the main
+window.
+
+\item[Calculations\submenu Parametric bootstrap \caps{ams}] calculates
+bootstrap statistics using the \ppcmd{bootams.py} program, producing Kent
+error ellipses which are shown on the \caps{ams} plot. It differs from the
+previous function in employing a parametric bootstrap, which can provide more
+realistic confidence intervals for small numbers of samples on the (often
+reasonable) assumption that measurement uncertainties are normally
+distributed across the selected samples.
+
+\item[Calculations\submenu Calculate Hext on \caps{ams}] calculates
+\cite[hext1963tensors] statistics using the \ppcmd{s\_hext.py} program
+and displays the mean directions and error ellipses on the \caps{ams} plot.
+
+\item[Calculations\submenu Clear \caps{ams} calculations] Clears
+any previously done bootstrap and Hext calculations.
 
 \end{menuitemlist}
 

@@ -13,7 +13,7 @@ type: :feature
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
+status: :in_progress
 disposition: 
 creation_time: 2011-11-12 03:46:38.138911 Z
 references: []
@@ -24,3 +24,7 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2011-12-06 00:39:08.889876 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - Added a proof-of-concept iText export. Haven't tried FreeHEP yet.
