@@ -12,4 +12,5 @@ syntax: regexp
 ^manual/manual\.(4ct|4tc|aux|bbl|blg|css|dvi)$
 ^manual/manual\.(html|idv|lg|log|out|pdf|tmp|xref)$
 ^manual/figures/
+^manual/hg.id$
 ^manual/.*~$

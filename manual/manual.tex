@@ -16,6 +16,7 @@
 \usepackage{graphicx}
 \usepackage{multirow}
 \usepackage{placeins}
+\usepackage{booktabs}
 \usepackage{textcomp} % for \textdegree
 \ifpdf
   \usepackage[unicode=true]{hyperref}
@@ -43,12 +44,17 @@
 \newcommand{\caps}[1]{\textsc{#1}} % for acronyms and initialisms
 \newcommand{\submenu}{ \textgreater{} } % htlatex doesn't like `>'.
 \newcommand{\alnifi}{$\alpha_{95}$}
+\newcommand{\quot}[1]{`#1'}
 
 % ======== Title
 
+% automatic version number / date: see
+% http://truongnotes.tumblr.com/post/13407676428/embed-mercurials-version-number-in-latex
+
+\input hg.id
 \title{PuffinPlot User Manual}
 \author{Pontus Lurcock}
-\date{18 November 2011}
+\date{\HgDate}
 
 % ======== Document starts here.
 
@@ -244,14 +250,13 @@ window, as shown in Figure 1.
 
 \subsubsection{Plot area}
 
-The plot area is the largest part of the window, and plots the data for
-the current sample using various plots. By default, four plots are
-shown: a demagnetization-intensity biplot, a Zijderveld plot, an
-equal-area projection, and a table of demagnetization steps. The plots
-can be moved and resized (see
-in\{section\}{[}sec:manual-change-layout{]}). Other plots are also
-available, and the preferences window can be used to control which plots
-are displayed (see in\{section\}{[}sec:manual-preferences{]}).
+The plot area is the largest part of the window, and plots the data for the
+current sample using various plots. By default, four plots are shown: a
+demagnetization-intensity biplot, a Zijderveld plot, an equal-area
+projection, and a table of demagnetization steps. The plots can be moved and
+resized (see section~\ref{sec:manual-change-layout}). Other plots are also
+available, and the preferences window can be used to control which plots are
+displayed (see section~\ref{sec:manual-preferences}).
 
 \subsubsection{Sample chooser}
 
@@ -390,9 +395,9 @@ up the file.
 
 \begin{table}[p]
 %{Fields for sample data export}
-  \caption{\label{tbl:manual-export-sample} List of fields in exported sample data file, Note that, in addition to the predefined fields, any custom user annotations (see in{section}[sec:manual-annotations]) will also be exported in this file.}
-\begin{tabular}{lp{100mm}}
-Field name          & Description \\
+  \caption{\label{tbl:manual-export-sample} List of fields in exported sample data file, Note that, in addition to the predefined fields, any custom user annotations (see section~\ref{sec:manual-annotations}) will also be exported in this file.}
+\begin{tabular}{lp{100mm}} \toprule
+Field name          & Description \\ \midrule
 Suite                & Suite name \\
 sample               & Sample name \\
 \caps{nrm} intensity & \caps{Nrm} intensity (A/m) \\
@@ -427,7 +432,7 @@ intensity reached half the \caps{nrm} intensity during demagnetization;
 `no' otherwise \\
 {\em [annotations]}  & Any user-defined annotations
 are also exported as part of the sample export file. See
-section~\ref{sec:manual-annotations} for details.
+section~\ref{sec:manual-annotations} for details. \\ \bottomrule
 \end{tabular}
 \end{table}
 
@@ -614,36 +619,36 @@ all the selected samples, not just the current sample.
 \begin{menuitemlist}
 
 \item[Calculations\submenu PCA] calculates a best-fitting line to all the
-selected points in all the selected samples, using principal component
-analysis \citep[kirschvink1980least]. The \caps{pca} direction is projected
-onto the Zijderveld plot.
+  selected points in all the selected samples, using principal component
+  analysis \citep{kirschvink1980least}. The \caps{pca} direction is projected
+  onto the Zijderveld plot.
 
-\item[Calculations\submenu Anchor PCA] is a menu item which may be
-toggled on or off. When it is on, \caps{pca} analyses are constrained to pass
-through the origin. In general, the \caps{pca} should be anchored when the
-analysed points are known to represent the final demagnetization component.
-Leaving it unanchored allows analysis of secondary components, provided
-that they are sufficiently well separated from other components.
+\item[Calculations\submenu Anchor PCA] is a menu item which may be toggled on
+  or off. When it is on, \caps{pca} analyses are constrained to pass through
+  the origin. In general, the \caps{pca} should be anchored when the analysed
+  points are known to represent the final demagnetization component. Leaving
+  it unanchored allows analysis of secondary components, provided that they
+  are sufficiently well separated from other components.
 
-\item[Calculations\submenu Fisher by sample] calculates, for each
-selected sample, a Fisherian mean direction for all the selected points. This
-can produce reasonable mean directions for origin-trending components, but
-principal component analysis is usually preferable.
+\item[Calculations\submenu Fisher by sample] calculates, for each selected
+  sample, a Fisherian mean direction for all the selected points. This can
+  produce reasonable mean directions for origin-trending components, but
+  principal component analysis is usually preferable.
 
-\item[Calculations\submenu Fisher by site] calculates a Fisherian
-mean direction for the \caps{pca} directions at each site.
+\item[Calculations\submenu Fisher by site] calculates a Fisherian mean
+  direction for the \caps{pca} directions at each site.
 
-\item[Calculations\submenu Fisher on suite] calculates a Fisherian
-mean of the \caps{pca} directions for all the selected samples, and
-opens a new window showing an equal-area plot of the \caps{pca} directions,
-the mean direction, and the 95\% confidence circle.
+\item[Calculations\submenu Fisher on suite] calculates a Fisherian mean of
+  the \caps{pca} directions for all the selected samples, and opens a new
+  window showing an equal-area plot of the \caps{pca} directions, the mean
+  direction, and the 95\% confidence circle.
 
-\item[Calculations\submenu MDF] calculates the Median Destructive Field
-(or, for thermal demagnetization, the Median Destructive Temperature) of the
-selected samples. This is the field (or temperature) at which the intensity
-of the sample's remanence has been reduced to half of its initial value. Once
-calculated, it is displayed on the demagnetization-intensity plot, and can be
-saved as part of the exported sample data.
+\item[Calculations\submenu MDF] calculates the Median Destructive Field (or,
+  for thermal demagnetization, the Median Destructive Temperature) of the
+  selected samples. This is the field (or temperature) at which the intensity
+  of the sample's remanence has been reduced to half of its initial value.
+  Once calculated, it is displayed on the demagnetization-intensity plot, and
+  can be saved as part of the exported sample data.
 
 \item[Calculations\submenu Clear calculations] de-selects all the points
 in all the selected samples, and clears the results of any calculations done
@@ -703,7 +708,7 @@ reasonable) assumption that measurement uncertainties are normally
 distributed across the selected samples.
 
 \item[Calculations\submenu Calculate Hext on \caps{ams}] calculates
-\cite[hext1963tensors] statistics using the \ppcmd{s\_hext.py} program
+\cite{hext1963tensors} statistics using the \ppcmd{s\_hext.py} program
 and displays the mean directions and error ellipses on the \caps{ams} plot.
 
 \item[Calculations\submenu Clear \caps{ams} calculations] Clears
@@ -711,6 +716,429 @@ any previously done bootstrap and Hext calculations.
 
 \end{menuitemlist}
 
+\subsubsection{Window menu}
+
+This menu allows you to open or close two windows displaying extra data.
+
+\begin{menuitemlist}
+
+\item[Window\submenu Data table] opens (or closes) a window showing
+all the demagnetization data for the current sample as a table. This
+table is far more extensive than the brief table displayed in the
+main window, and allows data to be selected and copied to the clipboard
+so that it can be pasted into a spreadsheet or text editor.
+
+\item[Window\submenu Suite \caps{pca} plot] opens (or closes) a window
+containing an equal-area plot of \caps{pca} directions; the plot is created
+by selecting the \ppcmd{Calculations\submenu Fisher on suite} menu item,
+and may be printed using the \ppcmd{File\submenu Print Fisher\ldots} menu item.
+
+\end{menuitemlist}
+
+\subsubsection{Help menu}
+
+\begin{menuitemlist}
+
+\item[Help\submenu About PuffinPlot] displays some brief information
+about PuffinPlot, including the version. On Mac OS X, this item is
+also present on the \ppcmd{PuffinPlot} menu.
+
+\end{menuitemlist}
+
+\subsection{Features}
+
+This section presents PuffinPlot's features in moderate detail.
+
+\subsubsection{\label{sec:manual-file-types}Supported file types}
+
+PuffinPlot can currently open three types of file: its own filetype (filename
+suffix \ppcmd{ppl}); data produced from 2\caps{g} cryomagnetometers (filename
+suffix \ppcmd{dat}); and data from the {\ss Zplot} program by Stephen Hurst
+(filename suffix \ppcmd{txt}). In general, support for other file formats is
+straighforward to add.
+
+\subsubsection{Selecting points}
+
+For most of PuffinPlot's functions, the data points of interest must be
+selected before anything can be done to them. You can select data points
+simply by clicking on them; if you click on a selected point it will be
+de-selected. Selected points are drawn in red to distinguish them from the
+black unselected points. Note that the notional data point itself is the
+thing being selected, not the visual representation that you click on. Thus,
+if you click on a point in one plot, the corresponding point in all the
+visible plots will also turn red, since they are visual representations of
+the same datum.
+
+Since data points are relatively small, clicking accurately on them can be
+inconvenient. PuffinPlot offers two alternative selection methods to
+alleviate this problem. Firstly, by holding down the \ppcmd{Shift} key, you
+can select a point simply by left-clicking near it; holding \ppcmd{Shift} and
+right-clicking will de-select nearby points instead. Secondly, you can click,
+hold the button, and drag the pointer across the graph, creating a rectangle.
+Any point within the rectangle will be selected.
+
+\subsubsection{Working with multiple samples}
+
+Since most PuffinPlot operations are automatically applied to all the
+selected samples, repetitive analysis work can often be done automatically
+using the \ppcmd{Copy point selection} feature. For example, if you wish to
+apply a \caps{pca} to the 100--250\textdegree{}C demagnetization range of a
+series of 50 samples, it can be done in four quick steps:
+
+\begin{enumerate}
+
+\item For the first sample, select the points corresponding to the
+  100--250\textdegree{}C demagnetization range.
+
+\item Select the 50 samples using the sample chooser, keeping the
+  first sample as the current one.
+
+\item Use \ppcmd{Copy point selection} on the \ppcmd{Edit} menu
+  (or press \ppcmd{Ctrl-Shift-C} to select the corresponding points
+  in all the selected samples.
+
+\item Select \ppcmd{\caps{pca}} from the \ppcmd{Calculations} menu,
+  or press \ppcmd{Ctrl-R}.
+
+\end{enumerate}
+
+This will immediately perform \caps{pca} on all 50 selected samples.
+
+\subsection{\label{sec:manual-plot-types}Plot types}
+
+This section lists and briefly describes the available plot types in
+PuffinPlot. Some of them are not displayed by default, but these may be
+activated via the preferences window (see
+section~\ref{sec:manual-preferences}). Note that the term `plot' is used
+rather loosely in this manual to refer to any movable element displaying data
+within the main window. Thus, the `plots' listed below include textual
+elements such as legends.
+
+\begin{menuitemlist}
+
+\item[Equal-area] is a Lambert azimuthal equal-area projection showing
+the directions of the current sample's magnetization vectors. Successive
+points are connected by great-circle segments. Points in the upper hemisphere
+are shown as unfilled (white) and connected by solid lines; points in the
+lower hemisphere are filled (black) and connected by dashed lines. If a great
+circle fit has been calculated for the sample, it is shown on this plot.
+
+\item[Zplot] is a Zijderveld plot, overlaying an orthographic projection in
+  the horizontal plane with an orthographic projection in a chosen vertical
+  plane. The vertical plane can be controlled using the chooser on the
+  toolbar; see section\ref{sec:manual-toolbar} for details. The horizontal
+  projection is shown with filled points, and the vertical projection with
+  unfilled points. If a \caps{pca} fit has been calculated for this sample,
+  the two projections of the \caps{pca} lines are overlaid on the plot in
+  blue. (If the \ppcmd{V vs. H} vertical projection is selected, only the
+  horizontal projection of the \caps{pca} line is shown, since \ppcmd{V vs.
+    H} effectively uses a different vertical projection for each point.)
+
+\item[Zplot key] is a legend for the Zijderveld plot, showing
+the interpretations of the filled and unfilled points and giving the
+units in which the axes are calibrated.
+
+\item[Demag.] is a plot of demagnetization step (in mT or °C) versus
+intensity of magnetization (in A/m), shown as a line of filled points.
+If magnetic susceptibility measurements have been taken, they are
+overlaid on the same plot as unfilled points, with the scale shown on the
+right of the graph.
+
+\item[Data table] is a table in which each row represents one
+demagnetization step for the current sample. The columns, from left
+to right, give the demagnetization step, declination, inclination,
+intensity, and magnetic susceptibility. Selected points are denoted
+by an asterisk (*) to their left; hidden points are denoted by a
+dash (--) to their left.
+
+\item[\caps{Pca}] shows the results of \caps{pca} textually, if
+\caps{pca} has been carried out for the current sample; otherwise it is
+invisible. When visible, it shows the inclination and declination of the
+first principal component, which corresponds to a least-squares linear
+fit. It also shows the maximum angular deviation (\caps{mad}) values
+\caps{mad}1 and \caps{mad}3, which function as goodness-of-fit parameters
+(smaller is better) for planarity and collinearity respectively.
+\cite{kirschvink1980least} gives more detail of the interpretation
+of \caps{mad} values.
+
+\item[Title] simply shows the name of the current sample and
+the current site, for a discrete suite. For a continuous (long core)
+suite, it shows the current depth.
+
+\item[Fisher] shows the parameters of the per-sample Fisherian analysis, if
+  one has been carried out; otherwise it is invisible. It gives the mean
+  inclination and declination and the \alnifi{} and $k$ parameters.
+
+\item[\caps{Ams}] is a lower-hemisphere equal-area plot of
+\caps{ams} data, if any has been imported. Maximum, intermediate, and
+minimum anisotropy axes are shown as squares, triangles, and circles
+respectively. If \caps{ams} statistics have been calculated (see
+section~\ref{sec:manual-functions-calcs}), the mean directions and
+confidence ellipses are also shown.
+
+\item[Ternary demag.] is an experimental ternary plot designed
+to display data from triaxial \caps{irm} demagnetization experiments
+conducted according to the method of \cite{lowrie1990identification}.
+The position of a point on the plot reflects the relative strengths
+of the three axes of magnetization, which in turn correspond to
+high, medium, and low coercivity components. The path produced
+by points at successive demagnetization steps thus shows the relative
+effects of thermal unblocking and alteration on these components.
+
+\item[Great circles] shows all the great circles fitted at
+the current sample's site, along with a best-fit direction calculated
+by the method of \cite{mcfadden1988circles}.
+
+\item[Formation mean] shows all the site means for the suite,
+and a Fisherian mean and 95\% confidence interval for them.
+If two polarities are present in the suite, two means are calculated
+and shown.
+
+\item[\caps{Nrm} Histogram] shows a histogram of \caps{nrm}
+intensities across the whole suite.
+
+\end{menuitemlist}
+
+\subsubsection{\label{sec:manual-move-plots}Arranging the plots}
+
+PuffinPlot allows the plots to be freely rearranged and resized within the
+display area; they can also be switched on and off as required (see
+section\ref{sec:manual-preferences}). To arrange the plots, select
+\ppcmd{Move plots} from the \ppcmd{Edit} menu. A tick appears next to the
+menu item, and the plots are overlaid by pale orange rectangles, allowing you
+to manipulate them. Each plot is also annotated with its name, which helps to
+identify plots that are not currently displaying any data (e.g. the
+`\caps{pca} directions' display if no \caps{pca} has been performed. To
+resize a plot, click on an edge or corner of its rectangle and drag it to the
+desired size. To move a plot, click in its central area and drag it to the
+desired location. Plots may be overlapped freely. When manipulating
+overlapping plots, mouse clicks only affect the smallest plot in the `pile'.
+
+Once the plots are arranged to your satisfaction, click \ppcmd{Move plots} on
+the \ppcmd{Edit} menu again to untick the menu item and resume normal
+operation.
+
+\subsubsection{\label{sec:manual-change-layout}Changing the layout}
+
+You can change the size and arrangement of the plots in the main window by
+choosing \ppcmd{Move plots} from the \ppcmd{Edit} menu. This puts PuffinPlot
+temporarily into a special mode where plots become moveable: a tick appears
+next to the \ppcmd{Move plots} menu item, and the plots themselves are
+overlaid by translucent coloured rectangles. The name of the plot is also
+displayed at the top left corner of each rectangle; this can be useful for
+identifying plots which are currently invisible -- for example, the table of
+\caps{pca} values if no \caps{pca} has been performed.
+
+In \ppcmd{Move plots} mode, you can resize a plot by clicking and dragging on
+one of the darker-coloured edges or corners of the plot. You can move the
+whole plot by clicking and dragging in its more lightly coloured central
+zone. Plots can overlap one another freely. When you click in an area where
+two or more plots overlap, the smallest plot is treated as the `topmost', and
+this is the one which will be moved or resized.
+
+\subsubsection[sec:manual-preferences]{The preferences window}
+
+The preferences window is divided into three tabs.
+
+\paragraph{The \ppcmd{Loading} tab}
+
+This tab contains options connected with reading data from \caps{.dat} files
+produced by the \caps{2g} `Long Core' software.
+
+\begin{menuitemlist}
+
+\item[\caps{Squid} sensor lengths.] When reading a \caps{2g} file, PuffinPlot
+  uses the `X corr', `Y corr', and `Z corr' fields to determine the
+  magnetization vector. However, for long core measurements, these values are
+  not corrected for effective sensor length, which is determined by the
+  response function of each \caps{squid} and must be determined empirically
+  when setting up the machine. To produce an accurate magnetization vector
+  for long core files, PuffinPlot corrects the \caps{squid} readings for the
+  configured sensor lengths when opening the file.
+
+\item[Protocol] gives the measurement protocol used in taking the readings. A
+  protocol is a particular sequence of empty tray measurements and sample
+  measurements in defined orientations, undertaken for each set of measured
+  samples. The tray and sample measurements are combined by PuffinPlot as it
+  reads the file, providing a more accurate, corrected moment measurement for
+  each sample. (Magnetic susceptibility measurements, if present, are also
+  automatically associated with the preceding magnetic moment measurement or
+  measurements.) Table~\ref{tbl:manual-import-protocols} describes the
+  available protocols.
+
+\end{menuitemlist}
+
+\begin{table}
+  \caption{\label{tbl:manual-import-protocols}Measurement protocols for 2\caps{g} data files}
+
+\begin{tabular}{lp{90mm}} \toprule
+Protocol & Description \\ \midrule
+\caps{normal} &
+ No extra tray or sample measurements are made. Each measurement run
+ consists simply of measuring the samples once in their normal
+ orientation. \\
+\caps{tray\_normal} &
+ Before each sample-measurement run, an empty tray measurement run
+ is made. The input file thus consists alternately of empty-tray
+ lines and sample-measurement lines. Each tray measurement is used
+ to correct the subsequent sample measurement.
+ \\
+\caps{normal\_tray} &
+ As \caps{tray\_normal}, but the tray measurement is made after
+ the sample measurement rather than before it.\\
+\caps{tray\_normal\_yflip} &
+ As \caps{tray\_normal}, but adding an extra sample measurement as
+ a third step. In the extra measurement, the sample is rotated
+180\textdegree{} around its {\em y} axis, so that the {\em x} and {\em z}
+measurements are inverted. Combining these readings improves not only the
+precision but also the accuracy of the magnetic moments measured on the {\em
+  x} and {\em z} axes, since any systematic bias should be cancelled out by
+the inversion. For the {\em y} axis, accuracy is not affected but
+precision is improved by averaging the two measurements. \\
+\caps{tray\_first} &
+ This is the simplest tray correction: the tray is measured once at the
+start, and all subseuent measurements are sample measurements. PuffinPlot
+corrects each sample measurement using the initial tray measurement.
+\\
+\caps{tray\_normal\_ignore} &
+This option reads a file measured using the \caps{tray\_normal} protocol, but
+(like \caps{tray\_first}) makes all sample corrections using the initial tray
+measurement, and ignores all subsequent tray measurements. The main intended
+use for this option is to allow direct comparison between the
+\caps{tray\_first} and \caps{tray\_normal} protocols, to avoid the extra
+work of using the \caps{tray\_normal} protocol on sample suites for which it
+is unnecessary. \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{The \ppcmd{Plots} tab}
+
+This tab shows a list of plots which PuffinPlot can display. You can control
+which plots are shown by ticking the boxes next to the plot names. The plot
+types are detailed in section~\ref{sec:manual-plot-types}.
+
+\paragraph{The \ppcmd{Misc.} tab}
+
+\begin{menuitemlist}
+
+\item[Demag y axis] allows to you customize the text which labels the {\em y}
+  axis of the demagnetization-intensity plot.
+
+\item[PmagPy folder] sets the location of the PmagPy programs. If you wish to
+  do calculations of \caps{ams} statistics within PuffinPlot, it is necessary
+  to have the PmagPy programs \ppcmd{bootams.py} and \ppcmd{s\_hext.py}
+  installed (see section~\ref{sec:manual-functions-calcs} for details). This
+  box allows you to specify to PuffinPlot the folder in which the programs
+  are installed.
+
+\item[Font] allows you to change the font used in the plots: enter a font
+  family name into the box. PuffinPlot must be restarted for the change to
+  take effect. If the specified font cannot be found, a default fallback font
+  is used.
+
+\end{menuitemlist}
+
+\subsubsection{\label{sec:manual-annotations}Annotations}
+
+Annotations are a feature allowing short, categorized notes to be added to
+each sample in a suite. The categories can be freely chosen. Annotations come
+in two varieties, {\em custom flags} and {\em custom notes}. Custom flags
+embody a true/false value and are intended for when a sample fulfils some
+criterion -- for example, \quot{messy}, \quot{low-temperature alteration},
+or \quot{multiple components}. Custom notes are intended for adding short
+items of information which are not automatically inferred by PuffinPlot --
+for example, \quot{number of components} or \quot{behaviour type}.
+
+\paragraph{Adding annotation categories}
+
+Annotations categories defined by selecting the \ppcmd{Edit custom
+  flags\ldots} or \ppcmd{Edit custom notes\ldots} item from the \ppcmd{Edit}
+menu. This will show a window allowing you to add, rearrange, or remove the
+annotation categories. If an annotation category is removed, all annotations
+made within that category will be lost.
+
+\paragraph{Using annotations}
+
+When custom flags or notes have been defined, an extra panel appears at the
+right-hand side of the main window. For each custom note category there is a
+text box into which text may be typed. For each custom flag category there is
+a tick box which may be selected or de-selected.
+
+Annotations are saved with the rest of the data in the PuffinPlot file; they
+are also exported in the sample data \caps{csv} file produced by the
+\ppcmd{File\submenu Export data\submenu Export sample calculations} menu
+item.
+
+\subsubsection{\label{sec:manual-scripting}Scripting}
+
+PuffinPlot's graphical desktop interface is intended to be the primary way to
+interact with the program. However, it is often useful to be able to interact
+with a program using a scripting language, in order to extend its
+capabilities, integrate it conveniently with other programs, or process large
+amounts of data without manual intervention. The Java platform upon which
+PuffinPlot is built supports a number of scripting languages which can easily
+interface with PuffinPlot. Perhaps most usefully, an implementation of the
+Python programming language -- named Jython \citep{juneau2009jython} -- has
+been developed for the Java platform. Since Python is widely used in
+scientific programming and scripting, and familiar to a large number of
+scientists, this should provide a convenient route for anyone wishing to
+integrate PuffinPlot with other data processing steps. Using Jython,
+PuffinPlot can be controlled either from a pre-written script, or
+interactively from a command shell which accepts and executes commands one at
+a time from the user.
+
+Currently, the main barrier to controlling PuffinPlot from another program or
+from an interactive shell is that its internal structure is very poorly
+documented; for many parts, the source code itself constitutes the only
+documentation. However, the source code is cleanly written and clearly laid
+out, so careful perusal of it should provide enough understanding to
+interface with most of PuffinPlot's facilities.
+
+Figure~\ref{fig:manual-script-example} shows a very simple script
+demonstrating the use of PuffinPlot from within a Python environment. The
+script opens a data file, calculates the mean \caps{nrm}, and produces a file
+containing a \caps{pca} direction for each sample. Note that virtually all of
+PuffinPlot's data and functionality is available to the Python script, so far
+more complex examples are possible.
+
+\begin{figure}
+% {A simple script which uses PuffinPlot}
+  \caption{\label{fig:manual-script-example}A simple Python script to
+    demonstrate the use of PuffinPlot from a scripting environment. This
+    script first opens a data file. It then calculates the mean \caps{nrm} of
+    all the samples and displays it. Then it calculates a \caps{pca}
+    direction for each sample in the suite, and saves the results to a
+    \caps{csv} file. Explanatory comments in the script are preceded by the
+    character \#.}
+\begin{verbatim}
+### Import the required libraries.
+from net.talvi.puffinplot import PuffinApp
+from net.talvi.puffinplot.data import Suite
+from java.io import File
+
+### Start PuffinPlot and open a data file.
+puffin = PuffinApp()
+input_file = File("example.ppl")
+suite = Suite([input_file])
+samples = suite.getSamples()
+
+### Calculate and display the mean NRM.
+total_nrm = sum([sample.getNRM() for sample in samples])
+print total_nrm / suite.getNumSamples()
+
+### Perform a PCA calculation for each sample.
+for sample in samples:          # do this for each sample:
+    sample.selectAll()          # select all points in the sample
+    sample.useSelectionForPca() # and mark them for use in PCA
+suite.doSampleCalculations()    # perform PCA for each sample
+
+### Save the results of the PCA calculation.
+output_file = File("example-results.csv")
+suite.saveCalcsSample(output_file)
+\end{verbatim}
+\end{figure}
+
+\newpage
 \bibliographystyle{plainnat}
 \bibliography{manual}
 
