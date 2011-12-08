@@ -9,8 +9,8 @@ type: :task
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :in_progress
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2011-11-10 04:53:59.255059 Z
 references: []
 
@@ -30,3 +30,10 @@ log_events:
     needed. ConTeXt-to-HTML is possible but hard compared to pandoc.
     We lose some typographical beauty but I think maintaining a 
     ConTeXt version would take too much time and effort.
+- - 2011-12-08 04:52:08.044677 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Manual translated to LaTeX and added to repository. Compiles
+    under pdflatex and htlatex. Still need to think about best way
+    to distribute it.

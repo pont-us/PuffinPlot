@@ -1,7 +1,9 @@
-\documentclass[a4paper]{article}
+\documentclass[a4paper,british]{article}
 
 % ======== General set-up
 
+\usepackage[british]{babel} % avoids `anal-ysis', inter alia.
+\usepackage[hmargin=3.5cm,vmargin=2.5cm]{geometry}
 \frenchspacing
 \usepackage{ifpdf} % For now, I'm just targeting pdflatex and htlatex.
 \usepackage{calc} % allow infix arithmetic
@@ -14,9 +16,11 @@
 \usepackage[utf8]{inputenc}
 \usepackage{url}
 \usepackage{graphicx}
-\usepackage{multirow}
+%\usepackage{multirow}
 \usepackage{placeins}
 \usepackage{booktabs}
+\usepackage{listings}
+\usepackage{textcase}
 \usepackage{textcomp} % for \textdegree
 \ifpdf
   \usepackage[unicode=true]{hyperref}
@@ -41,7 +45,8 @@
 {\end{list}}
 
 \newcommand{\ppcmd}[1]{\textsf{#1}} % For `computer' text
-\newcommand{\caps}[1]{\textsc{#1}} % for acronyms and initialisms
+% \newcommand{\caps}[1]{\textsc{#1}} % for acronyms and initialisms
+\newcommand{\caps}[1]{\MakeTextUppercase{#1}} % for acronyms and initialisms
 \newcommand{\submenu}{ \textgreater{} } % htlatex doesn't like `>'.
 \newcommand{\alnifi}{$\alpha_{95}$}
 \newcommand{\quot}[1]{`#1'}
@@ -65,9 +70,9 @@
 \section{Introduction}
 
 This manual gives a practical guide to the usage of the PuffinPlot
-palaeomagnetic data analysis program. Note that it does \emph{not} elucidate
-the principles of the analysis techniques themselves, and a working knowledge
-of palaeomagnetic procedures is assumed. For excellent introductions to
+palaeomagnetic data analysis program. Note that it does not elucidate the
+principles of the analysis techniques themselves, and a working knowledge of
+palaeomagnetic procedures is assumed. For excellent introductions to
 palaeomagnetic analysis, see \cite{tauxe2010paleomagnetism} or
 \cite{butler1992paleomagnetism}.
 
@@ -81,10 +86,15 @@ it.
 
 PuffinPlot runs on the Java platform (version 5 or later), which is
 preinstalled or freely available for a variety of operating systems,
-including Windows, Linux, and Mac OS X. Instructions for installing Java
-are beyond the scope of this manual; please consult the documentation
-for your operating system or visit \url{http://www.java.com/} for
-details.
+including Windows, Linux, and Mac OS X. Java is generally easy to install,
+but in-depth instructions for installing it are beyond the scope of this
+manual; please consult the documentation for your operating system or visit
+\url{http://www.java.com/} for details.
+
+\paragraph{Java installation: Mac OS X notes.} On most versions of Mac OS X,
+Java is preinstalled as standard. On version 10.7 (Lion) it must be manually
+installed via \ppcmd{Applications\submenu Utilities\submenu Java
+  Preferences}.
 
 \subsection{Obtaining and installing PuffinPlot}
 
@@ -108,6 +118,13 @@ select \emph{Open with Java runtime} or some similar text from a menu.
 PuffinPlot can also be started from a terminal prompt by setting the
 current folder to the one containing PuffinPlot, and typing
 \textsf{java -jar PuffinPlot.jar}.
+
+\paragraph{Note for Windows users.} Under Windows, other programs may
+occasionally interfere with the Java platform; if you have the Java platform
+installed on Windows but are still unable to run \ppcmd{jar} files such as
+\ppcmd{PuffinPlot.jar}, the situation can usually be fixed by running the
+\ppcmd{jarfix} program. At the time of writing, \ppcmd{jarfix} may be
+downloaded from \url{http://johann.loefflmann.net/en/software/jarfix/}.
 
 \subsubsection{Mac OS X}
 
@@ -153,7 +170,7 @@ every file within the folder will be opened.
 \ifpdf\includegraphics{figures/annot-scrnshot.pdf}
 \else\includegraphics{figures/annot-scrnshot.png}
 \fi
-\caption{The main window of PuffinPlot with a discrete file loaded,
+\caption{\label{fig:screenshot}The main window of PuffinPlot with a discrete file loaded,
 showing the default data plot layout. Data plots, information displays,
 and controls are annotated. Note that several other data plots are
 available, but are not shown by default, and that the layout may be
@@ -246,7 +263,7 @@ step.
 \subsection{Main window features}
 
 This section describes the parts and functions of the main PuffinPlot
-window, as shown in Figure 1.
+window, as shown in figure~\ref{fig:screenshot}.
 
 \subsubsection{Plot area}
 
@@ -254,9 +271,9 @@ The plot area is the largest part of the window, and plots the data for the
 current sample using various plots. By default, four plots are shown: a
 demagnetization-intensity biplot, a Zijderveld plot, an equal-area
 projection, and a table of demagnetization steps. The plots can be moved and
-resized (see section~\ref{sec:manual-change-layout}). Other plots are also
+resized (see section~\ref{sec:change-layout}). Other plots are also
 available, and the preferences window can be used to control which plots are
-displayed (see section~\ref{sec:manual-preferences}).
+displayed (see section~\ref{sec:preferences}).
 
 \subsubsection{Sample chooser}
 
@@ -303,7 +320,7 @@ Use \ppcmd{Ctrl-B} and \ppcmd{Ctrl-N} to change the current sample. Use
 \ppcmd{Ctrl-A} to select all the samples in the current suite. You can also
 use the up and down arrow keys to change the sample.
 
-\subsubsection{\label{sec:manual-toolbar}Toolbar}
+\subsubsection{\label{sec:toolbar}Toolbar}
 
 The toolbar displays various data and provides several controls.
 From left to right, these are:
@@ -367,7 +384,7 @@ saving files.
 
 \item[File\submenu Open\ldots] loads one or more files of demagnetization
   data into PuffinPlot as a new suite. See
-  section~\ref{sec:manual-file-types} for details of supported filetypes.
+  section~\ref{sec:file-types} for details of supported filetypes.
 
 \item[File\submenu Open recent file] is a submenu which
 contains the names of the last eight files which have been opened in
@@ -390,12 +407,12 @@ various kinds of data to \caps{csv} files.
 
 \item[File\submenu Export data\submenu sample calculations\ldots] saves a file
 containing all the data associated with individual samples.
-Table~\ref{tbl:manual-export-sample} describes the fields which make
+Table~\ref{tbl:export-sample} describes the fields which make
 up the file.
 
-\begin{table}[p]
+\begin{table}[tp]
 %{Fields for sample data export}
-  \caption{\label{tbl:manual-export-sample} List of fields in exported sample data file, Note that, in addition to the predefined fields, any custom user annotations (see section~\ref{sec:manual-annotations}) will also be exported in this file.}
+  \caption{\label{tbl:export-sample} List of fields in exported sample data file, Note that, in addition to the predefined fields, any custom user annotations (see section~\ref{sec:annotations}) will also be exported in this file.}
 \begin{tabular}{lp{100mm}} \toprule
 Field name          & Description \\ \midrule
 Suite                & Suite name \\
@@ -432,21 +449,21 @@ intensity reached half the \caps{nrm} intensity during demagnetization;
 `no' otherwise \\
 {\em [annotations]}  & Any user-defined annotations
 are also exported as part of the sample export file. See
-section~\ref{sec:manual-annotations} for details. \\ \bottomrule
+section~\ref{sec:annotations} for details. \\ \bottomrule
 \end{tabular}
 \end{table}
 
 \item[File\submenu Export data\submenu site calculations\ldots] saves a file
 containing (for suites with discrete samples) all the data associated with
-sites. Table~\ref{tbl:manual-export-site} describes the fields
+sites. Table~\ref{tbl:export-site} describes the fields
 which make up this file.
 
-\begin{table}[p]
+\begin{table}[tp]
 
-  \caption{\label{tbl:manual-export-site} List of fields in exported site data file}
+  \caption{\label{tbl:export-site} List of fields in exported site data file}
 
-\begin{tabular}{lp{100mm}}
-  Field name      & Description \\
+\begin{tabular}{p{5em}p{\textwidth-5em}} \toprule
+  Field name      & Description \\ \midrule
   site            & Name of site \\
   Fisher inc.     & Mean inclination of \caps{pca} directions (\textdegree) \\
   Fisher dec.     & Mean declination of \caps{pca} directions (\textdegree) \\
@@ -461,16 +478,14 @@ which make up this file.
   \caps{gc} k     & {\em k}-value for great-circle direction \\
   \caps{gc n}     & Number of great circles used in great-circle fit \\
   \caps{gc m}     & Number of \caps{pca} directions used in great-circle fit \\
-  \caps{t}1min    & \multirow{4}{100mm}{These four parameters give the ranges of demagnetization steps used to fit
+  \caps{t}1min\newline \caps{t}1max\newline \caps{t}2min\newline \caps{t}2max
+    & These four parameters give the ranges of demagnetization steps used to fit
     the circles. \caps{t}1 is the first (lowest) demagnetization step in a circle
     path for an individual sample, and \caps{t}2 the last (highest). \caps{t}1min
     is the minimum of the \caps{t}1 values across all the circles for the site,
     and \caps{t}2 the maximum. Similarly, \caps{t}2 is the last step used in a
     single circle, and \caps{t}2min--\caps{t}2max is the range of its values
-    across all the samples at a site.} \\
-  \caps{t}1max &   \\
-  \caps{t}2min &   \\
-  \caps{t}2max &   \\
+    across all the samples at a site. \\ \bottomrule
 \end{tabular}
 \end{table}
 
@@ -499,11 +514,11 @@ Cute\caps{pdf} Writer or Bullzip \caps{pdf} Printer, in order to produce
 \item[File\submenu Print Fisher\ldots] prints the contents of the separate
 window showing Fisher statistics of \caps{pca} directions through the suite;
 see \ppcmd{Calculations\submenu Fisher on suite} in
-section~\ref{sec:manual-functions-calcs} for more details.
+section~\ref{sec:functions-calcs} for more details.
 
 \item[File\submenu Print Great Circles\ldots] prints the contents of the
   separate great-circle fit window; see \ppcmd{Calculations\submenu Great
-    circles} in section~\ref{sec:manual-functions-calcs} for more details.
+    circles} in section~\ref{sec:functions-calcs} for more details.
 
 \item[File\submenu Import AMS] imports \caps{ams} data from a file. The
 file must be in the \caps{.asc} format produced by the \ppcmd{Safyr} program
@@ -533,7 +548,7 @@ a file saved using \ppcmd{Export preferences}. See the description of
 \ppcmd{Export preferences} for details.
 
 \item[File\submenu Preferences\ldots] opens the preferences window. See
-section~\ref{sec:manual-preferences} for details. On Mac OS X, this item is
+section~\ref{sec:preferences} for details. On Mac OS X, this item is
 found on the \ppcmd{PuffinPlot} menu to the left of the \ppcmd{File} menu,
 rather than on the \ppcmd{File} menu.
 
@@ -543,7 +558,7 @@ rather than on the \ppcmd{File} menu.
 
 \end{menuitemlist}
 
-\FloatBarrier
+%\FloatBarrier
 \subsubsection{Edit menu}
 
 The \ppcmd{Edit} menu provides various basic functions mainly
@@ -559,7 +574,7 @@ below).
 the selected samples.
 
 \item[Edit\submenu Move plots] allows you to reposition and resize the plots
-  in the main display area. See section~\ref{sec:manual-move-plots} for
+  in the main display area. See section~\ref{sec:move-plots} for
   details.
 
 \item[Edit\submenu Reset layout] resets the sizes and positions of
@@ -594,12 +609,12 @@ the selected samples.
 %\item[Edit\submenu Apply empty correction]
 
 \item[Edit\submenu Edit custom flags\ldots] allows you to add or remove
-user-defined flags for the suite; see section~\ref{sec:manual-annotations}
+user-defined flags for the suite; see section~\ref{sec:annotations}
 for details.
 
 \item[Edit\submenu Edit custom notes\ldots] allows you to add or remove
   user-defined note categories for the suite; see
-  section~\ref{sec:manual-annotations} for details.
+  section~\ref{sec:annotations} for details.
 
 \item[Edit\submenu Rescale mag. sus.] scales all the magnetic
 susceptibility values for the suite by a specified factor. This is
@@ -610,7 +625,7 @@ samples.
 
 \end{menuitemlist}
 
-\subsubsection{\label{sec:manual-functions-calcs}Calculations menu}
+\subsubsection{\label{sec:functions-calcs}Calculations menu}
 
 The calculations menu provides facilities for calculating magnetic
 parameters and directions. Note that most calculations operate on
@@ -681,11 +696,12 @@ PuffinPlot can show the results of statistical calculations on \caps{ams}
 tensors, giving mean directions and confidence ellipses for the principal
 axes by one of three methods; at present, however, these calculations cannot
 be performed by PuffinPlot itself. Instead, it makes use of two Python
-scripts from the PmagPy suite \citep[tauxe2010paleomagnetism],
+scripts from the PmagPy suite \citep{tauxe2010paleomagnetism},
 \ppcmd{bootams.py} and \ppcmd{s\_hext.py}. In order to calculate \caps{ams}
 statistics, these scripts must first be installed on the computer running
 PuffinPlot, and the folder containing them must be specified in the
 \ppcmd{Preferences} window. The PmagPy programs may be obtained from
+\url{http://earthref.org/PMagPy/}.
 
 All \caps{ams} calculations operate on the currently selected samples.
 \cite{tauxe1998directions} and chapter 13 of \cite{tauxe2010paleomagnetism}
@@ -749,7 +765,7 @@ also present on the \ppcmd{PuffinPlot} menu.
 
 This section presents PuffinPlot's features in moderate detail.
 
-\subsubsection{\label{sec:manual-file-types}Supported file types}
+\subsubsection{\label{sec:file-types}Supported file types}
 
 PuffinPlot can currently open three types of file: its own filetype (filename
 suffix \ppcmd{ppl}); data produced from 2\caps{g} cryomagnetometers (filename
@@ -804,12 +820,12 @@ series of 50 samples, it can be done in four quick steps:
 
 This will immediately perform \caps{pca} on all 50 selected samples.
 
-\subsection{\label{sec:manual-plot-types}Plot types}
+\subsection{\label{sec:plot-types}Plot types}
 
 This section lists and briefly describes the available plot types in
 PuffinPlot. Some of them are not displayed by default, but these may be
 activated via the preferences window (see
-section~\ref{sec:manual-preferences}). Note that the term `plot' is used
+section~\ref{sec:preferences}). Note that the term `plot' is used
 rather loosely in this manual to refer to any movable element displaying data
 within the main window. Thus, the `plots' listed below include textual
 elements such as legends.
@@ -826,7 +842,7 @@ circle fit has been calculated for the sample, it is shown on this plot.
 \item[Zplot] is a Zijderveld plot, overlaying an orthographic projection in
   the horizontal plane with an orthographic projection in a chosen vertical
   plane. The vertical plane can be controlled using the chooser on the
-  toolbar; see section\ref{sec:manual-toolbar} for details. The horizontal
+  toolbar; see section\ref{sec:toolbar} for details. The horizontal
   projection is shown with filled points, and the vertical projection with
   unfilled points. If a \caps{pca} fit has been calculated for this sample,
   the two projections of the \caps{pca} lines are overlaid on the plot in
@@ -873,7 +889,7 @@ suite, it shows the current depth.
 \caps{ams} data, if any has been imported. Maximum, intermediate, and
 minimum anisotropy axes are shown as squares, triangles, and circles
 respectively. If \caps{ams} statistics have been calculated (see
-section~\ref{sec:manual-functions-calcs}), the mean directions and
+section~\ref{sec:functions-calcs}), the mean directions and
 confidence ellipses are also shown.
 
 \item[Ternary demag.] is an experimental ternary plot designed
@@ -899,11 +915,11 @@ intensities across the whole suite.
 
 \end{menuitemlist}
 
-\subsubsection{\label{sec:manual-move-plots}Arranging the plots}
+\subsubsection{\label{sec:move-plots}Arranging the plots}
 
 PuffinPlot allows the plots to be freely rearranged and resized within the
 display area; they can also be switched on and off as required (see
-section\ref{sec:manual-preferences}). To arrange the plots, select
+section\ref{sec:preferences}). To arrange the plots, select
 \ppcmd{Move plots} from the \ppcmd{Edit} menu. A tick appears next to the
 menu item, and the plots are overlaid by pale orange rectangles, allowing you
 to manipulate them. Each plot is also annotated with its name, which helps to
@@ -918,7 +934,7 @@ Once the plots are arranged to your satisfaction, click \ppcmd{Move plots} on
 the \ppcmd{Edit} menu again to untick the menu item and resume normal
 operation.
 
-\subsubsection{\label{sec:manual-change-layout}Changing the layout}
+\subsubsection{\label{sec:change-layout}Changing the layout}
 
 You can change the size and arrangement of the plots in the main window by
 choosing \ppcmd{Move plots} from the \ppcmd{Edit} menu. This puts PuffinPlot
@@ -936,7 +952,7 @@ zone. Plots can overlap one another freely. When you click in an area where
 two or more plots overlap, the smallest plot is treated as the `topmost', and
 this is the one which will be moved or resized.
 
-\subsubsection[sec:manual-preferences]{The preferences window}
+\subsubsection{\label{sec:preferences}The preferences window}
 
 The preferences window is divided into three tabs.
 
@@ -963,13 +979,13 @@ produced by the \caps{2g} `Long Core' software.
   reads the file, providing a more accurate, corrected moment measurement for
   each sample. (Magnetic susceptibility measurements, if present, are also
   automatically associated with the preceding magnetic moment measurement or
-  measurements.) Table~\ref{tbl:manual-import-protocols} describes the
+  measurements.) Table~\ref{tbl:import-protocols} describes the
   available protocols.
 
 \end{menuitemlist}
 
 \begin{table}
-  \caption{\label{tbl:manual-import-protocols}Measurement protocols for 2\caps{g} data files}
+  \caption{\label{tbl:import-protocols}Measurement protocols for 2\caps{g} data files}
 
 \begin{tabular}{lp{90mm}} \toprule
 Protocol & Description \\ \midrule
@@ -1015,7 +1031,7 @@ is unnecessary. \\ \bottomrule
 
 This tab shows a list of plots which PuffinPlot can display. You can control
 which plots are shown by ticking the boxes next to the plot names. The plot
-types are detailed in section~\ref{sec:manual-plot-types}.
+types are detailed in section~\ref{sec:plot-types}.
 
 \paragraph{The \ppcmd{Misc.} tab}
 
@@ -1027,7 +1043,7 @@ types are detailed in section~\ref{sec:manual-plot-types}.
 \item[PmagPy folder] sets the location of the PmagPy programs. If you wish to
   do calculations of \caps{ams} statistics within PuffinPlot, it is necessary
   to have the PmagPy programs \ppcmd{bootams.py} and \ppcmd{s\_hext.py}
-  installed (see section~\ref{sec:manual-functions-calcs} for details). This
+  installed (see section~\ref{sec:functions-calcs} for details). This
   box allows you to specify to PuffinPlot the folder in which the programs
   are installed.
 
@@ -1038,7 +1054,7 @@ types are detailed in section~\ref{sec:manual-plot-types}.
 
 \end{menuitemlist}
 
-\subsubsection{\label{sec:manual-annotations}Annotations}
+\subsubsection{\label{sec:annotations}Annotations}
 
 Annotations are a feature allowing short, categorized notes to be added to
 each sample in a suite. The categories can be freely chosen. Annotations come
@@ -1069,7 +1085,7 @@ are also exported in the sample data \caps{csv} file produced by the
 \ppcmd{File\submenu Export data\submenu Export sample calculations} menu
 item.
 
-\subsubsection{\label{sec:manual-scripting}Scripting}
+\subsubsection{\label{sec:scripting}Scripting}
 
 PuffinPlot's graphical desktop interface is intended to be the primary way to
 interact with the program. However, it is often useful to be able to interact
@@ -1094,7 +1110,7 @@ documentation. However, the source code is cleanly written and clearly laid
 out, so careful perusal of it should provide enough understanding to
 interface with most of PuffinPlot's facilities.
 
-Figure~\ref{fig:manual-script-example} shows a very simple script
+Figure~\ref{fig:script-example} shows a very simple script
 demonstrating the use of PuffinPlot from within a Python environment. The
 script opens a data file, calculates the mean \caps{nrm}, and produces a file
 containing a \caps{pca} direction for each sample. Note that virtually all of
@@ -1103,14 +1119,15 @@ more complex examples are possible.
 
 \begin{figure}
 % {A simple script which uses PuffinPlot}
-  \caption{\label{fig:manual-script-example}A simple Python script to
+  \caption{\label{fig:script-example}A simple Python script to
     demonstrate the use of PuffinPlot from a scripting environment. This
     script first opens a data file. It then calculates the mean \caps{nrm} of
     all the samples and displays it. Then it calculates a \caps{pca}
     direction for each sample in the suite, and saves the results to a
     \caps{csv} file. Explanatory comments in the script are preceded by the
     character \#.}
-\begin{verbatim}
+\lstset{language=Python}
+\begin{lstlisting}
 ### Import the required libraries.
 from net.talvi.puffinplot import PuffinApp
 from net.talvi.puffinplot.data import Suite
@@ -1135,7 +1152,7 @@ suite.doSampleCalculations()    # perform PCA for each sample
 ### Save the results of the PCA calculation.
 output_file = File("example-results.csv")
 suite.saveCalcsSample(output_file)
-\end{verbatim}
+\end{lstlisting}
 \end{figure}
 
 \newpage

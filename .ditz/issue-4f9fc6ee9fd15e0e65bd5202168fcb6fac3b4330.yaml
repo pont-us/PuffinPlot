@@ -8,8 +8,8 @@ type: :task
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2011-11-10 05:05:19.871064 Z
 references: []
 
@@ -19,3 +19,13 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2011-12-07 20:41:57.540693 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - Manual ported, so I can do this now.
+- - 2011-12-07 21:50:40.980669 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Added instructions for installing Java on OS X 10.7, and for running
+    jarfix on Windows.

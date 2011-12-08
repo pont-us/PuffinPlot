@@ -63,7 +63,7 @@ public abstract class Plot
             "nrm_histogram false 422 733 147 154";
 
     static {
-        final AffineTransform at = AffineTransform.getTranslateInstance(0, -0.18);
+        final AffineTransform at = AffineTransform.getTranslateInstance(0, 0.18);
         at.concatenate(AffineTransform.getScaleInstance(0.8, 0.8));
         MAC_SUPERSCRIPT_TRANSFORM = new TransformAttribute(at);
     }
@@ -130,7 +130,7 @@ public abstract class Plot
      *  Used for "x10^?" when exponent is unknown.
      */
     protected AttributedString timesTenToThe(String text, String exponent) {
-        if (!PuffinApp.MAC_OS_X) {
+        if (!useAppleSuperscriptHack) {
             // 00D7 is the multiplication sign
             text += " \u00D710" + exponent;
             AttributedString as = new AttributedString(text);
@@ -151,6 +151,13 @@ public abstract class Plot
              * which "soaks up" the single application of the transform.
              * Much tedious trial and error went into this; test any changes
              * thoroughly!
+             * 
+             * Works for Java 1.5.0 on OS X 10.5.8 PPC, tested 2011-12-08.
+             * Now that recent Macs can do superscript properly, it's
+             * probably not worth individually crafting and testing 
+             * workarounds for every Java/OS X/architecture combination.
+             * I will trust that this one is acceptable until/unless
+             * I get a bug report about it.
              */
             text += " \u00D710\u200B" + exponent;
             AttributedString as = new AttributedString(text);
@@ -201,7 +208,7 @@ public abstract class Plot
         attributeMap.put(TextAttribute.SIZE, getFontSize());
         useAppleSuperscriptHack = PuffinApp.MAC_OS_X &&
                 (PuffinApp.OSX_POINT_VERSION < 6 ||
-                !System.getProperty("java.version").startsWith("1.5"));
+                System.getProperty("java.version").startsWith("1.5"));
                 
     }
 

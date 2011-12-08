@@ -82,7 +82,7 @@ public final class PuffinApp {
     private static final boolean useSwingChooserForOpen = true;
     private BitSet pointSelectionClipboard = new BitSet(0);
     private Properties buildProperties;
-    public static final float OSX_POINT_VERSION = getOsxPointVersion();
+    public static final int OSX_POINT_VERSION = getOsxPointVersion();
 
     static {
         final Handler logStringHandler =
@@ -93,15 +93,23 @@ public final class PuffinApp {
         logMemoryHandler.setLevel(Level.ALL);
     }
     
-    private static float getOsxPointVersion() {
+    private static int getOsxPointVersion() {
         final boolean osx =
                 System.getProperty("os.name").toLowerCase().startsWith("mac os x");
         if (!osx) return -1;
-        final String vString = System.getProperty("os.version");
-        if (!vString.startsWith("10.")) return -1;
+        
+        // split the "10.x.y" version number
+        String osVersion = System.getProperty("os.version");
+        String[] fragments = osVersion.split("\\.");
+        
+        // sanity check the "10." part of the version
+        if (!fragments[0].equals("10")) return -1;
+        if (fragments.length < 2) return -1;
+        
         try {
-            return Float.parseFloat(vString.substring(3));
-        } catch (NumberFormatException ex) {
+            int minorVers = Integer.parseInt(fragments[1]);
+            return minorVers;
+        } catch (NumberFormatException e) {
             return -1;
         }
     }

@@ -7,7 +7,7 @@ desc: |-
   especially with virtual fields.
 type: :feature
 component: PuffinPlot
-release: "1.0"
+release: "1.1"
 reporter: Pontus Lurcock <pont@talvi.net>
 status: :unstarted
 disposition: 
@@ -20,3 +20,12 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2011-12-08 04:53:57.396693 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.1 from 1.0
+  - |-
+    This doesn't seem to be as important to people as I thought,
+    perhaps because they're better at munging their own data than I
+    suspected. Or perhaps everything they wanted really is in there
+    already. In any case I'm dropping it from 1.0 to 1.1 since import
+    flexibility is far more important and time is limited.

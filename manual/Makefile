@@ -1,5 +1,6 @@
-all: hg.id
+manual.pdf: manual.tex
+	hg tip --template '\\def\\HgNode{{node|short}}\n\\def\\HgDate{{date|isodate}}\n\\def\\HgAuthor{{author|person}}\n' >hg.id
 	pdflatex manual
-
-hg.id:
-	hg tip --template '\\def\\HgNode{{node|short}}\n\\def\\HgDate{{date|isodate}}\n\\def\\HgAuthor{{author|person}}\n' >$@
+	bibtex manual
+	pdflatex manual
+	pdflatex manual
