@@ -163,7 +163,7 @@ public final class PuffinApp {
         System.setProperty("apple.laf.useScreenMenuBar", "true");
         System.setProperty("com.apple.mrj.application.apple.menu.about.name", "PuffinPlot");
         loadBuildProperties();
-        prefs = new PuffinPrefs();
+        prefs = new PuffinPrefs(); // needs PuffinApp.app set.
         actions = new PuffinActions(this);
         tableWindow = new TableWindow();
         fisherWindow = new FisherWindow();
@@ -584,7 +584,7 @@ public final class PuffinApp {
             List<File> files = openFileDialog("Select AMS files");
             // app.getSuite().importAms(files, true);
             getSuite().importAmsFromAsc(files, false);
-            updateDisplay();
+            getMainWindow().suitesChanged();
         } catch (IOException ex) {
             logger.log(Level.SEVERE, null, ex);
             errorDialog("Error importing AMS", ex.getLocalizedMessage());
