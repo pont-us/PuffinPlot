@@ -102,7 +102,7 @@ public class MainMenuBar extends JMenuBar {
                 pa.exportCalcsSite, pa.exportCalcsSuite, pa.exportIrm),
                 pa.pageSetup, pa.print, pa.printFisher, pa.printGc,
                 pa.importAms, pa.exportSvg, pa.exportPdf,
-                pa.exportPrefs, pa.importPrefs,
+                pa.exportPrefs, pa.importPrefs, pa.clearPreferences,
                 pa.prefs, pa.quit));
         add(makeMenu("Edit", pa.selectAll, pa.clearSelection,
                 movePlotsItem, pa.resetLayout, pa.editCorrections,

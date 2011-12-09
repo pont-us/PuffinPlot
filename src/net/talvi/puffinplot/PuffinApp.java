@@ -1,6 +1,7 @@
 package net.talvi.puffinplot;
 
 import java.awt.FileDialog;
+import java.util.prefs.BackingStoreException;
 import net.talvi.puffinplot.window.CorrectionWindow;
 import net.talvi.puffinplot.window.TableWindow;
 import net.talvi.puffinplot.window.FisherWindow;
@@ -70,7 +71,7 @@ public final class PuffinApp {
     private final FisherWindow fisherWindow;
     private final CorrectionWindow correctionWindow;
     private final GreatCircleWindow greatCircleWindow;
-    private final PrefsWindow prefsWindow;
+    private PrefsWindow prefsWindow;
     private final AboutBox aboutBox;
     private RecentFileList recentFiles;
     private CustomFieldEditor customFlagsWindow = null;
@@ -585,7 +586,7 @@ public final class PuffinApp {
             // app.getSuite().importAms(files, true);
             getSuite().importAmsFromAsc(files, false);
             getMainWindow().suitesChanged();
-        } catch (IOException ex) {
+            } catch (IOException ex) {
             logger.log(Level.SEVERE, null, ex);
             errorDialog("Error importing AMS", ex.getLocalizedMessage());
         }
@@ -634,5 +635,26 @@ public final class PuffinApp {
             }
         }
         updateDisplay();
+    }
+    
+    public void clearPreferences() {
+        int result = JOptionPane.showConfirmDialog
+                (getMainWindow(), "Are you sure you wish to clear "
+                + "your preferences\nand reset all preferences to default "
+                + "values?",
+                "Confirm clear preferences", 
+                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        if (result != JOptionPane.YES_OPTION) return;
+        try {
+            getPrefs().getPrefs().clear();
+            getPrefs().getPrefs().flush();
+            getPrefs().load();
+            getMainWindow().getGraphDisplay().recreatePlots();
+            updateDisplay();
+            prefsWindow = new PrefsWindow();
+        } catch (BackingStoreException ex) {
+            logger.log(Level.WARNING, "Error clearing preferences", ex);
+            errorDialog("Error clearing preferences", ex.getLocalizedMessage());
+        }
     }
 }

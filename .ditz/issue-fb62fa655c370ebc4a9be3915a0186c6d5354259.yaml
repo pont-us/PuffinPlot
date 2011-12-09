@@ -7,8 +7,8 @@ type: :feature
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2011-11-11 05:35:35.839009 Z
 references: []
 
@@ -18,3 +18,14 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2011-12-09 00:24:35.404669 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2011-12-09 00:49:09.320563 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Implemented as specified, with name 'Clear preferences' and
+    action PuffinActions.clearPreferences. Logic is in 
+    PuffinApp.clearPreferences() and menu item is on File menu.

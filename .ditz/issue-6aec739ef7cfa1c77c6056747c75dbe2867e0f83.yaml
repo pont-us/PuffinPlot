@@ -48,3 +48,14 @@ log_events:
     AsciiDoc looks promising actually -- can generate chunked HTML via
     DocBook. Processing will obviously be a bit heavyweight since it needs
     a DocBook toolchain, but output shouldn't be too big.
+- - 2011-12-08 22:59:55.668656 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    With Batik now bundled, size is less of a concern for JavaHelp,
+    and there is a full HTML manual produced using htlatex. The only 
+    remaining thing is the work of actually integrating the JavaHelp
+    classes, producing the JavaHelp files from the HTML, bundling
+    them into the jar, and persuading JavaHelp to load them. JavaHelp
+    seems to be fairly old, seldom used, and with limited documentation,
+    so I'd estimate this at maybe 8-16 hours of work.

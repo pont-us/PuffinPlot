@@ -747,4 +747,12 @@ public class PuffinActions {
                     thickness);
         }
     };
+    
+    public final Action clearPreferences = new AbstractAction("Clear preferences") {
+        private static final long serialVersionUID = 1L;
+        public void actionPerformed(ActionEvent e) {
+            app.clearPreferences();
+        }
+    };
+
 }
