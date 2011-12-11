@@ -44,9 +44,9 @@
 	        <arg value="-P57047"/>
             <arg file="store/${ant.project.name}.jar"/>
             <arg file="${ant.project.name}.zip"/>
-            <arg value="rae:/srv/talvi.net/public/htdocs/" />
+            <arg value="rae:/srv/talvi.net/public/htdocs/puffinplot/" />
         </exec>
-        <echo message="scp lumi: ${scp.result}" />
+        <echo message="scp rae: ${scp.result}" />
     </target>
     
     <target name="package-for-store" depends="jar">
