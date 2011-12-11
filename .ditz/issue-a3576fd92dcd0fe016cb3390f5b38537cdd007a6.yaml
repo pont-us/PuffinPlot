@@ -12,8 +12,8 @@ type: :feature
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :in_progress
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2011-11-14 05:32:19.514744 Z
 references: []
 
@@ -27,3 +27,10 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - changed status from unstarted to in_progress
   - ""
+- - 2011-12-10 01:25:32.753186 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Site names can now be set in three ways: explicitly and 
+    individually per sample; from a substring of the sample's name;
+    and (for long core samples) from the depth.

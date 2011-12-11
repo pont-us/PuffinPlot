@@ -65,7 +65,8 @@ public class MainMenuBar extends JMenuBar {
         updateRecentFiles();
 
         final JCheckBoxMenuItem movePlotsItem =
-                new JCheckBoxMenuItem("Move plots") {
+                new JCheckBoxMenuItem("Edit layout") {
+                    private static final long serialVersionUID = 1L;
                     @Override
                     public boolean isSelected() {
                         MainWindow w = app.getMainWindow();
@@ -83,6 +84,7 @@ public class MainMenuBar extends JMenuBar {
 
         final JCheckBoxMenuItem useEmptyItem =
                 new JCheckBoxMenuItem("Apply empty correction") {
+            private static final long serialVersionUID = 1L;
                     @Override
                     public boolean isSelected() {
                         return app.isEmptyCorrectionActive();
@@ -112,16 +114,17 @@ public class MainMenuBar extends JMenuBar {
                 makeMenu("Edit sites", pa.setSiteName,
                   pa.setSitesFromSampleNames, pa.setSitesByDepth),
                 pa.hideSelectedPoints, pa.unhideAllPoints,
-                pa.useAsEmptySlot, pa.unsetEmptySlot,
-                useEmptyItem, pa.showCustomFlagsWindow, pa.showCustomNotesWindow,
+                // pa.useAsEmptySlot, pa.unsetEmptySlot, useEmptyItem,
+                pa.showCustomFlagsWindow, pa.showCustomNotesWindow,
                 pa.rescaleMagSus));
         add(makeMenu("Calculations",
                 pa.pcaOnSelection, anchorItem = new AnchorItem(),
                 pa.fisherBySite, pa.fisherOnSuite,
                 pa.mdf, pa.clear, pa.circleFit, pa.greatCircleAnalysis,
                 pa.clearSiteCalcs,
-                pa.reversalTest, pa.bootAmsNaive, pa.bootAmsParam, pa.hextAms,
-                pa.clearAmsCalcs));
+                pa.reversalTest, makeMenu("AMS", pa.bootAmsNaive,
+                pa.bootAmsParam, pa.hextAms,
+                pa.clearAmsCalcs)));
         add(makeMenu("Window",
                 new WindowMenuItem("Data table")
                 { JFrame window(PuffinApp a) {return a.getTableWindow();}},

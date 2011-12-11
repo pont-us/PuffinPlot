@@ -109,8 +109,12 @@ public class ControlPanel extends JPanel
     }
     
     public Correction getCorrection() {
-        return new Correction(false /*trayButton.isSelected()*/,
-                false /*emptyButton.isSelected()*/,
+        /* Tray correction is applied on loading, and empty slot correction
+         * is currently unused, so these fields are set to false in the
+         * Correction. Originally these wre read from the user checkboxes
+         * trayButton and emptyButton, which have now been removed.
+         */
+        return new Correction(false, false,
                 rotationBox.getRotation());
     }
     

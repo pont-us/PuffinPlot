@@ -29,7 +29,7 @@ public class Correction {
 
     public static enum Rotation {
         NONE("None"), SAMPLE("Sample"), FORMATION("Formn.");
-        private final String niceName;
+        public final String niceName;
         private Rotation(String niceName) {
             this.niceName = niceName;
         }
@@ -66,6 +66,7 @@ public class Correction {
         Scanner s = new Scanner(string);
         Correction c = null;
         try {
+            // In practice the two booleans should always be false.
             c = new Correction(s.nextBoolean(), s.nextBoolean(),
                                   Rotation.valueOf(s.next()));
         } catch (InputMismatchException e) {

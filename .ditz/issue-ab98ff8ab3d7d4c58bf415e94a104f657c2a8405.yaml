@@ -1,0 +1,31 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Remove automatic site-guessing on loading
+desc: |-
+  Now that we have explicitly represented sites and the facilities
+  for the user to set them, it's redundant to retain the old 
+  guess-sites-on-loading code. It's also buggy: sample names that don't
+  conform to the Otago template can cause Puffin to crash (for
+  example, the single-character sample name x).
+type: :task
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :closed
+disposition: :fixed
+creation_time: 2011-12-10 01:29:57.689335 Z
+references: []
+
+id: ab98ff8ab3d7d4c58bf415e94a104f657c2a8405
+log_events: 
+- - 2011-12-10 01:29:58.733159 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
+- - 2011-12-10 01:53:31.953248 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2011-12-10 01:53:56.073259 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - Site guessing code removed as specified.

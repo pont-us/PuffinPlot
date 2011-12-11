@@ -243,29 +243,6 @@ public class Sample {
     public String getNameOrDepth() {
         return nameOrDepth;
     }
-
-    private void checkDiscrete() {
-        if (!getMeasType().isDiscrete())
-            throw new UnsupportedOperationException("Only discrete measurements can have sites.");
-    }
-
-    private int getSiteSplit() {
-        checkDiscrete();
-        String n = getNameOrDepth();
-        int len = n.length();
-        int splitAt =  len - n.charAt(len-2) == '.' ? len-5 : len-4;
-        return (splitAt >= 0) ? splitAt : 0;
-    }
-
-    public String getSiteId() {
-        checkDiscrete();
-        return getNameOrDepth().substring(0, getSiteSplit());
-    }
-
-    public String getSampleId() {
-        checkDiscrete();
-        return getNameOrDepth().substring(getSiteSplit());
-    }
     
     public boolean isPcaAnchored() {
         return data.isEmpty() ? false : data.get(0).isPcaAnchored();

@@ -73,24 +73,6 @@ public class Suite {
         suiteFisher = FisherValues.calculate(directions);
     }
 
-    private void guessSites() {
-        Map<String, List<Sample>> siteMap =
-                new LinkedHashMap<String, List<Sample>>();
-        for (Sample sample : samples) {
-            String siteName = sample.getSiteId();
-            if (!siteMap.containsKey(siteName))
-                siteMap.put(siteName, new LinkedList<Sample>());
-            siteMap.get(siteName).add(sample);
-        }
-        sites = new ArrayList<Site>(siteMap.size());
-        for (Entry<String, List<Sample>> entry: siteMap.entrySet()) {
-            List<Sample> siteSamples = entry.getValue();
-            Site site = new Site(entry.getKey(), siteSamples);
-            sites.add(site);
-            for (Sample s: siteSamples) s.setSite(site);
-        }
-    }
-    
     public void doFisherOnSites(Correction correction) {
         if (!getMeasType().isDiscrete()) {
             throw new UnsupportedOperationException("Only discrete suites "
@@ -306,7 +288,7 @@ public class Suite {
                 emptyTraySamples.add(samplesById.get(slotId));
                 slot++;
             }
-            guessSites(); // sites aren't saved yet so we just re-guess on load
+            // guessSites(); // rendered obsolete by new site manipulation facilities
         }
 
         processPuffinLines(puffinLines);
@@ -587,7 +569,7 @@ public class Suite {
             }
             double[] v = ad.getTensor();
             sample.setAmsFromTensor(v[0], v[1], v[2], v[3], v[4], v[5]);
-            guessSites();
+            // guessSites(); // obsolete
         }
     }
 
@@ -622,7 +604,7 @@ public class Suite {
         }
         for (Sample s: getSamples()) {
             final List<String> lines = s.exportFields(fields);
-            final File outFile = new File(directory, s.getSampleId());
+            final File outFile = new File(directory, s.getNameOrDepth());
             FileWriter fw = null;
             try {
                 fw = new FileWriter(outFile);
