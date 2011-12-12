@@ -1,0 +1,29 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: PuffinPlot crashes if AMS plot is visible
+desc: |-
+  See email from Claudio, 2011-12-11. Cause appears to be passing 
+  a null value to Collections.unmodifiableCollection in 
+  Suite.getAmsBootstrapParams.
+type: :bugfix
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :closed
+disposition: :fixed
+creation_time: 2011-12-12 00:31:48.249514 Z
+references: []
+
+id: 41ccb4012775b902afa152837e90a7c30e582e49
+log_events: 
+- - 2011-12-12 00:31:48.769460 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
+- - 2011-12-12 00:34:12.573653 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Fixed: list is now made unmodifiable by KentParams on creation,
+    so don't need to rewrap it in Suite. Also opened a bug (#194)
+    to refactor KentParams so as to make it less prone to this kind
+    of problem.

@@ -20,7 +20,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import net.talvi.puffinplot.data.Correction;
-import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;
 import static net.talvi.puffinplot.data.Correction.Rotation;
@@ -36,6 +35,7 @@ public class ControlPanel extends JPanel
     private static final PuffinApp app = PuffinApp.getInstance();
     
     private Action toggleZplotAction = new AbstractAction() {
+        private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {
             vVsBox.toggle();
         }
@@ -145,7 +145,7 @@ public class ControlPanel extends JPanel
         }
     }
     
-    class RotationBox extends JComboBox {
+    private class RotationBox extends JComboBox {
         private static final long serialVersionUID = 1L;
 
         RotationBox() {

@@ -50,8 +50,8 @@ public class Suite {
     private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
     private CustomFields<String> customFlagNames;
     private CustomFields<String> customNoteNames;
-    private List<KentParams> amsBootstrapParams;
-    private List<KentParams> hextParams;
+    private List<KentParams> amsBootstrapParams = null;
+    private List<KentParams> hextParams= null;
 
     public FisherValues getSuiteFisher() {
         return suiteFisher;
@@ -660,11 +660,11 @@ public class Suite {
      * @return the amsBootstrapParams
      */
     public List<KentParams> getAmsBootstrapParams() {
-        return Collections.unmodifiableList(amsBootstrapParams);
+        return amsBootstrapParams;
     }
 
     public List<KentParams> getAmsHextParams() {
-        return Collections.unmodifiableList(hextParams);
+        return hextParams;
     }
 
     public void clearAmsCalculations() {

@@ -111,7 +111,7 @@ public class KentParams {
             if (tempFile != null && tempFile.exists()) tempFile.delete();
             if (writer != null) writer.close();
         }
-        return result;
+        return Collections.unmodifiableList(result);
     }
 
    public static List<KentParams> calculateHext(List<Tensor> tensors,
@@ -140,7 +140,7 @@ public class KentParams {
            if (tempFile != null && tempFile.exists()) tempFile.delete();
            if (writer != null) writer.close();
        }
-       return result;
+       return Collections.unmodifiableList(result);
     }
 
     public double getTau() {
