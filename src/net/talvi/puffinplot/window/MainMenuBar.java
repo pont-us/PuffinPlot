@@ -16,12 +16,12 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
-import net.talvi.puffinplot.PuffinActions.PuffinAction;
+import net.talvi.puffinplot.PuffinAction;
 import net.talvi.puffinplot.data.Sample;
 
 public class MainMenuBar extends JMenuBar {
 
-    private static final Logger logger = Logger.getLogger("MainMenuBar");
+    private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
     private static final long serialVersionUID = 1L;
     final static private JMenuItem noRecentFiles =
             new JMenuItem("No recent files");

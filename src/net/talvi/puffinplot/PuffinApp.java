@@ -8,7 +8,6 @@ import net.talvi.puffinplot.window.FisherWindow;
 import net.talvi.puffinplot.window.AboutBox;
 import net.talvi.puffinplot.window.MainWindow;
 import net.talvi.puffinplot.data.Suite;
-import java.awt.event.ActionEvent;
 import java.awt.print.PageFormat;
 import java.awt.print.PrinterJob;
 import java.io.ByteArrayOutputStream;
@@ -327,6 +326,11 @@ public final class PuffinApp {
         getMainWindow().suitesChanged();
     }
 
+    /**
+     * Creates a new suite and reads data into it from the specified files.
+     * 
+     * @param files the files from which to read data
+     */
     public void openFiles(List<File> files) {
         if (files.isEmpty()) return;
         // If this fileset is already in the recent-files list,
@@ -456,18 +460,17 @@ public final class PuffinApp {
     }
     
     public void quit() {
-        getActions().quit.actionPerformed
-                (new ActionEvent(this, ActionEvent.ACTION_PERFORMED, ""));
+        getPrefs().save();
+        System.exit(0);
     }
     
+    /**
+     * Shows the application's ‘About’ dialog box, giving brief information
+     * about PuffinPlot.
+     */
     public void about() {
-        getActions().about.actionPerformed
-                (new ActionEvent(this, ActionEvent.ACTION_PERFORMED, ""));
-    }
-    
-    public void preferences() {
-        getActions().prefs.actionPerformed
-                (new ActionEvent(this, ActionEvent.ACTION_PERFORMED, ""));
+        aboutBox.setLocationRelativeTo(app.getMainWindow());
+        aboutBox.setVisible(true);
     }
 
     public void showPreferences() {
@@ -489,10 +492,6 @@ public final class PuffinApp {
 
     public PuffinActions getActions() {
         return actions;
-    }
-
-    public AboutBox getAboutBox() {
-        return aboutBox;
     }
 
     public FisherWindow getFisherWindow() {

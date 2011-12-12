@@ -35,47 +35,13 @@ import net.talvi.puffinplot.data.Suite.AmsCalcType;
 
 public class PuffinActions {
 
-    private static final Logger logger =
-            Logger.getLogger(PuffinActions.class.getName());
     private final PuffinApp app;
     private static final boolean useSwingChooserForSave = !PuffinApp.MAC_OS_X;
     // control or apple key as appropriate
-    private static final int modifierKey =
-            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+
 
     PuffinActions(PuffinApp app) {
         this.app = app;
-    }
-
-    public static abstract class PuffinAction extends AbstractAction {
-        private boolean specialMacMenuItem;
-
-        public PuffinAction(String name, String description,
-                Character accelerator, boolean shift, Integer mnemonic,
-                boolean specialMacMenuItem, int modifier) {
-            super(name);
-            this.specialMacMenuItem = specialMacMenuItem;
-            putValue(SHORT_DESCRIPTION, description);
-            if (accelerator != null) putValue(ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(accelerator,
-                    modifier | (shift ? InputEvent.SHIFT_DOWN_MASK : 0),
-                    false));
-            if (mnemonic != null) putValue(MNEMONIC_KEY, mnemonic);
-        }
-        
-        public PuffinAction(String name, String description,
-                Character accelerator, boolean shift, Integer mnemonic) {
-            this(name, description, accelerator, shift, mnemonic, false,
-                    modifierKey);
-        }
-        
-        public PuffinAction(String name, String description) {
-            this(name, description, null, false, null);
-        }
-
-        public boolean excludeFromMenu() {
-            return PuffinApp.MAC_OS_X && specialMacMenuItem;
-        }
     }
     
     public final Action about = new PuffinAction("About PuffinPlot",
@@ -83,8 +49,7 @@ public class PuffinActions {
             null, false, KeyEvent.VK_A) {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {
-            app.getAboutBox().setLocationRelativeTo(app.getMainWindow());
-            app.getAboutBox().setVisible(true);
+            app.about();
         }
     };
 
@@ -457,7 +422,7 @@ public class PuffinActions {
 
     public final Action prefs = new PuffinAction("Preferences…",
             "Show the preferences window", ',', false, KeyEvent.VK_R, true,
-            modifierKey) {
+            PuffinAction.modifierKey) {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {
             app.showPreferences();
@@ -515,11 +480,10 @@ public class PuffinActions {
     };
     
     public final Action quit = new PuffinAction("Quit",
-            null, 'Q', false, KeyEvent.VK_Q, true, modifierKey) {
+            null, 'Q', false, KeyEvent.VK_Q, true, PuffinAction.modifierKey) {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {
-            app.getPrefs().save();
-            System.exit(0);
+            app.quit();
         }
     };
 
