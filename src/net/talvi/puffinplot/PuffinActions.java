@@ -39,7 +39,7 @@ import net.talvi.puffinplot.data.Suite.AmsCalcType;
 public class PuffinActions {
 
     private final PuffinApp app;
-    private static final boolean useSwingChooserForSave = !PuffinApp.MAC_OS_X;
+    private final boolean useSwingChooserForSave;
     // control or apple key as appropriate
 
     /**
@@ -51,6 +51,7 @@ public class PuffinActions {
      */
     PuffinActions(PuffinApp app) {
         this.app = app;
+        useSwingChooserForSave = !app.isOnOsX();
     }
     
     /**
@@ -386,9 +387,9 @@ public class PuffinActions {
             "Fit great circle to selected points", 'L', false, KeyEvent.VK_C) {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {
-        app.fitCircle();
-        app.doGreatCircles(false);
-        app.getMainWindow().repaint();
+            app.fitGreatCirclesToSelection();
+            app.calculateGreatCirclesDirections(false);
+            app.updateDisplay();
         }
     };
 
@@ -400,7 +401,7 @@ public class PuffinActions {
             "Great circle analysis for site", 'I', false, KeyEvent.VK_L) {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {
-        app.doGreatCircles(true);
+        app.calculateGreatCirclesDirections(true);
         }
     };
 

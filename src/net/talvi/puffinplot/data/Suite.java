@@ -197,7 +197,7 @@ public class Suite {
             if (site == null) continue;
             if (sitesDone.contains(site)) continue;
             site.doFisher(correction);
-            site.doGreatCircle(correction);
+            site.calculateGreatCirclesDirection(correction);
             sitesDone.add(site);
         }
     }

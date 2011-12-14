@@ -206,7 +206,7 @@ public abstract class Plot
         final String fontFamily = prefs.get("plots.fontFamily", "Arial");
         attributeMap.put(TextAttribute.FAMILY, fontFamily);
         attributeMap.put(TextAttribute.SIZE, getFontSize());
-        useAppleSuperscriptHack = PuffinApp.MAC_OS_X &&
+        useAppleSuperscriptHack = PuffinApp.getInstance().isOnOsX() &&
                 (PuffinApp.getInstance().getOsxPointVersion() < 6 ||
                 System.getProperty("java.version").startsWith("1.5"));
                 

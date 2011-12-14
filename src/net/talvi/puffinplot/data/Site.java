@@ -45,7 +45,7 @@ public class Site {
         fisher = null;
     }
 
-    public void doGreatCircle(Correction correction) {
+    public void calculateGreatCirclesDirection(Correction correction) {
         List<Vec3> endpoints = new LinkedList<Vec3>();
         LinkedList<GreatCircle> circles = new LinkedList<GreatCircle>();
         for (Sample sample: getSamples()) {

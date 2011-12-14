@@ -80,7 +80,7 @@ public class MainWindow extends JFrame {
     public void suitesChanged() {
         sampleChooser.updateSuite();
         controlPanel.updateSuites();
-        int numSuites = PuffinApp.getInstance().getSuites().size();
+        final int numSuites = PuffinApp.getInstance().getSuites().size();
         welcomeMessage.setVisible(numSuites == 0);
         splitPane.setVisible(numSuites > 0);
         repaint();
@@ -88,7 +88,7 @@ public class MainWindow extends JFrame {
 
     public void sampleChanged() {
         controlPanel.updateSample();
-        Sample sample = PuffinApp.getInstance().getSample();
+        final Sample sample = PuffinApp.getInstance().getSample();
         if (sample==null) return;
         sampleDataPanel.setSample(sample);
         //pack();

@@ -58,7 +58,6 @@ public final class PuffinApp {
     private static final ByteArrayOutputStream logStream =
             new ByteArrayOutputStream();
     private static final MemoryHandler logMemoryHandler;
-
     private final PuffinActions actions;
     private List<Suite> suites = new ArrayList<Suite>();
     private Suite currentSuite;
@@ -81,8 +80,7 @@ public final class PuffinApp {
     private static final boolean useSwingChooserForOpen = true;
     private BitSet pointSelectionClipboard = new BitSet(0);
     private Properties buildProperties;
-    
-    public static final boolean MAC_OS_X =
+    private static final boolean MAC_OS_X =
             System.getProperty("os.name").toLowerCase().startsWith("mac os x");
     private static final int OSX_POINT_VERSION = determineOsxPointVersion();
 
@@ -95,67 +93,10 @@ public final class PuffinApp {
         logMemoryHandler.setLevel(Level.ALL);
     }
     
-    private static int determineOsxPointVersion() {
-        final boolean osx =
-                System.getProperty("os.name").toLowerCase().startsWith("mac os x");
-        if (!osx) return -1;
-        final String osVersion = System.getProperty("os.version");
-        final String[] parts = osVersion.split("\\.");
-        if (!parts[0].equals("10")) return -1;
-        if (parts.length < 2) return -1;
-        try {
-            int pointVersion = Integer.parseInt(parts[1]);
-            return pointVersion;
-        } catch (NumberFormatException e) {
-            return -1;
-        }
-    }
-    
-    public int getOsxPointVersion() {
-        return PuffinApp.OSX_POINT_VERSION;
-    }
-    
-    public static PuffinApp getInstance() { return app; }
-    
-    public List<Suite> getSuites() {
-        return Collections.unmodifiableList(suites);
-    }
-
-    public boolean isEmptyCorrectionActive() {
-        return emptyCorrectionActive;
-    }
-
-    public void setEmptyCorrectionActive(boolean b) {
-        emptyCorrectionActive = b;
-    }
-
-    public void redoCalculations() {
-        for (Suite suite: suites) suite.doSampleCalculations(getCorrection());
-    }
-
-    private void loadBuildProperties() {
-        InputStream propStream = null;
-        try {
-            propStream = PuffinApp.class.getResourceAsStream("build.properties");
-            buildProperties = new Properties();
-            buildProperties.load(propStream);
-        } catch (IOException ex) {
-            logger.log(Level.WARNING, "Failed to get build date", ex);
-            /* The only effect of this on the user is a lack of build date
-             * in the about box, so we can get away with just logging it.
-             */
-        } finally {
-            if (propStream != null)
-                try {propStream.close();} catch (IOException e) {}
-        }
-        logger.log(Level.INFO, "Build date: {0}", getBuildProperty("build.date"));
-    }
-    
-    public String getBuildProperty(String propertyName) {
-        if (buildProperties == null) return "unknown";
-        return buildProperties.getProperty(propertyName, "unknown");
-    }
-    
+    /**
+     * Instantiates a new PuffinPlot application object. Instantiating PuffinApp
+     * will cause the main PuffinPlot window to be opened immediately.
+     */
     public PuffinApp() {
         logger.info("Instantiating PuffinApp.");
         // have to set app here (not in main) since we need it during initialization
@@ -186,42 +127,6 @@ public final class PuffinApp {
         mainWindow.getMainMenuBar().updateRecentFiles();
         mainWindow.setVisible(true);
         logger.info("PuffinApp instantiation complete.");
-    }
-
-    void doGreatCircles(boolean popUpWindow) {
-        for (Site site: getSelectedSites()) site.doGreatCircle(getCorrection());
-        if (popUpWindow) greatCircleWindow.setVisible(true);
-    }
-
-    void fitCircle() {
-        for (Sample sample: getSelectedSamples()) {
-            sample.useSelectionForCircleFit();
-            sample.fitGreatCircle(getCorrection());
-        }
-    }
-
-    void doPcaOnSelection() {
-        for (Sample sample : getSelectedSamples()) {
-            if (sample.getSelectedPoints(getCorrection()).size() > 1) {
-                sample.useSelectionForPca();
-                sample.doPca(getCorrection());
-            }
-        }
-        updateDisplay();
-    }
-
-    GreatCircleWindow getGreatCircleWindow() {
-        return greatCircleWindow;
-    }
-
-    Site getCurrentSite() {
-        Sample sample = getSample();
-        if (sample==null) return null;
-        return sample.getSite();
-    }
-
-    void errorDialog(String title, PuffinUserException ex) {
-        errorDialog(title, ex.getLocalizedMessage());
     }
 
     private static class ExceptionHandler implements UncaughtExceptionHandler {
@@ -259,7 +164,11 @@ public final class PuffinApp {
             }
         }
     }
-
+    
+    /**
+     * Instantiates and starts a new PuffinApp.
+     * @param args command-line arguments for the application
+     */
     public static void main(String[] args) {
         logger.setLevel(Level.ALL);
         logger.info("Entering main method.");
@@ -294,27 +203,201 @@ public final class PuffinApp {
                 new Runnable() { public void run() { new PuffinApp(); } });
     }
     
+    /**
+     * Reports whether this PuffinApp is running on Mac OS X.
+     * 
+     * @return {@code true} if this PuffinApp is running on Mac OS X
+     */
+    public boolean isOnOsX() {
+        return PuffinApp.MAC_OS_X;
+    }
+    
+    private static int determineOsxPointVersion() {
+        final boolean osx =
+                System.getProperty("os.name").toLowerCase().startsWith("mac os x");
+        if (!osx) return -1;
+        final String osVersion = System.getProperty("os.version");
+        final String[] parts = osVersion.split("\\.");
+        if (!parts[0].equals("10")) return -1;
+        if (parts.length < 2) return -1;
+        try {
+            int pointVersion = Integer.parseInt(parts[1]);
+            return pointVersion;
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+    }
+    
+    /**
+     * If this PuffinApp is running on Mac OS X, this method returns the
+     * point version (minor version) of the operating system. Thus, for 
+     * example, it would return 5 if the PuffinApp is running on Mac OS X
+     * version 10.5 or any sub-version thereof (10.5.1, 10.5.2, etc.).
+     * If PuffinApp is not running on Mac OS X, or if the version cannot
+     * be determined, this method returns −1.
+     * 
+     * @return the OS X minor version number, or −1 if it cannot be determined
+     */
+    public int getOsxPointVersion() {
+        return PuffinApp.OSX_POINT_VERSION;
+    }
+    
+    /**
+     * Returns the single instance of PuffinApp. Only one instance of
+     * PuffinApp can exist at a time, and it may always be found using
+     * this method.
+     * 
+     * @return the single instance of PuffinApp
+     */
+    public static PuffinApp getInstance() { return app; }
+
+    /**
+     * Reports whether the empty-slot correction is currently active.
+     * The empty-slot correction is not currently used, and this
+     * method is reserved for a future re-implementation of the feature.
+     * 
+     * @return {@code} true if the empty-slot correction is active
+     */
+    public boolean isEmptyCorrectionActive() {
+        return emptyCorrectionActive;
+    }
+
+    /**
+     * Activates or deactivates the empty-slot correction.
+     * 
+     * @param b {@code true} to activate the empty-slot correction;
+     * {@code false} to deactivate it.
+     */
+    public void setEmptyCorrectionActive(boolean b) {
+        emptyCorrectionActive = b;
+    }
+
+    /**
+     * Recalculates all sample and site calculations in all currently open
+     * suites; intended to be called when the correction (none/sample/formation)
+     * has changed.
+     */
+    public void redoCalculations() {
+        for (Suite suite: suites) {
+            suite.doSampleCalculations(getCorrection());
+            suite.doSiteCalculations(getCorrection());
+        }
+    }
+
+    private void loadBuildProperties() {
+        InputStream propStream = null;
+        try {
+            propStream = PuffinApp.class.getResourceAsStream("build.properties");
+            buildProperties = new Properties();
+            buildProperties.load(propStream);
+        } catch (IOException ex) {
+            logger.log(Level.WARNING, "Failed to get build date", ex);
+            /* The only effect of this on the user is a lack of build date
+             * in the about box, so we can get away with just logging it.
+             */
+        } finally {
+            if (propStream != null)
+                try {propStream.close();} catch (IOException e) {}
+        }
+        logger.log(Level.INFO, "Build date: {0}", getBuildProperty("build.date"));
+    }
+    
+    /**
+     * Reads values from the {@code build.properties} file. This is a
+     * properties file written into the PuffinPlot jar at build time,
+     * and currently contains the keys {@code build.date} and
+     * {@code build.year}.
+     * 
+     * @param key the property key to read
+     * @return the value of the key
+     */
+    public String getBuildProperty(String key) {
+        if (buildProperties == null) return "unknown";
+        return buildProperties.getProperty(key, "unknown");
+    }
+    
+    /**
+     * For all selected sites, calculates the site mean direction by 
+     * best-fit intersection of great circles fitted to that
+     * site's samples.
+     * 
+     * @param popUpWindow if {@code true}, open a new window showing 
+     * great circle directions
+     */
+    public void calculateGreatCirclesDirections(boolean popUpWindow) {
+        for (Site site: getSelectedSites()) {
+            site.calculateGreatCirclesDirection(getCorrection());
+        }
+        if (popUpWindow) greatCircleWindow.setVisible(true);
+    }
+
+    /**
+     * For all selected samples, fit a great circle to the selected points.
+     */
+    public void fitGreatCirclesToSelection() {
+        for (Sample sample: getSelectedSamples()) {
+            sample.useSelectionForCircleFit();
+            sample.fitGreatCircle(getCorrection());
+        }
+    }
+
+    /**
+     * For all selected samples, determine a best-fit line to the selected
+     * points by principal component analysis.
+     */
+    public void doPcaOnSelection() {
+        for (Sample sample : getSelectedSamples()) {
+            if (sample.getSelectedPoints(getCorrection()).size() > 1) {
+                sample.useSelectionForPca();
+                sample.doPca(getCorrection());
+            }
+        }
+        updateDisplay();
+    }
+    
+    /** Returns the preferences for this PuffinApp.
+     * @return the preferences for this PuffinApp
+     */
     public PuffinPrefs getPrefs() {
         return prefs;
     }
 
+    /** Returns this PuffinApp's main window
+     * @return this PuffinApp's main window
+     */
     public MainWindow getMainWindow() {
         return mainWindow;
     }
  
+    /**
+     * Returns the correction currently being applied to the data displayed
+     * by this PuffinApp.
+     * 
+     * @return the correction currently being applied to the displayed data
+     */
     public Correction getCorrection() {
         return correction;
     }
     
-    public void setCorrection(Correction c) {
-        correction = c;
+    /**
+     * Sets the correction to apply to the displayed data.
+     * 
+     * @param correction the correction to apply to the displayed data
+     */
+    public void setCorrection(Correction correction) {
+        this.correction = correction;
     }
     
+    /**
+     * Updates the main window and table window to reflect any changes in
+     * the currently displayed data.
+     */
     public void updateDisplay() {
         getMainWindow().sampleChanged();
         getTableWindow().dataChanged();
     }
 
+    /** Closes the suite whose data is currently being displayed. */
     public void closeCurrentSuite() {
         if (suites == null || suites.isEmpty()) return;
         int index = suites.indexOf(currentSuite);
@@ -327,11 +410,8 @@ public final class PuffinApp {
         getMainWindow().suitesChanged();
     }
 
-    /**
-     * Creates a new suite and reads data into it from the specified files.
-     * 
-     * @param files the files from which to read data
-     */
+    /** Creates a new suite and reads data into it from the specified files.
+     * @param files the files from which to read data */
     public void openFiles(List<File> files) {
         if (files.isEmpty()) return;
         // If this fileset is already in the recent-files list,
@@ -373,11 +453,29 @@ public final class PuffinApp {
         mainWindow.updateSampleDataPanel();
     }
     
+    /**
+     * Displays a dialog box reporting an error.
+     * 
+     * @param title the title for the dialog box
+     * @param message the message to be displayed
+     */
     public void errorDialog(String title, String message) {
         JOptionPane.showMessageDialog
         (getMainWindow(), message, title, JOptionPane.ERROR_MESSAGE);
     }
 
+    /**
+     * Displays a dialog box reporting an error.
+     * The text of the error box is taken from the supplied
+     * exception.
+     * 
+     * @param title the title for the dialog box
+     * @param the exception from which to take the message text
+     */
+    public void errorDialog(String title, PuffinUserException ex) {
+        errorDialog(title, ex.getLocalizedMessage());
+    }
+    
     private static boolean unhandledErrorDialog() {
         final Object[] options = {"Continue", "Quit"};
         final JLabel message = new JLabel(
@@ -414,17 +512,47 @@ public final class PuffinApp {
             e.printStackTrace();
         }
     }
+    
+    /**
+     * Returns all the Suites currently open within this PuffinApp.
+     * 
+     * @return all the currently open suites as an unmodifiable list
+     */
+    public List<Suite> getSuites() {
+        return Collections.unmodifiableList(suites);
+    }
 
+    /** Returns the current Suite.
+     * @return the current Suite */
     public Suite getSuite() {
         return currentSuite;
     }
     
+    /** Sets the currently displayed Suite.
+     * @param index the index of the suite to be displayed within 
+     * PuffinApp's list of suites
+     * 
+     */
+    public void setSuite(int index) {
+        if (index >= 0 && index < suites.size()) {
+            currentSuite = suites.get(index);
+            getMainWindow().suitesChanged();
+        }
+    }
+    
+    /**
+     * Gets the current Sample
+     * 
+     * @return the current Sample
+     */
     public Sample getSample() {
         Suite suite = getSuite();
         if (suite==null) return null;
         return suite.getCurrentSample();
     }
 
+    /** Gets all the currently selected samples.
+     * @return the currently selected samples */
     public List<Sample> getSelectedSamples() {
         List<Sample> result =
                 getMainWindow().getSampleChooser().getSelectedSamples();
@@ -432,6 +560,17 @@ public final class PuffinApp {
         return result;
     }
 
+    /** Returns the site for which data is currently being displayed.
+     * @return the current site
+     */
+    public Site getCurrentSite() {
+        Sample sample = getSample();
+        if (sample==null) return null;
+        return sample.getSite();
+    }
+    
+    /** Gets all the sites containing any of the currently selected samples.
+     * @return all the sites which contain any of the currently selected samples */
     public List<Site> getSelectedSites() {
         List<Sample> samples = getSelectedSamples();
         Set<Site> siteSet = new LinkedHashSet<Site>();
@@ -445,6 +584,9 @@ public final class PuffinApp {
         return new ArrayList<Site>(siteSet);
     }
     
+    /** Gets all the samples in all the sites having at least one selected sample.
+     * @return all the samples contained in any site containing at least 
+     * one selected sample */
     public List<Sample> getAllSamplesInSelectedSites() {
         final List<Sample> samples = new ArrayList<Sample>();
         for (Site s: PuffinApp.getInstance().getSelectedSites()) {
@@ -452,14 +594,8 @@ public final class PuffinApp {
         }
         return samples;
     }
-
-    public void setSuite(int index) {
-        if (index >= 0 && index < suites.size()) {
-            currentSuite = suites.get(index);
-            getMainWindow().suitesChanged();
-        }
-    }
     
+    /** Terminates this instance of PuffinApp immediately. */
     public void quit() {
         getPrefs().save();
         System.exit(0);
@@ -474,10 +610,12 @@ public final class PuffinApp {
         aboutBox.setVisible(true);
     }
 
+    /** Opens the preferences window. */
     public void showPreferences() {
         prefsWindow.setVisible(true);
     }
 
+    /** Opens the page setup dialog box. */
     public void showPageSetupDialog() {
         PrinterJob job = PrinterJob.getPrinterJob();
         currentPageFormat = job.pageDialog(currentPageFormat);
@@ -498,7 +636,11 @@ public final class PuffinApp {
     public FisherWindow getFisherWindow() {
         return fisherWindow;
     }
-
+    
+    public GreatCircleWindow getGreatCircleWindow() {
+        return greatCircleWindow;
+    }
+    
     public CorrectionWindow getCorrectionWindow() {
         return correctionWindow;
     }
@@ -600,6 +742,27 @@ public final class PuffinApp {
             updateDisplay();
         }
     }
+        
+    public void clearPreferences() {
+        int result = JOptionPane.showConfirmDialog
+                (getMainWindow(), "Are you sure you wish to clear "
+                + "your preferences\nand reset all preferences to default "
+                + "values?",
+                "Confirm clear preferences", 
+                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        if (result != JOptionPane.YES_OPTION) return;
+        try {
+            getPrefs().getPrefs().clear();
+            getPrefs().getPrefs().flush();
+            getPrefs().load();
+            getMainWindow().getGraphDisplay().recreatePlots();
+            updateDisplay();
+            prefsWindow = new PrefsWindow();
+        } catch (BackingStoreException ex) {
+            logger.log(Level.WARNING, "Error clearing preferences", ex);
+            errorDialog("Error clearing preferences", ex.getLocalizedMessage());
+        }
+    }
     
     void copyPointSelection() {
         final Sample sample = getSample();
@@ -635,26 +798,5 @@ public final class PuffinApp {
             }
         }
         updateDisplay();
-    }
-    
-    public void clearPreferences() {
-        int result = JOptionPane.showConfirmDialog
-                (getMainWindow(), "Are you sure you wish to clear "
-                + "your preferences\nand reset all preferences to default "
-                + "values?",
-                "Confirm clear preferences", 
-                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-        if (result != JOptionPane.YES_OPTION) return;
-        try {
-            getPrefs().getPrefs().clear();
-            getPrefs().getPrefs().flush();
-            getPrefs().load();
-            getMainWindow().getGraphDisplay().recreatePlots();
-            updateDisplay();
-            prefsWindow = new PrefsWindow();
-        } catch (BackingStoreException ex) {
-            logger.log(Level.WARNING, "Error clearing preferences", ex);
-            errorDialog("Error clearing preferences", ex.getLocalizedMessage());
-        }
     }
 }
