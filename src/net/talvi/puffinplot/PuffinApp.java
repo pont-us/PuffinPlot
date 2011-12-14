@@ -117,7 +117,7 @@ public final class PuffinApp {
         System.setProperty("apple.laf.useScreenMenuBar", "true");
         System.setProperty("com.apple.mrj.application.apple.menu.about.name", "PuffinPlot");
         loadBuildProperties();
-        prefs = new PuffinPrefs(); // needs PuffinApp.app set.
+        prefs = new PuffinPrefs(this);
         actions = new PuffinActions(this);
         tableWindow = new TableWindow();
         fisherWindow = new FisherWindow();
