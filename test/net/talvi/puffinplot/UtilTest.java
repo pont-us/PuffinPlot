@@ -56,9 +56,11 @@ public class UtilTest {
             "1,3", "101",
             "4-6", "000111",
             "4-6,8-10,10,11,15-16", "0001110111100011",
-            "1-4,3-5,10,12-14,17", "11111000010111001"
+            "1-4,3-5,10,12-14,17", "11111000010111001",
+            "1-1000", "11111111111111111111",
+            "1-5,10-85", "11111000011111111111"
         };
-        final int limit = 128;
+        final int limit = 20;
         for (int i=0; i<inputsAndResults.length; i+=2) {
             assertEquals(makeBitSet(inputsAndResults[i+1]),
                     Util.numberRangeStringToBitSet(inputsAndResults[i], limit));

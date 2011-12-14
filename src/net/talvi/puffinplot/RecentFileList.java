@@ -9,15 +9,35 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.prefs.Preferences;
 
+
+/**
+ * <p>RecentFileList manages a list of file-sets. It is intended to be used
+ * to manage a collection of recently used files for convenient re-opening
+ * by a user. Note that each item in the list can comprise multiple files.
+ * The length of the list is currently hard-wired to 8, though this would
+ * be trivial to change if necessary.</p>
+ * 
+ * <p>RecentFileList loads and saves its data to a {@link java.util.prefs.Preferences}
+ * object, using the keys of the form {@code recentFileX}, where X is a non-negative
+ * integer less than the maximum number of file-sets.
+ * </p>
+ * 
+ * @author pont
+ */
 public class RecentFileList {
 
     private static final int MAX_LENGTH = 8;
     private LinkedList<FileSet> fileSets;
 
-    public RecentFileList(int size) {
-        fileSets = new LinkedList<FileSet>();
-    }
-
+    /**
+     * Creates a new file list, reading data (if any) from the supplied
+     * {@link Preferences} object. If any {@code recentFile0} (and so on)
+     * keys are absent, no error is raised, and the corresponding slots
+     * in the file list are left empty.
+     * 
+     * @param prefs the preferences object from which the read file list
+     * data
+     */
     public RecentFileList(Preferences prefs) {
         fileSets = new LinkedList<FileSet>();
         for (int i = 0; i < MAX_LENGTH; i++) {
@@ -27,6 +47,11 @@ public class RecentFileList {
         }
     }
 
+    /**
+     * Saves the recent file list to the specified Preferences object.
+     * 
+     * @param prefs the Preferences to which to save the recent file list
+     */
     public void save(Preferences prefs) {
         for (int i = 0; i < MAX_LENGTH; i++) {
             prefs.remove("recentFile" + i);
@@ -36,6 +61,15 @@ public class RecentFileList {
         }
     }
 
+    /**
+     * Gets a list containing the names of the file-sets in the file list.
+     * The names are expected to be displayed to the user. If a file-set
+     * contains only one file, its leafname is used. If it contains more
+     * than one file, the leafname of the first file is used, followed
+     * by ‘etc.’.
+     * 
+     * @return the list of file-set names from this recent files list
+     */
     public String[] getFilesetNames() {
         String[] result = new String[fileSets.size()];
         int i=0;
@@ -45,6 +79,16 @@ public class RecentFileList {
         return result;
     }
 
+    /**
+     * Returns a specified file-set and moves it to the top of the list.
+     * This method is intended to be called when a user selects a recently
+     * used file. It returns the file at a specified index within the list,
+     * and (since this file is now the most recently used) moves it to the
+     * top of the list.
+     * 
+     * @param index the index of a file-set within the list
+     * @return the requested file-set
+     */
     public List<File> getFilesAndReorder(int index) {
         FileSet result = fileSets.get(index);
         fileSets.remove(index);
@@ -52,6 +96,12 @@ public class RecentFileList {
         return result.getFiles();
     }
 
+    /**
+     * Adds a new file-set to the top of the list. If the list is already
+     * at its maximum length, the last item will be removed to make room.
+     * 
+     * @param files the files to be added (as a single file-set) to the list
+     */
     public void add(List<File> files) {
         FileSet f = new FileSet(files);
         fileSets.remove(f);
@@ -59,7 +109,7 @@ public class RecentFileList {
         if (fileSets.size() > MAX_LENGTH) fileSets.removeLast();
     }
 
-    public static class FileSet {
+    private static class FileSet {
 
         private final List<File> files;
         private final String name;
@@ -210,5 +260,4 @@ public class RecentFileList {
             return hash;
         }
     }
-
 }
