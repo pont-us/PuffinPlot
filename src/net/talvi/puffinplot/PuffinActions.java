@@ -75,7 +75,7 @@ public class PuffinActions {
             KeyEvent.VK_O) {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {
-            app.openFile();
+            app.openFilesWithDialog();
         }
     };
 
@@ -635,7 +635,7 @@ public class PuffinActions {
             "Import AMS data from Agico ASC file", null, false, KeyEvent.VK_L) {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {
-            app.importAms();
+            app.importAmsWithDialog();
         }
     };
 
@@ -844,7 +844,7 @@ public class PuffinActions {
     public final Action importPrefs = new AbstractAction("Import preferences…") {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent arg0) {
-            app.importPreferences();
+            app.importPreferencesWithDialog();
         }
     };
 

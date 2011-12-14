@@ -502,7 +502,7 @@ public class Suite {
      * (tensor components) otherwise it's
      * inc1 dec1 inc2 dec2 inc3 dec3 (axis directions, decreasing magnitude).
      * If there's no sample in the suite from which to take the sample
-     * and formation corrections, importAms will try to read them as
+     * and formation corrections, importAmsWithDialog will try to read them as
      * fields appended to the end of the line.
      */
 

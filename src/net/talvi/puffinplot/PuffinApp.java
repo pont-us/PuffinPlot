@@ -51,6 +51,18 @@ import net.talvi.puffinplot.window.CustomFieldEditor;
 import net.talvi.puffinplot.window.GreatCircleWindow;
 import net.talvi.puffinplot.window.PrefsWindow;
 
+/**
+ * This class constitutes the main PuffinPlot application.
+ * Instantiating it starts the PuffinPlot desktop application and opens 
+ * the main window. Most of {@code PuffinApp}'s
+ * functionality involves interfacing the user interface to the classes
+ * which handle the actual data. Most of the actions defined in
+ * {@link PuffinActions} act as thin wrappers around one or a few calls 
+ * to {@code PuffinApp}. Most of {@code PuffinApp}'s interaction with the
+ * data is via the {@link Suite}, {@link Site}, and {@link Sample} classes.
+ * 
+ * @author pont
+ */
 public final class PuffinApp {
 
     private static PuffinApp app;
@@ -470,7 +482,7 @@ public final class PuffinApp {
      * exception.
      * 
      * @param title the title for the dialog box
-     * @param the exception from which to take the message text
+     * @param ex the exception from which to take the message text
      */
     public void errorDialog(String title, PuffinUserException ex) {
         errorDialog(title, ex.getLocalizedMessage());
@@ -621,38 +633,58 @@ public final class PuffinApp {
         currentPageFormat = job.pageDialog(currentPageFormat);
     }
 
+    /** Returns the current page format. 
+     * @return the current page format */
     public PageFormat getCurrentPageFormat() {
         return currentPageFormat;
     }
 
+    /** Returns the data table window. 
+     * @return the data tabe window */
     public TableWindow getTableWindow() {
         return tableWindow;
     }
 
+    /** Returns the actions associated with this PuffinApp. 
+     * @return the action associated with this PuffinApp */
     public PuffinActions getActions() {
         return actions;
     }
 
+    /** Returns the Fisherian statistics window. 
+     * @return the Fisherian statistics window */
     public FisherWindow getFisherWindow() {
         return fisherWindow;
     }
     
+    /** Returns the great-circle statistics window. 
+     * @return the great-circle statistics window */
     public GreatCircleWindow getGreatCircleWindow() {
         return greatCircleWindow;
     }
     
+    /** Returns the window for user editing of correction data
+     * (sample orientation, formation orientation, geomagnetic declination)
+     * @return the correction editing window */
     public CorrectionWindow getCorrectionWindow() {
         return correctionWindow;
     }
 
+    /** Returns the list of recently used files. 
+     * @return the list of recently used files */
     public RecentFileList getRecentFiles() {
         return recentFiles;
     }
 
+    /** Sets the list of recently used files (allowing it to be restored
+     * after restarting the application).
+     * @param recentFiles the list of recently used files
+     */
     public void setRecentFiles(RecentFileList recentFiles) {
         this.recentFiles = recentFiles;
     }
 
+    /** Shows the window for editing the titles of the custom flags. */
     public void showCustomFlagsWindow() {
         if (currentSuite == null) return;
         customFlagsWindow =
@@ -660,6 +692,7 @@ public final class PuffinApp {
                 "Edit custom flags");
     }
     
+    /** Shows the window for editing the titles of the custom notes. */
     public void showCustomNotesWindow() {
         if (currentSuite == null) return;
         customNotesWindow =
@@ -667,6 +700,13 @@ public final class PuffinApp {
                 "Edit custom notes");
     }
     
+    /**
+     * Performs statistical calculations on AMS data using a script from
+     * Lisa Tauxe's pmagpy software suite.
+     * 
+     * @param calcType the type of calculation to perform
+     * @param scriptName the external script which will perform the calculations
+     */
     public void doAmsCalc(AmsCalcType calcType, String scriptName) {
         try {
             final String directory =
@@ -717,15 +757,20 @@ public final class PuffinApp {
         return files;
     }
     
-    public void openFile() {
+    /** Shows an ‘open files’ dialog box; if the user selects any files,
+     * they will be opened in a new suite. */
+    public void openFilesWithDialog() {
         List<File> files = app.openFileDialog("Open file(s)");
         if (files != null) app.openFiles(files);
     }
     
-    public void importAms() {
+    /** Shows an ‘open files’ dialog box; if the user selects any files,
+     * AMS data will be imported from them. The files are expected to
+     * be in Agico ASC format. */
+    public void importAmsWithDialog() {
         try {
             List<File> files = openFileDialog("Select AMS files");
-            // app.getSuite().importAms(files, true);
+            // app.getSuite().importAmsWithDialog(files, true);
             getSuite().importAmsFromAsc(files, false);
             getMainWindow().suitesChanged();
             } catch (IOException ex) {
@@ -734,7 +779,11 @@ public final class PuffinApp {
         }
     }
     
-    public void importPreferences() {
+    /** Shows an ‘open file’ dialog box; if the user select a file,
+     * the current preferences will be overwritten with preferences data
+     * from that file. The file is expected to contain Java Preferences
+     * data in XML format. */
+    public void importPreferencesWithDialog() {
         List<File> files = openFileDialog("Import preferences file");
         if (files != null && files.size() > 0) {
             getPrefs().importFromFile(files.get(0));
@@ -742,7 +791,9 @@ public final class PuffinApp {
             updateDisplay();
         }
     }
-        
+    
+    /** Shows a confirmation dialog. If the user confirms, all user preferences
+     * data is deleted and preferences revert to default values. */
     public void clearPreferences() {
         int result = JOptionPane.showConfirmDialog
                 (getMainWindow(), "Are you sure you wish to clear "
@@ -764,14 +815,22 @@ public final class PuffinApp {
         }
     }
     
-    void copyPointSelection() {
+    /** Copies the current pattern of selected points to a clipboard.
+     *  @see #pastePointSelection()
+     */
+    public void copyPointSelection() {
         final Sample sample = getSample();
         if (sample==null) return;
         pointSelectionClipboard = sample.getSelectionBitSet();
         updateDisplay();
     }
     
-    void pastePointSelection() {
+    /**
+     * For each selected sample, selects the points corresponding to those
+     * last copied to the clipboard.
+     * @see #copyPointSelection()
+     */
+    public void pastePointSelection() {
         if (pointSelectionClipboard==null) return;
         for (Sample sample: getSelectedSamples()) {
             sample.setSelectionBitSet(pointSelectionClipboard);
@@ -779,6 +838,13 @@ public final class PuffinApp {
         updateDisplay();
     }
     
+    /**
+     * For all selected samples, rotates magnetization data 180° around
+     * the specified axis. The intended use is to correct erroneous
+     * data caused by incorrect sample orientation during measurement.
+     * 
+     * @param axis the axis around which to flip the selected samples
+     */
     public void flipSelectedSamples(MeasurementAxis axis) {
         final List<Sample> samples = getSelectedSamples();
         if (samples.isEmpty()) return;
