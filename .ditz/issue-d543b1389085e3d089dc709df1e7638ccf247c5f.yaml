@@ -9,8 +9,8 @@ type: :feature
 component: PuffinPlot
 release: "1.1"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2009-07-28 02:33:13.935323 Z
 references: []
 
@@ -20,3 +20,7 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2011-12-13 01:54:39.205474 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - "Bug #184 duplicated this bug; it has now been fixed."

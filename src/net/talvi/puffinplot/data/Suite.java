@@ -1,6 +1,5 @@
 package net.talvi.puffinplot.data;
 
-import com.sun.imageio.plugins.common.BitFile;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -15,11 +14,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.logging.Level;

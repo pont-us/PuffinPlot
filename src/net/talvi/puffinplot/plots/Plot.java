@@ -207,7 +207,7 @@ public abstract class Plot
         attributeMap.put(TextAttribute.FAMILY, fontFamily);
         attributeMap.put(TextAttribute.SIZE, getFontSize());
         useAppleSuperscriptHack = PuffinApp.MAC_OS_X &&
-                (PuffinApp.OSX_POINT_VERSION < 6 ||
+                (PuffinApp.getInstance().getOsxPointVersion() < 6 ||
                 System.getProperty("java.version").startsWith("1.5"));
                 
     }

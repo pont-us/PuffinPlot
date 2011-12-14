@@ -38,7 +38,7 @@ public class MainMenuBar extends JMenuBar {
         for (Object thing: things) {
             if (thing instanceof PuffinAction) {
                 PuffinAction puffinAction = (PuffinAction) thing;
-                if (!puffinAction.excludeFromMenu()) menu.add(puffinAction);
+                if (!puffinAction.isExcludedFromMenu()) menu.add(puffinAction);
                 logger.log(Level.FINE,
                         puffinAction.getValue(Action.NAME).toString());
             } else if (thing instanceof Action) {

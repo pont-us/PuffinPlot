@@ -58,15 +58,14 @@ public final class PuffinApp {
     private static final ByteArrayOutputStream logStream =
             new ByteArrayOutputStream();
     private static final MemoryHandler logMemoryHandler;
+
     private final PuffinActions actions;
     private List<Suite> suites = new ArrayList<Suite>();
-    private final MainWindow mainWindow;
     private Suite currentSuite;
     private PageFormat currentPageFormat;
-    public static final boolean MAC_OS_X =
-            System.getProperty("os.name").toLowerCase().startsWith("mac os x");
-    private final TableWindow tableWindow;
+    private final MainWindow mainWindow;
     private final PuffinPrefs prefs;
+    private final TableWindow tableWindow;
     private final FisherWindow fisherWindow;
     private final CorrectionWindow correctionWindow;
     private final GreatCircleWindow greatCircleWindow;
@@ -82,7 +81,10 @@ public final class PuffinApp {
     private static final boolean useSwingChooserForOpen = true;
     private BitSet pointSelectionClipboard = new BitSet(0);
     private Properties buildProperties;
-    public static final int OSX_POINT_VERSION = getOsxPointVersion();
+    
+    public static final boolean MAC_OS_X =
+            System.getProperty("os.name").toLowerCase().startsWith("mac os x");
+    private static final int OSX_POINT_VERSION = determineOsxPointVersion();
 
     static {
         final Handler logStringHandler =
@@ -93,25 +95,24 @@ public final class PuffinApp {
         logMemoryHandler.setLevel(Level.ALL);
     }
     
-    private static int getOsxPointVersion() {
+    private static int determineOsxPointVersion() {
         final boolean osx =
                 System.getProperty("os.name").toLowerCase().startsWith("mac os x");
         if (!osx) return -1;
-        
-        // split the "10.x.y" version number
-        String osVersion = System.getProperty("os.version");
-        String[] fragments = osVersion.split("\\.");
-        
-        // sanity check the "10." part of the version
-        if (!fragments[0].equals("10")) return -1;
-        if (fragments.length < 2) return -1;
-        
+        final String osVersion = System.getProperty("os.version");
+        final String[] parts = osVersion.split("\\.");
+        if (!parts[0].equals("10")) return -1;
+        if (parts.length < 2) return -1;
         try {
-            int minorVers = Integer.parseInt(fragments[1]);
-            return minorVers;
+            int pointVersion = Integer.parseInt(parts[1]);
+            return pointVersion;
         } catch (NumberFormatException e) {
             return -1;
         }
+    }
+    
+    public int getOsxPointVersion() {
+        return PuffinApp.OSX_POINT_VERSION;
     }
     
     public static PuffinApp getInstance() { return app; }

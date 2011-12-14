@@ -5,8 +5,8 @@ type: :feature
 component: PuffinPlot
 release: "1.1"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2009-08-14 01:18:30.809191 Z
 references: []
 
@@ -16,3 +16,7 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2011-12-13 01:55:41.181467 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - "Has now been implemented as \xE2\x80\x98custom notes\xE2\x80\x99 and \xE2\x80\x98custom flags\xE2\x80\x99."

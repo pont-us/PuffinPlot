@@ -3,7 +3,7 @@ title: Add a hysteresis plot
 desc: ""
 type: :feature
 component: PuffinPlot
-release: "1.1"
+release: "1.2"
 reporter: Pontus Lurcock <pont@talvi.net>
 status: :unstarted
 disposition: 
@@ -16,3 +16,9 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2011-12-13 01:56:44.149509 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.2 from 1.1
+  - |-
+    Fairly peripheral to PuffinPlot's mission; definitely
+    low priority.

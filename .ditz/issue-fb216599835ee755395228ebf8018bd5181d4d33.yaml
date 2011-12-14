@@ -1,0 +1,24 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Rethink site/suite calculations a little
+desc: |-
+  Suite (formation) direction a little confusing at present --
+  I think it's displayed on the suite equal-area plot and (maybe)
+  saved in the suite data, but there's no menu item to calculate
+  it from site directions -- we've just got one that calculates a suite
+  direction from the individual sample directions. I should make
+  this all a bit more coherent.
+type: :task
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2011-12-13 01:05:23.325542 Z
+references: []
+
+id: fb216599835ee755395228ebf8018bd5181d4d33
+log_events: 
+- - 2011-12-13 01:05:23.685517 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

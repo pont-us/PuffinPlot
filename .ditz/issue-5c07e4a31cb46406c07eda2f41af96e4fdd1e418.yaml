@@ -3,7 +3,7 @@ title: Add a thermomagnetic plot
 desc: ""
 type: :feature
 component: PuffinPlot
-release: "1.1"
+release: "1.2"
 reporter: Pontus Lurcock <pont@talvi.net>
 status: :unstarted
 disposition: 
@@ -16,3 +16,9 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2011-12-13 01:56:27.885488 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.2 from 1.1
+  - |-
+    Fairly peripheral to PuffinPlot's mission; definitely
+    low priority.
