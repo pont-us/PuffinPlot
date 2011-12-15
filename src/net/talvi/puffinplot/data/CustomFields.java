@@ -6,6 +6,7 @@ import java.util.List;
 
 /**
  * Represents a set of custom fields for sample annotation.
+ * @param <T> the type of data to be stored in the fields
  */
 public class CustomFields<T> {
     private List<T> values;
