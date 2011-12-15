@@ -365,7 +365,7 @@ public class Sample {
         final List<Datum> ds = getData();
         List<String> result = new ArrayList<String>(ds.size());
         for (Datum d: ds) {
-            result.add(d.exportFields(fields, "\t"));
+            result.add(d.exportFieldValues(fields, "\t"));
         }
         return result;
     }

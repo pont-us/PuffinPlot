@@ -41,8 +41,8 @@ public class MDF {
             halfIntReached = true;
         }
         final Datum dPrev = data.get(i-2); // i can't be <=1 at this point
-        final double demagLevel = interpolate(dPrev.getDemagLevel(),
-                d.getDemagLevel(), d.getIntensity(),
+        final double demagLevel = interpolate(dPrev.getTreatmentLevel(),
+                d.getTreatmentLevel(), d.getIntensity(),
                 dPrev.getIntensity(), halfIntensity);
         return new MDF(demagLevel, halfIntensity, halfIntReached);
     }

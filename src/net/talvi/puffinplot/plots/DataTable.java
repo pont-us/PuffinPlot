@@ -51,7 +51,7 @@ public class DataTable extends Plot {
         if (sample.getDatum(0).getTreatType() == TreatType.THERMAL)
             headers2.set(0, "temp.");
         points.add(new TextLinePoint(this, g, 10, null, headers2, xSpacing));
-        final boolean useSequence = (Datum.maximumDemag(data) == 0);
+        final boolean useSequence = (Datum.maxTreatmentLevel(data) == 0);
         int sequence = 1;
         float yPos = 2 * ySpacing;
         for (Datum d: data) {
@@ -59,11 +59,11 @@ public class DataTable extends Plot {
             final List<String> values = new ArrayList<String>(4);
             final Vec3 p = d.getMoment(params.getCorrection());
             String demag = useSequence ? Integer.toString(sequence)
-                    : format("%.0f", d.getDemagLevel());
+                    : format("%.0f", d.getTreatmentLevel());
             if (d.getTreatType().getUnit().equals("T")) {
                 // turn T into mT
                 // TODO: right-justify (non-trivial in non-fixed font)
-                demag = format("%-4.0f", d.getDemagLevel() * 1000);
+                demag = format("%-4.0f", d.getTreatmentLevel() * 1000);
             }
             values.add(demag);
             values.add(format("%.1f", p.getDecDeg()));

@@ -1,19 +1,38 @@
 package net.talvi.puffinplot.data;
 
-import java.util.logging.Logger;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import static java.lang.Double.NaN;
+import static java.lang.Double.parseDouble;
 import static java.lang.Math.toRadians;
 
+/**
+ * <p>Datum is the fundamental data class of PuffinPlot. It represents the
+ * state of a sample at a particular point during the stepwise demagnetization
+ * process. The essential item of data is the demagnetization vector
+ * representing a particular magnetometer measurement. A large number of
+ * other fields give additional data about demagnetization procedures,
+ * other measurements, and sample characteristics. Some of these fields
+ * (such as the sample orientation) are in fact sample-level data rather
+ * than demagnetization-step-level data, and may be moved to {@link Sample}
+ * in a later version of PuffinPlot.</p>
+ * 
+ * <p>Datum is a mutable container class which is intended to be
+ * instantiated with no or very little data. Most of the fields 
+ * can be set after instantiation using setter methods.</p>
+ * 
+ * 
+ * <p>In terms of PuffinPlot's user interface, a Datum often
+ * defines the position and appearance of a point on one or more
+ * of the plots.</p>
+ * @author pont
+ */
 public class Datum {
-
     private static final double
             DEFAULT_AREA = 4.0, // can be overridden by Area field in file
             DEFAULT_VOLUME = 10.8; // can be overridden by Volume field in file
-
     private String discreteId = "UNSET";
     private MeasType measType = MeasType.UNSET;
     private TreatType treatType = TreatType.UNKNOWN;
@@ -32,154 +51,326 @@ public class Datum {
     private String timestamp = "UNSET";
     private double xDrift, yDrift, zDrift;
     private int slotNumber = -1;
-    private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
-
     private Line line;
     private boolean selected = false;
     private boolean inPca = false;
     private boolean onCircle = false;
     private boolean pcaAnchored = true;
     private boolean hidden = false;
-
     private Sample sample;
     private Suite suite;
-
     private LinkedHashMap<String, String> h;
 
-    static {
-
-    }
-
+    /**
+     * Creates a datum with a specified magnetization vector.
+     * @param x x component of the magnetization vector
+     * @param y y component of the magnetization vector
+     * @param z z component of the magnetization vector
+     */
     public Datum(double x, double y, double z) {
         moment = new Vec3(x, y, z);
     }
     
-    public Datum(Vec3 v) {
-        moment = v; // v is immutable so it's OK not to copy it
+    /**
+     * Creates a datum with a supplied magnetization vector.
+     * @param vector the magnetization vector
+     */
+    public Datum(Vec3 vector) {
+        moment = vector; // v is immutable so it's OK not to copy it
     }
 
-    public Datum() {}
+    /**
+     * Creates a datum with no data.
+     */
+    public Datum() {
+        // Nothing to do here.
+    }
 
+    /** Reports whether this datum is selected.
+     * @return {@code true} if this datum is selected */
     public boolean isSelected()        { return selected; }
+    /** Sets the selection state of this datum.
+     * @param v {@code true} to select this datum, {@code false} to deselect */
     public void setSelected(boolean v) { selected = v; }
+    /** Returns the sample's dip azimuth.
+     * @return the sample's dip azimuth in degrees */
     public double getSampAz()          { return sampAz; }
+    /** Sets the sample's dip azimuth.
+     * @param v the sample dip azimuth to set, in degrees */
     public void setSampAz(double v)    { sampAz = v; }
+    /** Returns the sample's dip angle.
+     * @return the sample's dip angle, in degrees */
     public double getSampDip()         { return sampDip; }
+    /** Sets the sample's dip angle.
+     * @param v the sample dip angle to set, in degrees */
     public void setSampDip(double v)   { sampDip = v; }
+    /** Returns the formation dip azimuth.
+     * @return the formation dip azimuth in degrees */
     public double getFormAz()          { return formAz; }
+    /** Sets the formation dip azimuth.
+     * @param v the formation dip azimuth to set, in degrees */
     public void setFormAz(double v)    { formAz = v; }
+    /** Returns the formation dip angle.
+     * @return the formation dip angle, in degrees */
     public double getFormDip()         { return formDip; }
+    /** Sets the formation dip angle.
+     * @param v the formation dip angle to set, in degrees */
     public void setFormDip(double v)   { formDip = v; }
+    /** Returns the local geomagnetic field declination for the sampling site.
+     * @return the local geomagnetic field declination, in degrees */
     public double getMagDev()          { return magDev; }
+    /** Sets the local geomagnetic field declination for the sampling site.
+     * @param v the local geomagnetic field declination to set, in degrees */
     public void setMagDev(double v)    { magDev = v; }
+    /** Reports whether PCA fits for this point should be anchored.
+     * @return {@code true} if PCA fits to this point should be anchored */
     public boolean isPcaAnchored()     { return pcaAnchored; }
+    /** Sets whether PCA fits for this point should be anchored.
+     * @param v {@code true} to set PCA fits for this point to be anchored */
     public void setPcaAnchored(boolean v) { pcaAnchored = v; }
+    /** Returns the measurement's data-file line. Not currently used.
+     * @return the data-file line for this measurement; not currently used */
     public Line getLine()              { return line; }
+    /** Sets the measurement's data-file line. Not currently used.
+     * @param v the data-file line to set for this measurement; not currently used */
     public void setLine(Line v)        { line = v; }
+    /** Returns the sample of which this measurement was made.
+     * @return the sample on which this measurement was made */
     public Sample getSample()          { return sample; }
-    public boolean isHidden()          { return hidden; }
-    public void setHidden(boolean v)   { hidden = v; }
+    /** Sets the sampe on which this measurement was made.
+     * @param v the sample on which this measurement was made */
     public void setSample(Sample v)    { sample = v; }
+    /** Reports whether this datum should be hidden on plots.
+     * @return {@code true} if this datum should not be displayed on plots */
+    public boolean isHidden()          { return hidden; }
+    /** Sets whether this datum should be hidden on plots.
+     * @param v {@code true} if this datum should not be displayed on plots */
+    public void setHidden(boolean v)   { hidden = v; }
+    /** For continuous measurements, returns the depth of this measurement within the core.
+     * @return for continuous measurements, the depth of this measurement within the core */
     public String getDepth()           { return depth; }
+    /** For continuous measurements, sets the depth of this measurement within the core.
+     * @param v for continuous measurements, the depth of this measurement within the core */
     public void setDepth(String v)     { depth = v; }
+    /** Returns the magnetic susceptibility of the sample at this stage of treatment
+     * @return the magnetic susceptibility of the sample at this stage of treatment */
     public double getMagSus()          { return magSus; }
+    /** Sets the magnetic susceptibility of the sample at this stage of treatment.
+     * @param v the magnetic susceptibility of the sample at this stage of treatment */
     public void setMagSus(double v)    { magSus = v; }
+    /** Returns the type of this measurement (discrete or continuous).
+     * @return the type of this measurement (discrete or continuous) */
     public MeasType getMeasType()      { return measType; }
+    /** Sets the type of this measurement (discrete or continuous).
+     * @param v the type of this measurement (discrete or continuous) */
     public void setMeasType(MeasType v){ measType = v; }
+    /** For discrete samples, returns the sample identifier (name).
+     * @return for discrete samples, the identifier (name) of the sample */
     public String getDiscreteId()      { return discreteId; }
+    /** For discrete samples, sets the sample identifier (name).
+     * @param v for discrete samples, the identifier (name) of the sample */
     public void setDiscreteId(String v){ discreteId = v; }
+    /** Returns the treatment applied before this measurement (AF, thermal, etc.).
+     * @return the treatment applied before this measurement (AF, thermal, etc.) */
     public TreatType getTreatType()    { return treatType; }
+    /** Sets the treatment applied before this measurement (AF, thermal, etc.).
+     * @param v the treatment applied before this measurement (AF, thermal, etc.) */
     public void setTreatType(TreatType v) { treatType = v; }
+    /** For AF or ARM treatment, returns the AF field strength in the x axis.
+     * @return for AF or ARM treatment, the AF field strength in the x axis */
     public double getAfX()             { return afx; }
+    /** For AF or ARM treatment, sets the AF field strength in the x axis.
+     * @param v for AF or ARM treatment, the AF field strength in the x axis*/
     public void setAfX(double v)       { afx = v; }
+    /** For AF or ARM treatment, returns the AF field strength in the y axis.
+     * @return for AF or ARM treatment, the AF field strength in the y axis */
     public double getAfY()             { return afy; }
+    /** For AF or ARM treatment, sets the AF field strength in the y axis.
+     * @param v for AF or ARM treatment, the AF field strength in the y axis*/
     public void setAfY(double v)       { afy = v; }
+    /** For AF or ARM treatment, returns the AF field strength in the z axis.
+     * @return for AF or ARM treatment, the AF field strength in the z axis */
     public double getAfZ()             { return afz; }
+    /** For AF or ARM treatment, sets the AF field strength in the z axis.
+     * @param v for AF or ARM treatment, the AF field strength in the z axis*/
     public void setAfZ(double v)       { afz = v; }
+    /** For IRM treatment, returns the IRM field strength.
+     * @return for IRM treatment, the IRM field strength */
     public double getIrmField()        { return irmField; }
+    /** For IRM treatment, sets the IRM field strength.
+     * @param v for IRM treatment, the IRM field strength */
     public void setIrmField(double v)  { irmField = v; }
+    /** For ARM treatment, returns the ARM bias field strength.
+     * @return for ARM treatment, the ARM bias field strength */
     public double getArmField()        { return armField; }
+    /** For ARM treatment, sets the ARM bias field strength.
+     * @param v for ARM treatment, the ARM bias field strength */
     public void setArmField(double v)  { armField = v; }
+    /** For ARM treatment, returns the axis of the ARM field.
+     * @return for ARM treatment, the axis of the ARM field */
     public ArmAxis getArmAxis()        { return armAxis; }
+    /** For ARM treatment, sets the axis of the ARM field.
+     * @param v for ARM treatment, the axis of the ARM field */
     public void setArmAxis(ArmAxis v)  { armAxis = v; }
+    /** For thermal treatment, returns the temperature in degrees Celsius.
+     * @return for thermal treatment, the temperature in degrees Celsius */
     public double getTemp()            { return temp; }
+    /** For thermal treatment, sets the temperature in degrees Celsius.
+     * @param v for thermal treatment, the temperature in degrees Celsius*/
     public void setTemp(double v)      { temp = v; }
+    /** For continuous measurements, returns the cross-sectional area of the core.
+     * @return the cross-sectional area of the core */
     public double getArea()            { return area; }
+    /** For continuous measurements, sets the cross-sectional area of the core.
+     * @param v the cross-sectional area of the core */
     public void setArea(double v)      { area = v; }
+    /** For discrete measurements, returns the volume of the sample.
+     * @return for discrete measurements, the volume of the sample */
     public double getVolume()          { return volume; }
+    /** For discrete measurements, sets the volume of the sample.
+     * @param v for discrete measurements, the volume of the sample */
     public void setVolume(double v)    { volume = v; }
+    /** Returns the number of the machine run during which this measurement was made.
+     * @return the number of the machine run during which this measurement was made */
     public int getRunNumber()          { return runNumber; }
+    /** Sets the number of the machine run during which this measurement was made.
+     * @param v the number of the machine run during which this measurement was made */
     public void setRunNumber(int v)    { runNumber = v; }
+    /** Returns the timestamp of this measurement.
+     * @return the timestamp of this measurement */
     public String getTimestamp()       { return timestamp; }
+    /** Sets the timestamp of this measurement.
+     * @param v the timestamp of this measurement */
     public void setTimestamp(String v) { timestamp = v; }
+    /** Returns the x drift correction value.
+     * @return the x drift correction value */    
     public double getXDrift()          { return xDrift; }
+    /** Sets the x drift correction value.
+     * @param v the x drift correction value */    
     public void setXDrift(double v)    { xDrift = v; }
+    /** Returns the y drift correction value.
+     * @return the y drift correction value */    
     public double getYDrift()          { return yDrift; }
+    /** Sets the y drift correction value.
+     * @param v the y drift correction value */    
     public void setYDrift(double v)    { yDrift = v; }
+    /** Returns the z drift correction value.
+     * @return the z drift correction value */    
     public double getZDrift()          { return zDrift; }
+    /** Sets the z drift correction value.
+     * @param v the z drift correction value */    
     public void setZDrift(double v)    { zDrift = v; }
+    /** Returns the number of the measurement tray slot in which the sample was measured.
+     * @return the number of the measurement tray slot in which the sample was measured */    
     public int getSlotNumber()         { return slotNumber; }
+    /** Sets the number of the measurement tray slot in which the sample was measured.
+     * @param v the number of the measurement tray slot in which the sample was measured */
     public void setSlotNumber(int v)   { slotNumber = v; }
+    /** Returns the data suite containing this measurement.
+     * @return the data suite containing this measurement */
     public Suite getSuite()            { return suite; }
+    /** Sets the data suite containing this measurement.
+     * @param v the data suite containing this measurement */
     public void setSuite(Suite v)      { suite = v; }
+    /** Reports whether this measurement is used for a great-circle fit.
+     * @return {@code true} if this measurement is used for a great-circle fit */
     public boolean isOnCircle()        { return onCircle; }
+    /** Sets whether this measurement is to be used for a great-circle fit.
+     * @param v {@code true} to use this measurement for a great-circle fit */
     public void setOnCircle(boolean v) { onCircle = v; }
+    /** Reports whether this measurement is used for a PCA fit.
+     * @return {@code true} if this measurement is used for a PCA fit */
     public boolean isInPca()           { return inPca; }
+    /** Sets whether this measurement is to be used for a PCA fit.
+     * @param v {@code true} to use this measurement for a PCA fit */
     public void setInPca(boolean v)    { inPca = v; }
 
+    /** Returns sample identifier or measurement depth.
+     * If the measurement is discrete, returns the sample identifier;
+     * if the measurement is continuous, returns a string representation
+     * of the measurement's depth within the core.
+     * @return sample identifier or depth within core, as appropriate
+     */
     public String getIdOrDepth() {
         return measType == MeasType.CONTINUOUS ? depth : discreteId;
     }
-    public boolean hasMagSus()          { return !Double.isNaN(magSus); }
+    
+    /** Reports whether this datum has any magnetic susceptibility data. 
+     * @return {@code true} if there is magnetic susceptibility data
+     * in this datum
+     */
+    public boolean hasMagSus() {
+        return !Double.isNaN(magSus);
+    }
 
+    /** Reports whether this datum has magnetic susceptibility but not
+     * magnetic moment data.
+     * 
+     * @return {@code true} if this datum contains magnetic susceptibility
+     * data and does not contain magnetic moment data
+     */
     public boolean isMagSusOnly() {
         return moment == null && hasMagSus();
     }
 
-    private boolean sampleCorrectionExists() {
+    private boolean hasSampleOrientation() {
         return (!Double.isNaN(sampAz)) && (!Double.isNaN(sampDip));
     }
 
-    private boolean formationCorrectionExists() {
+    private boolean hasFormationOrientation() {
         return (!Double.isNaN(formAz)) && (!Double.isNaN(formDip));
     }
 
     /**
-    * Sets the sample's magnetic dipole moment per unit volume
-    * in A/m.
-    * @param v
-    */
+     * <p>Strictly speaking, the name is not quite accurate:
+     * we do not deal with magnetic
+     * moment (which would be in Am<sup>2</sup>) but in magnetic dipole moment
+     * per unit volume (in A/m). But
+     * {@code getMagneticDipoleMomentPerUnitVolumeInAm} would be an inconveniently
+     * long method name.</p>
+     * 
+     * @return the magnetic dipole moment
+     * per unit volume in A/m */
+    public Vec3 getMoment() { return moment; }
+    
+    /**
+     * Sets the sample's magnetic dipole moment per unit volume
+     * in A/m.
+     * @param v the magnetic dipole moment per unit volume in A/m
+     */
     public void setMoment(Vec3 v)      { moment = v; }
 
     /**
-     * The name is slightly misleading: we do not deal with magnetic
-     * moment (which would be in Am^2) but in magnetic dipole moment
-     * per unit volume (in A/m). But
-     * getMagneticDipoleMomentPerUnitVolumeInAm would be an inconveniently
-     * long method name.
-     *
-     * @param c
-     * @return
+     * Returns the measured magnetic dipole moment per unit volume, as
+     * modified by the supplied correction. The correction may specify that
+     * the moment should be rotated to correct for sample and/or formation
+     * orientation. It also allows the specification of tray and empty-slot
+     * corrections, but these are not preently implemented here. (Tray
+     * corrections are applied when loading a file, and empty-slot 
+     * corrections are unimplemented.)
+     * 
+     * @param correction the corrections to apply to the magnetic moment measurement
+     * @return the corrected magnetic dipole moment per unit volume in A/m
      */
-    public Vec3 getMoment(Correction c) {
+    public Vec3 getMoment(Correction correction) {
         Vec3 result = moment;
-        if (c.includesEmpty()) {
-            result = result.minus(getLine().getEmptySlot().moment);
+        if (correction.includesEmpty()) {
+            result = result.minus(getLine().getEmptySlot().getMoment());
         }
-        if (c.includesTray()) {
+        if (correction.includesTray()) {
             Datum tray = getSuite().getTrayCorrection(this);
-            if (tray != null) result = result.minus(tray.moment);
+            if (tray != null) result = result.minus(tray.getMoment());
         }
-        result = correctVector(result, c);
+        result = correctVector(result, correction);
         return result;
     }
 
-    public Vec3 correctVector(Vec3 v, Correction c) {
+    private Vec3 correctVector(Vec3 v, Correction c) {
         Vec3 result = v;
-        if (c.includesSample() && sampleCorrectionExists()) {
+        if (c.includesSample() && hasSampleOrientation()) {
             result = result.correctSample(toRadians(sampAz + magDev),
                                           toRadians(sampDip));
-            if (c.includesFormation() && formationCorrectionExists()) {
+            if (c.includesFormation() && hasFormationOrientation()) {
                 result = result.correctForm(toRadians(formAz + magDev),
                                             toRadians(formDip));
             }
@@ -187,18 +378,37 @@ public class Datum {
         return result;
     }
     
-    /*
-     *  Rotate orientations 180 degrees about X axis.
+    /**
+     *  Rotates magnetic moment data 180 degrees about the specified axis.
+     *  @param axis the axis about which to perform the rotation
      */
     public void rot180(MeasurementAxis axis) {
         moment = moment.rot180(axis);
     }
 
+    /**
+     * Toggles the datum's selection state. {@code datum.toggleSel()}
+     * is functionally equivalent to {@code datum.setSelected(!datum.isSelected()}.
+     */
     public void toggleSel() {
         setSelected(!isSelected());
     }
 
-    public double getDemagLevel() {
+    /**
+     * <p>Returns a numerical representation of the intensity of the treatment
+     * which was applied immediately before this measurement. The interpretation
+     * of the number depends on the treatment type. For thermal treatment, it
+     * is a temperature in degrees Celsius. For magnetic treatments
+     * (AF demagnetization, ARM, IRM) it returns the magnetic field. As 
+     * is conventional, the magnetic field is returned as the equivalent 
+     * magnetic induction in units of Tesla.</p>
+     * 
+     * <p>For ARM treatment, this method returns the strength of the
+     * alternating field rather than the DC bias field.</p>
+     * 
+     * @return the treatment level
+     */
+    public double getTreatmentLevel() {
         switch (treatType) {
         case NONE: return 0;
         case DEGAUSS_XYZ: return afx>0?afx : afy>0?afy : afz;
@@ -211,27 +421,50 @@ public class Datum {
         }
     }
 
-    public static double maximumDemag(List<Datum> ds) {
+    /**
+     * Returns the maximum treatment level within the supplied group of
+     * datum objects.
+     * 
+     * @param data a list of datum objects
+     * @return the highest treatment level for any of the supplied datum objects
+     */
+    public static double maxTreatmentLevel(List<Datum> data) {
         double max = 0;
-        for (Datum d: ds) {
-            double level = d.getDemagLevel();
+        for (Datum d: data) {
+            double level = d.getTreatmentLevel();
             if (level > max) max = level;
         }
         return max;
     }
 
-    public static double maximumIntensity(List<Datum> ds) {
+    /**
+     * Returns the maximum magnitude of magnetic dipole moment per unit volume
+     * within the supplied group of
+     * datum objects.
+     * 
+     * @param data a list of datum objects
+     * @return the highest magnitude of magnetic dipole moment per unit volume
+     * for any of the supplied datum objects
+     */
+    public static double maxIntensity(List<Datum> data) {
         double max = 0;
-        for (Datum d: ds) {
+        for (Datum d: data) {
             double i = d.getIntensity();
             if (i > max) max = i;
         }
         return max;
     }
 
-    public static double maximumMagSus(List<Datum> ds) {
+    /**
+     * Returns the maximum magnetic susceptibility within the supplied group of
+     * datum objects.
+     * 
+     * @param data a list of datum objects
+     * @return the highest magnetic susceptibility for any of the supplied datum objects
+     */
+    public static double maxMagSus(List<Datum> data) {
         double max = 0;
-        for (Datum d: ds) {
+        for (Datum d: data) {
             double level = d.getMagSus();
             if (!Double.isNaN(level) && level > max) max = level;
         }
@@ -239,17 +472,29 @@ public class Datum {
     }
 
     /**
-     * Returns magnetic dipole moment per unit volume in A/m.
-     * @return magnetic dipole moment per unit volume in A/m
+     * Returns the magnitude of the magnetic dipole moment per unit volume in A/m.
+     * @return magnitude of magnetic dipole moment per unit volume in A/m
      */
     public double getIntensity() {
         return getMoment(Correction.NONE).mag();
     }
 
+    /**
+     * Returns {@code true} if this datum should be ignored (thrown away)
+     * when loading a data file. Currently, this method returns true if
+     * the measurement type is {@code NONE} &endash; that is, there is
+     * no data within the object.
+     * 
+     * @return {@code true} if this datum should be ignored when loading a file
+     */
     public boolean ignoreOnLoading() {
         return getMeasType() == MeasType.NONE;
     }
 
+    /**
+     * Reports whether the datum contains a magnetic moment measurement.
+     * @return {@code true} if the datum contains a magnetic moment measurement
+     */
     public boolean hasMagMoment() {
         return moment != null;
     }
@@ -258,6 +503,12 @@ public class Datum {
         return Double.toString(d);
     }
 
+    /**
+     * Returns a String representation of a value from a specified data field.
+     * 
+     * @param field the field to read
+     * @return a string representation of the value contained in the field
+     */
     public String getValue(DatumField field) {
         switch (field) {
         case AF_X: return fmt(afx);
@@ -296,36 +547,44 @@ public class Datum {
         }
     }
 
-    public void setValue(DatumField field, String s) {
+    /**
+     * Sets the value of a specified data field using a string.
+     * 
+     * @param field the field to set the value of
+     * @param value a string representation of the value to set the field to
+     * @throws NumberFormatException if the format of the string is 
+     * not compatible with the format of the field to be set
+     */
+    public void setValue(DatumField field, String value) {
         try {
-            doSetValue(field, s);
+            doSetValue(field, value);
         } catch (NumberFormatException e) {
             final String msg = String.format("Invalid number "+
                     "when setting field '%s' to value '%s':\n%s",
-                    field.toString(), s, e.getMessage());
+                    field.toString(), value, e.getMessage());
             throw new NumberFormatException(msg);
         }
     }
     
     private void doSetValue(DatumField field, String s) {
         switch (field) {
-        case AF_X: afx = Double.parseDouble(s); break;
-        case AF_Y: afy = Double.parseDouble(s); break;
-        case AF_Z: afz = Double.parseDouble(s); break;
-        case TEMPERATURE: temp = Double.parseDouble(s); break;
-        case MAG_SUS: magSus = Double.parseDouble(s); break;
-        case SAMPLE_AZ: setSampAz(Double.parseDouble(s)); break;
-        case SAMPLE_DIP: setSampDip(Double.parseDouble(s)); break;
-        case FORM_AZ: setFormAz(Double.parseDouble(s)); break;
-        case FORM_DIP: setFormDip(Double.parseDouble(s)); break;
-        case MAG_DEV: setMagDev(Double.parseDouble(s)); break;
-        case X_MOMENT: moment = moment.setX(Double.parseDouble(s)); break;
-        case Y_MOMENT: moment = moment.setY(Double.parseDouble(s)); break;
-        case Z_MOMENT: moment = moment.setZ(Double.parseDouble(s)); break;
-        case DEPTH: depth = (String) s; break;
-        case IRM_FIELD: setIrmField(Double.parseDouble(s)); break;
-        case ARM_FIELD: armField = Double.parseDouble(s); break;
-        case VOLUME: volume = Double.parseDouble(s); break;
+        case AF_X: afx = parseDouble(s); break;
+        case AF_Y: afy = parseDouble(s); break;
+        case AF_Z: afz = parseDouble(s); break;
+        case TEMPERATURE: temp = parseDouble(s); break;
+        case MAG_SUS: magSus = parseDouble(s); break;
+        case SAMPLE_AZ: setSampAz(parseDouble(s)); break;
+        case SAMPLE_DIP: setSampDip(parseDouble(s)); break;
+        case FORM_AZ: setFormAz(parseDouble(s)); break;
+        case FORM_DIP: setFormDip(parseDouble(s)); break;
+        case MAG_DEV: setMagDev(parseDouble(s)); break;
+        case X_MOMENT: moment = moment.setX(parseDouble(s)); break;
+        case Y_MOMENT: moment = moment.setY(parseDouble(s)); break;
+        case Z_MOMENT: moment = moment.setZ(parseDouble(s)); break;
+        case DEPTH: depth = s; break;
+        case IRM_FIELD: setIrmField(parseDouble(s)); break;
+        case ARM_FIELD: armField = parseDouble(s); break;
+        case VOLUME: volume = parseDouble(s); break;
         case DISCRETE_ID: discreteId = s; break;
         case MEAS_TYPE: measType = MeasType.valueOf(s); break;
         case TREATMENT: treatType = TreatType.valueOf(s); break;
@@ -333,7 +592,7 @@ public class Datum {
         case TIMESTAMP: timestamp = s; break;
         case SLOT_NUMBER: slotNumber = Integer.parseInt(s); break;
         case RUN_NUMBER: runNumber = Integer.parseInt(s); break;
-        case AREA: area = Double.parseDouble(s); break;
+        case AREA: area = parseDouble(s); break;
         case PP_SELECTED: selected = Boolean.parseBoolean(s); break;
         case PP_ANCHOR_PCA: setPcaAnchored(Boolean.parseBoolean(s)); break;
         case PP_HIDDEN: setHidden(Boolean.parseBoolean(s)); break;
@@ -358,16 +617,38 @@ public class Datum {
         }
     }
 
+    /**
+     * This class allows datum objects to be created from string representations
+     * of a specified format. The headers (corresponding to field names)
+     * are specified in the constructor, and data lines with a format
+     * corresponding to the supplied headers can then be turned into 
+     * datum objects.
+     */
     public static class Reader {
         private List<DatumField> fields;
 
+        /**
+         * Create a new reader using the supplied header strings.
+         * Each header string should correspond to the string representation
+         * of a {@link DatumField} field.
+         * @param headers list of headers defining the data format
+         */
         public Reader(List<String> headers) {
-            fields = new ArrayList(headers.size());
+            fields = new ArrayList<DatumField>(headers.size());
             for (String s: headers) fields.add(DatumField.valueOf(s));
         }
 
+        /**
+         * Creates a a datum object using the supplied strings to 
+         * populate the data fields. The values in the supplied list of
+         * strings must occur in the same order as the corresponding
+         * {@link DatumField}s supplied to the reader's constructor.
+         * 
+         * @param strings string representations of data values
+         * @return a datum object containing the supplied values
+         */
         public Datum fromStrings(List<String> strings) {
-            Datum d = new Datum(Vec3.ORIGIN);
+            final Datum d = new Datum(Vec3.ORIGIN);
             for (int i=0; i<strings.size(); i++) {
                 d.setValue(fields.get(i), strings.get(i));
             }
@@ -375,6 +656,14 @@ public class Datum {
         }
     }
 
+    /**
+     * Produces a list of strings representing the data values within this
+     * datum object. The order of the strings corresponds to the order of
+     * the fields in {@link DatumField#realFields}.
+     * 
+     * @return  a list of strings representing the data values within this
+     * datum
+     */
     public List<String> toStrings() {
         List<String> result =
                 new ArrayList<String>(DatumField.getRealFields().size());
@@ -384,11 +673,20 @@ public class Datum {
         return result;
     }
 
-    public String exportFields(Collection<DatumField> fields, String separator) {
-        StringBuilder sb = new StringBuilder();
+    /**
+     * Produces a string containing string representations of the contents
+     * of selected data fields. The values are separated by a specified 
+     * delimiter.
+     * 
+     * @param fields the fields for which values should be produced
+     * @param delimiter the string which should separate the values
+     * @return a string representation of the requested values
+     */
+    public String exportFieldValues(Collection<DatumField> fields, String delimiter) {
+        final StringBuilder sb = new StringBuilder();
         boolean first = true;
         for (DatumField field: fields) {
-            if (!first) sb.append(separator);
+            if (!first) sb.append(delimiter);
             sb.append(getValue(field));
             first = false;
         }

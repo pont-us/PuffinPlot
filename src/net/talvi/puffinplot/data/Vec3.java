@@ -423,6 +423,7 @@ public class Vec3 {
     /**
      *  The 2G manual specifies the following conversion, more or less:
      * 
+     *  <pre>{@code 
      *  if (x < 0) return atan(y / x) + PI;
      *  else if (x > 0 && y <= 0) return atan(y / x) + 2 * PI;
      *  else if (x == 0) {
@@ -432,13 +433,13 @@ public class Vec3 {
      *  } else {
      *      return atan(y / x);
      *  }
+     * }</pre>
      *
      * However, the formulae given in the manual are known to be unreliable,
      * so we use the more straightforwardly correct atan2, and shift the 
      * range from [-pi, pi] to [0, 2pi].
      * 
      */
-    
     public double getDecRad() {
         double theta = atan2(y, x);
         if (theta<0) theta += 2*PI;

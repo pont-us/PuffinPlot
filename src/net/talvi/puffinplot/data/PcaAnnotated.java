@@ -52,8 +52,8 @@ public class PcaAnnotated {
         PcaValues pca = PcaValues.calculate(points, s.isPcaAnchored());
         
         return new PcaAnnotated(pca,
-                data.get(0).getDemagLevel(),
-                data.get(data.size() - 1).getDemagLevel(),
+                data.get(0).getTreatmentLevel(),
+                data.get(data.size() - 1).getTreatmentLevel(),
                 contiguous);
     }
 

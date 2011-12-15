@@ -45,8 +45,8 @@ public class DemagPlot extends Plot {
 
         Rectangle2D dim = cropRectangle(getDimensions(), 270, 200, 50, 250);
         g.setColor(Color.BLACK);
-        double maxDemag = Datum.maximumDemag(data);
-        double maxIntens = Datum.maximumIntensity(data);
+        double maxDemag = Datum.maxTreatmentLevel(data);
+        double maxIntens = Datum.maxIntensity(data);
 
         // If all the measurements have the same demag level, we'll
         // just plot them in sequence to avoid giving them all the same
@@ -99,7 +99,7 @@ public class DemagPlot extends Plot {
         
         int i = 0;
         for (Datum d: data) {
-            double demagLevel = d.getDemagLevel() * demagRescale;
+            double demagLevel = d.getTreatmentLevel() * demagRescale;
             double xPos = dim.getMinX() +
                     (xBySequence ? (i + 1) : demagLevel) * hScale;
             addPoint(d, new Point2D.Double(xPos,
@@ -121,7 +121,7 @@ public class DemagPlot extends Plot {
             addPoint(null, new Point2D.Double(dim.getMaxX() + 10, dim.getMaxY()),
                     false, false, false);
             final AxisParameters msAxisParams =
-                    new AxisParameters(Datum.maximumMagSus(data),
+                    new AxisParameters(Datum.maxMagSus(data),
                     Direction.UP).withNumberEachTick();
             msAxisParams.label = "Mag. sus. (S.I.)";
             msAxisParams.farSide = true;
@@ -132,7 +132,7 @@ public class DemagPlot extends Plot {
             boolean first = true;
             for (Datum d: data) {
             final double xPos = dim.getMinX() +
-                    (xBySequence ? (i + 1) : d.getDemagLevel()) * hScale;
+                    (xBySequence ? (i + 1) : d.getTreatmentLevel()) * hScale;
             double magSus = d.getMagSus();
             if (magSus < 0) magSus = 0;
             if (d.hasMagSus()) {
