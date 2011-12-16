@@ -9,19 +9,27 @@ import java.util.List;
 import static java.lang.Math.abs;
 
 /**
- * A class to calculate and store the eigenvalues and vectors of the orientation
- * matrix of a supplied collection of vectors.
+ * A class to calculate and store the eigenvalues and eigenvectors of a matrix.
+ * It can also construct an orientation matrix from a supplied collection
+ * of vectors and perform eigen analysis on that matrix.
  *
  * @author pont
  */
 
 public class Eigens {
 
-    public final List<Vec3> vectors ;
-    public final List<Double> values;
+    private final List<Vec3> vectors;
+    private final List<Double> values;
 
-    public Eigens(Matrix m) {
-        EigenvalueDecomposition eigDecomp = m.eig();
+    /**
+     * Create an object holding the eigenvectors and eigenvalues of the
+     * supplied matrix. They will be sorted in descending order of
+     * eigenvalue.
+     * 
+     * @param matrix the matrix on which to perform eigen analysis
+     */
+    public Eigens(Matrix matrix) {
+        EigenvalueDecomposition eigDecomp = matrix.eig();
         double[] eigenvalues = eigDecomp.getRealEigenvalues();
 
         /* There has to be a less horrific method of arranging the
@@ -46,18 +54,31 @@ public class Eigens {
         values = Collections.unmodifiableList(valuesTmp);
     }
     
-    public static Eigens fromVectors(Collection<Vec3> vs, boolean normalize) {
-        Matrix oTensor = new Matrix(3,3); // zeros
-        for (Vec3 p: vs) 
-            oTensor.plusEquals(normalize ?
-                p.normalize().oTensor() : p.oTensor());
-        return new Eigens(oTensor);
+    /**
+     * Create an orientation tensor from the supplied vectors, then return
+     * the results of eigen analysis upon the constructed matrix.
+     * 
+     * @param vectors a collection of three-dimensional vectors
+     * @param normalize {@code true} to normalize the vectors before analysis
+     * @return the eigenvectors and eigenvalues of the orientation tensor
+     */
+    public static Eigens fromVectors(Collection<Vec3> vectors, boolean normalize) {
+        Matrix orientationTensor = new Matrix(3,3); // zeros
+        for (Vec3 vector: vectors) {
+            orientationTensor.plusEquals(normalize
+                    ? vector.normalize().oTensor()
+                    : vector.oTensor());
+        }
+        return new Eigens(orientationTensor);
     }
 
+    /** Returns a matrix of the eigenvectors.
+     * @return a matrix of the eigenvectors
+     */
     public Matrix toMatrix() {
-        Vec3 v1 = vectors.get(0);
-        Vec3 v2 = vectors.get(1);
-        Vec3 v3 = vectors.get(2);
+        Vec3 v1 = getVectors().get(0);
+        Vec3 v2 = getVectors().get(1);
+        Vec3 v3 = getVectors().get(2);
         double[] elts = {v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, v3.x, v3.y, v3.z};
         return new Matrix(elts, 3);
     }
@@ -91,5 +112,19 @@ public class Eigens {
         int[] result = new int[x.length];
         for (int i=0; i<x.length; i++) result[i] = ps.get(i).index;
         return result;
+    }
+
+    /** Returns the eigenvectors in order of decreasing eigenvalue.
+     * @return the eigenvectors in order of decreasing eigenvalue
+     */
+    public List<Vec3> getVectors() {
+        return vectors;
+    }
+
+    /** Returns the eigenvalues in decreasing order.
+     * @return the eigenvalues in decreasing order
+     */
+    public List<Double> getValues() {
+        return values;
     }
 }

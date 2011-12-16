@@ -9,6 +9,11 @@ import java.util.List;
 import static java.lang.Math.acos;
 import static java.lang.Math.pow;
 
+/**
+ * This class calculates Fisher (1953) spherical statistics on sets of vectors.
+ * 
+ * @author pont
+ */
 public class FisherValues implements FisherParams {
 
     private final double a95;
@@ -27,10 +32,19 @@ public class FisherValues implements FisherParams {
         this.meanDirection = meanDirection;
     }
     
-    public static FisherValues calculate(Collection<Vec3> points) {
-        List<Vec3> normPoints = new ArrayList<Vec3>(points.size());
-        double N = points.size();
-        for (Vec3 point: points) normPoints.add(point.normalize());
+    /**
+     * Returns a set of Fisherian statistics, calculated using the 
+     * Fisher (1953) method, for a collection of vectors. The vectors
+     * do not need to be normalized; since Fisherian statistics are
+     * purely directional, their magnitudes will not influence the result.
+     * 
+     * @param vectors the points on which to calculate statistics
+     * @return the Fisherian statistics for the supplied vectors
+     */
+    public static FisherValues calculate(Collection<Vec3> vectors) {
+        List<Vec3> normPoints = new ArrayList<Vec3>(vectors.size());
+        double N = vectors.size();
+        for (Vec3 point: vectors) normPoints.add(point.normalize());
         double R = Vec3.vectorSumLength(normPoints);
         double k = (N-1)/(N-R);
         double a95 = Math.toDegrees(acos( 1 - ((N-R)/R) * (pow(1/p,1/(N-1))-1) ));
@@ -49,6 +63,8 @@ public class FisherValues implements FisherParams {
         return meanDirection;
     }
     
+    /** Returns the directions of the vectors on which these statistics were calculated. 
+     * @return the directions of the vectors on which these statistics were calculated */
     public List<Vec3> getDirections() {
         return directions;
     }
@@ -57,12 +73,19 @@ public class FisherValues implements FisherParams {
         return String.format(Locale.ENGLISH, "%.1f", d);
     }
 
+    /** Returns the statistical parameters as a list of strings.
+     * The order of the parameters is the same as the order of
+     * the headers provided by {@link #getHeaders()}.
+     * @return the statistical parameters as a list of strings
+     */
     public List<String> toStrings() {
         return Arrays.asList(fmt(getMeanDirection().getDecDeg()),
                 fmt(getMeanDirection().getIncDeg()), fmt(getA95()),
                 fmt(getK()));
     }
 
+    /** Returns a string representation of the parameters.
+     *  @return a string representation of the parameters */
     @Override
     public String toString() {
         List<String> values = toStrings();
@@ -77,10 +100,16 @@ public class FisherValues implements FisherParams {
         return result.toString();
     }
 
+    /** Returns the headers describing the parameters as a list of strings.
+     * @return the headers describing the parameters
+     */
     public static List<String> getHeaders() {
         return HEADERS;
     }
 
+    /** Returns a list of empty strings equal in length to the number of parameters.
+     * @return  a list of empty strings equal in length to the number of parameters
+     */
     public static List<String> getEmptyFields() {
         return Collections.nCopies(HEADERS.size(), "");
     }

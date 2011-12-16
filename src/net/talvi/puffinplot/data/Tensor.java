@@ -22,7 +22,7 @@ public class Tensor {
         Matrix ams = new Matrix(elts, 3);
         Eigens amsEigens = new Eigens(ams);
         // For the present, we just keep the directions
-        amsAxes = amsEigens.vectors;
+        amsAxes = amsEigens.getVectors();
     }
 
     public Tensor(double k11, double k22, double k33,
@@ -41,7 +41,7 @@ public class Tensor {
         this.k22 = k[1][1];
         this.k23 = k[1][2];
         this.k33 = k[2][2];
-        amsAxes = amsEigens.vectors;
+        amsAxes = amsEigens.getVectors();
     }
 
     public Tensor(List<Vec3> axes) {

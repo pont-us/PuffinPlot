@@ -38,7 +38,7 @@ public class PcaValues {
         }
 
         Eigens eigen = Eigens.fromVectors(movedPoints, false);
-        Vec3 pComp = eigen.vectors.get(0);
+        Vec3 pComp = eigen.getVectors().get(0);
 
         /*
          * If the points are linearly arranged, the first eigenvector should now
@@ -55,9 +55,9 @@ public class PcaValues {
             minus(movedPoints.get(0));
         if (trend.dot(pComp) > 0) pComp = pComp.invert();
 
-        double lmax = eigen.values.get(0);
-        double lint = eigen.values.get(1);
-        double lmin = eigen.values.get(2);
+        double lmax = eigen.getValues().get(0);
+        double lint = eigen.getValues().get(1);
+        double lmin = eigen.getValues().get(2);
         double mad3 = toDegrees(atan(sqrt((lint + lmin) / lmax)));
         double mad1 = (lint != 0 && lmax != 0) ?
                 toDegrees(atan(sqrt(lmin/lint + lmin/lmax))) : 0;

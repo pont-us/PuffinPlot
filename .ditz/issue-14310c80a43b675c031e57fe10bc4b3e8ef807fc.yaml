@@ -1,0 +1,22 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Introduce a field export interface
+desc: |-
+  At present, several classes such as FisherValues use what is
+  in effect an implicit interface to export their fields when they
+  need to be saved to a file: toStrings(), getHeaders(), and
+  getEmptyFields(). These should be codified into an official interface.
+type: :task
+component: PuffinPlot
+release: "1.1"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2011-12-16 04:56:36.751242 Z
+references: []
+
+id: 14310c80a43b675c031e57fe10bc4b3e8ef807fc
+log_events: 
+- - 2011-12-16 04:56:37.255148 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

@@ -1,0 +1,20 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Ensure that classes are final where possible
+desc: |-
+  In accordance with the holy precepts of Bloch, any class not
+  explicitly designed for subclassing should be declared final.
+type: :task
+component: PuffinPlot
+release: "1.1"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2011-12-16 05:06:25.399610 Z
+references: []
+
+id: b03769a42980233d455f0fd14fefe8a250c30eff
+log_events: 
+- - 2011-12-16 05:06:25.879230 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
