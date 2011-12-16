@@ -421,7 +421,9 @@ public class Vec3 {
     }
 
     /**
-     *  The 2G manual specifies the following conversion, more or less:
+     * <p>Returns the declination in radians.</p>
+     * <p>Note:
+     * The 2G manual specifies the following conversion, more or less:
      * 
      *  <pre>{@code 
      *  if (x < 0) return atan(y / x) + PI;
@@ -435,10 +437,11 @@ public class Vec3 {
      *  }
      * }</pre>
      *
-     * However, the formulae given in the manual are known to be unreliable,
-     * so we use the more straightforwardly correct atan2, and shift the 
-     * range from [-pi, pi] to [0, 2pi].
+     * However, the formulae given in the manual are known to be unreliable.
+     * We use the more straightforwardly correct {@code atan2}, and shift the 
+     * range from [-pi, pi] to [0, 2pi].</p>
      * 
+     * @return the declination in radians
      */
     public double getDecRad() {
         double theta = atan2(y, x);

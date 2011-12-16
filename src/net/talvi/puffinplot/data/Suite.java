@@ -95,7 +95,7 @@ public class Suite {
     }
 
     public void saveAs(File file) throws PuffinUserException {
-        List<String> fields = DatumField.getRealFieldHeaders();
+        List<String> fields = DatumField.getRealFieldHeadings();
 
         FileWriter fileWriter = null;
         CsvWriter csvWriter = null;

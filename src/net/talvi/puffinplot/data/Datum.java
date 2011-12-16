@@ -23,10 +23,12 @@ import static java.lang.Math.toRadians;
  * instantiated with no or very little data. Most of the fields 
  * can be set after instantiation using setter methods.</p>
  * 
- * 
  * <p>In terms of PuffinPlot's user interface, a Datum often
  * defines the position and appearance of a point on one or more
  * of the plots.</p>
+ * 
+ * @see DatumField
+ * 
  * @author pont
  */
 public class Datum {

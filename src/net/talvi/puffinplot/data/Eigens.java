@@ -9,7 +9,7 @@ import java.util.List;
 import static java.lang.Math.abs;
 
 /**
- * A class to calculate the eigenvalues and vectors of the orientation
+ * A class to calculate and store the eigenvalues and vectors of the orientation
  * matrix of a supplied collection of vectors.
  *
  * @author pont
