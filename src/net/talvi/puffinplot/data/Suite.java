@@ -317,17 +317,17 @@ public class Suite {
                     "NRM intensity (A/m)",
                     "MS jump temp. (°C)",
                     PcaAnnotated.getHeaders(),
-                    GreatCircle.getHeaders(), MDF.getHeaders());
+                    GreatCircle.getHeaders(), MedianDestructiveField.getHeaders());
             for (Sample sample: samples) {
                 final PcaAnnotated pca = sample.getPca();
-                final MDF mdf = sample.getMDF();
+                final MedianDestructiveField mdf = sample.getMDF();
                 final GreatCircle circle = sample.getGreatCircle();
                 writer.writeCsv(getName(), sample.getNameOrDepth(),
                         String.format(Locale.ENGLISH, "%.4g", sample.getNRM()),
                         String.format(Locale.ENGLISH, "%.4g", sample.getMagSusJump()),
                         pca == null ? PcaAnnotated.getEmptyFields() : pca.toStrings(),
                         circle == null ? GreatCircle.getEmptyFields() : circle.toStrings(),
-                        mdf == null ? MDF.getEmptyFields() : mdf.toStrings());
+                        mdf == null ? MedianDestructiveField.getEmptyFields() : mdf.toStrings());
             }
         } catch (IOException ex) {
             throw new PuffinUserException(ex);

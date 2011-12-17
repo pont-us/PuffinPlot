@@ -13,7 +13,7 @@ import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 import net.talvi.puffinplot.data.Datum;
-import net.talvi.puffinplot.data.MDF;
+import net.talvi.puffinplot.data.MedianDestructiveField;
 import net.talvi.puffinplot.data.Sample;
 import static net.talvi.puffinplot.plots.PlotAxis.AxisParameters;
 import static net.talvi.puffinplot.plots.PlotAxis.Direction;
@@ -78,7 +78,7 @@ public class DemagPlot extends Plot {
         AxisParameters hAxisParams = new AxisParameters(xAxisLength * demagRescale, Direction.RIGHT).
                 withLabel(xAxisLabel).withNumberEachTick();
 
-        final MDF midpoint = sample.getMDF();
+        final MedianDestructiveField midpoint = sample.getMDF();
         if (midpoint != null && midpoint.isHalfIntReached()) {
             hAxisParams.markedPosition = midpoint.getDemagLevel() * demagRescale;
         }

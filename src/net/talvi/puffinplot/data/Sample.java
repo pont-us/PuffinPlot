@@ -19,7 +19,7 @@ public class Sample {
     private boolean isEmptySlot = false;
     private GreatCircle greatCircle;
     private PcaAnnotated pca;
-    private MDF mdf;
+    private MedianDestructiveField mdf;
     private boolean hasMsData = false;
     private Tensor ams;
     private double magSusJump = 0; // temperature at which mag. sus. jumps
@@ -55,10 +55,10 @@ public class Sample {
     }
 
     public void calculateMdf(Correction correction) {
-        mdf = MDF.calculate(getVisibleData());
+        mdf = MedianDestructiveField.calculate(getVisibleData());
     }
 
-    public MDF getMDF() {
+    public MedianDestructiveField getMDF() {
         return mdf;
     }
     
