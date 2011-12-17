@@ -1,7 +1,6 @@
 package net.talvi.puffinplot.data;
 
 import java.util.Collections;
-import java.util.Arrays;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.util.List;
@@ -14,20 +13,67 @@ import java.util.Scanner;
 import static java.lang.Math.toRadians;
 
 /**
- * A class representing the parameters of a Kent confidence ellipse.
+ * <p>A class representing the parameters of a Kent confidence ellipse.
+ * It also provides methods to calculate the parameters from sets
+ * of tensors using programs from Lisa Tauxe's pmagpy suite.</p>
+ * 
+ * <p>For details of the pmagpy programs and 
+ * anisotropy statistics, see Lisa Tauxe, <i>Essentials of Paleomagnetism</i>
+ * (University of California Press, 2010).</p>
  *
  * @author pont
  */
 public class KentParams {
 
-    private double tau;
-    private double tauSigma;
-    private Vec3 mean;
-    private double etaMag;
-    private Vec3 etaDir;
-    private double zetaMag;
-    private Vec3 zetaDir;
+    private final double tau;
+    private final double tauSigma;
+    private final Vec3 mean;
+    private final double etaMag;
+    private final Vec3 etaDir;
+    private final double zetaMag;
+    private final Vec3 zetaDir;
 
+    /**
+     * Creates an object representing a Kent confidence ellipse defined
+     * by the supplied parameters.
+     * 
+     * @param tau the tau value (eigenvalue of normalized mean susceptibility tensor)
+     * @param tauSigma (95% confidence region for tau)
+     * @param dec the mean declination in degrees
+     * @param inc the mean inclination in degrees
+     * @param etaMag the semiangle of the confidence ellipse's first axis
+     * @param etaDec the declination of the confidence ellipse's first axis
+     * @param etaInc the inclination of the confidence ellipse's first axis
+     * @param zetaMag the semiangle of the confidence ellipse's second axis
+     * @param zetaDec the declination of the confidence ellipse's second axis
+     * @param zetaInc the inclination of the confidence ellipse's second axis
+     */
+    public KentParams(double tau, double tauSigma, double dec, double inc,
+            double etaMag, double etaDec, double etaInc,
+            double zetaMag, double zetaDec, double zetaInc) {
+        this.tau = tau;
+        this.tauSigma = tauSigma;
+        this.mean = Vec3.fromPolarDegrees(1., inc, dec);
+        this.etaMag = toRadians(etaMag);
+        this.etaDir = Vec3.fromPolarDegrees(1., etaInc, etaDec);
+        this.zetaMag = toRadians(zetaMag);
+        this.zetaDir = Vec3.fromPolarDegrees(1., zetaInc, zetaDec);
+    }
+    
+    /**
+     * <p>Creates an object representing a Kent confidence ellipse defined
+     * by the parameters listed in the supplied string. The parameters in the 
+     * string should be separated by white space,
+     * and occur in the following order:</p>
+     * 
+     * <p>tau tau_sigma mean_dec mean_inc eta_semiangle eta_dec eta_inc
+     * zeta_semiangle zeta_dec zeta_inc</p>
+     * 
+     * <p>In the above, dec and inc refer to declination and inclination
+     * respectively; all angles are given in degrees.</p>
+     * 
+     * @param line 
+     */
     public KentParams(String line) {
         Scanner sc = new Scanner(line);
         tau = sc.nextDouble();
@@ -45,17 +91,6 @@ public class KentParams {
         zetaDir = Vec3.fromPolarDegrees(1., inc, dec);
     }
 
-    public KentParams(double tau, double tauSigma, double dec, double inc,
-            double etaMag, double etaDec, double etaInc,
-            double zetaMag, double zetaDec, double zetaInc) {
-        this.tau = tau;
-        this.tauSigma = tauSigma;
-        this.mean = Vec3.fromPolarDegrees(1., inc, dec);
-        this.etaMag = toRadians(etaMag);
-        this.etaDir = Vec3.fromPolarDegrees(1., etaInc, etaDec);
-        this.zetaMag = toRadians(zetaMag);
-        this.zetaDir = Vec3.fromPolarDegrees(1., zetaInc, zetaDec);
-    }
 
     private static List<String> execute(String[] args) throws IOException {
         Process process = Runtime.getRuntime().exec(args);
@@ -79,6 +114,18 @@ public class KentParams {
         return output;
     }
 
+    /**
+     * Calculates 95% Kent confidence ellipses from the supplied tensors 
+     * by running the {@code bootams.py} script from Lisa Tauxe's
+     * pmagpy suite. The ellipses are calculated by bootstrap statistics.
+     * 
+     * @param tensors the tensors on which to calculate statistics
+     * @param parametric {@code true} to use a parametric bootstrap; {@code} to use a ‘naïve’ bootstrap
+     * @param scriptPath filesystem path to the {@code bootams.py} script
+     * @return a list of three 95% Kent confidence ellipses for the supplied data.
+     * The ellipses are for the maximum, intermediate, and minimum axes, in that order
+     * @throws IOException if an I/O error occurred
+     */
     public static List<KentParams> calculateBootstrap(List<Tensor> tensors,
             boolean parametric, String scriptPath) throws IOException {
         File tempFile = null;
@@ -114,6 +161,19 @@ public class KentParams {
         return Collections.unmodifiableList(result);
     }
 
+    /**
+     * Calculates 95% Kent confidence ellipses from the supplied tensors 
+     * by running the {@code s_hext.py} script from Lisa Tauxe's
+     * pmagpy suite. The ellipses are calculated by Hext statistics.
+     * Note that no value is calculated for tau_sigma, which is set to
+     * zero.
+     * 
+     * @param tensors the tensors on which to calculate statistics
+     * @param scriptPath filesystem path to the {@code s_hext.py} script
+     * @return a list of three 95% Kent confidence ellipses for the supplied data.
+     * The ellipses are for the maximum, intermediate, and minimum axes, in that order
+     * @throws IOException if an I/O error occurred
+     */
    public static List<KentParams> calculateHext(List<Tensor> tensors,
            String scriptPath) throws IOException {
        final List<KentParams> result = new ArrayList<KentParams>(3);
@@ -143,30 +203,44 @@ public class KentParams {
        return Collections.unmodifiableList(result);
     }
 
+   /** Returns the tau value (eigenvalue of normalized mean susceptibility tensor).
+    * @return the tau value (eigenvalue of normalized mean susceptibility tensor). */
     public double getTau() {
         return tau;
     }
 
+    /** Returns (95% confidence region for tau)
+     * @return (95% confidence region for tau) */
     public double getTauSigma() {
         return tauSigma;
     }
 
+    /** Returns the mean direction
+     * @return the mean direction */
     public Vec3 getMean() {
         return mean;
     }
 
+    /** Returns the semiangle of the confidence ellipse's first axis
+     * @return the semiangle of the confidence ellipse's first axis */
     public double getEtaMag() {
         return etaMag;
     }
 
+    /** Returns the direction of the confidence ellipse's first axis
+     * @return the direction of the confidence ellipse's first axis */
     public Vec3 getEtaDir() {
         return etaDir;
     }
 
+    /** Returns the semiangle of the confidence ellipse's second axis
+     * @return the semiangle of the confidence ellipse's second axis */
     public double getZetaMag() {
         return zetaMag;
     }
 
+    /** Returns the direction of the confidence ellipse's second axis
+     * @return the direction of the confidence ellipse's second axis */
     public Vec3 getZetaDir() {
         return zetaDir;
     }

@@ -9,6 +9,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import static java.lang.Math.acos;
 
+/**
+ * This class represents a set of great circles and a set of directions.
+ * It calculates a best-fitting mean direction from these data using
+ * the method of McFadden and McElhinny (1988).
+ * 
+ * @author pont
+ */
 public class GreatCircles implements FisherParams {
 
     private static final Logger logger = Logger.getLogger("GreatCircles");
@@ -27,6 +34,13 @@ public class GreatCircles implements FisherParams {
         Arrays.asList("GC valid (Y/N)","GC dec (°)", "GC inc (°)",
             "GC a95 (°)", "GC k", "GC N", "GC M");
 
+    /**
+     * Calculates a mean direction from the supplied great circle and
+     * directions.
+     * 
+     * @param endpoints a set of directions (probably from linear PCA fits)
+     * @param circles a set of great circles
+     */
     public GreatCircles(List<Vec3> endpoints, List<GreatCircle> circles) {
         if (endpoints == null) this.endpoints = Collections.emptyList();
         else this.endpoints = endpoints;
@@ -96,10 +110,14 @@ public class GreatCircles implements FisherParams {
         return Math.toDegrees(Math.acos(v));
     }
 
+    /** Returns the great circles which were originally supplied to the constructor.
+     * @return the great circles which were originally supplied to the constructor */
     public List<GreatCircle> getCircles() {
         return Collections.unmodifiableList(circles);
     }
 
+    /** Returns the best-fit mean direction for the supplied circles and directions. 
+     * @return the best-fit mean direction for the supplied circles and directions */
     public Vec3 getMeanDirection() {
         return direction;
     }
@@ -108,20 +126,35 @@ public class GreatCircles implements FisherParams {
         return String.format(Locale.ENGLISH, "%.1f", d);
     }
 
+    /** Returns the statistical parameters as a list of strings.
+     * The order of the parameters is the same as the order of
+     * the headers provided by {@link #getHeaders()}.
+     * @return the statistical parameters as a list of strings
+     */
     public List<String> toStrings() {
         return Arrays.asList(isValid() ? "Y" : "N",
                 fmt(direction.getDecDeg()), fmt(direction.getIncDeg()),
                 fmt(a95), fmt(k), fmt(N()), fmt(M()));
     }
 
+    /** Returns a list of empty strings equal in length to the number of parameters.
+     * @return  a list of empty strings equal in length to the number of parameters
+     */
     public static List<String> getEmptyFields() {
         return Collections.nCopies(HEADERS.size(), "");
     }
 
+    /** Returns the headers describing the parameters as a list of strings.
+     * @return the headers describing the parameters
+     */
     public static List<String> getHeaders() {
         return HEADERS;
     }
 
+    /** Returns {@code true} if this great-circle fit is valid. 
+     * @return {@code true} if this great-circle fit is valid
+     */
+    // TODO make these limits configurable
     public boolean isValid() {
         return N()>=3 && a95<3.5 && k>3;
     }
