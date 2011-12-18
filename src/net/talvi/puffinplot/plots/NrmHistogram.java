@@ -43,7 +43,7 @@ public class NrmHistogram extends Plot {
         List<Double> nrms = new ArrayList<Double>(suite.getSamples().size());
         for (Sample s: suite.getSamples()) {
             if (s.hasData()) {
-                nrms.add(s.getNRM());
+                nrms.add(s.getNrm());
             }
         }
         final double minimum = 0; //Collections.min(nrms);

@@ -34,7 +34,7 @@ public class Site {
                 new ArrayList<Vec3>(getSamples().size());
         for (Sample s: getSamples()) {
             s.doPca(correction);
-            if (s.getPca() != null) directions.add(s.getPcaValues().getDirection());
+            if (s.getPcaAnnotated() != null) directions.add(s.getPcaValues().getDirection());
         }
         if (!directions.isEmpty()) {
             fisher = FisherValues.calculate(directions);
@@ -58,7 +58,7 @@ public class Site {
             if (sample.getGreatCircle() != null) {
                 sample.fitGreatCircle(correction); // make sure it's up to date
                 circles.add(sample.getGreatCircle());
-            } else if (sample.getPca() != null) {
+            } else if (sample.getPcaAnnotated() != null) {
                 endpoints.add(sample.getPcaValues().getDirection());
             }
         }

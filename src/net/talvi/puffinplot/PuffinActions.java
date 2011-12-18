@@ -428,7 +428,7 @@ public class PuffinActions {
             'M', false, KeyEvent.VK_M) {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {
-            for (Sample s: app.getSelectedSamples()) s.calculateMdf(app.getCorrection());
+            for (Sample s: app.getSelectedSamples()) s.calculateMdf();
             app.getMainWindow().repaint();
         }
     };
@@ -454,7 +454,7 @@ public class PuffinActions {
             'Z', false, KeyEvent.VK_C) {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {
-            for (Sample s: app.getSelectedSamples()) s.clear();
+            for (Sample s: app.getSelectedSamples()) s.clearCalculations();
             app.getMainWindow().repaint();
         }
     };

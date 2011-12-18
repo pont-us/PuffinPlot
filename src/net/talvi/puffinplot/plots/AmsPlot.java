@@ -98,7 +98,7 @@ public class AmsPlot extends EqAreaPlot {
         for (Sample s: PuffinApp.getInstance().getAllSamplesInSelectedSites()) {
             if (s.getAms() != null) {
                 for (int i=0; i<3; i++) {
-                    Vec3 v = s.getAmsAxis(i).normalize();
+                    Vec3 v = s.getAms().getAxis(i).normalize();
                     if (v.z < 0) v = v.invert(); // ensure lower hemisphere
                     final Point2D pos = project(v);
                     g.setColor(Color.GRAY);

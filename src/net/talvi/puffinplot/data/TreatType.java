@@ -2,9 +2,9 @@ package net.talvi.puffinplot.data;
 
 public enum TreatType {
     NONE("No treatment", "", ""),
-    DEGAUSS_XYZ("3-axis degauss", "3-axis AF field", "T"),
-    DEGAUSS_Z("z-axis degauss", "Z-axis AF field", "T"),
-    ARM("z-axis ARM", "AF field", "T"), //AF usually more interesting than bias
+    DEGAUSS_XYZ("3-axis degauss", "3-axis AF strength", "T"),
+    DEGAUSS_Z("z-axis degauss", "Z-axis AF strength", "T"),
+    ARM("z-axis ARM", "AF strength", "T"), //AF usually more interesting than bias
     IRM("IRM", "IRM field", "T"),
     THERMAL("Heating", "Temperature", "°C"),
     UNKNOWN("Unknown", "Unknown treatment", "?");

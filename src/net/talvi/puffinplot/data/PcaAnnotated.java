@@ -5,6 +5,16 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * This class encapsulates a set of principal component analysis (PCA)
+ * parameters along with some data on the treatment steps from which 
+ * the PCA was calculated. At present the treatment step data can only
+ * be read via the {@link #toStrings()} method which is intended for
+ * export to a file.
+ * 
+ * @see PcaValues
+ * @author pont
+ */
 public class PcaAnnotated {
 
     private final PcaValues pcaValues;
@@ -29,8 +39,19 @@ public class PcaAnnotated {
         this.contiguous = contiguous;
     }
 
-    static PcaAnnotated calculate(Sample s, Correction correction) {
-        List<Datum> rawData = s.getVisibleData();
+    /**
+     * Performs principal component analysis (PCA) on the specified sample.
+     * Points to use for PCA are determined using the 
+     * {@link Datum#isInPca()} method. The starting and ending treatment
+     * steps are stored, as is a flag indicating whether the treatment
+     * step were contiguous.
+     * 
+     * @param sample the sample on which to perform PCA
+     * @param correction the correction to apply to the magnetic moment data
+     * @return results of principal component analysis
+     */
+    public static PcaAnnotated calculate(Sample sample, Correction correction) {
+        List<Datum> rawData = sample.getVisibleData();
         List<Vec3> points = new ArrayList<Vec3>(rawData.size());
         List<Datum> data = new ArrayList<Datum>(rawData.size());
         
@@ -49,7 +70,7 @@ public class PcaAnnotated {
         if (thisIsPca) runEndsSeen++;
         boolean contiguous = (runEndsSeen <= 1);
         if (points.size() < 2) return null;
-        PcaValues pca = PcaValues.calculate(points, s.isPcaAnchored());
+        PcaValues pca = PcaValues.calculate(points, sample.isPcaAnchored());
         
         return new PcaAnnotated(pca,
                 data.get(0).getTreatmentLevel(),
@@ -57,10 +78,17 @@ public class PcaAnnotated {
                 contiguous);
     }
 
+    /** Returns the results of the principal component analysis.
+     * @return the results of the principal component analysis */
     public PcaValues getPcaValues() {
         return pcaValues;
     }
 
+    /** Returns the parameters as a list of strings.
+     * The order of the parameters is the same as the order of
+     * the headers provided by {@link #getHeaders()}.
+     * @return the parameters as a list of strings
+     */
     public List<String> toStrings() {
         ArrayList<String> result = new ArrayList<String>();
         result.addAll(pcaValues.toStrings());
@@ -70,12 +98,16 @@ public class PcaAnnotated {
         return Collections.unmodifiableList(result);
     }
 
+    /** Returns the headers describing the parameters as a list of strings.
+     * @return the headers describing the parameters */
     public static List<String> getHeaders() {
         return HEADERS;
     }
 
+    /** Returns a list of empty strings equal in length to the number of parameters.
+     * @return  a list of empty strings equal in length to the number of parameters
+     */
     public static List<String> getEmptyFields() {
         return Collections.nCopies(HEADERS.size(), "");
     }
-
 }

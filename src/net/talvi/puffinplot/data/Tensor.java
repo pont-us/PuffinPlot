@@ -78,7 +78,7 @@ public class Tensor {
         return Tensor.fromDirections(v1, v2, v3);
     }
 
-    Vec3 getAxis(int axis) {
+    public Vec3 getAxis(int axis) {
         return amsAxes.get(axis);
     }
 }

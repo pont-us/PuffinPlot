@@ -54,19 +54,19 @@ public class TreatTypeTest {
         for (TreatType t: TreatType.values()) {
             String label = t.getAxisLabel();
             switch (t) {
-            case NONE: assertEquals("No demagnetization", label);
+            case NONE: assertEquals("", label);
                 break;
-            case DEGAUSS_XYZ: assertEquals("3-axis AF strength (G)", label);
+            case DEGAUSS_XYZ: assertEquals("3-axis AF strength", label);
                 break;
-            case DEGAUSS_Z: assertEquals("Z-axis AF strength (G)", label);
+            case DEGAUSS_Z: assertEquals("Z-axis AF strength", label);
                 break;
-            case IRM: assertEquals("IRM field strength", label);
+            case IRM: assertEquals("IRM field", label);
                 break;
-            case THERMAL: assertEquals("Temperature (°C)", label);
+            case THERMAL: assertEquals("Temperature", label);
                 break;
             case UNKNOWN: assertEquals("Unknown treatment", label);
                 break;
-            case ARM: assertEquals("ARM field strength", label);
+            case ARM: assertEquals("AF strength", label);
                 break;
             default: fail("No test for axis label "+label);
                 break;

@@ -53,7 +53,7 @@ public class Util {
      * @param input a specification string
      * @param limit upper limit for bits to set; {@code limit-1} will be the 
      * highest possible set bit
-     * @return 
+     * @return a bit-set representation of the specified range
      */
     public static BitSet numberRangeStringToBitSet(String input, int limit) {
         Scanner sc = new Scanner(input);

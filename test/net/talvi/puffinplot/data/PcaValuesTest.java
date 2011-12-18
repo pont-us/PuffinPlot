@@ -46,7 +46,7 @@ public class PcaValuesTest {
          {2,2,1},
          {1,1,0}};
         
-        ArrayList<Vec3> points = new ArrayList(coords.length);
+        ArrayList<Vec3> points = new ArrayList<Vec3>(coords.length);
         for (double[] coord: coords)
             points.add(new Vec3(coord[0], coord[1], coord[2]));
         
@@ -59,16 +59,17 @@ public class PcaValuesTest {
          * since of course three points on a line plus any one other point
          * will be coplanar!
          */
-        assertEquals(Math.PI/4,anchored.getDecRadians(), 1e-6);
-        assertEquals(Math.toRadians(22.266),anchored.getIncRadians(), 0.01);
-        assertEquals(0,anchored.getMad1(), 0.01);
-        assertEquals(6.06,anchored.getMad3(), 0.01);
+        final Vec3 aDir = anchored.getDirection();
+        assertEquals(Math.PI/4, aDir.getDecRad(), 1e-6);
+        assertEquals(Math.toRadians(22.266), aDir.getIncRad(), 0.01);
+        assertEquals(0, anchored.getMad1(), 0.01);
+        assertEquals(6.06, anchored.getMad3(), 0.01);
         
         // These values worked out by hand.
-        assertEquals(Math.atan(1/Math.sqrt(2)),unanchored.getIncRadians(), 1e-6);
-        assertEquals(Math.PI/4,unanchored.getDecRadians(), 1e-6);
+        final Vec3 uaDir = unanchored.getDirection();
+        assertEquals(Math.atan(1/Math.sqrt(2)), uaDir.getIncRad(), 1e-6);
+        assertEquals(Math.PI/4, uaDir.getDecRad(), 1e-6);
         assertEquals(0,unanchored.getMad1(), 1e-6);
         assertEquals(0,unanchored.getMad3(), 1e-6);
     }
-
 }

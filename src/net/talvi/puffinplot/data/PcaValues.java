@@ -8,6 +8,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * This class performs three-dimension principal component analysis on
+ * a supplied collection of vectors and stores the results.
+ * 
+ * @see PcaAnnotated
+ * @author pont
+ */
 public class PcaValues {
     private final double mad1;
     private final double mad3;
@@ -26,6 +33,14 @@ public class PcaValues {
         this.anchored = anchored;
     }
 
+    /**
+     * Performs principal component analysis (PCA) on the supplied vectors
+     * and returns an object containing the results of the analysis.
+     * 
+     * @param points the points upon which to perform PCA
+     * @param anchored {@code true} to anchor the PCA to the origin
+     * @return the results of the PCA
+     */
     public static PcaValues calculate(List<Vec3> points, boolean anchored) {
         // We use Kirschvink's procedure but append a direction correction.
 
@@ -65,34 +80,36 @@ public class PcaValues {
         return new PcaValues(pComp, mad1, mad3, origin, anchored);
     }
 
-    public double getIncRadians() {
-        return direction.getIncRad();
-    }
-
-    public double getDecRadians() {
-        return direction.getDecRad();
-    }
-    
-    public double getIncDegrees() {
-        return direction.getIncDeg();
-    }
-
-    public double getDecDegrees() {
-        return direction.getDecDeg();
-    }
-
+    /** Returns the maximum angle of planar deviation.
+     * This is defined by Kirschvink (1980) p. 703.
+     * @return the maximum angle of planar deviation
+     */
     public double getMad1() {
         return mad1;
     }
 
+    /** Returns the maximum angle of linear deviation.
+     * This is defined by Kirschvink (1980) p. 703.
+     * @return the maximum angle of linear deviation
+     */
     public double getMad3() {
         return mad3;
     }
 
+    /**
+     * Returns the origin for the PCA fit. If this is an anchored PCA fit,
+     * this will be the zero vector, the origin for the co-ordinate system.
+     * Otherwise it will be the centre of mass of the points.
+     * 
+     * @return the origin for the PCA fit
+     */
     public Vec3 getOrigin() {
         return origin;
     }
 
+    /** Returns the direction of the principal PCA axis. 
+     * @return the direction of the principal PCA axis
+     */
     public Vec3 getDirection() {
         return direction;
     }
@@ -101,6 +118,8 @@ public class PcaValues {
         return String.format(Locale.ENGLISH, "%.1f", d);
     }
 
+    /** Returns the headers describing the parameters as a list of strings.
+     * @return the headers describing the parameters */
     public static List<String> getHeaders() {
         return HEADERS;
     }
@@ -108,7 +127,7 @@ public class PcaValues {
     /**
      * Return a Cartesian equation describing the PCA line.
      *
-     * @return a String giving an equation for the PCA
+     * @return a String giving an equation for the PCA line
      */
     public String getEquation() {
         StringBuilder sb = new StringBuilder();
@@ -121,8 +140,14 @@ public class PcaValues {
         return sb.toString();
     }
 
+    /** Returns the parameters as a list of strings.
+     * The order of the parameters is the same as the order of
+     * the headers provided by {@link #getHeaders()}.
+     * @return the parameters as a list of strings
+     */
     public List<String> toStrings() {
-        return Arrays.asList(fmt(getDecDegrees()), fmt(getIncDegrees()),
+        return Arrays.asList(fmt(direction.getDecDeg()), 
+                fmt(direction.getIncDeg()),
             fmt(getMad1()), fmt(getMad3()), anchored ? "yes" : "no");
     }
 }

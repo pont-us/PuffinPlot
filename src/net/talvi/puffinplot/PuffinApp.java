@@ -358,8 +358,8 @@ public final class PuffinApp {
      * points by principal component analysis.
      */
     public void doPcaOnSelection() {
-        for (Sample sample : getSelectedSamples()) {
-            if (sample.getSelectedPoints(getCorrection()).size() > 1) {
+        for (Sample sample: getSelectedSamples()) {
+            if (sample.getSelectedData().size() > 1) {
                 sample.useSelectionForPca();
                 sample.doPca(getCorrection());
             }

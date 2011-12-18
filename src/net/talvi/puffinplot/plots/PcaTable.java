@@ -41,8 +41,8 @@ public class PcaTable extends Plot {
         
         if (pca != null) {
             String[] strings = {
-                String.format("Dec %.2f", pca.getDecDegrees()),
-                String.format("Inc %.2f", pca.getIncDegrees()),
+                String.format("Dec %.2f", pca.getDirection().getDecDeg()),
+                String.format("Inc %.2f", pca.getDirection().getIncDeg()),
                 String.format("MAD1 %.2f", pca.getMad1()),
                 String.format("MAD3 %.2f", pca.getMad3()),
                 pca.getEquation(), ""

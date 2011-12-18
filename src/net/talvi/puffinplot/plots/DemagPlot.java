@@ -78,7 +78,7 @@ public class DemagPlot extends Plot {
         AxisParameters hAxisParams = new AxisParameters(xAxisLength * demagRescale, Direction.RIGHT).
                 withLabel(xAxisLabel).withNumberEachTick();
 
-        final MedianDestructiveField midpoint = sample.getMDF();
+        final MedianDestructiveField midpoint = sample.getMdf();
         if (midpoint != null && midpoint.isHalfIntReached()) {
             hAxisParams.markedPosition = midpoint.getDemagLevel() * demagRescale;
         }

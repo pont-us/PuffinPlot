@@ -17,6 +17,6 @@ public enum MeasurementAxis {
     MINUSZ,
     /** a virtual axis used in the modified Zijderveld plot, corresponding
      to the direction of the horizontal component of a data point.
-     @see net.talvi.puffinplot.plots.Zplot*/
+     @see net.talvi.puffinplot.plots.ZPlot */
     H;
 }

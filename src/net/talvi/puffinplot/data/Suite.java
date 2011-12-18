@@ -319,11 +319,11 @@ public class Suite {
                     PcaAnnotated.getHeaders(),
                     GreatCircle.getHeaders(), MedianDestructiveField.getHeaders());
             for (Sample sample: samples) {
-                final PcaAnnotated pca = sample.getPca();
-                final MedianDestructiveField mdf = sample.getMDF();
+                final PcaAnnotated pca = sample.getPcaAnnotated();
+                final MedianDestructiveField mdf = sample.getMdf();
                 final GreatCircle circle = sample.getGreatCircle();
                 writer.writeCsv(getName(), sample.getNameOrDepth(),
-                        String.format(Locale.ENGLISH, "%.4g", sample.getNRM()),
+                        String.format(Locale.ENGLISH, "%.4g", sample.getNrm()),
                         String.format(Locale.ENGLISH, "%.4g", sample.getMagSusJump()),
                         pca == null ? PcaAnnotated.getEmptyFields() : pca.toStrings(),
                         circle == null ? GreatCircle.getEmptyFields() : circle.toStrings(),
@@ -585,7 +585,7 @@ public class Suite {
         return Arrays.asList(fisherNormal, fisherReversed);
     }
 
-    public void exportToFiles(File directory, Collection<DatumField> fields) {
+    public void exportToFiles(File directory, List<DatumField> fields) {
         if (directory.exists()) {
             if (!directory.isDirectory()) {
                 logger.info(String.format("exportToFiles: %s is not a directory",

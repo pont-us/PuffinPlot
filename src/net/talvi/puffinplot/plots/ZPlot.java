@@ -118,23 +118,25 @@ public class ZPlot extends Plot {
         
         final PcaValues pca = sample.getPcaValues();
         if (pca != null) {
+            final double incRad = pca.getDirection().getIncRad();
+            final double decRad = pca.getDirection().getDecRad();
             final double x1 = pca.getOrigin().y * scale;
             final double y1 = - pca.getOrigin().x * scale;
-            drawLine(g, xOffset + x1, yOffset + y1,pca.getDecRadians(), axes, Color.BLUE);
+            drawLine(g, xOffset + x1, yOffset + y1,
+                    decRad, axes, Color.BLUE);
             
             final double x2 = pca.getOrigin().getComponent(vVs) * scale;
             final double y2 = - pca.getOrigin().getComponent(MeasurementAxis.MINUSZ) * scale;
             double incCorr = 0;
+
             switch (vVs) {
                 // We don't necessarily want the actual line of inclination; we
                 // want the projection of that line onto the appropriate plane.
                 case X:
-                    incCorr = atan(sin(pca.getIncRadians()) /
-                            (cos(pca.getIncRadians()) * cos(pca.getDecRadians())));
+                    incCorr = atan(sin(incRad) / (cos(incRad) * cos(decRad)));
                     break;
                 case Y:
-                    incCorr = atan(sin(pca.getIncRadians()) /
-                            (cos(pca.getIncRadians()) * sin(pca.getDecRadians())));
+                    incCorr = atan(sin(incRad) / (cos(incRad) * sin(decRad)));
                     break;
             }
             if (vVs== MeasurementAxis.X || vVs == MeasurementAxis.Y) {

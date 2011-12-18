@@ -81,7 +81,7 @@ public class Correction {
     }
     
     /** Returns a user-friendly string describing this correction. 
-     * @returna user-friendly string describing this correction */
+     * @return user-friendly string describing this correction */
     public String getDescription() {
         return getRotation().getNiceName() +
                 (empty ? " E" : "") +
