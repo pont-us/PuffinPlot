@@ -1,0 +1,26 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: General API for plot options
+desc: |-
+  It would be useful to have a system whereby a plot can declare
+  which options it wants to read out of the preferences, and 
+  PuffinPlot can automatically create GUI elements in the Preferences
+  window for the user to modify them. (Number of buckets in NRM
+  histogram, line tapering in equal-area plots, etc.) One complication:
+  some plot options (such as the aforementioned number-of-buckets)
+  would probably be better as suite-level rather than application-level
+  preferences. Not a trivial job in any case.
+type: :feature
+component: PuffinPlot
+release: "1.1"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2011-12-19 18:09:37.908202 Z
+references: []
+
+id: 4074e894298b2c7073a34587abff5e0d0e336df4
+log_events: 
+- - 2011-12-19 18:09:38.348100 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

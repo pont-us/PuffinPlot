@@ -9,7 +9,6 @@ import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import java.util.prefs.Preferences;
-import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 import net.talvi.puffinplot.data.Datum;
@@ -18,24 +17,45 @@ import net.talvi.puffinplot.data.Sample;
 import static net.talvi.puffinplot.plots.PlotAxis.AxisParameters;
 import static net.talvi.puffinplot.plots.PlotAxis.Direction;
 
+/**
+ * Demagnetization plot. This is a simple biplot with demagnetization
+ * step on the x axis and magnetic moment intensity on the y axis.
+ * When magnetic susceptibility data is available, it is also overlaid
+ * on the plot.
+ * 
+ * @author pont
+ */
 public class DemagPlot extends Plot {
 
     private final Preferences prefs;
 
+    /** Creates a demagnetization plot with the supplied parameters
+     * 
+     * @param parent the graph display containing the plot
+     * @param params the parameters of the plot
+     * @param prefs the preferences containing the plot configuration
+     */
     public DemagPlot(GraphDisplay parent, PlotParams params, Preferences prefs) {
         super(parent, params, prefs);
         this.prefs = prefs;
     }
 
+    /** Returns this plot's internal name.
+     * @return this plot's internal name */
     public String getName() {
         return "demag";
     }
 
+    /** Returns this plot's user-friendly name.
+     * @return this plot's user-friendly name */
     @Override
     public String getNiceName() {
         return "Demag.";
     }
 
+    /** Draws this plot. 
+     * @param g the graphics object to which to draw the plot
+     */
     public void draw(Graphics2D g) {
         clearPoints();
         Sample sample = params.getSample();

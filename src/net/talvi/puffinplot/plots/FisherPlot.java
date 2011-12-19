@@ -2,7 +2,6 @@ package net.talvi.puffinplot.plots;
 
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
-import static java.lang.Math.min;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
@@ -15,13 +14,19 @@ import java.util.prefs.Preferences;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 import net.talvi.puffinplot.PuffinApp;
-import net.talvi.puffinplot.PuffinPrefs;
 import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.data.FisherValues;
 import net.talvi.puffinplot.data.PcaValues;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Vec3;
 
+/**
+ * An equal-area plot showing site-level or suite-level Fisher statistics.
+ * This plot is only used in the special Fisher plot window; other variants
+ * are used in the main window.
+ * 
+ * @author pont
+ */
 public class FisherPlot extends EqAreaPlot {
 
     private final Stroke dashedStroke =
@@ -33,17 +38,29 @@ public class FisherPlot extends EqAreaPlot {
     
     private boolean groupedBySite = true;
     
+    /** Creates a Fisher plot with the supplied parameters.
+     * 
+     * @param parent the graph display containing the plot
+     * @param params the parameters of the plot
+     * @param dimensions the dimensions of this plot
+     * @param prefs the preferences containing the plot configuration
+     */
     public FisherPlot(GraphDisplay parent, PlotParams params,
             Rectangle2D dimensions, Preferences prefs) {
         super(parent, params, prefs);
         this.dimensions = dimensions;
     }
 
+    /** Returns this plot's internal name.
+     * @return this plot's internal name */
     @Override
     public String getName() {
         return "fisherplot";
     }
 
+    /** Draws this plot. 
+     * @param g the graphics object to which to draw the plot
+     */
     @Override
     public void draw(Graphics2D g) {
         updatePlotDimensions(g);
@@ -112,10 +129,22 @@ public class FisherPlot extends EqAreaPlot {
         drawPoints(g);
     }
 
+    /**
+     * Reports whether the Fisher means are grouped by site.
+     * 
+     * @return {@code true} if the graph shows Fisher means are grouped by site; 
+     * {@code false} if it shows a single Fisher mean calculated from all samples
+     */
     public boolean isGroupedBySite() {
         return groupedBySite;
     }
 
+    /**
+     * Sets whether the Fisher means are to be grouped by site.
+     * 
+     * @param groupedBySite {@code true} to show Fisher means are grouped by site; 
+     * {@code false} to show a single Fisher mean calculated from all samples
+     */
     public void setGroupedBySite(boolean groupedBySite) {
         this.groupedBySite = groupedBySite;
     }

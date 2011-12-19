@@ -2,13 +2,11 @@ package net.talvi.puffinplot.plots;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.prefs.Preferences;
-import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.plots.PlotAxis.AxisParameters;
@@ -17,23 +15,43 @@ import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 
 /**
- *
+ * A histogram of the intensities of natural remanent magnetizations of
+ * a collection of samples.
+ * 
  * @author pont
  */
 public class NrmHistogram extends Plot {
 
     private final Preferences prefs;
 
+    /** Creates an NRM histogram with the supplied parameters
+     * 
+     * @param parent the graph display containing the plot
+     * @param params the parameters of the plot
+     * @param prefs the preferences containing the plot configuration
+     */
     public NrmHistogram(GraphDisplay parent, PlotParams params, Preferences prefs) {
         super(parent, params, prefs);
         this.prefs = prefs;
     }
     
+    /** Returns this plot's internal name.
+     * @return this plot's internal name */
     @Override
     public String getName() {
         return "nrm_histogram";
     }
 
+    /** Returns this plot's user-friendly name.
+     * @return this plot's user-friendly name */
+    @Override
+    public String getNiceName() {
+        return "NRM Histogram";
+    }
+    
+    /** Draws this plot. 
+     * @param g the graphics object to which to draw the plot
+     */
     @Override
     public void draw(Graphics2D g) {
         clearPoints();
@@ -83,10 +101,5 @@ public class NrmHistogram extends Plot {
         }
 
         //drawPoints(g);
-    }
-
-    @Override
-    public String getNiceName() {
-        return "NRM Histogram";
     }
 }

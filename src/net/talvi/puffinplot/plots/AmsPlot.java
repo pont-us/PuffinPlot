@@ -7,15 +7,20 @@ import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.PuffinApp;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.data.KentParams;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
-import static java.lang.Math.min;
 
+/**
+ * A plot which shows the principal axes of anisotropy of magnetic
+ * susceptibility (AMS) tensors, and statistical means and confidence
+ * regions for groups of tensors.
+ * 
+ * @author pont
+ */
 public class AmsPlot extends EqAreaPlot {
 
     private List<KentParams> cachedBootstrapParams;
@@ -23,15 +28,25 @@ public class AmsPlot extends EqAreaPlot {
     private List<List<Vec3>> cachedBootstrapRegions = new ArrayList<List<Vec3>>();
     private List<List<Vec3>> cachedHextRegions = new ArrayList<List<Vec3>>();    
     
+    /** Creates an AMS plot with the supplied parameters
+     * 
+     * @param parent the graph display containing the plot
+     * @param params the parameters of the plot
+     * @param prefs the preferences containing the plot configuration
+     */
     public AmsPlot(GraphDisplay parent, PlotParams params, Preferences prefs) {
         super(parent, params, prefs);
     }
 
+    /** Returns this plot's internal name.
+     * @return this plot's internal name */
     @Override
     public String getName() {
         return "ams";
     }
 
+    /** Returns this plot's user-friendly name.
+     * @return this plot's user-friendly name */
     @Override
     public String getNiceName() {
         return "AMS";
@@ -69,8 +84,7 @@ public class AmsPlot extends EqAreaPlot {
                 build();
     }
 
-    protected void drawLhLineSegments(Graphics2D g,
-            int xo, int yo, int radius, List<Vec3> vs) {
+    private void drawLhLineSegments(Graphics2D g, List<Vec3> vs) {
          // determine whether we're in upper hemisphere, ignoring
          // z co-ordinates very close to zero. Assumes all segments
          // in same hemisphere.
@@ -86,6 +100,9 @@ public class AmsPlot extends EqAreaPlot {
          g.draw(vectorsToPath(vs2));
      }
 
+    /** Draws this plot. 
+     * @param g the graphics object to which to draw the plot
+     */
     public void draw(Graphics2D g) {
         updatePlotDimensions(g);
         clearPoints();
@@ -124,11 +141,11 @@ public class AmsPlot extends EqAreaPlot {
         g.setStroke(getStroke());
         g.setColor(Color.BLACK);
         for (List<Vec3> segment: cachedBootstrapRegions) {
-            drawLhLineSegments(g, xo, yo, radius, segment);
+            drawLhLineSegments(g, segment);
         }
         g.setStroke(getDashedStroke());
         for (List<Vec3> segment: cachedHextRegions) {
-            drawLhLineSegments(g, xo, yo, radius, segment);
+            drawLhLineSegments(g, segment);
         }
     }
 }

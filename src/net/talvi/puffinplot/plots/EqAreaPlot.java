@@ -21,27 +21,67 @@ import net.talvi.puffinplot.window.PlotParams;
 import net.talvi.puffinplot.data.Vec3;
 import static java.lang.Math.min;
 
+/**
+ * An abstract superclass for Lambert azimuthal equal-area plots.
+ * It provides various facilities to simplify the drawing of an
+ * equal-area plot, including projection of the data points and drawing
+ * of the axes.
+ * 
+ * @author pont
+ */
 public abstract class EqAreaPlot extends Plot {
     private static final int decTickStep = 10;
     private static final int incTickNum = 9;
     private boolean taperingEnabled;
+    
+    /** The graphics object to which to draw the plot.
+     *  It is set by {@link #updatePlotDimensions(Graphics2D)}. */
     protected Graphics2D g;
+    
+    /** The x co-ordinate of the projection's origin.
+     *  It is set by {@link #updatePlotDimensions(Graphics2D)}. */
     protected int xo;
+    
+    /** The y co-ordinate of the projection's origin.
+     *  It is set by {@link #updatePlotDimensions(Graphics2D)}. */
     protected int yo;
+    
+    /** The radius of the projection.
+     *  It is set by {@link #updatePlotDimensions(Graphics2D)}. */
     protected int radius;
     
+    /**
+     * Creates a new equal-area plot with the supplies parameters.
+     * 
+     * @param parent the graph display containing the plot
+     * @param params the plot parameters
+     * @param prefs the preferences containing the plot configuration
+     * @param taperingEnabled {@code true} to taper plotted lines according to z position
+     */
     protected EqAreaPlot(GraphDisplay parent, PlotParams params, Preferences prefs,
             boolean taperingEnabled) {
         super(parent, params, prefs);
         this.taperingEnabled = taperingEnabled;
     }
     
+    /**
+     * Creates a new equal-area plot with the supplies parameters.
+     * Plotted lines will not be tapered.
+     * 
+     * @param parent the graph display containing the plot
+     * @param params the plot parameters
+     * @param prefs the preferences containing the plot configuration
+     */
     protected EqAreaPlot(GraphDisplay parent, PlotParams params, Preferences prefs) {
         this(parent, params, prefs, false);
     }
     
     /**
-     *  This should be called before redrawing the plot.
+     * Sets the fields {@link #g}, {@link #radius}, {@link #xo},
+     * and {@link #yo} according to the supplied argument and the
+     * current plot dimensions.
+     * This method should be called before redrawing the plot.
+     * @param g the field {@link g} will be set to this value
      */
     protected void updatePlotDimensions(Graphics2D g) {
         final Rectangle2D dims = getDimensions();
@@ -51,6 +91,7 @@ public abstract class EqAreaPlot extends Plot {
         yo = (int) dims.getCenterY();
     }
     
+    /** Draws the axes of the plot. */
     protected void drawAxes() {
         g.setStroke(getStroke());
         //g.setColor(Color.WHITE);
@@ -75,6 +116,13 @@ public abstract class EqAreaPlot extends Plot {
         g.draw(new Line2D.Double(xo - l, yo, xo + l, yo));
     }
 
+    /**
+     * Projects a list of three-dimensional vectors into a two-dimensional
+     * path in the current plot co-ordinates.
+     * 
+     * @param vectors the vectors to project
+     * @return a path containing the projected vectors
+     */
     protected GeneralPath vectorsToPath(List<Vec3> vectors) {
         GeneralPath path = new GeneralPath();
         boolean first = true;
@@ -91,10 +139,13 @@ public abstract class EqAreaPlot extends Plot {
         return path;
     }
 
-     protected void drawStandardLineSegments(List<Vec3> vs) {
+    /**
+     * Draw non-tapered line segments. Assumes all segments in same hemisphere.
+     * @param vs vectors to project
+     */
+     private void drawStandardLineSegments(List<Vec3> vs) {
          // determine whether we're in upper hemisphere, ignoring
-         // z co-ordinates very close to zero. Assumes all segments
-         // in same hemisphere.
+         // z co-ordinates very close to zero. 
          boolean upperHemisph = true;
          for (Vec3 v: vs) { if (v.z > 1e-10) { upperHemisph = false; break; } }
          Stroke stroke = upperHemisph ? getStroke() : getDashedStroke();
@@ -103,10 +154,9 @@ public abstract class EqAreaPlot extends Plot {
      }
 
      /**
-      * Currently unused but should be plumbed in as a user preference
-      * at some point. Draws line segments using a three-dimensional effect,
+      * Draws line segments using a three-dimensional effect,
       * whereby more distant segments appear thinner and lighter in colour.
-      *
+      * Should be made selectable by a user preference at some point. 
       */
     private void drawTaperedLineSegments(List<Vec3> vs) {
          boolean first = true;
@@ -131,6 +181,11 @@ public abstract class EqAreaPlot extends Plot {
          }
      }
 
+    /**
+     * Projects and draws the supplied vectors.
+     * 
+     * @param vs the vectors to draw
+     */
     protected void drawLineSegments(List<Vec3> vs) {
         if (isTaperingEnabled()) {
             drawTaperedLineSegments(vs);
@@ -142,24 +197,47 @@ public abstract class EqAreaPlot extends Plot {
         }
     }
     
-    protected void drawGreatCircleSegment(Vec3 p1, Vec3 p2) {
-        drawLineSegments(Vec3.spherInterpolate(p1, p2, 0.05));
+    /** Draws the projection of a specified great-circle segment.
+     * The shorter of the two possible paths will be drawn.
+     * @param v0 one end of a great-circle segment
+     * @param v1 the other end of a great-circle segment
+     */
+    protected void drawGreatCircleSegment(Vec3 v0, Vec3 v1) {
+        drawLineSegments(Vec3.spherInterpolate(v0, v1, 0.05));
     }
 
-    protected void drawGreatCircleSegment(Vec3 p1, Vec3 p2, Vec3 dir) {
-        drawLineSegments(Vec3.spherInterpDir(p1, p2, dir, 0.05));
+    /** Draws the projection of a specified great-circle segment.
+     * Of the two possible paths, the one passing closer
+     * to the supplied vector {@code dir} will be drawn.
+     * @param v0 one end of a great-circle segment
+     * @param v1 the other end of a great-circle segment
+     * @param dir vector used to choose which path to draw
+     */
+    protected void drawGreatCircleSegment(Vec3 v0, Vec3 v1, Vec3 dir) {
+        drawLineSegments(Vec3.spherInterpDir(v0, v1, dir, 0.05));
     }
 
+    /**
+     * Projects and draws a great circle
+     * 
+     * @param pole the pole to the great circle which is to be drawn
+     * @param drawPole {@code true} to mark the pole on the plot
+     */
     protected void drawGreatCircle(Vec3 pole, boolean drawPole) {
         int n = 64;
         List<Vec3> vs = pole.greatCirclePoints(n, true);
         drawLineSegments(vs);
    }
 
-    protected Point2D.Double project(Vec3 p) {
-        final double h2 = p.x * p.x + p.y * p.y;
-        final double L = (h2 > 0) ? sqrt(1 - abs(p.z)) / sqrt(h2) : 0;
-
+    /**
+     * Projects the direction of a three-dimensional vector into plot co-ordinates.
+     * 
+     * @param v a vector
+     * @return the projection of the supplied vector onto this plot
+     */
+    protected Point2D.Double project(Vec3 v) {
+        final double h2 = v.x * v.x + v.y * v.y;
+        final double L = (h2 > 0) ? sqrt(1 - abs(v.z)) / sqrt(h2) : 0;
         /* Need to convert from declination (running clockwise from
          * Y axis) to plot co-ordinates (running anticlockwise from X axis).
          * First we flip the x-axis so that we're going anticlockwise
@@ -168,27 +246,13 @@ public abstract class EqAreaPlot extends Plot {
          * to take account of AWT Y-coordinates running top-to-bottom rather
          * than bottom-to-top (let x''' = x'' = y, y''' = -y'' = -x).
          */
-        return new Point2D.Double(xo + radius * p.y * L,
-                yo + radius * (-p.x) * L);
+        return new Point2D.Double(xo + radius * v.y * L,
+                yo + radius * (-v.x) * L);
     }
-//
-//    protected static GeneralPath project(List<Vec3> vs, int xo, int yo,
-//            int radius, boolean closed) {
-//        GeneralPath projection = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 72);
-//        boolean firstPoint = true;
-//        for (Vec3 v: vs) {
-//            Point2D.Double p = project(v, xo, yo, radius);
-//            if (firstPoint) {
-//                projection.moveTo((float) p.x, (float) p.y);
-//            } else {
-//                projection.lineTo((float) p.x, (float) p.y);
-//            }
-//            firstPoint = false;
-//        }
-//        if (closed) projection.closePath();
-//        return projection;
-//    }
 
+    /** Reports whether tapered lines are enabled for this plot. 
+     * @return {@code true} if tapered lines are enabled for this plot
+     */
     public boolean isTaperingEnabled() {
         return taperingEnabled;
     }

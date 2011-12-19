@@ -14,6 +14,14 @@ import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.TreatType;
 import static java.lang.String.format;
 
+/**
+ * A table showing some of the demagnetization data.
+ * At present the columns are: treatment step,
+ * declination, inclination, intensity, magnetic susceptibility.
+ * In the future they may become configurable.
+ * 
+ * @author pont
+ */
 public class DataTable extends Plot {
 
     private final double us = getUnitSize();
@@ -23,20 +31,32 @@ public class DataTable extends Plot {
     private final List<String> headers = 
             Arrays.asList(new String[] {"demag.", "dec.", "inc.", "int.", "m.s."});
     
+    /** Creates a data table with the supplied parameters
+     * 
+     * @param parent the graph display containing the table
+     * @param params the parameters of the table
+     * @param prefs the preferences containing the table configuration
+     */
     public DataTable(GraphDisplay parent, PlotParams params, Preferences prefs) {
         super(parent, params, prefs);
     }
 
+    /** Returns the internal plot name for this table. 
+     * @return the internal plot name for this table */
     @Override
     public String getName() {
         return "datatable";
     }
 
+    /** Returns the user-friendly plot name for this table. 
+     * @return the user-friendly plot name for this table */
     @Override
     public String getNiceName() {
         return "Data table";
     }
 
+    /** Draws the table. 
+     * @param g the graphics object to which to draw the table */
     @Override
     public void draw(Graphics2D g) {
         clearPoints();

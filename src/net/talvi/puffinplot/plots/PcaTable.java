@@ -8,6 +8,11 @@ import net.talvi.puffinplot.window.PlotParams;
 import net.talvi.puffinplot.data.PcaValues;
 import net.talvi.puffinplot.data.Sample;
 
+/**
+ * A textual display of a set of PCA parameters.
+ * 
+ * @author pont
+ */
 public class PcaTable extends Plot {
 
     private static final int X_SPACE = 100;
