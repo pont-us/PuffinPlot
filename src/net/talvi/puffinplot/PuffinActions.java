@@ -149,8 +149,7 @@ public class PuffinActions {
                     "Comma Separated Values");
             if (pathname != null)
                 try {
-                    app.getSuite().saveCalcsSample(new File(pathname),
-                            app.getCorrection());
+                    app.getSuite().saveCalcsSample(new File(pathname));
                 } catch (PuffinUserException ex) {
                     app.errorDialog("Error saving calculations", ex);
                 }
@@ -354,7 +353,7 @@ public class PuffinActions {
             } else if (!suite.getMeasType().isDiscrete()) {
                 app.errorDialog("Fisher by site", "Only discrete suites can have sites.");
             } else {
-                suite.doFisherOnSites(app.getCorrection());
+                suite.calculateSiteFishers(app.getCorrection());
                 app.getFisherWindow().getPlot().setGroupedBySite(true);
                 app.getFisherWindow().setVisible(true);
             }
@@ -373,7 +372,7 @@ public class PuffinActions {
             if (suite == null) {
                 app.errorDialog("Fisher on suite", "No suite loaded.");
             } else {
-                suite.doFisherOnSuite();
+                suite.calculateSuiteFisher();
                 app.getFisherWindow().getPlot().setGroupedBySite(false);
                 app.getFisherWindow().setVisible(true);
             }

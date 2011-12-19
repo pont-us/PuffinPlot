@@ -2,6 +2,10 @@ package net.talvi.puffinplot.data;
 
 import java.util.regex.Pattern;
 
+/** The type of measurement which was performed on a sample or set of samples.
+ * 
+ * @author pont
+ */
 public enum MeasType {
     /** measurement was on a discrete sample */
     DISCRETE("discrete", "sample"),

@@ -3,7 +3,7 @@ package net.talvi.puffinplot.data;
 /**
  * <p>This interface provides access to the standard parameters for 
  * Fisherian spherical statistics: mean direction, alpha-95, and
- * <i>k</i></p>
+ * <i>k</i>.</p>
  * 
  * <p>Note that usage of these parameters does not necessarily imply
  * that the statistics were obtained by the original Fisher (1953) method:

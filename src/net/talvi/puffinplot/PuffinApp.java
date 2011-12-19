@@ -714,7 +714,7 @@ public final class PuffinApp {
                     "/usr/local/bin");
             File f = new File(directory, scriptName);
             final String scriptPath = f.getAbsolutePath();
-         app.getSuite().doAmsStatistics(app.getAllSamplesInSelectedSites(),
+         app.getSuite().calculateAmsStatistics(app.getAllSamplesInSelectedSites(),
                  calcType, scriptPath);
         } catch (IOException ioe) {
             app.errorDialog("Error running AMS script", "The following error "+

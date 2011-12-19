@@ -52,7 +52,7 @@ public class FisherPlot extends EqAreaPlot {
         Suite suite = PuffinApp.getInstance().getSuite();
         if (suite==null) return;
         List<FisherValues> fishers = groupedBySite 
-                ? suite.getFishers()
+                ? suite.getSiteFishers()
                 : Collections.singletonList(suite.getSuiteFisher());
         if (fishers==null) return;
 

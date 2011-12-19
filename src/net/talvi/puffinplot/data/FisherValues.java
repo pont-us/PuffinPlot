@@ -45,7 +45,8 @@ public class FisherValues implements FisherParams {
         List<Vec3> normPoints = new ArrayList<Vec3>(vectors.size());
         double N = vectors.size();
         for (Vec3 point: vectors) normPoints.add(point.normalize());
-        double R = Vec3.vectorSumLength(normPoints);
+        // R is the vector sum length
+        double R = Vec3.sum(normPoints).mag();
         double k = (N-1)/(N-R);
         double a95 = Math.toDegrees(acos( 1 - ((N-R)/R) * (pow(1/p,1/(N-1))-1) ));
         return new FisherValues(normPoints, a95, k, Vec3.meanDirection(normPoints));

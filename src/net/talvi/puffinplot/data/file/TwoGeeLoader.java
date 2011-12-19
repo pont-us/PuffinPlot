@@ -159,6 +159,10 @@ public class TwoGeeLoader extends AbstractFileLoader {
         return result;
     }
 
+    private static Vec3 vectorMean(Vec3... vectors) {
+        return Vec3.mean(Arrays.asList(vectors));
+    }
+    
     private Datum combine3(Datum tray, Datum normal, Datum reversed) {
         /* We'll keep the rest of the data from the first (tray)
          * measurement, and just poke in the magnetic moment vector
@@ -180,11 +184,12 @@ public class TwoGeeLoader extends AbstractFileLoader {
         final Vec3 rev_tray = revV.minus(trayV);
         
         // average the relevant estimates for each axis
-        // for x and z, average tray-corr. norm, tc rev, and norm/rev average 
-        final Vec3 avg_x_z = Vec3.mean(norm_tray, norm_rev, rev_tray.invert());
+        // for x and z, average tray-corr. norm, tc rev, and norm/rev average
+        
+        final Vec3 avg_x_z = vectorMean(norm_tray, norm_rev, rev_tray.invert());
         // for y, average tray-corrected normal and reversed
         // (since 'reversed' doesn't flip the Y axis)
-        final Vec3 avg_y = Vec3.mean(norm_tray, rev_tray);
+        final Vec3 avg_y = vectorMean(norm_tray, rev_tray);
 
         // combine the axis estimates into a single vector
         Vec3 avg = new Vec3(avg_x_z.x, avg_y.y, avg_x_z.z);

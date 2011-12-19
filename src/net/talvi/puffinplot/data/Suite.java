@@ -29,7 +29,13 @@ import net.talvi.puffinplot.data.file.PplLoader;
 import net.talvi.puffinplot.data.file.TwoGeeLoader;
 import net.talvi.puffinplot.data.file.ZplotLoader;
 
-public class Suite {
+/** A suite of data, containing a number of samples.
+ * This will usually correspond to a section (for discrete studies)
+ * or core (for continuous studies).
+ * 
+ * @author pont
+ */
+public final class Suite {
 
     private List<Datum> data;
     private List<Site> sites;
@@ -50,15 +56,19 @@ public class Suite {
     private List<KentParams> amsBootstrapParams = null;
     private List<KentParams> hextParams= null;
 
-    public FisherValues getSuiteFisher() {
-        return suiteFisher;
-    }
-
+    /** Get the list of warnings produced when data was being loaded from
+     * one or more files.
+     * @return the list of warnings produced when data was being loaded from
+     * one or more files */
     public List<String> getLoadWarnings() {
         return Collections.unmodifiableList(loadWarnings);
     }
 
-    public void doFisherOnSuite() {
+    /** Calculates Fisher statistics on all the calculated PCA 
+     * directions for samples within the suite. The Fisher parameters
+     * are stored in the suite and can be retreived with
+     * {@link #getSuiteFisher()}. */
+    public void calculateSuiteFisher() {
         List<Sample> selected = PuffinApp.getInstance().getSelectedSamples();
         List<PcaValues> pcas = new ArrayList<PcaValues>(selected.size());
         for (Sample sample: selected) {
@@ -70,15 +80,28 @@ public class Suite {
         suiteFisher = FisherValues.calculate(directions);
     }
 
-    public void doFisherOnSites(Correction correction) {
-        if (!getMeasType().isDiscrete()) {
-            throw new UnsupportedOperationException("Only discrete suites "
-                    + "can have sites.");
-        }
+    /** Returns the Fisher parameters calculated on the entire suite. 
+     * @return the Fisher parameters calculated on the entire suite */
+    public FisherValues getSuiteFisher() {
+        return suiteFisher;
+    }
+
+    /** For each site in this suite, calculates Fisher statistics on the
+     * sample PCA directions.
+     * @param correction the correction to apply to the magnetic moment
+     * measurements when performing the PCA calculations
+     * @see #getSiteFishers()
+     * @see Site#doFisher(net.talvi.puffinplot.data.Correction)
+     */
+    public void calculateSiteFishers(Correction correction) {
         for (Site site: getSites()) site.doFisher(correction);
     }
 
-    public List<FisherValues> getFishers() {
+    /** Returns the results of the per-site Fisher statistics calculated 
+     * by {@link #calculateSiteFishers(net.talvi.puffinplot.data.Correction)}.
+     * @return the results of previously calculated per-site Fisher statistics
+     */
+    public List<FisherValues> getSiteFishers() {
         List<FisherValues> result = new ArrayList<FisherValues>(getSites().size());
         for (Site site: getSites()) {
             if (site.getFisher() != null) result.add(site.getFisher());
@@ -86,14 +109,26 @@ public class Suite {
         return result;
     }
 
+    /** Reports whether a default PuffinPlot file is set for this suite. 
+     * @return {@code true} if a default PuffinPlot file is set for this suite */
     public boolean isFilenameSet() {
         return getPuffinFile() != null;
     }
 
+    /** If a default PuffinPlot file is set for this suite, saves the suite data
+     * to that file. If not, does nothing.
+     * @throws PuffinUserException if an error occurred while saving the data
+     */
     public void save() throws PuffinUserException {
         if (getPuffinFile() != null) saveAs(getPuffinFile());
     }
 
+    /** Saves the data in this suite to a specified file. The specified
+     * file is also set as the default PuffinPlot file for this suite.
+     * 
+     * @param file the file to which to save the suite's data
+     * @throws PuffinUserException if an error occurred while saving data
+     */
     public void saveAs(File file) throws PuffinUserException {
         List<String> fields = DatumField.getRealFieldHeadings();
 
@@ -147,6 +182,8 @@ public class Suite {
         }
     }
 
+    /* Part of the old empty-slot correction code. Not currently used,
+     * but leaving in for now. */
     private Line getLineContainer(int lineNumber) {
         if (!dataByLine.containsKey(lineNumber))
             dataByLine.put(lineNumber, new Line(lineNumber));
@@ -182,6 +219,15 @@ public class Suite {
         return result;
     }
 
+    /** Performs calculations for each sample in this suite. For each sample,
+     * PCA and a great-circle fit are done, provided in each case that
+     * the sample contains data points which are flagged to be used for the
+     * calculation in question. The magnetic susceptibility jump temperature
+     * is also calculated.
+     * 
+     * @param correction the correction to apply to the magnetic moment
+     * data when performing the calculations
+     */
     public void doSampleCalculations(Correction correction) {
         for (Sample sample: getSamples()) {
             sample.doPca(correction);
@@ -190,7 +236,18 @@ public class Suite {
         }
     }
 
+    /** Calculate mean directions for all suitable sites in the suite.
+     * For each site, a Fisher mean and a great-circle mean may
+     * be calculated. The Fisher mean is only calculated for sites
+     * with a sufficient number of PCA directions for samples. The great-circle
+     * mean is only calculated for sites with a sufficient number of
+     * great circles fitted to samples.
+     * 
+     * @param correction the correction to apply to the magnetic moment
+     * data when performing the calculations
+     */
     public void doSiteCalculations(Correction correction) {
+        // TODO we can use getSites for this now!
         final Set<Site> sitesDone = new HashSet<Site>();
         for (Sample sample : getSamples()) {
             final Site site = sample.getSite();
@@ -203,11 +260,19 @@ public class Suite {
     }
 
     /**
-     * Note that this may return an empty suite, in which case it is the
+     * <p>Creates a new suite from the specified files.</p>
+     * 
+     * <p>Note that this may return an empty suite, in which case it is the
      * caller's responsibility to notice this and deal with it.
      * We can't just throw an exception if the suite's empty,
      * because then we lose the load warnings (which will probably explain
-     * to the user *why* the suite's empty and are thus quite important).
+     * to the user <i>why</i> the suite's empty and are thus quite important).</p>
+     * 
+     * @param files the files from which to load the data
+     * @param sensorLengths the effective lengths of the magnetometer's SQUID sensors,
+     * used to correct data read from a 2G long core file
+     * @param protocol the measurement protocol used
+     * @throws IOException if an I/O error occurred while reading the files 
      */
     public Suite(List<File> files, SensorLengths sensorLengths,
             TwoGeeLoader.Protocol protocol) throws IOException {
@@ -291,8 +356,10 @@ public class Suite {
         processPuffinLines(puffinLines);
     }
     
-    /**
+    /** Performs all possible sample and site calculations.
      *  Intended to be called after instantiating a new Suite from a file.
+     * @param correction the correction to apply to the magnetic moment
+     * data when performing the calculations
      */
     public void doAllCalculations(Correction correction) {
         doSampleCalculations(correction);
@@ -301,11 +368,11 @@ public class Suite {
         }
     }
     
-    /**
-     * Save calculations per-sample.
+    /** Exports sample calculations to a specified file in CSV format.
+     * @param file the file to which to write the sample calculations
+     * @throws PuffinUserException if an error occurred while writing the file
      */
-    public void saveCalcsSample(File file, Correction correction) 
-            throws PuffinUserException {
+    public void saveCalcsSample(File file) throws PuffinUserException {
         CsvWriter writer = null;
         try {
             if (samples.isEmpty()) {
@@ -340,8 +407,9 @@ public class Suite {
         }
     }
 
-    /*
-     * Save [Fisher and great-circle] calculations per site. Only works for discrete.
+    /** Exports site calculations to a specified file in CSV format.
+     * @param file the file to which to write the site calculations
+     * @throws PuffinUserException if an error occurred while writing the file
      */
     public void saveCalcsSite(File file) throws PuffinUserException {
         CsvWriter writer = null;
@@ -374,8 +442,9 @@ public class Suite {
         }
     }
 
-    /*
-     * Save a single Fisher calculation for the suite.
+    /** Saves the Fisher mean direction for the whole suite to a file in CSV format
+     * @param file the file to which to write the mean direction
+     * @throws PuffinUserException if an error occurred while writing the file
      */
     public void saveCalcsSuite(File file) throws PuffinUserException {
         CsvWriter writer = null;
@@ -396,46 +465,77 @@ public class Suite {
         }
     }
 
+    /** Returns a sample from this suite with the specified name,
+     * or {@code null} if no such sample exists. 
+     * @param name a sample name
+     * @return a sample from this suite with the specified name,
+     * or {@code null} if no such sample exists
+     */
     public Sample getSampleByName(String name) {
         return samplesById.get(name);
     }
 
+    /** Returns the index defining the current sample. 
+     * @return the index defining the current sample */
+    public int getCurrentSampleIndex() {
+        return currentSampleIndex;
+    }
+    
+    /** Sets the index defining the current sample. 
+     * @param value the index defining the current sample */
     public void setCurrentSampleIndex(int value) {
         currentSampleIndex = value;
     }
 
-    public int getCurrentSampleIndex() {
-        return currentSampleIndex;
-    }
-
+    /** Returns the current sample 
+     * @return the current sample */
     public Sample getCurrentSample() {
         return getSampleByIndex(getCurrentSampleIndex());
     }
-
+ 
+    /** Returns all the samples in this suite.
+     * @return all the samples in this suite */
     public List<Sample> getSamples() {
         return Collections.unmodifiableList(samples);
     }
 
+    /** Returns all the data points in this suite.
+     * @return all the data points in this suite */
     public List<Datum> getData() {
         return Collections.unmodifiableList(data);
     }
 
+    /** Returns the measurement type of this suite (discrete or continuous) 
+     * @return the measurement type of this suite (discrete or continuous) */
     public MeasType getMeasType() {
         return measType;
     }
 
+    /** Returns the name of this suite.
+     * @return the name of this suite */
     public String getName() {
         return suiteName;
     }
 
+    /** Returns the number of samples in this suite.
+     * @return the number of samples in this suite */
     public int getNumSamples() {
         return samplesById.size();
     }
 
+    /** Returns the sample with the specified index. 
+     * @param i an index number for a sample
+     * @return the sample with the specified index */
     public Sample getSampleByIndex(int i) {
         return samples.get(i);
     }
 
+    /** Returns the tray correction for the specified data point.
+     * Not currently used.
+     * @param d a data point representing a magnetic measurement
+     * @return a data point containing the magnetic moment of the
+     * section of the tray on which the measurement was made
+     */
     public Datum getTrayCorrection(Datum d) {
         Sample s = d.getSample();
         int slot = s.getSlotNumber();
@@ -447,11 +547,18 @@ public class Suite {
         }
     }
 
+    /** Returns the name of this suite. 
+     * @return the name of this suite */
     @Override
     public String toString() {
         return getName();
     }
 
+    /** Returns strings representing data about this suite.
+     * Note that this does not include data at the level of sites,
+     * samples, or treatment steps.
+     * @return strings representing data about this suite
+     */
     public List<String> toStrings() {
         List<String> result = new ArrayList<String>();
         if (customFlagNames.size()>0) {
@@ -463,6 +570,10 @@ public class Suite {
         return result;
     }
 
+    /** Sets suite data from a string. The string must be in the format
+     * of one of the strings produced by the {@link #toStrings()} method.
+     * @param string a string from which to read suite data
+     */
     public void fromString(String string) {
         String[] parts = string.split("\t");
         if ("CUSTOM_FLAG_NAMES".equals(parts[0])) {
@@ -472,7 +583,7 @@ public class Suite {
         }
     }
 
-    public double getFormAz() {
+    private double getFormAz() {
         for (Sample s: samples) {
             final double v = s.getFormAz();
             if (!Double.isNaN(v)) return v;
@@ -480,7 +591,7 @@ public class Suite {
         return 0;
     }
 
-    public double getFormDip() {
+    private double getFormDip() {
         for (Sample s: samples) {
             final double v = s.getFormDip();
             if (!Double.isNaN(v)) return v;
@@ -488,7 +599,7 @@ public class Suite {
         return 0;
     }
 
-    public double getMagDev() {
+    private double getMagDev() {
         for (Sample s: samples) {
             final double v = s.getMagDev();
             if (!Double.isNaN(v)) return v;
@@ -497,15 +608,21 @@ public class Suite {
     }
 
     /**
-     * Import AMS data from a whitespace-delimited file.
-     * If directions==false, line format is k11 k22 k33 k12 k23 k13 
+     * <p>Imports AMS data from a whitespace-delimited file.
+     * If {@code directions==false}, line format is k11 k22 k33 k12 k23 k13 
      * (tensor components) otherwise it's
      * inc1 dec1 inc2 dec2 inc3 dec3 (axis directions, decreasing magnitude).
      * If there's no sample in the suite from which to take the sample
      * and formation corrections, importAmsWithDialog will try to read them as
-     * fields appended to the end of the line.
+     * fields appended to the end of the line.</p>
+     * 
+     * <p>Not currently used in PuffinPlot.</p>
+     * 
+     * @param files the files from which to read the data
+     * @param directions {@code true} to read axis directions,
+     * {@code false} to read tensor components
+     * @throws IOException if there was an I/O error reading the files 
      */
-
     public void importAmsFromDelimitedFile(List<File> files, boolean directions)
             throws IOException {
         BufferedReader reader = null;
@@ -544,6 +661,15 @@ public class Suite {
         }
     }
 
+    /** Imports AMS data from ASC files in the format produced by
+     * Agico's SAFYR program.
+     * 
+     * @param files the ASC files to read
+     * @param magneticNorth {@code true} if the sample dip azimuths 
+     * in the file are relative to magnetic north; {@code false} if
+     * they are relative to geographic north
+     * @throws IOException if an I/O error occurred while reading the file
+     */
     public void importAmsFromAsc(List<File> files, boolean magneticNorth)
             throws IOException {
         List<AmsData> allData = new ArrayList<AmsData>();
@@ -566,10 +692,14 @@ public class Suite {
             }
             double[] v = ad.getTensor();
             sample.setAmsFromTensor(v[0], v[1], v[2], v[3], v[4], v[5]);
-            // guessSites(); // obsolete
         }
     }
 
+    /** Performs a reversal test on a list of suites. 
+     * @param suites the suites on which to perform the test.
+     * @return a two-item list containing Fisher statistics for the
+     * normal and reversed modes of the data in the suites, in that order
+     */
     public static List<FisherValues> doReversalTest(List<Suite> suites) {
         List<Vec3> normal = new ArrayList<Vec3>(), reversed = new ArrayList<Vec3>();
         for (Suite suite: suites) {
@@ -585,6 +715,11 @@ public class Suite {
         return Arrays.asList(fisherNormal, fisherReversed);
     }
 
+    /** Exports a subset of this suite's data to multiple files, one file
+     * per sample. The files are in a tab-delimited text format.
+     * @param directory the directory in which to create the files
+     * @param fields the fields to export
+     */
     public void exportToFiles(File directory, List<DatumField> fields) {
         if (directory.exists()) {
             if (!directory.isDirectory()) {
@@ -623,9 +758,8 @@ public class Suite {
         }
     }
 
-    /**
-     * @return the customFlagNames
-     */
+    /** Returns the names (titles) of the custom flags for this suite.
+     * @return the names (titles) of the custom flags for this suite  */
     public CustomFields<String> getCustomFlagNames() {
         return customFlagNames;
     }
@@ -646,33 +780,46 @@ public class Suite {
         }
     }
 
-    /**
-     * @return the customNoteNames
-     */
+    /** Returns the names (titles) of the custom notes for this suite.
+     * @return the names (titles) of the custom notes for this suite  */
     public CustomFields<String> getCustomNoteNames() {
         return customNoteNames;
     }
 
-    /**
-     * @return the amsBootstrapParams
-     */
+    /** Returns the parameters of the last AMS bootstrap statistics
+     * (if any) calculated on this suite's data.
+     * @return the parameters of the last AMS bootstrap statistics
+     * (if any) calculated on this suite's data */
     public List<KentParams> getAmsBootstrapParams() {
         return amsBootstrapParams;
     }
 
+    /** Returns the parameters of the last AMS Hext statistics
+     * (if any) calculated on this suite's data.
+     * @return the parameters of the last AMS Hext statistics
+     * (if any) calculated on this suite's data */
     public List<KentParams> getAmsHextParams() {
         return hextParams;
     }
 
+    /** Clears any AMS calculations on this suite */
     public void clearAmsCalculations() {
         amsBootstrapParams = null;
         hextParams = null;
     }
 
+    /** Returns the sites within this suite. 
+     * @return the sites within this suite */
     public List<Site> getSites() {
         return Collections.unmodifiableList(sites);
     }
 
+    /** Returns a site with the given name, or {@code null} if
+     * this suite contains no such site.
+     * @param siteName a site name
+     * @return a site with the given name, or {@code null} if
+     * this suite contains no such site
+     */
     public Site getSiteByName(String siteName) {
         for (Site site: sites) {
             if (siteName.equals(site.getName())) {
@@ -691,6 +838,8 @@ public class Suite {
         return site;
     }
 
+    /** Returns the name of the PuffinPlot file associated with this suite, if any. 
+     * @return the name of the PuffinPlot file associated with this suite, if any */
     public File getPuffinFile() {
         return puffinFile;
     }
@@ -737,10 +886,36 @@ public class Suite {
         }
     }
         
-    public static enum AmsCalcType { HEXT, BOOT, PARA_BOOT }; 
+    /** The type of a statistical calculation on AMS tensors. */
+    public static enum AmsCalcType {
+        /** Hext statistics*/
+        HEXT,
+        /** nonparametric bootstrap statistics */
+        BOOT,
+        /** parametric bootstrap statistics */
+        PARA_BOOT }; 
 
-    public void doAmsStatistics(List<Sample> samples, AmsCalcType calcType,
+    
+    /** Calculates and stores AMS statistics using an external script.
+     * 
+     * @param samples the samples on which to calculate statistics
+     * @param calcType the type of AMS calculation to perform
+     * @param scriptPath the filesystem path of the script which will perform the calculation
+     * @throws IOException if there was an error running the script or reading its output
+     * @throws IllegalArgumentException if the samples contain insufficient AMS data
+     */
+    public void calculateAmsStatistics(List<Sample> samples, AmsCalcType calcType,
             String scriptPath) throws IOException, IllegalArgumentException {
+        /* It may not be immediately obvious why this should be an instance
+         * method of Suite. In fact the only reason for this is that it
+         * stores its results in Suite. This is probably OK. The main deficiency
+         * of the current model for AMS data is that it only allows one set of
+         * data to be stored at a time. However, even if we improve that to
+         * allow multiple sets of AMS data, the Suite is the natural place
+         * to store them (since the sets of samples for AMS calculations
+         * isn't necessarily ties to a single Site).
+         * 
+         */
         List<Tensor> tensors = new ArrayList<Tensor>();
         for (Sample s: samples) {
             if (s.getAms() != null) tensors.add(s.getAms());
@@ -769,7 +944,6 @@ public class Suite {
         // ‘Iterator.remove is the only safe way to modify a collection 
         // during iteration’
         // -- http://docs.oracle.com/javase/tutorial/collections/interfaces/collection.html
-        
         for (Iterator<Site> it = sites.iterator(); it.hasNext(); ) {
             if (it.next().isEmpty()) {
                 it.remove();
@@ -777,6 +951,8 @@ public class Suite {
         }
     }
     
+    /** For a continuous suite, returns the minimum depth of a sample within the suite. 
+     * @return the minimum depth of a sample within the suite */
     public double getMinDepth() {
         if (!getMeasType().isContinuous()) return Double.NaN;
         double minimum = Double.POSITIVE_INFINITY;
@@ -789,6 +965,8 @@ public class Suite {
         return minimum;
     }
         
+    /** For a continuous suite, returns the maximum depth of a sample within the suite. 
+     * @return the maximum depth of a sample within the suite */
     public double getMaxDepth() {
         if (!getMeasType().isContinuous()) return Double.NaN;
         double maximum = Double.NEGATIVE_INFINITY;
@@ -801,10 +979,25 @@ public class Suite {
         return maximum;
     }
     
+    /** A SiteNamer turns a sample name into a site name. It is used
+     * to automatically define site names for a number of samples according
+     * to a pre-programmed scheme.
+     */
     public static interface SiteNamer {
+        /** Determines a site name from a sample name. 
+         * @param sample the name of a sample
+         * @return the name of a site which should contain the sample with the
+         * specified name
+         */
         String siteName(Sample sample);
     }
     
+    /** Sets sites for supplied samples according to a supplied site namer.
+     * Where a site with the required name exists, it will be used; 
+     * otherwise a new site with the required name will be created.
+     * @param samples the samples for which to set sites
+     * @param siteNamer the site namer which will produce the site names
+     */
     public void setSitesForSamples(Collection<Sample> samples, SiteNamer siteNamer) {
         for (Sample sample: samples) {
             final Site oldSite = sample.getSite();
@@ -818,6 +1011,12 @@ public class Suite {
         removeEmptySites();
     }
     
+    /** Explicitly sets a site for the specified samples.
+     * If a site with the requested name exists, it will be used;
+     * otherwise a new site with that name will be created.
+     * @param samples the samples for which to set the site
+     * @param siteName the name of the site into which to put the samples
+     */
     public void setNamedSiteForSamples(Collection<Sample> samples,
             final String siteName) {
         setSitesForSamples(samples, new SiteNamer() {
@@ -827,6 +1026,14 @@ public class Suite {
         });
     }
     
+    /** Sets site names for samples according to chosen characters from the
+     * sample names. The caller supplies a bit-set; for each sample name,
+     * the site name is determined by taking the characters of the sample
+     * name for which the corresponding bit is set.
+     * 
+     * @param samples the samples for which to set sites
+     * @param charMask the mask determining which characters to use for the site name
+     */
     public void setSiteNamesBySubstring(Collection<Sample> samples, final BitSet charMask) {
         setSitesForSamples(samples, new SiteNamer() {
             public String siteName(Sample sample) {
@@ -842,6 +1049,12 @@ public class Suite {
         });
     }
     
+    /** Sets site names for a continuous suite according to the depth of the samples.
+     * A thickness is specified to the method, and the suite is divided into
+     * sites of that thickness. Each site is named for the shallowest depth
+     * within it.
+     * @param samples the samples for which to set site names
+     * @param thickness the thickness of each site */
     public void setSiteNamesByDepth(Collection<Sample> samples, final double thickness) {
         setSitesForSamples(samples, new SiteNamer() {
             public String siteName(Sample sample) {
@@ -854,6 +1067,14 @@ public class Suite {
         });
     }
     
+    /** Creates a new sample and adds it to this suite.
+     * The sample's position is determined by
+     * its name. Provided that the suite is sorted by sample name (or depth),
+     * the sample will be inserted at its correct position according to 
+     * that sorting.
+     * @param id the identifier or name of the new sample
+     * @return a new sample with the supplied identifier
+     */
     public Sample insertNewSample(String id) {
         final Sample newSample = new Sample(id, this);
         int position = -1;
@@ -867,10 +1088,21 @@ public class Suite {
         return newSample;
     }
 
+    /** Determine whether this suite contain a same with a specified
+     * identifier (name).
+     * @param id a sample identifier
+     * @return {@code true} if this suite contains a sample with the
+     * specified identifier
+     */
     public boolean containsSample(String id) {
         return samplesById.containsKey(id);
     }
 
+    /** Multiplies all magnetic susceptibility measurements in this
+     * suite by the specified factor.
+     * @param factor a factor by which to multiply all the magnetic
+     * susceptibility measurements in this suite
+     */
     public void rescaleMagSus(double factor) {
         for (Datum d: data) {
             d.setMagSus(d.getMagSus() * factor);

@@ -42,7 +42,7 @@ public class AmsPlot extends EqAreaPlot {
         if (kps != null) {
             for (KentParams kp: kps) {
                 List<List<Vec3>> segments =
-                        Vec3.interpolateEquatorPoints(Vec3.ellipse(kp));
+                        Vec3.interpolateEquatorPoints(Vec3.makeEllipse(kp));
                 result.addAll(segments);
             }
         }

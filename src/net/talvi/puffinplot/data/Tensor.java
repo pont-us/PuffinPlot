@@ -5,11 +5,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * A second-order symmetric tensor used to represent the anisotropy of
+ * magnetic susceptibility.
+ * 
+ * @author pont
+ */
 public class Tensor {
 
     private double k11, k22, k33, k12, k23, k13;
     private List<Vec3> amsAxes;
 
+    /** Creates a tensor with the specified components. Since the
+     * tensor is symmetric, only six components need to be defined.
+     * 
+     * @param k11 (1,1) component
+     * @param k22 (2,2) component
+     * @param k33 (3,3) component
+     * @param k12 (1,2) and (2,1) component
+     * @param k23 (2,3) and (3,2) component
+     * @param k13 (1,3) and (3,1) component
+     */
     public Tensor(double k11, double k22, double k33,
             double k12, double k23, double k13) {
         this.k11 = k11;
@@ -25,6 +41,22 @@ public class Tensor {
         amsAxes = amsEigens.getVectors();
     }
 
+    /** Creates a tensor with the specified components and
+     * transformed using the specified matrices. The tensor
+     * is constructed by first making a tensor with the
+     * specified components, then sequentially transforming it
+     * by the two specified matrices. Since the
+     * tensor is symmetric, only six components need to be defined.
+     * 
+     * @param k11 (1,1) component
+     * @param k22 (2,2) component
+     * @param k33 (3,3) component
+     * @param k12 (1,2) and (2,1) component
+     * @param k23 (2,3) and (3,2) component
+     * @param k13 (1,3) and (3,1) component
+     * @param correct1 first correction matrix
+     * @param correct2 second correction matrix
+     */
     public Tensor(double k11, double k22, double k33,
             double k12, double k23, double k13, Matrix correct1, Matrix correct2) {
         double[] elts = {k11, k12, k13, k12, k22, k23, k13, k23, k33};
@@ -44,7 +76,11 @@ public class Tensor {
         amsAxes = amsEigens.getVectors();
     }
 
+    /** Creates a tensor with the specified principal axes.
+     * @param axes the principal axes of the tensor
+     */
     public Tensor(List<Vec3> axes) {
+        // TODO test this properly
         Vec3 v1 = axes.get(0);
         Vec3 v2 = axes.get(1);
         Vec3 v3 = axes.get(2);
@@ -57,11 +93,20 @@ public class Tensor {
         amsAxes = axes;
     }
 
+    /** Returns a string giving the components of the tensor, separated by spaces.
+     * The order is k11, k22, k33, k12, k23, k13.
+     * @return a string giving the components of the tensor, separated by spaces */
     public String toTensorComponentString() {
         String fmt = "%.5f %.5f %.5f %.5f %.5f %.5f";
         return String.format(Locale.ENGLISH, fmt, k11, k22, k33, k12, k23, k13);
     }
 
+    /** Creates a tensor with the specified axes.
+     * @param k1 major axis
+     * @param k2 intermediate axis
+     * @param k3 minor axis
+     * @return a tensor with the specified axes
+     */
     public static Tensor fromDirections(Vec3 k1, Vec3 k2, Vec3 k3) {
         List<Vec3> axes = new ArrayList<Vec3>(3);
         axes.add(k1);
@@ -70,7 +115,7 @@ public class Tensor {
         return new Tensor(axes);
     }
     
-    public static Tensor fromDirections(double i1, double d1, double i2,
+    private static Tensor fromDirections(double i1, double d1, double i2,
             double d2, double i3, double d3) {
         Vec3 v1 = Vec3.fromPolarDegrees(1, i1, d1);
         Vec3 v2 = Vec3.fromPolarDegrees(1, i2, d2);
@@ -78,6 +123,10 @@ public class Tensor {
         return Tensor.fromDirections(v1, v2, v3);
     }
 
+    /** Returns one of the tensor's three principal axes as a vector. 
+     * @param axis 0 for major axis, 1 for intermediate, and 2 for minor
+     * @return the requested axis
+     */
     public Vec3 getAxis(int axis) {
         return amsAxes.get(axis);
     }

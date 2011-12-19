@@ -45,7 +45,7 @@ public class PcaValues {
         // We use Kirschvink's procedure but append a direction correction.
 
         List<Vec3> movedPoints = points;
-        Vec3 origin = anchored ? Vec3.ORIGIN : Vec3.centreOfMass(points);
+        Vec3 origin = anchored ? Vec3.ORIGIN : Vec3.mean(points);
         if (!anchored) {
             // translate points to be centred on centre of mass
             movedPoints = new ArrayList<Vec3>(points.size());
