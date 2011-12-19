@@ -1,13 +1,11 @@
 package net.talvi.puffinplot.data.file;
 
 import java.util.regex.Matcher;
-import net.talvi.puffinplot.data.Datum;
 import java.util.List;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,6 +17,12 @@ import java.util.regex.Pattern;
 import static net.talvi.puffinplot.data.file.TwoGeeHelper.*;
 import static java.lang.Double.isNaN;
 
+/**
+ * A loader for PuffinPlot's own file format.
+ * 
+ * @author pont
+ */
+
 public class PplLoader extends AbstractFileLoader {
 
     private static final Logger logger = Logger.getLogger(PplLoader.class.getName());
@@ -28,9 +32,14 @@ public class PplLoader extends AbstractFileLoader {
     private Datum.Reader datumReader;
     private int treatmentField;
     private int version;
-    private List<String> extraLines = Collections.EMPTY_LIST;
+    private List<String> extraLines = Collections.emptyList();
     private final File file;
 
+    /**
+     * Creates a PuffinPlot file laoder for the specified file.
+     * 
+     * @param file the file from which to read data
+     */
     public PplLoader(File file) {
         this.file = file;
         try {
@@ -119,6 +128,6 @@ public class PplLoader extends AbstractFileLoader {
 
     @Override
     public List<String> getExtraLines() {
-        return extraLines;
+        return Collections.unmodifiableList(extraLines);
     }
 }

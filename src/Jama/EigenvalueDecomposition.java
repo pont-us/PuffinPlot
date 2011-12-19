@@ -857,8 +857,8 @@ public class EigenvalueDecomposition implements java.io.Serializable {
  * ------------------------ */
 
    /** Check for symmetry, then construct the eigenvalue decomposition
-   @param A    Square matrix
-   @return     Structure to access D and V.
+   @param Arg    Square matrix
+   Creates:     Structure to access D and V.
    */
 
    public EigenvalueDecomposition (Matrix Arg) {

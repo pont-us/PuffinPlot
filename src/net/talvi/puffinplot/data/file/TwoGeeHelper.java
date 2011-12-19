@@ -6,7 +6,7 @@ import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.Vec3;
 
-public class TwoGeeHelper {
+class TwoGeeHelper {
 
     private static final Map<String, TreatType> treatTypeMap =
             new HashMap<String, TreatType>();

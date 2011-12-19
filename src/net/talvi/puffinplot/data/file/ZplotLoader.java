@@ -16,6 +16,11 @@ import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.Vec3;
 import static net.talvi.puffinplot.data.file.TwoGeeHelper.*;
 
+/**
+ * A file loader for the file format used by Steve Hurst's Zplot program.
+ * 
+ * @author pont
+ */
 public class ZplotLoader extends AbstractFileLoader {
 
     private LineNumberReader reader;
@@ -37,6 +42,9 @@ public class ZplotLoader extends AbstractFileLoader {
         HEADERS = fieldPatterns;
     }
     
+    /** Creates a new Zplot loader to read a specified file. 
+     * @param file the Zplot file to read
+     */
     public ZplotLoader(File file) {
         this.file = file;
         data = new LinkedList<Datum>();

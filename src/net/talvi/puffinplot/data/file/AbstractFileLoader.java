@@ -6,7 +6,13 @@ import java.util.LinkedList;
 import java.util.List;
 import net.talvi.puffinplot.data.Datum;
 
-public abstract class AbstractFileLoader implements FileLoader {
+/**
+ * An abstract implementation of the {@link FileLoader} interface.
+ * This class provides a few facilities for implementing classes.
+ * 
+ * @author pont
+ */
+abstract class AbstractFileLoader implements FileLoader {
 
     protected List<String> messages = new LinkedList<String>();
     protected List<Datum> data = new ArrayList<Datum>();;

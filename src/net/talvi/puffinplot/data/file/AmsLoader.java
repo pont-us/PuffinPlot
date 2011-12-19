@@ -1,20 +1,17 @@
 package net.talvi.puffinplot.data.file;
 
 import java.util.regex.Pattern;
-import java.util.Arrays;
 import net.talvi.puffinplot.data.AmsData;
 import java.util.ArrayList;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
-import net.talvi.puffinplot.data.Tensor;
 import static java.lang.Double.parseDouble;
 
 /**
- * Turn an AGICO .ASC AMS file into a list of AMS tensors.
+ * Turns an AGICO .ASC AMS file into a list of AMS tensors.
  *
  * @author pont
  */
@@ -25,6 +22,8 @@ public class AmsLoader {
     private static final Pattern lastLine =
             Pattern.compile("^\\d\\d-\\d\\d-\\d\\d\\d\\d$");
 
+    /** Creates a new AMS laoder for a specified file. 
+     * @param ascFile the file for which to create the loader */
     public AmsLoader(File ascFile) {
         this.ascFile = ascFile;
     }
@@ -41,7 +40,13 @@ public class AmsLoader {
         return result.toArray(new String[][] {});
     }
 
-    public List<AmsData> readFile2() throws IOException {
+    /**
+     * Reads the file for which this loader was created.
+     * 
+     * @return the AMS tensor data in the file
+     * @throws IOException if there was an I/O error while reading the file
+     */
+    public List<AmsData> readFile() throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(ascFile));
         List<AmsData> result = new ArrayList<AmsData>();
         do {
@@ -59,7 +64,7 @@ public class AmsLoader {
         return result;
     }
 
-    public List<AmsData> readFile() throws IOException {
+    private List<AmsData> oldReadFile() throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(ascFile));
         List<AmsData> result = new ArrayList<AmsData>();
         String line = null;

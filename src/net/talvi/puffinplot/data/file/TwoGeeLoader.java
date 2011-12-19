@@ -20,6 +20,13 @@ import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.Vec3;
 import static net.talvi.puffinplot.data.file.TwoGeeHelper.*;
 
+/**
+ * A loader for data files produced by the Long Core software supplied
+ * with 2G Enterprises magnetometers.
+ * 
+ * @author pont
+ */
+
 public class TwoGeeLoader extends AbstractFileLoader {
 
     private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
@@ -32,16 +39,33 @@ public class TwoGeeLoader extends AbstractFileLoader {
     private final Protocol protocol;
     private Set<String> requestedFields = new HashSet<String>();
 
-
-    public enum Protocol {
-        NORMAL, // just a sample measurement
-        TRAY_NORMAL, // tray measurement then sample measurement
-        NORMAL_TRAY, // sample measurement then tray measurement
-        TRAY_NORMAL_YFLIP, // tray, sample, sample flipped around Y axis
-        TRAY_FIRST, // single tray measurement, then sample measurements
-        TRAY_NORMAL_IGNORE; // as TRAY_NORMAL but only use first tray correction
+    /**
+     * A measurement protocol. A protocol defines the order in which sample
+     * measurements and empty-tray measurements are taken, and the 
+     * sample orientations during sample measurements.
+     */
+    public static enum Protocol {
+        /** just a sample measurement */
+        NORMAL,
+        /** tray measurement then sample measurement */
+        TRAY_NORMAL,
+        /** sample measurement then tray measurement */
+        NORMAL_TRAY,
+        /** tray, then sample, then sample flipped around Y axis */
+        TRAY_NORMAL_YFLIP,
+        /** single initial tray measurement, then sample measurements */
+        TRAY_FIRST,
+        /** as TRAY_NORMAL but only use first tray correction */
+        TRAY_NORMAL_IGNORE;
     }
     
+    /**
+     * Creates a new 2G loader using the supplied parameters.
+     * 
+     * @param file the file to read
+     * @param protocol the measurement protocol which was used to create the data
+     * @param sensorLengths the effective sensor lengths (only used for long core data)
+     */
     public TwoGeeLoader(File file, Protocol protocol, Vec3 sensorLengths) {
         this.file = file;
         this.protocol = protocol;
@@ -204,10 +228,10 @@ public class TwoGeeLoader extends AbstractFileLoader {
      * (2) requested but not found
      */
     private void correlateFields() {
-        Set<String> fileFieldSet = new HashSet(fields.keySet());
-        Set<String> notUsed = new HashSet(fileFieldSet);
+        Set<String> fileFieldSet = new HashSet<String>(fields.keySet());
+        Set<String> notUsed = new HashSet<String>(fileFieldSet);
         notUsed.removeAll(requestedFields);
-        Set<String> notInFile = new HashSet(requestedFields);
+        Set<String> notInFile = new HashSet<String>(requestedFields);
         notInFile.removeAll(fileFieldSet);
         logger.info(String.format("Field headers in file %s\n" +
                 "Not found in file: %s\nIn file but ignored: %s", file,

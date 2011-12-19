@@ -675,7 +675,7 @@ public final class Suite {
         List<AmsData> allData = new ArrayList<AmsData>();
         for (File file: files) {
             AmsLoader amsLoader = new AmsLoader(file);
-            allData.addAll(amsLoader.readFile2());
+            allData.addAll(amsLoader.readFile());
         }
         for (AmsData ad: allData) {
             String name = ad.getName();
