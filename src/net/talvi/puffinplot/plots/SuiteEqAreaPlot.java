@@ -12,8 +12,11 @@ import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 
 /**
- * Displays directions for great-circle fits for whole suite.
- * 
+ * An equal-area plot data for an entire suite.
+ * This plot displays site means calculated using Fisher statistics
+ * or great-circle intersections, and overall Fisher means of the
+ * site means themselves. If there are site means in both hemispheres,
+ * a separate mean is shown for each hemisphere.
  */
 public class SuiteEqAreaPlot extends EqAreaPlot {
 

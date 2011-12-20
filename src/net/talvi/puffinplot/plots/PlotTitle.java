@@ -4,13 +4,24 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.util.prefs.Preferences;
-import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 import net.talvi.puffinplot.data.Sample;
 
+/**
+ * A title for the graph display, showing the sample identifier and
+ * some other information.
+ * 
+ * @author pont
+ */
 public class PlotTitle extends Plot {
 
+    /** Creates a plot title with the supplied parameters.
+     * 
+     * @param parent the graph display containing the plot title
+     * @param params the parameters of the plot title
+     * @param prefs the preferences containing the plot title configuration
+     */
     public PlotTitle(GraphDisplay parent, PlotParams params, Preferences prefs) {
         super(parent, params, prefs);
     }

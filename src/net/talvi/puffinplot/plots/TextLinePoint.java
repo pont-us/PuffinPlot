@@ -11,7 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 import net.talvi.puffinplot.data.Datum;
 
-public class TextLinePoint implements PlotPoint {
+/**
+ * <p>A <q>data point</q> which actually consists of a line of text.</p>
+ * 
+ * @author pont
+ */
+class TextLinePoint implements PlotPoint {
 
     private final Plot plot;
     private final Datum datum;

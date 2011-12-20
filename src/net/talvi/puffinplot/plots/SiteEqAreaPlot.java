@@ -16,6 +16,16 @@ import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 
+/**
+ * An equal-area plot showing data for a site. For each sample
+ * at the site, this plot shows the best-fitting great circle
+ * (if it has been calculated) and PCA direction (if it 
+ * has been calculated). The plot also shows the site mean 
+ * direction as calculated by Fisher statistics or by great-circle
+ * analysis.
+ * 
+ * @author pont
+ */
 public class SiteEqAreaPlot extends EqAreaPlot {
 
     public SiteEqAreaPlot(GraphDisplay parent, PlotParams params,

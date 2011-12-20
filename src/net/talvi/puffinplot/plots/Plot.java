@@ -32,11 +32,24 @@ import net.talvi.puffinplot.data.Datum;
 import static java.awt.font.TextAttribute.SUPERSCRIPT;
 import static java.awt.font.TextAttribute.SUPERSCRIPT_SUPER;
 
+/**
+ * An abstract superclass for all plots and other data displays.
+ * Any class that needs to write or draw to one of PuffinPlot's
+ * graph display areas should extend this class. Plot's subclasses
+ * include both graphical plots and textual displays such as
+ * the plot title and data table.
+ * 
+ * @author pont
+ */
 public abstract class Plot
 {
     private static final Logger logger = Logger.getLogger(Plot.class.getName());
+    
+    /** the plot parameters */
     protected final PlotParams params;
+    /** the plot's dimensions */
     protected Rectangle2D dimensions;
+    /** the data points displayed by the plot */
     List<PlotPoint> points = new LinkedList<PlotPoint>();
     private static final float UNIT_SCALE = 0.0001f;
     private Stroke stroke, dashedStroke;
@@ -45,6 +58,7 @@ public abstract class Plot
     private static final float TICK_LENGTH_IN_UNITS = 48.0f;
     private static final float FONT_SIZE_IN_UNITS = 120.0f;
     private static final float SLOPPY_SELECTION_RADIUS_IN_UNITS = 128.0f;
+    /** the default size of a plotted data point */
     protected static final double PLOT_POINT_SIZE = 24.;
     private Map<Attribute,Object> attributeMap =
             new HashMap<Attribute, Object>();
@@ -52,6 +66,7 @@ public abstract class Plot
     private boolean visible;
     private final boolean useAppleSuperscriptHack;
 
+    /** the default sizes and positions of the plots */
     protected static final String DEFAULT_PLOT_POSITIONS =
             "demag true 374 85 348 311 zplot true 736 85 456 697 " +
             "zplotlegend true 1060 14 130 49 title true 14 14 462 57 " +
@@ -68,119 +83,12 @@ public abstract class Plot
         MAC_SUPERSCRIPT_TRANSFORM = new TransformAttribute(at);
     }
 
-    public Rectangle2D getDimensions() {
-        return dimensions;
-    }
-
-    public void setDimensions(Rectangle2D dimensions) {
-        this.dimensions = dimensions;
-    }
-
-    public void setDimensionsToDefault() {
-        setDimensionsFromPrefsString(DEFAULT_PLOT_POSITIONS);
-    }
-
-    public int getMargin() {
-        return 24;
-    }
-
-    public Stroke getStroke() {
-        return stroke;
-    }
-    
-    public Stroke getDashedStroke() {
-        return dashedStroke;
-    }
-
-    public final float getUnitSize() {
-        return unitSize;
-    }
-
-    public float getTickLength() {
-        return TICK_LENGTH_IN_UNITS * getUnitSize();
-    }
-
-    public final float getFontSize() {
-        return FONT_SIZE_IN_UNITS * getUnitSize();
-    }
-
-    public Map<? extends Attribute,?> getTextAttributes() {
-        return Collections.unmodifiableMap(attributeMap);
-    }
-
-    public void applyTextAttributes(AttributedString as) {
-        for (Map.Entry<? extends Attribute, ?> a : attributeMap.entrySet())
-            as.addAttribute(a.getKey(), a.getValue());
-    }
-
-    protected void writeString(Graphics2D g, String text, float x, float y) {
-        if (text != null && !"".equals(text)) {
-            writeString(g, new AttributedString(text), x, y);
-        }
-    }
-
-    protected void writeString(Graphics2D g, AttributedString as, float x, float y) {
-        applyTextAttributes(as);
-        FontRenderContext frc = g.getFontRenderContext();
-        TextLayout layout = new TextLayout(as.getIterator(), frc);
-        layout.draw(g, x, y);
-    }
-
-    /**
-     *  Used for "x10^?" when exponent is unknown.
+    /** Creates a plot with the supplied parameters.
+     * 
+     * @param parent the graph display containing the plot
+     * @param params the parameters of the plot
+     * @param prefs the preferences containing the plot configuration
      */
-    protected AttributedString timesTenToThe(String text, String exponent) {
-        if (!useAppleSuperscriptHack) {
-            // 00D7 is the multiplication sign
-            text += " \u00D710" + exponent;
-            AttributedString as = new AttributedString(text);
-            as.addAttribute(SUPERSCRIPT, SUPERSCRIPT_SUPER,
-                    text.length() - exponent.length(), text.length());
-            return as;
-        } else {
-            /* This is a fairly horrendous workaround for some fairly
-             * horrendous bugs in Apple Java text rendering. Superscript
-             * attributes don't work properly; the obvious workaround for
-             * that (manually creating a scale-and-translate attribute)
-             * doesn't work either, since for some reason the transform
-             * is applied once to the first character in the run, then
-             * twice to subsequent characters. To get around this, we
-             * (1) create a transform which, when applied twice over,
-             * produces an acceptable superscript effect, and (2) insert
-             * a zero-width space as the first character in the run,
-             * which "soaks up" the single application of the transform.
-             * Much tedious trial and error went into this; test any changes
-             * thoroughly!
-             * 
-             * Works for Java 1.5.0 on OS X 10.5.8 PPC, tested 2011-12-08.
-             * Now that recent Macs can do superscript properly, it's
-             * probably not worth individually crafting and testing 
-             * workarounds for every Java/OS X/architecture combination.
-             * I will trust that this one is acceptable until/unless
-             * I get a bug report about it.
-             */
-            text += " \u00D710\u200B" + exponent;
-            AttributedString as = new AttributedString(text);
-            as.addAttribute(TextAttribute.TRANSFORM, MAC_SUPERSCRIPT_TRANSFORM,
-                    text.length() - exponent.length() - 1, text.length());
-            return as;
-        }
-    }
-
-    protected AttributedString timesTenToThe(String text, int exponent) {
-        return timesTenToThe(text, Integer.toString(exponent));
-    }
-
-    protected Rectangle2D cropRectangle(Rectangle2D r, double left,
-            double right, double top, double bottom) {
-        final double u = getUnitSize();
-        return new Rectangle2D.Double(
-                r.getMinX() + left * u,
-                r.getMinY() + top * u,
-                r.getWidth() - (left + right) * u,
-                r.getHeight() - (top + bottom) * u);
-    }
-    
     public Plot(GraphDisplay parent, PlotParams params, Preferences prefs) {
         this.params = params;
         String sizesString = DEFAULT_PLOT_POSITIONS;
@@ -229,7 +137,186 @@ public abstract class Plot
             }
         }
     }
+    
+    /** Returns the dimensions of this plot. 
+     * @return the dimensions of this plot */
+    public Rectangle2D getDimensions() {
+        return dimensions;
+    }
 
+    /** Sets the dimensions of this plot. 
+     * @param dimensions dimensions the new dimensions of this plot */
+    public void setDimensions(Rectangle2D dimensions) {
+        this.dimensions = dimensions;
+    }
+
+    /** Resets the plot's dimensions to the default,
+     * as defined in {@link #DEFAULT_PLOT_POSITIONS}. */
+    public void setDimensionsToDefault() {
+        setDimensionsFromPrefsString(DEFAULT_PLOT_POSITIONS);
+    }
+
+    /** Returns the size of the margin displayed when resizing the plot. 
+     * @return the size of the margin displayed when resizing the plot */
+    public int getMargin() {
+        return 24;
+    }
+
+    /** Returns the default solid stroke style.
+     * @return the default solid stroke style. */
+    public Stroke getStroke() {
+        return stroke;
+    }
+    
+    /** Returns the default dashed stroke style.
+     * @return the default dashed stroke style. */
+    public Stroke getDashedStroke() {
+        return dashedStroke;
+    }
+
+    /** Returns the size of a plot unit in Java 2D units.
+     * @return the size of a plot unit in Java 2D units */
+    public final float getUnitSize() {
+        return unitSize;
+    }
+
+    /** Returns the standard length of an axis tick in plot units. 
+     * @return the standard length of an axis tick in plot units */
+    public float getTickLength() {
+        return TICK_LENGTH_IN_UNITS * getUnitSize();
+    }
+
+    /** Returns the standard font size in plot units.
+     * @return the standard font size in plot units. */
+    public final float getFontSize() {
+        return FONT_SIZE_IN_UNITS * getUnitSize();
+    }
+
+    /** Returns this plot's standard text attributes. 
+     * @return this plot's standard text attributes */
+    public Map<? extends Attribute,?> getTextAttributes() {
+        return Collections.unmodifiableMap(attributeMap);
+    }
+
+    /** Applies this plot's standard text attributes to an attributed string.
+     * @param as the string to which to apply this plot's standard text 
+     * attributes
+     */
+    public void applyTextAttributes(AttributedString as) {
+        for (Map.Entry<? extends Attribute, ?> a : attributeMap.entrySet())
+            as.addAttribute(a.getKey(), a.getValue());
+    }
+
+    /** Writes a text string onto this plot. 
+     * @param g the graphics object to which to write the 
+     * @param text the text to write
+     * @param x the x co-ordinate of the text
+     * @param y the y co-ordinate of the text
+     */
+    protected void writeString(Graphics2D g, String text, float x, float y) {
+        if (text != null && !"".equals(text)) {
+            writeString(g, new AttributedString(text), x, y);
+        }
+    }
+
+    /** Writes an attributed text string onto this plot. 
+     * @param g the graphics object to which to write the 
+     * @param as the text to write
+     * @param x the x co-ordinate of the text
+     * @param y the y co-ordinate of the text
+     */
+    protected void writeString(Graphics2D g, AttributedString as, float x, float y) {
+        applyTextAttributes(as);
+        FontRenderContext frc = g.getFontRenderContext();
+        TextLayout layout = new TextLayout(as.getIterator(), frc);
+        layout.draw(g, x, y);
+    }
+
+    /**
+     * Returns an attributed string representing a number in scientific
+     * notation. For example, a significand of 12 and an exponent of 34
+     * would produce the string 12 &times; 10<sup>34</sup>.
+     * 
+     * @param significand the significand of the number
+     * @param exponent the exponent of the number
+     * @return an attributed string representing the number in scientific notation
+     */
+    protected AttributedString timesTenToThe(String significand, String exponent) {
+        String text = significand;
+        if (!useAppleSuperscriptHack) {
+            // 00D7 is the multiplication sign
+            text += " \u00D710" + exponent;
+            AttributedString as = new AttributedString(text);
+            as.addAttribute(SUPERSCRIPT, SUPERSCRIPT_SUPER,
+                    text.length() - exponent.length(), text.length());
+            return as;
+        } else {
+            /* This is a fairly horrendous workaround for some fairly
+             * horrendous bugs in Apple Java text rendering. Superscript
+             * attributes don't work properly; the obvious workaround for
+             * that (manually creating a scale-and-translate attribute)
+             * doesn't work either, since for some reason the transform
+             * is applied once to the first character in the run, then
+             * twice to subsequent characters. To get around this, we
+             * (1) create a transform which, when applied twice over,
+             * produces an acceptable superscript effect, and (2) insert
+             * a zero-width space as the first character in the run,
+             * which "soaks up" the single application of the transform.
+             * Much tedious trial and error went into this; test any changes
+             * thoroughly!
+             * 
+             * Works for Java 1.5.0 on OS X 10.5.8 PPC, tested 2011-12-08.
+             * Now that recent Macs can do superscript properly, it's
+             * probably not worth individually crafting and testing 
+             * workarounds for every Java/OS X/architecture combination.
+             * I will trust that this one is acceptable until/unless
+             * I get a bug report about it.
+             */
+            text += " \u00D710\u200B" + exponent;
+            AttributedString as = new AttributedString(text);
+            as.addAttribute(TextAttribute.TRANSFORM, MAC_SUPERSCRIPT_TRANSFORM,
+                    text.length() - exponent.length() - 1, text.length());
+            return as;
+        }
+    }
+
+    /**
+     * Returns an attributed string representing a number in scientific
+     * notation. For example, a significand of 12 and an exponent of 34
+     * would produce the string 12 &times; 10<sup>34</sup>.
+     * 
+     * @param significand the significand of the number
+     * @param exponent the exponent of the number
+     * @return an attributed string representing the number in scientific notation
+     */
+    protected AttributedString timesTenToThe(String significand, int exponent) {
+        return timesTenToThe(significand, Integer.toString(exponent));
+    }
+
+    /** Returns a cropped version of a specified rectangle. 
+     * @param r a rectangle
+     * @param left the amount to crop at the left
+     * @param right the amount to crop at the right
+     * @param top the amount to crop at the top
+     * @param bottom the amount to crop at the bottom
+     * @return the cropped rectangle
+     */
+    protected Rectangle2D cropRectangle(Rectangle2D r, double left,
+            double right, double top, double bottom) {
+        final double u = getUnitSize();
+        return new Rectangle2D.Double(
+                r.getMinX() + left * u,
+                r.getMinY() + top * u,
+                r.getWidth() - (left + right) * u,
+                r.getHeight() - (top + bottom) * u);
+    }
+
+    /** Returns a string representation of this plot's dimensions.
+     * The string is in the same format as the {@code plotSizes} 
+     * Preferences entry from which the plot reads its initial
+     * dimensions.
+     * @return a string representation of this plot's dimensions
+     */
     public String getDimensionsAsString() {
         logger.log(Level.INFO, "Getting dimensions for {0}", getName());
         Rectangle2D r = dimensions;
@@ -240,6 +327,8 @@ public abstract class Plot
                 r.getWidth(), r.getHeight());
     }
 
+    /** Draws the points in this plot's internal buffer. 
+     * @param g the graphics object to which to draw the points */
     protected void drawPoints(Graphics2D g) {
         g.setStroke(getStroke());
         PlotPoint prev = null;
@@ -248,7 +337,17 @@ public abstract class Plot
             prev = point;
         }
     }
-        
+    
+    /**
+     * Adds a point to this plot's internal buffer.
+     * 
+     * @param d the datum associated with the point ({@code null} if none)
+     * @param p the position of the point
+     * @param filled {@code true} if the point should be filled
+     * @param special {@code true} if the point should be highlighted
+     * @param line {@code true} if a line should be drawn from the previous 
+     * point to this one.
+     */
     protected void addPoint(Datum d, Point2D p, boolean filled,
             boolean special, boolean line) {
         points.add(ShapePoint.build(this, p).datum(d).
@@ -256,10 +355,18 @@ public abstract class Plot
                 build());
     }
     
+    /** Clear this plot's internal buffer of points. */
     protected void clearPoints() {
         points.clear();
     }
     
+    /** Handles a mouse click event on the plot. If the click was on 
+     * a plotted point, the associated datum (if any) will have its
+     * selection state toggled.
+     * 
+     * @param position the position of the click
+     * @param e the event associated with the click
+     */
     public void mouseClicked(java.awt.geom.Point2D position, MouseEvent e) {
         final boolean sloppy = e.isShiftDown();
         for (PlotPoint p : points) {
@@ -275,27 +382,41 @@ public abstract class Plot
             }
     }
 
-    public void selectByRectangle(Rectangle2D r) {
+    /** Selects all the plotted data points within a specified rectangle. 
+     * @param rectangle a rectangle defining which points should be selected */
+    public void selectByRectangle(Rectangle2D rectangle) {
         for (PlotPoint point: points) {
             if (point.getDatum() != null && 
                     !point.getDatum().isHidden() &&
-                    point.getShape().intersects(r))
+                    point.getShape().intersects(rectangle))
                 point.getDatum().setSelected(true);
         }
     }
 
+    /** Returns an internal name for this plot.
+     * @return an internal name for this plot */
     public abstract String getName();
 
+    /** Returns a user-friendly name for this plot.
+     * @return  a user-friendly name for this plot */
     public String getNiceName() {
         return getName();
     }
-        
+    
+    /** Draws this plot.
+     * @param g the graphics object onto which to draw this plot */
     public abstract void draw(Graphics2D g);
 
+    /** Reports whether this plot is visible. 
+     * @return {@code true} if this plot is visible; {@code false} if it is hidden
+     */
     public boolean isVisible() {
         return visible;
     }
 
+    /** Sets whether this plot should be drawn. 
+     * @param visible {@code true} to draw this plot; {@code false} not to draw it
+     */
     public void setVisible(boolean visible) {
         this.visible = visible;
     }

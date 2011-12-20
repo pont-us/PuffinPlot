@@ -12,7 +12,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-class PlotAxis {
+/**
+ * An axis for a plot.
+ * 
+ * @author pont
+ */
+final class PlotAxis {
     private final Plot plot;
     private final AxisParameters ap;
 

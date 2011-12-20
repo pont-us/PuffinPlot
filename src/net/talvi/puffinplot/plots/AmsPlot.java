@@ -28,7 +28,7 @@ public class AmsPlot extends EqAreaPlot {
     private List<List<Vec3>> cachedBootstrapRegions = new ArrayList<List<Vec3>>();
     private List<List<Vec3>> cachedHextRegions = new ArrayList<List<Vec3>>();    
     
-    /** Creates an AMS plot with the supplied parameters
+    /** Creates an AMS plot with the supplied parameters.
      * 
      * @param parent the graph display containing the plot
      * @param params the parameters of the plot

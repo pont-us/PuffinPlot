@@ -5,7 +5,7 @@ import java.awt.Shape;
 import java.awt.geom.Point2D;
 import net.talvi.puffinplot.data.Datum;
 
-public interface PlotPoint {
+interface PlotPoint {
 
     void draw(Graphics2D g);
 
@@ -18,5 +18,4 @@ public interface PlotPoint {
     Point2D getCentre();
 
     boolean isNear(Point2D point, double distance);
-
 }

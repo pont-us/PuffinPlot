@@ -12,6 +12,13 @@ import net.talvi.puffinplot.window.PlotParams;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Site;
 
+/**
+ * This plot shows site directions in textual form.
+ * It can show Fisher statistics and/or great-circle statistics
+ * provided that the appropriate calculation has been performed. 
+ * 
+ * @author pont
+ */
 public class SiteDataTable extends Plot {
 
     /* Using a real alpha character can be tricky: it should be OK if
@@ -25,6 +32,12 @@ public class SiteDataTable extends Plot {
     private static final String alpha = USE_REAL_ALPHA ? "α" : "a";
     private static final String[] PARAM_NAMES = {"Fisher", "GC"};
     
+    /** Creates a site data table with the supplied parameters.
+     * 
+     * @param parent the graph display containing the table
+     * @param params the parameters of the table
+     * @param prefs the preferences containing the table configuration
+     */
     public SiteDataTable(GraphDisplay parent, PlotParams params, Preferences prefs) {
         super(parent, params, prefs);
     }

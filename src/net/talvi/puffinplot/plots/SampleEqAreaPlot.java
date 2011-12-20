@@ -9,8 +9,21 @@ import net.talvi.puffinplot.data.GreatCircle;
 import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.data.Sample;
 
+/**
+ * An equal-area plot showing sample data. This plot shows the magnetic
+ * moment measurements for the treatment steps of a single sample.
+ * It can also show a best-fit great circle, if one has been calculated.
+ * 
+ * @author pont
+ */
 public class SampleEqAreaPlot extends EqAreaPlot {
 
+      /** Creates a sample equal-area plot with the supplied parameters.
+     * 
+     * @param parent the graph display containing the plot
+     * @param params the parameters of the plot
+     * @param prefs the preferences containing the plot configuration
+     */
     public SampleEqAreaPlot(GraphDisplay parent, PlotParams params,
             Preferences prefs) {
         super(parent, params, prefs);
@@ -51,14 +64,6 @@ public class SampleEqAreaPlot extends EqAreaPlot {
             ShapePoint.build(this, project(pole)).filled(pole.z>0).
                     triangle().build().draw(g);
         }
-
-        /* Some code to show where North gets projected to.
-         * Probably not very useful in general.
-        Datum anyOldDatum = sample.getVisibleData().get(0);
-        Vec3 north = anyOldDatum.correctVector(Vec3.NORTH, params.getCorrection());
-        points.add(new TrianglePoint(this, null,
-                project(north, xo, yo, radius)));
-        */
 
         drawPoints(g);
     }

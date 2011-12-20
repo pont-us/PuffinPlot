@@ -43,7 +43,7 @@ public class LUDecomposition implements java.io.Serializable {
  * ------------------------ */
 
    /** LU Decomposition
-   @param  Arg   Rectangular matrix
+   @param  A   Rectangular matrix
    Creates:     Structure to access L, U and piv.
    */
 

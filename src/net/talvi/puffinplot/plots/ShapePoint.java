@@ -15,7 +15,13 @@ import java.awt.geom.Rectangle2D;
 import net.talvi.puffinplot.data.Datum;
 import static java.lang.Math.sqrt;
 
-public class ShapePoint implements PlotPoint {
+/**
+ * A graph point with a geometrical shape. Available shapes are
+ * square, triangular, and circular.
+ * 
+ * @author pont
+ */
+class ShapePoint implements PlotPoint {
 
     private final Shape shape;
     private final Shape highlight;
@@ -27,7 +33,7 @@ public class ShapePoint implements PlotPoint {
     private final Plot plot;
     private static final double HIGHLIGHT_SCALE = 1.6;
 
-    public enum PointShape { 
+    public static enum PointShape { 
         SQUARE, CIRCLE, TRIANGLE;
         
         public static PointShape fromAmsAxis(int axis) {
@@ -39,6 +45,8 @@ public class ShapePoint implements PlotPoint {
         }
     }
     
+    /** To deal with the large number of possible parameters,
+     * we use the builder pattern. */
     public static class Builder {
         private final Point2D centre;
         private final Plot plot;

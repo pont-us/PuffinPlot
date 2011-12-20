@@ -18,18 +18,34 @@ import static java.lang.Math.abs;
 import static java.lang.Math.sqrt;
 
 /**
- * A general-purpose class for producing a ternary plot of
- * any appropriately structured data.
+ * An experimental ternary plot for a sample's magnetic moment data.
+ * Each point on the plot represents a magnetic moment measurement.
+ * Each of the ternary plot's axes corresponds to one of the three
+ * magnetic moment measurement axes (x, y, and z). A path on the plot
+ * thus shows how the relative intensities of the three orthogonal
+ * magnetization components vary during treatment. For a normal 
+ * palaeomagnetic study, this is unlikely to be useful. It is 
+ * designed for use with Lowrie's (1990) technique of thermal
+ * demagnetization of a composite triaxial IRM. In this case the
+ * three axes of the graph represent three different coercivity
+ * components, and the path of points for a sample represents
+ * the relative response of those components to thermal demagnetization.
  *
  * @author pont
  */
 public class TernaryPlot extends Plot {
 
+    /** Creates a ternary plot with the supplied parameters.
+     * 
+     * @param parent the graph display containing the plot
+     * @param params the parameters of the plot
+     * @param prefs the preferences containing the plot configuration
+     */
     public TernaryPlot(GraphDisplay parent, PlotParams params, Preferences prefs) {
         super(parent, params, prefs);
     }
 
-    protected void drawAxes(Graphics2D g) {
+    private void drawAxes(Graphics2D g) {
         g.setColor(Color.BLACK);
         final Rectangle2D dims = getDimensions();
         final double xo = dims.getMinX();
@@ -42,7 +58,7 @@ public class TernaryPlot extends Plot {
                 yo-s*sin(toRadians(60))));
     }
 
-    protected static Point2D.Double projectNormalized(double a, double b,
+    private static Point2D.Double projectNormalized(double a, double b,
             double xo, double yo, double scale) {
         final double y = yo - a * scale;
         final double w = (2/sqrt(3) - a);
@@ -50,7 +66,7 @@ public class TernaryPlot extends Plot {
         return new Point2D.Double(x, y);
     }
 
-    protected static Point2D.Double projectThreeValues(double a, double b,
+    private static Point2D.Double projectThreeValues(double a, double b,
             double c, double xo, double yo, double scale) {
         final double aa = abs(a);
         final double ab = abs(b);

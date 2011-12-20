@@ -4,14 +4,12 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.Arrays;
-import java.util.Collections;
 import static net.talvi.puffinplot.plots.PlotAxis.Direction.*;
 
 import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.plots.PlotAxis.Direction;
 
-public class ZplotAxes {
+class ZplotAxes {
 
     private final static Direction[] directions =
             new Direction[] { RIGHT, DOWN, LEFT, UP };

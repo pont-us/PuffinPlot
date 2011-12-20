@@ -27,11 +27,26 @@ import net.talvi.puffinplot.data.PcaValues;
 import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.data.Sample;
 
+/**
+ * A Zijderveld plot for a sample's demagnetization data. The vertical
+ * projection can be set to show east vs. up or north vs. up,
+ * and can also be set for a modified Zijderveld plot, where each data
+ * point is projected onto the vertical plane containing the origin and
+ * itself.
+ * 
+ * @author pont
+ */
 public class ZPlot extends Plot {
 
     private ZplotAxes axes;
     private final ZplotLegend legend;
 
+    /** Creates a Zijderveld plot with the supplied parameters.
+     * 
+     * @param parent the graph display containing the plot
+     * @param params the parameters of the plot
+     * @param prefs the preferences containing the plot configuration
+     */
     public ZPlot(GraphDisplay parent, PlotParams params, Preferences prefs) {
         super(parent, params, prefs);
         legend = new ZplotLegend(parent, params, prefs);
@@ -152,13 +167,23 @@ public class ZPlot extends Plot {
         drawPoints(g);
     }
 
+    /** Returns the legend for this plot. 
+     * @return the legend for this plot */
     public ZplotLegend getLegend() {
         return legend;
     }
 
+    /** A legend for a Zijderveld plot. It shows the units for the
+     * axes, and gives a key for the filled and unfilled points. */
     public class ZplotLegend extends Plot {
 
-        public ZplotLegend(GraphDisplay parent, PlotParams params,
+        /** Creates a legend for the Zijderveld plot containing this class.
+         * 
+         * @param parent the graph display containing the legend
+         * @param params the parameters of the legend
+         * @param prefs the preferences containing the legend configuration
+         */
+        private ZplotLegend(GraphDisplay parent, PlotParams params,
                 Preferences prefs) {
             super(parent, params, prefs);
         }
