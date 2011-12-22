@@ -19,7 +19,7 @@ import javax.swing.KeyStroke;
 import net.talvi.puffinplot.PuffinAction;
 import net.talvi.puffinplot.data.Sample;
 
-public class MainMenuBar extends JMenuBar {
+public final class MainMenuBar extends JMenuBar {
 
     private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
     private static final long serialVersionUID = 1L;

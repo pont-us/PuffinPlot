@@ -24,6 +24,14 @@ import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;
 import static net.talvi.puffinplot.data.Correction.Rotation;
 
+/**
+ * The control panel provides a user interface for common operations.
+ * These include suite selection, orientation correction, and Zijderveld
+ * plot axis selection. The control panel sits at the top of the main window.
+ * The control panel also displays some sample data.
+ * 
+ * @author pont
+ */
 public class ControlPanel extends JPanel 
    implements ActionListener, ItemListener {
 
@@ -43,13 +51,14 @@ public class ControlPanel extends JPanel
     private final JRadioButton trayButton;
     private final JRadioButton emptyButton;
     
+    /** Creates a new control panel */
     public ControlPanel() {
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         add(suiteBox = new JComboBox(new String[] {"no files loaded"}));
         add(rotationBox = new RotationBox());
         trayButton = emptyButton = null;
-        // Tray correction applied on loading; empty-slot correction
-        // needs re-architecting if it's to be used -- 2011-10-09.
+//         Tray correction applied on loading; empty-slot correction
+//         needs re-architecting if it's to be used -- 2011-10-09.
 //        add(new JLabel("T"));
 //        add(trayButton = new JRadioButton());
 //        trayButton.addItemListener(this);
@@ -84,6 +93,7 @@ public class ControlPanel extends JPanel
         app.getMainWindow().updateSampleDataPanel();
     }
     
+    /** Updates this control panel's sample information display. */
     public void updateSample() {
         Sample s = app.getSample();
         if (s != null) 
@@ -93,6 +103,11 @@ public class ControlPanel extends JPanel
                     s.getMagDev(), s.isPcaAnchored() ? "Y" : "N"));
     }
 
+    /** Handles action events. Currently the only action event 
+     * handled is that produced by a user selecting a suite from
+     * the suite selection combo box.
+     * @param e the action event to handle
+     */
     public void actionPerformed(ActionEvent e) {
         /* No way to tell if this was a user click or the box being
          * rebuilt, so we have to use this ugly variable to avoid spurious
@@ -104,10 +119,17 @@ public class ControlPanel extends JPanel
         }
     }
     
+    /** Returns the currently selected vertical projection for the 
+     * Zijderveld plot. 
+     * @return  the currently selected vertical projection for the 
+     * Zijderveld plot
+     */
     public MeasurementAxis getAxis() {
         return vVsBox.axis();
     }
     
+    /** Returns the correction to apply to magnetic moment data. 
+     * @return the correction to apply to magnetic moment data */
     public Correction getCorrection() {
         /* Tray correction is applied on loading, and empty slot correction
          * is currently unused, so these fields are set to false in the
@@ -118,6 +140,8 @@ public class ControlPanel extends JPanel
                 rotationBox.getRotation());
     }
     
+    /** Sets the correction to apply to magnetic moment data. 
+     * @param c the correction to apply to magnetic moment data */
     public void setCorrection(Correction c) {
         rotationBox.setRotation(c.getRotation());
     }
@@ -166,6 +190,13 @@ public class ControlPanel extends JPanel
         }
     }
 
+    /** Handles changes in the state of user interface components.
+     * For instance, this method will be called if the user
+     * selects a different correction to be applied to magnetic
+     * moment data.
+     * 
+     * @param e the event corresponding to the change
+     */
     public void itemStateChanged(ItemEvent e) {
         final Object s = e.getSource();
         if (s == rotationBox || s == trayButton || s == emptyButton ||

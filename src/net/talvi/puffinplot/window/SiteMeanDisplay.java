@@ -13,9 +13,19 @@ import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.plots.SiteEqAreaPlot;
 import net.talvi.puffinplot.plots.Plot;
 
-public class GreatCircleDisplay extends GraphDisplay implements Printable {
+/**
+ * A graph display containing a single equal-area plot which shows
+ * data for a site.
+ * 
+ * @see SiteEqAreaPlot
+ * @see SiteMeanWindow
+ * 
+ * @author pont
+ */
+public class SiteMeanDisplay extends GraphDisplay implements Printable {
 
-    public GreatCircleDisplay() {
+    /** Creates a new site mean graph display. */
+    public SiteMeanDisplay() {
         super();
         zoomTransform = AffineTransform.getScaleInstance(1.0, 1.0);
 
@@ -35,6 +45,15 @@ public class GreatCircleDisplay extends GraphDisplay implements Printable {
         plots.put(plot.getName(), plot);
     }
 
+    /** Prints this graph display.
+     * 
+     * @param graphics the graphics object to which to draw the display
+     * @param pageFormat the page format
+     * @param pageIndex the page number
+     * @return {@link #PAGE_EXISTS} if the page number is valid,
+     * otherwise {@link #NO_SUCH_PAGE}
+     * @throws PrinterException if a printing error occurred
+     */
     public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
             throws PrinterException {
         if (pageIndex > 0) return NO_SUCH_PAGE;

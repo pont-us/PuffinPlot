@@ -1,5 +1,6 @@
 package net.talvi.puffinplot.window;
 
+import java.util.EnumMap;
 import net.talvi.puffinplot.*;
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -8,8 +9,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -20,10 +21,16 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.DatumField;
 
+/**
+ * A window allowing the user to edit orientation corrections.
+ * Editable fields are provided for the sample and formation
+ * orientations and for the magnetic declination.
+ * 
+ * @author pont
+ */
 public class CorrectionWindow extends JFrame implements ActionListener {
 
     private final static DatumField[] fields = {
@@ -32,10 +39,13 @@ public class CorrectionWindow extends JFrame implements ActionListener {
     };
     private JButton cancelButton;
     private JButton setButton;
-    HashMap<DatumField, JCheckBox> checkBoxMap = new HashMap<DatumField, JCheckBox>();
-    HashMap<DatumField, JTextField> textFieldMap = new HashMap<DatumField, JTextField>();
+    private Map<DatumField, JCheckBox> checkBoxMap =
+            new EnumMap<DatumField, JCheckBox>(DatumField.class);
+    private Map<DatumField, JTextField> textFieldMap =
+            new EnumMap<DatumField, JTextField>(DatumField.class);
     
 
+    /** Creates a new correction window. */
     public CorrectionWindow() {
         super("Edit corrections");
         setResizable(false);
@@ -57,7 +67,7 @@ public class CorrectionWindow extends JFrame implements ActionListener {
         JPanel fieldPanel = new JPanel();
         fieldPanel.setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
-        for (DatumField field : fields) {
+        for (DatumField field: fields) {
             gc.gridwidth = 2;
             gc.anchor = GridBagConstraints.EAST;
             JCheckBox checkBox = new JCheckBox(field.getNiceName());
@@ -91,6 +101,11 @@ public class CorrectionWindow extends JFrame implements ActionListener {
         pack();
     }
 
+    /** <p>Handle an action event. The events handled are clicks on the
+     * <q>Cancel</q> and <q>Set</q> buttons.</p>
+     * 
+     * @param event the action event to handle
+     */
     public void actionPerformed(ActionEvent event) {
         if (event.getSource() == cancelButton)
             setVisible(false);

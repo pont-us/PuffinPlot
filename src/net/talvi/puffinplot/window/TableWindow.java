@@ -15,10 +15,28 @@ import javax.swing.table.AbstractTableModel;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.DatumField;
 
+/**
+ * A window which shows all the data for a sample in tabular form.
+ * 
+ * @author pont
+ */
 public class TableWindow extends JFrame {
+    private static final long serialVersionUID = 1L;
     private JTable table;
     private DataTableModel tableModel;
-
+    
+    /**
+     * Creates a new table window.
+     */
+    public TableWindow() {
+        // JFrame.setDefaultLookAndFeelDecorated(true);
+        TablePanel newContentPane = new TablePanel();
+        newContentPane.setOpaque(true); //content panes must be opaque
+        setContentPane(newContentPane);
+        newContentPane.setVisible(true);
+        pack();
+    }
+    
     private static class DataTableModel extends AbstractTableModel {
         private static final long serialVersionUID = 1L;
         private List<TableModelListener> listeners = new LinkedList<TableModelListener>();
@@ -70,7 +88,8 @@ public class TableWindow extends JFrame {
         }
     }
     
-    class TablePanel extends JPanel {
+    private class TablePanel extends JPanel {
+        private static final long serialVersionUID = 1L;
 
         public TablePanel() {
             super(new GridLayout(1, 0));
@@ -82,18 +101,13 @@ public class TableWindow extends JFrame {
         }
     }
 
+    /**
+     * Forces the data table to update its display.
+     * This allows it to be redrawn when the current sample changes.
+     * 
+     */
     public void dataChanged() {
         tableModel.fireModelChangedEvent();
         repaint(100);
     }
-
-    public TableWindow() {
-        // JFrame.setDefaultLookAndFeelDecorated(true);
-        TablePanel newContentPane = new TablePanel();
-        newContentPane.setOpaque(true); //content panes must be opaque
-        setContentPane(newContentPane);
-        newContentPane.setVisible(true);
-        pack();
-    }
-    
 }

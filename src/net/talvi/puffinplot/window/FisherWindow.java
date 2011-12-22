@@ -6,9 +6,19 @@ import javax.swing.JPanel;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.plots.FisherPlot;
 
+/**
+ * A window to hold a {@link FisherGraphDisplay}.
+ * 
+ * @see FisherGraphDisplay
+ * 
+ * @author pont
+ */
 public class FisherWindow extends JFrame {
     private FisherGraphDisplay graphDisplay;
 
+    /**
+     * Creates a new Fisher window.
+     */
     public FisherWindow() {
         setPreferredSize(new Dimension(600, 600));
         setTitle("Fisher analysis");
@@ -19,6 +29,12 @@ public class FisherWindow extends JFrame {
         setLocationRelativeTo(PuffinApp.getInstance().getMainWindow());
     }
 
+    /**
+     * Returns the single Fisher plot contained in this window's 
+     * graph display.
+     * 
+     * @return the Fisher plot in this window's graph display
+     */
     public FisherPlot getPlot() {
         return (FisherPlot) graphDisplay.plots.get("fisherplot");
     }

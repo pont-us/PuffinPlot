@@ -39,11 +39,25 @@ import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfWriter;
 import java.io.FileOutputStream;
 
+/**
+ * <p>A graphical UI component which lays out and draws one or more plots.
+ * It may allow the user to resize and rearrange the plots,
+ * and provides facilities to export the display to a 
+ * file and to print it via the standard Java printing interface.
+ * This is an abstract superclass which cannot be instantiated
+ * directly; concrete subclasses must implement the {@code print}
+ * method.</p>
+ * 
+ * @author pont
+ */
 public abstract class GraphDisplay extends JPanel implements Printable {
-
     private static final long serialVersionUID = -5730958004698337302L;
+    /** A map from internal plot names to the plots themselves. */
     protected Map<String,Plot> plots;
     private static final RenderingHints renderingHints = PuffinRenderingHints.getInstance();
+    /** A transformation applied to the graphics before painting them,
+     * intended to be used for zooming in and out of the display.
+     * It is initially set to the identity transformation. */
     protected AffineTransform zoomTransform;
     private final GdMouseListener mouseListener;
     private boolean dragPlotMode = false;
@@ -73,6 +87,14 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         addMouseMotionListener(mouseListener);
     }
 
+    /**
+     * <p>Returns a string representation of all this display's plot sizes 
+     * and positions. This is intended to be written to a preferences object, 
+     * allowing the plot layout to be saved and restored.</p>
+     * 
+     * @return a string representation of all this display's plot sizes
+     * and positions
+     */
     public String getPlotSizeString() {
         StringBuilder sb = new StringBuilder();
         for (Plot plot: plots.values()) {
@@ -84,6 +106,8 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         return sb.toString();
     }
 
+    /** Returns a list of the plots which are currently visible.
+     * @return a list of the plots which are currently visible */
     public List<Plot> getVisiblePlots() {
         final Collection<Plot> ps = getPlots();
         final List<Plot> result = new ArrayList<Plot>(ps.size());
@@ -91,14 +115,14 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         return result;
     }
 
+    /** Returns a collection of all the plots in this graph display. 
+     * @return all the plots in this graph display. */
     public Collection<Plot> getPlots() {
         return plots.values();
     }
 
-    public void recreatePlots() {
-        // does nothing in this abstract class
-    }
-
+    /** Paints this graph display to a graphics context. 
+     * @param g the graphics context in which to paint */
     @Override
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
@@ -156,6 +180,10 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         g2.setTransform(savedTransform);
     }
 
+    /** <p>Returns the inverse transform of the zoom transform.
+     * This can be used, for example, to map mouse clicks back
+     * to the graph display's original, untransformed co-ordinates.</p>
+     * @return the inverse transform of the zoom transform */
     protected AffineTransform getAntiZoom() {
         try {
             return zoomTransform.createInverse();
@@ -167,25 +195,33 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         }
     }
     
+    /** Reports whether the plots are currently draggable by the user. 
+     * @return {@code true} if the plots are currently draggable by the user */
     protected boolean isDragPlotMode() {
         return dragPlotMode;
     }
 
+    /** Sets whether the plots are draggable by the user.
+     * @param dragPlotMode {@code true} to make the plots draggable;
+     * {@code false} to make them non-draggable */
     protected void setDragPlotMode(boolean dragPlotMode) {
         this.dragPlotMode = dragPlotMode;
     }
 
+    /** Resets each plot's size and position to their defaults. */
     public void resetLayout() {
         for (Plot plot: plots.values()) plot.setDimensionsToDefault();
         repaint();
     }
 
-    /**
-     * We can't use a MouseAdapter because it crashes OS X Java with a 
-     * ClassCastException. No idea why.
-     */
-    protected class GdMouseListener
+    /** A listener to handle mouse clicks and movements on this 
+      * graph display.*/
+    private class GdMouseListener
     implements MouseListener, MouseMotionListener {
+        /*
+         * We can't use a MouseAdapter because it crashes OS X Java with a 
+         * ClassCastException. No idea why.
+         */
         private Point2D startPoint;
         private Rectangle2D oldDims; // Plot's dimensions before drag started
         private Plot draggee; // the plot currently being dragged
@@ -193,6 +229,8 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         private int sides;
         private Point2D currentDragPoint;
         
+        /** Handles a mouse click event.
+         * @param e the mouse click event */
         public void mouseClicked(MouseEvent e) {
             final Point2D position = getAntiZoom().transform(e.getPoint(), null);
             for (Plot plot: plots.values())
@@ -201,6 +239,8 @@ public abstract class GraphDisplay extends JPanel implements Printable {
             repaint();
         }
         
+        /** Handles a mouse button release event.
+         * @param e the mouse button release event */
         public void mouseReleased(MouseEvent e) {
             draggee = null;
             draggingSelection = false;
@@ -235,6 +275,8 @@ public abstract class GraphDisplay extends JPanel implements Printable {
             }
         }
 
+        /** Handles a mouse button press event.
+         * @param e the mouse button press event */
         public void mousePressed(MouseEvent e) {
             draggee = null;
             startPoint = currentDragPoint = getAntiZoom().transform(e.getPoint(), null);
@@ -242,6 +284,8 @@ public abstract class GraphDisplay extends JPanel implements Printable {
             else draggingSelection = true;
         }
         
+        /** Handles a mouse drag event. 
+         * @param e the mouse drag event */
         public void mouseDragged(MouseEvent e) {
             Point2D thisPoint = getAntiZoom().transform(e.getPoint(), null);
             if (isDragPlotMode() && getDraggingPlot() != null) {
@@ -276,15 +320,20 @@ public abstract class GraphDisplay extends JPanel implements Printable {
             }
         }
 
+        /** Returns the plot currently being dragged, if any. 
+         * @return the plot currently being dragged, if any */
         public Plot getDraggingPlot() {
             return draggee;
         }
 
-        public void mouseEntered(MouseEvent arg0) {}
-        public void mouseExited(MouseEvent arg0) {}
-        public void mouseMoved(MouseEvent arg0) {}
+        public void mouseEntered(MouseEvent e) {}
+        public void mouseExited(MouseEvent e) {}
+        public void mouseMoved(MouseEvent e) {}
     }
 
+    /** Prints all this display's plots to a graphics context.
+     * @param pf the page format for printing
+     * @param graphics the graphics context to which to draw */
     protected void printPlots(PageFormat pf, Graphics graphics) {
         setDoubleBuffered(false);
         Graphics2D g2 = (Graphics2D) graphics;
@@ -300,6 +349,8 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         setDoubleBuffered(true);
     }
 
+    /** Writes the contents of this display to an SVG file.
+     * @param filename the name of the file to which to write */
     public void saveToSvg(String filename) {
         // Get a DOMImplementation.
         DOMImplementation domImpl =
@@ -326,6 +377,13 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         }
     }
     
+    /** Writes the contents of this display to a PDF file.
+     * @param filename the name of the file to which to write
+     * @throws DocumentException if an error occurred while writing the PDF
+     * @throws FileNotFoundException if the file exists but is a directory
+     * rather than a regular file, does not exist but cannot be created,
+     * or cannot be opened for any other reason 
+     */
     public void saveToPdf(String filename) throws DocumentException, FileNotFoundException {
         com.lowagie.text.Document document =
                 new com.lowagie.text.Document(new Rectangle(2000, 1200));

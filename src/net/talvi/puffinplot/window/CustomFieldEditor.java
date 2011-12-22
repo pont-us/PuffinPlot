@@ -18,6 +18,12 @@ import javax.swing.ListSelectionModel;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.CustomFields;
 
+/**
+ * An editing window for custom field headings. This allows the user
+ * to edit the headings for custom notes and custom flags.
+ * 
+ * @author pont
+ */
 public class CustomFieldEditor extends JFrame {
 
     private JPanel contentPane;
@@ -32,6 +38,12 @@ public class CustomFieldEditor extends JFrame {
     private JButton downButton;
     private final CustomFields<String> fields;
 
+    /**
+     * Creates a new custom field editor window.
+     * 
+     * @param fields the fields to edit
+     * @param title the title of the window
+     */
     public CustomFieldEditor(CustomFields<String> fields, String title) {
         super(title);
         this.fields = fields;

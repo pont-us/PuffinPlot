@@ -13,7 +13,14 @@ import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.plots.Plot;
 import net.talvi.puffinplot.plots.ZPlot;
 
+/**
+ * A graph display which can show multiple plots. This is the display
+ * used in PuffinPlot's main window.
+ * 
+ * @author pont
+ */
 public class MainGraphDisplay extends GraphDisplay implements Printable {
+    private static final long serialVersionUID = 1L;
 
     // samplesForPrinting is only non-null during printing.
     private List<Sample> samplesForPrinting = null;
@@ -43,7 +50,10 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
         createPlots();
     }
 
-    @Override
+    /** Deletes all plots and recreates them. Some plots may have 
+     * settings which are only updated when the plot is created;
+     * this method allows them to take notice of changes in these
+     * settings without a restart of the whole program. */
     public void recreatePlots() {
         plots.clear();
         createPlots();
@@ -66,6 +76,15 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
         plots.put("ZplotLegend", ((ZPlot) plots.get("ZPlot")).getLegend());
     }
 
+    /** Prints this graph display.
+     * 
+     * @param graphics the graphics object to which to draw the display
+     * @param pf the page format
+     * @param pageIndex the page number
+     * @return {@link #PAGE_EXISTS} if the page number is valid,
+     * otherwise {@link #NO_SUCH_PAGE}
+     * @throws PrinterException if a printing error occurred
+     */
     public int print(Graphics graphics, PageFormat pf, int pageIndex)
             throws PrinterException {
         pf.setOrientation(PageFormat.LANDSCAPE);

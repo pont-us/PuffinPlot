@@ -22,8 +22,15 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import net.talvi.puffinplot.data.Suite;
 
+/**
+ * A custom slider GUI component allowing the user to select depths in a 
+ * long core.
+ * 
+ * @author pont
+ */
 public class DepthSlider extends JPanel
         implements MouseListener, MouseMotionListener {
+    private static final long serialVersionUID = 1L;
 
     private int maximum = 10;
     private int value = 1;
@@ -35,6 +42,7 @@ public class DepthSlider extends JPanel
     private List<ChangeListener> changeListeners =
             new LinkedList<ChangeListener>();
 
+    /** Creates a new slider. */
     public DepthSlider() {
         super();
         setBackground(Color.LIGHT_GRAY);
@@ -52,16 +60,19 @@ public class DepthSlider extends JPanel
         getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("UP"), "previous");
         getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control A"), "select_all");
         getActionMap().put("next", new AbstractAction() {
+            private static final long serialVersionUID = 1L;
             public void actionPerformed(ActionEvent e) {
                 changeValueBy(1);
             }
         });
         getActionMap().put("previous", new AbstractAction() {
+            private static final long serialVersionUID = 1L;
             public void actionPerformed(ActionEvent e) {
                 changeValueBy(-1);
             }
         });
         getActionMap().put("select_all", new AbstractAction() {
+            private static final long serialVersionUID = 1L;
             public void actionPerformed(ActionEvent e) {
                 rangeStart = 0;
                 rangeEnd = maximum;
@@ -72,11 +83,15 @@ public class DepthSlider extends JPanel
         addMouseMotionListener(this);
     }
 
+    /** Returns the minimum size of this slider. 
+     * @return the minimum size of this slider */
     @Override
     public Dimension getMinimumSize() {
         return new Dimension(20,100);
     }
 
+    /** Returns the preferred size of this slider. 
+     * @return the preferred size of this slider */
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(20,100);
@@ -91,6 +106,9 @@ public class DepthSlider extends JPanel
         g.draw(new Line2D.Double(getX(), y, getX() + getWidth(), y));
     }
 
+    /** Paints this slider to a specified graphics object.
+     * @param g the graphics object to which to paint this slider.
+     */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -125,6 +143,8 @@ public class DepthSlider extends JPanel
         return ((double) getHeight() - 2*getYMargin()) / ((double) maximum);
     }
 
+    /** Returns the current value of this slider. 
+     * @return the current value of this slider */
     public int getValue() {
         return value;
     }
@@ -150,14 +170,20 @@ public class DepthSlider extends JPanel
             cl.stateChanged(new ChangeEvent(this));
     }
 
+    /** Handles a mouse click on this slider. 
+     * @param e the event produced by the mouse click */
     public void mouseClicked(MouseEvent e) {
         clickOrDrag(e);
     }
 
+    /** Handles a mouse press on this slider. 
+     * @param e the event produced by the mouse press */
     public void mousePressed(MouseEvent e) {
         requestFocusInWindow();
     }
 
+    /** Handles a mouse release on this slider. 
+     * @param e the event produced by the mouse release */
     public void mouseReleased(MouseEvent e) {
        // Do nothing.
     }

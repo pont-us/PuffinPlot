@@ -48,7 +48,7 @@ import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Site;
 import net.talvi.puffinplot.data.Suite.AmsCalcType;
 import net.talvi.puffinplot.window.CustomFieldEditor;
-import net.talvi.puffinplot.window.GreatCircleWindow;
+import net.talvi.puffinplot.window.SiteMeanWindow;
 import net.talvi.puffinplot.window.PrefsWindow;
 
 /**
@@ -79,7 +79,7 @@ public final class PuffinApp {
     private final TableWindow tableWindow;
     private final FisherWindow fisherWindow;
     private final CorrectionWindow correctionWindow;
-    private final GreatCircleWindow greatCircleWindow;
+    private final SiteMeanWindow greatCircleWindow;
     private PrefsWindow prefsWindow;
     private final AboutBox aboutBox;
     private RecentFileList recentFiles;
@@ -121,7 +121,7 @@ public final class PuffinApp {
         actions = new PuffinActions(this);
         tableWindow = new TableWindow();
         fisherWindow = new FisherWindow();
-        greatCircleWindow = new GreatCircleWindow();
+        greatCircleWindow = new SiteMeanWindow();
         correctionWindow = new CorrectionWindow();
         // NB main window must be instantiated last, as
         // the Window menu references the other windows
@@ -659,7 +659,7 @@ public final class PuffinApp {
     
     /** Returns the great-circle statistics window. 
      * @return the great-circle statistics window */
-    public GreatCircleWindow getGreatCircleWindow() {
+    public SiteMeanWindow getGreatCircleWindow() {
         return greatCircleWindow;
     }
     

@@ -19,8 +19,7 @@ import net.talvi.puffinplot.data.Sample;
 public class MainWindow extends JFrame {
 
     private static final long serialVersionUID = -9075963924200708871L;
-
-    private final GraphDisplay graphDisplay;
+    private final MainGraphDisplay graphDisplay;
     public final ControlPanel controlPanel;
     private JScrollPane scrollPane;
     SampleChooser sampleChooser;
@@ -100,7 +99,7 @@ public class MainWindow extends JFrame {
         return menuBar;
     }
 
-    public GraphDisplay getGraphDisplay() {
+    public MainGraphDisplay getGraphDisplay() {
         return graphDisplay;
     }
     

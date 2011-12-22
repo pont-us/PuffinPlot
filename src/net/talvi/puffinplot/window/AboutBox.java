@@ -10,10 +10,13 @@ import net.talvi.puffinplot.*;
 import java.awt.Frame;
 
 /**
- *
+ * An <q>about this program</q> dialog box giving brief information
+ * about PuffinPlot.
+ * 
  * @author  pont
  */
 public class AboutBox extends javax.swing.JDialog {
+    private static final long serialVersionUID = 1L;
 
     private String gsp(String property) {
         return System.getProperty(property);
@@ -31,7 +34,9 @@ public class AboutBox extends javax.swing.JDialog {
                 gsp("os.arch"), gsp("java.version"), gsp("java.vendor"));
     }
     
-    /** Creates new form AboutBox */
+    /** Creates new about box.
+     * @param owner the frame from which the dialog is displayed
+     */
     public AboutBox(Frame owner) {
         super(owner, "About PuffinPlot", true);
         initComponents();

@@ -17,7 +17,8 @@ import net.talvi.puffinplot.data.Suite;
  *  SampleDataPanel displays information about the current sample, including
  *  custom flags.
  */
-public class SampleDataPanel extends JPanel {
+class SampleDataPanel extends JPanel {
+    private static final long serialVersionUID = 1L;
 
     private Sample sample;
 
@@ -56,6 +57,7 @@ public class SampleDataPanel extends JPanel {
     }
 
     private class SampleCheckBox extends JCheckBox {
+        private static final long serialVersionUID = 1L;
         private final Sample sample;
         private final int flagNum;
         public SampleCheckBox(Sample sample, int flagNum) {
@@ -78,6 +80,7 @@ public class SampleDataPanel extends JPanel {
     }
 
     private class SampleField extends JTextField {
+        private static final long serialVersionUID = 1L;
         //private final Sample sample;
         //private final int flagNum;
         public SampleField(final Sample sample, final int noteNum) {

@@ -1,0 +1,22 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Clean up static PuffinApp references in window classes
+desc: |-
+  Many of the classes in the window subpackage use 
+  PuffinApp.getInstance() to find the PuffinPlot application.
+  It would probably be cleaner to have the PuffinApp instance
+  supplied to their constructors.
+type: :task
+component: PuffinPlot
+release: "1.1"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2011-12-20 19:12:45.771864 Z
+references: []
+
+id: 7f814cb57d328c09751894c602ea1de2e48dfba6
+log_events: 
+- - 2011-12-20 19:12:46.227776 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

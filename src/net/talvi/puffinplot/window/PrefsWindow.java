@@ -33,9 +33,15 @@ import net.talvi.puffinplot.data.SensorLengths;
 import net.talvi.puffinplot.data.file.TwoGeeLoader;
 import net.talvi.puffinplot.plots.Plot;
 
+/**
+ * A window which allows the user to change PuffinPlot's preferences.
+ * 
+ * @author pont
+ */
 public class PrefsWindow extends JFrame {
 
     private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
+    private static final long serialVersionUID = 1L;
     private final JTextField[] sensorLengthField = new JTextField[3];
     private final PresetsBox presetsBox;
     private final JTextField protocolBox;
@@ -44,6 +50,9 @@ public class PrefsWindow extends JFrame {
     private final PuffinPrefs prefs =
             PuffinApp.getInstance().getPrefs();
     
+    /**
+     * Creates a new preferences window.
+     */
     public PrefsWindow() {
         super("Preferences");
         final Insets insets = new Insets(0,0,0,0);
@@ -193,6 +202,7 @@ public class PrefsWindow extends JFrame {
     }
 
     private class PlotBox extends JCheckBox {
+        private static final long serialVersionUID = 1L;
         private final Plot plot;
         public PlotBox(Plot plot) {
             super(plot.getNiceName(), plot.isVisible());
@@ -205,6 +215,7 @@ public class PrefsWindow extends JFrame {
     }
 
     private class PrefBox extends JTextField {
+        private static final long serialVersionUID = 1L;
         final private String key;
         public PrefBox(String key, String def) {
             super(prefs.getPrefs().get(key, def));
@@ -217,6 +228,7 @@ public class PrefsWindow extends JFrame {
     }
     
     private class PrefsComboBox extends JComboBox implements ItemListener {
+        private static final long serialVersionUID = 1L;
 
         private String prefsKey;
         
@@ -239,6 +251,7 @@ public class PrefsWindow extends JFrame {
     }
 
     private class PresetsBox extends JComboBox implements ItemListener {
+        private static final long serialVersionUID = 1L;
 
         public PresetsBox() {
             super(SensorLengths.getPresetNames());

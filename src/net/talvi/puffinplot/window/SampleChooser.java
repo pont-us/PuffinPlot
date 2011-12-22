@@ -19,6 +19,15 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.talvi.puffinplot.data.Sample;
 
+/**
+ * A component allowing a user to choose the current sample and
+ * the selected samples.
+ * For discrete suites, it shows a list of sample names.
+ * For continuous suites, it shows a slider control representing
+ * the depth within the core.
+ * 
+ * @author pont
+ */
 public class SampleChooser extends JPanel {
 
     private static final long serialVersionUID = 7533359714843605451L;
@@ -27,6 +36,7 @@ public class SampleChooser extends JPanel {
     private JScrollPane samplePane;
 
     private Action nextAction = new AbstractAction() {
+        private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {
             depthSlider.changeValueBy(1);
             sampleList.changeIndexBy(1);
@@ -34,6 +44,7 @@ public class SampleChooser extends JPanel {
     };
     
     private Action prevAction = new AbstractAction() {
+        private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {
             depthSlider.changeValueBy(-1);
             sampleList.changeIndexBy(-1);
@@ -54,6 +65,11 @@ public class SampleChooser extends JPanel {
         setVisibility(false, false);
     }
     
+    /**
+     * Returns all the currently selected samples.
+     * 
+     * @return all the currently selected samples
+     */
     public List<Sample> getSelectedSamples() {
         List<Sample> samples;
         Suite suite = PuffinApp.getInstance().getSuite();
@@ -87,6 +103,7 @@ public class SampleChooser extends JPanel {
     }
 
     private class SampleList extends JList {
+        private static final long serialVersionUID = 1L;
 
         DefaultListModel model;
 
@@ -118,6 +135,10 @@ public class SampleChooser extends JPanel {
         samplePane.setVisible(list);
     }
 
+    /**
+     * Redraws the sample chooser to reflect a change in the
+     * Puffin application's current suite.
+     */
     public void updateSuite() {
         Suite suite = PuffinApp.getInstance().getSuite();
         if (suite == null) {
@@ -142,6 +163,13 @@ public class SampleChooser extends JPanel {
         }
     }
 
+    /**
+     * For long core suites, returns the current depth index.
+     * Note that this is not the depth itself, but an index into the list
+     * of data points.
+     * 
+     * @return the current depth index for long core suites
+     */
     public int getDepthIndex() {
         return depthSlider.getValue();
     }
