@@ -91,8 +91,9 @@ public class TernaryPlot extends Plot {
         drawAxes(g);
         final Rectangle2D dims = getDimensions();
         double h = dims.getWidth() * (sqrt(3)/2);
-        Sample s = params.getSample();
-        for (Datum d: s.getData()) {
+        Sample sample = params.getSample();
+        if (sample==null) return;
+        for (Datum d: sample.getData()) {
             Vec3 v = d.getMoment(params.getCorrection());
             addPoint(d, projectThreeValues(v.x, v.y, v.z,
                     dims.getMinX(), dims.getMaxY(), h), false, false, true);

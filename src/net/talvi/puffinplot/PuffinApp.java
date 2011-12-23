@@ -618,7 +618,7 @@ public final class PuffinApp {
      * about PuffinPlot.
      */
     public void about() {
-        aboutBox.setLocationRelativeTo(app.getMainWindow());
+        aboutBox.setLocationRelativeTo(getMainWindow());
         aboutBox.setVisible(true);
     }
 
@@ -708,24 +708,25 @@ public final class PuffinApp {
      * @param scriptName the external script which will perform the calculations
      */
     public void doAmsCalc(AmsCalcType calcType, String scriptName) {
+        if (showErrorIfNoSuite()) return;
         try {
             final String directory =
-                    app.getPrefs().getPrefs().get("data.pmagPyPath",
+                    getPrefs().getPrefs().get("data.pmagPyPath",
                     "/usr/local/bin");
-            File f = new File(directory, scriptName);
-            final String scriptPath = f.getAbsolutePath();
-         app.getSuite().calculateAmsStatistics(app.getAllSamplesInSelectedSites(),
+            final File file = new File(directory, scriptName);
+            final String scriptPath = file.getAbsolutePath();
+            getSuite().calculateAmsStatistics(getAllSamplesInSelectedSites(),
                  calcType, scriptPath);
         } catch (IOException ioe) {
-            app.errorDialog("Error running AMS script", "The following error "+
+            errorDialog("Error running AMS script", "The following error "+
                     "occurred:\n" + ioe.getLocalizedMessage()+"\n" +
                     "Please check that the script path is correctly set in "+
                     "the preferences.");
         } catch (IllegalArgumentException iae) {
-            app.errorDialog("Error running AMS script", "The following error "+
+            errorDialog("Error running AMS script", "The following error "+
                     "occurred:\n" + iae.getLocalizedMessage());
         }
-        app.updateDisplay();
+        updateDisplay();
     }
         
     private List<File> openFileDialog(String title) {
@@ -738,13 +739,13 @@ public final class PuffinApp {
             final JFileChooser chooser = new JFileChooser(startingDir);
             chooser.setMultiSelectionEnabled(true);
             chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-            int choice = chooser.showOpenDialog(app.getMainWindow());
+            int choice = chooser.showOpenDialog(getMainWindow());
             if (choice == JFileChooser.APPROVE_OPTION) {
                 files = Arrays.asList(chooser.getSelectedFiles());
                 lastUsedFileOpenDirs.put(title, chooser.getCurrentDirectory());
             }
         } else {
-            final FileDialog fd = new FileDialog(app.getMainWindow(), title,
+            final FileDialog fd = new FileDialog(getMainWindow(), title,
                     FileDialog.LOAD);
             fd.setVisible(true);
             String filename = fd.getFile();
@@ -760,8 +761,8 @@ public final class PuffinApp {
     /** Shows an ‘open files’ dialog box; if the user selects any files,
      * they will be opened in a new suite. */
     public void openFilesWithDialog() {
-        List<File> files = app.openFileDialog("Open file(s)");
-        if (files != null) app.openFiles(files);
+        List<File> files = openFileDialog("Open file(s)");
+        if (files != null) openFiles(files);
     }
     
     private boolean showErrorIfNoSuite() {
@@ -906,6 +907,12 @@ public final class PuffinApp {
             site.clearGcFit();
             site.clearFisher();
         }
+        updateDisplay();
+    }
+    
+    public void clearAmsCalcs()  {
+        if (showErrorIfNoSuite()) return;
+        getSuite().clearAmsCalculations();
         updateDisplay();
     }
 }

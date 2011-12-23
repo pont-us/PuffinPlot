@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.data.FisherValues;
 import net.talvi.puffinplot.data.GreatCircles;
+import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Site;
+import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
@@ -56,7 +58,11 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
         updatePlotDimensions(g);
         clearPoints();
         drawAxes();
-        List<Site> sites = params.getSample().getSuite().getSites();
+        final Sample sample = params.getSample();
+        if (sample==null) return;
+        final Suite suite = sample.getSuite();
+        if (suite==null) return;
+        List<Site> sites = suite.getSites();
         if (sites == null || sites.isEmpty()) {
             writeString(g, "No sites defined.", xo-40, yo-20);
             return;

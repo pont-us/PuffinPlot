@@ -841,8 +841,7 @@ public class PuffinActions {
     public final Action clearAmsCalcs = new AbstractAction("Clear AMS calculations") {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent arg0) {
-            app.getSuite().clearAmsCalculations();
-            app.updateDisplay();
+            app.clearAmsCalcs();
         }
     };
     
