@@ -16,22 +16,41 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import net.talvi.puffinplot.data.Sample;
 
-public class MainWindow extends JFrame {
+/**
+ * The main window of the PuffinPlot application. The window is chiefly
+ * occupied by {@link MainGraphDisplay}, which shows a configurable 
+ * selection of plots. Various controls and information panels are arranged
+ * around the edges.
+ * 
+ * @see MainGraphDisplay
+ * @see MainMenuBar
+ * @see ControlPanel
+ * @see SampleChooser
+ * 
+ * @author pont
+ */
+public final class MainWindow extends JFrame {
 
     private static final long serialVersionUID = -9075963924200708871L;
     private final MainGraphDisplay graphDisplay;
-    public final ControlPanel controlPanel;
-    private JScrollPane scrollPane;
-    SampleChooser sampleChooser;
+    private final ControlPanel controlPanel;
+    private final JScrollPane scrollPane;
+    private final SampleChooser sampleChooser;
     private final MainMenuBar menuBar;
-    private JLabel welcomeMessage;
+    private final JLabel welcomeMessage;
     private final SampleDataPanel sampleDataPanel;
-    public final JSplitPane splitPane;
+    private final JSplitPane splitPane;
     private int splitPaneDividerWidth;
+    private final PuffinApp app;
 
+    /**
+     * Creates a new main window.
+     */
     public MainWindow() {
+        app = PuffinApp.getInstance();
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        addWindowListener(new CloseListener());
+        addWindowListener(new WindowAdapter() {
+            @Override public void windowClosing(WindowEvent e) {app.quit();}});
         setTitle("PuffinPlot");
         setPreferredSize(new Dimension(800,400));
         menuBar = new MainMenuBar();
@@ -52,7 +71,7 @@ public class MainWindow extends JFrame {
         mainPanel.add(splitPane);
         mainPanel.add(welcomeMessage =
                 new JLabel("Welcome to PuffinPlot. This puffin hatched on "+
-                PuffinApp.getInstance().getBuildProperty("build.date") +"."),
+                app.getBuildProperty("build.date") +"."),
                 BorderLayout.NORTH);
         splitPane.setVisible(false);
         mainPanel.add(sampleChooser = new SampleChooser(), BorderLayout.WEST);
@@ -66,28 +85,46 @@ public class MainWindow extends JFrame {
         setLocationRelativeTo(null); // centre on screen
     }
 
+    /**
+     * Returns this window's sample chooser.
+     * @return this window's sample chooser
+     */
     public SampleChooser getSampleChooser() {
         return sampleChooser;
     }
     
+    /**
+     * Updates this window's sample data panel. This forces the display
+     * to reflect any changes in the current data.
+     */
     public void updateSampleDataPanel() {
         splitPane.setDividerSize(sampleDataPanel.isVisible() ? 
                 splitPaneDividerWidth : 0);
         splitPane.resetToPreferredSizes();
     }
     
+    /**
+     * Informs this window that the list of currently loaded data suites
+     * has changed. Calling this method allows this window to update its display
+     * accordingly.
+     */
     public void suitesChanged() {
         sampleChooser.updateSuite();
-        controlPanel.updateSuites();
-        final int numSuites = PuffinApp.getInstance().getSuites().size();
+        getControlPanel().updateSuites();
+        final int numSuites = app.getSuites().size();
         welcomeMessage.setVisible(numSuites == 0);
         splitPane.setVisible(numSuites > 0);
         repaint();
     }
 
+    /**
+     * Informs this window that the current sample
+     * has changed. Calling this method allows this window to update its display
+     * accordingly.
+     */
     public void sampleChanged() {
-        controlPanel.updateSample();
-        final Sample sample = PuffinApp.getInstance().getSample();
+        getControlPanel().updateSample();
+        final Sample sample = app.getSample();
         if (sample==null) return;
         sampleDataPanel.setSample(sample);
         //pack();
@@ -95,20 +132,27 @@ public class MainWindow extends JFrame {
         getMainMenuBar().sampleChanged();
     }
     
+    /**
+     * Returns this window's menu bar.
+     * @return this window's menu bar
+     */
     public MainMenuBar getMainMenuBar() {
         return menuBar;
     }
 
+    /**
+     * Returns this window's graph display.
+     * @return this window's graph display
+     */
     public MainGraphDisplay getGraphDisplay() {
         return graphDisplay;
     }
-    
-    static class CloseListener extends WindowAdapter {
-        @Override
-        public void windowClosing(WindowEvent e) {
-            PuffinApp.getInstance().getActions().quit.
-            actionPerformed(new ActionEvent(this, 0, "window close"));
-        }
+
+    /**
+     * Returns the control panel for the plots displayed in this window.
+     * @return the control panel for the plots displayed in this window
+     */
+    public ControlPanel getControlPanel() {
+        return controlPanel;
     }
-    
 }

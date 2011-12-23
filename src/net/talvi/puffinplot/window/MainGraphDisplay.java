@@ -44,7 +44,7 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
                 return app.getCorrection();
             }
             public MeasurementAxis getAxis() {
-                return app.getMainWindow().controlPanel.getAxis();
+                return app.getMainWindow().getControlPanel().getAxis();
             }
         };
         createPlots();

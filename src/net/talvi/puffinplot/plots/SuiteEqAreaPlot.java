@@ -20,6 +20,12 @@ import net.talvi.puffinplot.window.PlotParams;
  */
 public class SuiteEqAreaPlot extends EqAreaPlot {
 
+    /** Creates a suite equal area plot with the supplied parameters.
+     * 
+     * @param parent the graph display containing the plot
+     * @param params the parameters of the plot
+     * @param prefs the preferences containing the plot configuration
+     */
     public SuiteEqAreaPlot(GraphDisplay parent, PlotParams params,
             Preferences prefs) {
         super(parent, params, prefs);

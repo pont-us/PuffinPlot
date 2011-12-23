@@ -18,6 +18,12 @@ public class PcaTable extends Plot {
     private static final int X_SPACE = 100;
     private static final int Y_SPACE = 20;
     
+    /** Creates a new PCA table with the supplied parameters.
+     * 
+     * @param parent the graph display containing the table
+     * @param params the parameters of the table
+     * @param prefs the preferences containing the table configuration
+     */
     public PcaTable(GraphDisplay parent, PlotParams params, Preferences prefs) {
         super(parent, params, prefs);
     }

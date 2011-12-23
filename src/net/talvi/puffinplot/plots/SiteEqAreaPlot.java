@@ -28,12 +28,25 @@ import net.talvi.puffinplot.window.PlotParams;
  */
 public class SiteEqAreaPlot extends EqAreaPlot {
 
+    /** Creates a site equal area plot with the supplied parameters.
+     * 
+     * @param parent the graph display containing the plot
+     * @param params the parameters of the plot
+     * @param dimensions the initial dimensions of the plot
+     * @param prefs the preferences containing the plot configuration
+     */
     public SiteEqAreaPlot(GraphDisplay parent, PlotParams params,
             Rectangle2D dimensions, Preferences prefs) {
         super(parent, params, prefs, true);
         this.dimensions = dimensions;
     }
 
+    /** Creates a site equal area plot with the supplied parameters.
+     * 
+     * @param parent the graph display containing the plot
+     * @param params the parameters of the plot
+     * @param prefs the preferences containing the plot configuration
+     */
     public SiteEqAreaPlot(GraphDisplay parent, PlotParams params,
             Preferences prefs) {
         super(parent, params, prefs);

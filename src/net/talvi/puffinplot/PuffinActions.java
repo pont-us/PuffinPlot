@@ -411,10 +411,7 @@ public class PuffinActions {
             "Clear site Fisher and Great Circle calculations", 'I', true, 0) {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {
-        Site site = app.getCurrentSite();
-        site.clearGcFit();
-        site.clearFisher();
-        app.updateDisplay();
+            app.clearSiteCalculations();
         }
     };
 
@@ -804,23 +801,14 @@ public class PuffinActions {
 
     /**
      * Scales all magnetic susceptibility values in the current suite by
-     * a user-defined factor.
+     * a user-specified factor.
      */
     public final Action rescaleMagSus = new PuffinAction("Rescale mag. sus. …",
             "Scale magnetic susceptibility by a constant factor (whole suite)",
             null, false, 0) {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {
-            final String factorString = JOptionPane.showInputDialog(
-                    app.getMainWindow(),
-                    "Please enter magnetic susceptibility scaling factor.");
-            // my empirically determined value for the Bartington is 4.3e-5.
-            try {
-                final double factor = Double.parseDouble(factorString);
-                app.getSuite().rescaleMagSus(factor);
-            } catch (NumberFormatException exception) {
-                app.errorDialog("Input error", "That didn't look like a number.");
-            }
+            app.rescaleMagSus();
         }
     };
 

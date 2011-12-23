@@ -131,7 +131,7 @@ public final class PuffinApp {
         Correction corr =
                 Correction.fromString(prefs.getPrefs().get("correction", "false false NONE"));
         setCorrection(corr);
-        getMainWindow().controlPanel.setCorrection(corr);
+        getMainWindow().getControlPanel().setCorrection(corr);
         if (MAC_OS_X) createAppleEventListener();
         currentPageFormat = PrinterJob.getPrinterJob().defaultPage();
         currentPageFormat.setOrientation(PageFormat.LANDSCAPE);
@@ -764,16 +764,28 @@ public final class PuffinApp {
         if (files != null) app.openFiles(files);
     }
     
+    private boolean showErrorIfNoSuite() {
+        if (getSuite() == null) {
+            errorDialog("No data file open",
+                    "You must open a data file\n"
+                    + "before you can perform this operation.");
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
     /** Shows an ‘open files’ dialog box; if the user selects any files,
      * AMS data will be imported from them. The files are expected to
      * be in Agico ASC format. */
     public void importAmsWithDialog() {
+        if (showErrorIfNoSuite()) return;
         try {
             List<File> files = openFileDialog("Select AMS files");
             // app.getSuite().importAmsWithDialog(files, true);
             getSuite().importAmsFromAsc(files, false);
             getMainWindow().suitesChanged();
-            } catch (IOException ex) {
+        } catch (IOException ex) {
             logger.log(Level.SEVERE, null, ex);
             errorDialog("Error importing AMS", ex.getLocalizedMessage());
         }
@@ -862,6 +874,37 @@ public final class PuffinApp {
             for (Sample sample: getSelectedSamples()) {
                 sample.flip(axis);
             }
+        }
+        updateDisplay();
+    }
+    
+    /**
+     * Scales all magnetic susceptibility values in the current suite by
+     * a user-specified factor.
+     */
+    public void rescaleMagSus() {
+        if (showErrorIfNoSuite()) return;
+        final String factorString = JOptionPane.showInputDialog(
+                getMainWindow(),
+                "Please enter magnetic susceptibility scaling factor.");
+        // my empirically determined value for the Bartington is 4.3e-5.
+        if (factorString == null) return;
+        try {
+            final double factor = Double.parseDouble(factorString);
+            getSuite().rescaleMagSus(factor);
+        } catch (NumberFormatException exception) {
+            errorDialog("Input error", "That didn't look like a number.");
+        }
+    }
+    
+    /**
+     * Clears any previously calculated Fisherian or great-circle site directions.
+     */
+    public void clearSiteCalculations() {
+        if (showErrorIfNoSuite()) return;
+        for (Site site: getSelectedSites()) {
+            site.clearGcFit();
+            site.clearFisher();
         }
         updateDisplay();
     }

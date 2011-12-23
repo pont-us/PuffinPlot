@@ -28,7 +28,7 @@ import net.talvi.puffinplot.data.Suite;
  * 
  * @author pont
  */
-public class DepthSlider extends JPanel
+class DepthSlider extends JPanel
         implements MouseListener, MouseMotionListener {
     private static final long serialVersionUID = 1L;
 

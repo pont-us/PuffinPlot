@@ -19,6 +19,11 @@ import javax.swing.KeyStroke;
 import net.talvi.puffinplot.PuffinAction;
 import net.talvi.puffinplot.data.Sample;
 
+/**
+ * The menu bar and attached hierarchy of menus for PuffinPlot's main window.
+ * 
+ * @author pont
+ */
 public final class MainMenuBar extends JMenuBar {
 
     private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
@@ -58,6 +63,9 @@ public final class MainMenuBar extends JMenuBar {
         return menu;
     }
 
+    /**
+     * Creates a new menu bar and menu tree.
+     */
     public MainMenuBar() {
         final PuffinActions pa = app.getActions();
         recentFilesMenu = new JMenu("Open recent file");
@@ -134,6 +142,7 @@ public final class MainMenuBar extends JMenuBar {
     }
 
     private class AnchorItem extends JCheckBoxMenuItem {
+        private static final long serialVersionUID = 1L;
         AnchorItem() {
             super("Anchor PCA");
             addItemListener(new ItemListener() {
@@ -154,11 +163,18 @@ public final class MainMenuBar extends JMenuBar {
             }
     }
 
+    /**
+     * Alerts the menu bar that the current sample has changed.
+     * This allows any stateful menu items to be changed.
+     */
     public void sampleChanged() {
         Sample s = PuffinApp.getInstance().getSample();
         if (s != null) anchorItem.setSelected(s.isPcaAnchored());
     }
     
+    /**
+     * Updates the submenu containing the list of recently used files.
+     */
     public void updateRecentFiles() {
         recentFilesMenu.removeAll();
         final RecentFileList recent = PuffinApp.getInstance().getRecentFiles();
@@ -168,6 +184,7 @@ public final class MainMenuBar extends JMenuBar {
         for (int i=0; i<recentFileNames.length; i++) {
             final int index  = i;
             recentFilesMenu.add(new AbstractAction() {
+                private static final long serialVersionUID = 1L;
                 public void actionPerformed(ActionEvent arg0) {
                     PuffinApp.getInstance().
                             openFiles(recent.getFilesAndReorder(index));
