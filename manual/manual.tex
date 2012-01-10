@@ -106,7 +106,7 @@ them.
 
 \subsubsection{All operating systems}
 
-The latest `universal' version of PuffinPlot may be downloaded as a file
+The latest cross-platform version of PuffinPlot may be downloaded as a file
 named \textsf{PuffinPlot.jar} from
 \url{http://talvi.net/PuffinPlot.jar}. This file is recommended for
 Linux, Windows, and other non-Mac operating systems.
@@ -132,7 +132,7 @@ The latest Mac OS X version of PuffinPlot may be downloaded as a file
 named \textsf{PuffinPlot.zip} from
 \url{http://talvi.net/PuffinPlot.zip}. This file is packaged as a
 standard OS X application and conforms more nearly to OS X user
-interface standards than the `universal' version described in the
+interface standards than the cross-platform version described in the
 previous section.
 
 After downloading \textsf{PuffinPlot.zip}, double-click on it to
@@ -353,7 +353,9 @@ all these values will usually be 0 and 90 respectively throughout the core.
 dip direction of the bedding; the second in the dip magnitude.
 
 \item[Magnetic declination] (\ppcmd{Dev}). This is the angle between
-magnetic north and true north at the sampling site.
+magnetic north and true north at the sampling site. (It is abbreviated
+`Dev' (for `deviation') to avoid any possible confusion with the
+declinations of sample magnetizations.
 
 \item[Select all] selects all the points in the current sample.
 
@@ -405,10 +407,9 @@ PuffinPlot's data display.
 \item[File\submenu Export data] is a submenu allowing the export of
 various kinds of data to \caps{csv} files.
 
-\item[File\submenu Export data\submenu sample calculations\ldots] saves a file
-containing all the data associated with individual samples.
-Table~\ref{tbl:export-sample} describes the fields which make
-up the file.
+\item[File\submenu Export data\submenu Export sample calculations\ldots]
+  saves a file containing all the data associated with individual samples.
+  Table~\ref{tbl:export-sample} describes the fields which make up the file.
 
 \begin{table}[tp]
 %{Fields for sample data export}
@@ -453,10 +454,10 @@ section~\ref{sec:annotations} for details. \\ \bottomrule
 \end{tabular}
 \end{table}
 
-\item[File\submenu Export data\submenu site calculations\ldots] saves a file
-containing (for suites with discrete samples) all the data associated with
-sites. Table~\ref{tbl:export-site} describes the fields
-which make up this file.
+\item[File\submenu Export data\submenu Export site calculations\ldots] saves
+  a file containing (for suites with discrete samples) all the data
+  associated with sites. Table~\ref{tbl:export-site} describes the fields
+  which make up this file.
 
 \begin{table}[tp]
 
@@ -489,16 +490,16 @@ which make up this file.
 \end{tabular}
 \end{table}
 
-\item[File\submenu Export data\submenu suite calculations\ldots] saves a
-  \caps{csv} file containing only one line of data, which gives the mean
-  inclination, mean declination, \alnifi{}, and {\em k} for the Fisherian mean
-  direction calculated for the entire suite.
+\item[File\submenu Export data\submenu Export suite calculations\ldots] saves
+  a \caps{csv} file containing only one line of data, which gives the mean
+  inclination, mean declination, \alnifi{}, and {\em k} for the Fisherian
+  mean direction calculated for the entire suite.
 
-\item[File\submenu Export data\submenu IRM data\ldots] saves files containing
-\caps{irm} acquisition data. It produces a folder of files, one for each
-sample in the suite. Each file is in tab-delimited text format, and each line
-within the file contains the \caps{irm} field strength and the magnetization
-intensity of the sample after application of that field.
+\item[File\submenu Export data\submenu Export IRM data\ldots] saves files
+  containing \caps{irm} acquisition data. It produces a folder of files, one
+  for each sample in the suite. Each file is in tab-delimited text format,
+  and each line within the file contains the \caps{irm} field strength and
+  the magnetization intensity of the sample after application of that field.
 
 \item[File\submenu Page Setup\ldots] opens a window allowing you
 to change the paper size, orientation, and margins for printing.
@@ -520,15 +521,15 @@ section~\ref{sec:functions-calcs} for more details.
   separate great-circle fit window; see \ppcmd{Calculations\submenu Great
     circles} in section~\ref{sec:functions-calcs} for more details.
 
-\item[File\submenu Import AMS] imports \caps{ams} data from a file. The
-file must be in the \caps{.asc} format produced by the \ppcmd{Safyr} program
-distributed with \caps{Agico} kappabridges. The \caps{ams} data is assigned
-to the appropriate samples within the suite by matching the sample names
-specified in the \caps{asc} file with the sample names for the
-demagnetization data. If the \caps{ams} file contains data for samples not in
-the suite, these samples will be created and added to the suite. \caps{Ams}
-data is not displayed by default; the equal-area plot of \caps{ams} data can
-be activated from the \ppcmd{Preferences} window.
+\item[File\submenu Import AMS\ldots] imports \caps{ams} data from a file. The
+  file must be in the \caps{.asc} format produced by the \ppcmd{Safyr}
+  program distributed with \caps{Agico} kappabridges. The \caps{ams} data is
+  assigned to the appropriate samples within the suite by matching the sample
+  names specified in the \caps{asc} file with the sample names for the
+  demagnetization data. If the \caps{ams} file contains data for samples not
+  in the suite, these samples will be created and added to the suite.
+  \caps{Ams} data is not displayed by default; the equal-area plot of
+  \caps{ams} data can be activated from the \ppcmd{Preferences} window.
 
 \item[File\submenu Export SVG] saves the current contents of the main
 data display as an \caps{svg} (Scalable Vector Graphics) file. As a vector
@@ -585,43 +586,83 @@ change the sample orientation, formation orientation, and local magnetic
 declination for all the selected samples. Each correction type can be
 individually changed without affecting the values of the others.
 
-\item[Edit\submenu Copy point selection] takes the points which are
-selected for the current sample, and selects the corresponding points
-for all the selected samples. This is useful, for example, for hiding
-the same points in a large number of samples without having to
-manually select them for each sample.
+\item[Edit\submenu Copy point selection] takes the points which are selected
+  for the current sample, and selects the corresponding points for all the
+  selected samples. This is useful, for example, for hiding the same points
+  in a large number of samples without having to manually select them for
+  each sample.
 
-%\item[Edit\submenu Flip sample(s)]
+\item[Edit\submenu Flip selected samples] is a submenu allowing the selected
+  samples to be rotated 180\textdegree around a selected axis. Such
+  functionality is rarely required but can be useful, for example, when it is
+  found that a sample has been incorrectly oriented during measurement, or
+  when converting between different orientation conventions.
+
+\item[Edit\submenu Flip selected samples\submenu Flip samples around X axis]
+  rotates the magnetic moment values for all selected samples 180\textdegree
+  around the X axis.
+
+\item[Edit\submenu Flip selected samples\submenu Flip samples around Y axis]
+  rotates the magnetic moment values for all selected samples 180\textdegree
+  around the Y axis.
+
+\item[Edit\submenu Flip selected samples\submenu Flip samples around Z axis]
+  rotates the magnetic moment values for all selected samples 180\textdegree
+  around the Z axis.
+
+\item[Edit\submenu Edit sites] is a submenu allowing site names to be
+  set for samples in various ways.
+
+\item[Edit\submenu Edit sites\submenu Set site name\ldots] allows a single
+  site name to be set for all the selected samples.
+
+\item[Edit\submenu Edit sites\submenu Set sites from sample names\ldots] sets
+  site names for the selected samples by taking specified characters from the
+  sample names. The characters to use are specified by a list of
+  comma-separated numbers and number ranges; for example, entering
+  \ppcmd{1,3,5-8} would give each selected sample a site name composed of the
+  first, third, and fifth to eighth characters of the sample name, so that
+  a sample with the name \ppcmd{FFQB0529.1} would get the site name
+  \ppcmd{FQ0529}. The table below gives some further examples.
+
+\begin{tabular}{lll} \toprule
+Sample name & Character selection & Resulting site name \\ \midrule
+FFQB0529.1 & 1,3,5-8 & FQ0529 \\
+FFQB0529.1 & 4-6 & B05 \\
+CiLpA-10-53 & 1-2,5,7-8 & CiA10 \\
+CiLpA-10-53 & 3-4,9-11 & Lp-53 \\
+\bottomrule \end{tabular}
+
+\item[Edit\submenu Edit sites\submenu Set sites by depth\ldots] sets site
+  names in continuous suites using the depths of the individual samples.
+  PuffinPlot asks for a thickness value, and groups the samples within the
+  core into sites of that thickness, effectively `slicing' the core into
+  equally thick sites. Each site is named after the lowest depth within it.
 
 \item[Edit\submenu Hide points] hides all the selected points in all the
-selected samples. This removes them from all the graphical plots (which will
-be rescaled to avoid unnecessary blank space), but not from the data table in
-the main plot window; on the data table, hidden data points are marked with a
-dash symbol (--) to their left. Hidden points can be restored using the
+  selected samples. This removes them from all the graphical plots (which
+  will be rescaled to avoid unnecessary blank space), but not from the data
+  table in the main plot window; on the data table, hidden data points are
+  marked with a dash symbol (--) to their left. Hidden points can be restored
+  using the \ppcmd{Show all points} menu item.
 
-\item[Edit\submenu Show all points] restores all hidden points in all
-the selected samples.
-
-%\item[Edit\submenu Use as empty slot]
-
-%\item[Edit\submenu Unset empty slot]
-
-%\item[Edit\submenu Apply empty correction]
+\item[Edit\submenu Show all points] restores all hidden points in all the
+  selected samples.
 
 \item[Edit\submenu Edit custom flags\ldots] allows you to add or remove
-user-defined flags for the suite; see section~\ref{sec:annotations}
-for details.
+  user-defined flags for the suite; see section~\ref{sec:annotations} for
+  details.
 
 \item[Edit\submenu Edit custom notes\ldots] allows you to add or remove
   user-defined note categories for the suite; see
   section~\ref{sec:annotations} for details.
 
-\item[Edit\submenu Rescale mag. sus.] scales all the magnetic
-susceptibility values for the suite by a specified factor. This is
-useful since magnetic susceptibility meters typically do not report
-values in standard S.I. units. Note that, unlike many PuffinPlot operations,
-the scaling is applied to the {\em entire suite}, not just the selected
-samples.
+\item[Edit\submenu Rescale mag. sus.\ldots] scales all the magnetic
+  susceptibility values for the suite by a specified factor. This is useful
+  since magnetic susceptibility meters typically do not report values in
+  standard S.I. units. Note that, unlike many PuffinPlot operations, the
+  scaling is applied to the {\em entire suite}, not just the selected
+  samples.
 
 \end{menuitemlist}
 
@@ -644,11 +685,6 @@ all the selected samples, not just the current sample.
   points are known to represent the final demagnetization component. Leaving
   it unanchored allows analysis of secondary components, provided that they
   are sufficiently well separated from other components.
-
-\item[Calculations\submenu Fisher by sample] calculates, for each selected
-  sample, a Fisherian mean direction for all the selected points. This can
-  produce reasonable mean directions for origin-trending components, but
-  principal component analysis is usually preferable.
 
 \item[Calculations\submenu Fisher by site] calculates a Fisherian mean
   direction for the \caps{pca} directions at each site.
@@ -686,7 +722,7 @@ results of any calculations associated with the selected {\em sites}
 best-fit great-circle direction for each selected site.
 
 \item[Calculations\submenu Reversal test] performs a basic reversal
-test of {\em all} the currently open suites.
+test on {\em all} the currently open suites.
 
 \end{menuitemlist}
 
@@ -1059,11 +1095,12 @@ types are detailed in section~\ref{sec:plot-types}.
 Annotations are a feature allowing short, categorized notes to be added to
 each sample in a suite. The categories can be freely chosen. Annotations come
 in two varieties, {\em custom flags} and {\em custom notes}. Custom flags
-embody a true/false value and are intended for when a sample fulfils some
-criterion -- for example, \quot{messy}, \quot{low-temperature alteration},
-or \quot{multiple components}. Custom notes are intended for adding short
-items of information which are not automatically inferred by PuffinPlot --
-for example, \quot{number of components} or \quot{behaviour type}.
+embody a true/false value and are intended to record whether a sample fulfils
+some criterion -- for example, \quot{messy}, \quot{low-temperature
+  alteration}, or \quot{multiple components}. Custom notes are intended for
+adding short items of information which are not automatically inferred by
+PuffinPlot -- for example, \quot{number of components} or \quot{behaviour
+  type}.
 
 \paragraph{Adding annotation categories}
 
@@ -1088,20 +1125,19 @@ item.
 \subsubsection{\label{sec:scripting}Scripting}
 
 PuffinPlot's graphical desktop interface is intended to be the primary way to
-interact with the program. However, it is often useful to be able to interact
-with a program using a scripting language, in order to extend its
-capabilities, integrate it conveniently with other programs, or process large
-amounts of data without manual intervention. The Java platform upon which
-PuffinPlot is built supports a number of scripting languages which can easily
-interface with PuffinPlot. Perhaps most usefully, an implementation of the
-Python programming language -- named Jython \citep{juneau2009jython} -- has
-been developed for the Java platform. Since Python is widely used in
-scientific programming and scripting, and familiar to a large number of
-scientists, this should provide a convenient route for anyone wishing to
-integrate PuffinPlot with other data processing steps. Using Jython,
-PuffinPlot can be controlled either from a pre-written script, or
-interactively from a command shell which accepts and executes commands one at
-a time from the user.
+interact with the program. However, it is often useful to be able to control
+a program using a scripting language, in order to extend its capabilities,
+integrate it conveniently with other programs, or process large amounts of
+data without manual intervention. The Java platform upon which PuffinPlot is
+built supports a number of scripting languages which can easily interface
+with PuffinPlot. Perhaps most usefully, an implementation of the Python
+programming language -- named Jython \citep{juneau2009jython} -- has been
+developed for the Java platform. Since Python is widely used in scientific
+programming and scripting, and familiar to a large number of scientists, this
+should provide a convenient route for anyone wishing to integrate PuffinPlot
+with other data processing steps. Using Jython, PuffinPlot can be controlled
+either from a pre-written script, or interactively from a command shell which
+accepts and executes commands one at a time from the user.
 
 Currently, the main barrier to controlling PuffinPlot from another program or
 from an interactive shell is that its internal structure is very poorly

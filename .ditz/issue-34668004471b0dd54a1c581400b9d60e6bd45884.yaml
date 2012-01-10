@@ -28,3 +28,9 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - changed status from unstarted to in_progress
   - Added a proof-of-concept iText export. Haven't tried FreeHEP yet.
+- - 2012-01-10 05:30:54.093444 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    This needs to be either finished (with library bundled),
+    tested, and documented, or removed and deferred.

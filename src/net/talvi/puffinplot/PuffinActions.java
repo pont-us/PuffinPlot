@@ -26,7 +26,6 @@ import net.talvi.puffinplot.data.DatumField;
 import net.talvi.puffinplot.data.FisherValues;
 import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;
-import net.talvi.puffinplot.data.Site;
 import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.data.Suite.AmsCalcType;
 
@@ -445,7 +444,7 @@ public class PuffinActions {
     /**
      * For each selected sample, clears all calculations and deselects all points.
      */
-    public final Action clear = new PuffinAction("Clear calculations",
+    public final Action clearSampleCalcs = new PuffinAction("Clear sample calculations",
             "Clear point selections and calculations for selected samples",
             'Z', false, KeyEvent.VK_C) {
         private static final long serialVersionUID = 1L;
