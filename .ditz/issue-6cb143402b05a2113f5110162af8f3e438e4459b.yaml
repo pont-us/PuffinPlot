@@ -5,8 +5,8 @@ type: :task
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :in_progress
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2011-11-12 03:55:34.130985 Z
 references: []
 
@@ -20,3 +20,7 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - changed status from unstarted to in_progress
   - ""
+- - 2012-01-10 22:51:07.994977 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - All public classes and members documented.

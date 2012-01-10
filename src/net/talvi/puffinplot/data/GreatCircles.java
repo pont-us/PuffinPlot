@@ -26,13 +26,14 @@ public class GreatCircles implements FisherParams {
     private double a95;
     private double k;
     private double R;
+    private int minPoints;
 
     private static final double MAX_ITERATIONS = 1000;
     private static final double STABLE_LIMIT = Math.PI / 1800; // 0.1 degree
 
     private static final List<String> HEADERS =
         Arrays.asList("GC valid (Y/N)","GC dec (°)", "GC inc (°)",
-            "GC a95 (°)", "GC k", "GC N", "GC M");
+            "GC a95 (°)", "GC k", "GC N", "GC M", "GC min points");
 
     /**
      * Calculates a mean direction from the supplied great circle and
@@ -50,6 +51,14 @@ public class GreatCircles implements FisherParams {
     }
     
     private void findDirection() {
+        minPoints = getCircles().isEmpty() ? 0 : Integer.MAX_VALUE;
+        for (GreatCircle gc: getCircles()) {
+            final int numPoints = gc.getPoints().size();
+            if (numPoints < minPoints) {
+                minPoints = numPoints; 
+            }
+        }
+        
         boolean goodFirstGuess = (endpoints.size() > 0);
         List<Vec3> D;
         if (goodFirstGuess) D = endpoints;
@@ -64,7 +73,7 @@ public class GreatCircles implements FisherParams {
             Vec3 guess = Vec3.ORIGIN;
             for (GreatCircle c: circles) guess = guess.plus(c.lastPoint().minus(c.getPoints().get(0)));
             D.add(guess.normalize()); // todo: better guess
-        } 
+        }
 
         List<Vec3> G = new ArrayList<Vec3>(circles.size());
         G.addAll(Collections.nCopies(circles.size(), Vec3.ORIGIN));
@@ -88,25 +97,33 @@ public class GreatCircles implements FisherParams {
         }
         logger.log(Level.INFO, "{0} iterations", iter);
         R = Vec3.sum(D).plus(Vec3.sum(G)).mag();
-        k = (2*M()+N()-2)/(2*(M()+N()-R));
+        k = (2*getM()+getN()-2)/(2*(getM()+getN()-R));
         direction = Vec3.sum(D).plus(Vec3.sum(G)).normalize();
         a95 = alpha(0.95);
         logger.log(Level.INFO, "a95 {0}", a95);
     }
 
-    private int M() {
+    /** Returns the number of stable endpoints used in the calculation.
+     * @return the number of stable endpoints used in the calculation */
+    public int getM() {
         return endpoints.size();
     }
 
-    private int N() {
+    /** Returns the number of great circles used in the calculation.
+     * @return the number of great circles used in the calculation */
+    public int getN() {
         return circles.size();
+    }
+    
+    private int getMinPoints() {
+        return minPoints;
     }
 
     private double alpha(double p) {
-        double NN = M() + N() / 2.0;
+        double NN = getM() + getN() / 2.0;
         double v = 1 - ((NN-1)/(k*R)) *
                 ( Math.pow(1/p, 1/(NN-1)) - 1 );
-        logger.log(Level.INFO, String.format("%d %d %f %f %f %f", M(), N(), NN, k, R, v));
+        logger.log(Level.INFO, String.format("%d %d %f %f %f %f", getM(), getN(), NN, k, R, v));
         return Math.toDegrees(Math.acos(v));
     }
 
@@ -125,6 +142,10 @@ public class GreatCircles implements FisherParams {
     private String fmt(double d) {
         return String.format(Locale.ENGLISH, "%.1f", d);
     }
+    
+    private String intFmt(int d) {
+        return String.format(Locale.ENGLISH, "%d", d);
+    }
 
     /** Returns the statistical parameters as a list of strings.
      * The order of the parameters is the same as the order of
@@ -134,7 +155,7 @@ public class GreatCircles implements FisherParams {
     public List<String> toStrings() {
         return Arrays.asList(isValid() ? "Y" : "N",
                 fmt(direction.getDecDeg()), fmt(direction.getIncDeg()),
-                fmt(a95), fmt(k), fmt(N()), fmt(M()));
+                fmt(a95), fmt(k), intFmt(getN()), intFmt(getM()), intFmt(getMinPoints()));
     }
 
     /** Returns a list of empty strings equal in length to the number of parameters.
@@ -156,7 +177,7 @@ public class GreatCircles implements FisherParams {
      */
     // TODO make these limits configurable
     public boolean isValid() {
-        return N()>=3 && a95<3.5 && k>3;
+        return getN()>=3 && a95<3.5 && k>3;
     }
 
     public double getA95() {
