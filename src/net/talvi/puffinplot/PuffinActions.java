@@ -552,9 +552,7 @@ public class PuffinActions {
             PrinterJob job = PrinterJob.getPrinterJob();
             job.setPrintable(app.getMainWindow().getGraphDisplay(),
                              app.getCurrentPageFormat());
-
             PrintService[] services = PrinterJob.lookupPrintServices();
-
             if (services.length > 0) {
                 try {
                     job.setPrintService(services[0]);
@@ -739,13 +737,13 @@ public class PuffinActions {
                 app.getMainWindow().getGraphDisplay().saveToSvg(pathname);
         }
     };
-    
+
     /**
      * Opens a save dialog allowing the current main display to be saved
      * as a PDF file.
      */
     public final Action exportPdf = new PuffinAction("Export PDF…",
-            "Save current display to an SVG file",
+            "Print data for selected samples to a PDF file",
             '9', true, 0) {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {
@@ -753,7 +751,7 @@ public class PuffinActions {
                     "Portable Document Format");
             if (pathname != null)
                 try {
-                app.getMainWindow().getGraphDisplay().saveToPdf(pathname);
+                app.exportPdf(new File(pathname));
             } catch (DocumentException ex) {
                 Logger.getLogger(PuffinActions.class.getName()).log(Level.SEVERE, null, ex);
             } catch (FileNotFoundException ex) {
@@ -761,7 +759,7 @@ public class PuffinActions {
             }
         }
     };
-
+    
     /**
      * Calculates bootstrap AMS statistics on the selected samples.
      */

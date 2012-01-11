@@ -50,6 +50,16 @@ import net.talvi.puffinplot.data.Suite.AmsCalcType;
 import net.talvi.puffinplot.window.CustomFieldEditor;
 import net.talvi.puffinplot.window.SiteMeanWindow;
 import net.talvi.puffinplot.window.PrefsWindow;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.DefaultFontMapper;
+import com.lowagie.text.pdf.FontMapper;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfWriter;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.io.FileOutputStream;
+import net.talvi.puffinplot.window.MainGraphDisplay;
 
 /**
  * This class constitutes the main PuffinPlot application.
@@ -910,9 +920,55 @@ public final class PuffinApp {
         updateDisplay();
     }
     
+    /**
+     * Clears the results of any AMS calculations for the current suite.
+     */
     public void clearAmsCalcs()  {
         if (showErrorIfNoSuite()) return;
         getSuite().clearAmsCalculations();
         updateDisplay();
+    }
+    
+    /**
+     * Writes a PDF file containing data plots with the current layout
+     * for all selected samples. One page is produced per selected sample.
+     * 
+     * @param pdfFile the PDF file to which to write the plots
+     * @throws DocumentException if an error occurred while writing the PDF
+     * @throws FileNotFoundException if the file exists but is a directory
+     * rather than a regular file, does not exist but cannot be created,
+     * or cannot be opened for any other reason 
+     */
+    public void exportPdf(File pdfFile) throws FileNotFoundException, DocumentException {
+        final MainGraphDisplay display = getMainWindow().getGraphDisplay();
+        final Dimension size = display.getMaximumSize();
+        com.lowagie.text.Document document =
+                new com.lowagie.text.Document(new Rectangle(size.width, size.height));
+        // The font mapping is fairly rudimentary at present, and will
+        // probably only work for the `standard' Java fonts. Getting it to
+        // work properly is non-trivial. One possible approach is to 
+        // use DefaultFontMapper.insertDirectory for all known possible
+        // platform font paths to build up a mapping, but apparently this
+        // is too slow to be practical -- see
+        // http://www.mail-archive.com/itext-questions@lists.sourceforge.net/msg01669.html
+        // The way to go would probably be a custom font mapper (since 
+        // we only use one font anyway) which uses some platform-informed
+        // heuristics to locate the font on disk.
+        // See p. 483 of the itext book for more details.
+        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
+        FontMapper mapper = new DefaultFontMapper();
+        document.open();
+        PdfContentByte content = writer.getDirectContent();
+        int pdfPage = 0;
+        boolean finished = false;
+        // a rough imitation of the Java printing interface
+        do {
+            document.newPage();  // shouldn't make a difference on first pass
+            Graphics2D g2 = content.createGraphics(size.width, size.height, mapper);
+            finished = display.printPdfPage(g2, pdfPage);
+            g2.dispose();
+            pdfPage++;
+        } while (!finished);
+        document.close();
     }
 }

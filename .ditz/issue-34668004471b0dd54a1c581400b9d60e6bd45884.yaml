@@ -13,8 +13,8 @@ type: :feature
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :in_progress
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2011-11-12 03:46:38.138911 Z
 references: []
 
@@ -34,3 +34,12 @@ log_events:
   - |-
     This needs to be either finished (with library bundled),
     tested, and documented, or removed and deferred.
+- - 2012-01-11 05:45:56.882978 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    iText export is now working properly for multi-page PDF export.
+    Improvements are possible: at present page size is fixed, and
+    only the standard Java fonts are correctly mapped to PDF.
+    But it's good enough to be useful so I will close this ticket
+    and open new ones for any future enhancements.

@@ -376,29 +376,4 @@ public abstract class GraphDisplay extends JPanel implements Printable {
             Logger.getLogger(GraphDisplay.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    /** Writes the contents of this display to a PDF file.
-     * @param filename the name of the file to which to write
-     * @throws DocumentException if an error occurred while writing the PDF
-     * @throws FileNotFoundException if the file exists but is a directory
-     * rather than a regular file, does not exist but cannot be created,
-     * or cannot be opened for any other reason 
-     */
-    public void saveToPdf(String filename) throws DocumentException, FileNotFoundException {
-        com.lowagie.text.Document document =
-                new com.lowagie.text.Document(new Rectangle(2000, 1200));
-        // fonts not working properly yet.
-        // see p. 483 of the itext book for possible fix.
-        // step 2
-        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(filename));
-        // step 3
-        document.open();
-        // step 4
-        PdfContentByte canvas = writer.getDirectContent();
-        Graphics2D g2 = canvas.createGraphics(2000, 1200);
-        paint(g2);
-        g2.dispose();
-        // step 5
-        document.close();
-    }
 }

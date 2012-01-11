@@ -1,7 +1,9 @@
 package net.talvi.puffinplot.window;
 
+import java.awt.Color;
 import net.talvi.puffinplot.*;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
@@ -88,7 +90,6 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
     public int print(Graphics graphics, PageFormat pf, int pageIndex)
             throws PrinterException {
         pf.setOrientation(PageFormat.LANDSCAPE);
-
         if (samplesForPrinting == null)
             samplesForPrinting = PuffinApp.getInstance().getSelectedSamples();
         if (pageIndex >= samplesForPrinting.size()) {
@@ -98,5 +99,32 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
         printPageIndex = pageIndex;
         printPlots(pf, graphics);
         return PAGE_EXISTS;
+    }
+    
+    /**
+     * Writes a requested page of the current suite to a given
+     * graphics context. Intended for use when exporting multi-page
+     * PDF. Uses the same model as Java printing, sans {@code PageFormat}.
+     * 
+     * @param g2 graphics context
+     * @param pageIndex the page to output
+     * @return {@code true} if this page is invalid (page number too high);
+     *  {@code false} otherwise
+     */
+    public boolean printPdfPage(Graphics2D g2, int pageIndex) {
+        if (samplesForPrinting == null)
+            samplesForPrinting = PuffinApp.getInstance().getSelectedSamples();
+        if (pageIndex >= samplesForPrinting.size()) {
+            samplesForPrinting = null; // we've finished printing
+            return true;
+        }
+        printPageIndex = pageIndex;
+        setDoubleBuffered(false);
+        g2.setPaint(Color.BLACK);
+        g2.setPaintMode();
+        for (Plot plot: getVisiblePlots()) plot.draw(g2);
+        printChildren(g2);
+        setDoubleBuffered(true);
+        return false;
     }
 }
