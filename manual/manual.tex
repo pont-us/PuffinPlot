@@ -430,9 +430,9 @@ Fisher k             & $k$-value of mean direction \\
 \caps{pca} inc.      & Inclination of \caps{pca} direction (\textdegree)\\
 \caps{pca} dec.      & Declination of \caps{pca} direction (\textdegree)\\
 \caps{pca} \caps{mad}1 &  The Maximum Angle of Deviation
-for the planar \caps{pca} fit; the smaller the value, the more coplanar the points. \\
+for the planar \caps{pca} fit; the smaller the value, the more coplanar the points. See section~\ref{sec:plot-types} for more details.\\
 \caps{pca} \caps{mad}3 & The Maximum Angle of Deviation
-for the linear \caps{pca} fit; the smaller the value, the more collinear the points. \\
+for the linear \caps{pca} fit; the smaller the value, the more collinear the points. See section~\ref{sec:plot-types} for more details.\\
 \caps{pca} anchored    & `yes' if the
 \caps{pca} fit was anchored; `no' if not \\
 \caps{pca} start       & Field or temperature of
@@ -861,20 +861,19 @@ This will immediately perform \caps{pca} on all 50 selected samples.
 
 This section lists and briefly describes the available plot types in
 PuffinPlot. Some of them are not displayed by default, but these may be
-activated via the preferences window (see
-section~\ref{sec:preferences}). Note that the term `plot' is used
-rather loosely in this manual to refer to any movable element displaying data
-within the main window. Thus, the `plots' listed below include textual
-elements such as legends.
+activated via the preferences window (see section~\ref{sec:preferences}).
+Note that the term `plot' is used rather loosely in this manual to refer to
+any movable element displaying data within the main window. Thus, the `plots'
+listed below include textual elements such as legends and tables.
 
 \begin{menuitemlist}
 
-\item[Equal-area] is a Lambert azimuthal equal-area projection showing
-the directions of the current sample's magnetization vectors. Successive
-points are connected by great-circle segments. Points in the upper hemisphere
-are shown as unfilled (white) and connected by solid lines; points in the
-lower hemisphere are filled (black) and connected by dashed lines. If a great
-circle fit has been calculated for the sample, it is shown on this plot.
+\item[Equal-area] is a Lambert azimuthal equal-area projection showing the
+  directions of the current sample's magnetization vectors. Successive points
+  are connected by great-circle segments. Points in the upper hemisphere are
+  shown as unfilled (white) and connected by solid lines; points in the lower
+  hemisphere are filled (black) and connected by dashed lines. If a great
+  circle fit has been calculated for the sample, it is shown on this plot.
 
 \item[Zplot] is a Zijderveld plot, overlaying an orthographic projection in
   the horizontal plane with an orthographic projection in a chosen vertical
@@ -887,68 +886,69 @@ circle fit has been calculated for the sample, it is shown on this plot.
   horizontal projection of the \caps{pca} line is shown, since \ppcmd{V vs.
     H} effectively uses a different vertical projection for each point.)
 
-\item[Zplot key] is a legend for the Zijderveld plot, showing
-the interpretations of the filled and unfilled points and giving the
-units in which the axes are calibrated.
+\item[Zplot key] is a legend for the Zijderveld plot, showing the
+  interpretations of the filled and unfilled points and giving the units in
+  which the axes are calibrated.
 
-\item[Demag.] is a plot of demagnetization step (in mT or °C) versus
-intensity of magnetization (in A/m), shown as a line of filled points.
-If magnetic susceptibility measurements have been taken, they are
-overlaid on the same plot as unfilled points, with the scale shown on the
-right of the graph.
+\item[Demag.] is a plot of demagnetization step (in mT or \textdegree C)
+  versus intensity of magnetization (in A/m), shown as a line of filled
+  points. If magnetic susceptibility measurements have been taken, they are
+  overlaid on the same plot as unfilled points, with the scale shown on the
+  right of the graph.
 
-\item[Data table] is a table in which each row represents one
-demagnetization step for the current sample. The columns, from left
-to right, give the demagnetization step, declination, inclination,
-intensity, and magnetic susceptibility. Selected points are denoted
-by an asterisk (*) to their left; hidden points are denoted by a
-dash (--) to their left.
+\item[Data table] is a table in which each row represents one demagnetization
+  step for the current sample. The columns, from left to right, give the
+  demagnetization step, declination, inclination, intensity, and magnetic
+  susceptibility. Selected points are denoted by an asterisk (*) to their
+  left; hidden points are denoted by a dash (--) to their left.
 
-\item[\caps{Pca}] shows the results of \caps{pca} textually, if
-\caps{pca} has been carried out for the current sample; otherwise it is
-invisible. When visible, it shows the inclination and declination of the
-first principal component, which corresponds to a least-squares linear
-fit. It also shows the maximum angular deviation (\caps{mad}) values
-\caps{mad}1 and \caps{mad}3, which function as goodness-of-fit parameters
-(smaller is better) for planarity and collinearity respectively.
-\cite{kirschvink1980least} gives more detail of the interpretation
-of \caps{mad} values.
+\item[\caps{Pca}] shows the results of \caps{pca} textually, if \caps{pca}
+  has been carried out for the current sample; if no \caps{pca} has been
+  done, this plot is invisible. When visible, it shows the inclination and
+  declination of the first principal component, which corresponds to a
+  least-squares linear fit. It also shows the maximum angular deviation
+  (\caps{mad}) values \caps{mad}1 and \caps{mad}3, which function as
+  goodness-of-fit parameters (smaller is better). The \caps{mad}1 value gives
+  an indication of how nearly the points lie in a single plane; the
+  \caps{mad}3 value gives an indication of how nearly they lie along a single
+  line. \caps{Pca} analysis and \caps{mad} values are explained in
+  \cite{kirschvink1980least} and in section 9.7 of
+  \cite{tauxe2010paleomagnetism}.
 
-\item[Title] simply shows the name of the current sample and
-the current site, for a discrete suite. For a continuous (long core)
-suite, it shows the current depth.
+\item[Title] simply shows the name of the current sample and the current
+  site, for a discrete suite. For a continuous (long core) suite, it shows
+  the current depth.
 
 \item[Fisher] shows the parameters of the per-sample Fisherian analysis, if
   one has been carried out; otherwise it is invisible. It gives the mean
   inclination and declination and the \alnifi{} and $k$ parameters.
 
-\item[\caps{Ams}] is a lower-hemisphere equal-area plot of
-\caps{ams} data, if any has been imported. Maximum, intermediate, and
-minimum anisotropy axes are shown as squares, triangles, and circles
-respectively. If \caps{ams} statistics have been calculated (see
-section~\ref{sec:functions-calcs}), the mean directions and
-confidence ellipses are also shown.
+\item[\caps{Ams}] is a lower-hemisphere equal-area plot of \caps{ams} data,
+  if any has been imported. Maximum, intermediate, and minimum anisotropy
+  axes are shown as squares, triangles, and circles respectively. If
+  \caps{ams} statistics have been calculated (see
+  section~\ref{sec:functions-calcs}), the mean directions and confidence
+  ellipses are also shown.
 
-\item[Ternary demag.] is an experimental ternary plot designed
-to display data from triaxial \caps{irm} demagnetization experiments
-conducted according to the method of \cite{lowrie1990identification}.
-The position of a point on the plot reflects the relative strengths
-of the three axes of magnetization, which in turn correspond to
-high, medium, and low coercivity components. The path produced
-by points at successive demagnetization steps thus shows the relative
-effects of thermal unblocking and alteration on these components.
+\item[Ternary demag.] is an experimental ternary plot designed to display
+  data from triaxial \caps{irm} demagnetization experiments conducted
+  according to the method of \cite{lowrie1990identification}. The position of
+  a point on the plot reflects the relative strengths of the three axes of
+  magnetization, which in turn correspond to high, medium, and low coercivity
+  components. The path produced by points at successive demagnetization steps
+  thus shows the relative effects of thermal unblocking and alteration on
+  these components.
 
-\item[Great circles] shows all the great circles fitted at
-the current sample's site, along with a best-fit direction calculated
-by the method of \cite{mcfadden1988circles}.
+\item[Great circles] shows all the great circles fitted at the current
+  sample's site, along with a best-fit direction calculated by the method of
+  \cite{mcfadden1988circles}.
 
-\item[Formation mean] shows all the site means for the suite,
-and a Fisherian mean and 95\% confidence interval for them.
-If two polarities are present in the suite, two means are calculated
-and shown.
+\item[Formation mean] shows all the site means for the suite, and a Fisherian
+  mean and 95\% confidence interval for them. If two polarities are present
+  in the suite, two means are calculated and shown.
 
-\item[\caps{Nrm} Histogram] shows a histogram of \caps{nrm}
-intensities across the whole suite.
+\item[\caps{Nrm} Histogram] shows a histogram of \caps{nrm} intensities
+  across the whole suite.
 
 \end{menuitemlist}
 

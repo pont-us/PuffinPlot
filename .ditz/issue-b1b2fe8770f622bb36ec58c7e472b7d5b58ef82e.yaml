@@ -8,8 +8,8 @@ type: :task
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2011-01-12 19:27:15.067195 Z
 references: []
 
@@ -19,3 +19,9 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2012-01-11 06:11:22.734994 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    MAD values now described clearly both in manual and in
+    JavaDoc.
