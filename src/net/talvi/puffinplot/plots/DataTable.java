@@ -82,8 +82,7 @@ public class DataTable extends Plot {
                     : format("%.0f", d.getTreatmentLevel());
             if (d.getTreatType().getUnit().equals("T")) {
                 // turn T into mT
-                // TODO: right-justify (non-trivial in non-fixed font)
-                demag = format("%-4.0f", d.getTreatmentLevel() * 1000);
+                demag = format("%.0f", d.getTreatmentLevel() * 1000);
             }
             values.add(demag);
             values.add(format("%.1f", p.getDecDeg()));

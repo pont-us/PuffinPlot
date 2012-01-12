@@ -260,6 +260,22 @@ public final class Suite {
     }
 
     /**
+     * <p>Creates a new suite from the specified files.
+     * The is a convenience method for
+     * {@link Suite(List<File>, SensorLengths, TwoGeeLoader.Protocol)}
+     * using the default sensor lengths (1, 1, 1) and protocol 
+     * ({@code NORMAL}).
+     * </p>
+     * 
+     * @param files the files from which to load the data
+     * @throws IOException if an I/O error occurred while reading the files 
+     */
+    public Suite(List<File> files) throws IOException {
+            this(files, SensorLengths.fromPresetName("1:1:1"),
+                    TwoGeeLoader.Protocol.NORMAL);
+    }
+    
+    /**
      * <p>Creates a new suite from the specified files.</p>
      * 
      * <p>Note that this may return an empty suite, in which case it is the

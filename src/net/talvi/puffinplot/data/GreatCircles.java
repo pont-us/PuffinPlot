@@ -7,6 +7,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.Preferences;
+import org.python.core.PyException;
+import org.python.core.PyObject;
+import org.python.util.PythonInterpreter;
 import static java.lang.Math.acos;
 
 /**
@@ -18,8 +22,7 @@ import static java.lang.Math.acos;
  */
 public class GreatCircles implements FisherParams {
 
-    private static final Logger logger = Logger.getLogger("GreatCircles");
-
+    private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
     private final List<GreatCircle> circles;
     private final List<Vec3> endpoints;
     private Vec3 direction;
@@ -27,6 +30,8 @@ public class GreatCircles implements FisherParams {
     private double k;
     private double R;
     private int minPoints;
+    private PythonInterpreter interp = new PythonInterpreter();
+    private Preferences prefs = Preferences.userNodeForPackage(net.talvi.puffinplot.PuffinPrefs.class);
 
     private static final double MAX_ITERATIONS = 1000;
     private static final double STABLE_LIMIT = Math.PI / 1800; // 0.1 degree
@@ -171,13 +176,24 @@ public class GreatCircles implements FisherParams {
     public static List<String> getHeaders() {
         return HEADERS;
     }
-
+    
     /** Returns {@code true} if this great-circle fit is valid. 
      * @return {@code true} if this great-circle fit is valid
      */
-    // TODO make these limits configurable
     public boolean isValid() {
-        return getN()>=3 && a95<3.5 && k>3;
+        final String validityCondition =
+                prefs.get("data.greatcircles.validityExpr", "N>=3 and a95<3.5 and k>3");
+        interp.set("a95", a95);
+        interp.set("k", k);
+        interp.set("N", getN());
+        interp.set("M", getM());
+        try {
+            PyObject result = interp.eval(validityCondition);
+            return result.__nonzero__();
+        } catch (PyException ex) {
+            logger.log(Level.WARNING, ex.toString());
+            return false;
+        }
     }
 
     public double getA95() {

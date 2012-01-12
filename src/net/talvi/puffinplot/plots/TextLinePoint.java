@@ -8,6 +8,7 @@ import java.awt.geom.Rectangle2D;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import net.talvi.puffinplot.data.Datum;
 
@@ -57,9 +58,13 @@ class TextLinePoint implements PlotPoint {
     }
 
     public void draw(Graphics2D g) {
+        double us = plot.getUnitSize();
+        xSpacing =
+            Arrays.asList(360*us, 420*us, 420*us, 620*us, 580*us);
+        final FontMetrics fontMetrics = g.getFontMetrics();
         if (datum != null) {
             if (datum.isSelected()) {
-                plot.writeString(g, "*"/*"π‣"*/, (float) xMin, (float) yPos);
+                plot.writeString(g, "*", (float) xMin, (float) yPos);
             }
             if (datum.isHidden()) {
                 plot.writeString(g, "-", (float) xMin, (float) yPos);
@@ -69,8 +74,11 @@ class TextLinePoint implements PlotPoint {
         double x = xMin + 10;
         for (int i=0; i<strings.size(); i++) {
             final AttributedCharacterIterator s = strings.get(i);
+            final Rectangle2D bounds =
+                    fontMetrics.getStringBounds(s, s.getBeginIndex(), s.getEndIndex(), g);
             final double space = xSpacing.get(i);
-            g.drawString(s, (float) x, (float) yPos);
+            final double xOffset = space - bounds.getWidth();
+            g.drawString(s, (float) (x + xOffset), (float) yPos);
             x += space;
         }
     }

@@ -1142,13 +1142,6 @@ with other data processing steps. Using Jython, PuffinPlot can be controlled
 either from a pre-written script, or interactively from a command shell which
 accepts and executes commands one at a time from the user.
 
-Currently, the main barrier to controlling PuffinPlot from another program or
-from an interactive shell is that its internal structure is very poorly
-documented; for many parts, the source code itself constitutes the only
-documentation. However, the source code is cleanly written and clearly laid
-out, so careful perusal of it should provide enough understanding to
-interface with most of PuffinPlot's facilities.
-
 Figure~\ref{fig:script-example} shows a very simple script
 demonstrating the use of PuffinPlot from within a Python environment. The
 script opens a data file, calculates the mean \caps{nrm}, and produces a file
@@ -1170,23 +1163,24 @@ more complex examples are possible.
 ### Import the required libraries.
 from net.talvi.puffinplot import PuffinApp
 from net.talvi.puffinplot.data import Suite
+from net.talvi.puffinplot.data import Correction
 from java.io import File
 
 ### Start PuffinPlot and open a data file.
-puffin = PuffinApp()
+puffin_app
 input_file = File("example.ppl")
 suite = Suite([input_file])
 samples = suite.getSamples()
 
 ### Calculate and display the mean NRM.
-total_nrm = sum([sample.getNRM() for sample in samples])
+total_nrm = sum([sample.getNrm() for sample in samples])
 print total_nrm / suite.getNumSamples()
 
 ### Perform a PCA calculation for each sample.
 for sample in samples:          # do this for each sample:
     sample.selectAll()          # select all points in the sample
     sample.useSelectionForPca() # and mark them for use in PCA
-suite.doSampleCalculations()    # perform PCA for each sample
+suite.doSampleCalculations(Correction.NONE)    # perform PCA for each sample
 
 ### Save the results of the PCA calculation.
 output_file = File("example-results.csv")

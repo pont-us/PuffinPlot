@@ -132,6 +132,8 @@ public class PrefsWindow extends JFrame {
         miscPanel.add(makeLabelledPrefComboBox("Look and feel",
                 "lookandfeel", new String[] {"Default", "Native", "Metal", "Nimbus"},
                 "Default"));
+        miscPanel.add(makeLabelledPrefBox("GC validity",
+                "data.greatcircles.validityExpr", "N>=3 and a95<3.5 and k>3"));
         miscPanel.add(Box.createVerticalGlue());
 
         tp.addTab("Loading", null, loadingPanel, "File loading");

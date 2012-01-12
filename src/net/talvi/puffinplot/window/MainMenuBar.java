@@ -39,7 +39,7 @@ public final class MainMenuBar extends JMenuBar {
 
     private static JMenu makeMenu(String name, Object... things) {
         JMenu menu = new JMenu(name);
-        logger.log(Level.INFO, "makeMenu {0}", name);
+        logger.log(Level.FINE, "makeMenu {0}", name);
         for (Object thing: things) {
             if (thing instanceof PuffinAction) {
                 PuffinAction puffinAction = (PuffinAction) thing;
@@ -112,6 +112,7 @@ public final class MainMenuBar extends JMenuBar {
                 pa.exportCalcsSite, pa.exportCalcsSuite, pa.exportIrm),
                 pa.pageSetup, pa.print, pa.printFisher, pa.printGc,
                 pa.importAms, pa.exportSvg, pa.exportPdf,
+                pa.runScript,
                 pa.exportPrefs, pa.importPrefs, pa.clearPreferences,
                 pa.prefs, pa.quit));
         add(makeMenu("Edit", pa.selectAll, pa.clearSelection,

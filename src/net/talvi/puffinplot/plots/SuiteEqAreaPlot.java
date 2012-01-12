@@ -50,7 +50,6 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
                 ShapePoint.build(this, project(mean)).
                 circle().build();
         meanPoint.draw(g);
-        System.out.println(fv.toString());
     }
 
     @Override
@@ -86,7 +85,6 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
             drawFisher(FisherValues.calculate(vs_n));
         if (vs_r.size()>1)
             drawFisher(FisherValues.calculate(vs_r));
-        //System.out.println(fv.toString());
         drawPoints(g);
     }
 }

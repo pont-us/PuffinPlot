@@ -60,6 +60,8 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.io.FileOutputStream;
 import net.talvi.puffinplot.window.MainGraphDisplay;
+import org.python.core.PyException;
+import org.python.util.PythonInterpreter;
 
 /**
  * This class constitutes the main PuffinPlot application.
@@ -191,9 +193,9 @@ public final class PuffinApp {
      * Instantiates and starts a new PuffinApp.
      * @param args command-line arguments for the application
      */
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         logger.setLevel(Level.ALL);
-        logger.info("Entering main method.");
+        logger.fine("Entering main method.");
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
         
         final Preferences prefs =
@@ -222,7 +224,29 @@ public final class PuffinApp {
         }
 
         java.awt.EventQueue.invokeLater(
-                new Runnable() { public void run() { new PuffinApp(); } });
+                new Runnable() { public void run() { 
+                    final PuffinApp app = new PuffinApp();
+                    app.processArgs(args);
+                } });
+    }
+    
+    private void processArgs(String[] args) {
+        int i=0;
+        String scriptPath = null;
+        for (i=0; i<args.length; i++) {
+            final String arg = args[i];
+            if ("-script".equals(arg) && i<args.length-1) {
+                scriptPath = args[i+1];
+            }
+        }
+        if (scriptPath != null) {
+            try {
+                runPythonScript(scriptPath);
+            } catch (PyException ex) {
+                System.err.println("Error running Python script "+scriptPath);
+                ex.printStackTrace(System.err);
+            }
+        }
     }
     
     /**
@@ -786,14 +810,13 @@ public final class PuffinApp {
         }
     }
     
-    /** Shows an ‘open files’ dialog box; if the user selects any files,
+    /** <p>Shows an <q>open files</q> dialog box; if the user selects any files,
      * AMS data will be imported from them. The files are expected to
-     * be in Agico ASC format. */
+     * be in Agico ASC format.</p> */
     public void importAmsWithDialog() {
         if (showErrorIfNoSuite()) return;
         try {
             List<File> files = openFileDialog("Select AMS files");
-            // app.getSuite().importAmsWithDialog(files, true);
             getSuite().importAmsFromAsc(files, false);
             getMainWindow().suitesChanged();
         } catch (IOException ex) {
@@ -802,10 +825,10 @@ public final class PuffinApp {
         }
     }
     
-    /** Shows an ‘open file’ dialog box; if the user select a file,
+    /** <p>Shows an <q>open file</q> dialog box; if the user select a file,
      * the current preferences will be overwritten with preferences data
      * from that file. The file is expected to contain Java Preferences
-     * data in XML format. */
+     * data in XML format.</p> */
     public void importPreferencesWithDialog() {
         List<File> files = openFileDialog("Import preferences file");
         if (files != null && files.size() > 0) {
@@ -970,5 +993,26 @@ public final class PuffinApp {
             pdfPage++;
         } while (!finished);
         document.close();
+    }
+    
+    public void runPythonScript(String scriptPath) throws PyException {
+        PythonInterpreter interp = new PythonInterpreter();
+        interp.set("puffin_app", this);
+        interp.execfile(scriptPath);
+        updateDisplay();
+        getMainWindow().suitesChanged();
+    }
+    
+    public void runPythonScriptWithDialog() {
+        final List<File> files = openFileDialog("Select Python script");
+        final File file = files.get(0);
+        try {
+            runPythonScript(file.getAbsolutePath());
+        } catch (PyException ex) {
+            JOptionPane.showMessageDialog
+                    (getMainWindow(), ex.toString(),
+                    "Error running Python script",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }
 }

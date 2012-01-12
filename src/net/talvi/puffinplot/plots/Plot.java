@@ -318,7 +318,7 @@ public abstract class Plot
      * @return a string representation of this plot's dimensions
      */
     public String getDimensionsAsString() {
-        logger.log(Level.INFO, "Getting dimensions for {0}", getName());
+        logger.log(Level.FINE, "Getting dimensions for {0}", getName());
         Rectangle2D r = dimensions;
         // Explicit locale to ensure . for decimal separator
         return String.format(Locale.ENGLISH, "%b %g %g %g %g ",
