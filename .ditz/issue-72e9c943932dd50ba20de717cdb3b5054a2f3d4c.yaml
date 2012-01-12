@@ -40,3 +40,11 @@ log_events:
     (also JLineConsole and InteractiveInterpreter in same package)
     http://don.freeshell.org/jython/ and
     http://code.google.com/p/jythonconsole/
+- - 2012-01-12 03:48:38.788577 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    This has now mostly been implemented as #176, with a bundled
+    Jython interpreter. However, I can't close it yet, as PuffinPlot
+    still lacks an interactive console ( http://don.freeshell.org/jython/
+    currently looks like a promising candidate, though).

@@ -904,7 +904,7 @@ public class PuffinActions {
     /**
      * Runs a Python script using the Jython interpreter.
      */
-    public final Action runScript = new AbstractAction("Run Python script") {
+    public final Action runScript = new AbstractAction("Run Python script…") {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {
             app.runPythonScriptWithDialog();

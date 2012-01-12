@@ -1,0 +1,22 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Update manual
+desc: |-
+  The manual has fallen behind PuffinPlot development.
+  In particular, I need to check that exported sample/site data
+  lists are up to date, and document the new items in the Preferences
+  window.
+type: :task
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2012-01-12 05:21:04.168693 Z
+references: []
+
+id: f1847dc09ac58bf20ed7655b53e300572e701452
+log_events: 
+- - 2012-01-12 05:21:04.540482 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

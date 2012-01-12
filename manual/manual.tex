@@ -507,17 +507,17 @@ section~\ref{sec:annotations} for details. \\ \bottomrule
 to change the paper size, orientation, and margins for printing.
 
 \item[File\submenu Print\ldots] opens a window allowing you to print the
-selected samples. Note that {\em only} the selected samples will be printed,
-so if you wish to print the whole suite use \ppcmd{Edit\submenu Select all} first.
-On most systems this will also allow you to print to a \caps{pdf} file;
-Windows users may need to install a virtual \caps{pdf} printer, such as
-Cute\caps{pdf} Writer or Bullzip \caps{pdf} Printer, in order to produce
-\caps{pdf} files.
+  selected samples. Note that {\em only} the selected samples will be
+  printed, so if you wish to print the whole suite use \ppcmd{Edit\submenu
+    Select all} first. On most systems this will also allow you to print to a
+  \caps{pdf} file; Windows users may need to install a virtual \caps{pdf}
+  printer, such as Cute\caps{pdf} Writer or Bullzip \caps{pdf} Printer, in
+  order to produce \caps{pdf} files.
 
 \item[File\submenu Print Fisher\ldots] prints the contents of the separate
-window showing Fisher statistics of \caps{pca} directions through the suite;
-see \ppcmd{Calculations\submenu Fisher on suite} in
-section~\ref{sec:functions-calcs} for more details.
+  window showing Fisher statistics of \caps{pca} directions through the
+  suite; see \ppcmd{Calculations\submenu Fisher on suite} in
+  section~\ref{sec:functions-calcs} for more details.
 
 \item[File\submenu Print Great Circles\ldots] prints the contents of the
   separate great-circle fit window; see \ppcmd{Calculations\submenu Great
@@ -533,31 +533,43 @@ section~\ref{sec:functions-calcs} for more details.
   \caps{Ams} data is not displayed by default; the equal-area plot of
   \caps{ams} data can be activated from the \ppcmd{Preferences} window.
 
-\item[File\submenu Export SVG] saves the current contents of the main
-data display as an \caps{svg} (Scalable Vector Graphics) file. As a vector
-graphics format, \caps{svg} is allows for high-quality reproduction at any
-size. It can also be easily edited and incorporated into other graphics using
-vector graphics programs such as Inkscape and Adobe Illustrator.
+\item[File\submenu Export SVG\ldots] saves the current contents of the main
+  data display as an \caps{svg} (Scalable Vector Graphics) file. As a vector
+  graphics format, \caps{svg} is allows for high-quality reproduction at any
+  size. It can also be easily edited and incorporated into other graphics
+  using vector graphics programs such as Inkscape and Adobe Illustrator.
 
-\item[File\submenu Export preferences\ldots] saves your current preferences to
-a file. In conjunction with the \ppcmd{Import preferences} feature, this
-allows you to transfer your preferences from one computer to another. It also
-allows you to keep multiple sets of preferences and switch between them as
-needed. Probably the most useful application is to save different plot
-layouts for different sets of data.
+\item[File\submenu Export PDF\ldots] writes data from the selected samples to
+  a \caps{pdf} (Portable Document Format) file. The resulting \caps{pdf} file
+  will use the current graph layout and will contain one page for each of the
+  selected samples.
 
-\item[File\submenu Import preferences\ldots] sets your preferences from
-a file saved using \ppcmd{Export preferences}. See the description of
-\ppcmd{Export preferences} for details.
+\item[File\submenu Run Python script\ldots] runs a user-specified
+  external script written in the Python programming language.
+  See section~\ref{sec:scripting} for details.
+
+\item[File\submenu Export preferences\ldots] saves your current preferences
+  to a file. In conjunction with the \ppcmd{Import preferences} feature, this
+  allows you to transfer your preferences from one computer to another. It
+  also allows you to keep multiple sets of preferences and switch between
+  them as needed. Probably the most useful application is to save different
+  plot layouts for different sets of data.
+
+\item[File\submenu Import preferences\ldots] sets your preferences from a
+  file saved using \ppcmd{Export preferences}. See the description of
+  \ppcmd{Export preferences} for details.
+
+\item[File\submenu Clear preferences] clears all changed preferences,
+  resetting them to their default values.
 
 \item[File\submenu Preferences\ldots] opens the preferences window. See
-section~\ref{sec:preferences} for details. On Mac OS X, this item is
-found on the \ppcmd{PuffinPlot} menu to the left of the \ppcmd{File} menu,
-rather than on the \ppcmd{File} menu.
+  section~\ref{sec:preferences} for details. On Mac OS X, this item is found
+  on the \ppcmd{PuffinPlot} menu to the left of the \ppcmd{File} menu, rather
+  than on the \ppcmd{File} menu.
 
 \item[File\submenu Quit] terminates PuffinPlot. On Mac OS X, this item is
-found on the \ppcmd{PuffinPlot} menu to the left of the \ppcmd{File} menu,
-rather than on the \ppcmd{File} menu.
+  found on the \ppcmd{PuffinPlot} menu to the left of the \ppcmd{File} menu,
+  rather than on the \ppcmd{File} menu.
 
 \end{menuitemlist}
 
@@ -1140,25 +1152,64 @@ programming and scripting, and familiar to a large number of scientists, this
 should provide a convenient route for anyone wishing to integrate PuffinPlot
 with other data processing steps. Using Jython, PuffinPlot can be controlled
 either from a pre-written script, or interactively from a command shell which
-accepts and executes commands one at a time from the user.
+accepts and executes commands one at a time from the user. PuffinPlot also
+includes a built-in Jython interpreter, allowing it to run Python scripts
+with no additional software.
 
-Figure~\ref{fig:script-example} shows a very simple script
-demonstrating the use of PuffinPlot from within a Python environment. The
-script opens a data file, calculates the mean \caps{nrm}, and produces a file
-containing a \caps{pca} direction for each sample. Note that virtually all of
-PuffinPlot's data and functionality is available to the Python script, so far
-more complex examples are possible.
+Scripting allows you to extend the functionality of PuffinPlot without
+modifying the main program -- for example, to perform extra processing on
+your data. It also allows you to reuse parts of PuffinPlot as a convenient
+library for other programs.
+
+There are three basic ways to control PuffinPlot with scripting:
+
+\begin{enumerate}
+
+\item Save a Python script as a file, and use \ppcmd{Run Python script\ldots}
+  from the \ppcmd{File} menu to run it. This will give your script access to
+  any data which has already been loaded into PuffinPlot.
+
+\item Save a Python script as a file and run PuffinPlot from the command
+  line, specifying the name of the script as a parameter using the following
+  syntax: \ppcmd{java -jar PuffinPlot.jar -script MyScriptName.py}, where
+  \ppcmd{MyScriptName.py} is the filename of the script you wish to run.
+  In this case, the script will be run as soon as PuffinPlot starts.
+
+\item Use a scripting language interpreter separate from PuffinPlot. In this
+  case, you must download and install the language yourself. This approach
+  let you use any language available for the Java platform, not just Jython.
+  Additionally, many languages (including Jython) provide an interactive
+  console, allowing you to control PuffinPlot by typing commands one
+  at a time, rather than executing a whole pre-written file.
+
+\end{enumerate}
+
+For the first two techniques -- when the script is run by PuffinPlot itself
+-- a variable called \ppcmd{puffin\_app} is created, which represents the
+currently running instance of PuffinPlot. This variable can be used, for
+example, to gain access to any data already loaded into PuffinPlot. If an
+external scripting language interpreter is used, PuffinPlot must be started
+explicitly before using it; this is demonstrated in the examples below.
+
+Figure~\ref{fig:script-example-1} shows a simple script demonstrating the use
+of PuffinPlot from within an external Jython interpreter (although it can
+also be run directly from within PuffinPlot). The script opens a data file,
+calculates the mean \caps{nrm}, and produces a file containing a \caps{pca}
+direction for each sample. Note that virtually all of PuffinPlot's data and
+functionality is available to the Python script, so far more complex examples
+are possible.
 
 \begin{figure}
-% {A simple script which uses PuffinPlot}
-  \caption{\label{fig:script-example}A simple Python script to
-    demonstrate the use of PuffinPlot from a scripting environment. This
-    script first opens a data file. It then calculates the mean \caps{nrm} of
-    all the samples and displays it. Then it calculates a \caps{pca}
-    direction for each sample in the suite, and saves the results to a
-    \caps{csv} file. Explanatory comments in the script are preceded by the
-    character \#.}
-\lstset{language=Python}
+  \caption{\label{fig:script-example-1}A simple Python script to demonstrate
+    the use of PuffinPlot from a scripting environment. This script first
+    opens a data file. It then calculates the mean \caps{nrm} of all the
+    samples and displays it. Then it calculates a \caps{pca} direction for
+    each sample in the suite, and saves the results to a \caps{csv} file.
+    Explanatory comments in the script are preceded by the character \#. If
+    Jython is installed and this script is saved as \ppcmd{example.py}, it
+    may be executed with the command \ppcmd{jython
+      -Dpython.path=PuffinPlot.jar example.py}}
+  \lstset{language=Python}
 \begin{lstlisting}
 ### Import the required libraries.
 from net.talvi.puffinplot import PuffinApp
@@ -1167,10 +1218,10 @@ from net.talvi.puffinplot.data import Correction
 from java.io import File
 
 ### Start PuffinPlot and open a data file.
-puffin_app
-input_file = File("example.ppl")
-suite = Suite([input_file])
-samples = suite.getSamples()
+puffin_app = PuffinApp()         # Create the PuffinPlot application
+input_file = File("example.ppl") # Specify an input file
+suite = Suite([input_file])      # Read the data into a Suite object
+samples = suite.getSamples()     # Get a list of the Samples in the Suite
 
 ### Calculate and display the mean NRM.
 total_nrm = sum([sample.getNrm() for sample in samples])
@@ -1187,6 +1238,34 @@ output_file = File("example-results.csv")
 suite.saveCalcsSample(output_file)
 \end{lstlisting}
 \end{figure}
+
+\begin{figure}
+  \caption{\label{fig:script-example-2} A Python script intended to be run
+    from PuffinPlot's \ppcmd{File\submenu Run Python script\ldots} menu item,
+    to act on the currently loaded data. Note that in this case it is not
+    necessary to create a Puffin application, since the current Puffin
+    application is supplied to the script in the \ppcmd{puffin\_app}
+    variable. }
+  \lstset{language=Python}
+\begin{lstlisting}
+# This script goes through all the data in the current suite.
+# For any datum that doesn't have a magnetic susceptibility
+# measurement, it sets the magnetic susceptibility to zero.
+
+suite = puffin_app.getSuite()          # find the current suite
+
+for sample in puffin_app.getSamples(): # For every sample in the suite,
+    for datum in sample.getData():     # and for every datum in the sample,
+        if not datum.hasMagSus():      # if it doesn't have a mag. sus. value,
+            datum.setMagSus(0)         # set the mag. sus. to 0.
+\end{lstlisting}
+\end{figure}
+
+\paragraph{Internal documentation for PuffinPlot} To write scripts
+interacting with PuffinPlot, some knowledge of its internals is of course
+necessary. PuffinPlot comes with complete documentation (JavaDoc) for all its
+accessible data structures. If more detail is required, the source code is
+also freely available.
 
 \newpage
 \bibliographystyle{plainnat}

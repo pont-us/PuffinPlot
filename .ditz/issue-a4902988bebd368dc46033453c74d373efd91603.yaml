@@ -1,0 +1,20 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Remember last directory when saving files
+desc: |-
+  Save file dialog should open to last-used directory.
+  Requested by Beth.
+type: :feature
+component: PuffinPlot
+release: "1.1"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2012-01-12 03:44:38.456580 Z
+references: []
+
+id: a4902988bebd368dc46033453c74d373efd91603
+log_events: 
+- - 2012-01-12 03:44:39.313042 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

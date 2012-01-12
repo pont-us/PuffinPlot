@@ -9,8 +9,8 @@ type: :feature
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :in_progress
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2011-11-12 03:48:31.970921 Z
 references: []
 
@@ -24,3 +24,10 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - changed status from unstarted to in_progress
   - ""
+- - 2012-01-12 05:22:06.264914 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Python scripts can now be run either from a menu item or
+    by passing a filename on the command line. The functionality
+    is documented in the manual.
