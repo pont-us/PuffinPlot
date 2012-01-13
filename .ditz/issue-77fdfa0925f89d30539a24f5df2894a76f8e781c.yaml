@@ -9,8 +9,8 @@ type: :task
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :in_progress
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2011-11-12 03:50:45.542931 Z
 references: []
 
@@ -31,3 +31,9 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - changed status from unstarted to in_progress
   - ""
+- - 2012-01-13 21:57:59.732102 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    PuffinPlot now hosted on Google Code; build file updated to
+    upload binaries thither.

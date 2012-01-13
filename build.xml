@@ -13,54 +13,15 @@
         </propertyfile>
     </target>
     
-    <target name="macbundle" depends="package-for-store"
-            description="Build an example application">
-        <taskdef name="jarbundler"
-                 classpath="${jarbundler.jar}"
-                 classname="net.sourceforge.jarbundler.JarBundler"/>
-        <jarbundler dir="${basedir}" verbose="true" showPlist="true"
-                    name="${ant.project.name}"
-                    mainclass="net.talvi.puffinplot.PuffinApp"
-                    jar="store/${ant.project.name}.jar"
-                    icon="apple-resources/icons/${ant.project.name}.icns"
-                    version="UNKNOWN"
-                    stubfile="apple-resources/JavaApplicationStub"
-        />
-        <exec executable="zip">
-            <arg value="-r" />
-            <arg value="${ant.project.name}" />
-            <arg value="${ant.project.name}.app" />
-        </exec>
-    </target>
-    
-    <target name="upload">
-        <exec executable="scp" resultproperty="scp.result">
-            <arg file="store/${ant.project.name}.jar"/>
-            <arg file="${ant.project.name}.zip"/>
-            <arg value="feather:/puysegur/scratch/" />
-        </exec>
-        <echo message="scp feather: ${scp.result}" />
-        <exec executable="scp" resultproperty="scp.result">
-	        <arg value="-P57047"/>
-            <arg file="store/${ant.project.name}.jar"/>
-            <arg file="${ant.project.name}.zip"/>
-            <arg value="rae:/srv/talvi.net/public/htdocs/puffinplot/" />
-        </exec>
-        <echo message="scp rae: ${scp.result}" />
-    </target>
-    
-    <target name="package-for-store" depends="jar">
-
+        
+    <target name="package-for-store" depends="jar"
+        description="Creates a composite JAR file containing all dependencies.">
         <!-- Change the value of this property to be the name of your JAR,
              minus the .jar extension. It should not have spaces.
              <property name="store.jar.name" value="MyJarName"/>
         -->
         <property name="store.jar.name" value="PuffinPlot"/>
-
-
-        <!-- don't edit below this line -->
-
-        <property name="store.dir" value="store"/>
+        <property name="store.dir" value="dist/single-jar"/>
         <property name="store.jar" value="${store.dir}/${store.jar.name}.jar"/>
 
         <echo message="Packaging ${application.title} into a single JAR at ${store.jar}"/>
@@ -83,11 +44,98 @@
         </zip>
 
         <delete file="${store.dir}/temp_final.jar"/>
-
     </target>
     
-    <!--
+    <target name="macbundle" depends="package-for-store"
+            description="Creates a zipped OS X application.">
+        <delete dir="${basedir}/dist/osx" />
+        <mkdir dir="${basedir}/dist/osx" />
+        <taskdef name="jarbundler"
+                 classpath="libs/jarbundler.jar"
+                 classname="net.sourceforge.jarbundler.JarBundler"/>
+        <jarbundler dir="${basedir}/dist" verbose="true" showPlist="true"
+                    name="${ant.project.name}"
+                    mainclass="net.talvi.puffinplot.PuffinApp"
+                    jar="${basedir}/dist/single-jar/${ant.project.name}.jar"
+                    icon="apple-resources/icons/${ant.project.name}.icns"
+                    version="UNKNOWN"
+                    stubfile="apple-resources/JavaApplicationStub"
+        />
+        <exec executable="zip">
+            <arg value="-r" />
+            <arg value="${basedir}/dist/osx/${ant.project.name}" />
+            <arg value="${basedir}/dist/${ant.project.name}.app" />
+        </exec>
+        <delete dir="${basedir}/dist/${ant.project.name}.app" />
+    </target>
+    
+    <target name="doc-archive" depends="javadoc"
+         description="Creates a zip archive containing the manual and javadoc.">
+         <delete file="${basedir}/dist/${ant.project.name}-doc.zip" />
+         <exec dir="${basedir}/manual/" executable="${basedir}/manual/make-all.sh"/>
+         <exec executable="zip">
+            <arg value="-r" />
+            <arg value="${basedir}/dist/${ant.project.name}-doc" />
+            <arg value="dist/javadoc" />
+            <arg value="manual/manual.pdf" />
+            <arg value="manual/manual.html" />
+            <arg value="manual/manual.css" />
+            <arg value="manual/figures" />
+        </exec>
+    </target>
+    
+    <target name="complete-archive" depends="doc-archive,macbundle"
+        description="Creates a zip archive containing sources (as well as nearly everything else)">
+        <delete file="dist/puffinplot-all.zip" />
+        <zip destfile="dist/puffinplot-all.zip"
+            basedir="${basedir}"
+            excludes="dist/puffinplot-all.zip, .hg/**, build.credentials.properties" />
+    </target>
+    
+    <target name="upload" depends="doc-archive,macbundle,complete-archive"
+        description="Uploads packages to Google project hosting.">
+    <taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask"
+        classpath="libs/ant-googlecode.jar" name="gcupload"/>
+    <property file="build.credentials.properties" />
+    <fail unless="gc.username"
+        message="Missing property 'gc.username' from file 'build.credentials.properties'."/>
+    <fail unless="gc.password"
+        message="Missing property 'gc.password' from file 'build.credentials.properties'."/>
+    <gcupload
+        username="${gc.username}"
+        password="${gc.password}"
+        projectname="puffinplot" 
+        filename="dist/single-jar/${ant.project.name}.jar" 
+        targetfilename="PuffinPlot.jar"
+        summary="PuffinPlot cross-platform JAR file"
+        labels="Type-Executable, OpSys-All" />
+    <gcupload
+        username="${gc.username}"
+        password="${gc.password}"
+        projectname="puffinplot" 
+        filename="dist/osx/${ant.project.name}.zip" 
+        targetfilename="PuffinPlot.zip"
+        summary="PuffinPlot for Mac OS X (zipped application)"
+        labels="Type-Executable, OpSys-OSX" />
+    <gcupload
+        username="${gc.username}"
+        password="${gc.password}"
+        projectname="puffinplot" 
+        filename="dist/${ant.project.name}-doc.zip" 
+        targetfilename="puffinplot-doc.zip"
+        summary="Documentation: User manual and JavaDoc"
+        labels="Type-Archive, OpSys-All" />
+    <gcupload
+        username="${gc.username}"
+        password="${gc.password}"
+        projectname="puffinplot" 
+        filename="dist/puffinplot-all.zip" 
+        targetfilename="puffinplot-all.zip"
+        summary="Everything (nearly): sources, binaries, documentation, bug database"
+        labels="Type-Archive, OpSys-All" />
+    </target>
 
+    <!--
     There exist several targets which are by default empty and which can be 
     used for execution of your tasks. These targets are usually executed 
     before and after some main targets. They are: 

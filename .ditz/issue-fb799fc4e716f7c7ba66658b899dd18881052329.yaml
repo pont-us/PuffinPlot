@@ -5,8 +5,8 @@ type: :feature
 component: PuffinPlot
 release: "1.1"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2009-06-04 02:54:56.377325 Z
 references: []
 
@@ -16,3 +16,10 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2012-01-13 06:09:21.150431 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Fixed long ago; ARM data is loaded correctly. On the demagnetization
+    plot, its intensity is plotted vs. ASF field strength. If anyone
+    needs is vs. bias field, I'll open another bug for it.
