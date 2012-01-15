@@ -16,7 +16,6 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.print.Printable;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -33,11 +32,6 @@ import net.talvi.puffinplot.plots.Plot;
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.w3c.dom.DOMImplementation;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfWriter;
-import java.io.FileOutputStream;
 
 /**
  * <p>A graphical UI component which lays out and draws one or more plots.
@@ -154,7 +148,7 @@ public abstract class GraphDisplay extends JPanel implements Printable {
             }
         } else {
             for (Plot plot : visiblePlots) {
-                float fontSize = plot.getFontSize() * 2;
+                float fontSize = plot.getFontSize() * 1.5f;
                 int margin = plot.getMargin();
                 g2.setPaint(Color.ORANGE);
                 g2.setComposite(WEAK_COMPOSITE);
@@ -164,16 +158,21 @@ public abstract class GraphDisplay extends JPanel implements Printable {
                 g2.fill(new Rectangle2D.Double(d.getMaxX() - margin, d.getMinY(), margin, d.getHeight()));
                 g2.fill(new Rectangle2D.Double(d.getMinX(), d.getMinY(), d.getWidth(), margin));
                 g2.fill(new Rectangle2D.Double(d.getMinX(), d.getMaxY() - margin, d.getWidth(), margin));
-                AttributedString as = new AttributedString(plot.getNiceName());
-                as.addAttribute(TextAttribute.FAMILY, "SansSerif");
-                as.addAttribute(TextAttribute.SIZE, fontSize);
-                as.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_ULTRABOLD);
                 g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .5f));
                 plot.draw(g2);
                 g2.setPaint(Color.BLUE);
                 g2.setComposite(STRONG_COMPOSITE);
-                g2.drawString(as.getIterator(),
-                        (float) d.getMinX()+margin, (float) d.getMinY()+margin+fontSize);
+                String[] nameParts = plot.getNiceName().split(" ");
+                float yPos = (float) d.getMinY()+margin;
+                for (String namePart: nameParts) {
+                    final AttributedString as = new AttributedString(namePart);
+                    as.addAttribute(TextAttribute.FAMILY, "SansSerif");
+                    as.addAttribute(TextAttribute.SIZE, fontSize);
+                    as.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_ULTRABOLD);
+                    yPos += fontSize;
+                    g2.drawString(as.getIterator(),
+                        (float) d.getMinX()+margin, yPos);
+                }
             }
         }
         

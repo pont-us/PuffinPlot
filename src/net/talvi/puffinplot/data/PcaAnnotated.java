@@ -94,7 +94,7 @@ public class PcaAnnotated {
         result.addAll(pcaValues.toStrings());
         result.add(Double.toString(demagStart));
         result.add(Double.toString(demagEnd));
-        result.add(contiguous ? "yes" : "no");
+        result.add(contiguous ? "Y" : "N");
         return Collections.unmodifiableList(result);
     }
 

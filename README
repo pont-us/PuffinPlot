@@ -1,0 +1,30 @@
+=PuffinPlot development notes=
+
+==Libraries==
+
+PuffinPlot uses the external libraries iText, batik, and jython. In the
+puffinplot-all.zip archive, these are included within dist/lib.
+
+==Building==
+
+PuffinPlot is developed using NetBeans, but does not require NetBeans for
+compilation: Ant is sufficient. For the Ant upload target, which uploads
+binaries and archives to Google project hosting, a valid user name and
+password must be supplied in a file named build.credentials.properties. The
+file build.credentials.example shows the correct format for the credentials
+file.
+
+It is possible for large uploads to exceed Ant's available memory. At the
+time of writing, this is not a problem, but if it becomes a problem
+the solution is to increase the memory allocation pool size using
+the ANT_OPTS environment variable, thus:
+
+  ANT_OPTS=-Xmx512m
+
+(or some other suitably large value).
+
+==Bug tracking==
+
+PuffinPlot uses the ditz bug-tracking system; the bug database lives within
+the repository itself. Ditz is available from ditz.rubyforge.org .
+

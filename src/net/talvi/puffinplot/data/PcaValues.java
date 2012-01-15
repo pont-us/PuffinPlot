@@ -22,7 +22,7 @@ public class PcaValues {
     private final Vec3 origin;
     private final boolean anchored;
     private static final List<String> HEADERS =
-        Arrays.asList("PCA dec", "PCA inc", "PCA MAD1", "PCA MAD3", "PCA anchored");
+        Arrays.asList("PCA dec. (°)", "PCA inc. (°)", "PCA MAD1", "PCA MAD3", "PCA anchored");
     
     private PcaValues(Vec3 direction, double mad1, double mad3,
             Vec3 origin, boolean anchored) {
@@ -148,6 +148,6 @@ public class PcaValues {
     public List<String> toStrings() {
         return Arrays.asList(fmt(direction.getDecDeg()), 
                 fmt(direction.getIncDeg()),
-            fmt(getMad1()), fmt(getMad3()), anchored ? "yes" : "no");
+            fmt(getMad1()), fmt(getMad3()), anchored ? "Y" : "N");
     }
 }

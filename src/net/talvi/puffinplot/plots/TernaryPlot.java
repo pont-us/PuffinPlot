@@ -47,6 +47,7 @@ public class TernaryPlot extends Plot {
 
     private void drawAxes(Graphics2D g) {
         g.setColor(Color.BLACK);
+        g.setStroke(getStroke());
         final Rectangle2D dims = getDimensions();
         final double xo = dims.getMinX();
         final double yo = dims.getMaxY();

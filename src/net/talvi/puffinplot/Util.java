@@ -78,7 +78,7 @@ public class Util {
             if (sc2.hasNextInt()) start = constrainInt(sc2.nextInt(), limit);
             if (sc2.hasNextInt()) end = constrainInt(sc2.nextInt(), limit);
             if (start>-1 && end>-1) {
-                result.set(start, end+1); // TODO check fenceposts!
+                result.set(start, end+1);
             }
         }
         return result;

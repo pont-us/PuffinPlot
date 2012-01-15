@@ -59,7 +59,7 @@ public class SiteEqAreaPlot extends EqAreaPlot {
     
     @Override
     public String getNiceName() {
-        return "Site directions";
+        return "Equal-area (site)";
     }
 
     private void drawGreatCircles(Site site) {

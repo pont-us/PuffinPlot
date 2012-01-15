@@ -40,7 +40,7 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
     
     @Override
     public String getNiceName() {
-        return "Suite directions";
+        return "Equal-area (suite)";
     }
 
     private void drawFisher(FisherValues fv) {

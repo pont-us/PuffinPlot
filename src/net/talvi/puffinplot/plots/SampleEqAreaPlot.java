@@ -36,7 +36,7 @@ public class SampleEqAreaPlot extends EqAreaPlot {
 
     @Override
     public String getNiceName() {
-        return "Equal-area";
+        return "Equal-area (sample)";
     }
 
     public void draw(Graphics2D g) {

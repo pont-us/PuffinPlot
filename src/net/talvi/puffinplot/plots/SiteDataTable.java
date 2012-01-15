@@ -54,7 +54,7 @@ public class SiteDataTable extends Plot {
 
     @Override
     public String getNiceName() {
-        return "Site data";
+        return "Site parameters";
     }
 
     private TextLayout layoutFisherParams(Graphics2D g, String name,

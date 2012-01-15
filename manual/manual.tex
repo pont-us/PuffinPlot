@@ -16,18 +16,21 @@
 \usepackage[utf8]{inputenc}
 \usepackage{url}
 \usepackage{graphicx}
-%\usepackage{multirow}
 \usepackage{placeins}
 \usepackage{booktabs}
 \usepackage{listings}
 \usepackage{textcase}
+\usepackage{color}
+\definecolor{mylinkcolour}{RGB}{0,0,160}
 \usepackage{textcomp} % for \textdegree
 \ifpdf
   \usepackage[unicode=true]{hyperref}
-  \hypersetup{breaklinks=true, pdfborder={0 0 0}}
+  \hypersetup{breaklinks=true,pdfborder={0 0 0},colorlinks=true,
+    linkcolor=mylinkcolour,citecolor=mylinkcolour,urlcolor=mylinkcolour,
+    filecolor=mylinkcolour}
 \fi
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{6pt plus 2pt minus 1pt}
+%\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt plus 2pt minus 1pt}
 \setlength{\emergencystretch}{3em}  % prevent overfull lines
 \setlength{\belowcaptionskip}{1ex}
 
@@ -66,6 +69,8 @@
 \begin{document}
 
 \maketitle
+
+\tableofcontents
 
 \section{Introduction}
 
@@ -379,7 +384,7 @@ This section gives a methodical account of PuffinPlot's features.
 This section lists all the items in PuffinPlot's menus, giving a brief
 description of the functionality associated with each one.
 
-\subsubsection{File menu}
+\subsubsection{\label{sec:menu-file}File menu}
 
 This menu contains functions connected with opening, closing, and
 saving files.
@@ -416,40 +421,35 @@ various kinds of data to \caps{csv} files.
 \begin{table}[tp]
 %{Fields for sample data export}
   \caption{\label{tbl:export-sample} List of fields in exported sample data file, Note that, in addition to the predefined fields, any custom user annotations (see section~\ref{sec:annotations}) will also be exported in this file.}
-\begin{tabular}{lp{100mm}} \toprule
+\begin{tabular}{lp{90mm}} \toprule
 Field name          & Description \\ \midrule
 Suite                & Suite name \\
 sample               & Sample name \\
-\caps{nrm} intensity & \caps{Nrm} intensity (A/m) \\
-\caps{ms} jump temp. & For thermal demagnetization, the
-temperature step at which the first jump in magnetic susceptibility occurs, A
-jump is defined as an increase of 2.5 or more times the previous value.
+\caps{nrm} intensity (A/m) & \caps{Nrm} intensity in A/m \\
+\caps{ms} jump temp. (\textdegree C) & For thermal demagnetization, the
+temperature step at which the first jump in magnetic susceptibility occurs.
+A jump is defined as a susceptibility of at least 2.5 times the previous value.
 \\
-Fisher inc.          & Mean inclination (\textdegree)\\
-Fisher dec.          & Mean declination (\textdegree)\\
-Fisher a95           & \alnifi{} of mean direction (\textdegree)\\
-Fisher k             & $k$-value of mean direction \\
-\caps{pca} inc.      & Inclination of \caps{pca} direction (\textdegree)\\
-\caps{pca} dec.      & Declination of \caps{pca} direction (\textdegree)\\
+\caps{pca} dec. (\textdegree)     & Declination of \caps{pca} direction (\textdegree)\\
+\caps{pca} inc. (\textdegree)     & Inclination of \caps{pca} direction (\textdegree)\\
 \caps{pca} \caps{mad}1 &  The Maximum Angle of Deviation
 for the planar \caps{pca} fit; the smaller the value, the more coplanar the points. See section~\ref{sec:plot-types} for more details.\\
 \caps{pca} \caps{mad}3 & The Maximum Angle of Deviation
 for the linear \caps{pca} fit; the smaller the value, the more collinear the points. See section~\ref{sec:plot-types} for more details.\\
-\caps{pca} anchored    & `yes' if the
-\caps{pca} fit was anchored; `no' if not \\
-\caps{pca} start       & Field or temperature of
-first demagnetization step used for \caps{pca} analysis (\textdegree C or mT)\\
-\caps{pca} end         & Field or temperature of
-last demagnetization step used for \caps{pca} analysis (\textdegree C or mT)\\
-\caps{pca} contiguous       & `yes' if
+\caps{pca} anchored    & `Y' if the \caps{pca} fit was anchored; `N' if not \\
+\caps{pca} start (\textdegree C or mT)      & Field (in mT) or temperature 
+(in \textdegree C) of first demagnetization step used for \caps{pca} analysis\\
+\caps{pca} end (\textdegree C or mT)        & Field (in mT) or temperature 
+(in \textdegree C) of last demagnetization step used for \caps{pca} analysis \\
+\caps{pca} contiguous       & `Y' if
 all steps between the first and last were selected for \caps{pca};
-`no' if any were omitted \\
-\caps{mdf} half-intensity   & half of the \caps{nrm} \\
-\caps{mdf} demagnetization  & the demagnetization level
-at which the \caps{nrm} was reduced to half (\textdegree C or mT) \\
-\caps{mdf} midpoint reached & `yes' if magnetization
+`N if any were omitted \\
+\caps{mdf} half-intensity (A/m)  & half of the \caps{nrm} (in A/m) \\
+\caps{mdf} demagnetization (\textdegree C or mT) & the demagnetization treatment level
+at which the \caps{nrm} was reduced to half (in \textdegree C or mT) \\
+\caps{mdf} midpoint reached & `Y' if magnetization
 intensity reached half the \caps{nrm} intensity during demagnetization;
-`no' otherwise \\
+`N' otherwise \\
 {\em [annotations]}  & Any user-defined annotations
 are also exported as part of the sample export file. See
 section~\ref{sec:annotations} for details. \\ \bottomrule
@@ -465,22 +465,24 @@ section~\ref{sec:annotations} for details. \\ \bottomrule
 
   \caption{\label{tbl:export-site} List of fields in exported site data file}
 
-\begin{tabular}{p{5em}p{\textwidth-5em}} \toprule
+\begin{tabular}{p{6.5em}p{\textwidth-6.5em}} \toprule
   Field name      & Description \\ \midrule
   site            & Name of site \\
-  Fisher inc.     & Mean inclination of \caps{pca} directions (\textdegree) \\
   Fisher dec.     & Mean declination of \caps{pca} directions (\textdegree) \\
+  Fisher inc.     & Mean inclination of \caps{pca} directions (\textdegree) \\
   Fisher a95      & \alnifi{} of mean \caps{pca} direction (\textdegree) \\
   Fisher k        & {\em k}-value of mean \caps{pca} direction \\
   \caps{gc} valid & `Y' if the great-circle fit
-  is valid, blank otherwise. A fit is valid if it includes at least three
-  circles, and has $\alpha_{95} < 3.5$ and $k>3$. \\
-  \caps{gc} inc.  & Inclination of great-circle direction (\textdegree) \\
-  \caps{gc} dec.  & Declination of great-circle direction (\textdegree) \\
-  \caps{gc} a95   & \alnifi{} for great-circle direction (\textdegree) \\
+  is valid, `N' otherwise. See section~\ref{sec:prefs-misc} for
+  details on the validity test and how it may be customized. \\
+  \caps{gc} dec. (°) & Declination of great-circle direction (\textdegree) \\
+  \caps{gc} inc. (°) & Inclination of great-circle direction (\textdegree) \\
+  \caps{gc} a95 (°) & \alnifi{} for great-circle direction (\textdegree) \\
   \caps{gc} k     & {\em k}-value for great-circle direction \\
   \caps{gc n}     & Number of great circles used in great-circle fit \\
   \caps{gc m}     & Number of \caps{pca} directions used in great-circle fit \\
+  \caps{gc} min points & the smallest number of points used to define
+    any of the great circles fitted at this site \\
   \caps{t}1min\newline \caps{t}1max\newline \caps{t}2min\newline \caps{t}2max
     & These four parameters give the ranges of demagnetization steps used to fit
     the circles. \caps{t}1 is the first (lowest) demagnetization step in a circle
@@ -871,7 +873,9 @@ series of 50 samples, it can be done in four quick steps:
 
 This will immediately perform \caps{pca} on all 50 selected samples.
 
-\subsection{\label{sec:plot-types}Plot types}
+\subsection{Plots and other data displays}
+
+\subsubsection{\label{sec:plot-types}Available plot types}
 
 This section lists and briefly describes the available plot types in
 PuffinPlot. Some of them are not displayed by default, but these may be
@@ -882,12 +886,13 @@ listed below include textual elements such as legends and tables.
 
 \begin{menuitemlist}
 
-\item[Equal-area] is a Lambert azimuthal equal-area projection showing the
-  directions of the current sample's magnetization vectors. Successive points
-  are connected by great-circle segments. Points in the upper hemisphere are
-  shown as unfilled (white) and connected by solid lines; points in the lower
-  hemisphere are filled (black) and connected by dashed lines. If a great
-  circle fit has been calculated for the sample, it is shown on this plot.
+\item[Equal-area (sample)] is a Lambert azimuthal equal-area projection
+  showing the directions of the current sample's magnetization vectors.
+  Successive points are connected by great-circle segments. Points in the
+  upper hemisphere are shown as unfilled (white) and connected by solid
+  lines; points in the lower hemisphere are filled (black) and connected by
+  dashed lines. If a great circle fit has been calculated for the sample, it
+  is shown on this plot.
 
 \item[Zplot] is a Zijderveld plot, overlaying an orthographic projection in
   the horizontal plane with an orthographic projection in a chosen vertical
@@ -899,10 +904,6 @@ listed below include textual elements such as legends and tables.
   blue. (If the \ppcmd{V vs. H} vertical projection is selected, only the
   horizontal projection of the \caps{pca} line is shown, since \ppcmd{V vs.
     H} effectively uses a different vertical projection for each point.)
-
-\item[Zplot key] is a legend for the Zijderveld plot, showing the
-  interpretations of the filled and unfilled points and giving the units in
-  which the axes are calibrated.
 
 \item[Demag.] is a plot of demagnetization step (in mT or \textdegree C)
   versus intensity of magnetization (in A/m), shown as a line of filled
@@ -933,9 +934,11 @@ listed below include textual elements such as legends and tables.
   site, for a discrete suite. For a continuous (long core) suite, it shows
   the current depth.
 
-\item[Fisher] shows the parameters of the per-sample Fisherian analysis, if
-  one has been carried out; otherwise it is invisible. It gives the mean
-  inclination and declination and the \alnifi{} and $k$ parameters.
+\item[Site parameters] shows the site mean direction as calculated either by
+  Fisher statistics or by the great-circle technique of
+  \cite[mcfadden1988circles]. It gives the mean inclination and declination
+  and the \alnifi{} and $k$ parameters. If no site mean direction has been
+  calculated for the current site, this plot is invisible.
 
 \item[\caps{Ams}] is a lower-hemisphere equal-area plot of \caps{ams} data,
   if any has been imported. Maximum, intermediate, and minimum anisotropy
@@ -953,16 +956,20 @@ listed below include textual elements such as legends and tables.
   thus shows the relative effects of thermal unblocking and alteration on
   these components.
 
-\item[Great circles] shows all the great circles fitted at the current
+\item[Equal-area (site)] shows all the great circles fitted at the current
   sample's site, along with a best-fit direction calculated by the method of
   \cite{mcfadden1988circles}.
 
-\item[Formation mean] shows all the site means for the suite, and a Fisherian
-  mean and 95\% confidence interval for them. If two polarities are present
-  in the suite, two means are calculated and shown.
+\item[Equal-area (suite)] shows all the site means for the suite, and a
+  Fisherian mean and 95\% confidence interval for them. If two polarities are
+  present in the suite, two means are calculated and shown.
 
 \item[\caps{Nrm} Histogram] shows a histogram of \caps{nrm} intensities
   across the whole suite.
+
+\item[Zplot key] is a legend for the Zijderveld plot, showing the
+  interpretations of the filled and unfilled points and giving the units in
+  which the axes are calibrated.
 
 \end{menuitemlist}
 
@@ -970,44 +977,37 @@ listed below include textual elements such as legends and tables.
 
 PuffinPlot allows the plots to be freely rearranged and resized within the
 display area; they can also be switched on and off as required (see
-section\ref{sec:preferences}). To arrange the plots, select
-\ppcmd{Move plots} from the \ppcmd{Edit} menu. A tick appears next to the
-menu item, and the plots are overlaid by pale orange rectangles, allowing you
-to manipulate them. Each plot is also annotated with its name, which helps to
+section~\ref{sec:preferences}). To arrange the plots, select \ppcmd{Edit
+  layout} from the \ppcmd{Edit} menu. This puts PuffinPlot temporarily into a
+special mode where plots become moveable. A tick appears next to the menu
+item, and the plots are overlaid by pale orange rectangles, allowing you to
+manipulate them. Each plot is also annotated with its name, which helps to
 identify plots that are not currently displaying any data (e.g. the
-`\caps{pca} directions' display if no \caps{pca} has been performed. To
-resize a plot, click on an edge or corner of its rectangle and drag it to the
-desired size. To move a plot, click in its central area and drag it to the
-desired location. Plots may be overlapped freely. When manipulating
-overlapping plots, mouse clicks only affect the smallest plot in the `pile'.
+`\caps{pca} directions' display if no \caps{pca} has been performed). To
+resize a plot, click and hold on an edge or corner of its rectangle, then
+drag it to the desired size. To move a plot, click and hold in its central
+area and drag it to the desired location. Plots may be overlapped freely.
+When you click in an area where two or more plots overlap, the smallest plot
+is treated as the `topmost', and this is the one which will be moved or
+resized.
 
-Once the plots are arranged to your satisfaction, click \ppcmd{Move plots} on
+Once the plots are arranged to your satisfaction, click \ppcmd{Edit layout} on
 the \ppcmd{Edit} menu again to untick the menu item and resume normal
 operation.
 
-\subsubsection{\label{sec:change-layout}Changing the layout}
+The plot layout is saved with your other preferences, and will be retained
+if PuffinPlot is closed and restarted. You can restore the original
+layout using the \ppcmd{Reset layout} menu item.
 
-You can change the size and arrangement of the plots in the main window by
-choosing \ppcmd{Move plots} from the \ppcmd{Edit} menu. This puts PuffinPlot
-temporarily into a special mode where plots become moveable: a tick appears
-next to the \ppcmd{Move plots} menu item, and the plots themselves are
-overlaid by translucent coloured rectangles. The name of the plot is also
-displayed at the top left corner of each rectangle; this can be useful for
-identifying plots which are currently invisible -- for example, the table of
-\caps{pca} values if no \caps{pca} has been performed.
+Sometimes it can be useful to save and restore different plot layouts. This
+can be done using the \ppcmd{Export preferences…} and \ppcmd{Import
+  preferences…} menu items (see section~\ref{sec:menu-file}).
 
-In \ppcmd{Move plots} mode, you can resize a plot by clicking and dragging on
-one of the darker-coloured edges or corners of the plot. You can move the
-whole plot by clicking and dragging in its more lightly coloured central
-zone. Plots can overlap one another freely. When you click in an area where
-two or more plots overlap, the smallest plot is treated as the `topmost', and
-this is the one which will be moved or resized.
-
-\subsubsection{\label{sec:preferences}The preferences window}
+\subsection{\label{sec:preferences}The preferences window}
 
 The preferences window is divided into three tabs.
 
-\paragraph{The \ppcmd{Loading} tab}
+\subsubsection{The \ppcmd{Loading} tab}
 
 This tab contains options connected with reading data from \caps{.dat} files
 produced by the \caps{2g} `Long Core' software.
@@ -1078,13 +1078,13 @@ is unnecessary. \\ \bottomrule
 \end{tabular}
 \end{table}
 
-\paragraph{The \ppcmd{Plots} tab}
+\subsubsection{The \ppcmd{Plots} tab}
 
 This tab shows a list of plots which PuffinPlot can display. You can control
-which plots are shown by ticking the boxes next to the plot names. The plot
-types are detailed in section~\ref{sec:plot-types}.
+which plots are shown by ticking and unticking the boxes next to the plot
+names. The plot types are detailed in section~\ref{sec:plot-types}.
 
-\paragraph{The \ppcmd{Misc.} tab}
+\subsubsection{\label{sec:prefs-misc}The \ppcmd{Misc.} tab}
 
 \begin{menuitemlist}
 
@@ -1103,13 +1103,62 @@ types are detailed in section~\ref{sec:plot-types}.
   take effect. If the specified font cannot be found, a default fallback font
   is used.
 
+\item[Look and feel] controls the appearance of PuffinPlot's windows and
+  menus. (It has no effect on the functionality of the program.)
+  \textit{Native} gives an appearance intended to harmonize with other
+  programs on the operating system on which PuffinPlot is running.
+  \textit{Metal} and \textit{Nimbus} are cross-platform appearances which
+  will look the same on any operating system. \textit{Default} will use the
+  default appearance for Java programs on the current operating system; in
+  most cases this will be the same as \textit{Native} for Mac OS X and
+  Windows, and \textit{Metal} for Linux. Changes to this option will
+  not take effect until PuffinPlot is restarted.
+
+\item[GC validity] allows you to customize the conditions under which a site
+  mean calculated by great-circle intersection is considered valid. The
+  validity test is used in several ways:
+
+  \begin{itemize}
+
+    \item When site data is exported to a CSV file, one of the exported
+      columns gives the result of the validity test.
+
+    \item Only valid site mean directions are shown on the suite equal-area
+      plot.
+
+    \item Only valid site mean directions are used when calculating the
+      overall mean direction for a suite.
+
+  \end{itemize}
+
+  The validity test takes the form of a logical expression in the syntax of
+  the Python programming language, involving the following variables:
+
+\begin{description}
+  \item[M] the number of stable endpoints (PCA directions) used in the fit
+  \item[N] the number of great circles used in the fit
+  \item[a95] the \alnifi\ value (semiangle of the 95\% confidence region)
+  \item[k] the $k$-value (estimate for $\kappa$)
+\end{description}
+
+The most useful components for contructing vailidity expressions are the
+comparison operators \texttt{<}, \texttt{<=}, \texttt{>=}, \texttt{>}, the
+logical operators \texttt{and} and \texttt{or}, and parentheses. A typical
+expression might be
+
+\centerline{\texttt{a95<3 and k>5 and (M>=3 or N>=5)}}
+
+which means that a great-circle fit will be considered valid if it has an
+\alnifi\ below 3, a $k$ above five, and either at least three endpoints or
+at least five circles.
+
 \end{menuitemlist}
 
-\subsubsection{\label{sec:annotations}Annotations}
+\subsection{\label{sec:annotations}Annotations}
 
 Annotations are a feature allowing short, categorized notes to be added to
 each sample in a suite. The categories can be freely chosen. Annotations come
-in two varieties, {\em custom flags} and {\em custom notes}. Custom flags
+in two varieties, \emph{custom flags} and \emph{custom notes}. Custom flags
 embody a true/false value and are intended to record whether a sample fulfils
 some criterion -- for example, \quot{messy}, \quot{low-temperature
   alteration}, or \quot{multiple components}. Custom notes are intended for
@@ -1137,7 +1186,7 @@ are also exported in the sample data \caps{csv} file produced by the
 \ppcmd{File\submenu Export data\submenu Export sample calculations} menu
 item.
 
-\subsubsection{\label{sec:scripting}Scripting}
+\subsection{\label{sec:scripting}Scripting}
 
 PuffinPlot's graphical desktop interface is intended to be the primary way to
 interact with the program. However, it is often useful to be able to control
@@ -1266,6 +1315,41 @@ interacting with PuffinPlot, some knowledge of its internals is of course
 necessary. PuffinPlot comes with complete documentation (JavaDoc) for all its
 accessible data structures. If more detail is required, the source code is
 also freely available.
+
+\section{Acknowledgements}
+
+\subsection*{Libraries}
+
+PuffinPlot makes use of several useful libraries generously released
+under liberal terms:
+
+\begin{itemize}
+
+\item Jama, a basic linear algebra package for Java, for matrix calculations.
+
+\item Apache batik, for \caps{svg} export.
+
+\item iText, for \caps{pdf} export.
+
+\item Jython, for scripting.
+
+\end{itemize}
+
+\subsection*{Other software}
+
+PuffinPlot was created with the assistance of a cornucopia of free and open
+source software; among the more significant are the Java platform and
+development kit, NetBeans, Ant, Emacs, \LaTeX\ (plus many \LaTeX\ packages),
+TeX4ht, the Gimp, and the Ubuntu operating system. I thank all who
+contributed to these projects.
+
+\subsection*{People}
+
+PuffinPlot was developed at the Otago Palaeomagnetic Research Facility at the
+University of Otago, Dunedin, New Zealand. Several colleagues provided
+valuable testing and feedback during PuffinPlot's development; in particular
+I thank Christian Ohneiser, Faye Nelson, Claudio Tapia, and Bethany Fox for
+their time and effort.
 
 \newpage
 \bibliographystyle{plainnat}

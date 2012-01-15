@@ -122,6 +122,6 @@ public class MedianDestructiveField {
     public List<String> toStrings() {
         return Arrays.asList(String.format(Locale.ENGLISH, "%.3g", getIntensity()),
                 String.format(Locale.ENGLISH, "%.3g", getDemagLevel()),
-                isHalfIntReached() ? "yes" : "no");
+                isHalfIntReached() ? "Y" : "N");
     }
 }

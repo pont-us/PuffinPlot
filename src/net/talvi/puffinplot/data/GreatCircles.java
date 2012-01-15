@@ -37,7 +37,7 @@ public class GreatCircles implements FisherParams {
     private static final double STABLE_LIMIT = Math.PI / 1800; // 0.1 degree
 
     private static final List<String> HEADERS =
-        Arrays.asList("GC valid (Y/N)","GC dec (°)", "GC inc (°)",
+        Arrays.asList("GC valid","GC dec. (°)", "GC inc. (°)",
             "GC a95 (°)", "GC k", "GC N", "GC M", "GC min points");
 
     /**
