@@ -456,6 +456,7 @@ for the planar \caps{pca} fit; the smaller the value, the more coplanar the poin
 \caps{pca} \caps{mad}3 & The Maximum Angle of Deviation
 for the linear \caps{pca} fit; the smaller the value, the more collinear the points. See section~\ref{sec:plot-types} for more details.\\
 \caps{pca} anchored    & `Y' if the \caps{pca} fit was anchored; `N' if not \\
+\caps{pca} equation    & The Cartesian equation of the \caps{pca} best-fit line \\
 \caps{pca} start (\textdegree C or mT)      & Field (in mT) or temperature 
 (in \textdegree C) of first demagnetization step used for \caps{pca} analysis\\
 \caps{pca} end (\textdegree C or mT)        & Field (in mT) or temperature 
@@ -941,19 +942,20 @@ listed below include textual elements such as legends and tables.
   susceptibility. Selected points are denoted by an asterisk (*) to their
   left; hidden points are denoted by a dash (--) to their left.
 
-\item[Sample parameters] shows the results of \caps{pca} and/or
-  great-circle fits for data in the current sample. If neither of these
-  calculations has been done, this plot is invisible. When visible, it shows
-  the inclination and declination of the first principal component, which
-  corresponds to a least-squares linear fit. It also shows the maximum
-  angular deviation (\caps{mad}) values \caps{mad}1 and \caps{mad}3, which
-  function as goodness-of-fit parameters (smaller is better). The \caps{mad}1
-  value gives an indication of how nearly the points lie in a single plane;
-  the \caps{mad}3 value gives an indication of how nearly they lie along a
-  single line. \caps{Pca} analysis and \caps{mad} values are explained in
+\item[Sample parameters] shows the results of \caps{pca} and/or great-circle
+  fits for data in the current sample. If neither of these calculations has
+  been done, this plot is invisible. When visible, it shows the inclination
+  and declination of the first principal component, which corresponds to a
+  least-squares linear fit. It also shows the maximum angular deviation
+  (\caps{mad}) values \caps{mad}1 and \caps{mad}3, which function as
+  goodness-of-fit parameters (smaller is better). The \caps{mad}1 value gives
+  an indication of how nearly the points lie in a single plane; the
+  \caps{mad}3 value gives an indication of how nearly they lie along a single
+  line. \caps{Pca} analysis and \caps{mad} values are explained in
   \cite{kirschvink1980least} and in section 9.7 of
-  \cite{tauxe2010paleomagnetism}. For the great-circle fit, the plot gives
-  the inclination and declination of one of the great circle's poles, and the
+  \cite{tauxe2010paleomagnetism}. The plot also show the Cartesian equation
+  of the PCA best-fit line. For the great-circle fit, the plot gives the
+  inclination and declination of one of the great circle's poles, and the
   \caps{mad}1 value indicating the goodness of fit of the great circle. (Note
   that this may be different from the \caps{mad}1 for the \caps{pca} fit,
   since different sets of points may be used for the two fits.)
@@ -1254,10 +1256,10 @@ There are three basic ways to control PuffinPlot with scripting:
 
 \item Use a scripting language interpreter separate from PuffinPlot. In this
   case, you must download and install the language yourself. This approach
-  let you use any language available for the Java platform, not just Jython.
+  lets you use any language available for the Java platform, not just Jython.
   Additionally, many languages (including Jython) provide an interactive
-  console, allowing you to control PuffinPlot by typing commands one
-  at a time, rather than executing a whole pre-written file.
+  console, allowing you to control PuffinPlot by typing commands one at a
+  time, rather than executing a whole pre-written file.
 
 \end{enumerate}
 
