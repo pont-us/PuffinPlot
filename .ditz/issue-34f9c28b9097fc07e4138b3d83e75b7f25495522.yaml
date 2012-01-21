@@ -7,8 +7,8 @@ type: :task
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :in_progress
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2011-11-11 05:53:54.543084 Z
 references: []
 
@@ -22,3 +22,9 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - changed status from unstarted to in_progress
   - ""
+- - 2012-01-17 23:08:20.732058 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    The user can now enter their own validity expression, which
+    will be evaluated by the jython interpreter. Documented in manual.

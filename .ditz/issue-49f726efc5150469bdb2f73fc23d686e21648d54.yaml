@@ -1,0 +1,22 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Show GC pole and MAD on screen
+desc: |-
+  The sample data display (the one showing PCA parameters, etc.)
+  should also show the direction of the pole to the fitted great
+  circle, and the MAD value of the PCA calculation which produced
+  the great-circle fit.
+type: :feature
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2012-01-20 22:17:41.047107 Z
+references: []
+
+id: 49f726efc5150469bdb2f73fc23d686e21648d54
+log_events: 
+- - 2012-01-20 22:17:41.555100 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

@@ -72,6 +72,8 @@
 
 \tableofcontents
 
+\newpage
+
 \section{Introduction}
 
 This manual gives a practical guide to the usage of the PuffinPlot
@@ -92,7 +94,7 @@ it.
 PuffinPlot runs on the Java platform (version 5 or later), which is
 preinstalled or freely available for a variety of operating systems,
 including Windows, Linux, and Mac OS X. Java is generally easy to install,
-but in-depth instructions for installing it are beyond the scope of this
+but detailed instructions for installing it are beyond the scope of this
 manual; please consult the documentation for your operating system or visit
 \url{http://www.java.com/} for details.
 
@@ -103,26 +105,45 @@ installed via \ppcmd{Applications\submenu Utilities\submenu Java
 
 \subsection{Obtaining and installing PuffinPlot}
 
-PuffinPlot is distributed in two variants. The first is suitable for all
-operating systems. The second has identical functionality, but is
-tailored for easier installation and use on Mac OS X. Mac users are
-advised to use the second variant, although the first will also work for
-them.
+You may download the latest version of PuffinPlot from
+\url{https://code.google.com/p/puffinplot/}. PuffinPlot is distributed as a
+single zip archive file containing the program itself (in two different
+variants, as detailed below) and documentation. The documentation consists of
+this manual (in both HTML and PDF format) and a JavaDoc folder, containing
+documentation for PuffinPlot's source code. The JavaDoc is only of interest
+to users wishing to write scripts which interface directly with PuffinPlot's
+internal data structures (see section~\ref{sec:scripting}).
+Table~\ref{tbl:archive-contents} lists the contents of the PuffinPlot
+archive. After downloading the archive, move it to the folder where you
+would like PuffinPlot installed and extract its contents there.
+
+\begin{table}[bp]
+%{Fields for sample data export}
+  \caption{\label{tbl:archive-contents} The contents of the PuffinPlot archive file.}
+\begin{tabular}{ll} \toprule
+File           & Description \\ \midrule
+README         & A text file briefly describing the archive. \\
+PuffinPlot.jar & The PuffinPlot program (suitable for all operating systems) \\
+PuffinPlot.app & The PuffinPlot program (tailored for Mac OS X) \\
+Manual         & Folder containing this manual in PDF and HTML format \\
+JavaDoc        & Folder containing internal documentation for PuffinPlot \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsubsection{All operating systems}
 
-The latest cross-platform version of PuffinPlot may be downloaded as a file
-named \textsf{PuffinPlot.jar} from
-\url{http://talvi.net/PuffinPlot.jar}. This file is recommended for
-Linux, Windows, and other non-Mac operating systems.
-
-The details of starting PuffinPlot vary between operating systems, but
-double-clicking on the file \textsf{PuffinPlot.jar} is the most common
-method. In some cases it may be necessary to right-click on the file and
-select \emph{Open with Java runtime} or some similar text from a menu.
-PuffinPlot can also be started from a terminal prompt by setting the
-current folder to the one containing PuffinPlot, and typing
-\textsf{java -jar PuffinPlot.jar}.
+The file \textsf{PuffinPlot.jar} in the archive is the PuffinPlot program
+itself, as a cross-platform jar (Java archive) file. This file is recommended
+for Linux, Windows, and other non-Mac operating systems; it will also run on
+Mac OS X, but the specific Mac OS X version described below is usually
+preferable. The details of starting PuffinPlot vary between operating
+systems, but double-clicking on the file \textsf{PuffinPlot.jar} is the most
+common method. In some cases it may be necessary to right-click on the file
+and select \emph{Open with Java runtime} or some similar text from a menu.
+PuffinPlot can also be started from a terminal prompt by setting the current
+folder to the one containing PuffinPlot, and typing \textsf{java -jar
+  PuffinPlot.jar}.
 
 \paragraph{Note for Windows users.} Under Windows, other programs may
 occasionally interfere with the Java platform; if you have the Java platform
@@ -133,16 +154,14 @@ downloaded from \url{http://johann.loefflmann.net/en/software/jarfix/}.
 
 \subsubsection{Mac OS X}
 
-The latest Mac OS X version of PuffinPlot may be downloaded as a file
-named \textsf{PuffinPlot.zip} from
-\url{http://talvi.net/PuffinPlot.zip}. This file is packaged as a
-standard OS X application and conforms more nearly to OS X user
-interface standards than the cross-platform version described in the
-previous section.
+The PuffinPlot archive also contains a special variant of the program for Mac
+OS X. This varient is packaged as a standard OS X application and conforms
+more nearly to OS X user interface standards than the cross-platform version
+described in the previous section. It is named `PuffinPlot.app', although 
+the extension `.app' is usually hidden by Mac OS X.
 
-After downloading \textsf{PuffinPlot.zip}, double-click on it to
-automatically extract the PuffinPlot application, denoted by an icon
-representing a puffin (specifically, the Atlantic Puffin
+In the extracted archive contents, the PuffinPlot application is shown as an
+icon representing a puffin (specifically, the Atlantic Puffin
 \emph{Fratercula arctica}). The application may then be dragged into the
 Applications folder, or any other convenient place.
 
@@ -1237,8 +1256,9 @@ For the first two techniques -- when the script is run by PuffinPlot itself
 -- a variable called \ppcmd{puffin\_app} is created, which represents the
 currently running instance of PuffinPlot. This variable can be used, for
 example, to gain access to any data already loaded into PuffinPlot. If an
-external scripting language interpreter is used, PuffinPlot must be started
-explicitly before using it; this is demonstrated in the examples below.
+external scripting language interpreter is used, the script must start the
+PuffinPlot application before doing anything else; this is demonstrated in
+the examples below.
 
 Figure~\ref{fig:script-example-1} shows a simple script demonstrating the use
 of PuffinPlot from within an external Jython interpreter (although it can
@@ -1316,6 +1336,8 @@ necessary. PuffinPlot comes with complete documentation (JavaDoc) for all its
 accessible data structures. If more detail is required, the source code is
 also freely available.
 
+\newpage
+
 \section{Acknowledgements}
 
 \subsection*{Libraries}
@@ -1351,7 +1373,17 @@ valuable testing and feedback during PuffinPlot's development; in particular
 I thank Christian Ohneiser, Faye Nelson, Claudio Tapia, and Bethany Fox for
 their time and effort.
 
-\newpage
+\subsection*{Icon}
+
+The icon used for the Mac OS X version of PuffinPlot is cropped from an
+illustration by the Finnish artist Wilhelm von Wright (1810--1887), published
+in \emph{Svenska f\aa glar, efter naturen och p\aa{} sten ritade} (2nd ed.,
+1929).
+
+% Define the heading of the bibliography to be empty, so I can put a proper
+% Section heading which will be included in the ToC.
+\renewcommand*{\refname}{\vspace{-1cm}} 
+\section{Bibliography}
 \bibliographystyle{plainnat}
 \bibliography{manual}
 

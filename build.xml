@@ -47,9 +47,8 @@
     </target>
     
     <target name="macbundle" depends="package-for-store"
-            description="Creates a zipped OS X application.">
-        <delete dir="${basedir}/dist/osx" />
-        <mkdir dir="${basedir}/dist/osx" />
+            description="Creates an OS X application.">
+        <delete dir="${basedir}/dist/${ant.project.name}.app" />
         <taskdef name="jarbundler"
                  classpath="libs/jarbundler.jar"
                  classname="net.sourceforge.jarbundler.JarBundler"/>
@@ -61,39 +60,36 @@
                     version="UNKNOWN"
                     stubfile="apple-resources/JavaApplicationStub"
         />
-        <exec executable="zip">
-            <arg value="-r" />
-            <arg value="${basedir}/dist/osx/${ant.project.name}" />
-            <arg value="${basedir}/dist/${ant.project.name}.app" />
-        </exec>
-        <delete dir="${basedir}/dist/${ant.project.name}.app" />
     </target>
     
-    <target name="doc-archive" depends="javadoc"
-         description="Creates a zip archive containing the manual and javadoc.">
-         <delete file="${basedir}/dist/${ant.project.name}-doc.zip" />
-         <exec dir="${basedir}/manual/" executable="${basedir}/manual/make-all.sh"/>
-         <exec executable="zip">
-            <arg value="-r" />
-            <arg value="${basedir}/dist/${ant.project.name}-doc" />
-            <arg value="dist/javadoc" />
-            <arg value="manual/manual.pdf" />
-            <arg value="manual/manual.html" />
-            <arg value="manual/manual.css" />
-            <arg value="manual/figures" />
-        </exec>
+    <target name="create-release" depends="javadoc,macbundle"
+      description="Creates an archive of binaries and documentation for release">
+        <property file="release.properties" />
+        <fail unless="release.version" message="No version number."/>
+        <property name="release.pathname" value="${basedir}/dist/puffinplot-${release.version}"/>
+        <delete dir="${release.pathname}.zip" />
+        <zip destfile="${release.pathname}.zip">
+            <zipfileset dir="${basedir}/dist/javadoc" prefix="JavaDoc" />
+            <zipfileset dir="${basedir}/dist/${ant.project.name}.app"
+                prefix="${ant.project.name}.app"
+                excludes="Contents/MacOS/JavaApplicationStub"/>
+            <zipfileset dir="${basedir}/dist/${ant.project.name}.app"
+                prefix="${ant.project.name}.app"
+                filemode="755"
+                includes="Contents/MacOS/JavaApplicationStub"/>
+            <zipfileset file="${basedir}/dist/single-jar/${ant.project.name}.jar" />
+            <zipfileset dir="${basedir}/manual" prefix="Manual">
+                <include name="manual.pdf" />
+                <include name="manual.html" />
+                <include name="manual.css" />
+                <include name="figures/*.png" />
+            </zipfileset>
+            <zipfileset dir="${basedir}/manual" includes="release-readme.txt" fullpath="README"/>
+        </zip>
     </target>
     
-    <target name="complete-archive" depends="doc-archive,macbundle"
-        description="Creates a zip archive containing sources (as well as nearly everything else)">
-        <delete file="dist/puffinplot-all.zip" />
-        <zip destfile="dist/puffinplot-all.zip"
-            basedir="${basedir}"
-            excludes="dist/puffinplot-all.zip, .hg/**, build.credentials.properties" />
-    </target>
-    
-    <target name="upload" depends="doc-archive,macbundle,complete-archive"
-        description="Uploads packages to Google project hosting.">
+    <target name="upload-release" depends="create-release"
+        description="Uploads an archive of PuffinPlot binaries and documentation">
     <taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask"
         classpath="libs/ant-googlecode.jar" name="gcupload"/>
     <property file="build.credentials.properties" />
@@ -101,37 +97,16 @@
         message="Missing property 'gc.username' from file 'build.credentials.properties'."/>
     <fail unless="gc.password"
         message="Missing property 'gc.password' from file 'build.credentials.properties'."/>
+    <property file="release.properties" />
+    <fail unless="release.version" message="No version number."/>
+    <property name="release.pathname" value="${basedir}/dist/puffinplot-${release.version}"/>
     <gcupload
         username="${gc.username}"
         password="${gc.password}"
         projectname="puffinplot" 
         filename="dist/single-jar/${ant.project.name}.jar" 
         targetfilename="PuffinPlot.jar"
-        summary="PuffinPlot cross-platform JAR file"
-        labels="Type-Executable, OpSys-All" />
-    <gcupload
-        username="${gc.username}"
-        password="${gc.password}"
-        projectname="puffinplot" 
-        filename="dist/osx/${ant.project.name}.zip" 
-        targetfilename="PuffinPlot.zip"
-        summary="PuffinPlot for Mac OS X (zipped application)"
-        labels="Type-Executable, OpSys-OSX" />
-    <gcupload
-        username="${gc.username}"
-        password="${gc.password}"
-        projectname="puffinplot" 
-        filename="dist/${ant.project.name}-doc.zip" 
-        targetfilename="puffinplot-doc.zip"
-        summary="Documentation: User manual and JavaDoc"
-        labels="Type-Archive, OpSys-All" />
-    <gcupload
-        username="${gc.username}"
-        password="${gc.password}"
-        projectname="puffinplot" 
-        filename="dist/puffinplot-all.zip" 
-        targetfilename="puffinplot-all.zip"
-        summary="Everything (nearly): sources, binaries, documentation, bug database"
+        summary="PuffinPlot archive containing program and documentation."
         labels="Type-Archive, OpSys-All" />
     </target>
 
