@@ -2,7 +2,12 @@ package net.talvi.puffinplot.plots;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.prefs.Preferences;
+import net.talvi.puffinplot.data.GreatCircle;
+import net.talvi.puffinplot.data.GreatCircles;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 import net.talvi.puffinplot.data.PcaValues;
@@ -49,23 +54,37 @@ public class PcaTable extends Plot {
         if (sample==null) return;
  
         final PcaValues pca = sample.getPcaValues();
+        final GreatCircle gc = sample.getGreatCircle();
+        
+        List<String> strings = new ArrayList<String>(10);
         
         if (pca != null) {
-            String[] strings = {
-                String.format("Dec %.2f", pca.getDirection().getDecDeg()),
+            strings.addAll(Arrays.asList(
+                String.format("PCA Dec %.2f", pca.getDirection().getDecDeg()),
                 String.format("Inc %.2f", pca.getDirection().getIncDeg()),
-                String.format("MAD1 %.2f", pca.getMad1()),
+                String.format("PCA MAD1 %.2f", pca.getMad1()),
                 String.format("MAD3 %.2f", pca.getMad3()),
-                pca.getEquation(), ""
-            };
-            
+                pca.getEquation(), ""));
+        }
+        
+        if (gc != null) {
+            strings.addAll(Arrays.asList(
+                String.format("GC Dec %.2f", gc.getPole().getDecDeg()),
+                String.format("Inc %.2f", gc.getPole().getIncDeg()),
+                String.format("GC MAD1 %.2f", gc.getMad1())));
+        }
+
+        
+        if (!strings.isEmpty()) {
             g.setColor(Color.BLACK);
 
-            for (int x=0; x<2; x++)
-                for (int y=0; y<3; y++)
-                    writeString(g, strings[2*y+x],
-                            (int) getDimensions().getMinX() + x * X_SPACE,
-                            (int) getDimensions().getMinY() + (y+1) * Y_SPACE);
+            for (int i=0; i<strings.size(); i++) {
+              final int x = i % 2;
+              final int y = i / 2;
+              writeString(g, strings.get(i),
+                      (int) getDimensions().getMinX() + x * X_SPACE,
+                      (int) getDimensions().getMinY() + (y+1) * Y_SPACE);
+            }
         }
     }
 

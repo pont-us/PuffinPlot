@@ -7,6 +7,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import static java.lang.Math.abs;
+import static java.lang.Math.sqrt;
+import static java.lang.Math.atan;
+import static java.lang.Math.toDegrees;
 
 /**
  * A class to calculate and store the eigenvalues and eigenvectors of a matrix.
@@ -126,5 +129,22 @@ public class Eigens {
      */
     public List<Double> getValues() {
         return values;
+    }
+    
+    public double getMad1() {
+        final double lmax = getValues().get(0);
+        final double lint = getValues().get(1);
+        final double lmin = getValues().get(2);
+        final double mad1 = (lint != 0 && lmax != 0) ?
+                toDegrees(atan(sqrt(lmin/lint + lmin/lmax))) : 0;
+        return mad1;
+    }
+    
+    public double getMad3() {
+        final double lmax = getValues().get(0);
+        final double lint = getValues().get(1);
+        final double lmin = getValues().get(2);
+        final double mad3 = toDegrees(atan(sqrt((lint + lmin) / lmax)));
+        return mad3;
     }
 }

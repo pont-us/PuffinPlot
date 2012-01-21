@@ -124,9 +124,10 @@ public class GreatCircles implements FisherParams {
         return minPoints;
     }
 
-    private double alpha(double p) {
-        double NN = getM() + getN() / 2.0;
-        double v = 1 - ((NN-1)/(k*R)) *
+    private double alpha(double confidence) {
+        final double p = 1 - confidence;
+        final double NN = getM() + getN() / 2.0;
+        final double v = 1 - ((NN-1)/(k*R)) *
                 ( Math.pow(1/p, 1/(NN-1)) - 1 );
         logger.log(Level.INFO, String.format("%d %d %f %f %f %f", getM(), getN(), NN, k, R, v));
         return Math.toDegrees(Math.acos(v));

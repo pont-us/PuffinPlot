@@ -70,14 +70,7 @@ public class PcaValues {
             minus(movedPoints.get(0));
         if (trend.dot(pComp) > 0) pComp = pComp.invert();
 
-        double lmax = eigen.getValues().get(0);
-        double lint = eigen.getValues().get(1);
-        double lmin = eigen.getValues().get(2);
-        double mad3 = toDegrees(atan(sqrt((lint + lmin) / lmax)));
-        double mad1 = (lint != 0 && lmax != 0) ?
-                toDegrees(atan(sqrt(lmin/lint + lmin/lmax))) : 0;
-        
-        return new PcaValues(pComp, mad1, mad3, origin, anchored);
+        return new PcaValues(pComp, eigen.getMad1(), eigen.getMad3(), origin, anchored);
     }
 
     /** Returns the maximum angle of planar deviation.

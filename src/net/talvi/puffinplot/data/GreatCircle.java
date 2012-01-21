@@ -18,6 +18,7 @@ public final class GreatCircle {
             Logger.getLogger(GreatCircle.class.getName());
     private final List<Vec3> points;
     private final Vec3 pole;
+    private final double mad1;
     private final double pointTrend; // direction of points along circle: +1 or -1 
     // TODO: need a way to represent sector constraints here...
     private static final List<String> HEADERS =
@@ -36,7 +37,10 @@ public final class GreatCircle {
         for (Vec3 p: pointsUnscaled) {
             this.points.add(p.normalize());
         }
-        this.pole = Eigens.fromVectors(points, true).getVectors().get(2).normalize();
+        Eigens eigens = Eigens.fromVectors(points, true);
+        this.pole = eigens.getVectors().get(2).normalize();
+        mad1 = eigens.getMad1();
+        
         // Calculate the direction of the point trend along the circle
         // (clockwise / anticlockwise). Can't be sure that all points
         // will be strictly in the right direction, so we'll add up
@@ -128,5 +132,9 @@ public final class GreatCircle {
      */
     public static List<String> getHeaders() {
         return HEADERS;
+    }
+
+    public double getMad1() {
+        return mad1;
     }
 }
