@@ -28,7 +28,7 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
     private List<Sample> samplesForPrinting = null;
     private int printPageIndex = -1;
     private final static String[] plotNames = {"SampleEqAreaPlot", "ZPlot",
-        "DemagPlot", "DataTable", "PcaTable", "PlotTitle", "SiteDataTable",
+        "DemagPlot", "DataTable", "SampleDataTable", "PlotTitle", "SiteDataTable",
         "AmsPlot", "TernaryPlot", "SiteEqAreaPlot", "SuiteEqAreaPlot",
         "NrmHistogram"};
     private final PlotParams params;

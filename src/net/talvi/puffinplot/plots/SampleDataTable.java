@@ -14,13 +14,13 @@ import net.talvi.puffinplot.data.PcaValues;
 import net.talvi.puffinplot.data.Sample;
 
 /**
- * A textual display of a set of PCA parameters.
+ * A textual display of a set of PCA and great circle parameters
+ * for a single sample.
  * 
  * @author pont
  */
-public class PcaTable extends Plot {
+public class SampleDataTable extends Plot {
 
-    private static final int X_SPACE = 100;
     private static final int Y_SPACE = 20;
     
     /** Creates a new PCA table with the supplied parameters.
@@ -29,7 +29,7 @@ public class PcaTable extends Plot {
      * @param params the parameters of the table
      * @param prefs the preferences containing the table configuration
      */
-    public PcaTable(GraphDisplay parent, PlotParams params, Preferences prefs) {
+    public SampleDataTable(GraphDisplay parent, PlotParams params, Preferences prefs) {
         super(parent, params, prefs);
     }
 
@@ -40,7 +40,7 @@ public class PcaTable extends Plot {
 
     @Override
     public String getNiceName() {
-        return "PCA";
+        return "Sample parameters";
     }
 
     @Override
@@ -57,35 +57,31 @@ public class PcaTable extends Plot {
         final GreatCircle gc = sample.getGreatCircle();
         
         List<String> strings = new ArrayList<String>(10);
+                
+        if (gc != null) {
+            strings.addAll(Arrays.asList(
+                String.format("GC  dec %.2f / inc %.2f", gc.getPole().getDecDeg(),
+                    gc.getPole().getIncDeg()),
+                String.format("GC  MAD1 %.2f", gc.getMad1())));
+        }
         
         if (pca != null) {
             strings.addAll(Arrays.asList(
-                String.format("PCA Dec %.2f", pca.getDirection().getDecDeg()),
-                String.format("Inc %.2f", pca.getDirection().getIncDeg()),
-                String.format("PCA MAD1 %.2f", pca.getMad1()),
-                String.format("MAD3 %.2f", pca.getMad3()),
-                pca.getEquation(), ""));
+                String.format("PCA  dec %.2f / inc %.2f",
+                    pca.getDirection().getDecDeg(),
+                    pca.getDirection().getIncDeg()),
+                String.format("PCA  MAD1 %.2f / MAD3 %.2f",
+                    pca.getMad1(), pca.getMad3()),
+                pca.getEquation()));
         }
-        
-        if (gc != null) {
-            strings.addAll(Arrays.asList(
-                String.format("GC Dec %.2f", gc.getPole().getDecDeg()),
-                String.format("Inc %.2f", gc.getPole().getIncDeg()),
-                String.format("GC MAD1 %.2f", gc.getMad1())));
-        }
-
         
         if (!strings.isEmpty()) {
             g.setColor(Color.BLACK);
-
             for (int i=0; i<strings.size(); i++) {
-              final int x = i % 2;
-              final int y = i / 2;
               writeString(g, strings.get(i),
-                      (int) getDimensions().getMinX() + x * X_SPACE,
-                      (int) getDimensions().getMinY() + (y+1) * Y_SPACE);
+                      (int) getDimensions().getMinX() + 10,
+                      (int) getDimensions().getMinY() + (i+1) * Y_SPACE);
             }
         }
     }
-
 }

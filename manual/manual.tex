@@ -936,18 +936,22 @@ listed below include textual elements such as legends and tables.
   susceptibility. Selected points are denoted by an asterisk (*) to their
   left; hidden points are denoted by a dash (--) to their left.
 
-\item[\caps{Pca}] shows the results of \caps{pca} textually, if \caps{pca}
-  has been carried out for the current sample; if no \caps{pca} has been
-  done, this plot is invisible. When visible, it shows the inclination and
-  declination of the first principal component, which corresponds to a
-  least-squares linear fit. It also shows the maximum angular deviation
-  (\caps{mad}) values \caps{mad}1 and \caps{mad}3, which function as
-  goodness-of-fit parameters (smaller is better). The \caps{mad}1 value gives
-  an indication of how nearly the points lie in a single plane; the
-  \caps{mad}3 value gives an indication of how nearly they lie along a single
-  line. \caps{Pca} analysis and \caps{mad} values are explained in
+\item[\caps{Sample parameters}] shows the results of \caps{pca} and/or
+  great-circle fits for data in the current sample. If neither of these
+  calculations has been done, this plot is invisible. When visible, it shows
+  the inclination and declination of the first principal component, which
+  corresponds to a least-squares linear fit. It also shows the maximum
+  angular deviation (\caps{mad}) values \caps{mad}1 and \caps{mad}3, which
+  function as goodness-of-fit parameters (smaller is better). The \caps{mad}1
+  value gives an indication of how nearly the points lie in a single plane;
+  the \caps{mad}3 value gives an indication of how nearly they lie along a
+  single line. \caps{Pca} analysis and \caps{mad} values are explained in
   \cite{kirschvink1980least} and in section 9.7 of
-  \cite{tauxe2010paleomagnetism}.
+  \cite{tauxe2010paleomagnetism}. For the great-circle fit, the plot gives
+  the inclination and declination of one of the great circle's poles, and the
+  \caps{mad}1 value indicating the goodness of fit of the great circle. (Note
+  that this may be different from the \caps{mad}1 for the \caps{pca} fit,
+  since different sets of points may be used for the two fits.)
 
 \item[Title] simply shows the name of the current sample and the current
   site, for a discrete suite. For a continuous (long core) suite, it shows

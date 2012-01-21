@@ -30,7 +30,7 @@ public class SiteDataTable extends Plot {
      */
     private static final boolean USE_REAL_ALPHA = false;
     private static final String alpha = USE_REAL_ALPHA ? "α" : "a";
-    private static final String[] PARAM_NAMES = {"Fisher", "GC"};
+    private static final String[] PARAM_NAMES = {"Fisher", "GCs"};
     
     /** Creates a site data table with the supplied parameters.
      * 
@@ -59,8 +59,8 @@ public class SiteDataTable extends Plot {
 
     private TextLayout layoutFisherParams(Graphics2D g, String name,
             FisherParams fp) {
-        final String s = String.format("%s: Dec=%.1f  Inc=%.1f  "
-                + "%s95=%.1f  k=%.1f", name,
+        final String s = String.format("%s  dec %.1f / inc %.1f / "
+                + "%s95 %.1f / k %.1f", name,
                 fp.getMeanDirection().getDecDeg(),
                 fp.getMeanDirection().getIncDeg(),
                 alpha, fp.getA95(), fp.getK());
