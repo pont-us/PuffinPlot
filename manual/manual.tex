@@ -462,7 +462,12 @@ for the linear \caps{pca} fit; the smaller the value, the more collinear the poi
 (in \textdegree C) of last demagnetization step used for \caps{pca} analysis \\
 \caps{pca} contiguous       & `Y' if
 all steps between the first and last were selected for \caps{pca};
-`N if any were omitted \\
+`N' if any were omitted \\
+\caps{GC} dec (\textdegree) & the declination of the pole to the fitted great circle, if any \\
+\caps{GC} inc (\textdegree) & the inclination of the pole to the fitted great circle, if any \\
+\caps{GC} \caps{mad}1 & the \caps{mad}1 value for the great circle fit,
+indicating goodness of fit (smaller is better). See section~\ref{sec:plot-types} for more details. \\
+\caps{GC} npoints & the number of points used for the great-circle fit \\
 \caps{mdf} half-intensity (A/m)  & half of the \caps{nrm} (in A/m) \\
 \caps{mdf} demagnetization (\textdegree C or mT) & the demagnetization treatment level
 at which the \caps{nrm} was reduced to half (in \textdegree C or mT) \\
@@ -916,7 +921,7 @@ listed below include textual elements such as legends and tables.
 \item[Zplot] is a Zijderveld plot, overlaying an orthographic projection in
   the horizontal plane with an orthographic projection in a chosen vertical
   plane. The vertical plane can be controlled using the chooser on the
-  toolbar; see section\ref{sec:toolbar} for details. The horizontal
+  toolbar; see section~\ref{sec:toolbar} for details. The horizontal
   projection is shown with filled points, and the vertical projection with
   unfilled points. If a \caps{pca} fit has been calculated for this sample,
   the two projections of the \caps{pca} lines are overlaid on the plot in
@@ -936,7 +941,7 @@ listed below include textual elements such as legends and tables.
   susceptibility. Selected points are denoted by an asterisk (*) to their
   left; hidden points are denoted by a dash (--) to their left.
 
-\item[\caps{Sample parameters}] shows the results of \caps{pca} and/or
+\item[Sample parameters] shows the results of \caps{pca} and/or
   great-circle fits for data in the current sample. If neither of these
   calculations has been done, this plot is invisible. When visible, it shows
   the inclination and declination of the first principal component, which

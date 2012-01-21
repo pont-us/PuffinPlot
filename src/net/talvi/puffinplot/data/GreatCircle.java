@@ -22,7 +22,7 @@ public final class GreatCircle {
     private final double pointTrend; // direction of points along circle: +1 or -1 
     // TODO: need a way to represent sector constraints here...
     private static final List<String> HEADERS =
-            Arrays.asList("GC dec (°)", "GC inc (°)", "GC npoints");
+            Arrays.asList("GC dec (°)", "GC inc (°)", "GC MAD1", "GC npoints");
 
     /**
      * Constructs a best-fitting great circle for the supplied vectors.
@@ -117,7 +117,7 @@ public final class GreatCircle {
      */
     public List<String> toStrings() {
         return Arrays.asList(fmt(pole.getDecDeg()), fmt(pole.getIncDeg()),
-                Integer.toString(points.size()));
+                fmt(getMad1()), Integer.toString(points.size()));
     }
 
     /** Returns a list of empty strings equal in length to the number of parameters.
@@ -134,6 +134,12 @@ public final class GreatCircle {
         return HEADERS;
     }
 
+    /**
+     * Returns the MAD1 (planar maximum angular deviation) value for
+     * the great-circle fit.
+     * 
+     * @return the MAD1 value for the great-circle fit.
+     */
     public double getMad1() {
         return mad1;
     }
