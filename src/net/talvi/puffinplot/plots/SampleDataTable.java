@@ -21,8 +21,6 @@ import net.talvi.puffinplot.data.Sample;
  */
 public class SampleDataTable extends Plot {
 
-    private static final int Y_SPACE = 20;
-    
     /** Creates a new PCA table with the supplied parameters.
      * 
      * @param parent the graph display containing the table
@@ -80,7 +78,7 @@ public class SampleDataTable extends Plot {
             for (int i=0; i<strings.size(); i++) {
               writeString(g, strings.get(i),
                       (int) getDimensions().getMinX() + 10,
-                      (int) getDimensions().getMinY() + (i+1) * Y_SPACE);
+                      (int) (getDimensions().getMinY() + (i+1) * getFontSize() * 1.2));
             }
         }
     }

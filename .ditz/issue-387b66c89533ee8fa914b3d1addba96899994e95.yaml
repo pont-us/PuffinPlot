@@ -13,8 +13,8 @@ type: :feature
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2011-11-14 21:02:45.349843 Z
 references: []
 
@@ -24,3 +24,15 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2012-01-22 01:09:37.687052 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2012-01-22 08:20:39.959054 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    The suite mean has been expanded to encompass six values:
+    overall, upper-hemisphere, and lower-hemisphere for per-site and
+    per-sample averages. They are all exported in the suite data
+    CSV file.

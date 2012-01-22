@@ -11,7 +11,7 @@ type: :task
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
+status: :in_progress
 disposition: 
 creation_time: 2011-12-13 01:05:23.325542 Z
 references: []
@@ -21,4 +21,21 @@ log_events:
 - - 2011-12-13 01:05:23.685517 Z
   - Pontus Lurcock <pont@talvi.net>
   - created
+  - ""
+- - 2012-01-22 08:10:54.975501 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    Some progress with this as part of #186 -- means are now
+    calculated and stored using both sample PCA directions and site means.
+    Calculation and saving to CSV is now comprehensive and rational.
+    Still need to do something about the plot, however -- probably just
+    tie it into the newly expanded suite means, and plot either
+    the overall site mean or the two hemispherical means if they're
+    available. Fall back to the sample-level mean if there aren't
+    any site means. Ideally it would be configurable but that will have
+    to wait.
+- - 2012-01-22 08:18:59.275180 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
   - ""

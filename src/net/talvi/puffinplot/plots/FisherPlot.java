@@ -70,7 +70,7 @@ public class FisherPlot extends EqAreaPlot {
         if (suite==null) return;
         List<FisherValues> fishers = groupedBySite 
                 ? suite.getSiteFishers()
-                : Collections.singletonList(suite.getSuiteFisher());
+                : Collections.singletonList(suite.getSuiteMeans().getBySample().getAll());
         if (fishers==null) return;
 
         final AlphaComposite translucent =

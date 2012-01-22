@@ -360,18 +360,19 @@ public class PuffinActions {
     };
     
     /**
-     * Calculates Fisher statistics on PCA directions for all selected samples.
+     * Calculates Fisher statistics on sample PCA directions for all
+     * selected samples, and on site means for all selected sites.
      */
-    public final Action fisherOnSuite = new PuffinAction("Fisher on suite",
-            "Fisher statistics on PCA directions for entire selection",
+    public final Action suiteMeans = new PuffinAction("Suite means",
+            "Calculate mean directions using all selected sites and samples",
             'F', true, KeyEvent.VK_U) {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {
             Suite suite = app.getSuite();
             if (suite == null) {
-                app.errorDialog("Fisher on suite", "No suite loaded.");
+                app.errorDialog("Calculate suite means", "No suite loaded.");
             } else {
-                suite.calculateSuiteFisher();
+                suite.calculateSuiteMeans();
                 app.getFisherWindow().getPlot().setGroupedBySite(false);
                 app.getFisherWindow().setVisible(true);
             }

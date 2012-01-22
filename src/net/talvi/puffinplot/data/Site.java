@@ -129,6 +129,22 @@ public class Site {
     public GreatCircles getGreatCircles() {
         return greatCircles;
     }
+    
+    /**
+     * Returns the Fisherian parameters of the site mean direction.
+     * If a great-circle mean has been calculated, its parameters will be 
+     * returned. If there is no great-circle mean but a Fisher mean has been 
+     * calculated, the Fisher mean will be returned. If neither type of mean 
+     * has been calculated, a null value will be returned.
+     * 
+     * @return the Fisherian parameters of the site mean direction
+     */
+    public FisherParams getMeanDirection() {
+        if (fisher != null) return fisher;
+        else if (greatCircles != null && greatCircles.isValid())
+            return greatCircles;
+        else return null;
+    }
 
     private String fmt(double x) {
         return String.format("%g", x);

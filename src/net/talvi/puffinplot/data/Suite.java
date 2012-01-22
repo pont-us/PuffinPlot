@@ -47,7 +47,7 @@ public final class Suite {
     private MeasType measType;
     private String suiteName;
     private List<Sample> emptyTraySamples;
-    private FisherValues suiteFisher;
+    private SuiteCalcs suiteCalcs;
     private List<String> loadWarnings;
     private boolean hasUnknownTreatType;
     private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
@@ -67,23 +67,35 @@ public final class Suite {
     /** Calculates Fisher statistics on all the calculated PCA 
      * directions for samples within the suite. The Fisher parameters
      * are stored in the suite and can be retreived with
-     * {@link #getSuiteFisher()}. */
-    public void calculateSuiteFisher() {
-        List<Sample> selected = PuffinApp.getInstance().getSelectedSamples();
-        List<PcaValues> pcas = new ArrayList<PcaValues>(selected.size());
-        for (Sample sample: selected) {
+     * {@link #getSuiteMeans()}. */
+    public void calculateSuiteMeans() {
+        final List<Sample> selSamps = PuffinApp.getInstance().getSelectedSamples();
+        List<Vec3> sampleDirs = new ArrayList<Vec3>(selSamps.size());
+        for (Sample sample: selSamps) {
             PcaValues pca = sample.getPcaValues();
-            if (pca != null) pcas.add(pca);
+            if (pca != null) {
+                sampleDirs.add(pca.getDirection());
+            }
         }
-        List<Vec3> directions = new ArrayList<Vec3>(pcas.size());
-        for (PcaValues pca: pcas) directions.add(pca.getDirection());
-        suiteFisher = FisherValues.calculate(directions);
+        
+        List<Site> selSites = PuffinApp.getInstance().getSelectedSites();
+        List<Vec3> siteDirs = new ArrayList<Vec3>(selSamps.size());
+        for (Site site: selSites) {
+            FisherParams fp = site.getMeanDirection();
+            if (fp != null) {
+                siteDirs.add(fp.getMeanDirection());
+            }
+        }
+
+        suiteCalcs = new SuiteCalcs(
+                SuiteCalcs.Means.calculate(siteDirs),
+                SuiteCalcs.Means.calculate(sampleDirs));
     }
 
     /** Returns the Fisher parameters calculated on the entire suite. 
      * @return the Fisher parameters calculated on the entire suite */
-    public FisherValues getSuiteFisher() {
-        return suiteFisher;
+    public SuiteCalcs getSuiteMeans() {
+        return suiteCalcs;
     }
 
     /** For each site in this suite, calculates Fisher statistics on the
@@ -465,12 +477,14 @@ public final class Suite {
     public void saveCalcsSuite(File file) throws PuffinUserException {
         CsvWriter writer = null;
         try {
-            if (suiteFisher == null) {
+            if (suiteCalcs == null) {
                 throw new PuffinUserException("There are no calculations to save.");
             }
             writer = new CsvWriter(new FileWriter(file));
-            writer.writeCsv(FisherValues.getHeaders());
-            writer.writeCsv(suiteFisher.toStrings());
+            writer.writeCsv(SuiteCalcs.getHeaders());
+            for (List<String> line: suiteCalcs.toStrings()) {
+                writer.writeCsv(line);
+            }
         } catch (IOException ex) {
            throw new PuffinUserException(ex);
         } finally {
