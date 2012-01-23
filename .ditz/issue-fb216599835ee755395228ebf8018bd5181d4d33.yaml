@@ -11,8 +11,8 @@ type: :task
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :in_progress
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2011-12-13 01:05:23.325542 Z
 references: []
 
@@ -39,3 +39,11 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - changed status from unstarted to in_progress
   - ""
+- - 2012-01-23 06:04:16.323429 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Fixed the final part of this problem by making the
+    suite equal-area plot behave more sensibly. It now shows two
+    directions or one direction as appropriate, and falls back
+    to using sample PCA directions if no sites are defined.

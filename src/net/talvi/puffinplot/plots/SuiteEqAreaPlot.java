@@ -1,14 +1,15 @@
 package net.talvi.puffinplot.plots;
 
-import java.util.ArrayList;
 import java.awt.Graphics2D;
 import java.util.List;
 import java.util.prefs.Preferences;
+import net.talvi.puffinplot.data.FisherParams;
 import net.talvi.puffinplot.data.FisherValues;
-import net.talvi.puffinplot.data.GreatCircles;
+import net.talvi.puffinplot.data.PcaValues;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Site;
 import net.talvi.puffinplot.data.Suite;
+import net.talvi.puffinplot.data.SuiteCalcs;
 import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
@@ -18,7 +19,8 @@ import net.talvi.puffinplot.window.PlotParams;
  * This plot displays site means calculated using Fisher statistics
  * or great-circle intersections, and overall Fisher means of the
  * site means themselves. If there are site means in both hemispheres,
- * a separate mean is shown for each hemisphere.
+ * a separate mean is shown for each hemisphere. If no sites are defined,
+ * sample PCA directions are used instead.
  */
 public class SuiteEqAreaPlot extends EqAreaPlot {
 
@@ -44,6 +46,7 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
     }
 
     private void drawFisher(FisherValues fv) {
+        if (fv==null) return;
         final Vec3 mean = fv.getMeanDirection();
         drawLineSegments(mean.makeSmallCircle(fv.getA95()));
         PlotPoint meanPoint = 
@@ -52,6 +55,15 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
         meanPoint.draw(g);
     }
 
+    private void drawMeans(SuiteCalcs.Means means) {
+        if (means.getUpper() != null && means.getLower() != null) {
+            drawFisher(means.getUpper());
+            drawFisher(means.getLower());
+        } else {
+            drawFisher(means.getAll());
+        }
+    }
+    
     @Override
     public void draw(Graphics2D g) {
         updatePlotDimensions(g);
@@ -62,29 +74,30 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
         final Suite suite = sample.getSuite();
         if (suite==null) return;
         List<Site> sites = suite.getSites();
+        final SuiteCalcs suiteCalcs = suite.getSuiteMeans();
         if (sites == null || sites.isEmpty()) {
-            writeString(g, "No sites defined.", xo-40, yo-20);
-            return;
-        }
-        List<Vec3> vs_n = new ArrayList<Vec3>();
-        List<Vec3> vs_r = new ArrayList<Vec3>();
-        for (Site site: sites) {
-            Vec3 siteMean = null;
-            GreatCircles circles = site.getGreatCircles();
-            if (circles != null && circles.isValid())
-                siteMean = circles.getMeanDirection();
-            if (siteMean == null) {
-                FisherValues fv = site.getFisher();
-                if (fv != null) siteMean = fv.getMeanDirection();
+            for (Sample s: suite.getSamples()) {
+                final PcaValues pca = s.getPcaValues();
+                if (pca != null) {
+                    final Vec3 dir = pca.getDirection();
+                    addPoint(null, project(dir), dir.z>0, false, false);
+                }
             }
-            if (siteMean==null) continue;
-            addPoint(null, project(siteMean), siteMean.z>0, false, false);
-            (siteMean.z>0 ? vs_r : vs_n).add(siteMean);
+            if (suiteCalcs != null) {
+                drawMeans(suiteCalcs.getBySample());
+            }
+        } else {
+            for (Site site: sites) {
+                final FisherParams siteMean = site.getMeanDirection();
+                if (siteMean != null) {
+                    final Vec3 dir = siteMean.getMeanDirection();
+                    addPoint(null, project(dir), dir.z>0, false, false);
+                }
+            }
+            if (suiteCalcs != null) {
+                drawMeans(suiteCalcs.getBySite());
+            }
         }
-        if (vs_n.size()>1)
-            drawFisher(FisherValues.calculate(vs_n));
-        if (vs_r.size()>1)
-            drawFisher(FisherValues.calculate(vs_r));
         drawPoints(g);
     }
 }
