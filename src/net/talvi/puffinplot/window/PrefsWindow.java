@@ -44,7 +44,7 @@ public class PrefsWindow extends JFrame {
     private static final long serialVersionUID = 1L;
     private final JTextField[] sensorLengthField = new JTextField[3];
     private final PresetsBox presetsBox;
-    private final JTextField protocolBox;
+    // private final JTextField protocolBox;
     private List<PlotBox> plotBoxes = new ArrayList<PlotBox>(24);
     private List<PrefBox> prefBoxes = new ArrayList<PrefBox>();
     private final PuffinPrefs prefs =
@@ -96,21 +96,21 @@ public class PrefsWindow extends JFrame {
         gbc2.weightx = 0.8;
         gbc2.weighty = 0;
         loadingPanel.add(squidPanel, gbc2);
+        
         gbc2.gridy = 5;
         gbc2.gridx = 0;
         gbc2.gridwidth = 1;
         gbc2.weightx = 0.25;
         gbc2.anchor = GridBagConstraints.LINE_END;
-        loadingPanel.add(new JLabel("Protocol"), gbc2);
-        gbc2.gridx = 1;
-        gbc2.gridwidth = 2;
-        gbc2.weightx = 0.75;
-        gbc2.anchor = GridBagConstraints.LINE_START;
-        protocolBox = new JTextField("NORMAL", 32);
-        protocolBox.setPreferredSize(new Dimension(200, 32));
-        loadingPanel.add(protocolBox, gbc2);
-        protocolBox.setToolTipText("If you don't know what this does, you " +
-                "probably shouldn't touch it.");
+        final TwoGeeLoader.Protocol[] protocolValues = TwoGeeLoader.Protocol.values();
+        final String[] protocolStrings = new String[protocolValues.length];
+        for (int i=0; i<protocolValues.length; i++) {
+            protocolStrings[i] = protocolValues[i].name();
+        }
+        loadingPanel.add(makeLabelledPrefComboBox("Protocol",
+                "measurementProtocol", protocolStrings, "NORMAL",
+                "The measurement protocol to use when reading 2G files."), gbc2);
+        
         JPanel plotsPanel = new JPanel(false);
         plotsPanel.setLayout(new BoxLayout(plotsPanel, BoxLayout.Y_AXIS));
         plotsPanel.add(new JLabel("Visible plots"));
@@ -131,7 +131,7 @@ public class PrefsWindow extends JFrame {
                 "plots.fontFamily", "Arial"));
         miscPanel.add(makeLabelledPrefComboBox("Look and feel",
                 "lookandfeel", new String[] {"Default", "Native", "Metal", "Nimbus"},
-                "Default"));
+                "Default", "PuffinPlot's appearance (changes take effect on restart)"));
         miscPanel.add(makeLabelledPrefBox("GC validity",
                 "data.greatcircles.validityExpr", "N>=3 and a95<3.5 and k>3"));
         miscPanel.add(Box.createVerticalGlue());
@@ -166,6 +166,7 @@ public class PrefsWindow extends JFrame {
             String defaultValue) {
         final JPanel panel = new JPanel(false);
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+        panel.add(Box.createRigidArea((new Dimension(8,0))));
         final JLabel label = new JLabel(labelString);
         label.setMaximumSize(new Dimension(200, 30));
         panel.add(label);
@@ -176,21 +177,24 @@ public class PrefsWindow extends JFrame {
     }
     
     private JPanel makeLabelledPrefComboBox(String labelString, String pref,
-            String[] values, String defaultValue) {
+            String[] values, String defaultValue, String toolTip) {
         final JPanel panel = new JPanel(false);
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+        panel.add(Box.createRigidArea((new Dimension(8,0))));
         final JLabel label = new JLabel(labelString);
         label.setMaximumSize(new Dimension(200, 30));
         panel.add(label);
         PrefsComboBox box = new PrefsComboBox(pref, values, defaultValue);
         box.setMaximumSize(new Dimension(300, 50));
+        box.setToolTipText(toolTip);
         panel.add(box);
         return panel;
     }
     
     private void applySettings() {
         presetsBox.applySettings();
-        prefs.set2gProtocol(TwoGeeLoader.Protocol.valueOf(protocolBox.getText()));
+        prefs.set2gProtocol(TwoGeeLoader.Protocol.valueOf(
+                prefs.getPrefs().get("measurementProtocol", "NORMAL")));
         for (PlotBox plotBox: plotBoxes) plotBox.applySetting();
         for (PrefBox prefBox: prefBoxes) prefBox.storeValue();
         try {
