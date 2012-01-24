@@ -1,0 +1,24 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: "Add a \xE2\x80\x98plot close-up\xE2\x80\x99 window"
+desc: |-
+  It can be handy to get a close-up view of a single plot
+  without editing the main layout. This feature could replace the
+  current stand-alone site and suite windows. It would simply
+  open up a window containing a single selected plot -- a duplicate
+  of one of the ones in the main area, but automatically resized to
+  fit the window.
+type: :feature
+component: PuffinPlot
+release: "1.1"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2012-01-23 06:18:10.698936 Z
+references: []
+
+id: 711b4f66c98bdbf41ad3e15c8f373076ee0366d6
+log_events: 
+- - 2012-01-23 06:18:11.002904 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

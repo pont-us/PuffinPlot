@@ -525,6 +525,12 @@ section~\ref{sec:annotations} for details. \\ \bottomrule
   \ppcmd{Calculate\submenu Suite means} menu item
   (section~\ref{sec:functions-calcs}) or details.
 
+\item[File\submenu Export data\submenu Export multi-suite calculations\ldots]
+  saves a \caps{csv} file containing the Fisherian parameters for mean
+  directions calculated across all the currently open suites; see the
+  documentation for the \ppcmd{Calculate\submenu Multi-suite means} menu item
+  (section~\ref{sec:functions-calcs}) or details.
+
 \item[File\submenu Export data\submenu Export IRM data\ldots] saves files
   containing \caps{irm} acquisition data. It produces a folder of files, one
   for each sample in the suite. Each file is in tab-delimited text format,
@@ -730,9 +736,10 @@ all the selected samples, not just the current sample.
   are sufficiently well separated from other components.
 
 \item[Calculations\submenu Fisher by site] calculates a Fisherian mean
-  direction for the \caps{pca} directions at each site.
+  direction for each selected site using the \caps{pca} directions of its
+  samples.
 
-\item[Calculations\submenu Suite means] calculates a Fisherian mean across
+\item[Calculations\submenu Suite means] calculates Fisherian means across
   all the selected samples, and opens a new window showing an equal-area plot
   of the \caps{pca} directions, the mean direction, and the 95\% confidence
   circle. Two sets of means are actually calculated: one set is calculated
@@ -744,7 +751,15 @@ all the selected samples, not just the current sample.
   means for the upper and lower hemisphere, to cater for data sets containing
   reversals. All these means can be exported as a \caps{csv} file using
   the \item[File\submenu Export Data\submenu Export suite calculations\ldots]
-  menu item.
+  menu item. Note that (like most PuffinPlot functions) this feature
+  operates on all the \emph{selected} samples; to calculate means for
+  the entire suite you must first select all the samples.
+
+\item[Calculations\submenu Multi-suite means] calculates Fisherian means
+  across all the samples in \emph{all} the currently opened suites. the
+  results are not plotted, but they are shown in a pop-up window and can be
+  saved using the \ppcmd{File\submenu Export data\submenu Export multi-suite
+    calculations\ldots} menu item.
 
 \item[Calculations\submenu MDF] calculates the Median Destructive Field (or,
   for thermal demagnetization, the Median Destructive Temperature) of the

@@ -64,12 +64,8 @@ public final class Suite {
         return Collections.unmodifiableList(loadWarnings);
     }
 
-    /** Calculates Fisher statistics on all the calculated PCA 
-     * directions for samples within the suite. The Fisher parameters
-     * are stored in the suite and can be retreived with
-     * {@link #getSuiteMeans()}. */
-    public void calculateSuiteMeans() {
-        final List<Sample> selSamps = PuffinApp.getInstance().getSelectedSamples();
+    private static SuiteCalcs calculateSuiteMeans(List<Sample> selSamps,
+            List<Site> selSites) {
         List<Vec3> sampleDirs = new ArrayList<Vec3>(selSamps.size());
         for (Sample sample: selSamps) {
             PcaValues pca = sample.getPcaValues();
@@ -77,8 +73,6 @@ public final class Suite {
                 sampleDirs.add(pca.getDirection());
             }
         }
-        
-        List<Site> selSites = PuffinApp.getInstance().getSelectedSites();
         List<Vec3> siteDirs = new ArrayList<Vec3>(selSamps.size());
         for (Site site: selSites) {
             FisherParams fp = site.getMeanDirection();
@@ -86,12 +80,58 @@ public final class Suite {
                 siteDirs.add(fp.getMeanDirection());
             }
         }
-
-        suiteCalcs = new SuiteCalcs(
+        return new SuiteCalcs(
                 SuiteCalcs.Means.calculate(siteDirs),
                 SuiteCalcs.Means.calculate(sampleDirs));
     }
+    
+    /** Calculates Fisher statistics on all the calculated PCA 
+     * directions for samples within the suite. The Fisher parameters
+     * are stored in the suite and can be retreived with
+     * {@link #getSuiteMeans()}. */
+    public void calculateSuiteMeans() {
+        final List<Sample> selSamps = PuffinApp.getInstance().getSelectedSamples();
+        final List<Site> selSites = PuffinApp.getInstance().getSelectedSites();
+        suiteCalcs = calculateSuiteMeans(selSamps, selSites);
+    }
 
+    /** Calculates and returns Fisher statistics on all the calculated PCA 
+     * directions for samples within supplied suite. The Fisher parameters
+     * are stored in the suite and can be retreived with
+     * {@link #getSuiteMeans()}.
+     * @param suites the suites on which to calculate statistics
+     * @return the results of the calculation
+     */
+    public static SuiteCalcs calculateMultiSuiteMeans(List<Suite> suites) {
+        final List<Sample> selSamps = new ArrayList<Sample>();
+        final List<Site> selSites = new ArrayList<Site>();
+        for (Suite suite: suites) {
+            selSamps.addAll(suite.getSamples());
+            selSites.addAll(suite.getSites());
+        }
+        return calculateSuiteMeans(selSamps, selSites);
+    }
+    
+    /** Performs a reversal test on a list of suites. 
+     * @param suites the suites on which to perform the test.
+     * @return a two-item list containing Fisher statistics for the
+     * normal and reversed modes of the data in the suites, in that order
+     */
+    public static List<FisherValues> doReversalTest(List<Suite> suites) {
+        List<Vec3> normal = new ArrayList<Vec3>(), reversed = new ArrayList<Vec3>();
+        for (Suite suite: suites) {
+            for (Sample sample: suite.getSamples()) {
+                PcaValues pca = sample.getPcaValues();
+                if (pca != null) {
+                 (pca.getDirection().z > 0 ? normal : reversed).add(pca.getDirection());
+                }
+            }
+        }
+        FisherValues fisherNormal = FisherValues.calculate(normal);
+        FisherValues fisherReversed = FisherValues.calculate(reversed);
+        return Arrays.asList(fisherNormal, fisherReversed);
+    }
+    
     /** Returns the Fisher parameters calculated on the entire suite. 
      * @return the Fisher parameters calculated on the entire suite */
     public SuiteCalcs getSuiteMeans() {
@@ -723,26 +763,6 @@ public final class Suite {
             double[] v = ad.getTensor();
             sample.setAmsFromTensor(v[0], v[1], v[2], v[3], v[4], v[5]);
         }
-    }
-
-    /** Performs a reversal test on a list of suites. 
-     * @param suites the suites on which to perform the test.
-     * @return a two-item list containing Fisher statistics for the
-     * normal and reversed modes of the data in the suites, in that order
-     */
-    public static List<FisherValues> doReversalTest(List<Suite> suites) {
-        List<Vec3> normal = new ArrayList<Vec3>(), reversed = new ArrayList<Vec3>();
-        for (Suite suite: suites) {
-            for (Sample sample: suite.getSamples()) {
-                PcaValues pca = sample.getPcaValues();
-                if (pca != null) {
-                 (pca.getDirection().z > 0 ? normal : reversed).add(pca.getDirection());
-                }
-            }
-        }
-        FisherValues fisherNormal = FisherValues.calculate(normal);
-        FisherValues fisherReversed = FisherValues.calculate(reversed);
-        return Arrays.asList(fisherNormal, fisherReversed);
     }
 
     /** Exports a subset of this suite's data to multiple files, one file

@@ -109,7 +109,8 @@ public final class MainMenuBar extends JMenuBar {
         add(makeMenu("File", pa.open, recentFilesMenu, pa.save, pa.saveAs,
                 pa.close,
                 makeMenu("Export data", pa.exportCalcsSample,
-                pa.exportCalcsSite, pa.exportCalcsSuite, pa.exportIrm),
+                pa.exportCalcsSite, pa.exportCalcsSuite, 
+                pa.exportCalcsMultiSuite, pa.exportIrm),
                 pa.pageSetup, pa.print, pa.printFisher, pa.printGc,
                 pa.importAms, pa.exportSvg, pa.exportPdf,
                 pa.runScript,
@@ -131,7 +132,7 @@ public final class MainMenuBar extends JMenuBar {
                 pa.fisherBySite, pa.suiteMeans,
                 pa.mdf, pa.clearSampleCalcs, pa.circleFit, pa.greatCircleAnalysis,
                 pa.clearSiteCalcs,
-                pa.reversalTest, makeMenu("AMS", pa.bootAmsNaive,
+                pa.multiSuiteMeans, makeMenu("AMS", pa.bootAmsNaive,
                 pa.bootAmsParam, pa.hextAms,
                 pa.clearAmsCalcs)));
         add(makeMenu("Window",

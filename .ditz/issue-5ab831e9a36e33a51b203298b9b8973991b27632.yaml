@@ -1,0 +1,31 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Better handling of multi-suite mean directions
+desc: |-
+  At present multi-suite means are produced in a somewhat 
+  ad-hoc fashion and shown poorly in a modal dialog. They
+  should at least be saveable.
+type: :bugfix
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :closed
+disposition: :fixed
+creation_time: 2012-01-24 03:45:34.962351 Z
+references: []
+
+id: 5ab831e9a36e33a51b203298b9b8973991b27632
+log_events: 
+- - 2012-01-24 03:45:35.541502 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
+- - 2012-01-24 03:48:26.037639 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2012-01-24 03:54:16.561562 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Multi-suite calculations are now handled very much like
+    single-suite calculations, except that they aren't plotted.

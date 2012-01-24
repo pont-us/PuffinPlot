@@ -1,0 +1,26 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Tidy up the extra equal-area plot windows
+desc: "At present \xE2\x80\x98Fisher by site\xE2\x80\x99 and \xE2\x80\x98Great circles\xE2\x80\x99 open up \n\
+  new windows containing a single large equal-area plot.\n\
+  These are at least partially redundant now that there are \n\
+  site and suite equal area plots in the main window. Easiest\n\
+  would probably be to retain them, but rename them (to \xE2\x80\x98site\xE2\x80\x99\n\
+  and \xE2\x80\x98suite\xE2\x80\x99 something), and don't open them automatically.\n\
+  Add the site (great-circle) plot to the Windows menu to\n\
+  let it be opened automatically. They're still handy for\n\
+  a quick close-up without having to edit the main plot layout."
+type: :task
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2012-01-23 06:16:12.722930 Z
+references: []
+
+id: e15067dd5aec6a12bcfd0ae1932eeac56b2bf0c6
+log_events: 
+- - 2012-01-23 06:16:13.230815 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

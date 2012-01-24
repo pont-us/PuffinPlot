@@ -2,6 +2,7 @@ package net.talvi.puffinplot;
 
 import java.awt.FileDialog;
 import java.util.prefs.BackingStoreException;
+import net.talvi.puffinplot.data.SuiteCalcs;
 import net.talvi.puffinplot.window.CorrectionWindow;
 import net.talvi.puffinplot.window.TableWindow;
 import net.talvi.puffinplot.window.FisherWindow;
@@ -59,6 +60,8 @@ import com.lowagie.text.pdf.PdfWriter;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.io.FileOutputStream;
+import javax.swing.JTextArea;
+import net.talvi.puffinplot.data.CsvWriter;
 import net.talvi.puffinplot.window.MainGraphDisplay;
 import org.python.core.PyException;
 import org.python.util.PythonInterpreter;
@@ -107,6 +110,7 @@ public final class PuffinApp {
     private static final boolean MAC_OS_X =
             System.getProperty("os.name").toLowerCase().startsWith("mac os x");
     private static final int OSX_POINT_VERSION = determineOsxPointVersion();
+    private SuiteCalcs multiSuiteCalcs;
 
     static {
         final Handler logStringHandler =
@@ -995,6 +999,70 @@ public final class PuffinApp {
         document.close();
     }
     
+    public void calculateMultiSuiteMeans() {
+        multiSuiteCalcs = Suite.calculateMultiSuiteMeans(suites);
+        StringBuilder meansBuilder = new StringBuilder();
+        List<List<String>> meansStrings = new ArrayList<List<String>>(8);
+        meansStrings.add(SuiteCalcs.getHeaders());
+        meansStrings.addAll(multiSuiteCalcs.toStrings());
+        for (List<String> line: meansStrings) {
+            boolean first = true;
+            for (String cell: line) {
+                if (!first) meansBuilder.append("\t");
+                meansBuilder.append(cell);
+                first = false;
+            }
+            meansBuilder.append("\n");
+        }
+        String meansString = meansBuilder.toString();
+        final JTextArea textArea = new JTextArea(meansString);
+        textArea.setTabSize(10);
+        JOptionPane.showMessageDialog(getMainWindow(),
+                textArea, "Means across all suites",
+                JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    
+    void exportCalcsMultiSuite() {
+        if (app.getSuite() == null) {
+                errorDialog("Error saving calculations", "No file loaded.");
+                return;
+        }
+        String pathname = actions.getSavePath("Export multi-suite calculations", ".csv",
+                "Comma Separated Values");
+        if (pathname != null) {
+            try {
+                CsvWriter writer = null;
+                try {
+                    if (multiSuiteCalcs == null) {
+                        throw new PuffinUserException("There are no calculations to save.");
+                    }
+                    writer = new CsvWriter(new FileWriter(pathname));
+                    writer.writeCsv(SuiteCalcs.getHeaders());
+                    for (List<String> line: multiSuiteCalcs.toStrings()) {
+                        writer.writeCsv(line);
+                    }
+                } catch (IOException ex) {
+                    throw new PuffinUserException(ex);
+                } finally {
+                    if (writer != null) {
+                        try { writer.close(); }
+                        catch (IOException e) { logger.warning(e.getLocalizedMessage()); }
+                    }
+                }
+            } catch (PuffinUserException ex) {
+                errorDialog("Error saving multi-suite calculations",
+                        ex.getLocalizedMessage());
+            }
+        }
+    }
+    
+    /**
+     * Runs a specified Python script
+     * 
+     * @param scriptPath the path to the script
+     * @throws PyException if an error occurred while running the script
+     */
     public void runPythonScript(String scriptPath) throws PyException {
         PythonInterpreter interp = new PythonInterpreter();
         interp.set("puffin_app", this);
@@ -1003,6 +1071,10 @@ public final class PuffinApp {
         getMainWindow().suitesChanged();
     }
     
+    /**
+     * Opens a file selection dialog and runs the Python script
+     * (if any) which the user selects from that dialog. 
+     */
     public void runPythonScriptWithDialog() {
         final List<File> files = openFileDialog("Select Python script");
         final File file = files.get(0);

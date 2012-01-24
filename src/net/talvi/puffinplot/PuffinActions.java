@@ -89,7 +89,7 @@ public class PuffinActions {
         }
     };
 
-    private String getSavePath(final String title, final String extension,
+    String getSavePath(final String title, final String extension,
             final String type) {
         String pathname = null;
         if (useSwingChooserForSave) {
@@ -204,6 +204,17 @@ public class PuffinActions {
         }
     };
 
+        /**
+     * Opens a ‘Save’ dialog box; suite calculations are saved to 
+     * the chosen file (if any).
+     */
+    public final Action exportCalcsMultiSuite = new AbstractAction("Export multi-suite calculations…") {
+        private static final long serialVersionUID = 1L;
+        public void actionPerformed(ActionEvent arg0) {
+            app.exportCalcsMultiSuite();
+        }
+    };
+    
     private void doSaveAs(Suite suite) {
         String pathname = getSavePath("Save data", ".ppl", "PuffinPlot data");
         if (pathname != null) try {
@@ -663,20 +674,14 @@ public class PuffinActions {
     };
 
     /**
-     * Performs a reversal test on all the currently open data suites.
+     * Calculate mean directions for data in all the currently open data suites.
      */
-    public final Action reversalTest = new PuffinAction("Reversal test",
-            "Perform reversal test on all opened suites", null, false,
+    public final Action multiSuiteMeans = new PuffinAction("Multi-suite means",
+            "Calculate means for data in all open suites", null, false,
             KeyEvent.VK_V) {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {
-            List<FisherValues> fv = Suite.doReversalTest(app.getSuites());
-            System.out.println(fv.get(0));
-            System.out.println(fv.get(1));
-                    JOptionPane.showMessageDialog
-        (app.getMainWindow(), new JTextArea("Normal " +fv.get(0).toString() +
-                            "\nReversed: "+fv.get(1).toString()),
-                            "Reversals test", JOptionPane.INFORMATION_MESSAGE);
+            app.calculateMultiSuiteMeans();
         }
     };
 
