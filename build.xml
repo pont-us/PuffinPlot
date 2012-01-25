@@ -62,7 +62,11 @@
         />
     </target>
     
-    <target name="create-release" depends="javadoc,macbundle"
+    <target name="build-manual">
+        <exec dir="${basedir}/manual" executable="${basedir}/manual/make-all.sh" />
+    </target>
+    
+    <target name="create-release" depends="javadoc,build-manual,macbundle"
       description="Creates an archive of binaries and documentation for release">
         <property file="release.properties" />
         <fail unless="release.version" message="No version number."/>
