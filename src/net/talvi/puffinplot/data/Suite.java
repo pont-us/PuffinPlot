@@ -314,7 +314,7 @@ public final class Suite {
     /**
      * <p>Creates a new suite from the specified files.
      * The is a convenience method for
-     * {@link Suite(List<File>, SensorLengths, TwoGeeLoader.Protocol)}
+     * {@link #Suite(List, SensorLengths, TwoGeeLoader.Protocol)}
      * using the default sensor lengths (1, 1, 1) and protocol 
      * ({@code NORMAL}).
      * </p>

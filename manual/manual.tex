@@ -490,7 +490,7 @@ section~\ref{sec:annotations} for details. \\ \bottomrule
 
   \caption{\label{tbl:export-site} List of fields in exported site data file}
 
-\begin{tabular}{p{6.5em}p{\textwidth-6.5em}} \toprule
+\begin{tabular}{lp{90mm}} \toprule
   Field name      & Description \\ \midrule
   site            & Name of site \\
   Fisher dec.     & Mean declination of \caps{pca} directions (\textdegree) \\
@@ -508,15 +508,23 @@ section~\ref{sec:annotations} for details. \\ \bottomrule
   \caps{gc m}     & Number of \caps{pca} directions used in great-circle fit \\
   \caps{gc} min points & the smallest number of points used to define
     any of the great circles fitted at this site \\
-  \caps{t}1min\newline \caps{t}1max\newline \caps{t}2min\newline \caps{t}2max
-    & These four parameters give the ranges of demagnetization steps used to fit
-    the circles. \caps{t}1 is the first (lowest) demagnetization step in a circle
-    path for an individual sample, and \caps{t}2 the last (highest). \caps{t}1min
-    is the minimum of the \caps{t}1 values across all the circles for the site,
-    and \caps{t}2 the maximum. Similarly, \caps{t}2 is the last step used in a
-    single circle, and \caps{t}2min--\caps{t}2max is the range of its values
-    across all the samples at a site. \\ \bottomrule
+  \caps{t}1min & See note below \\
+  \caps{t}1max & See note below \\
+  \caps{t}2min & See note below \\
+  \caps{t}2max & See note below \\ \bottomrule
 \end{tabular}
+
+\smallskip
+
+Note on \caps{t}1min, \caps{t}1max, \caps{t}2min, and \caps{t}2max: these
+four parameters give the ranges of demagnetization steps used to fit the
+circles. \caps{t}1 denotes the first (lowest) demagnetization step in a
+circle path for an individual sample, and \caps{t}2 the last (highest).
+\caps{t}1min is the minimum of the \caps{t}1 values across all the circles
+for the site, and \caps{t}1max the maximum. Similarly, \caps{t}2 denotes the
+last step used in a single circle, and \caps{t}2min--\caps{t}2max is the
+range of its values across all the samples at a site.
+
 \end{table}
 
 \item[File\submenu Export data\submenu Export suite calculations\ldots] saves

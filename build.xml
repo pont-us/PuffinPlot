@@ -81,7 +81,8 @@
                 prefix="${ant.project.name}.app"
                 filemode="755"
                 includes="Contents/MacOS/JavaApplicationStub"/>
-            <zipfileset file="${basedir}/dist/single-jar/${ant.project.name}.jar" />
+            <zipfileset file="${basedir}/dist/single-jar/${ant.project.name}.jar"
+                filemode="755"/>
             <zipfileset dir="${basedir}/manual" prefix="Manual">
                 <include name="manual.pdf" />
                 <include name="manual.html" />
@@ -92,7 +93,7 @@
         </zip>
     </target>
     
-    <target name="upload-release" depends="create-release"
+    <target name="upload-release"
         description="Uploads an archive of PuffinPlot binaries and documentation">
     <taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask"
         classpath="libs/ant-googlecode.jar" name="gcupload"/>
@@ -108,8 +109,8 @@
         username="${gc.username}"
         password="${gc.password}"
         projectname="puffinplot" 
-        filename="dist/single-jar/${ant.project.name}.jar" 
-        targetfilename="PuffinPlot.jar"
+        filename="${release.pathname}.zip" 
+        targetfilename="puffinplot-${release.version}.zip"
         summary="PuffinPlot archive containing program and documentation."
         labels="Type-Archive, OpSys-All" />
     </target>
