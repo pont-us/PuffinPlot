@@ -33,9 +33,10 @@ public class MedianDestructiveField {
     private final boolean halfIntReached;
     private static final List<String> HEADERS =
         Arrays.asList("MDF half-intensity (A/m)",
-            "MDF demagnetization (°C or mT)", "MDF midpoint reached");
+            "MDF demagnetization (°C or T)", "MDF midpoint reached");
 
-    private MedianDestructiveField(double demagLevel, double intensity, boolean halfIntReached) {
+    private MedianDestructiveField(double demagLevel, double intensity,
+            boolean halfIntReached) {
         this.demagLevel = demagLevel;
         this.intensity = intensity;
         this.halfIntReached = halfIntReached;
@@ -79,7 +80,7 @@ public class MedianDestructiveField {
 
     /** Returns the treatment level at which the intensity of the sample's
      * magnetic moment reached half of its initial value. If this did not
-     * happen, thismethod may return an arbitrary value.
+     * happen, this method may return an arbitrary value.
      * @return the treatment level at which the intensity of the sample's
      * magnetic moment reached half of its initial value, if possible
      */

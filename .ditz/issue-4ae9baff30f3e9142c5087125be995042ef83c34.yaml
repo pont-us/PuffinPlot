@@ -1,0 +1,26 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Incorrect units for AF MDF in site CSV export
+desc: Column header claims mT, but they're actually in Tesla.
+type: :bugfix
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :closed
+disposition: :fixed
+creation_time: 2012-01-26 03:38:01.840457 Z
+references: []
+
+id: 4ae9baff30f3e9142c5087125be995042ef83c34
+log_events: 
+- - 2012-01-26 03:38:02.228316 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
+- - 2012-01-30 02:19:20.120621 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2012-01-30 02:23:22.520571 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - "Fixed the easy way: by changing the header, not the values."
