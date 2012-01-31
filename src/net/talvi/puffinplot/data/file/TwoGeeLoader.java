@@ -316,7 +316,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
         Datum d = new Datum();
 
         final MeasType measType =
-                measTypeFromString(r.getString("Meas. type", "SAMPLE/DISCRETE"));
+                measTypeFromString(r.getString("Meas. type", "SAMPLE/CONTINUOUS"));
 
         d.setArea(r.getDouble("Area", d.getArea()));
         d.setVolume(r.getDouble("Volume", d.getVolume()));
@@ -390,7 +390,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
         }
         if (r.hasDouble("ARM Gauss")) {
             // Yes, they say Gauss, but I think they mean Oersted.
-            d.setIrmField(oerstedToTesla(r.getDouble("aRM Gauss", Double.NaN)));
+            d.setIrmField(oerstedToTesla(r.getDouble("ARM Gauss", Double.NaN)));
         }
         d.setArmAxis(ArmAxis.fromString(r.getString("ARM axis", "UNKNOWN")));
         // TODO better default ARM axis

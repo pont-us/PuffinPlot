@@ -68,14 +68,19 @@ public abstract class Plot
 
     /** the default sizes and positions of the plots */
     protected static final String DEFAULT_PLOT_POSITIONS =
-            "demag true 374 85 348 311 zplot true 736 85 456 697 " +
-            "zplotlegend true 1060 14 130 49 title true 14 14 462 57 " +
-            "sitetable true 550 14 178 61 pcatable true 736 14 193 64 " +
-            "equarea true 376 398 346 389 datatable true 14 83 356 543 " +
-            "ams false 222 633 147 154 ternaryplot false 500 500 300 300 " +
-            "equarea_site false 422 533 147 154 " +
-            "equarea_suite false 422 633 147 154 "+
-            "nrm_histogram false 422 733 147 154";
+            "equarea true 339 319 309 302 "
+            + "zplot true 647 70 446 614 "
+            + "demag true 337 73 308 230 "
+            + "datatable true 8 72 326 543 "
+            + "pcatable true 338 5 191 65 "
+            + "title true 4 5 328 59 "
+            + "sitetable true 533 4 321 66 "
+            + "ams false 379 634 193 177 "
+            + "ternaryplot false 573 616 204 191 "
+            + "equarea_site false 6 616 182 193 "
+            + "equarea_suite false 192 615 186 197 "
+            + "nrm_histogram false 778 679 315 131 "
+            + "zplotlegend true 856 6 132 63";
 
     static {
         final AffineTransform at = AffineTransform.getTranslateInstance(0, 0.18);
