@@ -62,7 +62,7 @@ import java.awt.Graphics2D;
 import java.io.FileOutputStream;
 import javax.swing.JTextArea;
 import net.talvi.puffinplot.data.CsvWriter;
-import net.talvi.puffinplot.window.MainGraphDisplay;
+import net.talvi.puffinplot.window.*;
 import org.python.core.PyException;
 import org.python.util.PythonInterpreter;
 
@@ -1087,4 +1087,10 @@ public final class PuffinApp {
                     JOptionPane.ERROR_MESSAGE);
         }
     }
+    
+    void importTabularData() {
+        TabularImportWindow importWindow = new TabularImportWindow();
+        importWindow.setVisible(true);
+    }
+
 }

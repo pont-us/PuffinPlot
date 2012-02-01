@@ -36,5 +36,4 @@ abstract class AbstractFileLoader implements FileLoader {
     public List<String> getMessages() {
         return Collections.unmodifiableList(messages);
     }
-
 }

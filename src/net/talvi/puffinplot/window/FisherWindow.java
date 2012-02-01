@@ -21,7 +21,7 @@ public class FisherWindow extends JFrame {
      */
     public FisherWindow() {
         setPreferredSize(new Dimension(600, 600));
-        setTitle("Fisher analysis");
+        setTitle("Suite equal-area plot");
         JPanel contentPane = graphDisplay = new FisherGraphDisplay();
         contentPane.setOpaque(true); //content panes must be opaque
         setContentPane(contentPane);

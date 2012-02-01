@@ -106,7 +106,8 @@ public final class MainMenuBar extends JMenuBar {
         });
         useEmptyItem.setAccelerator(KeyStroke.getKeyStroke('Y', modifierKey));
         
-        add(makeMenu("File", pa.open, recentFilesMenu, pa.save, pa.saveAs,
+        add(makeMenu("File", pa.open, pa.importTabularData,
+                recentFilesMenu, pa.save, pa.saveAs,
                 pa.close,
                 makeMenu("Export data", pa.exportCalcsSample,
                 pa.exportCalcsSite, pa.exportCalcsSuite, 
@@ -136,10 +137,15 @@ public final class MainMenuBar extends JMenuBar {
                 pa.bootAmsParam, pa.hextAms,
                 pa.clearAmsCalcs)));
         add(makeMenu("Window",
-                new WindowMenuItem("Data table")
-                { JFrame window(PuffinApp a) {return a.getTableWindow();}},
-                new WindowMenuItem("Suite PCA plot")
-                { JFrame window(PuffinApp a) {return a.getFisherWindow();}}));
+                new WindowMenuItem("Data table") {
+                    private static final long serialVersionUID = 1L;
+                    JFrame window(PuffinApp a) {return a.getTableWindow();}},
+                new WindowMenuItem("Site equal-area plot") {
+                    private static final long serialVersionUID = 1L;
+                    JFrame window(PuffinApp a) {return a.getGreatCircleWindow();}},
+                new WindowMenuItem("Suite equal-area plot") {
+                    private static final long serialVersionUID = 1L;
+                    JFrame window(PuffinApp a) {return a.getFisherWindow();}}));
         add(makeMenu("Help", pa.about));
     }
 

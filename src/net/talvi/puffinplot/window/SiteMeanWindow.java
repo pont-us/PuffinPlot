@@ -21,7 +21,7 @@ public class SiteMeanWindow extends JFrame {
      */
     public SiteMeanWindow() {
         setPreferredSize(new Dimension(600, 600));
-        setTitle("Great circles");
+        setTitle("Site equal-area plot");
         GraphDisplay contentPane = graphDisplay = new SiteMeanDisplay();
         contentPane.setOpaque(true); //content panes must be opaque
         setContentPane(contentPane);

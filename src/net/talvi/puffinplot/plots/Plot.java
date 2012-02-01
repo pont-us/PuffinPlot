@@ -70,7 +70,7 @@ public abstract class Plot
     protected static final String DEFAULT_PLOT_POSITIONS =
             "equarea true 339 319 309 302 "
             + "zplot true 647 70 446 614 "
-            + "demag true 337 73 308 230 "
+            + "demag true 337 99 308 204 "
             + "datatable true 8 72 326 543 "
             + "pcatable true 338 5 191 65 "
             + "title true 4 5 328 59 "

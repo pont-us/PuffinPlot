@@ -9,7 +9,7 @@ type: :task
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
+status: :in_progress
 disposition: 
 creation_time: 2009-08-24 00:02:04.505444 Z
 references: []
@@ -32,3 +32,7 @@ log_events:
     description language in which importable file format definitions
     could be written. Might even be worth porting the 2G and Zplot 
     importers to this language.
+- - 2012-02-01 05:49:56.343832 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""

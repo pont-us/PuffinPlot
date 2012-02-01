@@ -12,7 +12,6 @@ import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.print.PrintService;
@@ -20,10 +19,8 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.JTextArea;
 import javax.swing.filechooser.FileFilter;
 import net.talvi.puffinplot.data.DatumField;
-import net.talvi.puffinplot.data.FisherValues;
 import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
@@ -357,7 +354,7 @@ public class PuffinActions {
             KeyEvent.VK_I) {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {
-            Suite suite = app.getSuite();
+            final Suite suite = app.getSuite();
             if (suite == null) {
                 app.errorDialog("Fisher by site", "No suite loaded.");
             } else if (!suite.getMeasType().isDiscrete()) {
@@ -365,7 +362,7 @@ public class PuffinActions {
             } else {
                 suite.calculateSiteFishers(app.getCorrection());
                 app.getFisherWindow().getPlot().setGroupedBySite(true);
-                app.getFisherWindow().setVisible(true);
+                // app.getFisherWindow().setVisible(true);
             }
         }
     };
@@ -385,7 +382,7 @@ public class PuffinActions {
             } else {
                 suite.calculateSuiteMeans();
                 app.getFisherWindow().getPlot().setGroupedBySite(false);
-                app.getFisherWindow().setVisible(true);
+                //app.getFisherWindow().setVisible(true);
             }
         }
     };
@@ -411,7 +408,7 @@ public class PuffinActions {
             "Great circle analysis for site", 'I', false, KeyEvent.VK_L) {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {
-        app.calculateGreatCirclesDirections(true);
+        app.calculateGreatCirclesDirections(false);
         }
     };
 
@@ -914,6 +911,16 @@ public class PuffinActions {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {
             app.runPythonScriptWithDialog();
+        }
+    };
+    
+    /**
+     * Imports data from a tabular file.
+     */
+    public final Action importTabularData = new AbstractAction("Import data…") {
+        private static final long serialVersionUID = 1L;
+        public void actionPerformed(ActionEvent e) {
+            app.importTabularData();
         }
     };
 }
