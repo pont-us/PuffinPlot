@@ -19,9 +19,9 @@ import static java.lang.Math.toRadians;
  * than demagnetization-step-level data, and may be moved to {@link Sample}
  * in a later version of PuffinPlot.</p>
  * 
- * <p>Datum is a mutable container class which is intended to be
- * instantiated with no or very little data. Most of the fields 
- * can be set after instantiation using setter methods.</p>
+ * <p>Datum is a mutable container class which is intended to be instantiated
+ * with no or very little data. Most of the fields can be set after
+ * instantiation using setter methods.</p>
  * 
  * <p>In terms of PuffinPlot's user interface, a Datum often
  * defines the position and appearance of a point on one or more
@@ -82,10 +82,10 @@ public class Datum {
     }
 
     /**
-     * Creates a datum with no data.
+     * Creates a datum with no data. The moment is set to zero.
      */
     public Datum() {
-        // Nothing to do here.
+        moment = Vec3.ORIGIN;
     }
 
     /** Reports whether this datum is selected.
@@ -544,6 +544,8 @@ public class Datum {
         case PP_ONCIRCLE: return Boolean.toString(isOnCircle());
         case PP_INPCA: return Boolean.toString(isInPca());
         case VIRT_MAGNETIZATION: return fmt(getIntensity());
+        case VIRT_DECLINATION: return fmt(moment.getDecDeg());
+        case VIRT_INCLINATION: return fmt(moment.getIncDeg());
         case VIRT_MSJUMP: return fmt(getSample().getMagSusJump());
         default: throw new IllegalArgumentException("Unknown field "+field);
         }

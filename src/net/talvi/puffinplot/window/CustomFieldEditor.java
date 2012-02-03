@@ -25,6 +25,7 @@ import net.talvi.puffinplot.data.CustomFields;
  * @author pont
  */
 public class CustomFieldEditor extends JFrame {
+    private static final long serialVersionUID = 1L;
 
     private JPanel contentPane;
     private JList list;
@@ -106,7 +107,7 @@ public class CustomFieldEditor extends JFrame {
         p.add(Box.createVerticalStrut(4));
     }
 
-    class MoveUpListener implements ActionListener {
+    private class MoveUpListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             int index = list.getSelectedIndex() - 1;
             if (index<0) return;
@@ -118,7 +119,7 @@ public class CustomFieldEditor extends JFrame {
         }
     }
 
-    class MoveDownListener implements ActionListener {
+    private class MoveDownListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             int index = list.getSelectedIndex();
             if (index>=fields.size()-1 || index==-1) return;
@@ -130,7 +131,7 @@ public class CustomFieldEditor extends JFrame {
         }
     }
 
-    class RemoveFieldListener implements ActionListener {
+    private class RemoveFieldListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             int index = list.getSelectedIndex();
             if (index==-1) return;
@@ -150,7 +151,7 @@ public class CustomFieldEditor extends JFrame {
         }
     }
 
-    class AddFieldListener implements ActionListener {
+    private class AddFieldListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             //String name = customFieldName.getText();
             String name = (String) JOptionPane.showInputDialog(
@@ -176,7 +177,7 @@ public class CustomFieldEditor extends JFrame {
         }
     }
 
-    class RenameListener implements ActionListener {
+    private class RenameListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             int index = list.getSelectedIndex();
             if (index==-1) return;

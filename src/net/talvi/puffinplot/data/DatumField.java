@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.talvi.puffinplot.data.file.FileFormat;
 
 /**
  * <p>This enum represents a field in the {@link Datum} class which is associated
@@ -93,26 +94,31 @@ public enum DatumField {
 
     // Processing and display parameters
     /** the selection state of the datum */
-    PP_SELECTED("PUFFIN selected"),
+    PP_SELECTED("PUFFIN selected", "Selected", false, false),
     /** whether PCA fits are to be anchored for this datum */
-    PP_ANCHOR_PCA("PUFFIN anchor PCA"),
+    PP_ANCHOR_PCA("PUFFIN anchor PCA", "PCA anchored", false, false),
     /** whether this datum should be hidden on plots */
-    PP_HIDDEN("PUFFIN hidden"),
+    PP_HIDDEN("PUFFIN hidden", "Hidden", false, false),
     /** whether this datum is used for a great-circle fit */
-    PP_ONCIRCLE("PUFFIN on circle"),
+    PP_ONCIRCLE("PUFFIN on circle", "Use for great circle", false, false),
     /** whether this datum is used for a PCA fit */
-    PP_INPCA("PUFFIN in PCA"),
+    PP_INPCA("PUFFIN in PCA", "Use for PCA", false, false),
 
     // Virtual parameters
     // These are not explicitly stored, but are calculated when required
     /** the intensity of the magnetic dipole moment per unit volume (‘magnetization’) */
-    VIRT_MAGNETIZATION("Magnetization", "Magnetization", true),
+    VIRT_MAGNETIZATION("Magnetization", "Magnetization", true, true),
+    /** declination of magnetization vector (degrees) */
+    VIRT_DECLINATION("Declination", "Declination", true, true),
+    /** inclination of magnetization vector (degrees) */
+    VIRT_INCLINATION("Inclination", "Inclination", true, true),
     /** the temperature at which the magnetic susceptibility increases sharply */
-    VIRT_MSJUMP("MS jump temp.", "MS jump temp.", true);
+    VIRT_MSJUMP("MS jump temp.", "MS jump temp.", false, true);
     
     private final String heading;
     private final String niceName;
     private final boolean virtual;
+    private final boolean importable;
     private final static Map<String, DatumField> nameMap
             = new HashMap<String, DatumField>();
     private static final List<String> realFieldHeadings;
@@ -135,14 +141,15 @@ public enum DatumField {
         realFieldHeadings = Collections.unmodifiableList(realFieldHeadersTmp);
     }
 
-    private DatumField(String heading, String niceName, boolean virtual) {
+    private DatumField(String heading, String niceName, boolean importable, boolean virtual) {
+        this.importable = importable;
         this.heading = heading;
         this.niceName = niceName;
         this.virtual = virtual;
     }
 
     private DatumField(String heading, String niceName) {
-        this(heading, niceName, false);
+        this(heading, niceName, true, false);
     }
 
     private DatumField(String heading) {
@@ -182,6 +189,18 @@ public enum DatumField {
      */
     public boolean isVirtual() {
         return virtual;
+    }
+    
+    /** Reports whether this field is importable. Importable fields are those
+     * which may be specified for custom data import. Note that (perhaps
+     * counterintuitively) the virtual fields for declination, inclination, 
+     * and magnetization <em>are</em> importable, although they cannot
+     * be set by {@link Datum#setValue(DatumField, String)}: they are
+     * handled as a special case by {@link FileFormat#readLine(String)}.
+     * @return {@code true} if this field is importable
+     */
+    public boolean isImportable() {
+        return importable;
     }
 
     /** Returns an unmodifiable list of the real fields.

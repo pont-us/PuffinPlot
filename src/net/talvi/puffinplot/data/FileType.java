@@ -22,6 +22,8 @@ public enum FileType {
     PUFFINPLOT_OLD,
     /** the new PuffinPlot file format */
     PUFFINPLOT_NEW,
+    /** A custom tabular file format defined by a FileFormat object */
+    CUSTOM_TABULAR,
     /** unknown file format */
     UNKNOWN;
 

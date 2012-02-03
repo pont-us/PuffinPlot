@@ -920,7 +920,7 @@ public class PuffinActions {
     public final Action importTabularData = new AbstractAction("Import data…") {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {
-            app.importTabularData();
+            app.showTabularImportDialog();
         }
     };
 }

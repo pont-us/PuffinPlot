@@ -23,11 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.PuffinUserException;
-import net.talvi.puffinplot.data.file.AmsLoader;
-import net.talvi.puffinplot.data.file.FileLoader;
-import net.talvi.puffinplot.data.file.PplLoader;
-import net.talvi.puffinplot.data.file.TwoGeeLoader;
-import net.talvi.puffinplot.data.file.ZplotLoader;
+import net.talvi.puffinplot.data.file.*;
 
 /** A suite of data, containing a number of samples.
  * This will usually correspond to a section (for discrete studies)
@@ -324,7 +320,7 @@ public final class Suite {
      */
     public Suite(List<File> files) throws IOException {
             this(files, SensorLengths.fromPresetName("1:1:1"),
-                    TwoGeeLoader.Protocol.NORMAL);
+                    TwoGeeLoader.Protocol.NORMAL, null);
     }
     
     /**
@@ -343,7 +339,7 @@ public final class Suite {
      * @throws IOException if an I/O error occurred while reading the files 
      */
     public Suite(List<File> files, SensorLengths sensorLengths,
-            TwoGeeLoader.Protocol protocol) throws IOException {
+            TwoGeeLoader.Protocol protocol, FileFormat format) throws IOException {
         assert(files.size() > 0);
         if (files.size() == 1) suiteName = files.get(0).getName();
         else suiteName = files.get(0).getParentFile().getName();
@@ -371,11 +367,17 @@ public final class Suite {
                 continue;
             }
             FileType fileType = null;
-            try {
-                fileType = FileType.guess(file);
-            } catch (IOException ex) {
-                loadWarnings.add(String.format("Error guessing type of file \"%s\": %s",
-                        file.getName(), ex.getLocalizedMessage()));
+            if (format != null) {
+                // explicit format specified: use the custom format loader
+                fileType = FileType.CUSTOM_TABULAR;
+            } else {
+                // no format specified: gues the file type
+                try {
+                    fileType = FileType.guess(file);
+                } catch (IOException ex) {
+                    loadWarnings.add(String.format("Error guessing type of file \"%s\": %s",
+                            file.getName(), ex.getLocalizedMessage()));
+                }
             }
             FileLoader loader = null;
             switch (fileType) {
@@ -392,6 +394,9 @@ public final class Suite {
                 break;
             case ZPLOT:
                 loader = new ZplotLoader(file);
+                break;
+            case CUSTOM_TABULAR:
+                loader = new TabularFileLoader(file, format);
                 break;
             default:
                 loadWarnings.add(String.format("%s is of unknown file type.", file.getName()));
@@ -420,7 +425,6 @@ public final class Suite {
             }
             // guessSites(); // rendered obsolete by new site manipulation facilities
         }
-
         processPuffinLines(puffinLines);
     }
     

@@ -140,8 +140,8 @@ public class PrefsWindow extends JFrame {
         tp.addTab("Plots", null, plotsPanel, "Active plots");
         tp.addTab("Misc.", null, miscPanel, "Miscellaneous");
 
-        JButton button = new JButton("Close");
-        button.addActionListener(new ActionListener() {
+        JButton closeButton = new JButton("Close");
+        closeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // window closing event isn't triggered by a setVisible(false),
                 // so we have to update the SensorLengths here.
@@ -155,7 +155,7 @@ public class PrefsWindow extends JFrame {
                 applySettings();
             }
         });
-        add(button, new GridBagConstraints(
+        add(closeButton, new GridBagConstraints(
                 0, 1, 1, 1, 0.01, 0.01, GridBagConstraints.LINE_END,
                 GridBagConstraints.VERTICAL, insets, 4, 4));
         pack();

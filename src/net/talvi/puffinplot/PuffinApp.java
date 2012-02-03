@@ -62,6 +62,7 @@ import java.awt.Graphics2D;
 import java.io.FileOutputStream;
 import javax.swing.JTextArea;
 import net.talvi.puffinplot.data.CsvWriter;
+import net.talvi.puffinplot.data.file.FileFormat;
 import net.talvi.puffinplot.window.*;
 import org.python.core.PyException;
 import org.python.util.PythonInterpreter;
@@ -460,9 +461,13 @@ public final class PuffinApp {
         getMainWindow().suitesChanged();
     }
 
+    public void openFiles(List<File> files) {
+        openFiles(files, null);
+    }
+    
     /** Creates a new suite and reads data into it from the specified files.
      * @param files the files from which to read data */
-    public void openFiles(List<File> files) {
+    public void openFiles(List<File> files, FileFormat format) {
         if (files.isEmpty()) return;
         // If this fileset is already in the recent-files list,
         // it will be bumped up to the top; otherwise it will be
@@ -471,7 +476,7 @@ public final class PuffinApp {
         
         try {
             Suite suite = new Suite(files, prefs.getSensorLengths(),
-                    prefs.get2gProtocol());
+                    prefs.get2gProtocol(), format);
             suite.doAllCalculations(getCorrection());
             List<String> warnings = suite.getLoadWarnings();
             if (warnings.size() > 0) {
@@ -1088,9 +1093,14 @@ public final class PuffinApp {
         }
     }
     
-    void importTabularData() {
-        TabularImportWindow importWindow = new TabularImportWindow();
+    public void showTabularImportDialog() {
+        TabularImportWindow importWindow = new TabularImportWindow(this);
         importWindow.setVisible(true);
+        // The window will call back to importTabularDataWithFormat.
     }
-
+    
+    public void importTabularDataWithFormat(FileFormat format) {
+        final List<File> files = openFileDialog("Select file(s) to import");
+        openFiles(files, format);
+    }
 }
