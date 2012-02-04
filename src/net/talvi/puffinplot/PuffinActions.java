@@ -361,7 +361,7 @@ public class PuffinActions {
                 app.errorDialog("Fisher by site", "Only discrete suites can have sites.");
             } else {
                 suite.calculateSiteFishers(app.getCorrection());
-                app.getFisherWindow().getPlot().setGroupedBySite(true);
+                app.getSuiteEqAreaWindow().getPlot().setGroupedBySite(true);
                 // app.getFisherWindow().setVisible(true);
             }
         }
@@ -381,7 +381,7 @@ public class PuffinActions {
                 app.errorDialog("Calculate suite means", "No suite loaded.");
             } else {
                 suite.calculateSuiteMeans();
-                app.getFisherWindow().getPlot().setGroupedBySite(false);
+                app.getSuiteEqAreaWindow().getPlot().setGroupedBySite(false);
                 //app.getFisherWindow().setVisible(true);
             }
         }
@@ -586,7 +586,7 @@ public class PuffinActions {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {
             PrinterJob job = PrinterJob.getPrinterJob();
-            job.setPrintable((Printable) app.getFisherWindow().getContentPane(),
+            job.setPrintable((Printable) app.getSuiteEqAreaWindow().getContentPane(),
                     app.getCurrentPageFormat());
             PrintService[] services = PrinterJob.lookupPrintServices();
             if (services.length > 0) {
@@ -648,7 +648,7 @@ public class PuffinActions {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {
             PrinterJob job = PrinterJob.getPrinterJob();
-            job.setPrintable((Printable) app.getGreatCircleWindow().getContentPane(),
+            job.setPrintable((Printable) app.getSiteEqAreaWindow().getContentPane(),
                     app.getCurrentPageFormat());
 
             PrintService[] services = PrinterJob.lookupPrintServices();

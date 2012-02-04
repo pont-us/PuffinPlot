@@ -11,23 +11,23 @@ import java.awt.geom.Rectangle2D;
 import java.util.Collections;
 import java.util.List;
 import java.util.prefs.Preferences;
-import net.talvi.puffinplot.window.GraphDisplay;
-import net.talvi.puffinplot.window.PlotParams;
 import net.talvi.puffinplot.PuffinApp;
-import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.data.FisherValues;
 import net.talvi.puffinplot.data.PcaValues;
 import net.talvi.puffinplot.data.Sample;
+import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.data.Vec3;
+import net.talvi.puffinplot.window.GraphDisplay;
+import net.talvi.puffinplot.window.PlotParams;
 
 /**
- * An equal-area plot showing site-level or suite-level Fisher statistics.
- * This plot is only used in the special Fisher plot window; other variants
- * are used in the main window.
+ * An equal-area plot showing suite-level Fisher statistics.
+ * This plot is only used in the special Fisher plot window; 
+ * {@link SuiteEqAreaPlot} is used in the main window.
  * 
  * @author pont
  */
-public class FisherPlot extends EqAreaPlot {
+public class SeparateSuiteEaPlot extends EqAreaPlot {
 
     private final Stroke dashedStroke =
             new BasicStroke(0.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL,
@@ -38,14 +38,14 @@ public class FisherPlot extends EqAreaPlot {
     
     private boolean groupedBySite = true;
     
-    /** Creates a Fisher plot with the supplied parameters.
+    /** Creates a suite equal-area plot with the supplied parameters.
      * 
      * @param parent the graph display containing the plot
      * @param params the parameters of the plot
      * @param dimensions the dimensions of this plot
      * @param prefs the preferences containing the plot configuration
      */
-    public FisherPlot(GraphDisplay parent, PlotParams params,
+    public SeparateSuiteEaPlot(GraphDisplay parent, PlotParams params,
             Rectangle2D dimensions, Preferences prefs) {
         super(parent, params, prefs);
         this.dimensions = dimensions;

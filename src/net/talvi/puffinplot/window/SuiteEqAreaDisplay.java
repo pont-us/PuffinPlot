@@ -7,23 +7,25 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import net.talvi.puffinplot.PuffinApp;
-import net.talvi.puffinplot.plots.FisherPlot;
 import net.talvi.puffinplot.plots.Plot;
+import net.talvi.puffinplot.plots.SeparateSuiteEaPlot;
 
 /**
- * A graph display which contains a single equal-area plot of Fisher means.
+ * A graph display which contains a single equal-area plot of Fisher means
+ * at suite level.
  * 
- * @see net.talvi.puffinplot.plots.FisherPlot
+ * @see net.talvi.puffinplot.plots.SeparateSuiteEaPlot
  * @see FisherWindow
  * @author pont
  */
-public class FisherGraphDisplay extends GraphDisplay implements Printable {
+public class SuiteEqAreaDisplay extends GraphDisplay implements Printable {
+    private static final long serialVersionUID = 1L;
 
-    /** Creates a new FIsher graph display */
-    public FisherGraphDisplay() {
+    /** Creates a new suite equal-area graph display */
+    public SuiteEqAreaDisplay() {
         super();
         zoomTransform = AffineTransform.getScaleInstance(1.0, 1.0);
-        Plot plot = new FisherPlot(
+        Plot plot = new SeparateSuiteEaPlot(
                 null, null, new Rectangle2D.Double(50, 50, 600, 600),
                 PuffinApp.getInstance().getPrefs().getPrefs());
         plot.setVisible(true);

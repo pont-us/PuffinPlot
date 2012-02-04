@@ -142,10 +142,10 @@ public final class MainMenuBar extends JMenuBar {
                     JFrame window(PuffinApp a) {return a.getTableWindow();}},
                 new WindowMenuItem("Site equal-area plot") {
                     private static final long serialVersionUID = 1L;
-                    JFrame window(PuffinApp a) {return a.getGreatCircleWindow();}},
+                    JFrame window(PuffinApp a) {return a.getSiteEqAreaWindow();}},
                 new WindowMenuItem("Suite equal-area plot") {
                     private static final long serialVersionUID = 1L;
-                    JFrame window(PuffinApp a) {return a.getFisherWindow();}}));
+                    JFrame window(PuffinApp a) {return a.getSuiteEqAreaWindow();}}));
         add(makeMenu("Help", pa.about));
     }
 

@@ -5,7 +5,7 @@ import java.util.prefs.BackingStoreException;
 import net.talvi.puffinplot.data.SuiteCalcs;
 import net.talvi.puffinplot.window.CorrectionWindow;
 import net.talvi.puffinplot.window.TableWindow;
-import net.talvi.puffinplot.window.FisherWindow;
+import net.talvi.puffinplot.window.SuiteEqAreaWindow;
 import net.talvi.puffinplot.window.AboutBox;
 import net.talvi.puffinplot.window.MainWindow;
 import net.talvi.puffinplot.data.Suite;
@@ -93,9 +93,9 @@ public final class PuffinApp {
     private final MainWindow mainWindow;
     private final PuffinPrefs prefs;
     private final TableWindow tableWindow;
-    private final FisherWindow fisherWindow;
+    private final SuiteEqAreaWindow suiteEqAreaWindow;
     private final CorrectionWindow correctionWindow;
-    private final SiteMeanWindow greatCircleWindow;
+    private final SiteMeanWindow siteEqAreaWindow;
     private PrefsWindow prefsWindow;
     private final AboutBox aboutBox;
     private RecentFileList recentFiles;
@@ -137,8 +137,8 @@ public final class PuffinApp {
         prefs = new PuffinPrefs(this);
         actions = new PuffinActions(this);
         tableWindow = new TableWindow();
-        fisherWindow = new FisherWindow();
-        greatCircleWindow = new SiteMeanWindow();
+        suiteEqAreaWindow = new SuiteEqAreaWindow();
+        siteEqAreaWindow = new SiteMeanWindow();
         correctionWindow = new CorrectionWindow();
         // NB main window must be instantiated last, as
         // the Window menu references the other windows
@@ -379,7 +379,7 @@ public final class PuffinApp {
         for (Site site: getSelectedSites()) {
             site.calculateGreatCirclesDirection(getCorrection());
         }
-        if (popUpWindow) greatCircleWindow.setVisible(true);
+        if (popUpWindow) siteEqAreaWindow.setVisible(true);
     }
 
     /**
@@ -694,16 +694,16 @@ public final class PuffinApp {
         return actions;
     }
 
-    /** Returns the Fisherian statistics window. 
-     * @return the Fisherian statistics window */
-    public FisherWindow getFisherWindow() {
-        return fisherWindow;
+    /** Returns the suite equal-area plot window. 
+     * @return the suite equal-area plot window */
+    public SuiteEqAreaWindow getSuiteEqAreaWindow() {
+        return suiteEqAreaWindow;
     }
     
     /** Returns the great-circle statistics window. 
      * @return the great-circle statistics window */
-    public SiteMeanWindow getGreatCircleWindow() {
-        return greatCircleWindow;
+    public SiteMeanWindow getSiteEqAreaWindow() {
+        return siteEqAreaWindow;
     }
     
     /** Returns the window for user editing of correction data
