@@ -10,10 +10,8 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.Map.Entry;
 import javax.swing.*;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.DatumField;
@@ -33,25 +31,30 @@ public class TabularImportWindow extends JFrame {
     private HeaderLinesPanel headerLinesPanel;
     private final EnumChooser<MeasType> measTypeChooser;
     private final EnumChooser<TreatType> treatTypeChooser;
+    private final FileFormat initialFormat;
     
     public TabularImportWindow(final PuffinApp app) {
         super("Import data");
+        this.initialFormat = FileFormat.readFromPrefs(app.getPrefs().getPrefs());
         final Container contentPane = getContentPane();
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
+        final JPanel firstPanel = new JPanel();
+        firstPanel.setLayout(new BoxLayout(firstPanel, BoxLayout.Y_AXIS));
+        firstPanel.setBorder(BorderFactory.createTitledBorder("General parameters"));
         headerLinesPanel = new HeaderLinesPanel();
-        contentPane.add(headerLinesPanel);
+        firstPanel.add(headerLinesPanel);
         measTypeChooser = new EnumChooser<MeasType>("Measurement type",
                 new String[] {"Continuous", "Discrete"},
                 new MeasType[] {MeasType.CONTINUOUS, MeasType.DISCRETE},
-                MeasType.CONTINUOUS);
-        contentPane.add(measTypeChooser);
-
+                initialFormat.getMeasurementType());
+        firstPanel.add(measTypeChooser);
         treatTypeChooser = new EnumChooser<TreatType>("Treatment type",
                 "Thermal#AF (3-axis)#AF (z-axis)#IRM#ARM".split("#"),
                 new TreatType[] {TreatType.THERMAL, TreatType.DEGAUSS_XYZ,
                 TreatType.DEGAUSS_Z, TreatType.IRM, TreatType.ARM},
-                TreatType.DEGAUSS_XYZ);
-        contentPane.add(treatTypeChooser);        
+                initialFormat.getTreatmentType());
+        firstPanel.add(treatTypeChooser);    
+        contentPane.add(firstPanel);
         
         final JScrollPane scrollPane = new JScrollPane(new FieldChooserPane(),
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -59,7 +62,9 @@ public class TabularImportWindow extends JFrame {
         JViewport headerViewport = new JViewport();
         JPanel header = new JPanel();
         header.setLayout(new BoxLayout(header, BoxLayout.X_AXIS));
-        header.add(new JLabel("Column number"));
+        JLabel columnLabel = new JLabel("Column no.");
+        columnLabel.setMaximumSize(new Dimension(80, 24));
+        header.add(columnLabel);
         header.add(new JLabel("Column contents"));
         headerViewport.add(header);
         scrollPane.setColumnHeader(headerViewport);
@@ -82,6 +87,7 @@ public class TabularImportWindow extends JFrame {
         importButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 final FileFormat format = getFileFormat();
+                format.writeToPrefs(app.getPrefs().getPrefs());
                 setVisible(false);
                 dispose();
                 app.importTabularDataWithFormat(format);
@@ -124,7 +130,10 @@ public class TabularImportWindow extends JFrame {
         final Map<Integer, DatumField> fieldMap =
                 new HashMap<Integer,DatumField>(fieldChoosers.size());
         for (FieldChooser fieldChooser: fieldChoosers) {
-            fieldMap.put(fieldChooser.getColumnNumber()-1, fieldChooser.getField());
+            final DatumField field = fieldChooser.getField();
+            if (field != null) {
+                fieldMap.put(fieldChooser.getColumnNumber()-1, field);
+            }
         }
         return new FileFormat(fieldMap, headerLinesPanel.getNumber(),
                 measTypeChooser.getValue(),
@@ -138,9 +147,8 @@ public class TabularImportWindow extends JFrame {
         public HeaderLinesPanel() {
             setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
             final JLabel label = new JLabel("Number of header lines to skip");
-            spinnerModel =
-                    new SpinnerNumberModel(1, 0, 1000, 1);
-                    //new SpinnerNumberModel(0, 0, 1000, 1);
+            spinnerModel = new SpinnerNumberModel(initialFormat.getHeaderLines(),
+                    0, 1000, 1);
             final JSpinner spinner = new JSpinner(spinnerModel);
             add(label);
             add(spinner);
@@ -155,10 +163,22 @@ public class TabularImportWindow extends JFrame {
     private class FieldChooserPane extends JPanel {
         public FieldChooserPane() {
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-            for (int i=0; i<4; i++) {
+            Iterator<Integer> columnIterator = 
+                    initialFormat.getColumnMap().keySet().iterator();
+            for (int i=0; i<8; i++) {
                 FieldChooser fieldChooser = new FieldChooser(i+1);
+                if (columnIterator.hasNext()) {
+                    final int column = columnIterator.next();
+                    final DatumField field = initialFormat.getColumnMap().get(column);
+                    fieldChooser.setContents(column, field);
+                }
                 add(fieldChooser);
                 fieldChoosers.add(fieldChooser);
+            }
+            int i=0;
+            for (Entry<Integer, DatumField> entry:
+                    initialFormat.getColumnMap().entrySet()) {
+                
             }
         }
     }
@@ -176,8 +196,10 @@ public class TabularImportWindow extends JFrame {
         
         static {
             DatumField[] allValues = DatumField.values();
-            fieldStrings = new ArrayList<String>(allValues.length);
-            fields = new ArrayList<DatumField>(allValues.length);
+            fieldStrings = new ArrayList<String>(allValues.length+1);
+            fields = new ArrayList<DatumField>(allValues.length+1);
+            fields.add(null);
+            fieldStrings.add("[Ignore this column]");
             for (DatumField field: allValues) {
                 if (field.isImportable()) {
                     fields.add(field);
@@ -195,14 +217,10 @@ public class TabularImportWindow extends JFrame {
             spinnerModel =
                     new SpinnerNumberModel(columnNumber, 1, 1000, 1);
             spinner = new JSpinner(spinnerModel);
-            //l.setLabelFor(spinner);
-            spinner.setMaximumSize(new Dimension(100, 24));
+            spinner.setMaximumSize(new Dimension(80, 24));
             add(spinner);
-
             fieldBox = new JComboBox(fieldStrings.toArray(emptyStringArray));
             fieldBox.setMaximumSize(new Dimension(300, 24));
-            // box.setToolTipText(toolTip);
-
             add(fieldBox);
         }
 
@@ -212,6 +230,15 @@ public class TabularImportWindow extends JFrame {
         
         public DatumField getField() {
             return fields.get(fieldBox.getSelectedIndex());
+        }
+
+        private void setContents(int column, DatumField field) {
+            spinnerModel.setValue(column);
+            for (int i=0; i<fields.size(); i++) {
+                if (fields.get(i) == field) {
+                    fieldBox.setSelectedIndex(i);
+                }
+            }
         }
     }
 }

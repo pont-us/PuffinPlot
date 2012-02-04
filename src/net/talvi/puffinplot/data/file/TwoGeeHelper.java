@@ -39,7 +39,7 @@ class TwoGeeHelper {
     }
 
     /**
-     * Sometime s people preprocess data with Excel, which helpfully
+     * Sometimes people preprocess data with Excel, which helpfully
      * wraps field names in quotation marks. This peels them off again.
      */
     private static String normalizeString(String s) {

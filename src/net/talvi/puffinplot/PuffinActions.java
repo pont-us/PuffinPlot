@@ -588,9 +588,7 @@ public class PuffinActions {
             PrinterJob job = PrinterJob.getPrinterJob();
             job.setPrintable((Printable) app.getFisherWindow().getContentPane(),
                     app.getCurrentPageFormat());
-
             PrintService[] services = PrinterJob.lookupPrintServices();
-
             if (services.length > 0) {
                 try {
                     job.setPrintService(services[0]);
