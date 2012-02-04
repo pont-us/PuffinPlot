@@ -48,7 +48,7 @@ public enum DatumField {
 
     // Lab measurements
     /** the type of the measurement (discrete or continuous) */
-    MEAS_TYPE("Measurement type"),
+    MEAS_TYPE("Measurement type", "Measurement type", "CONTINUOUS", true, false),
     /** the x component of the magentic moment measurement */
     X_MOMENT("X moment"),
     /** the y component of the magentic moment measurement */
@@ -76,7 +76,7 @@ public enum DatumField {
 
     // Treatments
     /** the type of treatment applied before measurement (thermal, AF, etc.)*/
-    TREATMENT("Treatment type"),
+    TREATMENT("Treatment type", "Treatment type", "DEGAUSS_XYZ", true, false),
     /** for treatments involving AF, the AF x-axis field strength in Tesla */
     AF_X("AF X field"),
     /** for treatments involving AF, the AF y-axis field strength in Tesla */
@@ -90,33 +90,34 @@ public enum DatumField {
     /** for ARM treatment, the biasing field strength in Tesla */
     ARM_FIELD("ARM Gauss"),
     /** for ARM treatment, the axis along which the biasing field was applied */
-    ARM_AXIS("ARM axis"),
+    ARM_AXIS("ARM axis", "ARM axis", "AXIAL", true, false),
 
     // Processing and display parameters
     /** the selection state of the datum */
-    PP_SELECTED("PUFFIN selected", "Selected", false, false),
+    PP_SELECTED("PUFFIN selected", "Selected", "false", false, false),
     /** whether PCA fits are to be anchored for this datum */
-    PP_ANCHOR_PCA("PUFFIN anchor PCA", "PCA anchored", false, false),
+    PP_ANCHOR_PCA("PUFFIN anchor PCA", "PCA anchored", "false", false, false),
     /** whether this datum should be hidden on plots */
-    PP_HIDDEN("PUFFIN hidden", "Hidden", false, false),
+    PP_HIDDEN("PUFFIN hidden", "Hidden", "false", false, false),
     /** whether this datum is used for a great-circle fit */
-    PP_ONCIRCLE("PUFFIN on circle", "Use for great circle", false, false),
+    PP_ONCIRCLE("PUFFIN on circle", "Use for great circle", "false", false, false),
     /** whether this datum is used for a PCA fit */
-    PP_INPCA("PUFFIN in PCA", "Use for PCA", false, false),
+    PP_INPCA("PUFFIN in PCA", "Use for PCA", "false", false, false),
 
     // Virtual parameters
     // These are not explicitly stored, but are calculated when required
     /** the intensity of the magnetic dipole moment per unit volume (‘magnetization’) */
-    VIRT_MAGNETIZATION("Magnetization", "Magnetization", true, true),
+    VIRT_MAGNETIZATION("Magnetization", "Magnetization", "0", true, true),
     /** declination of magnetization vector (degrees) */
-    VIRT_DECLINATION("Declination", "Declination", true, true),
+    VIRT_DECLINATION("Declination", "Declination", "0", true, true),
     /** inclination of magnetization vector (degrees) */
-    VIRT_INCLINATION("Inclination", "Inclination", true, true),
+    VIRT_INCLINATION("Inclination", "Inclination", "0", true, true),
     /** the temperature at which the magnetic susceptibility increases sharply */
-    VIRT_MSJUMP("MS jump temp.", "MS jump temp.", false, true);
+    VIRT_MSJUMP("MS jump temp.", "MS jump temp.", "0", false, true);
     
     private final String heading;
     private final String niceName;
+    private final String defaultValue;
     private final boolean virtual;
     private final boolean importable;
     private final static Map<String, DatumField> nameMap
@@ -141,19 +142,17 @@ public enum DatumField {
         realFieldHeadings = Collections.unmodifiableList(realFieldHeadersTmp);
     }
 
-    private DatumField(String heading, String niceName, boolean importable, boolean virtual) {
+    private DatumField(String heading, String niceName, String defaultValue,
+            boolean importable, boolean virtual) {
         this.importable = importable;
         this.heading = heading;
         this.niceName = niceName;
         this.virtual = virtual;
-    }
-
-    private DatumField(String heading, String niceName) {
-        this(heading, niceName, true, false);
+        this.defaultValue = defaultValue;
     }
 
     private DatumField(String heading) {
-        this(heading, heading);
+        this(heading, heading, "0", true, false);
     }
 
     /**
@@ -180,6 +179,15 @@ public enum DatumField {
      */
     public String getNiceName() {
         return niceName;
+    }
+    
+    /**
+     * Currently only used in {@link Datum#setValue(DatumField, String)}.
+     * 
+     * @return a string representation of the default value for the field
+     */
+    public String getDefaultValue() {
+        return defaultValue;
     }
 
     /** Reports whether this field is virtual. Virtual fields have no corresponding

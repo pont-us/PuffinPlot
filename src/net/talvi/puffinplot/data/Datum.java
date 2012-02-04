@@ -7,6 +7,7 @@ import java.util.List;
 import static java.lang.Double.NaN;
 import static java.lang.Double.parseDouble;
 import static java.lang.Math.toRadians;
+import java.util.logging.Logger;
 
 /**
  * <p>Datum is the fundamental data class of PuffinPlot. It represents the
@@ -32,6 +33,7 @@ import static java.lang.Math.toRadians;
  * @author pont
  */
 public class Datum {
+    private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
     private static final double
             DEFAULT_AREA = 4.0, // can be overridden by Area field in file
             DEFAULT_VOLUME = 10.8; // can be overridden by Volume field in file
@@ -562,11 +564,21 @@ public class Datum {
     public void setValue(DatumField field, String value) {
         try {
             doSetValue(field, value);
-        } catch (NumberFormatException e) {
-            final String msg = String.format("Invalid number "+
-                    "when setting field '%s' to value '%s':\n%s",
-                    field.toString(), value, e.getMessage());
-            throw new NumberFormatException(msg);
+        } catch (NumberFormatException e1) {
+            logger.warning(String.format("Invalid value %s for field %s; using default %s",
+                    value, field.toString(), field.getDefaultValue()));
+            try {
+                doSetValue(field, field.getDefaultValue());
+            } catch (NumberFormatException e2) {
+                final String msg = String.format("Invalid value "+
+                        "when setting field '%s' to value '%s':\n%s",
+                        field.toString(), value, e2.getMessage());
+                logger.warning(msg);
+                // Failing silently is often a bad thing, but in this case
+                // it might actually be possible to continue usefully without
+                // this field. If it makes the program keel over later, the
+                // log message should make it easier to trace.
+            }
         }
     }
     

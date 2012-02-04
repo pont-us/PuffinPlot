@@ -32,6 +32,9 @@ public class TabularImportWindow extends JFrame {
     private final EnumChooser<MeasType> measTypeChooser;
     private final EnumChooser<TreatType> treatTypeChooser;
     private final FileFormat initialFormat;
+    private final StringChooser separatorChooser;
+    private final LabelledTextField columnWidthsBox;
+    private final JCheckBox fixedWidthBox;
     
     public TabularImportWindow(final PuffinApp app) {
         super("Import data");
@@ -53,7 +56,15 @@ public class TabularImportWindow extends JFrame {
                 new TreatType[] {TreatType.THERMAL, TreatType.DEGAUSS_XYZ,
                 TreatType.DEGAUSS_Z, TreatType.IRM, TreatType.ARM},
                 initialFormat.getTreatmentType());
-        firstPanel.add(treatTypeChooser);    
+        firstPanel.add(treatTypeChooser);
+        firstPanel.add(separatorChooser = new StringChooser("Column separator",
+                new String[] {"Comma", "Tab", "Single space", "Any white space", "| (pipe)"},
+                new String[] {",", "\t", " ", "\\s+", "|"},
+                initialFormat.getSeparator()));
+        firstPanel.add(fixedWidthBox = new JCheckBox("Use fixed-width fields",
+                initialFormat.useFixedWidthColumns()));
+        firstPanel.add(columnWidthsBox = new LabelledTextField("Column widths",
+                initialFormat.getColumnWidthsAsString()));
         contentPane.add(firstPanel);
         
         final JScrollPane scrollPane = new JScrollPane(new FieldChooserPane(),
@@ -98,6 +109,48 @@ public class TabularImportWindow extends JFrame {
         setLocationRelativeTo(PuffinApp.getInstance().getMainWindow());
     }
     
+    private class StringChooser extends JPanel {
+        private final String[] values;
+        private final JComboBox comboBox;
+        
+        public StringChooser(String labelText, String[] labels, String[] values,
+                String initialValue) {
+            setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+            final JLabel label = new JLabel(labelText);
+            comboBox = new JComboBox(labels);
+            this.values = values;
+            label.setLabelFor(comboBox);
+            for (int i=0; i<values.length; i++) {
+                if (values[i].equals(initialValue)) {
+                    comboBox.setSelectedIndex(i);
+                }
+            }
+            add(label);
+            add(comboBox);
+        }
+        
+        public String getValue() {
+            return values[comboBox.getSelectedIndex()];
+        }
+    }
+    
+    private class LabelledTextField extends JPanel {
+        private final JTextField textField;
+        
+        public LabelledTextField(String labelText, String initialValue) {
+            setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+            final JLabel label = new JLabel(labelText);
+            textField = new JTextField(initialValue);
+            label.setLabelFor(textField);
+            add(label);
+            add(textField);
+        }
+        
+        public String getValue() {
+            return textField.getText();
+        }
+    }
+    
     private class EnumChooser<T extends Enum<T>> extends JPanel {
         
         private final T[] values;
@@ -138,7 +191,9 @@ public class TabularImportWindow extends JFrame {
         return new FileFormat(fieldMap, headerLinesPanel.getNumber(),
                 measTypeChooser.getValue(),
                 treatTypeChooser.getValue(),
-                "\\s");
+                separatorChooser.getValue(),
+                fixedWidthBox.isSelected(),
+                FileFormat.convertStringToColumnWidths(columnWidthsBox.getValue()));
     }
     
     private class HeaderLinesPanel extends JPanel {
@@ -168,7 +223,7 @@ public class TabularImportWindow extends JFrame {
             for (int i=0; i<8; i++) {
                 FieldChooser fieldChooser = new FieldChooser(i+1);
                 if (columnIterator.hasNext()) {
-                    final int column = columnIterator.next();
+                    final int column = columnIterator.next()+1;
                     final DatumField field = initialFormat.getColumnMap().get(column);
                     fieldChooser.setContents(column, field);
                 }

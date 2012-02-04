@@ -23,20 +23,22 @@ public class FileFormat {
     private final Map<Integer,DatumField> columnMap;
     private final int headerLines;
     private final String separator;
+    private final boolean useFixedWidthColumns;
+    private final List<Integer> columnWidths;
     private final static String prefsPrefix = "fileformat";
-    public final static FileFormat DEFAULT = 
-            new FileFormat(new HashMap<Integer, DatumField>(0),
-            0, MeasType.CONTINUOUS, TreatType.DEGAUSS_XYZ,
-            "\t");
+    private final static String[] emptyStringArray = {};
     
     public FileFormat(Map<Integer,DatumField> columnMap, int headerLines,
             MeasType measurementType, TreatType treatmentType,
-            String separator) {
+            String separator, boolean useFixedWidthColumns,
+            List<Integer> columnWidths) {
         this.columnMap = new HashMap<Integer, DatumField>(columnMap);
         this.headerLines = headerLines;
         this.separator = separator;
         this.measurementType = measurementType;
         this.treatmentType = treatmentType;
+        this.useFixedWidthColumns = useFixedWidthColumns;
+        this.columnWidths = columnWidths;
     }
     
     private double safeParse(String s) {
@@ -49,8 +51,22 @@ public class FileFormat {
         return result;
     }
     
+    private String[] splitLine(String line) {
+        if (useFixedWidthColumns) {
+            List<String> result = new ArrayList<String>(columnWidths.size());
+            int start = 0; // start of current column
+            for (int width: columnWidths) {
+                result.add(line.substring(start, start+width));
+                start += width;
+            }
+            return result.toArray(emptyStringArray);
+        } else {
+            return line.split(separator);
+        }
+    }
+    
     public Datum readLine(String line) {
-        final String[] fieldStrings = line.split(separator);
+        final String[] fieldStrings = splitLine(line);
         final Datum datum = new Datum();
         datum.setMeasType(measurementType);
         datum.setTreatType(treatmentType);
@@ -89,11 +105,39 @@ public class FileFormat {
         return data;
     }
     
+    public static List<Integer> convertStringToColumnWidths(String widthString) {
+        String[] widths = widthString.split(", *");
+        List<Integer> result = new ArrayList<Integer>(widths.length);
+        for (String wString: widths) {
+            if ("".equals(wString)) continue;
+            try {
+                result.add(Integer.parseInt(wString));
+            } catch (NumberFormatException ex) {
+                // ignore ill-formed fields
+            }
+        }
+        return result;
+    }
+    
+    public String getColumnWidthsAsString() {
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        for (int width: columnWidths) {
+            if (!first) sb.append(",");
+            sb.append(Integer.toString(width));
+            first = false;
+        }
+        return sb.toString();
+    }
+    
     public void writeToPrefs(Preferences prefs) {
-        prefs.put(prefsPrefix+".separator", separator);
-        prefs.putInt(prefsPrefix+".headerlines", headerLines);
-        prefs.put(prefsPrefix+".meastype", measurementType.toString());
-        prefs.put(prefsPrefix+".treatType", treatmentType.toString());
+        final String pp = prefsPrefix;
+        prefs.put(pp+".separator", separator);
+        prefs.putInt(pp+".headerlines", headerLines);
+        prefs.put(pp+".meastype", measurementType.toString());
+        prefs.put(pp+".treatType", treatmentType.toString());
+        prefs.putBoolean(pp+".useFixedWidth", useFixedWidthColumns);
+        prefs.put(pp+".columnWidths", getColumnWidthsAsString());
         StringBuilder fieldsBuilder = new StringBuilder();
         boolean first = true;
         for (Entry<Integer, DatumField> entry: columnMap.entrySet()) {
@@ -107,13 +151,17 @@ public class FileFormat {
     }
     
     public static FileFormat readFromPrefs(Preferences prefs) {
-        final String separator = prefs.get(prefsPrefix+".separator", "\t");
-        final int headerLines = prefs.getInt(prefsPrefix+".headerlines", 0);
+        final String pp = prefsPrefix;
+        final String separator = prefs.get(pp+".separator", "\t");
+        final int headerLines = prefs.getInt(pp+".headerlines", 0);
         final MeasType measType =
-                MeasType.valueOf(prefs.get(prefsPrefix+".measType", "CONTINUOUS"));
+                MeasType.valueOf(prefs.get(pp+".measType", "CONTINUOUS"));
         final TreatType treatType =
-                TreatType.valueOf(prefs.get(prefsPrefix+".treatType", "DEGAUSS_XYZ"));
-        final String columnString = prefs.get(prefsPrefix+".columnMap", "");
+                TreatType.valueOf(prefs.get(pp+".treatType", "DEGAUSS_XYZ"));
+        final boolean useFixedWidth = prefs.getBoolean(pp+".useFixedWidth", false);
+        final List<Integer> columnWidths =
+                convertStringToColumnWidths(prefs.get(pp+".columnWidths", ""));
+        final String columnString = prefs.get(pp+".columnMap", "");
         final String[] columnDefs = columnString.split("\t");
         final Map<Integer, DatumField> columnMap =
                 new LinkedHashMap<Integer, DatumField>(columnDefs.length);
@@ -124,7 +172,8 @@ public class FileFormat {
             final DatumField field = DatumField.valueOf(parts[1]);
             columnMap.put(column, field);
         }
-        return new FileFormat(columnMap, headerLines, measType, treatType, separator);
+        return new FileFormat(columnMap, headerLines, measType, treatType,
+                separator, useFixedWidth, columnWidths);
     }
 
     /**
@@ -160,5 +209,9 @@ public class FileFormat {
      */
     public String getSeparator() {
         return separator;
+    }
+    
+    public boolean useFixedWidthColumns() {
+        return useFixedWidthColumns;
     }
 }
