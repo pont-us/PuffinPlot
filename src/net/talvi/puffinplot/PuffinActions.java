@@ -537,7 +537,6 @@ public class PuffinActions {
         }
     };
 
-
     /**
      * Opens the preferences window.
      */
@@ -567,8 +566,7 @@ public class PuffinActions {
                     job.setPrintService(services[0]);
                     /* Note: if we pass an attribute set to printDialog(),
                      * it forces the use of a cross-platform Swing print
-                     * dialog rather than the default native one.
-                    */
+                     * dialog rather than the default native one. */
                     if (job.printDialog()) job.print();
                 } catch (PrinterException pe) {
                     System.err.println(pe);
@@ -578,11 +576,38 @@ public class PuffinActions {
     };
     
     /**
-     * Opens a printing dialog box allowing printing of the Fisher statistics
+     * Opens a print dialog for the site equal-area plot window.
+     */
+    public final Action printGc = new PuffinAction("Print site EA window…",
+            "Print the contents of the suite equal-area plot window",
+            null, false, KeyEvent.VK_N) {
+        private static final long serialVersionUID = 1L;
+        public void actionPerformed(ActionEvent e) {
+            PrinterJob job = PrinterJob.getPrinterJob();
+            job.setPrintable((Printable) app.getSiteEqAreaWindow().getContentPane(),
+                    app.getCurrentPageFormat());
+            PrintService[] services = PrinterJob.lookupPrintServices();
+            if (services.length > 0) {
+                try {
+                    job.setPrintService(services[0]);
+                    /* Note: if we pass an attribute set to printDialog(),
+                     * it forces the use of a cross-platform Swing print
+                     * dialog rather than the default native one. */
+                    if (job.printDialog()) job.print();
+                } catch (PrinterException pe) {
+                    System.err.println(pe);
+                }
+            }
+        }
+    };
+    
+    /**
+     * Opens a printing dialog box allowing printing of the suite equal-area 
      * data display.
      */
-    public final Action printFisher = new PuffinAction("Print Fisher…",
-            "Print the Fisher statistics plot", null, false, KeyEvent.VK_F) {
+    public final Action printSuiteEqArea = new PuffinAction("Print suite EA window…",
+            "Print the contents of the suite equal-area plot window",
+            null, false, KeyEvent.VK_F) {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {
             PrinterJob job = PrinterJob.getPrinterJob();
@@ -636,35 +661,6 @@ public class PuffinActions {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {
             app.importAmsWithDialog();
-        }
-    };
-
-    /**
-     * Opens a print dialog for the Great Circles window.
-     */
-    public final Action printGc = new PuffinAction("Print Great Circles…",
-            "Print Great Circles", null, false,
-            KeyEvent.VK_N) {
-        private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
-            PrinterJob job = PrinterJob.getPrinterJob();
-            job.setPrintable((Printable) app.getSiteEqAreaWindow().getContentPane(),
-                    app.getCurrentPageFormat());
-
-            PrintService[] services = PrinterJob.lookupPrintServices();
-
-            if (services.length > 0) {
-                try {
-                    job.setPrintService(services[0]);
-                    /* Note: if we pass an attribute set to printDialog(),
-                     * it forces the use of a cross-platform Swing print
-                     * dialog rather than the default native one.
-                    */
-                    if (job.printDialog()) job.print();
-                } catch (PrinterException pe) {
-                    System.err.println(pe);
-                }
-            }
         }
     };
 

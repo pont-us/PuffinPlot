@@ -1,22 +1,17 @@
 package net.talvi.puffinplot.window;
 
-import java.util.logging.Level;
-import net.talvi.puffinplot.*;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.KeyStroke;
+import javax.swing.*;
 import net.talvi.puffinplot.PuffinAction;
+import net.talvi.puffinplot.PuffinActions;
+import net.talvi.puffinplot.PuffinApp;
+import net.talvi.puffinplot.RecentFileList;
 import net.talvi.puffinplot.data.Sample;
 
 /**
@@ -112,7 +107,7 @@ public final class MainMenuBar extends JMenuBar {
                 makeMenu("Export data", pa.exportCalcsSample,
                 pa.exportCalcsSite, pa.exportCalcsSuite, 
                 pa.exportCalcsMultiSuite, pa.exportIrm),
-                pa.pageSetup, pa.print, pa.printFisher, pa.printGc,
+                pa.pageSetup, pa.print, pa.printSuiteEqArea, pa.printGc,
                 pa.importAms, pa.exportSvg, pa.exportPdf,
                 pa.runScript,
                 pa.exportPrefs, pa.importPrefs, pa.clearPreferences,
