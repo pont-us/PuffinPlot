@@ -194,12 +194,12 @@ every file within the folder will be opened.
 \ifpdf\includegraphics{figures/annot-scrnshot.pdf}
 \else\includegraphics{figures/annot-scrnshot.png}
 \fi
-\caption{\label{fig:screenshot}The main window of PuffinPlot with a discrete file loaded,
-showing the default data plot layout. Data plots, information displays,
-and controls are annotated. Note that several other data plots are
-available, but are not shown by default, and that the layout may be
-freely rearranged by the user. Data points above the 275\textdegree C
-demagnetization step have been hidden.}
+\caption{\label{fig:screenshot}The main window of PuffinPlot with a discrete
+  file loaded, showing the default data plot layout. Data plots, information
+  displays, and controls are annotated. Note that several other data plots
+  are available, but are not shown by default, and that the layout may be
+  freely rearranged by the user. Data points above the 275\textdegree C
+  demagnetization step have been hidden.}
 \end{figure}
 
 \subsection{A tour of the main window}
@@ -414,13 +414,17 @@ saving files.
   data into PuffinPlot as a new suite. See
   section~\ref{sec:file-types} for details of supported filetypes.
 
-\item[File\submenu Open recent file] is a submenu which
-contains the names of the last eight files which have been opened in
-PuffinPlot, allowing them to be opened again with a single click.
+\item[File\submenu Import data\ldots] imports data from a file format
+  specified by the user. This feature allows most textual, tabular data files
+  to be read by PuffinPlot. See section~\ref{sec:import-data} for details.
+
+\item[File\submenu Open recent file] is a submenu which contains the names of
+  the last eight files which have been opened in PuffinPlot, allowing them to
+  be opened again with a single click.
 
 \item[File\submenu Save] saves the current suite as a PuffinPlot file. If
 the suite was opened from a PuffinPlot file or if it has been previously
-saved as a PuffinPlot file, it will immediately be saved to that file. If no
+saved as a PuffinPlot file, it will immediately be saved to that file. If no %
 PuffinPlot file is associated with this suite yet, a standard ‘save file’
 dialog box will prompt you for a file name and location.
 
@@ -441,7 +445,7 @@ various kinds of data to \caps{csv} files.
 %{Fields for sample data export}
   \caption{\label{tbl:export-sample} List of fields in exported sample data file, Note that, in addition to the predefined fields, any custom user annotations (see section~\ref{sec:annotations}) will also be exported in this file.}
 \begin{tabular}{lp{90mm}} \toprule
-Field name          & Description \\ \midrule
+Field name           & Description \\ \midrule
 Suite                & Suite name \\
 sample               & Sample name \\
 \caps{nrm} intensity (A/m) & \caps{Nrm} intensity in A/m \\
@@ -556,14 +560,13 @@ to change the paper size, orientation, and margins for printing.
   printer, such as Cute\caps{pdf} Writer or Bullzip \caps{pdf} Printer, in
   order to produce \caps{pdf} files.
 
-\item[File\submenu Print Fisher\ldots] prints the contents of the separate
-  window showing Fisher statistics of \caps{pca} directions through the
-  suite; see \ppcmd{Calculations\submenu Fisher on suite} in
-  section~\ref{sec:functions-calcs} for more details.
+\item[File\submenu Print suite EA window\ldots] prints the contents of a
+  separate window showing an equal-are plot of sample/site directions through
+  the suite; see section~\ref{sec:menu-window} for more details.
 
-\item[File\submenu Print Great Circles\ldots] prints the contents of the
-  separate great-circle fit window; see \ppcmd{Calculations\submenu Great
-    circles} in section~\ref{sec:functions-calcs} for more details.
+\item[File\submenu Print site EA window\ldots] prints the contents of a
+  separate window showing an equal-area plot of directions at the current
+  site; see section~\ref{sec:menu-window} for more details.
 
 \item[File\submenu Import AMS\ldots] imports \caps{ams} data from a file. The
   file must be in the \caps{.asc} format produced by the \ppcmd{Safyr}
@@ -630,22 +633,27 @@ below).
 \item[Edit\submenu Clear selection] de-selects all the points in all
 the selected samples.
 
-\item[Edit\submenu Move plots] allows you to reposition and resize the plots
+\item[Edit\submenu Edit layout] allows you to reposition and resize the plots
   in the main display area. See section~\ref{sec:edit-layout} for details.
 
-\item[Edit\submenu Reset layout] resets the sizes and positions of
-all the plots to their default values.
+\item[Edit\submenu Reset layout] resets the sizes and positions of all the
+  plots to their default values.
 
 \item[Edit\submenu Corrections\ldots] opens a window which allows you to
-change the sample orientation, formation orientation, and local magnetic
-declination for all the selected samples. Each correction type can be
-individually changed without affecting the values of the others.
+  change the sample orientation, formation orientation, and local magnetic
+  declination for all the selected samples. Each correction type can be
+  individually changed without affecting the values of the others.
 
-\item[Edit\submenu Copy point selection] takes the points which are selected
-  for the current sample, and selects the corresponding points for all the
-  selected samples. This is useful, for example, for hiding the same points
-  in a large number of samples without having to manually select them for
-  each sample.
+\item[Edit\submenu Copy point selection] copies the selected treatment steps
+  for the current sample to an invisible `clipboard'. The selection can be
+  pasted from the clipboard to other samples (see \ppcmd{Paste point
+    selection}), selecting the same demagnetization steps in those samples.
+  This is useful for selecting the same treatment steps in a large number of
+  samples without having to manually select them for each sample.
+
+\item[Edit\submenu Paste point selection] takes the selected treatment steps
+  from the clipboard (see \ppcmd{Copy point selection}) and selects the same
+  treatment steps in all the selected samples.
 
 \item[Edit\submenu Flip selected samples] is a submenu allowing the selected
   samples to be rotated 180\textdegree around a selected axis. Such
@@ -746,9 +754,9 @@ all the selected samples, not just the current sample.
   direction for each selected site using the \caps{pca} directions of its
   samples.
 
-\item[Calculations\submenu Suite means] calculates Fisherian means across
-  all the selected samples, and opens a new window showing an equal-area plot
-  of the \caps{pca} directions, the mean direction, and the 95\% confidence
+\item[Calculations\submenu Suite means] calculates Fisherian means across all
+  the selected samples, and opens a new window showing an equal-area plot of
+  the \caps{pca} directions, the mean direction, and the 95\% confidence
   circle. Two sets of means are actually calculated: one set is calculated
   from the \caps{pca} directions of individual samples, and the other from
   the site mean directions (if any have been computed). Note that, if there
@@ -756,17 +764,11 @@ all the selected samples, not just the current sample.
   valid are used; see section~\ref{sec:prefs-misc} for details of the
   validity test. Each set of means consists of an overall mean and individual
   means for the upper and lower hemisphere, to cater for data sets containing
-  reversals. All these means can be exported as a \caps{csv} file using
-  the \item[File\submenu Export Data\submenu Export suite calculations\ldots]
-  menu item. Note that (like most PuffinPlot functions) this feature
-  operates on all the \emph{selected} samples; to calculate means for
-  the entire suite you must first select all the samples.
-
-\item[Calculations\submenu Multi-suite means] calculates Fisherian means
-  across all the samples in \emph{all} the currently opened suites. the
-  results are not plotted, but they are shown in a pop-up window and can be
-  saved using the \ppcmd{File\submenu Export data\submenu Export multi-suite
-    calculations\ldots} menu item.
+  reversals. All these means can be exported as a \caps{csv} file using the
+  \ppcmd{File\submenu Export Data\submenu Export suite calculations\ldots}
+  menu item. Note that (like most PuffinPlot functions) this feature operates
+  on all the \emph{selected} samples; to calculate means for the entire suite
+  you must first select all the samples.
 
 \item[Calculations\submenu MDF] calculates the Median Destructive Field (or,
   for thermal demagnetization, the Median Destructive Temperature) of the
@@ -775,9 +777,9 @@ all the selected samples, not just the current sample.
   Once calculated, it is displayed on the demagnetization-intensity plot, and
   can be saved as part of the exported sample data.
 
-\item[Calculations\submenu Clear calculations] de-selects all the points
-in all the selected samples, and clears the results of any calculations done
-on them, such as \caps{pca} or great-circle analysis.
+\item[Calculations\submenu Clear sample calculations] de-selects all the
+  points in all the selected samples, and clears the results of any
+  calculations done on them, such as \caps{pca} or great-circle analysis.
 
 \item[Calculations\submenu Fit circle] calculates and displays a
 best-fitting great circle for all the selected points in all the selected
@@ -795,8 +797,11 @@ results of any calculations associated with the selected {\em sites}
 (as opposed to samples); at present, this amounts to clearing the
 best-fit great-circle direction for each selected site.
 
-\item[Calculations\submenu Reversal test] performs a basic reversal
-test on {\em all} the currently open suites.
+\item[Calculations\submenu Multi-suite means] calculates Fisherian means
+  across all the samples in \emph{all} the currently opened suites. the
+  results are not plotted, but they are shown in a pop-up window and can be
+  saved using the \ppcmd{File\submenu Export data\submenu Export multi-suite
+    calculations\ldots} menu item.
 
 \end{menuitemlist}
 
@@ -842,9 +847,9 @@ any previously done bootstrap and Hext calculations.
 
 \end{menuitemlist}
 
-\subsubsection{Window menu}
+\subsubsection{\label{sec:menu-window}Window menu}
 
-This menu allows you to open or close two windows displaying extra data.
+This menu allows you to open or close auxiliary windows.
 
 \begin{menuitemlist}
 
@@ -854,10 +859,23 @@ table is far more extensive than the brief table displayed in the
 main window, and allows data to be selected and copied to the clipboard
 so that it can be pasted into a spreadsheet or text editor.
 
-\item[Window\submenu Suite \caps{pca} plot] opens (or closes) a window
-containing an equal-area plot of \caps{pca} directions; the plot is created
-by selecting the \ppcmd{Calculations\submenu Fisher on suite} menu item,
-and may be printed using the \ppcmd{File\submenu Print Fisher\ldots} menu item.
+\item[Window\submenu Site equal-area plot] opens (or closes) a window
+  containing an equal-area plot for the current site; the plot is created by
+  selecting the \ppcmd{Calculations\submenu Fisher by site} or
+  \ppcmd{Calculations\submenu Great circles} menu items, and may be printed
+  using the \ppcmd{File\submenu Print site EA window\ldots} menu item. Note
+  that the main display area provides a similar plot; this window can be
+  useful for a quick inspection of site data at a larger scale without
+  editing the main plot layout.
+
+\item[Window\submenu Suite equal-area plot] opens (or closes) a window
+  containing an equal-area plot of sample or site directions across the whole
+  suite; the plot is created by selecting the \ppcmd{Calculations\submenu
+    Suite means} menu item, and may be printed using the
+  \ppcmd{File\submenu Print suite EA window\ldots} menu item. Note that the
+  main display area provides a similar plot; this window can be useful for a
+  quick inspection of suite data at a larger scale without editing the main
+  plot layout.
 
 \end{menuitemlist}
 
@@ -877,11 +895,76 @@ This section presents PuffinPlot's features in moderate detail.
 
 \subsubsection{\label{sec:file-types}Supported file types}
 
-PuffinPlot can currently open three types of file: its own filetype (filename
-suffix \ppcmd{ppl}); data produced from 2\caps{g} cryomagnetometers (filename
-suffix \ppcmd{dat}); and data from the {\ss Zplot} program by Stephen Hurst
-(filename suffix \ppcmd{txt}). In general, support for other file formats is
-straighforward to add.
+PuffinPlot can automatically open three types of file: its own filetype
+(filename suffix \ppcmd{ppl}); data produced from 2\caps{g} cryomagnetometers
+(filename suffix \ppcmd{dat}); and data from the {\sf Zplot} program by
+Stephen Hurst (filename suffix \ppcmd{txt}). In general, support for other
+file formats is straighforward to add, and most tabular textual file formats
+can be opened using the \ppcmd{File\submenu Import data\ldots} function.
+
+\subsubsection{\label{sec:import-data}Importing data}
+
+When \ppcmd{File\submenu Import data\ldots} is selected, PuffinPlot shows a
+window allowing you to describe a text-based, tabular file format; once you
+have specified a format, you can choose one or more files in that format,
+which PuffinPlot will then open. The file is assumed to contain one magnetic
+measurement per line. The file format specification consists of several
+parts, which are described below.
+
+\paragraph{General settings} describes parameters relating to the file as a
+whole, rather than individual columns.
+
+\begin{description}
+
+\item[Number of header lines to skip] Data files may include extra data
+  (`header lines') at the start of the file, most often a line containing
+  textual descriptions of the columns. This field lets you specify how many
+  lines PuffinPlot should ignore at the start of the file, letting it
+  skip over them.
+
+\item[Measurement type] This specifies whether the files contain discrete
+  or long core measurements.
+
+\item[Treatment type] This specifies the type of treatment applied to
+  the samples -- thermal, AF, IRM, etc.
+
+\item[Column separator] For files which do not use fixed-width columns (for
+  example, CSV files), this drop-down lets you select the character used
+  to separate the columns. If `Use fixed-width columns' is selected, the
+  column separator is not used.
+
+\item[Use fixed-width columns] Tabular text files usually use one of two
+  conventions for separating columns: either the columns have widths which
+  differ from line to line, and are separated with a special character such
+  as a comma or tab; or the columns have the same width in every line, and
+  are padded out to this width with space characters when the contents are
+  shorter than the column width. Select this tick box to specify that the
+  file format has fixed-width columns. In this case, the column separator will
+  be ignored and you must specify the widths of the columns (see below).
+  If this box is not selected, the column widths are ignored.
+
+\item[Column widths] If your file format uses fixed-width columns, you must
+  specify them here as a list of numbers separated by commas. For example, if
+  you have six columns, with the first being ten characters wide and the rest
+  eight characters wide, you would enter 10,8,8,8,8,8 in this box. If your
+  file format does not use fixed-width columns, this box is ignored.
+
+\end{description}
+
+\paragraph{Column definitions}
+
+\begin{description}
+
+\item[Column no.] This is the number of the column to read; columns are
+  numbered from left to right, starting at 1.
+
+\item[Column contents] This is the data to read from the specified column.
+  Note that not all data types need to be specified for a file format; at
+  minimum, it is sufficient to specify the demagnetization step the three
+  components of the magnetization vector (either as X, Y, and Z moments, or
+  as declination, inclination, and magnetization).
+
+\end{description}
 
 \subsubsection{Selecting points}
 

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.talvi.puffinplot.window;
 
 import java.awt.BorderLayout;
@@ -21,7 +17,8 @@ import net.talvi.puffinplot.data.file.FileFormat;
 import org.apache.batik.swing.JSVGScrollPane;
 
 /**
- *
+ * A window allowing the user to define a custom file format.
+ * 
  * @author pont
  */
 public class TabularImportWindow extends JFrame {
@@ -36,14 +33,22 @@ public class TabularImportWindow extends JFrame {
     private final LabelledTextField columnWidthsBox;
     private final JCheckBox fixedWidthBox;
     
+    /**
+     * Creates a new tabular import window. The supplied PuffinPlot 
+     * application is used mainly to obtain a preferences object,
+     * which is used to save and restore the file format.
+     * 
+     * @param app the PuffinPlot application for which this window is to be used
+     */
     public TabularImportWindow(final PuffinApp app) {
         super("Import data");
+        setPreferredSize(new Dimension(400, 500));
         this.initialFormat = FileFormat.readFromPrefs(app.getPrefs().getPrefs());
         final Container contentPane = getContentPane();
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
         final JPanel firstPanel = new JPanel();
         firstPanel.setLayout(new BoxLayout(firstPanel, BoxLayout.Y_AXIS));
-        firstPanel.setBorder(BorderFactory.createTitledBorder("General parameters"));
+        firstPanel.setBorder(BorderFactory.createTitledBorder("General settings"));
         headerLinesPanel = new HeaderLinesPanel();
         firstPanel.add(headerLinesPanel);
         measTypeChooser = new EnumChooser<MeasType>("Measurement type",
@@ -61,7 +66,7 @@ public class TabularImportWindow extends JFrame {
                 new String[] {"Comma", "Tab", "Single space", "Any white space", "| (pipe)"},
                 new String[] {",", "\t", " ", "\\s+", "|"},
                 initialFormat.getSeparator()));
-        firstPanel.add(fixedWidthBox = new JCheckBox("Use fixed-width fields",
+        firstPanel.add(fixedWidthBox = new JCheckBox("Use fixed-width columns",
                 initialFormat.useFixedWidthColumns()));
         firstPanel.add(columnWidthsBox = new LabelledTextField("Column widths",
                 initialFormat.getColumnWidthsAsString()));
@@ -110,6 +115,7 @@ public class TabularImportWindow extends JFrame {
     }
     
     private class StringChooser extends JPanel {
+        private static final long serialVersionUID = 1L;
         private final String[] values;
         private final JComboBox comboBox;
         
@@ -135,6 +141,7 @@ public class TabularImportWindow extends JFrame {
     }
     
     private class LabelledTextField extends JPanel {
+        private static final long serialVersionUID = 1L;
         private final JTextField textField;
         
         public LabelledTextField(String labelText, String initialValue) {
@@ -152,6 +159,7 @@ public class TabularImportWindow extends JFrame {
     }
     
     private class EnumChooser<T extends Enum<T>> extends JPanel {
+        private static final long serialVersionUID = 1L;
         
         private final T[] values;
         private final String[] names;
@@ -179,6 +187,9 @@ public class TabularImportWindow extends JFrame {
         }
     }
     
+    /**
+     * @return the file format defined by the current settings of this window
+     */
     public FileFormat getFileFormat() {
         final Map<Integer, DatumField> fieldMap =
                 new HashMap<Integer,DatumField>(fieldChoosers.size());
@@ -216,11 +227,12 @@ public class TabularImportWindow extends JFrame {
     }
     
     private class FieldChooserPane extends JPanel {
+        private static final long serialVersionUID = 1L;
         public FieldChooserPane() {
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             Iterator<Integer> columnIterator = 
                     initialFormat.getColumnMap().keySet().iterator();
-            for (int i=0; i<8; i++) {
+            for (int i=0; i<20; i++) {
                 FieldChooser fieldChooser = new FieldChooser(i+1);
                 if (columnIterator.hasNext()) {
                     final int column = columnIterator.next()+1;

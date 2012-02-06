@@ -1,6 +1,10 @@
 package net.talvi.puffinplot.data.file;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.data.Datum;
@@ -16,7 +20,7 @@ import net.talvi.puffinplot.data.Vec3;
  * 
  * @author pont
  */
-public class FileFormat {
+public final class FileFormat {
     
     private final MeasType measurementType;
     private final TreatType treatmentType;
@@ -28,6 +32,17 @@ public class FileFormat {
     private final static String prefsPrefix = "fileformat";
     private final static String[] emptyStringArray = {};
     
+    /**
+     * Creates a new file format with the specified parameters.
+     * 
+     * @param columnMap a mapping from column numbers (0-indexed) to data fields
+     * @param headerLines number of header lines to skip
+     * @param measurementType type of all measurements in file
+     * @param treatmentType type of all treatments in file
+     * @param separator column separator for non-fixed-width-column formats
+     * @param useFixedWidthColumns whether this format uses fixed-width columns
+     * @param columnWidths the widths of columns for fixed-width-column formats
+     */
     public FileFormat(Map<Integer,DatumField> columnMap, int headerLines,
             MeasType measurementType, TreatType treatmentType,
             String separator, boolean useFixedWidthColumns,
@@ -65,6 +80,12 @@ public class FileFormat {
         }
     }
     
+    /**
+     * Creates a {@link Datum} from a line formatted according to this format.
+     * 
+     * @param line a line formatted according this this format
+     * @return the datum defined by the supplied line
+     */
     public Datum readLine(String line) {
         final String[] fieldStrings = splitLine(line);
         final Datum datum = new Datum();
@@ -97,6 +118,13 @@ public class FileFormat {
         return datum;
     }
     
+    /**
+     * Reds a list of lines in this format and produces the corresponding
+     * {@link Datum}s.
+     * 
+     * @param lines a list of lines in this format
+     * @return the data defined by the lines (in the same order)
+     */
     public List<Datum> readLines(List<String> lines) {
         final List<Datum> data = new ArrayList<Datum>(lines.size() - headerLines);
         for (int i=headerLines; i<lines.size(); i++) {
@@ -105,6 +133,13 @@ public class FileFormat {
         return data;
     }
     
+    /**
+     * Turns a string containing comma-separated decimal integers into a
+     * {@link List} of {@link Integer.
+     * 
+     * @param widthString a string of comma-separated decimal integers
+     * @return the list of integers defined by the input string
+     */
     public static List<Integer> convertStringToColumnWidths(String widthString) {
         String[] widths = widthString.split(", *");
         List<Integer> result = new ArrayList<Integer>(widths.length);
@@ -119,6 +154,10 @@ public class FileFormat {
         return result;
     }
     
+    /**
+     * @return the column widths for this format as a string of 
+     * comma-separated decimal integers
+     */
     public String getColumnWidthsAsString() {
         StringBuilder sb = new StringBuilder();
         boolean first = true;
@@ -130,6 +169,11 @@ public class FileFormat {
         return sb.toString();
     }
     
+    /**
+     * Saves this format to a preferences object.
+     * 
+     * @param prefs the preferences to which to save this format
+     */
     public void writeToPrefs(Preferences prefs) {
         final String pp = prefsPrefix;
         prefs.put(pp+".separator", separator);
@@ -150,6 +194,12 @@ public class FileFormat {
         prefs.put(prefsPrefix+".columnMap", fieldsBuilder.toString());
     }
     
+    /**
+     * Creates a format from a preferences object.
+     * 
+     * @param prefs a preferences object containing the data for a format
+     * @return the corresponding format
+     */
     public static FileFormat readFromPrefs(Preferences prefs) {
         final String pp = prefsPrefix;
         final String separator = prefs.get(pp+".separator", "\t");
@@ -211,6 +261,9 @@ public class FileFormat {
         return separator;
     }
     
+    /**
+     * @return {@code true} if the format uses fixed-width columns
+     */
     public boolean useFixedWidthColumns() {
         return useFixedWidthColumns;
     }
