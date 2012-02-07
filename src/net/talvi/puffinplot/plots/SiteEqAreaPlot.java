@@ -93,7 +93,7 @@ public class SiteEqAreaPlot extends EqAreaPlot {
         final PlotPoint meanPoint = ShapePoint.build(this, project(meanDir)).
                 circle().scale(1.5).filled(meanDir.z>0).build();
         meanPoint.draw(g);
-        drawLineSegments(meanDir.makeSmallCircle(Math.toDegrees(maxRadius)));
+        //drawLineSegments(meanDir.makeSmallCircle(Math.toDegrees(maxRadius)));
         drawLineSegments(meanDir.makeSmallCircle(circles.getA95()));
         List<String> ss = circles.toStrings();
         writeString(g, ss.get(3)+"/"+ss.get(4), xo-radius, yo-radius);

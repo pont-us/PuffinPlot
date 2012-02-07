@@ -1082,6 +1082,7 @@ public final class PuffinApp {
      */
     public void runPythonScriptWithDialog() {
         final List<File> files = openFileDialog("Select Python script");
+        if (files.isEmpty()) return;
         final File file = files.get(0);
         try {
             runPythonScript(file.getAbsolutePath());

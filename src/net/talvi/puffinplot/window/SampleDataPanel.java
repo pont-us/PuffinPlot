@@ -1,6 +1,7 @@
 package net.talvi.puffinplot.window;
 
 import java.awt.Dimension;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -36,6 +37,7 @@ class SampleDataPanel extends JPanel {
         removeAll(); // remove all components
         if (sample==null) return;
         Suite suite = sample.getSuite();
+        add(Box.createRigidArea(new Dimension(0,12)));
         int totalObjects = 0;
         for (int i=0; i<suite.getCustomFlagNames().size(); i++) {
             add(new SampleCheckBox(sample, i));
