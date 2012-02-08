@@ -384,7 +384,7 @@ public final class Suite {
             case TWOGEE:
             case PUFFINPLOT_OLD:
                 TwoGeeLoader twoGeeLoader =
-                        new TwoGeeLoader(file, protocol, sensorLengths.toVector());
+                        new TwoGeeLoader(file, protocol, sensorLengths.toVector(), false);
                 loader = twoGeeLoader;
                 if (files.size()==1) puffinFile = file;
                 break;
@@ -404,7 +404,7 @@ public final class Suite {
             }
             if (loader != null) {
                 dataArray.ensureCapacity(dataArray.size() + loader.getData().size());
-                for (Datum d : loader.getData()) {
+                for (Datum d: loader.getData()) {
                     if (!d.ignoreOnLoading()) addDatum(d);
                 }
                 loadWarnings.addAll(loader.getMessages());

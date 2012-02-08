@@ -57,7 +57,7 @@ public class PrefsWindow extends JFrame {
         super("Preferences");
         final Insets insets = new Insets(0,0,0,0);
         final int BOTH = GridBagConstraints.BOTH;
-        setPreferredSize(new Dimension(300, 500));
+        setPreferredSize(new Dimension(400, 500));
         setLayout(new GridBagLayout());
         JTabbedPane tp = new JTabbedPane();
         add(tp, new GridBagConstraints(0, 0, 2, 1, 0.99, 0.99, GridBagConstraints.LINE_START, BOTH,
@@ -89,7 +89,23 @@ public class PrefsWindow extends JFrame {
             c.gridx = 1;
             squidPanel.add(sensorLengthField[i], c);
         }
+        
         GridBagConstraints gbc2 = new GridBagConstraints();
+        gbc2.gridwidth = 3;
+        gbc2.anchor = GridBagConstraints.LINE_START;
+        gbc2.fill = GridBagConstraints.BOTH;
+        gbc2.weightx = 0.8;
+        gbc2.weighty = 0;
+        loadingPanel.add(makeLabelledPrefComboBox("Read magnetization from",
+                "readTwoGeeMagFrom",
+                new String[] {"X/Y/Z ", "Dec/Inc/Intensity"},
+                "X/Y/Z",
+                "Magnetization can be read either from x/y/z moments or from "
+                + "declination/inclination/intensity."),
+                gbc2);
+        
+        gbc2 = new GridBagConstraints();
+        gbc2.gridy = 1;
         gbc2.gridwidth = 3;
         gbc2.anchor = GridBagConstraints.LINE_START;
         gbc2.fill = GridBagConstraints.BOTH;
@@ -97,7 +113,7 @@ public class PrefsWindow extends JFrame {
         gbc2.weighty = 0;
         loadingPanel.add(squidPanel, gbc2);
         
-        gbc2.gridy = 5;
+        gbc2.gridy = 6;
         gbc2.gridx = 0;
         gbc2.gridwidth = 1;
         gbc2.weightx = 0.25;

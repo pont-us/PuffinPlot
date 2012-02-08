@@ -17,6 +17,7 @@ import net.talvi.puffinplot.data.ArmAxis;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.MeasType;
+import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.Vec3;
 import static net.talvi.puffinplot.data.file.TwoGeeHelper.*;
 
@@ -38,6 +39,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
     private LineNumberReader reader;
     private final Protocol protocol;
     private Set<String> requestedFields = new HashSet<String>();
+    private boolean usePolarData; // use d/i/i rather than x/y/z fields
 
     /**
      * A measurement protocol. A protocol defines the order in which sample
@@ -66,9 +68,11 @@ public class TwoGeeLoader extends AbstractFileLoader {
      * @param protocol the measurement protocol which was used to create the data
      * @param sensorLengths the effective sensor lengths (only used for long core data)
      */
-    public TwoGeeLoader(File file, Protocol protocol, Vec3 sensorLengths) {
+    public TwoGeeLoader(File file, Protocol protocol, Vec3 sensorLengths,
+            boolean usePolarData) {
         this.file = file;
         this.protocol = protocol;
+        this.usePolarData = usePolarData;
         setSensorLengths(sensorLengths);
         try {
             reader = new LineNumberReader(new FileReader(file));
@@ -311,20 +315,54 @@ public class TwoGeeLoader extends AbstractFileLoader {
         }
     }
 
+    private boolean fieldExistsAndIsValid(String fieldName, FieldReader r) {
+        return fieldExists(fieldName) &&
+                !r.getString(fieldName, "dummy").equals("NA");
+    }
+    
+    private Vec3 readMagnetizationVector(FieldReader r) {
+        Vec3 result = null;
+        if (usePolarData) {
+            if (fieldExistsAndIsValid("Declination: Unrotated", r)) {
+                result = Vec3.fromPolarDegrees(r.getDouble("Intensity", 0),
+                        r.getDouble("Inclination: Unrotated", 0),
+                        r.getDouble("Declination: Unrotated", 0));
+            }
+        } else {
+            if (fieldExistsAndIsValid("X corr", r)) {
+                result = new Vec3(r.getDouble("X corr", 0),
+                        r.getDouble("Y corr", 0),
+                        r.getDouble("Z corr", 0));
+            } else if (fieldExistsAndIsValid("X intensity", r)) {
+                result = new Vec3(r.getDouble("X intensity", 0),
+                        r.getDouble("Y intensity", 0),
+                        r.getDouble("Z intensity", 0));
+            } else if (fieldExistsAndIsValid("X mean", r)) {
+                result = new Vec3(r.getDouble("X mean", 0),
+                        r.getDouble("Y mean", 0),
+                        r.getDouble("Z mean", 0));
+            }
+        }
+        return result;
+    }
+    
     private Datum lineToDatum(String line, int lineNumber) {
         FieldReader r = new FieldReader(line);
         Datum d = new Datum();
-
-        final MeasType measType =
-                measTypeFromString(r.getString("Meas. type", "SAMPLE/CONTINUOUS"));
-
+        
+        final MeasType measType;
+        if (fieldExists("Meas. type")) {
+            measType = measTypeFromString(r.getString("Meas. type", "sample/continuous"));
+        } else if (fieldExists("Sample ID")) {
+            measType = MeasType.DISCRETE;
+        } else {
+            measType = MeasType.CONTINUOUS;
+        }
+        
         d.setArea(r.getDouble("Area", d.getArea()));
         d.setVolume(r.getDouble("Volume", d.getVolume()));
-        if (fieldExists("X corr") &&
-                !r.getString("X corr", "dummy").equals("NA")) {
-            final Vec3 momentGaussCm3 = new Vec3(r.getDouble("X corr", 0),
-                    r.getDouble("Y corr", 0),
-                    r.getDouble("Z corr", 0));
+        final Vec3 momentGaussCm3 = readMagnetizationVector(r);
+        if (momentGaussCm3 != null) {
             // we have a raw magnetic moment in gauss * cm^3.
             // First we divide it by the sample volume in cm^3 to get a
             // magnetization in gauss.
@@ -373,8 +411,23 @@ public class TwoGeeLoader extends AbstractFileLoader {
                 d.setDepth(r.getString("Depth", d.getDepth()));
             }
         }
+        
+        // Sometimes, continuous files use "Position" for the depth field
+        if (measType.isContinuous() &&
+                !fieldExists("Depth") && fieldExists("Position")) {
+            d.setDepth(r.getString("Position", d.getDepth()));
+        }
         d.setMeasType(measType);
-        d.setTreatType(treatTypeFromString(r.getString("Treatment Type", "AF")));
+        
+        if (fieldExists("Treatment Type"))
+            d.setTreatType(treatTypeFromString(r.getString("Treatment Type", "degauss z")));
+        else if (fieldExistsAndIsValid("ARM Gauss", r)) d.setTreatType(TreatType.ARM);
+        else if (fieldExistsAndIsValid("IRM Gauss", r)) d.setTreatType(TreatType.IRM);
+        else if (fieldExistsAndIsValid("AF X", r)) d.setTreatType(TreatType.DEGAUSS_XYZ);
+        else if (fieldExistsAndIsValid("AF Z", r)) d.setTreatType(TreatType.DEGAUSS_Z);
+        else if (fieldExistsAndIsValid("Temp C", r)) d.setTreatType(TreatType.THERMAL);
+        else d.setTreatType(TreatType.DEGAUSS_Z);
+        
         if (r.hasDouble("AF X")) {
             d.setAfX(oerstedToTesla(r.getDouble("AF X", Double.NaN)));
         }
