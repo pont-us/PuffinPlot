@@ -311,8 +311,8 @@ public final class Suite {
      * <p>Creates a new suite from the specified files.
      * The is a convenience method for
      * {@link #Suite(List, SensorLengths, TwoGeeLoader.Protocol)}
-     * using the default sensor lengths (1, 1, 1) and protocol 
-     * ({@code NORMAL}).
+     * using the default sensor lengths (1, 1, 1), protocol 
+     * ({@code NORMAL}), and Cartesian (X/Y/Z) magnetic moment fields.
      * </p>
      * 
      * @param files the files from which to load the data
@@ -320,7 +320,7 @@ public final class Suite {
      */
     public Suite(List<File> files) throws IOException {
             this(files, SensorLengths.fromPresetName("1:1:1"),
-                    TwoGeeLoader.Protocol.NORMAL, null);
+                    TwoGeeLoader.Protocol.NORMAL, false, null);
     }
     
     /**
@@ -333,13 +333,19 @@ public final class Suite {
      * to the user <i>why</i> the suite's empty and are thus quite important).</p>
      * 
      * @param files the files from which to load the data
-     * @param sensorLengths the effective lengths of the magnetometer's SQUID sensors,
-     * used to correct data read from a 2G long core file
-     * @param protocol the measurement protocol used
+     * @param sensorLengths for 2G long core files only: the effective lengths 
+     * of the magnetometer's SQUID sensors,
+     * used to correct Cartesian magnetic moment data
+     * @param protocol for 2G files only: the measurement protocol used
+     * @param usePolarMoment for 2G files only: use polar (dec/inc/int)
+     * data fields instead of Carteian ones (X/Y/Z) to determine magnetic moment
+     * @param format explicitly specified file format (null to automatically
+     * guess between 2G, PuffinPlot, and Zplot).
      * @throws IOException if an I/O error occurred while reading the files 
      */
     public Suite(List<File> files, SensorLengths sensorLengths,
-            TwoGeeLoader.Protocol protocol, FileFormat format) throws IOException {
+            TwoGeeLoader.Protocol protocol, boolean usePolarMoment,
+            FileFormat format) throws IOException {
         assert(files.size() > 0);
         if (files.size() == 1) suiteName = files.get(0).getName();
         else suiteName = files.get(0).getParentFile().getName();
@@ -384,7 +390,8 @@ public final class Suite {
             case TWOGEE:
             case PUFFINPLOT_OLD:
                 TwoGeeLoader twoGeeLoader =
-                        new TwoGeeLoader(file, protocol, sensorLengths.toVector(), false);
+                        new TwoGeeLoader(file, protocol,
+                        sensorLengths.toVector(), usePolarMoment);
                 loader = twoGeeLoader;
                 if (files.size()==1) puffinFile = file;
                 break;

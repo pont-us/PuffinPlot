@@ -39,7 +39,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
     private LineNumberReader reader;
     private final Protocol protocol;
     private Set<String> requestedFields = new HashSet<String>();
-    private boolean usePolarData; // use d/i/i rather than x/y/z fields
+    private boolean usePolarMoment; // use d/i/i rather than x/y/z fields
 
     /**
      * A measurement protocol. A protocol defines the order in which sample
@@ -69,10 +69,10 @@ public class TwoGeeLoader extends AbstractFileLoader {
      * @param sensorLengths the effective sensor lengths (only used for long core data)
      */
     public TwoGeeLoader(File file, Protocol protocol, Vec3 sensorLengths,
-            boolean usePolarData) {
+            boolean usePolarMoment) {
         this.file = file;
         this.protocol = protocol;
-        this.usePolarData = usePolarData;
+        this.usePolarMoment = usePolarMoment;
         setSensorLengths(sensorLengths);
         try {
             reader = new LineNumberReader(new FileReader(file));
@@ -322,7 +322,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
     
     private Vec3 readMagnetizationVector(FieldReader r) {
         Vec3 result = null;
-        if (usePolarData) {
+        if (usePolarMoment) {
             if (fieldExistsAndIsValid("Declination: Unrotated", r)) {
                 result = Vec3.fromPolarDegrees(r.getDouble("Intensity", 0),
                         r.getDouble("Inclination: Unrotated", 0),
@@ -353,10 +353,10 @@ public class TwoGeeLoader extends AbstractFileLoader {
         final MeasType measType;
         if (fieldExists("Meas. type")) {
             measType = measTypeFromString(r.getString("Meas. type", "sample/continuous"));
-        } else if (fieldExists("Sample ID")) {
-            measType = MeasType.DISCRETE;
-        } else {
+        } else if (fieldExists("Depth")) {
             measType = MeasType.CONTINUOUS;
+        } else {
+            measType = MeasType.DISCRETE;
         }
         
         d.setArea(r.getDouble("Area", d.getArea()));
@@ -369,7 +369,13 @@ public class TwoGeeLoader extends AbstractFileLoader {
             final Vec3 magnetizationGauss;
             switch (measType) {
             case CONTINUOUS:
-                magnetizationGauss = momentGaussCm3.divideBy(sensorLengths.times(d.getArea()));
+                if (usePolarMoment) {
+                    // Polar moments in 2G files are already corrected for
+                    // sensor length and cross-sectional core area
+                    magnetizationGauss = momentGaussCm3;
+                } else {
+                    magnetizationGauss = momentGaussCm3.divideBy(sensorLengths.times(d.getArea()));
+                }
                 break;
             case DISCRETE:
                 magnetizationGauss = momentGaussCm3.divideBy(d.getVolume());

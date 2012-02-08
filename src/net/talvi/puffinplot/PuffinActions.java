@@ -494,7 +494,7 @@ public class PuffinActions {
     public final Action copyPointSelection =
             new PuffinAction("Copy point selection",
             "Copy the point selection to the clipboard",
-                    'C', false, KeyEvent.VK_C, false, 0) {
+                    'J', false, KeyEvent.VK_C) {
                 private static final long serialVersionUID = 1L;
                 public void actionPerformed(ActionEvent e) {
                     app.copyPointSelection(); }};
@@ -506,7 +506,7 @@ public class PuffinActions {
     public final Action pastePointSelection =
             new PuffinAction("Paste point selection",
             "Select the points corresponding to those copied to the clipboard",
-                    'V', false, KeyEvent.VK_P, false, 0) {
+                    'K', false, KeyEvent.VK_P) {
         private static final long serialVersionUID = 1L;
                 public void actionPerformed(ActionEvent e) {
                     app.pastePointSelection(); }};

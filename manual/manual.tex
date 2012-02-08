@@ -898,9 +898,14 @@ This section presents PuffinPlot's features in moderate detail.
 PuffinPlot can automatically open three types of file: its own filetype
 (filename suffix \ppcmd{ppl}); data produced from 2\caps{g} cryomagnetometers
 (filename suffix \ppcmd{dat}); and data from the {\sf Zplot} program by
-Stephen Hurst (filename suffix \ppcmd{txt}). In general, support for other
-file formats is straighforward to add, and most tabular textual file formats
-can be opened using the \ppcmd{File\submenu Import data\ldots} function.
+Stephen Hurst (filename suffix \ppcmd{txt}). Note that there are different
+ways to read 2\caps{g} data files: users are encouraged to read
+section~\ref{sec:prefs-2g-import} and ensure that the preferences are
+correctly set for their needs.
+
+In general, support for other file formats is straighforward to add, and most
+tabular textual file formats can be opened using the \ppcmd{File\submenu
+  Import data\ldots} function.
 
 \subsubsection{\label{sec:import-data}Importing data}
 
@@ -1156,21 +1161,34 @@ can be done using the \ppcmd{Export preferences…} and \ppcmd{Import
 
 The preferences window is divided into three tabs.
 
-\subsubsection{The \ppcmd{Loading} tab}
+\subsubsection{\label{sec:prefs-2g-import}The \ppcmd{2G import} tab}
 
 This tab contains options connected with reading data from \caps{.dat} files
 produced by the \caps{2g} `Long Core' software.
 
 \begin{menuitemlist}
 
-\item[\caps{Squid} sensor lengths.] When reading a \caps{2g} file, PuffinPlot
-  uses the `X corr', `Y corr', and `Z corr' fields to determine the
-  magnetization vector. However, for long core measurements, these values are
-  not corrected for effective sensor length, which is determined by the
-  response function of each \caps{squid} and must be determined empirically
-  when setting up the machine. To produce an accurate magnetization vector
-  for long core files, PuffinPlot corrects the \caps{squid} readings for the
-  configured sensor lengths when opening the file.
+\item[Read magnetization from.] This setting controls whether PuffinPlot
+  reads a sample's magnetic moment from the fields giving the Cartesian
+  components of the magnetization vector (X/Y/Z) or whether it reads the
+  polar represantation (the declination, inclination, and intensity fields).
+  The Cartesian components are stored to higher precision in the file, so
+  using them is preferable when possible. However, if the Cartesian
+  components are used when reading a long-core file, they must usually be
+  corrected for the effective sensor lengths (see below). If the sensor
+  lengths are unknown, reading data from the polar fields can be a useful
+  fallback. When reading a file using the `X/Y/Z' setting, PuffinPlot first
+  looks for the `X corr', `Y corr', and `Z corr' fields to determine the
+  magnetization vector. If these are not present, it falls back to `X
+  mean'/`Y mean'/`Z mean', then to `X intensity'/`Y intensity'/`Z intensity'.
+
+\item[\caps{Squid} sensor lengths.] As described above, the Cartesian
+  magnetization components in long core files are not corrected for effective
+  sensor length, which is determined by the response function of each
+  \caps{squid} and must be determined empirically when setting up the
+  machine. To produce a magnetization vector for long core files when using
+  the ‘X/Y/Z’ setting, PuffinPlot corrects the \caps{squid} readings for
+  these configured sensor lengths when opening the file.
 
 \item[Protocol] gives the measurement protocol used in taking the readings. A
   protocol is a particular sequence of empty tray measurements and sample

@@ -52,4 +52,10 @@ public enum TreatType {
     public String getUnit() {
         return unit;
     }
+    
+    /** @return {@code true} if this treatment involves application of
+     * an alternating magnetic field */
+    public boolean involvesAf() {
+        return this==DEGAUSS_XYZ || this==DEGAUSS_Z || this==ARM;
+    }
 }

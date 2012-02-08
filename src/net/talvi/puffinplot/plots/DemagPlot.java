@@ -84,20 +84,19 @@ public class DemagPlot extends Plot {
 
         TreatType treatType = sample.getDatum(sample.getNumData() - 1).getTreatType();
         final String xAxisLabel;
+        double demagRescale = 1;
         if (xBySequence) {
             xAxisLabel = "Measurement number";
         } else {
             String unit = treatType.getUnit();
-            if (treatType == TreatType.DEGAUSS_XYZ) {
+            if (treatType.involvesAf()) {
                 unit = "m" + unit;
+                demagRescale = 1000;
             }
             xAxisLabel = String.format("%s (%s)", treatType.getAxisLabel(), unit);
         }
-        double demagRescale = 1;
-        if (treatType == TreatType.DEGAUSS_XYZ) demagRescale = 1000;
         AxisParameters hAxisParams = new AxisParameters(xAxisLength * demagRescale, Direction.RIGHT).
                 withLabel(xAxisLabel).withNumberEachTick();
-
         final MedianDestructiveField midpoint = sample.getMdf();
         if (midpoint != null && midpoint.isHalfIntReached()) {
             hAxisParams.markedPosition = midpoint.getDemagLevel() * demagRescale;

@@ -476,7 +476,9 @@ public final class PuffinApp {
         
         try {
             Suite suite = new Suite(files, prefs.getSensorLengths(),
-                    prefs.get2gProtocol(), format);
+                    prefs.get2gProtocol(),
+                    !"X/Y/Z".equals(prefs.getPrefs().get("readTwoGeeMagFrom", "X/Y/Z")),
+                    format);
             suite.doAllCalculations(getCorrection());
             List<String> warnings = suite.getLoadWarnings();
             if (warnings.size() > 0) {

@@ -84,16 +84,16 @@ public class ZplotLoader extends AbstractFileLoader {
         }
         String[] headers = whitespace.split(headerLine);
 
-        if (headers.length != 7) {
-            addMessage("Wrong number of header fields in Zplot file %s:" +
-                    ": expected 7, got %s", file.getName(), headers.length);
-            return;
+        if (headers.length < 7 || headers.length > 8) {
+            addMessage("Wrong number of header fields in Zplot file %s: " +
+                    "expected 7 or 8, got %s", file.getName(), headers.length);
+            // return;
         }
         for (int i = 0; i < HEADERS.size(); i++) {
             if (!HEADERS.get(i).matcher(headers[i]).matches()) {
                 addMessage("Unknown header field %s in file %s.",
                         headers[i], file.getName());
-                return;
+                // return;
             }
         }
         String line;

@@ -10,8 +10,8 @@ type: :task
 component: PuffinPlot
 release: "1.0"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :in_progress
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2010-05-13 06:02:56.686559 Z
 references: []
 
@@ -25,3 +25,10 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - changed status from unstarted to in_progress
   - ""
+- - 2012-02-08 23:32:09.215557 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Now much better at guessing unspecified treatment and measurement
+    types. Option added to use polar magnetization data -- useful when
+    sensor lengths unknown.

@@ -60,7 +60,8 @@ public class PrefsWindow extends JFrame {
         setPreferredSize(new Dimension(400, 500));
         setLayout(new GridBagLayout());
         JTabbedPane tp = new JTabbedPane();
-        add(tp, new GridBagConstraints(0, 0, 2, 1, 0.99, 0.99, GridBagConstraints.LINE_START, BOTH,
+        add(tp, new GridBagConstraints(0, 0, 2, 1, 0.99, 0.99,
+                GridBagConstraints.LINE_START, BOTH,
                 insets, 0, 0));
         JPanel loadingPanel = new JPanel(false);
         loadingPanel.setLayout(new GridBagLayout());
@@ -98,7 +99,7 @@ public class PrefsWindow extends JFrame {
         gbc2.weighty = 0;
         loadingPanel.add(makeLabelledPrefComboBox("Read magnetization from",
                 "readTwoGeeMagFrom",
-                new String[] {"X/Y/Z ", "Dec/Inc/Intensity"},
+                new String[] {"X/Y/Z", "Dec/Inc/Intensity"},
                 "X/Y/Z",
                 "Magnetization can be read either from x/y/z moments or from "
                 + "declination/inclination/intensity."),
@@ -152,9 +153,9 @@ public class PrefsWindow extends JFrame {
                 "data.greatcircles.validityExpr", "N>=3 and a95<3.5 and k>3"));
         miscPanel.add(Box.createVerticalGlue());
 
-        tp.addTab("Loading", null, loadingPanel, "File loading");
-        tp.addTab("Plots", null, plotsPanel, "Active plots");
-        tp.addTab("Misc.", null, miscPanel, "Miscellaneous");
+        tp.addTab("2G import", null, loadingPanel, "Settings for reading 2G data files");
+        tp.addTab("Plots", null, plotsPanel, "Select which plots are shown");
+        tp.addTab("Misc.", null, miscPanel, "Miscellaneous settings");
 
         JButton closeButton = new JButton("Close");
         closeButton.addActionListener(new ActionListener() {
