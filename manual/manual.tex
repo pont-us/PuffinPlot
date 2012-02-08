@@ -243,46 +243,44 @@ an extra menu at the left, entitled \textsf{PuffinPlot}.
 lowest) contains multiple instances of the following layer.}
 \end{figure}
 
-PuffinPlot uses a hierarchical data structure, with higher levels
-containing multiple instances of each lower level. The structure is
-summarized in Figure 2. At the top is the \emph{suite}, which contains
-all the data to be analysed as part of a particular study. For a
-discrete specimen study, this will typically correspond to a section in
-the field; for a long core study, it will correspond to a core. A suite
-is initially created by opening one or more data files from a
-magnetometer; it is saved as a file in PuffinPlot's own format. In a
-discrete study, a suite contains multiple \emph{sites}. A site
-corresponds to a set of samples taken from one spot in a section. A
+PuffinPlot uses a hierarchical data structure, with higher levels containing
+multiple instances of each lower level. The structure is summarized in Figure
+2. At the top is the \emph{suite}, which contains all the data to be analysed
+as part of a particular study. For a discrete specimen study, this will
+typically correspond to a section in the field; for a long core study, it
+will correspond to a core. A suite is initially created by opening one or
+more data files from a magnetometer; it is saved as a file in PuffinPlot's
+own format. In a discrete study, a suite contains multiple \emph{sites}. A
+site corresponds to a set of samples taken from one spot in a section. A
 site's associated data can include such things as bedding attitude and
 stratigraphic height, as well as calculated parameters such as the mean
-palaeomagnetic direction for all the samples at the site. For a long
-core study, sites are not defined: samples are contained directly within
-the suite.
+palaeomagnetic direction for all the samples at the site. Site are not
+required: if no sites have been defined, samples are contained directly
+within the suite.
 
-Each site (or, for long core data, the suite) contains multiple
-\emph{samples}. A sample corresponds to a small physical volume of rock.
-For a discrete study, this will usually be a typical palaeomagnetic 25mm
-cylinder or IODP cube sample. For long cores, it is the portion of the
-core at a particular depth. The data associated with a sample consists
-of information specific to this physical unit which does not change with
-the application of demagnetization techniques --- for example, a sample
-code or name (or, for long cores, a depth), the field orientation of the
-sample, and its volume. For discrete samples this data can also include
-a tensor representing anisotropy of magnetic susceptibility, which is
-imported separately from an Agico kappabridge datafile and collated with
-the magnetization data by matching the sample names. The sample can also
-contain calculated parameters, such as a direction fitted by principal
-component analysis, or a best-fitting great circle.
+Each site (or, if no sites are defined, the suite) contains multiple
+\emph{samples}. A sample corresponds to a small physical volume of rock. For
+a discrete study, this will usually be a typical palaeomagnetic 25mm cylinder
+or IODP cube sample. For long cores, it is the portion of the core at a
+particular depth. The data associated with a sample consists of information
+specific to this physical unit which does not change with the application of
+demagnetization techniques --- for example, a sample code or name (or, for
+long cores, a depth), the field orientation of the sample, and its volume.
+For discrete samples this data can also include a tensor representing
+anisotropy of magnetic susceptibility, which is imported separately from an
+Agico kappabridge datafile and collated with the magnetization data by
+matching the sample names. The sample can also contain calculated parameters,
+such as a direction fitted by principal component analysis, or a best-fitting
+great circle.
 
-Each sample contains multiple \emph{demagnetization steps}. A
-\emph{step} represents a sample at a particular point during the
-treatment protocol. Its associated data thus includes details of the
-treatment: the type (thermal, AF, IRM, etc.) and parameters
-(temperature, field strength, etc.). The data also includes the state of
-the sample itself --- most importantly, the measured magnetization
-vector. For thermal studies, the magnetic susceptibility is usually also
-recorded after every heating cycle, and is also stored as part of the
-step.
+Each sample contains multiple \emph{demagnetization steps}. A \emph{step}
+represents a sample at a particular point during the treatment protocol. Its
+associated data thus includes details of the treatment: the type (thermal,
+AF, IRM, etc.) and parameters (temperature, field strength, etc.). The data
+also includes the state of the sample itself --- most importantly, the
+measured magnetization vector. For thermal studies, the magnetic
+susceptibility is usually also recorded after every heating cycle, and is
+also stored as part of the step.
 
 \subsection{Main window features}
 
@@ -381,7 +379,7 @@ dip direction of the bedding; the second in the dip magnitude.
 \item[Magnetic declination] (\ppcmd{Dev}). This is the angle between
 magnetic north and true north at the sampling site. (It is abbreviated
 `Dev' (for `deviation') to avoid any possible confusion with the
-declinations of sample magnetizations.
+declinations of sample magnetizations.)
 
 \item[Select all] selects all the points in the current sample.
 

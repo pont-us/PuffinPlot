@@ -13,7 +13,7 @@
    height="372.04724"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.1 r9760"
+   inkscape:version="0.48.2 r9819"
    sodipodi:docname="data-model.svg">
   <sodipodi:namedview
      id="base"
@@ -22,9 +22,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="5.6"
-     inkscape:cx="397.41794"
-     inkscape:cy="360.90771"
+     inkscape:zoom="1.4"
+     inkscape:cx="330.19155"
+     inkscape:cy="224.33799"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -267,7 +267,7 @@
            height="68.571426"
            width="87.857147"
            id="rect4891" /></flowRegion><flowPara
-         id="flowPara4893">For long core data sets, sites are not defined: the suite contains the samples directly.</flowPara></flowRoot>    <text
+         id="flowPara4893">Sites are not required. If none are defined, the suite contains the samples directly.</flowPara></flowRoot>    <text
        sodipodi:linespacing="100%"
        id="text4895"
        y="719.90717"
