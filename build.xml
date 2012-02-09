@@ -13,7 +13,6 @@
         </propertyfile>
     </target>
     
-        
     <target name="package-for-store" depends="jar"
         description="Creates a composite JAR file containing all dependencies.">
         <!-- Change the value of this property to be the name of your JAR,
@@ -89,6 +88,7 @@
                 <include name="manual.css" />
                 <include name="figures/*.png" />
             </zipfileset>
+            <zipfileset dir="${basedir}/example-data" prefix="Example-data"/>
             <zipfileset dir="${basedir}/manual" includes="release-readme.txt" fullpath="README"/>
         </zip>
     </target>
