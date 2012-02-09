@@ -41,7 +41,7 @@ public class AboutBox extends javax.swing.JDialog {
     private String getContent() {
         final String fmt = 
                 "PuffinPlot is a program for showing, exploring, and analysing "
-                + "palæomagnetic data. Copyright 2012–%s Pontus "
+                + "palæomagnetic data. Copyright 2012 Pontus "
                 + "Lurcock (pont@talvi.net). "
                 + "PuffinPlot is free software: you can redistribute it and/or "
                 + "modify it under the terms of the GNU General Public License "
@@ -50,8 +50,8 @@ public class AboutBox extends javax.swing.JDialog {
                 + "PuffinPlot is distributed in the hope that it will be useful, "
                 + "but WITHOUT ANY WARRANTY; without even the implied warranty "
                 + "of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. "
-                + "Please see the file LICENCE"
-                + "(supplied with PuffinPlot) or go to http://www.gnu.org/licenses/gpl.html"
+                + "Please see the file LICENCE (supplied with PuffinPlot) "
+                + "or go to http://www.gnu.org/licenses/gpl.html "
                 + "for details.\n\n"
                 + "System information: OS %s %s (%s), Java %s (%s)";
         String year = PuffinApp.getInstance().getBuildProperty("build.year");
