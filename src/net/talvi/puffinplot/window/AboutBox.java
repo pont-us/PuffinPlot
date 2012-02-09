@@ -41,9 +41,18 @@ public class AboutBox extends javax.swing.JDialog {
     private String getContent() {
         final String fmt = 
                 "PuffinPlot is a program for showing, exploring, and analysing "
-                + "palæomagnetic data. It is released under the GNU General "
-                + "Public Licence version 3, and is Copyright 2008–%s Pontus "
-                + "Lurcock (pont@talvi.net).\n\n"
+                + "palæomagnetic data. Copyright 2012–%s Pontus "
+                + "Lurcock (pont@talvi.net). "
+                + "PuffinPlot is free software: you can redistribute it and/or "
+                + "modify it under the terms of the GNU General Public License "
+                + "as published by the Free Software Foundation, either version "
+                + "3 of the License, or (at your option) any later version. "
+                + "PuffinPlot is distributed in the hope that it will be useful, "
+                + "but WITHOUT ANY WARRANTY; without even the implied warranty "
+                + "of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. "
+                + "Please see the file LICENCE"
+                + "(supplied with PuffinPlot) or go to http://www.gnu.org/licenses/gpl.html"
+                + "for details.\n\n"
                 + "System information: OS %s %s (%s), Java %s (%s)";
         String year = PuffinApp.getInstance().getBuildProperty("build.year");
         return String.format(fmt, year, gsp("os.name"), gsp("os.version"),
@@ -73,7 +82,7 @@ public class AboutBox extends javax.swing.JDialog {
         jLabel3 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
 
-        setMinimumSize(new java.awt.Dimension(500, 300));
+        setMinimumSize(new java.awt.Dimension(700, 400));
         setModal(true);
         getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.Y_AXIS));
 
@@ -100,7 +109,7 @@ public class AboutBox extends javax.swing.JDialog {
         getContentPane().add(jScrollPane1);
 
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("Build date: "+PuffinApp.getInstance().getBuildProperty("build.date"));
+        jLabel3.setText("Version 1.0. Build date: "+PuffinApp.getInstance().getBuildProperty("build.date"));
         jLabel3.setAlignmentX(0.5F);
         jLabel3.setMaximumSize(new java.awt.Dimension(500, 30));
         jLabel3.setMinimumSize(new java.awt.Dimension(45, 30));

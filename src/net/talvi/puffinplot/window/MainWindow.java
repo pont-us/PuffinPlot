@@ -30,6 +30,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.border.EmptyBorder;
 import net.talvi.puffinplot.data.Sample;
 
 /**
@@ -53,7 +54,7 @@ public final class MainWindow extends JFrame {
     private final JScrollPane scrollPane;
     private final SampleChooser sampleChooser;
     private final MainMenuBar menuBar;
-    private final JLabel welcomeMessage;
+    private final JPanel welcomeMessage;
     private final SampleDataPanel sampleDataPanel;
     private final JSplitPane splitPane;
     private int splitPaneDividerWidth;
@@ -85,9 +86,7 @@ public final class MainWindow extends JFrame {
         splitPane.setDividerSize(0);
         // jsp.setMaximumSize(new Dimension(1000,700));
         mainPanel.add(splitPane);
-        mainPanel.add(welcomeMessage =
-                new JLabel("Welcome to PuffinPlot. This puffin hatched on "+
-                app.getBuildProperty("build.date") +"."),
+        mainPanel.add(welcomeMessage = new WelcomeMessage(),
                 BorderLayout.NORTH);
         splitPane.setVisible(false);
         mainPanel.add(sampleChooser = new SampleChooser(), BorderLayout.WEST);
@@ -99,6 +98,19 @@ public final class MainWindow extends JFrame {
         setMaximumSize(scrollPane.getMaximumSize());
         pack();
         setLocationRelativeTo(null); // centre on screen
+    }
+    
+    private class WelcomeMessage extends JPanel {
+    public WelcomeMessage() {
+        super();
+        setBorder(new EmptyBorder(12, 12, 12, 12));
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        add(new JLabel("Welcome to PuffinPlot, version 1.0. This puffin hatched on "+
+                app.getBuildProperty("build.date") +"."));
+        add(new JLabel("PuffinPlot is copyright 2012 by Pontus Lurcock."));
+        add(new JLabel("PuffinPlot is distributed under the GNU General Public License."));
+        add(new JLabel("Select ‘About PuffinPlot’ from the Help menu for details."));
+    }
     }
 
     /**
