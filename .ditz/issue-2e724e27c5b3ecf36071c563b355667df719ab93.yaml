@@ -1,0 +1,21 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Better release management
+desc: |-
+  In the 1.0 release, version numbers and copyright dates are
+  hardcoded! Version number should be specified in a properties file
+  or similar and read by PuffinPlot at runtime.
+type: :task
+component: PuffinPlot
+release: "1.1"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2012-02-09 20:08:31.761976 Z
+references: []
+
+id: 2e724e27c5b3ecf36071c563b355667df719ab93
+log_events: 
+- - 2012-02-09 20:08:32.069883 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
