@@ -390,7 +390,7 @@ public class PuffinActions {
     /**
      * For each selected sample, fits a great circle to the selected points.
      */
-    public final Action circleFit = new PuffinAction("Fit circle",
+    public final Action circleFit = new PuffinAction("Fit great circle",
             "Fit great circle to selected points", 'L', false, KeyEvent.VK_C) {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {

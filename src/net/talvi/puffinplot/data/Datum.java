@@ -314,7 +314,11 @@ public class Datum {
      * data and does not contain magnetic moment data
      */
     public boolean isMagSusOnly() {
-        return moment == null && hasMagSus();
+        // Q. But what if we have a measurement of exactly zero?
+        // A. 1. You never have a measurement of exactly zero.
+        // A. 2. It still wouldn't have reference equality with ORIGIN,
+        //       since it would have been separately instantiated.
+        return (moment == null || moment == Vec3.ORIGIN) && hasMagSus();
     }
 
     private boolean hasSampleOrientation() {
