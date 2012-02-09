@@ -1,6 +1,7 @@
 package net.talvi.puffinplot.data;
 
 import java.util.InputMismatchException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
@@ -28,8 +29,9 @@ public class Correction {
     private boolean empty;
     private Rotation rotation;
     public static final Correction NONE =
-            new Correction(false, false, Rotation.NONE);
-
+            new Correction(false, false, Rotation.NONE, false);
+    private boolean magDevAppliedToFormation;
+    
     /**
      * Creates a new set of corrections
      * 
@@ -37,10 +39,12 @@ public class Correction {
      * @param empty {@code} true} to use the empty slot correction
      * @param rotation the type of rotation correction to use
      */
-    public Correction(boolean tray, boolean empty, Rotation rotation) {
+    public Correction(boolean tray, boolean empty, Rotation rotation,
+                boolean magDevAppliedToFormation) {
         this.tray = tray;
         this.empty = empty;
         this.rotation = rotation;
+        this.magDevAppliedToFormation = magDevAppliedToFormation;
     }
 
     /** Sets the rotation correction. 
@@ -53,6 +57,20 @@ public class Correction {
      * @return the type of rotation correction currently in use */
     public Rotation getRotation() {
         return rotation;
+    }
+
+    /**
+     * @return the magDevAppliedToFormation
+     */
+    public boolean isMagDevAppliedToFormation() {
+        return magDevAppliedToFormation;
+    }
+
+    /**
+     * @param magDevAppliedToFormation the magDevAppliedToFormation to set
+     */
+    public void setMagDevAppliedToFormation(boolean magDevAppliedToFormation) {
+        this.magDevAppliedToFormation = magDevAppliedToFormation;
     }
 
     /**
@@ -128,7 +146,8 @@ public class Correction {
      */
     @Override
     public String toString() {
-        return String.format("%b %b %s", tray, empty, getRotation().name());
+        return String.format("%b %b %s %b", tray, empty, getRotation().name(),
+                magDevAppliedToFormation);
     }
 
     /**
@@ -145,11 +164,15 @@ public class Correction {
         try {
             // At present, the two booleans should always be false.
             c = new Correction(s.nextBoolean(), s.nextBoolean(),
-                                  Rotation.valueOf(s.next()));
+                    Rotation.valueOf(s.next()),
+                    s.nextBoolean());
         } catch (InputMismatchException e) {
             c = NONE;
             logger.info("Malformed correction string in preferences: defaulting to no correction.");
-        }
+        } catch (NoSuchElementException e) {
+            c = NONE;
+            logger.info("Malformed correction string in preferences: defaulting to no correction.");
+        } 
         return c;
     }
 }

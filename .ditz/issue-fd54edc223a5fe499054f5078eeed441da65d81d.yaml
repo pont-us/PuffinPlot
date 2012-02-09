@@ -1,0 +1,23 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Refactor the corrections architecture
+desc: |-
+  the Correction class and its usage are a bit of a mess -- passed
+  around between PuffinApp, PrefsWindow, and CorrectionWindow.
+  Includes dead code for old-style tray and empty-slot corrections --
+  this should be excised -- it can always be re-added one day if
+  required.
+type: :task
+component: PuffinPlot
+release: "1.1"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2012-02-09 03:32:32.711722 Z
+references: []
+
+id: fd54edc223a5fe499054f5078eeed441da65d81d
+log_events: 
+- - 2012-02-09 03:32:32.899509 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

@@ -143,12 +143,13 @@ public final class PuffinApp {
         // NB main window must be instantiated last, as
         // the Window menu references the other windows
         mainWindow = new MainWindow();
-        // prefs window needs the graph list from MainGraphDisplay from MainWindow
-        prefsWindow = new PrefsWindow();
         Correction corr =
-                Correction.fromString(prefs.getPrefs().get("correction", "false false NONE"));
+                Correction.fromString(prefs.getPrefs().get("correction", "false false NONE false"));
         setCorrection(corr);
         getMainWindow().getControlPanel().setCorrection(corr);
+        // prefs window needs the graph list from MainGraphDisplay from MainWindow
+        // prefs window also needs the correction.
+        prefsWindow = new PrefsWindow();
         if (MAC_OS_X) createAppleEventListener();
         currentPageFormat = PrinterJob.getPrinterJob().defaultPage();
         currentPageFormat.setOrientation(PageFormat.LANDSCAPE);

@@ -37,6 +37,8 @@ public class CorrectionWindow extends JFrame implements ActionListener {
         DatumField.SAMPLE_AZ, DatumField.SAMPLE_DIP, DatumField.FORM_AZ,
         DatumField.FORM_DIP, DatumField.MAG_DEV
     };
+    
+    private static final long serialVersionUID = 1L;
     private JButton cancelButton;
     private JButton setButton;
     private Map<DatumField, JCheckBox> checkBoxMap =

@@ -15,18 +15,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.PuffinPrefs;
 import net.talvi.puffinplot.data.SensorLengths;
@@ -140,6 +130,8 @@ public class PrefsWindow extends JFrame {
         miscPanel.setLayout(new BoxLayout(miscPanel, BoxLayout.Y_AXIS));
         
         miscPanel.add(Box.createVerticalGlue());
+        
+        miscPanel.add(new MagDevTickBox());
         miscPanel.add(makeLabelledPrefBox("Demag y axis",
                 "plots.demag.vAxisLabel", "Magnetization (A/m)"));
         miscPanel.add(makeLabelledPrefBox("PmagPy folder",
@@ -180,6 +172,20 @@ public class PrefsWindow extends JFrame {
     }
 
     private JPanel makeLabelledPrefBox(String labelString, String pref,
+            String defaultValue) {
+        final JPanel panel = new JPanel(false);
+        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+        panel.add(Box.createRigidArea((new Dimension(8,0))));
+        final JLabel label = new JLabel(labelString);
+        label.setMaximumSize(new Dimension(200, 30));
+        panel.add(label);
+        JTextField field = new PrefBox(pref, defaultValue);
+        field.setMaximumSize(new Dimension(300, 50));
+        panel.add(field);
+        return panel;
+    }
+    
+    private JPanel makeLabelledTickBox(String labelString, String pref,
             String defaultValue) {
         final JPanel panel = new JPanel(false);
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
@@ -250,6 +256,19 @@ public class PrefsWindow extends JFrame {
         }
     }
     
+    private class MagDevTickBox extends JCheckBox implements ItemListener {
+        private static final long serialVersionUID = 1L;
+        public MagDevTickBox() {
+            super("Bedding is vs. magnetic north",
+                   PuffinApp.getInstance().getCorrection().isMagDevAppliedToFormation());
+            addItemListener(this);
+        }
+
+        public void itemStateChanged(ItemEvent e) {
+            PuffinApp.getInstance().getCorrection().setMagDevAppliedToFormation(isSelected());
+        }
+    }
+    
     private class PrefsComboBox extends JComboBox implements ItemListener {
         private static final long serialVersionUID = 1L;
 
@@ -263,13 +282,9 @@ public class PrefsWindow extends JFrame {
             setSelectedItem(value);
             addItemListener(this);
         }
-        
-        public void applySettings() {
-            prefs.getPrefs().put(prefsKey, getSelectedItem().toString());
-        }
 
         public void itemStateChanged(ItemEvent e) {
-            applySettings();
+            prefs.getPrefs().put(prefsKey, getSelectedItem().toString());
         }
     }
 

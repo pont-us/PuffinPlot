@@ -375,7 +375,9 @@ public class Datum {
             result = result.correctSample(toRadians(sampAz + magDev),
                                           toRadians(sampDip));
             if (c.includesFormation() && hasFormationOrientation()) {
-                result = result.correctForm(toRadians(formAz + magDev),
+                double formAzTmp = formAz;
+                if (c.isMagDevAppliedToFormation()) formAzTmp += magDev;
+                result = result.correctForm(toRadians(formAzTmp),
                                             toRadians(formDip));
             }
         }

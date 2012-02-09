@@ -1,0 +1,32 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Inaccurate data model figure in manual
+desc: |-
+  Now that sites are possible for long cores, the figure in
+  the manual should be updated to reflect this.
+type: :bugfix
+component: PuffinPlot
+release: "1.0"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :closed
+disposition: :fixed
+creation_time: 2012-02-08 23:37:33.915801 Z
+references: []
+
+id: f657fd90695120fc521afb0cb4cd73f7c5b6e8b0
+log_events: 
+- - 2012-02-08 23:37:35.287515 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
+- - 2012-02-08 23:41:44.719674 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2012-02-08 23:41:55.595591 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - The manual text is also incorrect.
+- - 2012-02-08 23:56:49.935587 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - ""

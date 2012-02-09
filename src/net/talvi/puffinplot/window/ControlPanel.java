@@ -1,28 +1,17 @@
 package net.talvi.puffinplot.window;
 
-import net.talvi.puffinplot.*;
-import net.talvi.puffinplot.data.Suite;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
-import javax.swing.JRadioButton;
-import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
+import javax.swing.*;
+import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.Correction;
+import net.talvi.puffinplot.data.Correction.Rotation;
 import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;
-import static net.talvi.puffinplot.data.Correction.Rotation;
+import net.talvi.puffinplot.data.Suite;
 
 /**
  * The control panel provides a user interface for common operations.
@@ -135,11 +124,12 @@ public class ControlPanel extends JPanel
     public Correction getCorrection() {
         /* Tray correction is applied on loading, and empty slot correction
          * is currently unused, so these fields are set to false in the
-         * Correction. Originally these wre read from the user checkboxes
+         * Correction. Originally these were read from the user checkboxes
          * trayButton and emptyButton, which have now been removed.
          */
         return new Correction(false, false,
-                rotationBox.getRotation());
+                rotationBox.getRotation(),
+                app.getCorrection().isMagDevAppliedToFormation());
     }
     
     /** Sets the correction to apply to magnetic moment data. 
