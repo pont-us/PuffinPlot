@@ -16,18 +16,18 @@
  */
 package net.talvi.puffinplot.data;
 
-import java.util.Locale;
+import static java.lang.Math.acos;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import org.python.core.PyException;
 import org.python.core.PyObject;
 import org.python.util.PythonInterpreter;
-import static java.lang.Math.acos;
 
 /**
  * This class represents a set of great circles and a set of directions.

@@ -19,3 +19,9 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2012-02-09 22:41:11.310035 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    Gary Acton has emailed me the code for this (in Fortran),
+    I think.
