@@ -1,0 +1,28 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Configurable PCA fit line
+desc: |-
+  I could partially address Reveiwer 2's problem with post-editing
+  of PCA fit lines by adding a configuration option: something like
+  "long/short/none", where "short" is truncated roughly to the fitted
+  points rather than to the entire plot area.
+type: :feature
+component: PuffinPlot
+release: "1.01"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2012-05-08 13:01:27.538013 Z
+references: []
+
+id: 0ba7603d2df5969a454b260342608ac659596592
+log_events: 
+- - 2012-05-08 13:01:27.810898 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
+- - 2012-05-08 13:02:22.193969 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    I may as well add a colour choose while I'm about it.
+    ,
