@@ -23,7 +23,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.text.AttributedString;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -242,7 +241,9 @@ final class PlotAxis {
         AffineTransform old = g.getTransform();
         g.translate(x - bounds.getMinX(), y - bounds.getMaxY());
         g.rotate(θ);
-        layout.draw(g, 0,0);
+        // Don't use layout.draw, since that will draw the text as a glyph
+        // vector, which won't be exported as text in SVG, PDF, etc.
+        g.drawString(text.getIterator(), 0, 0);
         g.setTransform(old);
     }
 

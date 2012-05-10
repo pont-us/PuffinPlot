@@ -16,57 +16,6 @@
  */
 package net.talvi.puffinplot;
 
-import java.awt.FileDialog;
-import java.util.prefs.BackingStoreException;
-import net.talvi.puffinplot.data.SuiteCalcs;
-import net.talvi.puffinplot.window.CorrectionWindow;
-import net.talvi.puffinplot.window.TableWindow;
-import net.talvi.puffinplot.window.SuiteEqAreaWindow;
-import net.talvi.puffinplot.window.AboutBox;
-import net.talvi.puffinplot.window.MainWindow;
-import net.talvi.puffinplot.data.Suite;
-import java.awt.print.PageFormat;
-import java.awt.print.PrinterJob;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.MemoryHandler;
-import java.util.logging.SimpleFormatter;
-import java.util.logging.StreamHandler;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import static java.lang.Thread.UncaughtExceptionHandler;
-import java.util.Arrays;
-import java.util.BitSet;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.prefs.Preferences;
-import javax.swing.JFileChooser;
-import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
-import net.talvi.puffinplot.data.Correction;
-import net.talvi.puffinplot.data.MeasurementAxis;
-import net.talvi.puffinplot.data.Sample;
-import net.talvi.puffinplot.data.Site;
-import net.talvi.puffinplot.data.Suite.AmsCalcType;
-import net.talvi.puffinplot.window.CustomFieldEditor;
-import net.talvi.puffinplot.window.SiteMeanWindow;
-import net.talvi.puffinplot.window.PrefsWindow;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.DefaultFontMapper;
@@ -74,10 +23,30 @@ import com.lowagie.text.pdf.FontMapper;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfWriter;
 import java.awt.Dimension;
+import java.awt.FileDialog;
 import java.awt.Graphics2D;
-import java.io.FileOutputStream;
+import java.awt.print.PageFormat;
+import java.awt.print.PrinterJob;
+import java.io.*;
+import java.lang.Thread.UncaughtExceptionHandler;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.MemoryHandler;
+import java.util.logging.SimpleFormatter;
+import java.util.logging.StreamHandler;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
-import net.talvi.puffinplot.data.CsvWriter;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
+import net.talvi.puffinplot.data.Suite.AmsCalcType;
+import net.talvi.puffinplot.data.*;
 import net.talvi.puffinplot.data.file.FileFormat;
 import net.talvi.puffinplot.window.*;
 import org.python.core.PyException;
@@ -604,9 +573,7 @@ public final class PuffinApp {
     
     /** Sets the currently displayed Suite.
      * @param index the index of the suite to be displayed within 
-     * PuffinApp's list of suites
-     * 
-     */
+     * PuffinApp's list of suites */
     public void setSuite(int index) {
         if (index >= 0 && index < suites.size()) {
             currentSuite = suites.get(index);
@@ -1021,6 +988,15 @@ public final class PuffinApp {
             pdfPage++;
         } while (!finished);
         document.close();
+    }
+    
+    /**
+     * Saves the current graph display as an SVG file.
+     * 
+     * @param pathname the path to which to save the SVG file
+     */
+    public void exportSvg(String pathname) {
+        getMainWindow().getGraphDisplay().saveToSvg(pathname);
     }
     
     public void calculateMultiSuiteMeans() {

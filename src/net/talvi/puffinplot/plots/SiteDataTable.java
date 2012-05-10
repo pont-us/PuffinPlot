@@ -20,13 +20,14 @@ import java.awt.Graphics2D;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
+import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.data.FisherParams;
-import net.talvi.puffinplot.window.GraphDisplay;
-import net.talvi.puffinplot.window.PlotParams;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Site;
+import net.talvi.puffinplot.window.GraphDisplay;
+import net.talvi.puffinplot.window.PlotParams;
 
 /**
  * This plot shows site directions in textual form.
@@ -73,7 +74,7 @@ public class SiteDataTable extends Plot {
         return "Site parameters";
     }
 
-    private TextLayout layoutFisherParams(Graphics2D g, String name,
+    private AttributedCharacterIterator layoutFisherParams(Graphics2D g, String name,
             FisherParams fp) {
         final String s = String.format("%s  dec %.1f / inc %.1f / "
                 + "%s95 %.1f / k %.1f", name,
@@ -94,7 +95,8 @@ public class SiteDataTable extends Plot {
                     position, position+1);
         }
         final FontRenderContext frc = g.getFontRenderContext();
-        return new TextLayout(as.getIterator(), frc);
+        // return new TextLayout(as.getIterator(), frc);
+        return as.getIterator();
     }
     
     @Override
@@ -112,8 +114,10 @@ public class SiteDataTable extends Plot {
             FisherParams fp = fisherParams[i];
             if (fp != null) {
                 yPos += getFontSize() * 1.2;
-                layoutFisherParams(g, PARAM_NAMES[i], fp).
-                        draw(g, xOrig, yOrig + yPos);
+                //layoutFisherParams(g, PARAM_NAMES[i], fp).
+                //        draw(g, xOrig, yOrig + yPos);
+                g.drawString(layoutFisherParams(g, PARAM_NAMES[i], fp),
+                        xOrig, yOrig + yPos);
             }
         }
     }

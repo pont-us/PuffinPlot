@@ -248,9 +248,9 @@ public abstract class Plot
      */
     protected void writeString(Graphics2D g, AttributedString as, float x, float y) {
         applyTextAttributes(as);
-        FontRenderContext frc = g.getFontRenderContext();
-        TextLayout layout = new TextLayout(as.getIterator(), frc);
-        layout.draw(g, x, y);
+        // Don't use TextLayout.draw, since it draw with a GlyphVector
+        // and we'd get shapes rather than text in SVG export etc.
+        g.drawString(as.getIterator(), x, y);
     }
 
     /**
