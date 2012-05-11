@@ -1,0 +1,37 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Problems with unanchored PCA
+desc: "Gary Acton reports:\n\
+  \xE2\x80\x98Neither the menu selection nor the Ctrl-R or Apple-R\n\
+  allowed me to use the unanchored PCA.\xE2\x80\x99\n\
+  A little baffling, since it works for everyone else.\n\
+  My best guess is that he doesn't realize that \xE2\x80\x98Anchor PCA\xE2\x80\x99\n\
+  is a toggle item which he must disable to get an unanchored PCA,\n\
+  rather assuming that \xE2\x80\x98PCA\xE2\x80\x99 and \xE2\x80\x98Anchor PCA\xE2\x80\x99 immediately\n\
+  calculate anchored and unanchored PCAs respectively.\n\
+  In this case, it's a problem of poor GUI design and/or poor \n\
+  documentation. Probably the easiest fix would be to improve the\n\
+  documentation, tool tips, and menu item wording."
+type: :bugfix
+component: PuffinPlot
+release: "1.01"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2012-05-10 14:07:16.682367 Z
+references: []
+
+id: 98eeef199515a09fcd4892fc7bd28ee55eb0920c
+log_events: 
+- - 2012-05-10 14:07:17.507254 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
+- - 2012-05-10 14:09:36.411344 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - "Note also that GA's next sentence commences\n\
+    \xE2\x80\x98I noticed in the PuffinPlot manual that...\xE2\x80\x99\n\
+    which shows that (if indeed this bug is due to misunderstanding\n\
+    the GUI) the user did read the manual -- i.e. it's\n\
+    an \xE2\x80\x98unclear documentation\xE2\x80\x99 problem rather than a \n\
+    \xE2\x80\x98user didn't bother reading the documentation\xE2\x80\x99 problem."

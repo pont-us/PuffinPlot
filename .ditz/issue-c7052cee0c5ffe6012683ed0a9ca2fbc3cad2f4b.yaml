@@ -1,0 +1,23 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Revise discussion of PCA in manual
+desc: "Gary Acton writes:\n\
+  \xE2\x80\x98I noticed in the PuffinPlot manual that\n\
+  the authors suggest anchored PCA is the primary PCA to use. I don't actually\n\
+  agree with that as many data fail to decay precisely to the origin of a\n\
+  Zijderveld plot and thus the unanchored version will be needed.\xE2\x80\x99\n\
+  Revise the appropriate section of the manual."
+type: :bugfix
+component: PuffinPlot
+release: "1.01"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2012-05-10 14:33:00.282361 Z
+references: []
+
+id: c7052cee0c5ffe6012683ed0a9ca2fbc3cad2f4b
+log_events: 
+- - 2012-05-10 14:33:00.507260 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

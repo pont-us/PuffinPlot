@@ -1,0 +1,35 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: More comprehensible site and suite calculations
+desc: "This one might require a little thought. Anonymous \n\
+  reviewer writes:\n\
+  \xE2\x80\x98The major flaw that was found is in the process of defining the set of\n\
+  samples in each site, making sure the PCA analyses ended up in that site,\n\
+  and then figuring out a simple way to view and analyze the site mean\n\
+  results. This part of the analysis process is very cryptic, and not easy\n\
+  to examine or modify. It would be a significant improvement if a data\n\
+  table with sample name, PCA results, and the Fisher mean and stats were\n\
+  also included in a window- preferable an interactive window (so data can\n\
+  be coded, deleted, etc) along with the Site Equal Area plot. Although the\n\
+  process would become more familiar with practice, I was never very\n\
+  confident that the right results of the PCA analyses were being used for\n\
+  the site mean (it took a bit of very close examination to determine this\n\
+  was in fact working). The great-circle analysis was very good at the\n\
+  individual sample level, but was also a bit cryptic when examining the\n\
+  site-level or suite-level results.\xE2\x80\x99\n\
+  Since this is described as \xE2\x80\x98the major flaw\xE2\x80\x99 I should be thorough\n\
+  in addressing it."
+type: :bugfix
+component: PuffinPlot
+release: "1.01"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2012-05-10 16:01:23.946358 Z
+references: []
+
+id: 41a40aefec67a40fb5c383ce4faa17c34be8bd9a
+log_events: 
+- - 2012-05-10 16:01:24.338307 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

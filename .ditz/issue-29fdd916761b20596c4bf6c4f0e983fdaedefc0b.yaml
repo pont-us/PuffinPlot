@@ -6,7 +6,7 @@ desc: |-
   Kirschvink paper.
 type: :feature
 component: PuffinPlot
-release: "1.2"
+release: "1.01"
 reporter: Pontus Lurcock <pont@talvi.net>
 status: :unstarted
 disposition: 
@@ -25,3 +25,27 @@ log_events:
   - |-
     Gary Acton has emailed me the code for this (in Fortran),
     I think.
+- - 2012-05-10 14:51:59.306400 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - "Also mentioned by GA in review comments on the paper:\n\
+    \xE2\x80\x98For batch processing (like the many thousands of intervals measured along\n\
+    U-channels), an automated PCA that recognizes and removes outliers would be\n\
+    useful. That is the primary feature that ZPLOTIT has that PuffinPlot does not\n\
+    and is the main reason I wrote ZPLOTIT. The outlier removing capability would\n\
+    be easy to incorporate. In ZPLOTIT the user defines a minimum number of steps\n\
+    to use in the PCA and a range of demagnetization steps over which to search.\n\
+    If the range contains more than the minimum required steps, the program seeks\n\
+    outlier steps, which are steps that degrade the PCA line fit significantly.\n\
+    The PCA is then computed with and without outliers and the anchored and\n\
+    unanchored PCA is provided for comparison. In PuffinPlot, one could\n\
+    accomplish this but currently would have to do so for each individual sample,\n\
+    which is not feasible when dealing with hundreds of meters of U-channels.\xE2\x80\x99\n\
+    This is presumably the algorithm implemented in the Fortran code,\n\
+    and also looks similar (or possibly even identical) to the Kirschvink\n\
+    algorithm."
+- - 2012-05-10 14:52:49.499319 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.01 from 1.2
+  - "Provisionally assigning to the \xE2\x80\x98revised paper\xE2\x80\x99 release, though\n\
+    I may have to drop it if time runs out."
