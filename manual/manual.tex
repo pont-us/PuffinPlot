@@ -749,10 +749,13 @@ all the selected samples, not just the current sample.
 
 \item[Calculations\submenu Anchor PCA] is a menu item which may be toggled on
   or off. When it is on, \caps{pca} analyses are constrained to pass through
-  the origin. In general, the \caps{pca} should be anchored when the analysed
-  points are known to represent the final demagnetization component. Leaving
-  it unanchored allows analysis of secondary components, provided that they
-  are sufficiently well separated from other components.
+  the origin. In general, it is appropriate to anchor the \caps{pca} if the
+  analysed points are known to represent the final demagnetization component
+  -- that is, they are trending directly towards the origin, and deviations
+  from this path are known to be due to measurement noise rather than an
+  offset in the true magnetization vectors. Leaving PCA unanchored allows
+  analysis of non-final components, provided that they are sufficiently well
+  separated from other components.
 
 \item[Calculations\submenu Fisher by site] calculates a Fisherian mean
   direction for each selected site using the \caps{pca} directions of its
