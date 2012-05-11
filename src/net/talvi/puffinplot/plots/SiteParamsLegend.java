@@ -19,7 +19,6 @@ package net.talvi.puffinplot.plots;
 import java.awt.Graphics2D;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
-import java.awt.font.TextLayout;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 import java.util.prefs.Preferences;
@@ -36,7 +35,7 @@ import net.talvi.puffinplot.window.PlotParams;
  * 
  * @author pont
  */
-public class SiteDataTable extends Plot {
+public class SiteParamsLegend extends Plot {
 
     /* Using a real alpha character can be tricky: it should be OK if
      * the real alpha is simply absent from the font, since it should
@@ -55,7 +54,7 @@ public class SiteDataTable extends Plot {
      * @param params the parameters of the table
      * @param prefs the preferences containing the table configuration
      */
-    public SiteDataTable(GraphDisplay parent, PlotParams params, Preferences prefs) {
+    public SiteParamsLegend(GraphDisplay parent, PlotParams params, Preferences prefs) {
         super(parent, params, prefs);
     }
     

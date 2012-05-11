@@ -23,11 +23,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.data.GreatCircle;
-import net.talvi.puffinplot.data.GreatCircles;
-import net.talvi.puffinplot.window.GraphDisplay;
-import net.talvi.puffinplot.window.PlotParams;
 import net.talvi.puffinplot.data.PcaValues;
 import net.talvi.puffinplot.data.Sample;
+import net.talvi.puffinplot.window.GraphDisplay;
+import net.talvi.puffinplot.window.PlotParams;
 
 /**
  * A textual display of a set of PCA and great circle parameters
@@ -35,7 +34,7 @@ import net.talvi.puffinplot.data.Sample;
  * 
  * @author pont
  */
-public class SampleDataTable extends Plot {
+public class SampleParamsLegend extends Plot {
 
     /** Creates a new PCA table with the supplied parameters.
      * 
@@ -43,7 +42,7 @@ public class SampleDataTable extends Plot {
      * @param params the parameters of the table
      * @param prefs the preferences containing the table configuration
      */
-    public SampleDataTable(GraphDisplay parent, PlotParams params, Preferences prefs) {
+    public SampleParamsLegend(GraphDisplay parent, PlotParams params, Preferences prefs) {
         super(parent, params, prefs);
     }
 

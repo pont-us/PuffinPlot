@@ -18,17 +18,17 @@ package net.talvi.puffinplot.plots;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import static java.lang.String.format;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.prefs.Preferences;
-import net.talvi.puffinplot.window.GraphDisplay;
-import net.talvi.puffinplot.window.PlotParams;
 import net.talvi.puffinplot.data.Datum;
-import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.TreatType;
-import static java.lang.String.format;
+import net.talvi.puffinplot.data.Vec3;
+import net.talvi.puffinplot.window.GraphDisplay;
+import net.talvi.puffinplot.window.PlotParams;
 
 /**
  * A table showing some of the demagnetization data.
@@ -38,7 +38,7 @@ import static java.lang.String.format;
  * 
  * @author pont
  */
-public class DataTable extends Plot {
+public class DemagTable extends Plot {
 
     private final double us = getUnitSize();
     private final List<Double> xSpacing =
@@ -53,7 +53,7 @@ public class DataTable extends Plot {
      * @param params the parameters of the table
      * @param prefs the preferences containing the table configuration
      */
-    public DataTable(GraphDisplay parent, PlotParams params, Preferences prefs) {
+    public DemagTable(GraphDisplay parent, PlotParams params, Preferences prefs) {
         super(parent, params, prefs);
     }
 
@@ -82,8 +82,7 @@ public class DataTable extends Plot {
         final List<Datum> data = sample.getData();
         if (data.isEmpty()) return;
 
-        // final FontRenderContext frc = g.getFontRenderContext();
-        List<String> headers2 = new ArrayList<String>(headers);
+        final List<String> headers2 = new ArrayList<String>(headers);
         if (sample.getDatum(0).getTreatType() == TreatType.THERMAL)
             headers2.set(0, "temp.");
         points.add(new TextLinePoint(this, g, 10, null, headers2, xSpacing));
