@@ -122,6 +122,12 @@ public class PcaValues {
     public Vec3 getDirection() {
         return direction;
     }
+    
+    /** Reports whether the PCA calculation was anchored.
+     * @return {@code true} is the PCA calculation was anchored */
+    public boolean isAnchored() {
+        return anchored;
+    }
 
     private String fmt(double d) {
         return String.format(Locale.ENGLISH, "%.1f", d);

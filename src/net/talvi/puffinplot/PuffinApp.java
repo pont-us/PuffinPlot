@@ -48,6 +48,8 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import net.talvi.puffinplot.data.Suite.AmsCalcType;
 import net.talvi.puffinplot.data.*;
 import net.talvi.puffinplot.data.file.FileFormat;
+import net.talvi.puffinplot.plots.Plot;
+import net.talvi.puffinplot.plots.SampleClickListener;
 import net.talvi.puffinplot.window.*;
 import org.python.core.PyException;
 import org.python.util.PythonInterpreter;
@@ -71,6 +73,7 @@ public final class PuffinApp {
     private static final ByteArrayOutputStream logStream =
             new ByteArrayOutputStream();
     private static final MemoryHandler logMemoryHandler;
+
     private final PuffinActions actions;
     private List<Suite> suites = new ArrayList<Suite>();
     private Suite currentSuite;
@@ -107,6 +110,19 @@ public final class PuffinApp {
         logMemoryHandler.setLevel(Level.ALL);
     }
     
+    
+    private class PuffinAppSampleClickListener implements SampleClickListener {
+
+        public PuffinAppSampleClickListener() { }
+
+        public void sampleClicked(Sample sample) {
+            final Suite suite = getSuite();
+            getSuite().setCurrentSampleIndex(suite.getIndexBySample(sample));
+            getMainWindow().getSampleChooser().updateValueFromSuite();
+            updateDisplay();
+        }
+    }
+    
     /**
      * Instantiates a new PuffinPlot application object. Instantiating PuffinApp
      * will cause the main PuffinPlot window to be opened immediately.
@@ -139,6 +155,9 @@ public final class PuffinApp {
         currentPageFormat = PrinterJob.getPrinterJob().defaultPage();
         currentPageFormat.setOrientation(PageFormat.LANDSCAPE);
         aboutBox = new AboutBox(mainWindow);
+        final Plot sampleParamsTable =
+                mainWindow.getGraphDisplay().getPlotByClassName("SampleParamsTable");
+        sampleParamsTable.addSampleClickListener(new PuffinAppSampleClickListener());
         mainWindow.getMainMenuBar().updateRecentFiles();
         mainWindow.setVisible(true);
         logger.info("PuffinApp instantiation complete.");

@@ -22,7 +22,7 @@ type: :bugfix
 component: PuffinPlot
 release: "1.01"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
+status: :in_progress
 disposition: 
 creation_time: 2012-05-10 16:01:23.946358 Z
 references: []
@@ -33,3 +33,14 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2012-05-12 18:32:42.302146 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2012-05-12 18:33:40.846072 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    I have now added a table which shows sample directions within the
+    current site. It is slightly interactive, in that clicking on a line
+    will jump to the appropriate sample.

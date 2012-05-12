@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import net.talvi.puffinplot.data.Datum;
+import net.talvi.puffinplot.data.Sample;
 
 /**
  * <p>A <q>data point</q> which actually consists of a line of text.</p>
@@ -37,6 +38,7 @@ class TextLinePoint implements PlotPoint {
 
     private final Plot plot;
     private final Datum datum;
+    private final Sample sample;
     private final double yPos;
     private List<Double> xSpacing;
     private Rectangle2D bbox;
@@ -44,9 +46,10 @@ class TextLinePoint implements PlotPoint {
     private final double xMin;
 
     public TextLinePoint(Plot plot, Graphics2D g, double yOffset, Datum d,
-            List<String> values, List<Double> xSpacing) {
+            Sample sample, List<String> values, List<Double> xSpacing) {
         this.plot = plot;
         this.datum = d;
+        this.sample = sample;
         this.yPos = yOffset + plot.getDimensions().getMinY();
         this.xSpacing = xSpacing;
         this.strings = new ArrayList<AttributedCharacterIterator>(values.size());
@@ -75,8 +78,6 @@ class TextLinePoint implements PlotPoint {
 
     public void draw(Graphics2D g) {
         double us = plot.getUnitSize();
-        xSpacing =
-            Arrays.asList(360*us, 420*us, 420*us, 620*us, 580*us);
         final FontMetrics fontMetrics = g.getFontMetrics();
         if (datum != null) {
             if (datum.isSelected()) {
@@ -105,6 +106,10 @@ class TextLinePoint implements PlotPoint {
 
     public Datum getDatum() {
         return datum;
+    }
+    
+    public Sample getSample() {
+        return sample;
     }
 
     public Shape getShape() {

@@ -16,14 +16,11 @@
  */
 package net.talvi.puffinplot.window;
 
-import net.talvi.puffinplot.*;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -31,6 +28,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.border.EmptyBorder;
+import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.Sample;
 
 /**

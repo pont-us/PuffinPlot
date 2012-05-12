@@ -47,6 +47,8 @@ import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.Datum;
 import static java.awt.font.TextAttribute.SUPERSCRIPT;
 import static java.awt.font.TextAttribute.SUPERSCRIPT_SUPER;
+import java.util.*;
+import net.talvi.puffinplot.data.Sample;
 
 /**
  * An abstract superclass for all plots and other data displays.
@@ -81,6 +83,8 @@ public abstract class Plot
     private static final TransformAttribute MAC_SUPERSCRIPT_TRANSFORM;
     private boolean visible;
     private final boolean useAppleSuperscriptHack;
+    private final Set<SampleClickListener> sampleClickListeners =
+            new HashSet<SampleClickListener>();
 
     /** the default sizes and positions of the plots */
     protected static final String DEFAULT_PLOT_POSITIONS =
@@ -96,6 +100,7 @@ public abstract class Plot
             + "equarea_site false 6 616 182 193 "
             + "equarea_suite false 192 615 186 197 "
             + "nrm_histogram false 778 679 315 131 "
+            + "sample_params_table false 778 379 315 331 "
             + "zplotlegend true 856 6 132 63";
 
     static {
@@ -392,7 +397,7 @@ public abstract class Plot
         final boolean sloppy = e.isShiftDown();
         for (PlotPoint p : points) {
             final Datum d = p.getDatum();
-            if (d == null || d.isHidden()) continue;
+            if (d != null && !d.isHidden()) {
             if (sloppy) {
                 if (p.isNear(position, SLOPPY_SELECTION_RADIUS_IN_UNITS * getUnitSize()))
                     d.setSelected(e.getButton() == MouseEvent.BUTTON1);
@@ -400,7 +405,13 @@ public abstract class Plot
                 if (p.getShape().contains(position))
                     d.toggleSel();
             }
+            } else /* no datum associated with point; check for a sample */ {
+                final Sample sample = p.getSample();
+                if (sample != null && p.getShape().contains(position)) {
+                    fireSampleClickNotification(sample);
+                }
             }
+        }
     }
 
     /** Selects all the plotted data points within a specified rectangle. 
@@ -440,5 +451,19 @@ public abstract class Plot
      */
     public void setVisible(boolean visible) {
         this.visible = visible;
+    }
+    
+    public void addSampleClickListener(SampleClickListener listener) {
+        sampleClickListeners.add(listener);
+    }
+    
+    public void removeSampleClickListener(SampleClickListener listener) {
+        sampleClickListeners.remove(listener);
+    }
+    
+    private void fireSampleClickNotification(Sample sample) {
+        for (SampleClickListener listener: sampleClickListeners) {
+            listener.sampleClicked(sample);
+        }
     }
 }

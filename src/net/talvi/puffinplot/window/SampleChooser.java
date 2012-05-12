@@ -189,4 +189,19 @@ public class SampleChooser extends JPanel {
     public int getDepthIndex() {
         return depthSlider.getValue();
     }
+    
+    public void updateValueFromSuite() {
+        final Suite suite = PuffinApp.getInstance().getSuite();
+        final int index = suite.getCurrentSampleIndex();
+        switch (suite.getMeasType()) {
+            case CONTINUOUS:
+                depthSlider.setValue(index);
+                break;
+            case DISCRETE:
+                sampleList.setSelectedIndex(index);
+                break;
+            default:
+                throw new RuntimeException("No such measurement type.");
+        }
+    }
 }

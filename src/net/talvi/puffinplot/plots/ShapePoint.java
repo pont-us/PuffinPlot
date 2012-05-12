@@ -30,6 +30,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import net.talvi.puffinplot.data.Datum;
 import static java.lang.Math.sqrt;
+import net.talvi.puffinplot.data.Sample;
 
 /**
  * A graph point with a geometrical shape. Available shapes are
@@ -191,6 +192,11 @@ class ShapePoint implements PlotPoint {
 
     public Datum getDatum() {
         return datum;
+    }
+    
+    /* For the present, only TextLinePoints can have samples. */
+    public Sample getSample() {
+        return null;
     }
 
     public Shape getShape() {

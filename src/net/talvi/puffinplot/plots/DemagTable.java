@@ -42,7 +42,7 @@ public class DemagTable extends Plot {
 
     private final double us = getUnitSize();
     private final List<Double> xSpacing =
-            Arrays.asList(420*us, 420*us, 420*us, 550*us, 480*us);
+            Arrays.asList(360*us, 420*us, 420*us, 620*us, 580*us);
     private final int ySpacing = (int) (120 * getUnitSize());
     private final List<String> headers = 
             Arrays.asList(new String[] {"demag.", "dec.", "inc.", "int.", "m.s."});
@@ -85,7 +85,7 @@ public class DemagTable extends Plot {
         final List<String> headers2 = new ArrayList<String>(headers);
         if (sample.getDatum(0).getTreatType() == TreatType.THERMAL)
             headers2.set(0, "temp.");
-        points.add(new TextLinePoint(this, g, 10, null, headers2, xSpacing));
+        points.add(new TextLinePoint(this, g, 10, null, null, headers2, xSpacing));
         final boolean useSequence = (Datum.maxTreatmentLevel(data) == 0);
         int sequence = 1;
         float yPos = 2 * ySpacing;
@@ -106,7 +106,7 @@ public class DemagTable extends Plot {
             // throws an ArrayFormatException (at least in Sun Java 5 & 6)
             values.add(format("%.2e", p.mag()));
             values.add(format("%.1e", d.getMagSus()));
-            points.add(new TextLinePoint(this, g, yPos, d, values, xSpacing));
+            points.add(new TextLinePoint(this, g, yPos, d, null, values, xSpacing));
             yPos += ySpacing;
             sequence++;
         }

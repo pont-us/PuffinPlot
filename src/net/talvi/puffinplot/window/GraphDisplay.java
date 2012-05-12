@@ -135,6 +135,16 @@ public abstract class GraphDisplay extends JPanel implements Printable {
     public Collection<Plot> getPlots() {
         return plots.values();
     }
+    
+    /**
+     * Returns the plot with a specified class name.
+     * 
+     * @param name the name of a subclass of {@code Plot}
+     * @return the plot with the given class, or {@code null} if there is none
+     */
+    public Plot getPlotByClassName(String name) {
+        return plots.get(name);
+    }
 
     /** Paints this graph display to a graphics context. 
      * @param g the graphics context in which to paint */

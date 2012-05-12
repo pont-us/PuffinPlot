@@ -164,6 +164,13 @@ class DepthSlider extends JPanel
     public int getValue() {
         return value;
     }
+    
+    public void setValue(int newValue) {
+        value = constrain(newValue);
+        repaint();
+        // We don't notify the change listeners here, since
+        // the change was not initiated by this DepthSlider.
+    }
 
     void changeValueBy(int i) {
         value = constrain(value + i);

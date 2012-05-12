@@ -21,20 +21,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.BitSet;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.talvi.puffinplot.PuffinApp;
@@ -54,6 +41,7 @@ public final class Suite {
     private File puffinFile;
     private List<Sample> samples = new ArrayList<Sample>(); // samples in order
     private LinkedHashMap<String, Sample> samplesById; // name or depth as appropriate
+    private HashMap<Sample, Integer> indicesBySample; // maps sample to index
     private Map<Integer, Line> dataByLine;
     private int currentSampleIndex = 0;
     private MeasType measType;
@@ -76,6 +64,13 @@ public final class Suite {
         return Collections.unmodifiableList(loadWarnings);
     }
 
+    private void updateReverseIndex() {
+        indicesBySample = new HashMap<Sample, Integer>(getNumSamples());
+        for (int i=0; i<samples.size(); i++) {
+            indicesBySample.put(samples.get(i), i);
+        }
+    }
+    
     private static SuiteCalcs calculateSuiteMeans(List<Sample> selSamps,
             List<Site> selSites) {
         List<Vec3> sampleDirs = new ArrayList<Vec3>(selSamps.size());
@@ -99,7 +94,7 @@ public final class Suite {
     
     /** Calculates Fisher statistics on all the calculated PCA 
      * directions for samples within the suite. The Fisher parameters
-     * are stored in the suite and can be retreived with
+     * are stored in the suite and can be retrieved with
      * {@link #getSuiteMeans()}. */
     public void calculateSuiteMeans() {
         final List<Sample> selSamps = PuffinApp.getInstance().getSelectedSamples();
@@ -109,7 +104,7 @@ public final class Suite {
 
     /** Calculates and returns Fisher statistics on all the calculated PCA 
      * directions for samples within supplied suite. The Fisher parameters
-     * are stored in the suite and can be retreived with
+     * are stored in the suite and can be retrieved with
      * {@link #getSuiteMeans()}.
      * @param suites the suites on which to calculate statistics
      * @return the results of the calculation
@@ -449,6 +444,7 @@ public final class Suite {
             // guessSites(); // rendered obsolete by new site manipulation facilities
         }
         processPuffinLines(puffinLines);
+        updateReverseIndex();
     }
     
     /** Performs all possible sample and site calculations.
@@ -627,6 +623,14 @@ public final class Suite {
         return samples.get(i);
     }
 
+    /** Returns the index of a specified sample within this suite.
+     * @param sample a sample in the suite
+     * @return the index of the sample, or {@code -1} if not in this suite */
+    public int getIndexBySample(Sample sample) {
+        final Integer index =  indicesBySample.get(sample);
+        return index==null ? -1 : index;
+    }
+    
     /** Returns the tray correction for the specified data point.
      * Not currently used.
      * @param d a data point representing a magnetic measurement
@@ -756,6 +760,7 @@ public final class Suite {
                 }
             }
         }
+        updateReverseIndex();
     }
 
     /** Imports AMS data from ASC files in the format produced by
@@ -790,6 +795,7 @@ public final class Suite {
             double[] v = ad.getTensor();
             sample.setAmsFromTensor(v[0], v[1], v[2], v[3], v[4], v[5]);
         }
+        updateReverseIndex();
     }
 
     /** Exports a subset of this suite's data to multiple files, one file
@@ -1148,11 +1154,13 @@ public final class Suite {
      * The sample's position is determined by
      * its name. Provided that the suite is sorted by sample name (or depth),
      * the sample will be inserted at its correct position according to 
-     * that sorting.
+     * that sorting. Note that the reverse (sample-to-index) map is not
+     * updated; this must be done manually with a call to
+     * updateReverseIndex().
      * @param id the identifier or name of the new sample
      * @return a new sample with the supplied identifier
      */
-    public Sample insertNewSample(String id) {
+    private Sample insertNewSample(String id) {
         final Sample newSample = new Sample(id, this);
         int position = -1;
         do {

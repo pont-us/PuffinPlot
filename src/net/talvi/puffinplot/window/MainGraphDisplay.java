@@ -44,9 +44,9 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
     private List<Sample> samplesForPrinting = null;
     private int printPageIndex = -1;
     private final static String[] plotNames = {"SampleEqAreaPlot", "ZPlot",
-        "DemagPlot", "DataTable", "SampleDataTable", "PlotTitle", "SiteDataTable",
+        "DemagPlot", "DemagTable", "SampleParamsLegend", "PlotTitle", "SiteParamsLegend",
         "AmsPlot", "TernaryPlot", "SiteEqAreaPlot", "SuiteEqAreaPlot",
-        "NrmHistogram"};
+        "SampleParamsTable", "NrmHistogram"};
     private final PlotParams params;
 
     MainGraphDisplay() {
