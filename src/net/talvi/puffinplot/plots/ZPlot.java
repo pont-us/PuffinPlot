@@ -25,14 +25,19 @@ import static java.util.Collections.max;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.RenderingHints.Key;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.text.AttributedString;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import java.util.prefs.Preferences;
+import net.talvi.puffinplot.Util;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 import net.talvi.puffinplot.data.Correction;
@@ -81,14 +86,22 @@ public class ZPlot extends Plot {
     
     private void drawLine(Graphics2D g, double x, double y,
             double angleRad, ZplotAxes axes, Color colour) {
-        final Rectangle oldClip = g.getClipBounds();
-        g.setClip(axes.getBounds());
-        final double dx = 800*sin(angleRad);
-        final double dy = 800*cos(angleRad);
+        // Note that line clipping is done ‘manually’. The previous implementation
+        // just used g.setClip(axes.getBounds()) (saving and restoring the
+        // previous clip rectangle), but this caused problems, chiefly
+        // that the lines would appear at full length in SVG and PDF exports.
+        // Unfortunately there seems to be no appropriate clipping
+        // function in the Java libraries, so I have added a clipping routine
+        // to the Util class.
+        // SAFE_LENGTH is intended always to reach the edges of the plot.
+        final double SAFE_LENGTH = 2000;
+        final double dx = SAFE_LENGTH * sin(angleRad);
+        final double dy = SAFE_LENGTH * cos(angleRad);
         g.setStroke(getStroke());
         g.setColor(colour);
-        g.draw(new Line2D.Double(x-dx, y+dy, x+dx, y-dy));
-        g.setClip(oldClip);
+        final Line2D unclipped = new Line2D.Double(x-dx, y+dy, x+dx, y-dy);
+        final Line2D clipped = Util.clipLineToRectangle(unclipped, axes.getBounds());
+        g.draw(clipped);
     }
     
     @Override

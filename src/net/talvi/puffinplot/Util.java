@@ -16,6 +16,9 @@
  */
 package net.talvi.puffinplot;
 
+import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
@@ -99,4 +102,89 @@ public class Util {
         }
         return result;
     }
+    
+    public static Line2D clipLineToRectangle(Line2D line, Rectangle2D r) {
+        boolean accept = false, done = false;
+        Outcode oc0 = new Outcode(line.getP1(), r),
+                oc1 = new Outcode(line.getP2(), r),
+                ocOut;
+        double x = 0, y = 0,
+                x0 = line.getX1(),
+                y0 = line.getY1(),
+                x1 = line.getX2(),
+                y1 = line.getY2();
+        do {
+            if (oc0.inside() && oc1.inside()) {
+                done = accept = true;
+            } else if (oc0.sameSide(oc1)) {
+                done = true;
+            } else {
+                ocOut = oc0.outside() ? oc0 : oc1;
+                if (ocOut.top()) {
+                    x = x0 + (x1 - x0) * (r.getMaxY() - y0) / (y1 - y0);
+                    y = r.getMaxY();
+                } else if (ocOut.bottom()) {
+                    x = x0 + (x1 - x0) * (r.getMinY() - y0) / (y1 - y0);
+                    y = r.getMinY();
+                } else if (ocOut.right()) {
+                    y = y0 + (y1 - y0) * (r.getMaxX() - x0) / (x1 - x0);
+                    x = r.getMaxX();
+                } else if (ocOut.left()) {
+                    y = y0 + (y1 - y0) * (r.getMinX() - x0) / (x1 - x0);
+                    x = r.getMinX();
+                }
+                if (ocOut.equals(oc0)) {
+                    x0 = x;
+                    y0 = y;
+                    oc0 = new Outcode(x0, y0, r);
+                } else {
+                    x1 = x;
+                    y1 = y;
+                    oc1 = new Outcode(x1, y1, r);
+                }
+            }
+        } while (!done);
+        
+        if (accept) return new Line2D.Double(x0, y0, x1, y1);
+        else return null;
+    }
+
+    private static class Outcode {
+        private int bitField = 0;
+        public Outcode(Point2D p, Rectangle2D r) {
+            this(p.getX(), p.getY(), r);
+        }
+        public Outcode(double x, double y, Rectangle2D r) {
+            bitField = (y > r.getMaxY() ? 8 : 0) |
+               (y < r.getMinY() ? 4 : 0) |
+               (x > r.getMaxX() ? 2 : 0) |
+               (x < r.getMinX() ? 1 : 0);
+        }
+        public boolean top() { return (bitField & 8) > 0; }
+        public boolean bottom() { return (bitField & 4) > 0; }
+        public boolean right() { return (bitField & 2) > 0; }
+        public boolean left() { return (bitField & 1) > 0; }
+        public boolean inside() { return bitField == 0; }
+        public boolean outside() { return bitField != 0; }
+        @Override
+        public boolean equals(Object o) {
+            if (o instanceof Outcode) {
+                final Outcode oc = (Outcode) o;
+                return (bitField == oc.bitField);
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 47 * hash + this.bitField;
+            return hash;
+        }
+        public boolean sameSide(Outcode oc) {
+            return (bitField & oc.bitField) != 0;
+        }
+    }
+
 }
