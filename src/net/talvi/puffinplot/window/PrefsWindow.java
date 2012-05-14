@@ -159,6 +159,9 @@ public class PrefsWindow extends JFrame {
                 "Default", "PuffinPlot's appearance (changes take effect on restart)"));
         miscPanel.add(makeLabelledPrefBox("GC validity",
                 "data.greatcircles.validityExpr", "N>=3 and a95<3.5 and k>3"));
+        miscPanel.add(makeLabelledPrefComboBox("Zplot PCA display",
+                "plots.zplotPcaDisplay", new String[] {"Long", "Short", "None"},
+                "Long", "How PCA lines are shown on the Zijderveld plot"));
         miscPanel.add(Box.createVerticalGlue());
 
         tp.addTab("2G import", null, loadingPanel, "Settings for reading 2G data files");

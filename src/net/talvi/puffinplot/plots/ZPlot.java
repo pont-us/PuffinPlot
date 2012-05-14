@@ -31,6 +31,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.text.AttributedString;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -61,6 +62,7 @@ public class ZPlot extends Plot {
 
     private ZplotAxes axes;
     private final ZplotLegend legend;
+    private final Preferences prefs;
 
     /** Creates a Zijderveld plot with the supplied parameters.
      * 
@@ -71,6 +73,7 @@ public class ZPlot extends Plot {
     public ZPlot(GraphDisplay parent, PlotParams params, Preferences prefs) {
         super(parent, params, prefs);
         legend = new ZplotLegend(parent, params, prefs);
+        this.prefs = prefs;
     }
 
     private static Rectangle2D extent(List<Datum> sample, Correction c,
@@ -84,8 +87,8 @@ public class ZPlot extends Plot {
         return new Rectangle2D.Double(xMin, yMin, xMax-xMin, yMax-yMin);
     }
     
-    private void drawLine(Graphics2D g, double x, double y,
-            double angleRad, ZplotAxes axes, Color colour) {
+    private void drawPcaLine(Graphics2D g, double x, double y,
+            double angleRad, ZplotAxes axes, Color colour, Rectangle2D clip) {
         // Note that line clipping is done ‘manually’. The previous implementation
         // just used g.setClip(axes.getBounds()) (saving and restoring the
         // previous clip rectangle), but this caused problems, chiefly
@@ -99,9 +102,8 @@ public class ZPlot extends Plot {
         final double dy = SAFE_LENGTH * cos(angleRad);
         g.setStroke(getStroke());
         g.setColor(colour);
-        final Line2D unclipped = new Line2D.Double(x-dx, y+dy, x+dx, y-dy);
-        final Line2D clipped = Util.clipLineToRectangle(unclipped, axes.getBounds());
-        g.draw(clipped);
+        g.draw(Util.clipLineToRectangle(
+                new Line2D.Double(x-dx, y+dy, x+dx, y-dy), clip));
     }
     
     @Override
@@ -140,34 +142,51 @@ public class ZPlot extends Plot {
         final double scale = axes.getScale();
         final double xOffset = axes.getXOffset();
         final double yOffset = axes.getYOffset();
+        final List<Point2D> pcaPointsH = new ArrayList<Point2D>(data.size()+1);
+        final List<Point2D> pcaPointsV = new ArrayList<Point2D>(data.size()+1);
         
         boolean first = true;
         for (Datum d: data) {
-            final Vec3 p = d.getMoment(correction);
+            final Vec3 v = d.getMoment(correction);
             // Plot the point in the horizontal plane
-            final double x1 = xOffset + p.y * scale;
-            final double y1 = yOffset - p.x * scale;
-            addPoint(d, new Point2D.Double(x1, y1), true, first, !first);
+            final double x1 = xOffset + v.y * scale;
+            final double y1 = yOffset - v.x * scale;
+            final Point2D point = new Point2D.Double(x1, y1);
+            addPoint(d, point, true, first, !first);
+            if (d.isInPca()) pcaPointsH.add(point);
             first = false;
         }
         first = true;
         for (Datum d: data) {
-            Vec3 p = d.getMoment(correction);
+            Vec3 v = d.getMoment(correction);
             // Now plot the point in the vertical plane
-            final double x2 = xOffset + p.getComponent(vVs) * scale;
-            final double y2 = yOffset - p.getComponent(MeasurementAxis.MINUSZ) * scale;
-            addPoint(d, new Point2D.Double(x2, y2), false, first, !first);
+            final double x2 = xOffset + v.getComponent(vVs) * scale;
+            final double y2 = yOffset - v.getComponent(MeasurementAxis.MINUSZ) * scale;
+            final Point2D point = new Point2D.Double(x2, y2);
+            addPoint(d, point, false, first, !first);
+            if (d.isInPca()) pcaPointsV.add(point);
             first = false;
         }
         
         final PcaValues pca = sample.getPcaValues();
-        if (pca != null) {
+        final String pcaStyle = prefs.get("plots.zplotPcaDisplay", "Long");
+        if (pca != null && !"None".equals(pcaStyle)) {
+            if (pca.isAnchored()) {
+                final Point2D origin = new Point2D.Double(axes.getXOffset(), axes.getYOffset());
+                pcaPointsH.add(origin);
+                pcaPointsV.add(origin);
+            }
+            Rectangle2D clipRectangle = axes.getBounds(); // if "Short" will overwrite
+            
             final double incRad = pca.getDirection().getIncRad();
             final double decRad = pca.getDirection().getDecRad();
             final double x1 = pca.getOrigin().y * scale;
             final double y1 = - pca.getOrigin().x * scale;
-            drawLine(g, xOffset + x1, yOffset + y1,
-                    decRad, axes, Color.BLUE);
+            if ("Short".equals(pcaStyle)) {
+                clipRectangle = Util.envelope(pcaPointsH);
+            }
+            drawPcaLine(g, xOffset + x1, yOffset + y1,
+                    decRad, axes, Color.BLUE, clipRectangle);
             
             final double x2 = pca.getOrigin().getComponent(vVs) * scale;
             final double y2 = - pca.getOrigin().getComponent(MeasurementAxis.MINUSZ) * scale;
@@ -190,7 +209,11 @@ public class ZPlot extends Plot {
                  * so there is no meaningful plane onto which the PCA line
                  * can be projected.
                  */
-                drawLine(g, xOffset + x2, yOffset + y2, Math.PI/2 + incCorr, axes, Color.BLUE);
+                if ("Short".equals(pcaStyle)) {
+                    clipRectangle = Util.envelope(pcaPointsV);
+                }
+                drawPcaLine(g, xOffset + x2, yOffset + y2, Math.PI/2 + incCorr,
+                        axes, Color.BLUE, clipRectangle);
             }
         }
         drawPoints(g);

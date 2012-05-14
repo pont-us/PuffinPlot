@@ -21,6 +21,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
@@ -185,6 +186,22 @@ public class Util {
         public boolean sameSide(Outcode oc) {
             return (bitField & oc.bitField) != 0;
         }
+    }
+    
+    public static Rectangle2D envelope(Collection<Point2D> points) {
+        if (points.isEmpty()) return null;
+        double x0, y0, x1, y1;
+        x0 = y0 = Double.POSITIVE_INFINITY;
+        x1 = y1 = Double.NEGATIVE_INFINITY;
+        for (Point2D p: points) {
+            final double x = p.getX();
+            final double y = p.getY();
+            if (x < x0) x0 = x;
+            if (x > x1) x1 = x;
+            if (y < y0) y0 = y;
+            if (y > y1) y1 = y;
+        }
+        return new Rectangle2D.Double(x0, y0, x1-x0, y1-y0);
     }
 
 }
