@@ -219,5 +219,18 @@ public class Util {
         }
         return new Rectangle2D.Double(x0, y0, x1-x0, y1-y0);
     }
+    
+    public static Line2D scaleLine(Line2D line, double scale) {
+        if (scale==1) return line;
+        final double x0 = line.getX1();
+        final double y0 = line.getY1();
+        final double x1 = line.getX2();
+        final double y1 = line.getY2();
+        final double xmid = (x0+x1)/2;
+        final double ymid = (y0+y1)/2;
+        final double xd = (x1-x0) * 0.5 * scale;
+        final double yd = (y1-y0) * 0.5 * scale;
+        return new Line2D.Double(xmid-xd, ymid-yd, xmid+xd, ymid+yd);
+    }
 
 }

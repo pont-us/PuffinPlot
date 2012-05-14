@@ -1055,7 +1055,9 @@ listed below include textual elements such as legends and tables.
   the two projections of the \caps{pca} lines are overlaid on the plot in
   blue. (If the \ppcmd{V vs. H} vertical projection is selected, only the
   horizontal projection of the \caps{pca} line is shown, since \ppcmd{V vs.
-    H} effectively uses a different vertical projection for each point.)
+    H} effectively uses a different vertical projection for each point.) The
+  appearance of the PCA lines can be changed using the Preferences dialog
+  (see section~\ref{sec:prefs-misc}).
 
 \item[Demag.] is a plot of demagnetization step (in mT or \textdegree C)
   versus intensity of magnetization (in A/m), shown as a line of filled
@@ -1086,6 +1088,15 @@ listed below include textual elements such as legends and tables.
   \caps{mad}1 value indicating the goodness of fit of the great circle. (Note
   that this may be different from the \caps{mad}1 for the \caps{pca} fit,
   since different sets of points may be used for the two fits.)
+
+\item[Sample parameter table] shows a summary of parameters for each sample
+  within the current site: declination, inclination, and type of analysis
+  (`PCAa' and `PCAu' for anchored and unanchored PCA respectively, and `GC'
+  for great circle). For PCA analysis, the declination and inclination
+  give the first principal component; for great-circle analysis, they
+  give the pole to the circle. Clicking on a line within this table
+  will show the corresponding sample's data -- in effect it works
+  as an extra sample chooser.
 
 \item[Title] simply shows the name of the current sample and the current
   site, for a discrete suite. For a continuous (long core) suite, it shows
@@ -1333,6 +1344,19 @@ which means that a great-circle fit will be considered valid if it has an
 \alnifi\ below 3, a $k$ above five, and either at least three endpoints or
 at least five circles. Setting the validity expression to \texttt{True}
 will cause all great-circle fits to be considered valid.
+
+\item[Zplot PCA display] controls the manner in which PCA directions are
+  shown on the Zijderveld plot (see section~\ref{sec:plot-types}). The
+  available settings are:
+
+\begin{description}
+\item[Full] PCA lines will extend right to the edges of the Zijderveld
+  plot.
+\item[Long] PCA lines will be shortened by 10\% from the `Full' length.
+\item[Short] PCAlines will only extend through the points used to calculate
+  the PCA.
+\item[None] No PCA lines will be shown.
+\end{description}
 
 \end{menuitemlist}
 

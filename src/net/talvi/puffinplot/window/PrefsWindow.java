@@ -160,7 +160,7 @@ public class PrefsWindow extends JFrame {
         miscPanel.add(makeLabelledPrefBox("GC validity",
                 "data.greatcircles.validityExpr", "N>=3 and a95<3.5 and k>3"));
         miscPanel.add(makeLabelledPrefComboBox("Zplot PCA display",
-                "plots.zplotPcaDisplay", new String[] {"Long", "Short", "None"},
+                "plots.zplotPcaDisplay", new String[] {"Full", "Long", "Short", "None"},
                 "Long", "How PCA lines are shown on the Zijderveld plot"));
         miscPanel.add(Box.createVerticalGlue());
 

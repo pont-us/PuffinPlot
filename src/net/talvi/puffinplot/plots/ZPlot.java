@@ -75,7 +75,8 @@ public class ZPlot extends Plot {
     }
     
     private void drawPcaLine(Graphics2D g, double x, double y,
-            double angleRad, ZplotAxes axes, Color colour, Rectangle2D clip) {
+            double angleRad, ZplotAxes axes, Color colour, Rectangle2D clip,
+            double scale) {
         // Note that line clipping is done ‘manually’. The previous implementation
         // just used g.setClip(axes.getBounds()) (saving and restoring the
         // previous clip rectangle), but this caused problems, chiefly
@@ -89,8 +90,10 @@ public class ZPlot extends Plot {
         final double dy = SAFE_LENGTH * cos(angleRad);
         g.setStroke(getStroke());
         g.setColor(colour);
-        g.draw(Util.clipLineToRectangle(
-                new Line2D.Double(x-dx, y+dy, x+dx, y-dy), clip));
+        Line2D line = Util.clipLineToRectangle(
+                new Line2D.Double(x-dx, y+dy, x+dx, y-dy), clip);
+        line = Util.scaleLine(line, scale);
+        g.draw(line);
     }
     
     @Override
@@ -159,7 +162,8 @@ public class ZPlot extends Plot {
         }
         
         final PcaValues pca = sample.getPcaValues();
-        final String pcaStyle = prefs.get("plots.zplotPcaDisplay", "Long");
+        final String pcaStyle = prefs.get("plots.zplotPcaDisplay", "Full");
+        final double lineScale = "Long".equals(pcaStyle) ? 0.9 : 1.0;
         if (pca != null && !"None".equals(pcaStyle)) {
             if (pca.isAnchored()) {
                 final Point2D origin = new Point2D.Double(axes.getXOffset(), axes.getYOffset());
@@ -176,7 +180,7 @@ public class ZPlot extends Plot {
                 clipRectangle = Util.envelope(pcaPointsH);
             }
             drawPcaLine(g, xOffset + x1, yOffset + y1,
-                    decRad, axes, Color.BLUE, clipRectangle);
+                    decRad, axes, Color.BLUE, clipRectangle, lineScale);
             
             final double x2 = pca.getOrigin().getComponent(vVs) * scale;
             final double y2 = - pca.getOrigin().getComponent(MeasurementAxis.MINUSZ) * scale;
@@ -203,7 +207,7 @@ public class ZPlot extends Plot {
                     clipRectangle = Util.envelope(pcaPointsV);
                 }
                 drawPcaLine(g, xOffset + x2, yOffset + y2, Math.PI/2 + incCorr,
-                        axes, Color.BLUE, clipRectangle);
+                        axes, Color.BLUE, clipRectangle, lineScale);
             }
         }
         drawPoints(g);
