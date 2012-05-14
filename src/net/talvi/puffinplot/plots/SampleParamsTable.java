@@ -33,8 +33,11 @@ import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 
 /**
- *
- * @author pont
+ * A table showing sample directions for the current site.
+ * The table shows the sample name, the calculation method
+ * (anchored or unanchored PCA or great circle), declination,
+ * and inclination. For PCA the principal direction is shown;
+ * for great circles, the direction of the pole is shown.
  */
 public class SampleParamsTable extends Plot {
 
@@ -45,7 +48,14 @@ public class SampleParamsTable extends Plot {
     private final List<String> headers = 
             Arrays.asList(new String[] {"Sample", "type", "dec.", "inc."});
     
-    public SampleParamsTable(GraphDisplay parent, PlotParams params, Preferences prefs) {
+    /** Creates a sample parameter table with the supplied parameters.
+     * 
+     * @param parent the graph display containing the plot
+     * @param params the parameters of the plot
+     * @param prefs the preferences containing the plot configuration
+     */
+    public SampleParamsTable(GraphDisplay parent, PlotParams params,
+            Preferences prefs) {
         super(parent, params, prefs);
     }
     

@@ -443,10 +443,33 @@ public abstract class Plot
         this.visible = visible;
     }
     
+    /**
+     * Adds a listener for sample clicks to this plot. When the user clicks
+     * on a plot element representing a sample, the
+     * {@link SampleClickListener#sampleClicked(net.talvi.puffinplot.data.Sample)}
+     * method of the supplied listener will be invoked. The listener can be
+     * removed using the {@link Plot#removeSampleClickListener(net.talvi.puffinplot.plots.SampleClickListener)}
+     * method.
+     * 
+     * @see SampleClickListener
+     * @see Plot#removeSampleClickListener(net.talvi.puffinplot.plots.SampleClickListener) 
+     * 
+     * @param listener the listener to add
+     */
     public void addSampleClickListener(SampleClickListener listener) {
         sampleClickListeners.add(listener);
     }
     
+    /**
+     * Removes a sample click listener which was previously added to this plot.
+     * If the listener was never added to the plot, no action is taken and
+     * no exception is raised.
+     * 
+     * @see Plot#addSampleClickListener(net.talvi.puffinplot.plots.SampleClickListener) 
+     * @see SampleClickListener
+     * 
+     * @param listener the listener to remove
+     */
     public void removeSampleClickListener(SampleClickListener listener) {
         sampleClickListeners.remove(listener);
     }

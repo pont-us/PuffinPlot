@@ -20,10 +20,24 @@ package net.talvi.puffinplot.plots;
 import net.talvi.puffinplot.data.Sample;
 
 /**
- *
- * @author pont
+ * An interface for classes which want to be notified of clicks on samples.
+ * More precisely, clicks on plot elements representing samples.
+ * A class implementing this interface should be registered with the
+ * plot of interest by calling
+ * {@link Plot#addSampleClickListener(net.talvi.puffinplot.plots.SampleClickListener)}.
+ * Once this has been done, the {@link SampleClickListener#sampleClicked(net.talvi.puffinplot.data.Sample) }
+ * will be called whenever the user clicks on a plot element representing
+ * a sample.
+ * 
+ * @see Plot#addSampleClickListener(net.talvi.puffinplot.plots.SampleClickListener)
+ * @see Plot#removeSampleClickListener(net.talvi.puffinplot.plots.SampleClickListener)
  */
 public interface SampleClickListener {
     
+    /**
+     * Invoked when a sample is clicked in a plot.
+     * 
+     * @param sample the sample corresponding to the plot element which was clicked
+     */
     public void sampleClicked(Sample sample);
 }

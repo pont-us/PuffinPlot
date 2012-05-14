@@ -16,38 +16,25 @@
  */
 package net.talvi.puffinplot.plots;
 
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
-import static java.lang.Math.atan;
-import static java.util.Collections.min;
-import static java.util.Collections.max;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.RenderingHints.Key;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import static java.lang.Math.atan;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 import java.text.AttributedString;
 import java.util.ArrayList;
+import static java.util.Collections.max;
+import static java.util.Collections.min;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.Util;
+import net.talvi.puffinplot.data.*;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
-import net.talvi.puffinplot.data.Correction;
-import net.talvi.puffinplot.data.Datum;
-import net.talvi.puffinplot.data.DatumComparator;
-import net.talvi.puffinplot.data.MeasurementAxis;
-import net.talvi.puffinplot.data.PcaValues;
-import net.talvi.puffinplot.data.Vec3;
-import net.talvi.puffinplot.data.Sample;
 
 /**
  * A Zijderveld plot for a sample's demagnetization data. The vertical
@@ -142,6 +129,9 @@ public class ZPlot extends Plot {
         final double scale = axes.getScale();
         final double xOffset = axes.getXOffset();
         final double yOffset = axes.getYOffset();
+        
+        // We keep track of the points used for the PCA calculation in 
+        // order to calculate the length for the short-format PCA fit line.
         final List<Point2D> pcaPointsH = new ArrayList<Point2D>(data.size()+1);
         final List<Point2D> pcaPointsV = new ArrayList<Point2D>(data.size()+1);
         
