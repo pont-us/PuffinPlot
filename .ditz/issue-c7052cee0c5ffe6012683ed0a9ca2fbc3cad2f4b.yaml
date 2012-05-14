@@ -10,8 +10,8 @@ type: :bugfix
 component: PuffinPlot
 release: "1.01"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2012-05-10 14:33:00.282361 Z
 references: []
 
@@ -21,3 +21,10 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2012-05-14 14:02:54.239330 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    I didn't intend this section to convey the meaning which GA
+    gleaned from it. I have rewritten it in a way which I hope is
+    less ambiguous.
