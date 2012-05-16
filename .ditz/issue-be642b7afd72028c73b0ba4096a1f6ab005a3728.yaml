@@ -40,7 +40,7 @@ type: :bugfix
 component: PuffinPlot
 release: "1.01"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
+status: :in_progress
 disposition: 
 creation_time: 2012-05-10 16:31:43.330699 Z
 references: []
@@ -55,3 +55,7 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - commented
   - "\xE2\x80\x98Native vector graphics export\xE2\x80\x99 added as issue #227."
+- - 2012-05-16 09:29:00.918353 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""

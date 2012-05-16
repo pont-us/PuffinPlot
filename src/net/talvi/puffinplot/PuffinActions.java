@@ -26,6 +26,7 @@ import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.logging.Level;
@@ -737,17 +738,38 @@ public class PuffinActions {
 
     /**
      * Opens a save dialog allowing the current main display to be saved
-     * as an SVG file.
+     * as an SVG file using the Batik library.
      */
-    public final Action exportSvg = new PuffinAction("Export SVG…",
-            "Save current display to an SVG file",
-            '9', false, 0) {
+    public final Action exportSvgBatik = new PuffinAction("Export SVG (Batik)…",
+            "Save current display to an SVG file, using the Batik graphics library",
+            '6', false, 0) {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {
-            String pathname = getSavePath("Export to SVG", ".svg",
+            String pathname = getSavePath("Export to SVG (Batik)", ".svg",
                     "Scalable Vector Graphics");
             if (pathname != null)
-                app.getMainWindow().getGraphDisplay().saveToSvg(pathname);
+                app.getMainWindow().getGraphDisplay().saveToSvgBatik(pathname);
+        }
+    };
+    
+    /**
+     * Opens a save dialog allowing the current main display to be saved
+     * as an SVG file using the FreeHEP library.
+     */
+    public final Action exportSvgFreehep = new PuffinAction("Export SVG (FreeHEP)…",
+            "Save current display to an SVG file, using the FreeHEP graphics library",
+            '7', false, 0) {
+        private static final long serialVersionUID = 1L;
+        public void actionPerformed(ActionEvent e) {
+            String pathname = getSavePath("Export to SVG (FreeHEP)", ".svg",
+                    "Scalable Vector Graphics");
+            if (pathname != null) {
+                try {
+                app.getMainWindow().getGraphDisplay().saveToSvgFreehep(pathname);
+                } catch (IOException ex) {
+                    app.errorDialog("Error exporting SVG", ex.getLocalizedMessage());
+                }
+            }
         }
     };
 
@@ -755,19 +777,39 @@ public class PuffinActions {
      * Opens a save dialog allowing the current main display to be saved
      * as a PDF file.
      */
-    public final Action exportPdf = new PuffinAction("Export PDF…",
-            "Print data for selected samples to a PDF file",
-            '9', true, 0) {
+    public final Action exportPdfItext = new PuffinAction("Export PDF (iText)…",
+            "Print data for selected samples to a PDF file, using the iText graphics library",
+            '8', false, 0) {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {
             String pathname = getSavePath("Export to PDF", ".pdf",
                     "Portable Document Format");
             if (pathname != null)
                 try {
-                app.exportPdf(new File(pathname));
+                app.exportPdfItext(new File(pathname));
             } catch (DocumentException ex) {
                 Logger.getLogger(PuffinActions.class.getName()).log(Level.SEVERE, null, ex);
             } catch (FileNotFoundException ex) {
+                Logger.getLogger(PuffinActions.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    };
+    
+    /**
+     * Opens a save dialog allowing the current main display to be saved
+     * as a PDF file.
+     */
+    public final Action exportPdfFreehep = new PuffinAction("Export PDF (FreeHEP)…",
+            "Print data for selected samples to a PDF file, using the FreeHEP graphics library",
+            '9', false, 0) {
+        private static final long serialVersionUID = 1L;
+        public void actionPerformed(ActionEvent e) {
+            String pathname = getSavePath("Export to PDF", ".pdf",
+                    "Portable Document Format");
+            if (pathname != null)
+                try {
+                app.exportPdfFreehep(new File(pathname));
+            } catch (IOException ex) {
                 Logger.getLogger(PuffinActions.class.getName()).log(Level.SEVERE, null, ex);
             }
         }

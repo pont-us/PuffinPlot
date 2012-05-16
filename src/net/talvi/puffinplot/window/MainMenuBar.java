@@ -123,8 +123,12 @@ public final class MainMenuBar extends JMenuBar {
                 makeMenu("Export data", pa.exportCalcsSample,
                 pa.exportCalcsSite, pa.exportCalcsSuite, 
                 pa.exportCalcsMultiSuite, pa.exportIrm),
+                makeMenu("Export graphics",
+                pa.exportSvgBatik, pa.exportSvgFreehep,
+                pa.exportPdfItext, pa.exportPdfFreehep),
                 pa.pageSetup, pa.print, pa.printSuiteEqArea, pa.printGc,
-                pa.importAms, pa.exportSvg, pa.exportPdf,
+                pa.importAms,
+
                 pa.runScript,
                 pa.exportPrefs, pa.importPrefs, pa.clearPreferences,
                 pa.prefs, pa.quit));

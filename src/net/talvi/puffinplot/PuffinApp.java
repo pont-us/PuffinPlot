@@ -21,7 +21,6 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.DefaultFontMapper;
 import com.lowagie.text.pdf.FontMapper;
 import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfWriter;
 import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.Graphics2D;
@@ -51,6 +50,7 @@ import net.talvi.puffinplot.data.file.FileFormat;
 import net.talvi.puffinplot.plots.Plot;
 import net.talvi.puffinplot.plots.SampleClickListener;
 import net.talvi.puffinplot.window.*;
+import org.freehep.util.UserProperties;
 import org.python.core.PyException;
 import org.python.util.PythonInterpreter;
 
@@ -976,7 +976,7 @@ public final class PuffinApp {
      * rather than a regular file, does not exist but cannot be created,
      * or cannot be opened for any other reason 
      */
-    public void exportPdf(File pdfFile) throws FileNotFoundException, DocumentException {
+    public void exportPdfItext(File pdfFile) throws FileNotFoundException, DocumentException {
         final MainGraphDisplay display = getMainWindow().getGraphDisplay();
         final Dimension size = display.getMaximumSize();
         com.lowagie.text.Document document =
@@ -992,12 +992,14 @@ public final class PuffinApp {
         // we only use one font anyway) which uses some platform-informed
         // heuristics to locate the font on disk.
         // See p. 483 of the itext book for more details.
-        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
+        com.lowagie.text.pdf.PdfWriter writer =
+                com.lowagie.text.pdf.PdfWriter.getInstance(document,
+                new FileOutputStream(pdfFile));
         FontMapper mapper = new DefaultFontMapper();
         document.open();
         PdfContentByte content = writer.getDirectContent();
         int pdfPage = 0;
-        boolean finished = false;
+        boolean finished;
         // a rough imitation of the Java printing interface
         do {
             document.newPage();  // shouldn't make a difference on first pass
@@ -1010,12 +1012,45 @@ public final class PuffinApp {
     }
     
     /**
-     * Saves the current graph display as an SVG file.
+     * Writes a PDF file containing data plots with the current layout
+     * for all selected samples. One page is produced per selected sample.
      * 
-     * @param pathname the path to which to save the SVG file
+     * @param pdfFile the PDF file to which to write the plots
+     * @throws IOException if there was an error during file writing
      */
-    public void exportSvg(String pathname) {
-        getMainWindow().getGraphDisplay().saveToSvg(pathname);
+    public void exportPdfFreehep(File pdfFile) throws IOException {
+        final MainGraphDisplay display = getMainWindow().getGraphDisplay();
+        final Dimension size = display.getMaximumSize();
+        //OutputStream outStream = new FileOutputStream(pdfFile);
+        //org.freehep.graphicsio.pdf.PDFWriter pdfWriter =
+        //        new org.freehep.graphicsio.pdf.PDFWriter(outStream);
+        UserProperties props=(UserProperties)org.freehep.graphicsio.pdf.PDFGraphics2D.getDefaultProperties();
+        props.setProperty(org.freehep.graphicsio.pdf.PDFGraphics2D.TEXT_AS_SHAPES, false);
+        props.setProperty(org.freehep.graphicsio.pdf.PDFGraphics2D.COMPRESS, true);
+        props.setProperty(org.freehep.graphicsio.pdf.PDFGraphics2D.ORIENTATION, org.freehep.graphicsio.PageConstants.LANDSCAPE);
+        org.freehep.graphicsio.pdf.PDFGraphics2D.setDefaultProperties(props);
+        org.freehep.graphicsio.pdf.PDFGraphics2D graphics2d =
+                new org.freehep.graphicsio.pdf.PDFGraphics2D(pdfFile, size);
+        Properties p = new Properties();
+        p.setProperty("PageSize","A4");
+        graphics2d.setProperties(p);
+        graphics2d.setMultiPage(true);
+        graphics2d.startExport();
+        
+        int pdfPage = 0;
+        boolean finished;
+        // a rough imitation of the Java printing interface
+        do {
+            graphics2d.openPage(size, null);
+            finished = display.printPdfPage(graphics2d, pdfPage);
+            pdfPage++;
+            graphics2d.closePage();
+        } while (!finished);
+        
+        //getMainWindow().getGraphDisplay().print(graphics2d);
+        graphics2d.endExport();
+        graphics2d.closeStream();
+        
     }
     
     public void calculateMultiSuiteMeans() {

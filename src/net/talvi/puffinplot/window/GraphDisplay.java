@@ -378,19 +378,10 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         printChildren(graphics);
         setDoubleBuffered(true);
     }
-
-    /** Writes the contents of this display to an SVG file.
+    
+    /** Writes the contents of this display to an SVG file using the Batik library.
      * @param filename the name of the file to which to write */
-    public void saveToSvg(String filename) {
-        //saveToSvgBatik(filename);
-        try {
-        saveToSvgFreehep(filename);
-        } catch (IOException e) {
-            // TODO fix
-        }
-    }
-
-    private void saveToSvgBatik(String filename) {
+    public void saveToSvgBatik(String filename) {
         // Get a DOMImplementation.
         DOMImplementation domImpl =
             GenericDOMImplementation.getDOMImplementation();
@@ -417,7 +408,9 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         }
     }
     
-    private void saveToSvgFreehep(String filename) throws IOException {
+    /** Writes the contents of this display to an SVG file using the FreeHEP library.
+     * @param filename the name of the file to which to write */
+    public void saveToSvgFreehep(String filename) throws IOException {
         SVGGraphics2D g =
                 new org.freehep.graphicsio.svg.SVGGraphics2D(new File(filename),
                 this);
