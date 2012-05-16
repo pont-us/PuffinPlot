@@ -553,6 +553,10 @@ range of its values across all the samples at a site.
   and each line within the file contains the \caps{irm} field strength and
   the magnetization intensity of the sample after application of that field.
 
+\item[File\submenu Export graphics] is a submenu with various options
+  for exporting the plots for the current and selected samples.
+  See section~\ref{sec:graphics-export} for full details.
+
 \item[File\submenu Page Setup\ldots] opens a window allowing you
 to change the paper size, orientation, and margins for printing.
 
@@ -581,17 +585,6 @@ to change the paper size, orientation, and margins for printing.
   in the suite, these samples will be created and added to the suite.
   \caps{Ams} data is not displayed by default; the equal-area plot of
   \caps{ams} data can be activated from the \ppcmd{Preferences} window.
-
-\item[File\submenu Export SVG\ldots] saves the current contents of the main
-  data display as an \caps{svg} (Scalable Vector Graphics) file. As a vector
-  graphics format, \caps{svg} is allows for high-quality reproduction at any
-  size. It can also be easily edited and incorporated into other graphics
-  using vector graphics programs such as Inkscape and Adobe Illustrator.
-
-\item[File\submenu Export PDF\ldots] writes data from the selected samples to
-  a \caps{pdf} (Portable Document Format) file. The resulting \caps{pdf} file
-  will use the current graph layout and will contain one page for each of the
-  selected samples.
 
 \item[File\submenu Run Python script\ldots] runs a user-specified
   external script written in the Python programming language.
@@ -1392,6 +1385,79 @@ are also exported in the sample data \caps{csv} file produced by the
 \ppcmd{File\submenu Export data\submenu Export sample calculations} menu
 item.
 
+\subsection{\label{sec:graphics-export}Exporting graphics}
+
+\subsubsection{Introduction}
+
+PuffinPlot can export the displayed plots in several ways, for printing,
+incorporation into documents, and editing by other programs. Two formats are
+supported:
+
+\begin{description}
+
+\item[SVG (Scalable Vector Graphics)] is a widely supported format for the
+  display and editing of vector graphics data. SVG files can be opened and
+  edited by vector graphics programs such as Inkscape and Adobe Illustrator,
+  and can be incorporated into documents by a variety of programs. The chief
+  limitation of the SVG files exported by PuffinPlot is that they can
+  only contain one page, corresponding to the currently displayed data.
+
+\item[PDF (Portable Document Format)] is a popular format for on-screen
+  display and printing of all kinds of documents. PuffinPlot can produce
+  multi-page PDF documents with one page for each selected sample.
+  Many vector graphics programs can import PDF files, but since PDF is 
+  a format designed primarily for display rather than editing, the results
+  may be inferior to those produced with SVG.
+
+\end{description}
+
+Both these formats are formally standardized; however, they are also large
+and complex, and they are supported to varying extents by a huge number of
+programs. For these reasons, compatibility problems can sometimes occur. It
+is difficult to produce a file which will be guaranteed to work well with any
+program on any operating system. PuffinPlot attempts to mitigate this problem
+by offering a range of different graphics export options, as detailed in the
+next section.
+
+\subsubsection{Graphics export options}
+
+All of these export functions may be found in the \ppcmd{Export graphics}
+submenu of the \ppcmd{File} menu, except for the ‘Print to PDF’ option.
+
+\begin{description}
+
+\item[Export SVG (Batik)] saves the current contents of the main
+  data display as an \caps{svg} file using the Batik software
+  library.
+
+\item[Export SVG (FreeHEP)] saves the current contents of the main
+  data display as an \caps{svg} file using the FreeHEP software
+  library.
+
+\item[Export PDF (iText)] produces \caps{pdf} file using the iText software
+  library. The resulting \caps{pdf} file will use the current graph layout
+  and will contain one page for each of the selected samples.
+
+\item[Export PDF (FreeHEP)] produces a \caps{pdf} file using the FreeHEP
+  software library. The resulting \caps{pdf} file will use the current graph
+  layout and will contain one page for each of the selected samples.
+
+\item[Print to PDF] is another way of producing a PDF file. Select
+  \ppcmd{Print\ldots} from the \ppcmd{File} menu, and select \ppcmd{PDF} as
+  the destination printer. If the PDF option is not available, you will
+  first have to install a PDF printer driver; please see your operating
+  system documentation for details.
+
+\end{description}
+
+These options are to some extent redundant: SVG files produced using the two
+menu items should appear practically identical, as should the three varieties
+of PDF file. However, the internal structures of the files are different,
+which is useful in improving compatibility with other programs. If, for
+example, you find that another program has trouble reading the SVG file
+produced using the Batik option, you may find that if FreeHEP option 
+produces better results.
+
 \subsection{\label{sec:scripting}Scripting}
 
 PuffinPlot's graphical desktop interface is intended to be the primary way to
@@ -1539,6 +1605,8 @@ liberal terms:
 \item Apache batik, for \caps{svg} export.
 
 \item iText, for \caps{pdf} export.
+
+\item FreeHEP, for graphics export.
 
 \item Jython, for scripting.
 

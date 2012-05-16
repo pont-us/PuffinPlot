@@ -1,0 +1,29 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Work on external libraries and build documentation
+desc: |-
+  PuffinPlot now uses several external libraries, which are
+  automatically wrapped up in the final jar. However, there's
+  no explicit documentation on where these libraries should be placed
+  so that they can be found by the NetBeans project. It can be
+  pieced together from the project file itself, but for someone
+  trying to build from scratch it would be good to have a list
+  of dependencies and a standard place to put libraries
+  (at present they're split between ../libraries and /usr/share/java
+  depending on whether they're present in the Ubuntu Lucid repos.
+  Clearly it shouldn't be tied to the OS setup like this --
+  they should all be ../libraries).
+type: :task
+component: PuffinPlot
+release: "1.1"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2012-05-16 17:23:46.728185 Z
+references: []
+
+id: 6c6ac3620e12ec30953c616aca61df9f5b5bcf63
+log_events: 
+- - 2012-05-16 17:23:47.047920 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

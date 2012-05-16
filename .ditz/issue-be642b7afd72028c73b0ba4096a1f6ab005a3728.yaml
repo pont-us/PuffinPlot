@@ -40,8 +40,8 @@ type: :bugfix
 component: PuffinPlot
 release: "1.01"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :in_progress
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2012-05-10 16:31:43.330699 Z
 references: []
 
@@ -59,3 +59,11 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - changed status from unstarted to in_progress
   - ""
+- - 2012-05-16 18:41:02.152964 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    I think I have done as much as practically feasible on this one:
+    options for changing the length of the PCA lines or hiding them 
+    entirely; export options using FreeHEP as well as Batik; and a more
+    thorough discussion of vector export in the manual.

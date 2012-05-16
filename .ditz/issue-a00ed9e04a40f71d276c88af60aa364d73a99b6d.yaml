@@ -8,8 +8,8 @@ type: :task
 component: PuffinPlot
 release: "1.01"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :in_progress
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2012-05-08 12:49:50.642013 Z
 references: []
 
@@ -29,3 +29,9 @@ log_events:
   - |-
     It's producing decent-looking SVG files, though at present
     it's not properly integrated into PuffinPlot.
+- - 2012-05-16 17:20:12.351941 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    FreeHEP integrated, actions added to menu, libraries added to
+    build.
