@@ -1,0 +1,26 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Allow use of strike/dip and azimuth/hade
+desc: "Anonymous reviewer says:\n\
+  \xE2\x80\x98I do prefer to use dip direction and dip for bedding and other\n\
+  planar attitudes- however this is not universally the case- so a\n\
+  toggle option to use either strike and dip, or dip direction and\n\
+  dip, would be useful. Likewise, our lab uses azimuth and hade,\n\
+  rather than azimuth and plunge, for core orientation- so a toggle\n\
+  for either of those formats would also be a good additional\n\
+  feature.\xE2\x80\x99\n\
+  Shouldn't be too hard."
+type: :feature
+component: PuffinPlot
+release: "1.01"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2012-05-17 11:25:06.650251 Z
+references: []
+
+id: 7567f70209cb7439250f83070d9e115de0f3b21c
+log_events: 
+- - 2012-05-17 11:25:07.082076 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
