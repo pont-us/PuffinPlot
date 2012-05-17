@@ -16,13 +16,13 @@
  */
 package net.talvi.puffinplot.data;
 
-import java.util.Collection;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
 import static java.lang.Double.NaN;
 import static java.lang.Double.parseDouble;
 import static java.lang.Math.toRadians;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -304,7 +304,41 @@ public class Datum {
     /** Sets whether this measurement is to be used for a PCA fit.
      * @param v {@code true} to use this measurement for a PCA fit */
     public void setInPca(boolean v)    { inPca = v; }
-
+    
+    /** Returns the sample hade for this datum.
+     * @return the sample's hade, in degrees */
+    public double getSampHade() {
+        return 90 - sampDip;
+    }
+    
+    /** Sets the sample hade for this datum.
+     * Since the hade is the complement of the dip,
+     * this will of course change the sample's dip.
+     * @param hadeDeg the hade to set, in degrees
+     */
+    public void setSampHade(double hadeDeg) {
+        sampDip = 90 - hadeDeg;
+    }
+    
+    /** Returns the formation strike for this datum. 
+     * @return the formation strike, in degrees
+     */
+    public double getFormStrike() {
+        double strike = formAz - 90;
+        if (strike < 0) strike += 360;
+        return strike;
+    }
+    
+    /** Sets the formation strike for this datum.
+     * This will of course also set the formation dip azimuth.
+     * @param strikeDeg the formation strike, in degrees
+     */
+    public void setFormStrike(double strikeDeg) {
+        double az = strikeDeg + 90;
+        if (az > 360) az -= 360;
+        formAz = az;
+    }
+    
     /** Returns sample identifier or measurement depth.
      * If the measurement is discrete, returns the sample identifier;
      * if the measurement is continuous, returns a string representation
@@ -570,7 +604,10 @@ public class Datum {
         case VIRT_MAGNETIZATION: return fmt(getIntensity());
         case VIRT_DECLINATION: return fmt(moment.getDecDeg());
         case VIRT_INCLINATION: return fmt(moment.getIncDeg());
+        case VIRT_SAMPLE_HADE: return fmt(getSampHade());
+        case VIRT_FORM_STRIKE: return fmt(getFormStrike());
         case VIRT_MSJUMP: return fmt(getSample().getMagSusJump());
+            // TODO strike and hade
         default: throw new IllegalArgumentException("Unknown field "+field);
         }
     }
@@ -636,6 +673,9 @@ public class Datum {
         case PP_HIDDEN: setHidden(Boolean.parseBoolean(s)); break;
         case PP_ONCIRCLE: setOnCircle(Boolean.parseBoolean(s)); break;
         case PP_INPCA: setInPca(Boolean.parseBoolean(s)); break;
+        case VIRT_SAMPLE_HADE: setSampHade(parseDouble(s)); break;
+        case VIRT_FORM_STRIKE: setFormStrike(parseDouble(s)); break;
+            // TODO strike and hade
         default: throw new IllegalArgumentException("Unknown field "+field);
         }
     }

@@ -13,6 +13,11 @@
             </test-roots>
         </data>
         <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+            <word>counterintuitively</word>
+            <word>demagnetization</word>
+            <word>field's</word>
+            <word>magnetization</word>
+            <word>panel's</word>
             <word>Zijderveld</word>
         </spellchecker-wordlist>
     </configuration>

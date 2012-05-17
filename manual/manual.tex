@@ -357,44 +357,50 @@ From left to right, these are:
 
 \begin{description}
 
-\item[Suite chooser.] This shows the name of the current suite of
-data. If more than one suite of data has been opened, the suite chooser
-allows you to switch between them.
+\item[Suite chooser.] This shows the name of the current suite of data. If
+  more than one suite of data has been opened, the suite chooser allows you
+  to switch between them.
 
-\item[Orientation correction chooser.] This chooser allows you to
-choose whether data is displayed in laboratory co-ordinates
-(\ppcmd{uncorrected}), in field co-ordinates, corrected for sample orientation
-(\ppcmd{samp. corr.}), or in tectonic co-ordinates, corrected for both
-sample orientation and bedding orientation (\ppcmd{form. corr.}).
+\item[Orientation correction chooser.] This chooser allows you to choose
+  whether data is displayed in laboratory co-ordinates (\ppcmd{uncorrected}),
+  in field co-ordinates, corrected for sample orientation (\ppcmd{samp.
+    corr.}), or in tectonic co-ordinates, corrected for both sample
+  orientation and bedding orientation (\ppcmd{form. corr.}).
 
 \item[Zijderveld projection type.] This chooser controls the vertical
-projection used in the Zijderveld plot. The {\em y} axis always corresponds
-to the vertical direction; the chooser controls the {\em x} axis, which may
-correspond to North (\ppcmd{V vs. N}) or East (\ppcmd{V vs. E}). The third
-option, \ppcmd{V vs. H}, projects each data point separately, in the plane
-containing itself and the origin; this is sometimes referred to as a
-`modified Zijderveld' plot.
+  projection used in the Zijderveld plot. The {\em y} axis always corresponds
+  to the vertical direction; the chooser controls the {\em x} axis, which may
+  correspond to North (\ppcmd{V vs. N}) or East (\ppcmd{V vs. E}). The third
+  option, \ppcmd{V vs. H}, projects each data point separately, in the plane
+  containing itself and the origin; this is sometimes referred to as a
+  `modified Zijderveld' plot.
 
-\item[Sample orientation] (\ppcmd{Samp}). The first number is the
-azimuth of the sample orientation; the second is its dip. For a long core,
-all these values will usually be 0 and 90 respectively throughout the core.
+\item[Sample orientation] (\ppcmd{Samp}). The first number is the azimuth of
+  the sample orientation; the second is its either its dip angle or its hade,
+  depending on the current setting in the user preferences (see
+  section~\ref{sec:prefs-misc}). By default, PuffinPlot uses dip angle rather
+  than hade. For a long core, the azimuth and dip will usually be 0 and 90
+  respectively throughout the core.
 
-\item[Formation orientation] (\ppcmd{Form}). The first number is the
-dip direction of the bedding; the second in the dip magnitude.
+\item[Formation orientation] (\ppcmd{Form}). The first number is either the
+  azimuth of the dip for the bedding, or its strike; the second is the dip
+  angle. By default PuffinPlot uses the dip azimuth rather than the strike,
+  but this can be changed in the preferences window (see
+  section~\ref{sec:prefs-misc}).
 
-\item[Magnetic declination] (\ppcmd{Dev}). This is the angle between
-magnetic north and true north at the sampling site. (It is abbreviated
-`Dev' (for `deviation') to avoid any possible confusion with the
-declinations of sample magnetizations.)
+\item[Magnetic declination] (\ppcmd{Dev}). This is the angle between magnetic
+  north and true north at the sampling site. (It is abbreviated `Dev' (for
+  `deviation') to avoid any possible confusion with the declinations of
+  sample magnetizations.)
 
 \item[Select all] selects all the points in the current sample.
 
-\item[\caps{Pca}] performs principal component analysis for the
-selected points of all the selected samples.
+\item[\caps{Pca}] performs principal component analysis for the selected
+  points of all the selected samples.
 
-\item[Clear calculations] de-selects all the points in all the
-selected samples, and clears the results of any calculations done on them,
-such as \caps{pca} or great-circle analysis.
+\item[Clear calculations] de-selects all the points in all the selected
+  samples, and clears the results of any calculations done on them, such as
+  \caps{pca} or great-circle analysis.
 
 \end{description}
 
@@ -624,11 +630,11 @@ to do with manipulation of data points.
 \begin{menuitemlist}
 
 \item[Edit\submenu Select all] selects all the points in all the selected
-samples, excluding points which have been hidden (see \ppcmd{Hide points}
-below).
+  samples, excluding points which have been hidden (see \ppcmd{Hide points}
+  below).
 
-\item[Edit\submenu Clear selection] de-selects all the points in all
-the selected samples.
+\item[Edit\submenu Clear selection] de-selects all the points in all the
+  selected samples.
 
 \item[Edit\submenu Edit layout] allows you to reposition and resize the plots
   in the main display area. See section~\ref{sec:edit-layout} for details.
@@ -639,7 +645,11 @@ the selected samples.
 \item[Edit\submenu Corrections\ldots] opens a window which allows you to
   change the sample orientation, formation orientation, and local magnetic
   declination for all the selected samples. Each correction type can be
-  individually changed without affecting the values of the others.
+  individually changed without affecting the values of the others. For
+  convenience, sample orientation can be specified using either dip angle or
+  hade; it is possible but pointless to enter values for both of these
+  parameters, since one will overwrite the other. Similarly, formation
+  orientation can be specified using either dip azimuth or strike.
 
 \item[Edit\submenu Copy point selection] copies the selected treatment steps
   for the current sample to an invisible `clipboard'. The selection can be
@@ -1350,6 +1360,14 @@ will cause all great-circle fits to be considered valid.
   the PCA.
 \item[None] No PCA lines will be shown.
 \end{description}
+
+\item[Sample orientation] controls how sample orientation is displayed at the
+  top of the main window: it can be shown either as azimuth and dip angle, or
+  as azimuth and hade (the complement of the dip angle).
+
+\item[Formation orientation] controls how formation orientation is displayed
+  at the top of the main window: it can be shown either as dip azimuth and
+  dip angle, or as strike and dip angle.
 
 \end{menuitemlist}
 

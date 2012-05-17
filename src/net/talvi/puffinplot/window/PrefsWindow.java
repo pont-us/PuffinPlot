@@ -32,7 +32,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.PuffinPrefs;
 import net.talvi.puffinplot.data.SensorLengths;
@@ -162,6 +161,14 @@ public class PrefsWindow extends JFrame {
         miscPanel.add(makeLabelledPrefComboBox("Zplot PCA display",
                 "plots.zplotPcaDisplay", new String[] {"Full", "Long", "Short", "None"},
                 "Long", "How PCA lines are shown on the Zijderveld plot"));
+        miscPanel.add(makeLabelledPrefComboBox("Sample orientation",
+                "display.sampleOrientation",
+                new String[] {"Azimuth/Dip", "Azimuth/Hade"},
+                "Azimuth/Dip", "The parameters used to represent sample orientation"));
+        miscPanel.add(makeLabelledPrefComboBox("Formation orientation",
+                "display.formationOrientation",
+                new String[] {"Dip azimuth/Dip", "Strike/Dip"},
+                "Azimuth/Dip", "The parameters used to represent formation orientation"));
         miscPanel.add(Box.createVerticalGlue());
 
         tp.addTab("2G import", null, loadingPanel, "Settings for reading 2G data files");

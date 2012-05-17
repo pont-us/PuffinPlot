@@ -65,11 +65,11 @@ public enum DatumField {
     // Lab measurements
     /** the type of the measurement (discrete or continuous) */
     MEAS_TYPE("Measurement type", "Measurement type", "CONTINUOUS", true, false),
-    /** the x component of the magentic moment measurement */
+    /** the x component of the magnetic moment measurement */
     X_MOMENT("X moment"),
-    /** the y component of the magentic moment measurement */
+    /** the y component of the magnetic moment measurement */
     Y_MOMENT("Y moment"),
-    /** the z component of the magentic moment measurement */
+    /** the z component of the magnetic moment measurement */
     Z_MOMENT("Z moment"),
     /** the measured magnetic susceptibility */
     MAG_SUS("Magnetic susceptibility"),
@@ -129,7 +129,12 @@ public enum DatumField {
     /** inclination of magnetization vector (degrees) */
     VIRT_INCLINATION("Inclination", "Inclination", "0", true, true),
     /** the temperature at which the magnetic susceptibility increases sharply */
-    VIRT_MSJUMP("MS jump temp.", "MS jump temp.", "0", false, true);
+    VIRT_MSJUMP("MS jump temp.", "MS jump temp.", "0", false, true),
+    /** the hade of a discrete sample (degrees) */
+    VIRT_SAMPLE_HADE("Sample hade", "Sample hade", "0", true, true),
+    /** the strike of the formation orientation (degrees) */
+    VIRT_FORM_STRIKE("Formation strike", "Formation strike", "0", true, true);
+    
     
     private final String heading;
     private final String niceName;

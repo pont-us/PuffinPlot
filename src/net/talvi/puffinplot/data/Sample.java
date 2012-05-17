@@ -693,6 +693,16 @@ public class Sample {
     private void setSampDip(double sampDip) {
         this.sampDip = sampDip;
     }
+    
+    /** Returns this sample's hade in degrees. 
+     * @return this sample's hade in degrees */
+    public double getSampHade() {
+        return 90 - sampDip;
+    }
+
+    private void setSampHade(double sampHade) {
+        this.sampDip = 90 - sampHade;
+    }
 
     /** Returns this sample's formation dip azimuth in degrees.
      * @return sampAz this sample's formation dip azimuth in degrees */
@@ -702,6 +712,20 @@ public class Sample {
 
     private void setFormAz(double formAz) {
         this.formAz = formAz;
+    }
+    
+    /** Returns this sample's formation strike in degrees.
+     * @return sampAz this sample's formation strike in degrees */
+    public double getFormStrike() {
+        double strike = formAz - 90;
+        if (strike < 0) strike += 360;
+        return strike;
+    }
+
+    private void setFormStrike(double formStrike) {
+        double az = formStrike + 90;
+        if (az > 360) az -= 360;
+        this.formAz = az;
     }
 
     /** Returns this sample's formation dip angle in degrees.
@@ -733,8 +757,10 @@ public class Sample {
         switch (field) {
             case SAMPLE_AZ: setSampAz(parseDouble(value)); break;
             case SAMPLE_DIP: setSampDip(parseDouble(value)); break;
+            case VIRT_SAMPLE_HADE: setSampHade(parseDouble(value)); break;
             case FORM_AZ: setFormAz(parseDouble(value)); break;
             case FORM_DIP: setFormDip(parseDouble(value)); break;
+            case VIRT_FORM_STRIKE: setFormStrike(parseDouble(value)); break;
             case MAG_DEV: setMagDev(parseDouble(value)); break;
         }
         for (Datum d: getData()) {

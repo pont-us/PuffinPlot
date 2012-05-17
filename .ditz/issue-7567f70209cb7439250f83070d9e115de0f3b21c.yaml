@@ -13,8 +13,8 @@ type: :feature
 component: PuffinPlot
 release: "1.01"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2012-05-17 11:25:06.650251 Z
 references: []
 
@@ -24,3 +24,13 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2012-05-17 18:19:11.390197 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2012-05-17 20:43:50.590125 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Hade and strike now supported in custom file import,
+    corrections window, and sample data panel at top of main window.

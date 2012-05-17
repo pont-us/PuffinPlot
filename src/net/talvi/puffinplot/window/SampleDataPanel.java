@@ -41,7 +41,6 @@ class SampleDataPanel extends JPanel {
 
     public SampleDataPanel() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        //pane.setVisible(true);
     }
 
     public void setSample(Sample s) {

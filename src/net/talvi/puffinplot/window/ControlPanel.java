@@ -21,6 +21,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.prefs.Preferences;
 import javax.swing.*;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.Correction;
@@ -46,6 +47,7 @@ public class ControlPanel extends JPanel
     private RotationBox rotationBox;
     VVsBox vVsBox;
     private static final PuffinApp app = PuffinApp.getInstance();
+    private static final Preferences prefs = app.getPrefs().getPrefs();
     
     private Action toggleZplotAction = new AbstractAction() {
         private static final long serialVersionUID = 1L;
@@ -62,13 +64,6 @@ public class ControlPanel extends JPanel
         add(suiteBox = new JComboBox(new String[] {"no files loaded"}));
         add(rotationBox = new RotationBox());
         trayButton = emptyButton = null;
-//         Tray correction applied on loading; empty-slot correction
-//         needs re-architecting if it's to be used -- 2011-10-09.
-//        add(new JLabel("T"));
-//        add(trayButton = new JRadioButton());
-//        trayButton.addItemListener(this);
-//        add(new JLabel("E"));
-//        add(emptyButton = new JRadioButton());
         add(vVsBox = new VVsBox());
         add(new JToolBar.Separator());
         add(correctionField = new JLabel());
@@ -100,13 +95,30 @@ public class ControlPanel extends JPanel
         app.getMainWindow().updateSampleDataPanel();
     }
     
+    private String sampleOrientation(Sample s) {
+        final String format =
+                prefs.get("display.sampleOrientation", "Azimuth/Dip");
+        return String.format("Samp. %.1f/%.1f",
+                s.getSampAz(),
+                "Azimuth/Dip".equals(format) ? s.getSampDip() : s.getSampHade());
+    }
+    
+    private String formationOrientation(Sample s) {
+        final String format =
+                prefs.get("display.formationOrientation", "Dip azimuth/Dip");
+        return String.format("Form. %.1f/%.1f",
+                "Dip azimuth/Dip".equals(format) ? s.getFormAz() : s.getFormStrike(),
+                s.getFormDip());
+    }
+    
     /** Updates this control panel's sample information display. */
     public void updateSample() {
         Sample s = app.getSample();
         if (s != null) 
-            correctionField.setText(String.format(
-                    "Samp. %.1f/%.1f Form. %.1f/%.1f Dev. %.1f Anc:%s",
-                    s.getSampAz(), s.getSampDip(), s.getFormAz(), s.getFormDip(),
+            correctionField.setText(
+                    sampleOrientation(s) + " " +
+                    formationOrientation(s) + " " +
+                    String.format("Dev. %.1f Anc:%s",
                     s.getMagDev(), s.isPcaAnchored() ? "Y" : "N"));
     }
 

@@ -349,7 +349,7 @@ public final class Suite {
      * used to correct Cartesian magnetic moment data
      * @param protocol for 2G files only: the measurement protocol used
      * @param usePolarMoment for 2G files only: use polar (dec/inc/int)
-     * data fields instead of Carteian ones (X/Y/Z) to determine magnetic moment
+     * data fields instead of Cartesian ones (X/Y/Z) to determine magnetic moment
      * @param format explicitly specified file format (null to automatically
      * guess between 2G, PuffinPlot, and Zplot).
      * @throws IOException if an I/O error occurred while reading the files 
@@ -441,7 +441,6 @@ public final class Suite {
                 emptyTraySamples.add(samplesById.get(slotId));
                 slot++;
             }
-            // guessSites(); // rendered obsolete by new site manipulation facilities
         }
         processPuffinLines(puffinLines);
         updateReverseIndex();

@@ -16,8 +16,6 @@
  */
 package net.talvi.puffinplot.window;
 
-import java.util.EnumMap;
-import net.talvi.puffinplot.*;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -25,20 +23,13 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import net.talvi.puffinplot.data.Sample;
+import javax.swing.*;
+import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.DatumField;
+import net.talvi.puffinplot.data.Sample;
 
 /**
  * A window allowing the user to edit orientation corrections.
@@ -50,8 +41,9 @@ import net.talvi.puffinplot.data.DatumField;
 public class CorrectionWindow extends JFrame implements ActionListener {
 
     private final static DatumField[] fields = {
-        DatumField.SAMPLE_AZ, DatumField.SAMPLE_DIP, DatumField.FORM_AZ,
-        DatumField.FORM_DIP, DatumField.MAG_DEV
+        DatumField.SAMPLE_AZ, DatumField.SAMPLE_DIP, DatumField.VIRT_SAMPLE_HADE,
+        DatumField.FORM_AZ, DatumField.VIRT_FORM_STRIKE, DatumField.FORM_DIP, 
+        DatumField.MAG_DEV
     };
     
     private static final long serialVersionUID = 1L;
@@ -117,6 +109,7 @@ public class CorrectionWindow extends JFrame implements ActionListener {
         cp.add(buttonPane);
 
         pack();
+        setLocationRelativeTo(null);
     }
 
     /** <p>Handle an action event. The events handled are clicks on the
@@ -128,7 +121,8 @@ public class CorrectionWindow extends JFrame implements ActionListener {
         if (event.getSource() == cancelButton)
             setVisible(false);
         if (event.getSource() == setButton) {
-            List<Sample> samples = PuffinApp.getInstance().getSelectedSamples();
+            final PuffinApp app = PuffinApp.getInstance();
+            List<Sample> samples = app.getSelectedSamples();
             for (DatumField field : fields) {
                 if (checkBoxMap.get(field).isSelected()) {
                     String value = textFieldMap.get(field).getText();
@@ -138,6 +132,7 @@ public class CorrectionWindow extends JFrame implements ActionListener {
                 }
             }
             setVisible(false);
+            app.updateDisplay();
         }
     }
 }
