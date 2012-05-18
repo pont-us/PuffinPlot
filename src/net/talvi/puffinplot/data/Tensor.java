@@ -18,6 +18,8 @@ package net.talvi.puffinplot.data;
 
 import Jama.Matrix;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -31,6 +33,9 @@ public class Tensor {
 
     private double k11, k22, k33, k12, k23, k13;
     private List<Vec3> amsAxes;
+    private static final List<String> HEADERS =
+            Arrays.asList("AMS dec1", "AMS inc1", "AMS dec2", "AMS inc2",
+            "AMS dec3", "AMS inc3");
 
     /** Creates a tensor with the specified components. Since the
      * tensor is symmetric, only six components need to be defined.
@@ -145,5 +150,37 @@ public class Tensor {
      */
     public Vec3 getAxis(int axis) {
         return amsAxes.get(axis);
+    }
+        
+    private String fmt(double d) {
+        return String.format(Locale.ENGLISH, "%.1f", d);
+    }
+
+    /** Returns the principal directions as a list of strings.
+     * The order of the parameters is the same as the order of
+     * the headers provided by {@link #getHeaders()}.
+     * @return the principal directions as a list of strings
+     */
+    public List<String> toStrings() {
+        final Vec3 p1 = amsAxes.get(0),
+                p2 = amsAxes.get(1),
+                p3 = amsAxes.get(2);
+        return Arrays.asList(fmt(p1.getDecDeg()), fmt(p1.getIncDeg()),
+                fmt(p2.getDecDeg()), fmt(p2.getIncDeg()),
+                fmt(p3.getDecDeg()), fmt(p3.getIncDeg()));
+    }
+
+    /** Returns a list of empty strings equal in length to the number of parameters.
+     * @return  a list of empty strings equal in length to the number of parameters
+     */
+    public static List<String> getEmptyFields() {
+        return Collections.nCopies(HEADERS.size(), "");
+    }
+
+    /** Returns the headers describing the parameters as a list of strings.
+     * @return the headers describing the parameters
+     */
+    public static List<String> getHeaders() {
+        return HEADERS;
     }
 }

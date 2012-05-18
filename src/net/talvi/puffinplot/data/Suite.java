@@ -474,17 +474,21 @@ public final class Suite {
                     "NRM intensity (A/m)",
                     "MS jump temp. (°C)",
                     PcaAnnotated.getHeaders(),
-                    GreatCircle.getHeaders(), MedianDestructiveField.getHeaders());
+                    GreatCircle.getHeaders(),
+                    MedianDestructiveField.getHeaders(),
+                    Tensor.getHeaders());
             for (Sample sample: samples) {
                 final PcaAnnotated pca = sample.getPcaAnnotated();
                 final MedianDestructiveField mdf = sample.getMdf();
                 final GreatCircle circle = sample.getGreatCircle();
+                final Tensor ams = sample.getAms();
                 writer.writeCsv(getName(), sample.getNameOrDepth(),
                         String.format(Locale.ENGLISH, "%.4g", sample.getNrm()),
                         String.format(Locale.ENGLISH, "%.4g", sample.getMagSusJump()),
                         pca == null ? PcaAnnotated.getEmptyFields() : pca.toStrings(),
                         circle == null ? GreatCircle.getEmptyFields() : circle.toStrings(),
-                        mdf == null ? MedianDestructiveField.getEmptyFields() : mdf.toStrings());
+                        mdf == null ? MedianDestructiveField.getEmptyFields() : mdf.toStrings(),
+                        ams == null ? Tensor.getEmptyFields() : ams.toStrings());
             }
         } catch (IOException ex) {
             throw new PuffinUserException(ex);
@@ -995,8 +999,7 @@ public final class Suite {
          * data to be stored at a time. However, even if we improve that to
          * allow multiple sets of AMS data, the Suite is the natural place
          * to store them (since the sets of samples for AMS calculations
-         * isn't necessarily ties to a single Site).
-         * 
+         * isn't necessarily tied to a single Site).
          */
         List<Tensor> tensors = new ArrayList<Tensor>();
         for (Sample s: samples) {
@@ -1033,7 +1036,9 @@ public final class Suite {
         }
     }
     
-    /** For a continuous suite, returns the minimum depth of a sample within the suite. 
+    /**
+     * For a continuous suite, returns the minimum depth of a sample
+     * within the suite. 
      * @return the minimum depth of a sample within the suite */
     public double getMinDepth() {
         if (!getMeasType().isContinuous()) return Double.NaN;

@@ -11,8 +11,8 @@ type: :feature
 component: PuffinPlot
 release: "1.01"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2012-05-17 11:17:00.026225 Z
 references: []
 
@@ -22,3 +22,13 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2012-05-18 07:31:51.175756 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2012-05-18 10:26:04.011677 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Orientations of all three AMS axes are now exported with
+    other sample data.

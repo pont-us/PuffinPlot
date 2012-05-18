@@ -16,16 +16,18 @@
  */
 package net.talvi.puffinplot.plots;
 
-import java.util.ArrayList;
+import com.sun.org.apache.xalan.internal.xsltc.dom.SingletonIterator;
 import java.awt.Color;
-import java.util.List;
-import net.talvi.puffinplot.data.Suite;
-import net.talvi.puffinplot.PuffinApp;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.prefs.Preferences;
+import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.KentParams;
 import net.talvi.puffinplot.data.Sample;
+import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
@@ -117,7 +119,7 @@ public class AmsPlot extends EqAreaPlot {
      }
 
     /** Draws this plot. 
-     * @param g the graphics object to which to draw the plot
+     * @param g the graphics context to which to draw the plot
      */
     public void draw(Graphics2D g) {
         updatePlotDimensions(g);
@@ -128,7 +130,9 @@ public class AmsPlot extends EqAreaPlot {
 
         g.setStroke(getStroke());
 
-        for (Sample s: PuffinApp.getInstance().getAllSamplesInSelectedSites()) {
+        List<Sample> samples = PuffinApp.getInstance().getAllSamplesInSelectedSites();
+        if (samples.isEmpty()) samples = Collections.singletonList(sample);
+        for (Sample s: samples) {
             if (s.getAms() != null) {
                 for (int i=0; i<3; i++) {
                     Vec3 v = s.getAms().getAxis(i).normalize();

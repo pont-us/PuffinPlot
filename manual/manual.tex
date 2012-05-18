@@ -489,6 +489,12 @@ at which the \caps{nrm} was reduced to half (in \textdegree C or mT) \\
 \caps{mdf} midpoint reached & `Y' if magnetization
 intensity reached half the \caps{nrm} intensity during demagnetization;
 `N' otherwise \\
+\caps{ams} dec1 & declination of major axis of \caps{ams} tensor \\
+\caps{ams} inc1 & inclination of major axis of \caps{ams} tensor \\
+\caps{ams} dec2 & declination of intermediate axis of \caps{ams} tensor \\
+\caps{ams} inc2 & inclination of intermediate axis of \caps{ams} tensor \\
+\caps{ams} dec3 & declination of minor axis of \caps{ams} tensor \\
+\caps{ams} inc3 & inclination of minor axis of \caps{ams} tensor \\
 {\em [annotations]}  & Any user-defined annotations
 are also exported as part of the sample export file. See
 section~\ref{sec:annotations} for details. \\ \bottomrule
@@ -1539,6 +1545,12 @@ direction for each sample. Note that virtually all of PuffinPlot's data and
 functionality is available to the Python script, so far more complex examples
 are possible.
 
+\paragraph{Internal documentation for PuffinPlot} To write scripts
+interacting with PuffinPlot, some knowledge of its internals is of course
+necessary. PuffinPlot comes with complete documentation (JavaDoc) for all its
+accessible data structures. If more detail is required, the source code is
+also freely available.
+
 \begin{figure}
   \caption{\label{fig:script-example-1}A simple Python script to demonstrate
     the use of PuffinPlot from a scripting environment. This script first
@@ -1601,13 +1613,7 @@ for sample in puffin_app.getSamples(): # For every sample in the suite,
 \end{lstlisting}
 \end{figure}
 
-\paragraph{Internal documentation for PuffinPlot} To write scripts
-interacting with PuffinPlot, some knowledge of its internals is of course
-necessary. PuffinPlot comes with complete documentation (JavaDoc) for all its
-accessible data structures. If more detail is required, the source code is
-also freely available.
-
-\newpage
+%\newpage
 
 \section{Acknowledgements}
 

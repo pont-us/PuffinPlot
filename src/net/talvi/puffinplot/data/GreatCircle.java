@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -72,7 +73,8 @@ public final class GreatCircle {
         }
         pointTrend = Math.signum(total);
         for (Vec3 p: points) {
-            logger.fine(p.toString() + "   " + angleFromLast(nearestOnCircle(p)));
+            logger.log(Level.FINE, "{0}   {1}", new Object[] {p.toString(),
+                angleFromLast(nearestOnCircle(p))});
         }
     }
 

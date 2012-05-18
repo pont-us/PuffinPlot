@@ -151,21 +151,23 @@ public class PuffinActions {
      * Opens a ‘Save’ dialog box; sample calculations are saved to 
      * the chosen file (if any).
      */
-    public final Action exportCalcsSample = new AbstractAction("Export sample calculations…") {
+    public final Action exportCalcsSample =
+            new AbstractAction("Export sample calculations…") {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent arg0) {
+        public void actionPerformed(ActionEvent event) {
             if (app.getSuite() == null) {
-                app.errorDialog("Error saving calculation", "No file loaded.");
+                app.errorDialog("Error saving calculations", "No file loaded.");
                             return;
             }
-            String pathname = getSavePath("Export sample calculations", ".csv",
-                    "Comma Separated Values");
-            if (pathname != null)
+            final String pathname = getSavePath("Export sample calculations",
+                    ".csv", "Comma Separated Values");
+            if (pathname != null) {
                 try {
                     app.getSuite().saveCalcsSample(new File(pathname));
                 } catch (PuffinUserException ex) {
                     app.errorDialog("Error saving calculations", ex);
                 }
+            }
         }
     };
 

@@ -17,13 +17,13 @@
 package net.talvi.puffinplot.data;
 
 import Jama.Matrix;
+import static java.lang.Double.parseDouble;
+import static java.lang.Math.toRadians;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import static java.lang.Math.toRadians;
-import static java.lang.Double.parseDouble;
 
 /**
  * This class represents a sample on which measurements have been made.
@@ -488,7 +488,8 @@ public class Sample {
     }
 
     /** Sets whether this sample is an empty slot on the measurement tray.
-     * @param isEmptySlot {@code true} to deeclare this sample as an empty slot on the measurement tray
+     * @param isEmptySlot {@code true} to declare this sample as an empty slot
+     * on the measurement tray
      */
     public void setEmptySlot(boolean isEmptySlot) {
         this.isEmptySlot = isEmptySlot;
@@ -593,21 +594,24 @@ public class Sample {
         return fc;
     }
 
-    /** Returns this sample's AMS tensor 
-     * @return this sample's AMS tensor
+    /** Returns this sample's AMS tensor.
+     * @return this sample's AMS tensor, or {@code null} if none has been set
      */
     public Tensor getAms() {
         return ams;
     }
     
-    /** Returns a specified subset of demagnetization data as strings.
+    /**
+     * Returns a specified subset of demagnetization data as strings.
      * This method takes a list of {@link DatumField}s and returns a list
      * of strings. Each string in the list represents one {@link Datum}
      * in this sample, and consists of a concatenation of string representations
      * of the requested fields (in the corresponding order), delimited
      * by tab characters.
-     * @param fields the fields to export
-     * @return a string representation of the requested fields for each {@link Datum} in this sample
+     * 
+     * @param  fields the fields to export
+     * @return a string representation of the requested fields for
+     *         each {@link Datum} in this sample
      */
     public List<String> exportFields(List<DatumField> fields) {
         final List<Datum> ds = getData();
@@ -618,10 +622,13 @@ public class Sample {
         return result;
     }
 
-    /** Returns a list of Strings representing data pertaining to this sample.
+    /**
+     * Returns a list of Strings representing data pertaining to this sample.
      * (Note that this only includes sample-level data, not Datum-level
      * data such as magnetic moment measurements.)
-     * @return a list of Strings representing data pertaining to this sample */
+     * 
+     * @return a list of Strings representing data pertaining to this sample
+     */
     public List<String> toStrings() {
         List<String> result = new ArrayList<String>();
         if (customFlags.size()>0) {
