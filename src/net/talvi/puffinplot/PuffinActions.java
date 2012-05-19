@@ -381,7 +381,7 @@ public class PuffinActions {
             } else {
                 suite.calculateSiteFishers(app.getCorrection());
                 app.getSuiteEqAreaWindow().getPlot().setGroupedBySite(true);
-                // app.getFisherWindow().setVisible(true);
+                app.updateDisplay();
             }
         }
     };

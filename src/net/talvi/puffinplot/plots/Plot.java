@@ -90,7 +90,8 @@ public abstract class Plot
             + "equarea_site false 6 616 182 193 "
             + "equarea_suite false 192 615 186 197 "
             + "nrm_histogram false 778 679 315 131 "
-            + "sample_params_table false 778 379 315 331 "
+            + "sample_params_table false 478 379 315 331 "
+            + "site_params_table false 778 379 315 331 "
             + "zplotlegend true 856 6 132 63";
 
     static {

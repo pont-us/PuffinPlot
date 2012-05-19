@@ -17,7 +17,6 @@
 package net.talvi.puffinplot.window;
 
 import java.awt.Color;
-import net.talvi.puffinplot.*;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.print.PageFormat;
@@ -25,6 +24,7 @@ import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.util.List;
 import java.util.prefs.Preferences;
+import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;
@@ -44,9 +44,10 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
     private List<Sample> samplesForPrinting = null;
     private int printPageIndex = -1;
     private final static String[] plotNames = {"SampleEqAreaPlot", "ZPlot",
-        "DemagPlot", "DemagTable", "SampleParamsLegend", "PlotTitle", "SiteParamsLegend",
+        "DemagPlot", "DemagTable", "SampleParamsLegend",
+        "PlotTitle", "SiteParamsLegend",
         "AmsPlot", "TernaryPlot", "SiteEqAreaPlot", "SuiteEqAreaPlot",
-        "SampleParamsTable", "NrmHistogram"};
+        "SampleParamsTable", "SiteParamsTable", "NrmHistogram"};
     private final PlotParams params;
 
     MainGraphDisplay() {

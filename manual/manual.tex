@@ -1107,6 +1107,26 @@ listed below include textual elements such as legends and tables.
   will show the corresponding sample's data -- in effect it works
   as an extra sample chooser.
 
+\item[Site parameter table] shows a summary of parameters for each site
+  within the current suite. The columns are:
+
+  \begin{description}
+  \item[Site] the name or identifier of the site
+  \item[n] the number of samples at the site
+  \item[PCA] the number of PCA analyses for samples at the site
+  \item[GC] the number of great circles fitted for samples at the site
+  \item[dec.] the declination of the site mean direction
+  \item[inc.] the inclination of the site mean direction
+  \item[type] the type of analysis used: `Fisher' for \cite{fisher1953sphere}
+    analysis on PCA directions; `GC' for great-circle analysis
+    \citep{mcfadden1988circles}. `GC' is suffixed with either `(v)' for valid
+    or `(i)' for invalid. See section~\ref{sec:prefs-misc} for details on the
+    validity test and how it may be customized.
+  \end{description}
+
+  Clicking on a line within the site parameter table will jump to the first
+  sample of the corresponding site.
+
 \item[Title] simply shows the name of the current sample and the current
   site, for a discrete suite. For a continuous (long core) suite, it shows
   the current depth.

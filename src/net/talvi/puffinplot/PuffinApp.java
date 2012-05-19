@@ -155,9 +155,12 @@ public final class PuffinApp {
         currentPageFormat = PrinterJob.getPrinterJob().defaultPage();
         currentPageFormat.setOrientation(PageFormat.LANDSCAPE);
         aboutBox = new AboutBox(mainWindow);
-        final Plot sampleParamsTable =
-                mainWindow.getGraphDisplay().getPlotByClassName("SampleParamsTable");
-        sampleParamsTable.addSampleClickListener(new PuffinAppSampleClickListener());
+        final MainGraphDisplay display = mainWindow.getGraphDisplay();
+        final SampleClickListener scListener = new PuffinAppSampleClickListener();
+        display.getPlotByClassName("SampleParamsTable").
+                addSampleClickListener(scListener);
+        display.getPlotByClassName("SiteParamsTable").
+                addSampleClickListener(scListener);
         mainWindow.getMainMenuBar().updateRecentFiles();
         mainWindow.setVisible(true);
         logger.info("PuffinApp instantiation complete.");

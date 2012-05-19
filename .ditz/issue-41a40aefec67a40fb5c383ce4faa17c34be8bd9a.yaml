@@ -22,8 +22,8 @@ type: :bugfix
 component: PuffinPlot
 release: "1.01"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :in_progress
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2012-05-10 16:01:23.946358 Z
 references: []
 
@@ -44,3 +44,11 @@ log_events:
     I have now added a table which shows sample directions within the
     current site. It is slightly interactive, in that clicking on a line
     will jump to the appropriate sample.
+- - 2012-05-19 09:42:47.839372 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    I have added a site parameter table to complement the sample
+    parameter table. Like its predecessor, it can change the current 
+    sample when the user clicks on it. I think that this should be
+    enough to address the concerns of the reviewer.

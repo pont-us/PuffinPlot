@@ -76,6 +76,11 @@ public class FisherValues implements FisherParams {
         return k;
     }
     
+    /**
+     * Returns the number of directions used to calculate these Fisherian parameters.
+     * 
+     * @return the number of directions used to calculate these Fisherian parameters
+     */
     public int getNDirs() {
         return directions.size();
     }
