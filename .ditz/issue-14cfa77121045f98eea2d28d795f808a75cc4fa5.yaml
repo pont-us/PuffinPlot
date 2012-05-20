@@ -9,8 +9,8 @@ type: :feature
 component: PuffinPlot
 release: "1.1"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2009-08-24 00:04:04.184531 Z
 references: []
 
@@ -20,3 +20,9 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2012-05-20 09:48:10.267735 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    This should actually have been closed on 6 February along with
+    bug #121 (improve file import capabilities).
