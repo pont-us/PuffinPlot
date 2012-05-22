@@ -1,0 +1,28 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Incorrect character encoding in Batik SVG export
+desc: |-
+  Problem encountered on Windows XP: Batik SVG file is malformed
+  and will not open in Firefox or Inkscape. Reason appears to be
+  that, although the encoding is declared as UTF-8, the single
+  non-ASCII character in the file (the degree symbol in the 
+  demagnetization plot x-axis label) is encoded as ISO-8859-1.
+type: :bugfix
+component: PuffinPlot
+release: "1.01"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2012-05-22 21:23:57.014229 Z
+references: []
+
+id: abb018da95a8ac670f54551dfb25bfc5c85d5d47
+log_events: 
+- - 2012-05-22 21:23:58.510111 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
+- - 2012-05-22 21:25:11.271195 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - "This might be the issue reported by the anonymous reviewer\n\
+    (\xE2\x80\x98SVG file did not work well\xE2\x80\x99, bug #226)."
