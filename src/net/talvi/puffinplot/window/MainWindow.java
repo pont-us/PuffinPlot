@@ -144,8 +144,8 @@ public final class MainWindow extends JFrame {
     }
 
     /**
-     * Informs this window that the current sample
-     * has changed. Calling this method allows this window to update its display
+     * Informs this window that the current sample has changed.
+     * Calling this method allows this window to update its display
      * accordingly.
      */
     public void sampleChanged() {
@@ -153,7 +153,6 @@ public final class MainWindow extends JFrame {
         final Sample sample = app.getSample();
         if (sample==null) return;
         sampleDataPanel.setSample(sample);
-        //pack();
         repaint(100);
         getMainMenuBar().sampleChanged();
     }

@@ -329,8 +329,9 @@ public class PuffinActions {
      * Performs principal component analysis on the selected points of the
      * selected samples.
      */
-    public final Action pcaOnSelection = new PuffinAction("PCA",
-            "Perform principal component analysis on selected points", 'R', false, KeyEvent.VK_P) {
+    public final Action pcaOnSelection = new PuffinAction("Calculate PCA",
+            "Perform principal component analysis (anchored or unanchored) "
+            + "on selected points", 'R', false, KeyEvent.VK_P) {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {
             app.doPcaOnSelection();

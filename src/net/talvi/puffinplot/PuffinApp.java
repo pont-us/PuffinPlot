@@ -516,6 +516,7 @@ public final class PuffinApp {
         }
         mainWindow.getMainMenuBar().updateRecentFiles();
         mainWindow.updateSampleDataPanel();
+        updateDisplay();
     }
     
     /**

@@ -127,9 +127,7 @@ public final class MainMenuBar extends JMenuBar {
                 pa.exportSvgBatik, pa.exportSvgFreehep,
                 pa.exportPdfItext, pa.exportPdfFreehep),
                 pa.pageSetup, pa.print, pa.printSuiteEqArea, pa.printGc,
-                pa.importAms,
-
-                pa.runScript,
+                pa.importAms, pa.runScript,
                 pa.exportPrefs, pa.importPrefs, pa.clearPreferences,
                 pa.prefs, pa.quit));
         add(makeMenu("Edit", pa.selectAll, pa.clearSelection,
@@ -138,9 +136,8 @@ public final class MainMenuBar extends JMenuBar {
                 makeMenu("Flip selected samples",
                 pa.flipSampleX, pa.flipSampleY, pa.flipSampleZ),
                 makeMenu("Edit sites", pa.setSiteName,
-                  pa.setSitesFromSampleNames, pa.setSitesByDepth),
+                pa.setSitesFromSampleNames, pa.setSitesByDepth),
                 pa.hideSelectedPoints, pa.unhideAllPoints,
-                // pa.useAsEmptySlot, pa.unsetEmptySlot, useEmptyItem,
                 pa.showCustomFlagsWindow, pa.showCustomNotesWindow,
                 pa.rescaleMagSus));
         add(makeMenu("Calculations",
@@ -167,7 +164,9 @@ public final class MainMenuBar extends JMenuBar {
     private class AnchorItem extends JCheckBoxMenuItem {
         private static final long serialVersionUID = 1L;
         AnchorItem() {
-            super("Anchor PCA");
+            super("PCA anchored");
+            setToolTipText("If this item is checked, "
+                    + "subsequent PCA analyses will be anchored");
             addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent event) {
                 for (Sample s: app.getSelectedSamples()) {

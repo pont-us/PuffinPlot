@@ -751,20 +751,24 @@ all the selected samples, not just the current sample.
 
 \begin{menuitemlist}
 
-\item[Calculations\submenu PCA] calculates a best-fitting line to all the
-  selected points in all the selected samples, using principal component
-  analysis \citep{kirschvink1980least}. The \caps{pca} direction is projected
-  onto the Zijderveld plot.
+\item[Calculations\submenu Calculate \caps{pca}] calculates a best-fitting
+  line to all the selected points in all the selected samples, using
+  principal component analysis \citep{kirschvink1980least}. The \caps{pca}
+  direction is projected onto the Zijderveld plot. If the `\caps{pca}
+  anchored' menu item (below) is ticked, the resulting \caps{pca} fit line
+  will be anchored to the origin; if `\caps{pca} anchored' is not ticked, the
+  \caps{pca} fit will be unanchored.
 
-\item[Calculations\submenu Anchor PCA] is a menu item which may be toggled on
-  or off. When it is on, \caps{pca} analyses are constrained to pass through
-  the origin. In general, it is appropriate to anchor the \caps{pca} if the
-  analysed points are known to represent the final demagnetization component
-  -- that is, they are trending directly towards the origin, and deviations
-  from this path are known to be due to measurement noise rather than an
-  offset in the true magnetization vectors. Leaving PCA unanchored allows
-  analysis of a non-final component, provided that it is sufficiently well
-  separated from other components.
+\item[Calculations\submenu \caps{pca} anchored] is a menu item which may be
+  toggled on or off. When it is on, a tick mark appears next to it, and
+  \caps{pca} analyses are constrained to pass through the origin. In general,
+  it is appropriate to anchor the \caps{pca} if the analysed points are known
+  to represent the final demagnetization component -- that is, they are
+  trending directly towards the origin, and deviations from this path are
+  known to be due to measurement noise rather than an offset in the true
+  magnetization vectors. Leaving \caps{pca} unanchored allows analysis of a
+  non-final component, provided that it is sufficiently well separated from
+  other components.
 
 \item[Calculations\submenu Fisher by site] calculates a Fisherian mean
   direction for each selected site using the \caps{pca} directions of its
@@ -1065,7 +1069,7 @@ listed below include textual elements such as legends and tables.
   blue. (If the \ppcmd{V vs. H} vertical projection is selected, only the
   horizontal projection of the \caps{pca} line is shown, since \ppcmd{V vs.
     H} effectively uses a different vertical projection for each point.) The
-  appearance of the PCA lines can be changed using the Preferences dialog
+  appearance of the \caps{pca} lines can be changed using the Preferences dialog
   (see section~\ref{sec:prefs-misc}).
 
 \item[Demag.] is a plot of demagnetization step (in mT or \textdegree C)
@@ -1092,7 +1096,7 @@ listed below include textual elements such as legends and tables.
   line. \caps{Pca} analysis and \caps{mad} values are explained in
   \cite{kirschvink1980least} and in section 9.7 of
   \cite{tauxe2010paleomagnetism}. The plot also show the Cartesian equation
-  of the PCA best-fit line. For the great-circle fit, the plot gives the
+  of the \caps{pca} best-fit line. For the great-circle fit, the plot gives the
   inclination and declination of one of the great circle's poles, and the
   \caps{mad}1 value indicating the goodness of fit of the great circle. (Note
   that this may be different from the \caps{mad}1 for the \caps{pca} fit,
@@ -1100,8 +1104,8 @@ listed below include textual elements such as legends and tables.
 
 \item[Sample parameter table] shows a summary of parameters for each sample
   within the current site: declination, inclination, and type of analysis
-  (`PCAa' and `PCAu' for anchored and unanchored PCA respectively, and `GC'
-  for great circle). For PCA analysis, the declination and inclination
+  (`\caps{pca}a' and `\caps{pca}u' for anchored and unanchored \caps{pca} respectively, and `GC'
+  for great circle). For \caps{pca} analysis, the declination and inclination
   give the first principal component; for great-circle analysis, they
   give the pole to the circle. Clicking on a line within this table
   will show the corresponding sample's data -- in effect it works
@@ -1113,12 +1117,12 @@ listed below include textual elements such as legends and tables.
   \begin{description}
   \item[Site] the name or identifier of the site
   \item[n] the number of samples at the site
-  \item[PCA] the number of PCA analyses for samples at the site
+  \item[\caps{pca}] the number of \caps{pca} analyses for samples at the site
   \item[GC] the number of great circles fitted for samples at the site
   \item[dec.] the declination of the site mean direction
   \item[inc.] the inclination of the site mean direction
   \item[type] the type of analysis used: `Fisher' for \cite{fisher1953sphere}
-    analysis on PCA directions; `GC' for great-circle analysis
+    analysis on \caps{pca} directions; `GC' for great-circle analysis
     \citep{mcfadden1988circles}. `GC' is suffixed with either `(v)' for valid
     or `(i)' for invalid. See section~\ref{sec:prefs-misc} for details on the
     validity test and how it may be customized.
@@ -1356,7 +1360,7 @@ names. The plot types are detailed in section~\ref{sec:plot-types}.
   the Python programming language, involving the following variables:
 
 \begin{description}
-  \item[M] the number of stable endpoints (PCA directions) used in the fit
+  \item[M] the number of stable endpoints (\caps{pca} directions) used in the fit
   \item[N] the number of great circles used in the fit
   \item[a95] the \alnifi\ value (semiangle of the 95\% confidence region)
   \item[k] the $k$-value (estimate for $\kappa$)
@@ -1374,17 +1378,17 @@ which means that a great-circle fit will be considered valid if it has an
 at least five circles. Setting the validity expression to \texttt{True}
 will cause all great-circle fits to be considered valid.
 
-\item[Zplot PCA display] controls the manner in which PCA directions are
+\item[Zplot \caps{pca} display] controls the manner in which \caps{pca} directions are
   shown on the Zijderveld plot (see section~\ref{sec:plot-types}). The
   available settings are:
 
 \begin{description}
-\item[Full] PCA lines will extend right to the edges of the Zijderveld
+\item[Full] \caps{pca} lines will extend right to the edges of the Zijderveld
   plot.
-\item[Long] PCA lines will be shortened by 10\% from the `Full' length.
-\item[Short] PCAlines will only extend through the points used to calculate
-  the PCA.
-\item[None] No PCA lines will be shown.
+\item[Long] \caps{pca} lines will be shortened by 10\% from the `Full' length.
+\item[Short] \caps{pca}lines will only extend through the points used to calculate
+  the \caps{pca}.
+\item[None] No \caps{pca} lines will be shown.
 \end{description}
 
 \item[Sample orientation] controls how sample orientation is displayed at the

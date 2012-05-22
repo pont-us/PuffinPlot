@@ -15,8 +15,8 @@ type: :bugfix
 component: PuffinPlot
 release: "1.01"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2012-05-10 14:07:16.682367 Z
 references: []
 
@@ -35,3 +35,22 @@ log_events:
     the GUI) the user did read the manual -- i.e. it's\n\
     an \xE2\x80\x98unclear documentation\xE2\x80\x99 problem rather than a \n\
     \xE2\x80\x98user didn't bother reading the documentation\xE2\x80\x99 problem."
+- - 2012-05-21 09:53:58.915090 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2012-05-21 09:56:37.147041 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - "Mini-bug which came up while investigating this:\n\
+    Start Puffin, open new 2G file, open Calcs menu.\n\
+    \xE2\x80\x98Use anchoring\xE2\x80\x99 item is unchecked, yet clicking \xE2\x80\x98Calculate PCA\xE2\x80\x99\n\
+    will do an anchored calculation. Workarounds: check and uncheck the\n\
+    item, or switch to another sample and back again."
+- - 2012-05-22 11:39:06.246672 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Assumed that problems were caused by misunderstanding, and
+    mitigated them with improved menu item wording, tool-tips,
+    and documentation.
