@@ -51,8 +51,8 @@ releases:
     - ""
 - !ditz.rubyforge.org,2008-03-06/release 
   name: "1.01"
-  status: :unreleased
-  release_time: 
+  status: :released
+  release_time: 2012-05-23 11:51:21.754735 Z
   log_events: 
   - - 2012-05-08 12:43:55.458916 Z
     - Pontus Lurcock <pont@talvi.net>
@@ -60,3 +60,9 @@ releases:
     - |-
       This release will address the comments of the reviewers for the 
       PuffinPlot paper in G-cubed.
+  - - 2012-05-23 11:51:21.754771 Z
+    - Pontus Lurcock <pont@talvi.net>
+    - released
+    - |-
+      Incorporates bug fixes and improvements suggested by reviewers
+      of the paper.
