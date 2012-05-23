@@ -1,0 +1,30 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Incorrect PCA line lengths
+desc: |-
+  If PuffinPlot is started with no saved preferences, PCA fit
+  lines are shown at the "Full" setting. However, the Preferences
+  window shows the "Long" setting. Once the setting has been changed,
+  the actual appearance corresponds to the setting in all cases.
+type: :bugfix
+component: PuffinPlot
+release: "1.01"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :closed
+disposition: :fixed
+creation_time: 2012-05-23 09:48:30.814034 Z
+references: []
+
+id: e60aca55b02c32f68d8f0fe83069148ddbb30c27
+log_events: 
+- - 2012-05-23 09:48:31.142910 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
+- - 2012-05-23 10:10:16.721959 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Defaults were differently set in ZPlot and PrefsWindow; fixed now.
+    The fact that the default has to be set identically in two places
+    is something of a meta-bug, and I have filed it for future attention
+    in ticket #234.

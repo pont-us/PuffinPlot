@@ -162,7 +162,7 @@ public class ZPlot extends Plot {
         }
         
         final PcaValues pca = sample.getPcaValues();
-        final String pcaStyle = prefs.get("plots.zplotPcaDisplay", "Full");
+        final String pcaStyle = prefs.get("plots.zplotPcaDisplay", "Long");
         final double lineScale = "Long".equals(pcaStyle) ? 0.9 : 1.0;
         if (pca != null && !"None".equals(pcaStyle)) {
             if (pca.isAnchored()) {
