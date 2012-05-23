@@ -10,8 +10,8 @@ type: :bugfix
 component: PuffinPlot
 release: "1.01"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2012-05-22 21:23:57.014229 Z
 references: []
 
@@ -26,3 +26,15 @@ log_events:
   - commented
   - "This might be the issue reported by the anonymous reviewer\n\
     (\xE2\x80\x98SVG file did not work well\xE2\x80\x99, bug #226)."
+- - 2012-05-23 08:59:49.767411 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    (Slight factual error: the multiplication symbol in a couple of
+    plot legends is also a non-ASCII character.)
+- - 2012-05-23 09:15:27.400401 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    GraphDisplay.saveSvgToBatik now explicitly requests UTF-8 encoding.
+    I have successfully tested the fix under Windows.

@@ -32,10 +32,7 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.print.Printable;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
 import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -382,28 +379,30 @@ public abstract class GraphDisplay extends JPanel implements Printable {
     /** Writes the contents of this display to an SVG file using the Batik library.
      * @param filename the name of the file to which to write */
     public void saveToSvgBatik(String filename) {
-        // Get a DOMImplementation.
         DOMImplementation domImpl =
             GenericDOMImplementation.getDOMImplementation();
-        // Create an instance of org.w3c.dom.Document.
         String svgNS = "http://www.w3.org/2000/svg";
         org.w3c.dom.Document document =
                 domImpl.createDocument(svgNS, "svg", null);
-        // Create an instance of the SVG Generator.
         org.apache.batik.svggen.SVGGraphics2D svgGenerator =
                 new org.apache.batik.svggen.SVGGraphics2D(document);
-        // svgGenerator.setUnsupportedAttributes(null);
-        // TODO work out why setUnsupportedAttributes doesn't work.
+        svgGenerator.setUnsupportedAttributes(null);
         paint(svgGenerator);
         //for (Plot plot: getVisiblePlots()) plot.draw(svgGenerator);
-        // Finally, stream out SVG to the standard output using
-        // UTF-8 encoding.
-        boolean useCSS = true; // we want to use CSS style attributes
-        Writer out;
+        final boolean useCssAttributes = true;
+        Writer writer = null;
+        OutputStream outputStream = null;
         try {
-            out = new FileWriter(filename);
-            svgGenerator.stream(out, useCSS);
+            outputStream = new FileOutputStream(filename);
+            writer = new OutputStreamWriter(outputStream, "UTF-8");
+            svgGenerator.stream(writer, useCssAttributes);
         } catch (IOException ex) {
+            try {
+                if (writer != null) writer.close();
+                if (outputStream != null) outputStream.close();
+            } catch (IOException ex2) {
+                // do nothing
+            }
             Logger.getLogger(GraphDisplay.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

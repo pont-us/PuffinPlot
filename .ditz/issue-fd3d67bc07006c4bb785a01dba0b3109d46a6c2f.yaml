@@ -1,0 +1,25 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Tidy up print and vector export code
+desc: |-
+  The code for printing, PDF export, and SVG export has grown in
+  a somewhat ad-hoc fashion and probably needs a little tidying up
+  and refactoring. Among other things, it's not clear that double
+  buffering is disabled in all the vector export routines. So far I've
+  never come across any evidence of accidental double-buffering (e.g.
+  a huge bitmapped PDF export) but it's probably worth doing the due
+  diligence.
+type: :task
+component: PuffinPlot
+release: "1.1"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2012-05-23 09:14:21.561014 Z
+references: []
+
+id: fd3d67bc07006c4bb785a01dba0b3109d46a6c2f
+log_events: 
+- - 2012-05-23 09:14:22.176343 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
