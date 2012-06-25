@@ -6,7 +6,7 @@ desc: |-
   or similar and read by PuffinPlot at runtime.
 type: :task
 component: PuffinPlot
-release: "1.1"
+release: "1.02"
 reporter: Pontus Lurcock <pont@talvi.net>
 status: :unstarted
 disposition: 
@@ -18,4 +18,8 @@ log_events:
 - - 2012-02-09 20:08:32.069883 Z
   - Pontus Lurcock <pont@talvi.net>
   - created
+  - ""
+- - 2012-06-25 13:05:39.387673 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.02 from 1.1
   - ""
