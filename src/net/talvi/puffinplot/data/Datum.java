@@ -403,7 +403,7 @@ public class Datum {
      * modified by the supplied correction. The correction may specify that
      * the moment should be rotated to correct for sample and/or formation
      * orientation. It also allows the specification of tray and empty-slot
-     * corrections, but these are not preently implemented here. (Tray
+     * corrections, but these are not presently implemented here. (Tray
      * corrections are applied when loading a file, and empty-slot 
      * corrections are unimplemented.)
      * 
@@ -471,7 +471,20 @@ public class Datum {
     public double getTreatmentLevel() {
         switch (treatType) {
         case NONE: return 0;
-        case DEGAUSS_XYZ: return afx>0?afx : afy>0?afy : afz;
+        case DEGAUSS_XYZ:
+            // This is a bit ill-defined: in general, of course, we can't
+            // collapse a three-dimensional treatment into a single value.
+            // We assume that the same treatment has been applied on each
+            // axis, and that zero values are due to lazy construction of
+            // the input file. (The exception is if all the values are 
+            // zero, in which case we assume that it's an actual zero-level
+            // treatment.) The logic below should handle NaN values cleanly,
+            // but negative values will come out as zero. So far I've never
+            // seen a file with negative AF treatment values.
+            if (afx>0) return afx;
+            if (afy>0) return afy;
+            if (afz>0) return afz;
+            return 0;
         case DEGAUSS_Z: return afz;
         case THERMAL: return temp;
         case ARM: return afz; //usually we vary this & keep bias field constant

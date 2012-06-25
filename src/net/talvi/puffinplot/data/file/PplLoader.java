@@ -52,7 +52,7 @@ public class PplLoader extends AbstractFileLoader {
     private final File file;
 
     /**
-     * Creates a PuffinPlot file laoder for the specified file.
+     * Creates a PuffinPlot file loader for the specified file.
      * 
      * @param file the file from which to read data
      */
