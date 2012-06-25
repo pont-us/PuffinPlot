@@ -66,3 +66,12 @@ releases:
     - |-
       Incorporates bug fixes and improvements suggested by reviewers
       of the paper.
+- !ditz.rubyforge.org,2008-03-06/release 
+  name: "1.02"
+  status: :unreleased
+  release_time: 
+  log_events: 
+  - - 2012-06-25 09:25:52.577438 Z
+    - Pontus Lurcock <pont@talvi.net>
+    - created
+    - Bug fix release; no new features.

@@ -251,17 +251,12 @@ public class TabularImportWindow extends JFrame {
             for (int i=0; i<20; i++) {
                 FieldChooser fieldChooser = new FieldChooser(i+1);
                 if (columnIterator.hasNext()) {
-                    final int column = columnIterator.next()+1;
+                    final int column = columnIterator.next();
                     final DatumField field = initialFormat.getColumnMap().get(column);
-                    fieldChooser.setContents(column, field);
+                    fieldChooser.setContents(column+1, field);
                 }
                 add(fieldChooser);
                 fieldChoosers.add(fieldChooser);
-            }
-            int i=0;
-            for (Entry<Integer, DatumField> entry:
-                    initialFormat.getColumnMap().entrySet()) {
-                
             }
         }
     }
