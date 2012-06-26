@@ -1,0 +1,21 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Add references to the G-cubed paper
+desc: |-
+  Once the G-cubed paper is finally published, add references to
+  it to the website, program, and manual, with a request to cite
+  if used for a publication.
+type: :task
+component: PuffinPlot
+release: "1.02"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2012-06-25 17:00:35.940572 Z
+references: []
+
+id: cb35cfd3d677703f9f9e757aa2b62e08a4d0eaa7
+log_events: 
+- - 2012-06-25 17:00:36.172316 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

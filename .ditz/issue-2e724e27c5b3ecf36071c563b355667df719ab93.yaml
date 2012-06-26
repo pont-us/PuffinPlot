@@ -8,7 +8,7 @@ type: :task
 component: PuffinPlot
 release: "1.02"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
+status: :in_progress
 disposition: 
 creation_time: 2012-02-09 20:08:31.761976 Z
 references: []
@@ -23,3 +23,14 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - assigned to release 1.02 from 1.1
   - ""
+- - 2012-06-25 23:17:59.840998 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2012-06-26 14:51:27.463224 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    The manual could also do with better automatic versioning.
+    At the moment it just pulls the datestamp off the tip of the
+    Mercurial repository.

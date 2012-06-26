@@ -1,9 +1,75 @@
 =PuffinPlot development notes=
 
-==Libraries==
+==Dependencies==
 
-PuffinPlot uses the external libraries iText, batik, and jython. In the
-puffinplot-all.zip archive, these are included within dist/lib.
+===Java libraries===
+
+PuffinPlot uses the external libraries iText, batik, FreeHEP, and jython.
+
+List of required libraries with Ubuntu packages, 2012-06-16:
+
+batik-all.jar
+freehep-export.jar
+freehep-graphics2d.jar
+freehep-io.jar
+freehep-swing.jar
+freehep-util.jar
+itext.jar
+xml-apis.jar
+
+Ubuntu packages containing these:
+
+libbatik-java
+libfreehep-export-java
+libfreehep-graphics2d-java
+libfreehep-io-java
+libfreehep-swing-java
+libfreehep-util-java
+libitext-java
+libjaxp1.3-java
+
+Libraries without Ubuntu packages (should be placed in a directory called
+libraries in the same directory as the PuffinPlot directory):
+
+freehep-graphicsio-2.1.1.jar
+freehep-graphicsio-pdf-2.1.1.jar
+freehep-graphicsio-svg-2.1.1.jar
+freehep-xml-2.1.1.jar
+jython.jar
+
+===TeX dependencies===
+
+The manual is produced using LaTeX. The following programs and packages are
+required to build it.
+
+Programs
+
+pdflatex
+htlatex (from the tex4ht package)
+
+Packages
+
+babel
+geometry
+ifpdf
+calc
+fontenc
+mathdesign : texlive-fonts-extra
+natbib
+inputenc
+url
+graphicx
+placeins : texlive-latex-extra
+booktabs
+listings
+textcase
+color
+textcomp
+hyperref
+
+Fonts
+
+Bitstream Charter : texlive-fonts-recommended
 
 ==Building==
 

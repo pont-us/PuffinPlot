@@ -7,9 +7,25 @@
     <import file="nbproject/build-impl.xml"/>
     
     <target name="-pre-jar">
+    <property file="release.properties"/>
+    <exec executable="hg" outputproperty="build.hg.revid">
+    <arg value="id"/> <arg value="-i"/> <arg value="${basedir}"/>
+    </exec>
+    <exec executable="hg" outputproperty="build.hg.tag">
+    <arg value="id"/> <arg value="-t"/> <arg value="${basedir}"/>
+    </exec>
+    <exec executable="hg" outputproperty="build.hg.date">
+    <arg value="log"/> <arg value="-l1"/> <arg value="-r."/>
+    <arg value="--template"/> <arg value="'{date|hgdate}\n'"/>
+    <arg value="${basedir}"/>
+    </exec>
         <propertyfile file="build/classes/net/talvi/puffinplot/build.properties">
             <entry key="build.date" type="date" value="now" pattern="yyyy-MM-dd HH:mm"/>
             <entry key="build.year" type="date" value="now" pattern="yyyy"/>
+            <entry key="build.release.version" value="${release.version}"/>
+            <entry key="build.hg.revid" value="${build.hg.revid}"/>
+            <entry key="build.hg.tag" value="${build.hg.tag}"/>
+            <entry key="build.hg.date" value="${build.hg.date}"/>
         </propertyfile>
     </target>
     
