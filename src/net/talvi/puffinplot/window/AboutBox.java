@@ -42,7 +42,7 @@ public class AboutBox extends javax.swing.JDialog {
         final String fmt = 
                 "PuffinPlot is a program for showing, exploring, and analysing "
                 + "palæomagnetic data. Copyright 2012 Pontus "
-                + "Lurcock (pont@talvi.net). "
+                + "Lurcock (pont at talvi dot net). "
                 + "PuffinPlot is free software: you can redistribute it and/or "
                 + "modify it under the terms of the GNU General Public License "
                 + "as published by the Free Software Foundation, either version "
@@ -102,14 +102,13 @@ public class AboutBox extends javax.swing.JDialog {
         jTextArea1.setRows(5);
         jTextArea1.setText(getContent());
         jTextArea1.setWrapStyleWord(true);
-        jTextArea1.setOpaque(false);
         jTextArea1.setPreferredSize(null);
         jScrollPane1.setViewportView(jTextArea1);
 
         getContentPane().add(jScrollPane1);
 
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("Version 1.01. Build date: "+PuffinApp.getInstance().getBuildProperty("build.date"));
+        jLabel3.setText("Version: "+PuffinApp.getInstance().getVersion().getVersionString()+". Date: "+PuffinApp.getInstance().getVersion().getDateString());
         jLabel3.setAlignmentX(0.5F);
         jLabel3.setMaximumSize(new java.awt.Dimension(500, 30));
         jLabel3.setMinimumSize(new java.awt.Dimension(45, 30));

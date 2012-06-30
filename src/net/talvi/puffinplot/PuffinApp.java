@@ -28,6 +28,7 @@ import java.awt.print.PageFormat;
 import java.awt.print.PrinterJob;
 import java.io.*;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Handler;
@@ -100,6 +101,7 @@ public final class PuffinApp {
             System.getProperty("os.name").toLowerCase().startsWith("mac os x");
     private static final int OSX_POINT_VERSION = determineOsxPointVersion();
     private SuiteCalcs multiSuiteCalcs;
+    private final Version version;
 
     static {
         final Handler logStringHandler =
@@ -135,6 +137,7 @@ public final class PuffinApp {
         System.setProperty("apple.laf.useScreenMenuBar", "true");
         System.setProperty("com.apple.mrj.application.apple.menu.about.name", "PuffinPlot");
         loadBuildProperties();
+        version = new Version();
         prefs = new PuffinPrefs(this);
         actions = new PuffinActions(this);
         tableWindow = new TableWindow();
@@ -1156,5 +1159,52 @@ public final class PuffinApp {
     public void importTabularDataWithFormat(FileFormat format) {
         final List<File> files = openFileDialog("Select file(s) to import");
         openFiles(files, format);
+    }
+    
+    public Version getVersion() {
+        return version;
+    }
+    
+    public class Version {
+        private final String versionString;
+        private final String dateString;
+        private Version() {
+            String hgRev = getBuildProperty("build.hg.revid");
+            final String hgDate = getBuildProperty("build.hg.date");
+            final String hgTag = getBuildProperty("build.hg.tag");
+            final boolean modified = hgRev.endsWith("+");
+            hgRev = hgRev.replace("+", "");
+            if (hgTag.startsWith("version_") && !modified) {
+                versionString = hgTag.substring(8);
+            } else {
+                versionString = hgRev +
+                        (modified ? " (modified)" : "");
+            }
+            String epochDate = hgDate.split(" ")[0];
+            String dateStringTmp = getBuildProperty("build.date") +
+                    " (date of build; revision date not available)";
+            try {
+                Date date = new Date(Long.parseLong(epochDate) * 1000);
+                DateFormat df = new SimpleDateFormat("yyyy.MM.dd HH:mm");
+                dateStringTmp = df.format(date);
+            } catch (NumberFormatException ex) {
+                 // nothing to do
+            }
+            dateString = dateStringTmp;
+        }
+
+        /**
+         * @return the versionString
+         */
+        public String getVersionString() {
+            return versionString;
+        }
+
+        /**
+         * @return the dateString
+         */
+        public String getDateString() {
+            return dateString;
+        }
     }
 }

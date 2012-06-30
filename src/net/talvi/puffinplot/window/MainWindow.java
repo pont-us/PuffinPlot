@@ -103,8 +103,12 @@ public final class MainWindow extends JFrame {
         super();
         setBorder(new EmptyBorder(12, 12, 12, 12));
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        add(new JLabel("Welcome to PuffinPlot, version 1.01. This puffin hatched on "+
-                app.getBuildProperty("build.date") +"."));
+        final PuffinApp.Version version = app.getVersion();
+        final String welcome =
+                String.format("Welcome to PuffinPlot, version %s. "
+                + "This puffin hatched on %s.", version.getVersionString(),
+                version.getDateString());
+        add(new JLabel(welcome));
         add(new JLabel("PuffinPlot is copyright 2012 by Pontus Lurcock."));
         add(new JLabel("PuffinPlot is distributed under the GNU General Public License."));
         add(new JLabel("Select ‘About PuffinPlot’ from the Help menu for details."));
