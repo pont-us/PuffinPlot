@@ -9,7 +9,7 @@ desc: |-
   components.
 type: :task
 component: PuffinPlot
-release: "1.1"
+release: "1.2"
 reporter: Pontus Lurcock <pont@talvi.net>
 status: :unstarted
 disposition: 
@@ -28,3 +28,7 @@ log_events:
   - |-
     Deferring to version 1.1 since at present it's not causing
     noticeable problems.
+- - 2012-06-30 22:27:45.675743 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.2 from 1.1
+  - ""

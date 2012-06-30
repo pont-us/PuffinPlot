@@ -59,3 +59,11 @@ log_events:
     them into the jar, and persuading JavaHelp to load them. JavaHelp
     seems to be fairly old, seldom used, and with limited documentation,
     so I'd estimate this at maybe 8-16 hours of work.
+- - 2012-06-30 22:27:41.175562 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.2 from 1.1
+  - ""
+- - 2012-06-30 22:28:49.279854 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.1 from 1.2
+  - ""

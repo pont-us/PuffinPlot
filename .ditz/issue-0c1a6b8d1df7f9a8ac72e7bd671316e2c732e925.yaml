@@ -1,0 +1,21 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Ask user before overwriting files
+desc: |-
+  When any file is being saved or exported, there may be an existing
+  file with the same name. If this is the case, the user should be 
+  asked to confirm before the existing file is overwritten.
+type: :feature
+component: PuffinPlot
+release: "1.02"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2012-06-27 14:45:03.987527 Z
+references: []
+
+id: 0c1a6b8d1df7f9a8ac72e7bd671316e2c732e925
+log_events: 
+- - 2012-06-27 14:45:04.435329 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

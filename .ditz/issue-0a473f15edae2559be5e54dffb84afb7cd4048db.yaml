@@ -6,7 +6,7 @@ desc: |-
   displayed/hidden.
 type: :feature
 component: PuffinPlot
-release: "1.1"
+release: "1.2"
 reporter: Pontus Lurcock <pont@talvi.net>
 status: :unstarted
 disposition: 
@@ -32,3 +32,7 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - assigned to release 1.1 from 1.0
   - See comment for rationale.
+- - 2012-06-30 22:27:45.152975 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.2 from 1.1
+  - ""

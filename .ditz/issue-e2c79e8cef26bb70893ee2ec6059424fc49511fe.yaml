@@ -7,7 +7,7 @@ desc: |-
   especially with virtual fields.
 type: :feature
 component: PuffinPlot
-release: "1.1"
+release: "1.2"
 reporter: Pontus Lurcock <pont@talvi.net>
 status: :unstarted
 disposition: 
@@ -29,3 +29,7 @@ log_events:
     suspected. Or perhaps everything they wanted really is in there
     already. In any case I'm dropping it from 1.0 to 1.1 since import
     flexibility is far more important and time is limited.
+- - 2012-06-30 22:27:44.881189 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.2 from 1.1
+  - ""

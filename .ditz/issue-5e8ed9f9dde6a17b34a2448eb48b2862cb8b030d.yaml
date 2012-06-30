@@ -7,7 +7,7 @@ desc: |-
   able. But easy to implement so worth considering.
 type: :feature
 component: PuffinPlot
-release: "1.1"
+release: "1.2"
 reporter: Pontus Lurcock <pont@talvi.net>
 status: :unstarted
 disposition: 
@@ -19,4 +19,8 @@ log_events:
 - - 2009-06-04 02:44:16.676139 Z
   - Pontus Lurcock <pont@talvi.net>
   - created
+  - ""
+- - 2012-06-30 22:27:41.719556 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.2 from 1.1
   - ""

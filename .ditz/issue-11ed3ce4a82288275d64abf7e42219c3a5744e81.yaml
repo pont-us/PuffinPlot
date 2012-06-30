@@ -5,7 +5,7 @@ desc: |-
   the NRM histogram plot.
 type: :feature
 component: PuffinPlot
-release: "1.1"
+release: "1.2"
 reporter: Pontus Lurcock <pont@talvi.net>
 status: :unstarted
 disposition: 
@@ -17,4 +17,8 @@ log_events:
 - - 2011-12-19 18:01:41.157094 Z
   - Pontus Lurcock <pont@talvi.net>
   - created
+  - ""
+- - 2012-06-30 22:27:47.468532 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.2 from 1.1
   - ""

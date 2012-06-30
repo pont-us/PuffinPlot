@@ -9,7 +9,7 @@ desc: |-
   before wider release.
 type: :feature
 component: PuffinPlot
-release: "1.1"
+release: "1.2"
 reporter: Pontus Lurcock <pont@talvi.net>
 status: :unstarted
 disposition: 
@@ -28,3 +28,7 @@ log_events:
   - |-
     This isn't particularly difficult, but due to severe time pressure
     for the 1.0 release, I'm going to defer it to 1.1
+- - 2012-06-30 22:27:44.353228 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.2 from 1.1
+  - ""

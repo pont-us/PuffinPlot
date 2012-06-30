@@ -32,3 +32,11 @@ log_events:
     of any way to work around it.
     http://lists.apple.com/archives/Java-dev/2008/Nov/msg00239.html seems
     to confirm this.
+- - 2012-06-30 22:27:43.304460 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.2 from 1.1
+  - ""
+- - 2012-06-30 22:28:25.496006 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.1 from 1.2
+  - ""

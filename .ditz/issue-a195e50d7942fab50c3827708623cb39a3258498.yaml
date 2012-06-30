@@ -1,0 +1,20 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Export GCs as strike and dip
+desc: |-
+  Christian requests that great circles be exported as strike and
+  dip as well as pole direction. Should be simple to implement.
+type: :feature
+component: PuffinPlot
+release: "1.02"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2012-06-27 14:35:32.187188 Z
+references: []
+
+id: a195e50d7942fab50c3827708623cb39a3258498
+log_events: 
+- - 2012-06-27 14:35:33.346975 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

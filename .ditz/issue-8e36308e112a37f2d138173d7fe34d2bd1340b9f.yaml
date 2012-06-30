@@ -8,7 +8,7 @@ desc: |-
   like sample ID or magnetic deviation, up from Datum to Sample or Suite.
 type: :task
 component: PuffinPlot
-release: "1.1"
+release: "1.2"
 reporter: Pontus Lurcock <pont@talvi.net>
 status: :unstarted
 disposition: 
@@ -27,3 +27,7 @@ log_events:
   - |-
     Still seems like a great idea, but there won't be time to do
     it for the 1.0 release.
+- - 2012-06-30 22:27:43.820766 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.2 from 1.1
+  - ""

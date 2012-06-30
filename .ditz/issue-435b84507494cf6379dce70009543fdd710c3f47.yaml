@@ -10,7 +10,7 @@ desc: |-
   for little practical benefit).
 type: :task
 component: PuffinPlot
-release: "1.1"
+release: "1.2"
 reporter: Pontus Lurcock <pont@talvi.net>
 status: :unstarted
 disposition: 
@@ -38,3 +38,7 @@ log_events:
   - |-
     Empty-slot corrections deferred to later release; see bug #82
     for rationale.
+- - 2012-06-30 22:27:42.500473 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.2 from 1.1
+  - ""

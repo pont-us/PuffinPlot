@@ -3,7 +3,7 @@ title: apple-W doesn't close the fisher-by-site window
 desc: and it should.
 type: :bugfix
 component: PuffinPlot
-release: "1.1"
+release: "1.2"
 reporter: Pontus Lurcock <pont@talvi.net>
 status: :unstarted
 disposition: 
@@ -15,4 +15,8 @@ log_events:
 - - 2009-08-14 01:19:54.668791 Z
   - Pontus Lurcock <pont@talvi.net>
   - created
+  - ""
+- - 2012-06-30 22:27:43.566833 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.2 from 1.1
   - ""
