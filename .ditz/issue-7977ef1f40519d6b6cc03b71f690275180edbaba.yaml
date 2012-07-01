@@ -18,3 +18,10 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2012-07-01 21:25:29.087576 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    Actually I misunderstood, this isn't exactly what Christian
+    wants. On the other hand, it's a useful feature to have so I 
+    should still implement it.

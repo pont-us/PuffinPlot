@@ -1,0 +1,25 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Make points interactive in site EA plot
+desc: |-
+  Request from Christian, who wants to be able to tweak GC fits
+  directly from the site EA plot. Need to think a little about exact
+  interaction mechanism though. Certainly could implement 
+  click-to-remove but then how do you re-add? Or maybe a toggle to
+  show all points in the site EA plot, colour-coded according to
+  whether they're used for the GC fit, click to toggle their 
+  inclusion. Hmm, maybe trickier than I thought.
+type: :feature
+component: PuffinPlot
+release: "1.02"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2012-07-01 21:35:51.743848 Z
+references: []
+
+id: 56e7a8ec873b8bfc6b75fcdb5a5f39ed2614073c
+log_events: 
+- - 2012-07-01 21:36:03.719551 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - Might get pushed back to 1.1, but assigning to 1.02 for now.
