@@ -83,6 +83,10 @@ palaeomagnetic procedures is assumed. For excellent introductions to
 palaeomagnetic analysis, see \cite{tauxe2010paleomagnetism} or
 \cite{butler1992paleomagnetism}.
 
+If you use PuffinPlot in the creation of published work, please cite the
+PuffinPlot paper \citep{lurcock2012puffinplot}. See
+Appendix~\ref{sec:citing-puffinplot} for further details.
+
 PuffinPlot is free software, distributed under the GNU General Public
 License. Please see the \ppcmd{LICENCE} file in the PuffinPlot archive
 for details.
@@ -1683,11 +1687,64 @@ illustration by the Finnish artist Wilhelm von Wright (1810--1887), published
 in \emph{Svenska f\aa glar, efter naturen och p\aa{} sten ritade} (2nd ed.,
 1929).
 
+\appendix
+\section{Citing PuffinPlot\label{sec:citing-puffinplot}}
+
+PuffinPlot was introduced and described in a 2012 paper published
+in \emph{Geochemistry, Geophysics, Geosystems}. If you make use of
+PuffinPlot in published work, please include the following citation:
+
+\begin{quote}
+Lurcock, P. C., and G. S. Wilson (2012), PuffinPlot: A versatile,
+user-friendly program for paleomagnetic analysis, \emph{Geochemistry,
+  Geophysics, Geosystems}, 13, Q06Z45, doi:10.1029/2012GC004098.
+\end{quote}
+
+\noindent For convenience, citation data is provided below in two formats
+commonly used by bibliography management software.
+
+\subsection*{BibTeX citation record}
+
+\begin{verbatim}
+@article{lurcock2012puffinplot,
+   author = {Lurcock, P. C. and Wilson, G. S.},
+   title = {PuffinPlot: A versatile, user-friendly program for
+     paleomagnetic analysis},
+   journal = {Geochemistry, Geophysics, Geosystems},
+   year = {2012},
+   month = {Jun},
+   day = {26},
+   publisher = {AGU},
+   volume = {13},
+   pages = {Q06Z45},
+   issn = {1525-2027},
+   doi = {10.1029/2012GC004098},
+   url = {http://dx.doi.org/10.1029/2012GC004098}
+ }
+\end{verbatim}
+
+\subsection*{RIS citation record}
+
+\begin{verbatim}
+ TY  - JOUR
+ T1  - PuffinPlot: A versatile, user-friendly program for paleomagnetic analysis
+ A1  - Lurcock, P. C.
+ A1  - Wilson, G. S.
+ Y1  - 2012/06/26
+ JO  - Geochemistry, Geophysics, Geosystems
+ VL  - 13
+ SP  - Q06Z45
+ SN  - 1525-2027
+ UR  - http://dx.doi.org/10.1029/2012GC004098
+ DO  - 10.1029/2012GC004098
+ PB  - AGU
+\end{verbatim}
+
 % Define the heading of the bibliography to be empty, so I can put a proper
 % Section heading which will be included in the ToC.
-\renewcommand*{\refname}{\vspace{-1cm}} 
+%\renewcommand*{\refname}{\vspace{-1cm}} 
 \section{Bibliography}
-\bibliographystyle{plainnat}
+\bibliographystyle{apalike-url}
 \bibliography{manual}
 
 \end{document}
