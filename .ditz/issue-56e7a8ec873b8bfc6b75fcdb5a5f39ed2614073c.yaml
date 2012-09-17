@@ -10,7 +10,7 @@ desc: |-
   inclusion. Hmm, maybe trickier than I thought.
 type: :feature
 component: PuffinPlot
-release: "1.02"
+release: "1.03"
 reporter: Pontus Lurcock <pont@talvi.net>
 status: :unstarted
 disposition: 
@@ -23,3 +23,7 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - Might get pushed back to 1.1, but assigning to 1.02 for now.
+- - 2012-09-17 20:39:01.007793 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.03 from 1.02
+  - Need to push this back to get 1.02 out quickly.

@@ -5,7 +5,7 @@ desc: |-
   dip as well as pole direction. Should be simple to implement.
 type: :feature
 component: PuffinPlot
-release: "1.02"
+release: "1.03"
 reporter: Pontus Lurcock <pont@talvi.net>
 status: :unstarted
 disposition: 
@@ -18,3 +18,7 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2012-09-17 20:37:03.295627 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.03 from 1.02
+  - Need to push this back to get 1.02 out quickly.

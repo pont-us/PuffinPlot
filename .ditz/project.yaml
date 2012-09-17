@@ -84,3 +84,12 @@ releases:
     - Pontus Lurcock <pont@talvi.net>
     - created
     - ""
+- !ditz.rubyforge.org,2008-03-06/release 
+  name: "1.03"
+  status: :unreleased
+  release_time: 
+  log_events: 
+  - - 2012-09-17 20:36:35.215600 Z
+    - Pontus Lurcock <pont@talvi.net>
+    - created
+    - ""
