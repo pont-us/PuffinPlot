@@ -8,8 +8,8 @@ type: :task
 component: PuffinPlot
 release: "1.02"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :in_progress
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2012-02-09 20:08:31.761976 Z
 references: []
 
@@ -34,3 +34,11 @@ log_events:
     The manual could also do with better automatic versioning.
     At the moment it just pulls the datestamp off the tip of the
     Mercurial repository.
+- - 2012-09-17 21:07:38.095971 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Release information is now gleaned from Mercurial at build time.
+    For the manual, it is munged with a Python script and included
+    into the LaTeX source. For the program, it is written to a 
+    properties file which is packaged and read at run-time.

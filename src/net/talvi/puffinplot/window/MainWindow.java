@@ -17,13 +17,13 @@
 package net.talvi.puffinplot.window;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -31,10 +31,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
-import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.Sample;
 
@@ -116,12 +113,22 @@ public final class MainWindow extends JFrame {
                 + "This puffin hatched on %s.", version.getVersionString(),
                 version.getDateString());
         add(new JLabel(welcome));
-        add(new JLabel("PuffinPlot is copyright 2012 by Pontus Lurcock."));
+        add(new JLabel(String.format(
+                "PuffinPlot is copyright %s by Pontus Lurcock.",
+                version.getYearRange())));
         final JPanel citePanel = new JPanel();
-        citePanel.setBorder(new EmptyBorder(12, 12, 12, 12));
+        citePanel.setBorder(new EmptyBorder(12, 0, 12, 12));
         citePanel.setLayout(new BoxLayout(citePanel, BoxLayout.X_AXIS));
         citePanel.add(new JLabel("If you use PuffinPlot in a published work, please "));
-        citePanel.add(new JButton("click here to cite the PuffinPlot paper."));
+        JButton citeMeButton =
+                new JButton("click here to cite the PuffinPlot paper.");
+        citePanel.add(citeMeButton);
+        citeMeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                PuffinApp.getInstance().getCiteWindow().setVisible(true);
+            }
+        });
         citePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         add(citePanel);
         add(new JLabel("PuffinPlot is distributed under the GNU General Public License."));

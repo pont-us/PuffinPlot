@@ -8,8 +8,8 @@ type: :feature
 component: PuffinPlot
 release: "1.02"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2012-06-25 12:52:11.491719 Z
 references: []
 
@@ -28,3 +28,18 @@ log_events:
     Shouldn't be a problem -- the only people who can't get Java 6 are on
     PPC or 32-bit Intel Macs, and most of those machines are probably dead
     by now.
+- - 2012-09-17 21:11:40.560040 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - |-
+    Now using Window.setIconImages. Seems fine on Windows. A bit 
+    ropey on Ubuntu but I don't think the problem there is at my end.
+    (Works fine from command line, default icon when run from file
+    manager. Very odd.) Suspect there's nothing I can do about it,
+    so I'm closing this bug and hoping that a future Ubuntu release will
+    fix the problem.
+    ./
+- - 2012-09-17 21:12:28.064267 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - (See previous comment for details.)

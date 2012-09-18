@@ -8,8 +8,8 @@ type: :task
 component: PuffinPlot
 release: "1.02"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :in_progress
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2012-06-25 17:00:35.940572 Z
 references: []
 
@@ -23,3 +23,11 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - changed status from unstarted to in_progress
   - ""
+- - 2012-09-18 15:39:02.435607 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    There is now a whole window -- opened from a button on the start
+    screen -- dedicated to citing PuffinPlot. It provides a formatted
+    citation, a link to the paper online, and buttons to copy
+    BibTeX and RIS data to the clipboard.

@@ -17,6 +17,7 @@
 package net.talvi.puffinplot;
 
 import com.lowagie.text.DocumentException;
+import java.awt.Desktop;
 import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -27,6 +28,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.logging.Level;
@@ -976,6 +979,28 @@ public class PuffinActions {
         private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent e) {
             app.showTabularImportDialog();
+        }
+    };
+    
+    /**
+     * Opens the PuffinPlot website.
+     */
+    public final Action openPuffinWebsite = new PuffinAction("PuffinPlot website",
+            "Visit the PuffinPlot website", null, false, null) {
+        private static final long serialVersionUID = 1L;
+        public void actionPerformed(ActionEvent e) {
+            app.openWebPage("http://code.google.com/p/puffinplot/");
+        }
+    };
+    
+    /**
+     * Opens the Citation window.
+     */
+    public final Action openCiteWindow = new PuffinAction("Cite PuffinPlot…",
+            "Show information on citing PuffinPlot", null, false, null) {
+        private static final long serialVersionUID = 1L;
+        public void actionPerformed(ActionEvent e) {
+            app.getCiteWindow().setVisible(true);
         }
     };
 }

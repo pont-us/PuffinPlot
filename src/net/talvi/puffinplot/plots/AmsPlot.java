@@ -16,7 +16,6 @@
  */
 package net.talvi.puffinplot.plots;
 
-import com.sun.org.apache.xalan.internal.xsltc.dom.SingletonIterator;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;

@@ -21,13 +21,19 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.DefaultFontMapper;
 import com.lowagie.text.pdf.FontMapper;
 import com.lowagie.text.pdf.PdfContentByte;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.print.PageFormat;
 import java.awt.print.PrinterJob;
 import java.io.*;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -48,7 +54,6 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import net.talvi.puffinplot.data.Suite.AmsCalcType;
 import net.talvi.puffinplot.data.*;
 import net.talvi.puffinplot.data.file.FileFormat;
-import net.talvi.puffinplot.plots.Plot;
 import net.talvi.puffinplot.plots.SampleClickListener;
 import net.talvi.puffinplot.window.*;
 import org.freehep.util.UserProperties;
@@ -87,6 +92,7 @@ public final class PuffinApp {
     private final SiteMeanWindow siteEqAreaWindow;
     private PrefsWindow prefsWindow;
     private final AboutBox aboutBox;
+    private final CiteWindow citeWindow;
     private RecentFileList recentFiles;
     private CustomFieldEditor customFlagsWindow = null;
     private CustomFieldEditor customNotesWindow;
@@ -117,6 +123,7 @@ public final class PuffinApp {
 
         public PuffinAppSampleClickListener() { }
 
+        @Override
         public void sampleClicked(Sample sample) {
             final Suite suite = getSuite();
             getSuite().setCurrentSampleIndex(suite.getIndexBySample(sample));
@@ -144,9 +151,11 @@ public final class PuffinApp {
         suiteEqAreaWindow = new SuiteEqAreaWindow();
         siteEqAreaWindow = new SiteMeanWindow();
         correctionWindow = new CorrectionWindow();
+        citeWindow = new CiteWindow();
         // NB main window must be instantiated last, as
         // the Window menu references the other windows
         mainWindow = new MainWindow();
+        setApplicationIcon();
         Correction corr =
                 Correction.fromString(prefs.getPrefs().get("correction", "false false NONE false"));
         setCorrection(corr);
@@ -240,16 +249,15 @@ public final class PuffinApp {
         }
 
         java.awt.EventQueue.invokeLater(
-                new Runnable() { public void run() { 
+                new Runnable() { @Override public void run() { 
                     final PuffinApp app = new PuffinApp();
                     app.processArgs(args);
                 } });
     }
     
     private void processArgs(String[] args) {
-        int i=0;
         String scriptPath = null;
-        for (i=0; i<args.length; i++) {
+        for (int i=0; i<args.length; i++) {
             final String arg = args[i];
             if ("-script".equals(arg) && i<args.length-1) {
                 scriptPath = args[i+1];
@@ -429,6 +437,13 @@ public final class PuffinApp {
      */
     public MainWindow getMainWindow() {
         return mainWindow;
+    }
+    
+    /** Returns this PuffinApp's citation window
+     * @return this PuffinApp's citation window
+     */
+    public CiteWindow getCiteWindow() {
+        return citeWindow;
     }
  
     /**
@@ -1168,6 +1183,7 @@ public final class PuffinApp {
     public class Version {
         private final String versionString;
         private final String dateString;
+        private final String yearRange;
         private Version() {
             String hgRev = getBuildProperty("build.hg.revid");
             final String hgDate = getBuildProperty("build.hg.date");
@@ -1180,31 +1196,61 @@ public final class PuffinApp {
                 versionString = hgRev +
                         (modified ? " (modified)" : "");
             }
-            String epochDate = hgDate.split(" ")[0];
-            String dateStringTmp = getBuildProperty("build.date") +
+            String hgEpochDate = hgDate.split(" ")[0];
+            final String buildDate = getBuildProperty("build.date");
+            String dateStringTmp =  buildDate +
                     " (date of build; revision date not available)";
+            final Date date = new Date(Long.parseLong(hgEpochDate) * 1000);
+            DateFormat df = new SimpleDateFormat("yyyy.MM.dd HH:mm");
             try {
-                Date date = new Date(Long.parseLong(epochDate) * 1000);
-                DateFormat df = new SimpleDateFormat("yyyy.MM.dd HH:mm");
                 dateStringTmp = df.format(date);
             } catch (NumberFormatException ex) {
                  // nothing to do
             }
             dateString = dateStringTmp;
+            
+            String yearTmp = "2012";
+            if (!"unknown".equals(buildDate)) {
+                yearTmp = buildDate.substring(0, 4);
+            }
+            if ("2012".equals(yearTmp)) {
+                yearRange = "2012";
+            } else {
+                yearRange = "2012–"+yearTmp;
+            }
         }
 
-        /**
-         * @return the versionString
-         */
         public String getVersionString() {
             return versionString;
         }
 
-        /**
-         * @return the dateString
-         */
         public String getDateString() {
             return dateString;
+        }
+        
+        public String getYearRange() {
+            return yearRange;
+        }
+    }
+        
+    private void setApplicationIcon() {
+        List<Image> icons = new ArrayList<Image>(10);
+        final Toolkit kit = Toolkit.getDefaultToolkit();
+        for (String iconName: "256 128 48 32 16".split(" ")) {
+            final URL url =
+                    PuffinApp.class.getResource("icons/"+iconName+".png" );
+            icons.add(kit.createImage(url));
+        }
+        getMainWindow().setIconImages(icons);
+    }
+    
+    public void openWebPage(String uriString) {
+        try {
+            Desktop.getDesktop().browse(new URI(uriString));
+        } catch (URISyntaxException ex) {
+            app.errorDialog("Error opening web page", ex.getLocalizedMessage());
+        } catch (IOException ex) {
+            app.errorDialog("Error opening web page", ex.getLocalizedMessage());
         }
     }
 }

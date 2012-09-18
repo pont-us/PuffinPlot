@@ -158,7 +158,7 @@ public final class MainMenuBar extends JMenuBar {
                 new WindowMenuItem("Suite equal-area plot") {
                     private static final long serialVersionUID = 1L;
                     JFrame window(PuffinApp a) {return a.getSuiteEqAreaWindow();}}));
-        add(makeMenu("Help", pa.about));
+        add(makeMenu("Help", pa.openPuffinWebsite, pa.openCiteWindow, pa.about));
     }
 
     private class AnchorItem extends JCheckBoxMenuItem {
