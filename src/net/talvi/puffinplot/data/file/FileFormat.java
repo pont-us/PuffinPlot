@@ -193,8 +193,8 @@ public final class FileFormat {
     public void writeToPrefs(Preferences prefs) {
         final String pp = prefsPrefix;
         prefs.put(pp+".separator", separator);
-        prefs.putInt(pp+".headerlines", headerLines);
-        prefs.put(pp+".meastype", measurementType.toString());
+        prefs.putInt(pp+".headerLines", headerLines);
+        prefs.put(pp+".measType", measurementType.toString());
         prefs.put(pp+".treatType", treatmentType.toString());
         prefs.putBoolean(pp+".useFixedWidth", useFixedWidthColumns);
         prefs.put(pp+".columnWidths", getColumnWidthsAsString());
@@ -219,7 +219,7 @@ public final class FileFormat {
     public static FileFormat readFromPrefs(Preferences prefs) {
         final String pp = prefsPrefix;
         final String separator = prefs.get(pp+".separator", "\t");
-        final int headerLines = prefs.getInt(pp+".headerlines", 0);
+        final int headerLines = prefs.getInt(pp+".headerLines", 0);
         final MeasType measType =
                 MeasType.valueOf(prefs.get(pp+".measType", "CONTINUOUS"));
         final TreatType treatType =
