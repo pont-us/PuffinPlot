@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Show the bestfit mean and its a95 on the sample stereonet
+desc: (from JMG)
+type: :feature
+component: PuffinPlot
+release: "1.03"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2012-11-07 20:08:26.927552 Z
+references: []
+
+id: 5f4df8168ffdc322c499c3683a438a7406ec8529
+log_events: 
+- - 2012-11-07 20:08:27.167503 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

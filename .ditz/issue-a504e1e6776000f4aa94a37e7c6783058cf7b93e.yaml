@@ -1,0 +1,23 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Highlight selected site mean in suite plot
+desc: |-
+  JMG writes:
+  It would help if the program would highlight site mean in suite
+  plot when that mean was selected in site parameter table.
+  Likewise for highlighting sample means in site plot when that
+  sample mean was selected in sample parameter table.
+type: :feature
+component: PuffinPlot
+release: "1.03"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2012-11-07 20:11:42.399580 Z
+references: []
+
+id: a504e1e6776000f4aa94a37e7c6783058cf7b93e
+log_events: 
+- - 2012-11-07 20:11:42.607373 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

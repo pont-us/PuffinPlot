@@ -9,7 +9,7 @@ desc: |-
   before wider release.
 type: :feature
 component: PuffinPlot
-release: "1.2"
+release: "1.03"
 reporter: Pontus Lurcock <pont@talvi.net>
 status: :unstarted
 disposition: 
@@ -32,3 +32,11 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - assigned to release 1.2 from 1.1
   - ""
+- - 2012-11-07 20:39:03.135716 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.03 from 1.2
+  - |-
+    Bumping up to 1.03 since someone's finally requested it.
+    JMG writes:
+    It would help visually if you lined up the common axes on the
+    Zijderveld diagrams

@@ -1,0 +1,23 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Distinguish demag points from means on site EA plots
+desc: "JMG writes:\n\
+  Site stereonets show incremental sample demag directions for GC\n\
+  fits \xE2\x80\x93 this is useful, but it is difficult to distinguish them\n\
+  from sample means \xE2\x80\x93 it would be better if it displayed different\n\
+  symbols to represent site means, sample best fits, and individual\n\
+  sample steps (in the case of great circles)."
+type: :feature
+component: PuffinPlot
+release: "1.03"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2012-11-07 20:27:56.367748 Z
+references: []
+
+id: 9b9a2064b1157a22c194957a727a3b83d684156d
+log_events: 
+- - 2012-11-07 20:27:56.591730 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

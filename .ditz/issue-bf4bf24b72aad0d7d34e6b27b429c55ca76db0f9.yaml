@@ -1,0 +1,20 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Extend blue forced lines to the origin
+desc: |-
+  From JMG. Not sure exactly what he means -- will clarify before
+  fixing.
+type: :feature
+component: PuffinPlot
+release: "1.03"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2012-11-07 20:42:07.071935 Z
+references: []
+
+id: bf4bf24b72aad0d7d34e6b27b429c55ca76db0f9
+log_events: 
+- - 2012-11-07 20:42:07.423752 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

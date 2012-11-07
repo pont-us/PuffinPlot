@@ -1,0 +1,19 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Label plots
+desc: "JMG writes:\n\
+  Label plots \xE2\x80\x93its hard to tell site from suite stereonets"
+type: :feature
+component: PuffinPlot
+release: "1.03"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2012-11-07 20:37:25.647857 Z
+references: []
+
+id: 031953fd3674ccdec9e2f5186e06cf45203adb59
+log_events: 
+- - 2012-11-07 20:37:25.823687 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

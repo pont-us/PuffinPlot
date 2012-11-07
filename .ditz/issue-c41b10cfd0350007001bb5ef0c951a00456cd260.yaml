@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: a95s do not project onto upper hemisphere properly
+desc: From JMG.
+type: :bugfix
+component: PuffinPlot
+release: "1.03"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2012-11-07 20:43:24.912483 Z
+references: []
+
+id: c41b10cfd0350007001bb5ef0c951a00456cd260
+log_events: 
+- - 2012-11-07 20:43:25.135935 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
