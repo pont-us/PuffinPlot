@@ -16,3 +16,11 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2012-11-10 16:44:31.460706 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    This is presumably the same one that he reported telephonically,
+    which I noted as "when doing any fit (incl PCA) doesn't show mean
+    and a95 on plot". Well, PCA doesn't give an a95 of course, but 
+    perhaps MAD could be shown somehow?
