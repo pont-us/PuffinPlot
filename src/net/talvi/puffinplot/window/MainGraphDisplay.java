@@ -54,14 +54,17 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
         super();
         final PuffinApp app = PuffinApp.getInstance();
         params = new PlotParams() {
+            @Override
             public Sample getSample() {
                 return samplesForPrinting == null
                         ? app.getSample()
                         : samplesForPrinting.get(printPageIndex);
             }
+            @Override
             public Correction getCorrection() {
                 return app.getCorrection();
             }
+            @Override
             public MeasurementAxis getAxis() {
                 return app.getMainWindow().getControlPanel().getAxis();
             }
@@ -104,6 +107,7 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
      * otherwise {@link #NO_SUCH_PAGE}
      * @throws PrinterException if a printing error occurred
      */
+    @Override
     public int print(Graphics graphics, PageFormat pf, int pageIndex)
             throws PrinterException {
         pf.setOrientation(PageFormat.LANDSCAPE);

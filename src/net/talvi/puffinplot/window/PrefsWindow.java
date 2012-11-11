@@ -177,6 +177,7 @@ public class PrefsWindow extends JFrame {
 
         JButton closeButton = new JButton("Close");
         closeButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 // window closing event isn't triggered by a setVisible(false),
                 // so we have to update the SensorLengths here.
@@ -290,6 +291,7 @@ public class PrefsWindow extends JFrame {
             addItemListener(this);
         }
 
+        @Override
         public void itemStateChanged(ItemEvent e) {
             PuffinApp.getInstance().getCorrection().setMagDevAppliedToFormation(isSelected());
         }
@@ -309,6 +311,7 @@ public class PrefsWindow extends JFrame {
             addItemListener(this);
         }
 
+        @Override
         public void itemStateChanged(ItemEvent e) {
             prefs.getPrefs().put(prefsKey, getSelectedItem().toString());
         }
@@ -324,13 +327,13 @@ public class PrefsWindow extends JFrame {
             updateWith(prefs.getSensorLengths());
         }
 
+        @Override
         public void itemStateChanged(ItemEvent e) {
             String name = (String) getSelectedItem();
-            SensorLengths sl = null;
             if (name.equals("Custom")) {
                 for (JTextField slf: sensorLengthField) slf.setEnabled(true);
             } else {
-                sl = SensorLengths.fromPresetName(name);
+                final SensorLengths sl = SensorLengths.fromPresetName(name);
                 for (int i=0; i<3; i++) {
                     JTextField slf = sensorLengthField[i];
                     slf.setEnabled(false);

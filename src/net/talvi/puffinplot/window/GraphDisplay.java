@@ -21,7 +21,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.print.PageFormat;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -31,6 +30,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.io.*;
 import java.text.AttributedString;
@@ -39,14 +39,11 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
 import net.talvi.puffinplot.plots.Plot;
 import org.apache.batik.dom.GenericDOMImplementation;
-import org.freehep.graphics2d.VectorGraphics;
-import org.freehep.graphicsio.FontConstants;
 import org.freehep.graphicsio.svg.SVGGraphics2D;
 import org.freehep.util.UserProperties;
 import org.w3c.dom.DOMImplementation;
@@ -162,9 +159,14 @@ public abstract class GraphDisplay extends JPanel implements Printable {
                 r.setFrameFromDiagonal(mouseListener.startPoint,
                         mouseListener.currentDragPoint);
                 Rectangle2D rUnzoomed = new Rectangle2D.Double();
-                rUnzoomed.setFrameFromDiagonal(getAntiZoom().transform(mouseListener.startPoint, null),
+                rUnzoomed.setFrameFromDiagonal(
+                        getAntiZoom().transform(mouseListener.startPoint, null),
                         getAntiZoom().transform(mouseListener.currentDragPoint, null));
-                for (Plot plot : visiblePlots) plot.selectByRectangle(rUnzoomed);
+                for (Plot plot : visiblePlots) {
+                    final boolean rightButton =
+                            mouseListener.getCurrentButton() == MouseEvent.BUTTON3;
+                    plot.selectByRectangle(rUnzoomed, !rightButton);
+                }
                 for (Plot plot : visiblePlots) plot.draw(g2);
                 g2.setColor(Color.ORANGE);
                 g2.setComposite(WEAK_COMPOSITE);
@@ -255,9 +257,11 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         private static final int LEFT=1, TOP=2, RIGHT=4, BOTTOM=8, ALLSIDES=15;
         private int sides;
         private Point2D currentDragPoint;
+        private int currentButton;
         
         /** Handles a mouse click event.
          * @param e the mouse click event */
+        @Override
         public void mouseClicked(MouseEvent e) {
             final Point2D position = getAntiZoom().transform(e.getPoint(), null);
             for (Plot plot: plots.values())
@@ -268,6 +272,7 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         
         /** Handles a mouse button release event.
          * @param e the mouse button release event */
+        @Override
         public void mouseReleased(MouseEvent e) {
             draggee = null;
             draggingSelection = false;
@@ -304,15 +309,19 @@ public abstract class GraphDisplay extends JPanel implements Printable {
 
         /** Handles a mouse button press event.
          * @param e the mouse button press event */
+        @Override
         public void mousePressed(MouseEvent e) {
             draggee = null;
-            startPoint = currentDragPoint = getAntiZoom().transform(e.getPoint(), null);
+            startPoint = currentDragPoint = 
+                    getAntiZoom().transform(e.getPoint(), null);
             if (isDragPlotMode()) updateDraggingPlot();
             else draggingSelection = true;
+            currentButton = e.getButton();
         }
         
         /** Handles a mouse drag event. 
          * @param e the mouse drag event */
+        @Override
         public void mouseDragged(MouseEvent e) {
             Point2D thisPoint = getAntiZoom().transform(e.getPoint(), null);
             if (isDragPlotMode() && getDraggingPlot() != null) {
@@ -353,9 +362,20 @@ public abstract class GraphDisplay extends JPanel implements Printable {
             return draggee;
         }
 
+        @Override
         public void mouseEntered(MouseEvent e) {}
+        @Override
         public void mouseExited(MouseEvent e) {}
+        @Override
         public void mouseMoved(MouseEvent e) {}
+
+        /**
+         * Returns the currently depressed mouse button.
+         * @return the currently depressed mouse button.
+         */
+        public int getCurrentButton() {
+            return currentButton;
+        }
     }
 
     /** Prints all this display's plots to a graphics context.
@@ -414,7 +434,7 @@ public abstract class GraphDisplay extends JPanel implements Printable {
                 new org.freehep.graphicsio.svg.SVGGraphics2D(new File(filename),
                 this);
         UserProperties p = new UserProperties();
-        p.setProperty(g.TEXT_AS_SHAPES, false);
+        p.setProperty(SVGGraphics2D.TEXT_AS_SHAPES, false);
         g.setProperties(p);
         g.startExport();
         print(g);

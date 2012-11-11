@@ -94,6 +94,7 @@ public final class MainMenuBar extends JMenuBar {
                     }
                 };
         movePlotsItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent event) {
                 GraphDisplay gd = app.getMainWindow().getGraphDisplay();
                 gd.setDragPlotMode(!gd.isDragPlotMode());
@@ -110,6 +111,7 @@ public final class MainMenuBar extends JMenuBar {
                     }
                 };
         useEmptyItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent event) {
                 app.setEmptyCorrectionActive(!app.isEmptyCorrectionActive());
                 app.updateDisplay();
@@ -151,12 +153,15 @@ public final class MainMenuBar extends JMenuBar {
         add(makeMenu("Window",
                 new WindowMenuItem("Data table") {
                     private static final long serialVersionUID = 1L;
+                    @Override
                     JFrame window(PuffinApp a) {return a.getTableWindow();}},
                 new WindowMenuItem("Site equal-area plot") {
                     private static final long serialVersionUID = 1L;
+                    @Override
                     JFrame window(PuffinApp a) {return a.getSiteEqAreaWindow();}},
                 new WindowMenuItem("Suite equal-area plot") {
                     private static final long serialVersionUID = 1L;
+                    @Override
                     JFrame window(PuffinApp a) {return a.getSuiteEqAreaWindow();}}));
         add(makeMenu("Help", pa.openPuffinWebsite, pa.openCiteWindow, pa.about));
     }
@@ -168,6 +173,7 @@ public final class MainMenuBar extends JMenuBar {
             setToolTipText("If this item is checked, "
                     + "subsequent PCA analyses will be anchored");
             addItemListener(new ItemListener() {
+                @Override
             public void itemStateChanged(ItemEvent event) {
                 for (Sample s: app.getSelectedSamples()) {
                     s.setPcaAnchored(isSelected());
@@ -207,6 +213,7 @@ public final class MainMenuBar extends JMenuBar {
             final int index  = i;
             recentFilesMenu.add(new AbstractAction() {
                 private static final long serialVersionUID = 1L;
+                @Override
                 public void actionPerformed(ActionEvent arg0) {
                     PuffinApp.getInstance().
                             openFiles(recent.getFilesAndReorder(index));

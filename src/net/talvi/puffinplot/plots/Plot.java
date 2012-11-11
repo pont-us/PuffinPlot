@@ -405,14 +405,18 @@ public abstract class Plot
         }
     }
 
-    /** Selects all the plotted data points within a specified rectangle. 
-     * @param rectangle a rectangle defining which points should be selected */
-    public void selectByRectangle(Rectangle2D rectangle) {
+    /** Sets selection state for data points in a rectangle.
+     * Only visible points (i.e. those for which {@code isHidden()} is 
+     * {@code false}) are affected by this method.
+     * @param rectangle a rectangle defining which points should be selected
+     * @param state {@code true} to select points, {@code false} to deselect
+     */
+    public void selectByRectangle(Rectangle2D rectangle, boolean state) {
         for (PlotPoint point: points) {
             if (point.getDatum() != null && 
                     !point.getDatum().isHidden() &&
                     point.getShape().intersects(rectangle))
-                point.getDatum().setSelected(true);
+                point.getDatum().setSelected(state);
         }
     }
 
