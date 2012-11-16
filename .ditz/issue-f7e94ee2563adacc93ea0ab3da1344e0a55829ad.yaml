@@ -1,0 +1,22 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Support Caltech file format
+desc: ""
+type: :feature
+component: PuffinPlot
+release: "1.03"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2012-11-16 22:02:13.559214 Z
+references: []
+
+id: f7e94ee2563adacc93ea0ab3da1344e0a55829ad
+log_events: 
+- - 2012-11-16 22:02:13.767214 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
+- - 2012-11-16 22:02:28.295180 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - assigned to release 1.03 from 1.1
+  - ""
