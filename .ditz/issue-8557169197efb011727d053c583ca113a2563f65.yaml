@@ -1,0 +1,28 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Simultaneous treatment of fits with different corrections
+desc: |-
+  JMG writes:
+  I was playing around today with outputs and was wondering if there was a
+  way to customize it.  At present it only puts out sample and site
+  directions in one coordinate system (I assume this is in stratigraphic
+  coordinates??).  It would be good to output both geo and strat coords.
+  
+  Dealing with this would probably require some rearchitecting to
+  store the different corrections simultaneously -- see also #247,
+  multiple fits per sample. These two should probably be implemented
+  simultaneously.
+type: :feature
+component: PuffinPlot
+release: "1.1"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2012-11-23 02:56:34.272761 Z
+references: []
+
+id: 8557169197efb011727d053c583ca113a2563f65
+log_events: 
+- - 2012-11-23 02:56:34.525845 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
