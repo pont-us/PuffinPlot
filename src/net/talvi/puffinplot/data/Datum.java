@@ -493,6 +493,22 @@ public class Datum {
         default: throw new IllegalArgumentException("unhandled treatment type");
         }
     }
+    
+    /**
+     * Returns the treatment level formatted as a string.
+     * Temperatures are given in degrees Celsius, AF intensities
+     * in millitesla.
+     * 
+     * @return a string representing the treatment level
+     */
+    public String getFormattedTreatmentLevel() {
+        if (getTreatType().getUnit().equals("T")) {
+            // turn T into mT
+            return String.format("%.0f", getTreatmentLevel() * 1000);
+        } else {
+            return String.format("%.0f", getTreatmentLevel());
+        }
+    }
 
     /**
      * Returns the maximum treatment level within the supplied group of

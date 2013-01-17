@@ -14,22 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with PuffinPlot.  If not, see <http://www.gnu.org/licenses/>.
  */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package net.talvi.puffinplot.plots;
 
-import java.awt.geom.Line2D;
 import java.awt.Color;
-import java.awt.geom.Ellipse2D;
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import net.talvi.puffinplot.data.Datum;
 import static java.lang.Math.sqrt;
+import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.Sample;
 
 /**
@@ -48,7 +45,22 @@ class ShapePoint implements PlotPoint {
     private final boolean special;
     private final Point2D centre;
     private final Plot plot;
+    private Direction labelPos = Direction.RIGHT;
     private static final double HIGHLIGHT_SCALE = 1.6;
+
+    /**
+     * @return the labelPos
+     */
+    public Direction getLabelPos() {
+        return labelPos;
+    }
+
+    /**
+     * @param labelPos the labelPos to set
+     */
+    public void setLabelPos(Direction labelPos) {
+        this.labelPos = labelPos;
+    }
 
     public static enum PointShape { 
         SQUARE, CIRCLE, TRIANGLE;
@@ -173,40 +185,58 @@ class ShapePoint implements PlotPoint {
         return path;
     }
     
+    @Override
     public void draw(Graphics2D g) {
         g.setStroke(plot.getStroke());
         g.setColor(getDatum() != null && getDatum().isSelected() ?
                 Color.RED : Color.BLACK);
         g.draw(shape);
-        if (special) g.draw(highlight);
-        if (filled) g.fill(shape);
+        if (special) {
+            g.draw(highlight);
+        }
+        if (filled) {
+            g.fill(shape);
+        }
     }
 
-    public void drawWithPossibleLine(Graphics2D g, PlotPoint prev) {
+    @Override
+    public void drawWithPossibleLine(Graphics2D g, PlotPoint prev,
+            boolean annotate) {
         draw(g);
         g.setColor(Color.BLACK);
         if (lineToHere && prev != null) {
             g.draw(new Line2D.Double(prev.getCentre(), centre));
         }
+        if (annotate && datum != null) {
+            double pad = plot.getFontSize() / 3;
+            final String label = datum.getFormattedTreatmentLevel();
+            plot.putText(g, label, centre.getX(), centre.getY(), getLabelPos(),
+                    0, pad);
+        }
     }
 
+    @Override
     public Datum getDatum() {
         return datum;
     }
     
     /* For the present, only TextLinePoints can have samples. */
+    @Override
     public Sample getSample() {
         return null;
     }
 
+    @Override
     public Shape getShape() {
         return shape;
     }
 
+    @Override
     public Point2D getCentre() {
         return centre;
     }
 
+    @Override
     public boolean isNear(Point2D point, double distance) {
         return centre.distance(point) < distance;
     }

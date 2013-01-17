@@ -21,9 +21,11 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.event.MouseEvent;
+import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
 import static java.awt.font.TextAttribute.SUPERSCRIPT;
 import static java.awt.font.TextAttribute.SUPERSCRIPT_SUPER;
+import java.awt.font.TextLayout;
 import java.awt.font.TransformAttribute;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -109,7 +111,11 @@ public abstract class Plot
     public Plot(GraphDisplay parent, PlotParams params, Preferences prefs) {
         this.params = params;
         String sizesString = DEFAULT_PLOT_POSITIONS;
-        if (prefs != null) sizesString = prefs.get("plotSizes", DEFAULT_PLOT_POSITIONS);
+        String fontFamily = "Arial";
+        if (prefs != null) {
+            sizesString = prefs.get("plotSizes", DEFAULT_PLOT_POSITIONS);
+            fontFamily = prefs.get("plots.fontFamily", "Arial");
+        }
         try {
             setDimensionsFromPrefsString(sizesString);
         } catch (NoSuchElementException e) {
@@ -117,7 +123,9 @@ public abstract class Plot
             // safe to continue, default will be set below
         }
         // We may have a sizes string in the prefs but without this specific plot
-        if (dimensions==null) setDimensionsFromPrefsString(DEFAULT_PLOT_POSITIONS);
+        if (dimensions==null) {
+            setDimensionsFromPrefsString(DEFAULT_PLOT_POSITIONS);
+        }
         float maxDim = 800;
         // TODO fix this; parent should never be null (see FisherEqAreaPlot).
         if (parent != null) {
@@ -128,7 +136,7 @@ public abstract class Plot
         stroke = new BasicStroke(getUnitSize() * LINE_WIDTH_IN_UNITS);
         dashedStroke = new BasicStroke(getUnitSize() * LINE_WIDTH_IN_UNITS,
                 0, 0, 1, new float[]{2, 2}, 0);
-        final String fontFamily = prefs.get("plots.fontFamily", "Arial");
+        
         attributeMap.put(TextAttribute.FAMILY, fontFamily);
         attributeMap.put(TextAttribute.SIZE, getFontSize());
         useAppleSuperscriptHack = PuffinApp.getInstance().isOnOsX() &&
@@ -150,7 +158,9 @@ public abstract class Plot
                 double h = scanner.nextDouble();
                 dimensions = new Rectangle2D.Double(x, y, w, h);
             } else {
-                for (int i=0; i<5; i++) scanner.next();
+                for (int i=0; i<5; i++) {
+                    scanner.next();
+                }
             }
         }
     }
@@ -165,6 +175,17 @@ public abstract class Plot
      * @param dimensions dimensions the new dimensions of this plot */
     public void setDimensions(Rectangle2D dimensions) {
         this.dimensions = dimensions;
+    }
+    
+    /** Determines whether the points should be labelled.
+     * This method is used by {@code Plot}'s drawing routines.
+     * As defined in {@code Plot}, this method always returns
+     * {@code false}. Plots which
+     * use labelled points should override it.
+     * @return {@code true} if this plot's points should be labelled
+     */
+    public boolean areTreatmentStepsLabelled() {
+        return false;
     }
 
     /** Resets the plot's dimensions to the default,
@@ -220,8 +241,9 @@ public abstract class Plot
      * attributes
      */
     public void applyTextAttributes(AttributedString as) {
-        for (Map.Entry<? extends Attribute, ?> a : attributeMap.entrySet())
+        for (Map.Entry<? extends Attribute, ?> a : attributeMap.entrySet()) {
             as.addAttribute(a.getKey(), a.getValue());
+        }
     }
 
     /** Writes a text string onto this plot. 
@@ -350,7 +372,7 @@ public abstract class Plot
         g.setStroke(getStroke());
         PlotPoint prev = null;
         for (PlotPoint point: points) {
-            point.drawWithPossibleLine(g, prev);
+            point.drawWithPossibleLine(g, prev, areTreatmentStepsLabelled());
             prev = point;
         }
     }
@@ -367,15 +389,84 @@ public abstract class Plot
      */
     protected void addPoint(Datum d, Point2D p, boolean filled,
             boolean special, boolean line) {
-        points.add(ShapePoint.build(this, p).datum(d).
+        final ShapePoint pp = ShapePoint.build(this, p).datum(d).
                 filled(filled).lineToHere(line).special(special).
-                build());
+                build();
+        points.add(pp);
+        final int nPoints = points.size();
+        if (nPoints > 1) {
+            PlotPoint prevPoint = points.get(nPoints - 2);
+            Point2D centre = prevPoint.getCentre();
+            List<Point2D> others = new ArrayList<Point2D>(2);
+            others.add(points.get(nPoints - 1).getCentre());
+            if (nPoints>2) others.add(points.get(nPoints - 3).getCentre());
+            ((ShapePoint)prevPoint).setLabelPos(Direction.safeDirection(centre, others));
+        }
     }
     
     /** Clear this plot's internal buffer of points. */
     protected void clearPoints() {
         points.clear();
     }
+    
+    /**
+     * Write some text on this plot.
+     * 
+     * @param g the graphics context
+     * @param text the text to write
+     * @param x the x position of the text
+     * @param y the y position of the text
+     * @param dir the location of the text relative to the given position
+     * @param θ the rotation of the text, in radians (0 = horizontal)
+     * @param padding the distance between the text and the given position
+     */
+    public void putText(Graphics2D g, AttributedString text, double x,
+            double y, Direction dir, double θ, double padding) {
+        applyTextAttributes(text);
+        FontRenderContext frc = g.getFontRenderContext();
+        TextLayout layout = new TextLayout(text.getIterator(), frc);
+        Rectangle2D bounds = AffineTransform.getRotateInstance(θ).
+                createTransformedShape(layout.getBounds()).getBounds2D();
+        double w2 = bounds.getWidth()/2;
+        double h2 = bounds.getHeight()/2;
+        x -= w2;
+        y += h2;
+        w2 += padding;
+        h2 += padding;
+        switch (dir) {
+        case RIGHT: x += w2; break;
+        case DOWN: y += h2; break;
+        case LEFT: x -= w2; break;
+        case UP: y -= h2; break;
+        }
+
+        // Shape bbMoved = AffineTransform.getTranslateInstance(x, y).createTransformedShape(bounds);
+        AffineTransform old = g.getTransform();
+        g.translate(x - bounds.getMinX(), y - bounds.getMaxY());
+        g.rotate(θ);
+        // Don't use layout.draw, since that will draw the text as a glyph
+        // vector, which won't be exported as text in SVG, PDF, etc.
+        g.drawString(text.getIterator(), 0, 0);
+        g.setTransform(old);
+    }
+    
+    /**
+     * Write some text on this plot.
+     * 
+     * @param g the graphics context
+     * @param text the text to write
+     * @param x the x position of the text
+     * @param y the y position of the text
+     * @param dir the location of the text relative to the given position
+     * @param θ the rotation of the text, in radians (0 = horizontal)
+     * @param padding the distance between the text and the given position
+     */
+    public void putText(Graphics2D g, String textString, double x,
+            double y, Direction dir, double θ, double padding) {
+        AttributedString text = new AttributedString(textString);
+        putText(g, text, x, y, dir, θ, padding);
+    }
+
     
     /** Handles a mouse click event on the plot. If the click was on 
      * a plotted point, the associated datum (if any) will have its
@@ -390,11 +481,13 @@ public abstract class Plot
             final Datum d = p.getDatum();
             if (d != null && !d.isHidden()) {
             if (sloppy) {
-                if (p.isNear(position, SLOPPY_SELECTION_RADIUS_IN_UNITS * getUnitSize()))
+                if (p.isNear(position, SLOPPY_SELECTION_RADIUS_IN_UNITS * getUnitSize())) {
                     d.setSelected(e.getButton() == MouseEvent.BUTTON1);
+                }
                 } else {
-                if (p.getShape().contains(position))
-                    d.toggleSel();
+                    if (p.getShape().contains(position)) {
+                        d.toggleSel();
+                    }
             }
             } else /* no datum associated with point; check for a sample */ {
                 final Sample sample = p.getSample();
@@ -415,8 +508,9 @@ public abstract class Plot
         for (PlotPoint point: points) {
             if (point.getDatum() != null && 
                     !point.getDatum().isHidden() &&
-                    point.getShape().intersects(rectangle))
+                    point.getShape().intersects(rectangle)) {
                 point.getDatum().setSelected(state);
+            }
         }
     }
 

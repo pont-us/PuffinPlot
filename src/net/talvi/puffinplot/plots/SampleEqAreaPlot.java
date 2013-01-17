@@ -18,12 +18,12 @@ package net.talvi.puffinplot.plots;
 
 import java.awt.Graphics2D;
 import java.util.prefs.Preferences;
-import net.talvi.puffinplot.window.GraphDisplay;
-import net.talvi.puffinplot.window.PlotParams;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.GreatCircle;
-import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.data.Sample;
+import net.talvi.puffinplot.data.Vec3;
+import net.talvi.puffinplot.window.GraphDisplay;
+import net.talvi.puffinplot.window.PlotParams;
 
 /**
  * An equal-area plot showing sample data. This plot shows the magnetic
@@ -33,6 +33,8 @@ import net.talvi.puffinplot.data.Sample;
  * @author pont
  */
 public class SampleEqAreaPlot extends EqAreaPlot {
+    
+    private Preferences prefs;
 
       /** Creates a sample equal-area plot with the supplied parameters.
      * 
@@ -43,6 +45,7 @@ public class SampleEqAreaPlot extends EqAreaPlot {
     public SampleEqAreaPlot(GraphDisplay parent, PlotParams params,
             Preferences prefs) {
         super(parent, params, prefs);
+        this.prefs = prefs;
     }
 
     @Override
@@ -53,6 +56,12 @@ public class SampleEqAreaPlot extends EqAreaPlot {
     @Override
     public String getNiceName() {
         return "Equal-area (sample)";
+    }
+    
+    @Override
+    public boolean areTreatmentStepsLabelled() {
+        if (prefs==null) return false;
+        else return prefs.getBoolean("plots.labelTreatmentSteps", false);
     }
 
     public void draw(Graphics2D g) {

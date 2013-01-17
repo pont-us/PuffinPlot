@@ -24,7 +24,6 @@ import java.awt.geom.Rectangle2D;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.Sample;
@@ -76,9 +75,8 @@ class TextLinePoint implements PlotPoint {
         }
     }
 
+    @Override
     public void draw(Graphics2D g) {
-        double us = plot.getUnitSize();
-        final FontMetrics fontMetrics = g.getFontMetrics();
         if (datum != null) {
             if (datum.isSelected()) {
                 plot.writeString(g, "*", (float) xMin, (float) yPos);
@@ -88,6 +86,7 @@ class TextLinePoint implements PlotPoint {
             }
         }
 
+        final FontMetrics fontMetrics = g.getFontMetrics();
         double x = xMin + 10;
         for (int i=0; i<strings.size(); i++) {
             final AttributedCharacterIterator s = strings.get(i);
@@ -100,26 +99,33 @@ class TextLinePoint implements PlotPoint {
         }
     }
 
-    public void drawWithPossibleLine(Graphics2D g, PlotPoint prev) {
+    @Override
+    public void drawWithPossibleLine(Graphics2D g, PlotPoint prev,
+            boolean annotate) {
         draw(g);
     }
 
+    @Override
     public Datum getDatum() {
         return datum;
     }
     
+    @Override
     public Sample getSample() {
         return sample;
     }
 
+    @Override
     public Shape getShape() {
         return bbox;
     }
 
+    @Override
     public Point2D getCentre() {
         return new Point2D.Double(bbox.getCenterX(), bbox.getCenterY());
     }
 
+    @Override
     public boolean isNear(Point2D point, double distance) {
         return bbox.contains(point);
     }

@@ -105,7 +105,14 @@ public class ZPlot extends Plot {
     public String getNiceName() {
         return "Zplot";
     }
+        
+    @Override
+    public boolean areTreatmentStepsLabelled() {
+        if (prefs==null) return false;
+        else return prefs.getBoolean("plots.labelTreatmentSteps", false);
+    }
 
+    @Override
     public void draw(Graphics2D g) {
         final Sample sample = params.getSample();
         if (sample==null) return;

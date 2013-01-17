@@ -16,22 +16,20 @@
  */
 package net.talvi.puffinplot.plots;
 
-import net.talvi.puffinplot.data.TreatType;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
-
 import java.util.prefs.Preferences;
-import net.talvi.puffinplot.window.GraphDisplay;
-import net.talvi.puffinplot.window.PlotParams;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.MedianDestructiveField;
 import net.talvi.puffinplot.data.Sample;
-import static net.talvi.puffinplot.plots.PlotAxis.AxisParameters;
-import static net.talvi.puffinplot.plots.PlotAxis.Direction;
+import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.plots.PlotAxis.AxisParameters;
+import net.talvi.puffinplot.window.GraphDisplay;
+import net.talvi.puffinplot.window.PlotParams;
 
 /**
  * Demagnetization plot. This is a simple biplot with demagnetization
@@ -58,6 +56,7 @@ public class DemagPlot extends Plot {
 
     /** Returns this plot's internal name.
      * @return this plot's internal name */
+    @Override
     public String getName() {
         return "demag";
     }
@@ -68,10 +67,11 @@ public class DemagPlot extends Plot {
     public String getNiceName() {
         return "Demag.";
     }
-
+    
     /** Draws this plot. 
      * @param g the graphics object to which to draw the plot
      */
+    @Override
     public void draw(Graphics2D g) {
         clearPoints();
         Sample sample = params.getSample();

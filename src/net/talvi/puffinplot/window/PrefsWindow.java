@@ -146,6 +146,8 @@ public class PrefsWindow extends JFrame {
         
         miscPanel.add(Box.createVerticalGlue());
         
+        miscPanel.add(makeLabelledTickBox("Label treatment steps",
+                "plots.labelTreatmentSteps", false));
         miscPanel.add(new MagDevTickBox());
         miscPanel.add(makeLabelledPrefBox("Demag y axis",
                 "plots.demag.vAxisLabel", "Magnetization (A/m)"));
@@ -213,16 +215,16 @@ public class PrefsWindow extends JFrame {
     }
     
     private JPanel makeLabelledTickBox(String labelString, String pref,
-            String defaultValue) {
+            boolean defaultValue) {
         final JPanel panel = new JPanel(false);
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
         panel.add(Box.createRigidArea((new Dimension(8,0))));
-        final JLabel label = new JLabel(labelString);
+        final JLabel label = new JLabel("");
         label.setMaximumSize(new Dimension(200, 30));
         panel.add(label);
-        JTextField field = new PrefBox(pref, defaultValue);
-        field.setMaximumSize(new Dimension(300, 50));
-        panel.add(field);
+        PrefsTickBox tickBox = new PrefsTickBox(labelString, pref, defaultValue);
+        tickBox.setMaximumSize(new Dimension(300, 50));
+        panel.add(tickBox);
         return panel;
     }
     
@@ -280,6 +282,22 @@ public class PrefsWindow extends JFrame {
         }
         public void storeValue() {
             prefs.getPrefs().put(key, getText());
+        }
+    }    
+    private class PrefsTickBox extends JCheckBox implements ItemListener {
+        private static final long serialVersionUID = 1L;
+        final private String key;
+        public PrefsTickBox(String labelString, String key,
+            boolean defaultValue) {
+            super(labelString,
+                  prefs.getPrefs().getBoolean(key, defaultValue));
+            this.key = key;
+            addItemListener(this);
+        }
+
+        @Override
+        public void itemStateChanged(ItemEvent e) {
+            prefs.getPrefs().putBoolean(key, isSelected());
         }
     }
     

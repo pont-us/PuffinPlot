@@ -26,7 +26,7 @@ import java.util.prefs.Preferences;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.plots.PlotAxis.AxisParameters;
-import net.talvi.puffinplot.plots.PlotAxis.Direction;
+import net.talvi.puffinplot.plots.Direction;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 

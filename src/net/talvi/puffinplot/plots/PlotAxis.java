@@ -17,11 +17,7 @@
 package net.talvi.puffinplot.plots;
 
 import java.awt.Graphics2D;
-import java.awt.font.FontRenderContext;
-import java.awt.font.TextLayout;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
-import java.awt.geom.Rectangle2D;
 import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,55 +31,6 @@ import java.util.List;
 final class PlotAxis {
     private final Plot plot;
     private final AxisParameters ap;
-
-    static enum Direction {
-        RIGHT("R","E", 0), UP("U","N", 1),
-        LEFT("L","W", 2), DOWN("D","S", 3);
-        
-        private final String letter;
-        private final String compassDir;
-        private final int position;
-        private final static Direction[] ordering = new Direction[4];
-
-        static {
-            for (Direction d: values()) ordering[d.position] = d;
-        }
-
-        private Direction(String letter, String compassDir, int position) {
-            this.letter = letter;
-            this.compassDir = compassDir;
-            this.position = position;
-        }
-        
-        boolean isHorizontal() {
-            return (position % 2) == 0;
-        }
-        
-        Direction labelPos(boolean farSide) {
-            final Direction d = this.isHorizontal() ? DOWN : LEFT;
-            return farSide ? d.opposite() : d;
-        }
-        
-        Direction rotAcw90() {
-            return ordering[(position + 1) % 4];
-        }
-
-        public Direction opposite() {
-            return ordering[(position + 2) % 4];
-        }
-
-        double labelRot() {
-            return this.isHorizontal() ? 0 : -Math.PI/2;
-        }
-
-        public String getCompassDir() {
-            return compassDir;
-        }
-
-        public String getLetter() {
-            return letter;
-        }
-    }
 
     public PlotAxis(AxisParameters axisParameters, Plot plot) {
         ap = new AxisParameters(axisParameters);
@@ -211,42 +158,6 @@ final class PlotAxis {
                                20 ;
     }
 
-    private void putText(Graphics2D g, String textString, double x,
-            double y, Direction dir, double θ, double padding) {
-        AttributedString text = new AttributedString(textString);
-        putText(g, text, x, y, dir, θ, padding);
-    }
-
-    private void putText(Graphics2D g, AttributedString text, double x,
-            double y, Direction dir, double θ, double padding) {
-        plot.applyTextAttributes(text);
-        FontRenderContext frc = g.getFontRenderContext();
-        TextLayout layout = new TextLayout(text.getIterator(), frc);
-        Rectangle2D bounds = AffineTransform.getRotateInstance(θ).
-                createTransformedShape(layout.getBounds()).getBounds2D();
-        double w2 = bounds.getWidth()/2;
-        double h2 = bounds.getHeight()/2;
-        x -= w2;
-        y += h2;
-        w2 += padding;
-        h2 += padding;
-        switch (dir) {
-        case RIGHT: x += w2; break;
-        case DOWN: y += h2; break;
-        case LEFT: x -= w2; break;
-        case UP: y -= h2; break;
-        }
-
-        // Shape bbMoved = AffineTransform.getTranslateInstance(x, y).createTransformedShape(bounds);
-        AffineTransform old = g.getTransform();
-        g.translate(x - bounds.getMinX(), y - bounds.getMaxY());
-        g.rotate(θ);
-        // Don't use layout.draw, since that will draw the text as a glyph
-        // vector, which won't be exported as text in SVG, PDF, etc.
-        g.drawString(text.getIterator(), 0, 0);
-        g.setTransform(old);
-    }
-
     public void draw(Graphics2D g, double scale, int xOrig, int yOrig) {
         int x = 0, y = 0;
         double t = plot.getTickLength() / 2.0f;
@@ -270,7 +181,7 @@ final class PlotAxis {
                 AttributedString as = (ap.magnitudeOnTicks && getMagnitude() != 0)
                     ? plot.timesTenToThe(text, getMagnitude())
                     : new AttributedString(text);
-                putText(g, as,
+                plot.putText(g, as,
                         xOrig + x * pos, yOrig + y * pos,
                         ap.direction.labelPos(ap.farSide), 0, 5);
             }
@@ -283,7 +194,7 @@ final class PlotAxis {
             if (ap.markedPosition != null) {
                 AttributedString mark = new AttributedString
                         (String.format("%.2f", ap.markedPosition * Math.pow(10, -getMagnitude())));
-                putText(g, mark,
+                plot.putText(g, mark,
                         xOrig + x * ap.markedPosition * scale,
                         yOrig + y * ap.markedPosition * scale,
                         ap.direction.labelPos(!ap.farSide), 0, 5);
@@ -297,12 +208,12 @@ final class PlotAxis {
                     ? plot.timesTenToThe(ap.label, getMagnitude())
                     : new AttributedString(ap.label);
 
-            putText(g, as, xOrig + xLen / 2, yOrig + yLen / 2,
+            plot.putText(g, as, xOrig + xLen / 2, yOrig + yLen / 2,
                     ap.direction.labelPos(ap.farSide), ap.direction.labelRot(), 22);
         }
         
         if (ap.endLabel != null) {
-            putText(g, ap.endLabel, xOrig+xLen, yOrig+yLen, ap.direction, 0, 8);
+            plot.putText(g, ap.endLabel, xOrig+xLen, yOrig+yLen, ap.direction, 0, 8);
         }
     }
 
@@ -310,7 +221,7 @@ final class PlotAxis {
         return ap.endLabel;
     }
 
-    public PlotAxis.Direction getDirection() {
+    public Direction getDirection() {
         return ap.direction;
     }
     

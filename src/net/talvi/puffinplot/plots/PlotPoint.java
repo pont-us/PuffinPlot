@@ -26,7 +26,8 @@ interface PlotPoint {
 
     void draw(Graphics2D g);
 
-    void drawWithPossibleLine(Graphics2D g, PlotPoint prev);
+    void drawWithPossibleLine(Graphics2D g, PlotPoint prev,
+            boolean annotate);
 
     Datum getDatum();
     

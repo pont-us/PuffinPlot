@@ -93,12 +93,8 @@ public class DemagTable extends Plot {
             if (yPos > getDimensions().getHeight()) break;
             final List<String> values = new ArrayList<String>(4);
             final Vec3 p = d.getMoment(params.getCorrection());
-            String demag = useSequence ? Integer.toString(sequence)
-                    : format("%.0f", d.getTreatmentLevel());
-            if (d.getTreatType().getUnit().equals("T")) {
-                // turn T into mT
-                demag = format("%.0f", d.getTreatmentLevel() * 1000);
-            }
+            final String demag = useSequence ? Integer.toString(sequence)
+                    : d.getFormattedTreatmentLevel();
             values.add(demag);
             values.add(format("%.1f", p.getDecDeg()));
             values.add(format("% .1f", p.getIncDeg()));
