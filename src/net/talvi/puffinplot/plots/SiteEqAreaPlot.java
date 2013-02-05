@@ -16,18 +16,18 @@
  */
 package net.talvi.puffinplot.plots;
 
-import net.talvi.puffinplot.data.FisherValues;
-import java.util.ArrayList;
-import net.talvi.puffinplot.data.PcaValues;
-import java.util.List;
-import java.util.prefs.Preferences;
-import net.talvi.puffinplot.data.Sample;
-import net.talvi.puffinplot.data.Site;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.prefs.Preferences;
+import net.talvi.puffinplot.data.FisherValues;
 import net.talvi.puffinplot.data.GreatCircle;
 import net.talvi.puffinplot.data.GreatCircles;
+import net.talvi.puffinplot.data.PcaValues;
+import net.talvi.puffinplot.data.Sample;
+import net.talvi.puffinplot.data.Site;
 import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;

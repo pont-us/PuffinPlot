@@ -16,9 +16,6 @@
  */
 package net.talvi.puffinplot.data;
 
-import static java.lang.Math.atan;
-import static java.lang.Math.sqrt;
-import static java.lang.Math.toDegrees;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

@@ -120,6 +120,7 @@ public class AmsPlot extends EqAreaPlot {
     /** Draws this plot. 
      * @param g the graphics context to which to draw the plot
      */
+    @Override
     public void draw(Graphics2D g) {
         updatePlotDimensions(g);
         clearPoints();

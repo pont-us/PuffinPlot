@@ -203,7 +203,7 @@ public class ZPlot extends Plot {
                     incCorr = atan(sin(incRad) / (cos(incRad) * sin(decRad)));
                     break;
             }
-            if (vVs== MeasurementAxis.X || vVs == MeasurementAxis.Y) {
+            if (vVs == MeasurementAxis.X || vVs == MeasurementAxis.Y) {
                 /* If we're plotting vertical projections vs. `H', there's
                  * no meaningful way to display the vertical component of the
                  * PCA: the projection plane is changing with every point

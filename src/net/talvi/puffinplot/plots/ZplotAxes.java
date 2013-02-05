@@ -20,10 +20,8 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import static net.talvi.puffinplot.plots.Direction.*;
-
 import net.talvi.puffinplot.data.MeasurementAxis;
-import net.talvi.puffinplot.plots.Direction;
+import static net.talvi.puffinplot.plots.Direction.*;
 
 class ZplotAxes {
 

@@ -64,6 +64,7 @@ public class SampleEqAreaPlot extends EqAreaPlot {
         else return prefs.getBoolean("plots.labelTreatmentSteps", false);
     }
 
+    @Override
     public void draw(Graphics2D g) {
         updatePlotDimensions(g);
         clearPoints();

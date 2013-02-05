@@ -17,25 +17,24 @@
 package net.talvi.puffinplot.plots;
 
 import java.awt.BasicStroke;
-import static java.lang.Math.sqrt;
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
-import static java.lang.Math.abs;
-import static java.lang.Math.toRadians;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
-import java.awt.geom.Point2D;
 import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import static java.lang.Math.abs;
+import static java.lang.Math.cos;
+import static java.lang.Math.min;
+import static java.lang.Math.sin;
+import static java.lang.Math.sqrt;
+import static java.lang.Math.toRadians;
 import java.util.List;
 import java.util.prefs.Preferences;
+import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
-import net.talvi.puffinplot.data.Vec3;
-import static java.lang.Math.min;
 
 /**
  * An abstract superclass for Lambert azimuthal equal-area plots.
