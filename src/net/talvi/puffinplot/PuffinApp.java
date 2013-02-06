@@ -51,8 +51,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
-import net.talvi.puffinplot.data.Suite.AmsCalcType;
 import net.talvi.puffinplot.data.*;
+import net.talvi.puffinplot.data.Suite.AmsCalcType;
 import net.talvi.puffinplot.data.file.FileFormat;
 import net.talvi.puffinplot.plots.SampleClickListener;
 import net.talvi.puffinplot.window.*;
@@ -562,16 +562,21 @@ public final class PuffinApp {
     
     private static boolean unhandledErrorDialog() {
         final Object[] options = {"Continue", "Quit"};
-        final JLabel message = new JLabel(
+        String messageText =
                 "<html><body style=\"width: 400pt; font-weight: normal;\">" +
-                "<p>An unexpected error occurred. </p><p>" +
-                "Please make sure that you are using the latest version " +
-                "of PuffinPlot. If so, report the error to Pont. " +
-                "I will try to write the details " +
-                "to a file called PUFFIN-ERROR.txt . "+
-                "I recommend that you quit, but if you have unsaved "+
-                "data you could try to continue and save it.</p></body></html>")
-                ;
+                "<p><b>An unexpected error occurred.</b></p>" +
+                "<p>We apologize for the inconvenience. Please report this " +
+                "error to PP_ADDRESS@gmail.com. " +
+                "PuffinPlot will try to write the details " +
+                "to a file called PUFFIN-ERROR.txt in your home folder. "+
+                "Please attach this file to your report. " +
+                "If you have no unsaved data it is recommended that you " +
+                "quit now and restart PuffinPlot. " +
+                "If you have unsaved data, press Continue, then save your "+
+                "data to a new file before quitting PuffinPlot." +
+                "</p></body></html>";
+        messageText = messageText.replaceAll("PP_ADDRESS", "puffinplot");
+        final JLabel message = new JLabel(messageText);
         int response =
                 JOptionPane.showOptionDialog(getInstance().getMainWindow(),
                 message, "Unexpected error",
