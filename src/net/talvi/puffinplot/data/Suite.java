@@ -1066,6 +1066,15 @@ public final class Suite {
         return maximum;
     }
     
+    /** Clears all sites for this suite.
+     */
+    public void clearSites() {
+        sites = new ArrayList<Site>();
+        for (Sample s: samples) {
+            s.setSite(null);
+        }
+    }
+    
     /** A SiteNamer turns a sample name into a site name. It is used
      * to automatically define site names for a number of samples according
      * to a pre-programmed scheme.

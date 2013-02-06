@@ -138,7 +138,8 @@ public final class MainMenuBar extends JMenuBar {
                 makeMenu("Flip selected samples",
                 pa.flipSampleX, pa.flipSampleY, pa.flipSampleZ),
                 makeMenu("Edit sites", pa.setSiteName,
-                pa.setSitesFromSampleNames, pa.setSitesByDepth),
+                pa.setSitesFromSampleNames, pa.setSitesByDepth,
+                pa.clearSites),
                 pa.hideSelectedPoints, pa.unhideAllPoints,
                 pa.showCustomFlagsWindow, pa.showCustomNotesWindow,
                 pa.rescaleMagSus));

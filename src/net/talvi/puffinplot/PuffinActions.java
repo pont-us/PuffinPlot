@@ -904,6 +904,14 @@ public class PuffinActions {
         }
     };
     
+    public final Action clearSites = new PuffinAction("Clear sites",
+            "Remove all current site definitions", null, false, null) {
+        private static final long serialVersionUID = 1L;
+        @Override public void actionPerformed(ActionEvent e) {
+            app.getSuite().clearSites();
+        }
+    };
+    
     /**
      * Opens a dialog box allowing the user to specify a site name
      * for the selected samples.
