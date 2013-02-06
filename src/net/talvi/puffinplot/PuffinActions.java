@@ -17,7 +17,6 @@
 package net.talvi.puffinplot;
 
 import com.lowagie.text.DocumentException;
-import java.awt.Desktop;
 import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -28,8 +27,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.logging.Level;
@@ -77,6 +74,7 @@ public class PuffinActions {
             "Show information about this program",
             null, false, KeyEvent.VK_A) {
         private static final long serialVersionUID = 1L;
+        @Override
         public void actionPerformed(ActionEvent e) {
             app.about();
         }
@@ -90,6 +88,7 @@ public class PuffinActions {
             "Open a 2G, PPL, or ZPlot data file.", 'O', false,
             KeyEvent.VK_O) {
         private static final long serialVersionUID = 1L;
+        @Override
         public void actionPerformed(ActionEvent e) {
             app.openFilesWithDialog();
         }
@@ -101,7 +100,7 @@ public class PuffinActions {
     public final Action close = new PuffinAction("Close",
             "Close this suite of data", 'W', false, KeyEvent.VK_C) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             app.closeCurrentSuite();
         }
     };

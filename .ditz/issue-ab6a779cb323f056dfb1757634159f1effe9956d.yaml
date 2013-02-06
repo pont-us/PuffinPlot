@@ -19,8 +19,8 @@ type: :bugfix
 component: PuffinPlot
 release: "1.03"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2012-11-12 21:59:47.608859 Z
 references: []
 
@@ -30,3 +30,13 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2013-02-06 11:10:15.802320 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2013-02-06 11:13:42.269639 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Turned out to be a one-line fix: adding a Datum.setInPca(false)
+    to Sample.clearCalculations().

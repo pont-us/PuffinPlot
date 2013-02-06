@@ -83,7 +83,10 @@ public class Sample {
         mdf = null;
         greatCircle = null;
         selectNone();
-        for (Datum d: getData()) d.setOnCircle(false);
+        for (Datum d: getData()) {
+            d.setInPca(false);
+            d.setOnCircle(false);
+        }
     }
     
     /** Returns the suite containing this sample.
