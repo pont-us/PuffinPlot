@@ -1107,6 +1107,7 @@ public final class Suite {
     public void setNamedSiteForSamples(Collection<Sample> samples,
             final String siteName) {
         setSitesForSamples(samples, new SiteNamer() {
+            @Override
             public String siteName(Sample sample) {
                 return siteName;
             }
@@ -1123,6 +1124,7 @@ public final class Suite {
      */
     public void setSiteNamesBySubstring(Collection<Sample> samples, final BitSet charMask) {
         setSitesForSamples(samples, new SiteNamer() {
+            @Override
             public String siteName(Sample sample) {
                 final String sampleName = sample.getNameOrDepth();
                 StringBuilder sb = new StringBuilder(sampleName.length());
@@ -1144,6 +1146,7 @@ public final class Suite {
      * @param thickness the thickness of each site */
     public void setSiteNamesByDepth(Collection<Sample> samples, final double thickness) {
         setSitesForSamples(samples, new SiteNamer() {
+            @Override
             public String siteName(Sample sample) {
                 double minDepth = getMinDepth();
                 double relDepth = sample.getDepth() - minDepth;

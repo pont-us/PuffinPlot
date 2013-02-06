@@ -1,0 +1,32 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Fisher-by-site disabled for long core
+desc: |-
+  Although sites are now allowed in long core suites, attempting
+  a "Fisher by site" calculation fails with a message of "Only
+  discrete suites can have sites".
+type: :bugfix
+component: PuffinPlot
+release: "1.03"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :closed
+disposition: :fixed
+creation_time: 2013-02-06 11:47:20.059088 Z
+references: []
+
+id: 570d4b88a2be2db41c826c7370b2ccd3e272f9ef
+log_events: 
+- - 2013-02-06 11:47:20.501975 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
+- - 2013-02-06 12:49:33.484374 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2013-02-06 12:50:24.830725 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    PuffinActions.fisherBySite now checks for presence of sites
+    in current suite, rather than checking whether it is discrete
+    or long core.

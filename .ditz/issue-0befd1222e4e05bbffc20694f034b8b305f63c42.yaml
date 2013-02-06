@@ -23,3 +23,10 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2013-02-06 11:19:27.418000 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    It's possible that this might be the same bug as #257 
+    (cleared PCA calculations reappearing). Need to check back
+    with JMG before I can do anything with this one.
