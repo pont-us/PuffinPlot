@@ -131,6 +131,7 @@ public class PuffinActions {
                     FileDialog.SAVE);
             if (extension != null) {
             fd.setFilenameFilter(new FilenameFilter() {
+                @Override
                 public boolean accept(File dir, String name) {
                     return name.toLowerCase().endsWith(extension) ||
                             (new File(dir, name)).isDirectory();
@@ -156,7 +157,7 @@ public class PuffinActions {
     public final Action exportCalcsSample =
             new AbstractAction("Export sample calculations…") {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent event) {
+        @Override public void actionPerformed(ActionEvent event) {
             if (app.getSuite() == null) {
                 app.errorDialog("Error saving calculations", "No file loaded.");
                             return;
@@ -179,7 +180,7 @@ public class PuffinActions {
      */
     public final Action exportCalcsSite = new AbstractAction("Export site calculations…") {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent arg0) {
+        @Override public void actionPerformed(ActionEvent arg0) {
             if (app.getSuite() == null) {
                 app.errorDialog("Error saving calculation", "No file loaded.");
                             return;
@@ -203,7 +204,7 @@ public class PuffinActions {
      */
     public final Action exportCalcsSuite = new AbstractAction("Export suite calculations…") {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent arg0) {
+        @Override public void actionPerformed(ActionEvent arg0) {
             if (app.getSuite() == null) {
                 app.errorDialog("Error saving calculation", "No file loaded.");
                 return;
@@ -228,7 +229,7 @@ public class PuffinActions {
      */
     public final Action exportCalcsMultiSuite = new AbstractAction("Export multi-suite calculations…") {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent arg0) {
+        @Override public void actionPerformed(ActionEvent arg0) {
             app.exportCalcsMultiSuite();
         }
     };
@@ -253,7 +254,7 @@ public class PuffinActions {
     public final Action save = new PuffinAction("Save",
             "Re-save the current file", 'S', false, KeyEvent.VK_A) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             Suite suite = app.getSuite();
             if (suite != null) {
                 if (suite.isFilenameSet()) try {
@@ -276,7 +277,7 @@ public class PuffinActions {
     public final Action saveAs = new PuffinAction("Save as…",
             "Save this suite of data in a new file.", 'S', true, KeyEvent.VK_S) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent arg0) {
+        @Override public void actionPerformed(ActionEvent arg0) {
             Suite suite = app.getSuite();
             if (suite != null) doSaveAs(suite);
         }
@@ -289,7 +290,7 @@ public class PuffinActions {
     public final Action pageSetup = new PuffinAction("Page Setup…",
             "Edit the page setup for printing", 'P', true, KeyEvent.VK_G) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent arg0) {
+        @Override public void actionPerformed(ActionEvent arg0) {
             app.showPageSetupDialog();
         }
     };
@@ -300,7 +301,7 @@ public class PuffinActions {
     public final Action flipSampleX = new PuffinAction("Flip samples around X axis",
             "Rotate selected samples 180° about the X axis") {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent arg0) {
+        @Override public void actionPerformed(ActionEvent arg0) {
             app.flipSelectedSamples(MeasurementAxis.X);
         }
     };
@@ -311,7 +312,7 @@ public class PuffinActions {
     public final Action flipSampleY = new PuffinAction("Flip samples around Y axis",
             "Rotate selected samples 180° about the Y axis") {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent arg0) {
+        @Override public void actionPerformed(ActionEvent arg0) {
             app.flipSelectedSamples(MeasurementAxis.Y);
         }
     };
@@ -322,7 +323,7 @@ public class PuffinActions {
     public final Action flipSampleZ = new PuffinAction("Flip samples around Z axis",
             "Rotate selected samples 180° about the Z axis") {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent arg0) {
+        @Override public void actionPerformed(ActionEvent arg0) {
             app.flipSelectedSamples(MeasurementAxis.Z);
         }
     };
@@ -335,7 +336,7 @@ public class PuffinActions {
             "Perform principal component analysis (anchored or unanchored) "
             + "on selected points", 'R', false, KeyEvent.VK_P) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             app.doPcaOnSelection();
         }
     };
@@ -348,7 +349,7 @@ public class PuffinActions {
             "Use this sample as a control for machine noise", null, false,
             KeyEvent.VK_E) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             for (Sample s : app.getSuite().getSamples()) s.setEmptySlot(false);
             app.getSample().setEmptySlot(true);
             app.updateDisplay();
@@ -362,7 +363,7 @@ public class PuffinActions {
      */
     public final Action unsetEmptySlot = new AbstractAction("Unset empty slot") {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             for (Sample s : app.getSuite().getSamples()) s.setEmptySlot(false);
             app.updateDisplay();
         }
@@ -375,7 +376,7 @@ public class PuffinActions {
             "Fisher statistics on PCA directions grouped by site", 'F', false,
             KeyEvent.VK_I) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             final Suite suite = app.getSuite();
             if (suite == null) {
                 app.errorDialog("Fisher by site", "No suite loaded.");
@@ -398,7 +399,7 @@ public class PuffinActions {
             "Calculate mean directions using all selected sites and samples",
             'F', true, KeyEvent.VK_U) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             Suite suite = app.getSuite();
             if (suite == null) {
                 app.errorDialog("Calculate suite means", "No suite loaded.");
@@ -416,7 +417,7 @@ public class PuffinActions {
     public final Action circleFit = new PuffinAction("Fit great circle",
             "Fit great circle to selected points", 'L', false, KeyEvent.VK_C) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             app.fitGreatCirclesToSelection();
             app.calculateGreatCirclesDirections(false);
             app.updateDisplay();
@@ -430,7 +431,7 @@ public class PuffinActions {
     public final Action greatCircleAnalysis = new PuffinAction("Great circles",
             "Great circle analysis for site", 'I', false, KeyEvent.VK_L) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
         app.calculateGreatCirclesDirections(false);
         }
     };
@@ -441,7 +442,7 @@ public class PuffinActions {
     public final Action clearSiteCalcs = new PuffinAction("Clear site calculations",
             "Clear site Fisher and Great Circle calculations", 'I', true, 0) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             app.clearSiteCalculations();
         }
     };
@@ -454,7 +455,7 @@ public class PuffinActions {
             "Calculate median destructive field (or temperature) on selected samples",
             'M', false, KeyEvent.VK_M) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             for (Sample s: app.getSelectedSamples()) s.calculateMdf();
             app.getMainWindow().repaint();
         }
@@ -468,7 +469,7 @@ public class PuffinActions {
             "Edit sample and formation orientations, and local geomagnetic field declination",
             null, false, KeyEvent.VK_R) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             app.getCorrectionWindow().setVisible(true);
         }
     };
@@ -480,7 +481,7 @@ public class PuffinActions {
             "Clear point selections and calculations for selected samples",
             'Z', false, KeyEvent.VK_C) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             for (Sample s: app.getSelectedSamples()) s.clearCalculations();
             app.getMainWindow().repaint();
         }
@@ -492,7 +493,7 @@ public class PuffinActions {
     public final Action selectAll = new PuffinAction("Select all",
             "Select all visible points in selected samples", 'D', false, KeyEvent.VK_A) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             for (Sample s: app.getSelectedSamples()) s.selectVisible();
                 app.getMainWindow().repaint();
         }
@@ -504,7 +505,7 @@ public class PuffinActions {
     public final Action clearSelection = new PuffinAction("Clear selection",
             "Unselect all points in selected samples", 'D', true, KeyEvent.VK_L) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             for (Sample s: app.getSelectedSamples()) s.selectNone();
                 app.getMainWindow().repaint();
         }
@@ -519,7 +520,7 @@ public class PuffinActions {
             "Copy the point selection to the clipboard",
                     'J', false, KeyEvent.VK_C) {
                 private static final long serialVersionUID = 1L;
-                public void actionPerformed(ActionEvent e) {
+                @Override public void actionPerformed(ActionEvent e) {
                     app.copyPointSelection(); }};
     
     /**
@@ -531,7 +532,7 @@ public class PuffinActions {
             "Select the points corresponding to those copied to the clipboard",
                     'K', false, KeyEvent.VK_P) {
         private static final long serialVersionUID = 1L;
-                public void actionPerformed(ActionEvent e) {
+                @Override public void actionPerformed(ActionEvent e) {
                     app.pastePointSelection(); }};
 
     /**
@@ -541,7 +542,7 @@ public class PuffinActions {
     public final Action hideSelectedPoints = new PuffinAction("Hide points",
             "Hide the selected points", 'G', false, KeyEvent.VK_H) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
            for (Sample s: app.getSelectedSamples())  s.hideSelectedPoints();
             app.getMainWindow().repaint();
         }
@@ -554,7 +555,7 @@ public class PuffinActions {
             "Make hidden points visible again for all selected samples", 'G',
             true, KeyEvent.VK_O) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             for (Sample s : app.getSelectedSamples()) s.unhideAllPoints();
             app.getMainWindow().repaint();
         }
@@ -567,7 +568,7 @@ public class PuffinActions {
             "Show the preferences window", ',', false, KeyEvent.VK_R, true,
             PuffinAction.modifierKey) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             app.showPreferences();
         }
     };
@@ -579,7 +580,7 @@ public class PuffinActions {
     public final Action print = new PuffinAction("Print…",
             "Print the selected samples", 'P', false, KeyEvent.VK_E) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             PrinterJob job = PrinterJob.getPrinterJob();
             job.setPrintable(app.getMainWindow().getGraphDisplay(),
                              app.getCurrentPageFormat());
@@ -605,7 +606,7 @@ public class PuffinActions {
             "Print the contents of the suite equal-area plot window",
             null, false, KeyEvent.VK_N) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             PrinterJob job = PrinterJob.getPrinterJob();
             job.setPrintable((Printable) app.getSiteEqAreaWindow().getContentPane(),
                     app.getCurrentPageFormat());
@@ -632,7 +633,7 @@ public class PuffinActions {
             "Print the contents of the suite equal-area plot window",
             null, false, KeyEvent.VK_F) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             PrinterJob job = PrinterJob.getPrinterJob();
             job.setPrintable((Printable) app.getSuiteEqAreaWindow().getContentPane(),
                     app.getCurrentPageFormat());
@@ -658,7 +659,7 @@ public class PuffinActions {
     public final Action quit = new PuffinAction("Quit",
             null, 'Q', false, KeyEvent.VK_Q, true, PuffinAction.modifierKey) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             app.quit();
         }
     };
@@ -670,7 +671,7 @@ public class PuffinActions {
             "Move plots back to their original positions", null, false,
             KeyEvent.VK_L) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             app.getMainWindow().getGraphDisplay().resetLayout();
         }
     };
@@ -682,7 +683,7 @@ public class PuffinActions {
     public final Action importAms = new PuffinAction("Import AMS…",
             "Import AMS data from Agico ASC file", null, false, KeyEvent.VK_L) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             app.importAmsWithDialog();
         }
     };
@@ -694,7 +695,7 @@ public class PuffinActions {
             "Calculate means for data in all open suites", null, false,
             KeyEvent.VK_V) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             app.calculateMultiSuiteMeans();
         }
     };
@@ -706,7 +707,7 @@ public class PuffinActions {
     public final Action exportIrm = new PuffinAction("Export IRM data…",
             "Export IRM field/remanence for this suite", null, false, 0) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             if (app.getSuite() == null) return;
             String pathname = getSavePath("Export IRM data", null,
                     null);
@@ -724,7 +725,7 @@ public class PuffinActions {
             "Edit user-defined flags for samples",
             null, false, 0) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
            app.showCustomFlagsWindow();
         }
     };
@@ -737,7 +738,7 @@ public class PuffinActions {
             "Edit user-defined notes for samples",
             null, false, 0) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
            app.showCustomNotesWindow();
         }
     };
@@ -750,7 +751,7 @@ public class PuffinActions {
             "Save current display to an SVG file, using the Batik graphics library",
             '6', false, 0) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             String pathname = getSavePath("Export to SVG (Batik)", ".svg",
                     "Scalable Vector Graphics");
             if (pathname != null)
@@ -766,7 +767,7 @@ public class PuffinActions {
             "Save current display to an SVG file, using the FreeHEP graphics library",
             '7', false, 0) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             String pathname = getSavePath("Export to SVG (FreeHEP)", ".svg",
                     "Scalable Vector Graphics");
             if (pathname != null) {
@@ -787,7 +788,7 @@ public class PuffinActions {
             "Print data for selected samples to a PDF file, using the iText graphics library",
             '8', false, 0) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             String pathname = getSavePath("Export to PDF", ".pdf",
                     "Portable Document Format");
             if (pathname != null)
@@ -809,7 +810,7 @@ public class PuffinActions {
             "Print data for selected samples to a PDF file, using the FreeHEP graphics library",
             '9', false, 0) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             String pathname = getSavePath("Export to PDF", ".pdf",
                     "Portable Document Format");
             if (pathname != null)
@@ -828,7 +829,7 @@ public class PuffinActions {
             "Calculate bootstrap statistics for AMS data of selected samples",
             null, false, 0) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             app.doAmsCalc(AmsCalcType.BOOT, "bootams.py");
         }
     };
@@ -840,7 +841,7 @@ public class PuffinActions {
             "Calculate parametric bootstrap statistics for AMS data of selected samples",
             null, false, 0) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             app.doAmsCalc(AmsCalcType.PARA_BOOT, "bootams.py");
         }
     };
@@ -852,7 +853,7 @@ public class PuffinActions {
             "Calculate Hext statistics for AMS data of selected samples",
             null, false, 0) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             app.doAmsCalc(AmsCalcType.HEXT, "s_hext.py");
         }
     };
@@ -865,7 +866,7 @@ public class PuffinActions {
             "Scale magnetic susceptibility by a constant factor (whole suite)",
             null, false, 0) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             app.rescaleMagSus();
         }
     };
@@ -875,7 +876,7 @@ public class PuffinActions {
      */
     public final Action exportPrefs = new AbstractAction("Export preferences…") {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent arg0) {
+        @Override public void actionPerformed(ActionEvent arg0) {
             String pathname = getSavePath("Export preferences", ".xml",
                     "eXtensible Markup Language");
             if (pathname != null)
@@ -888,7 +889,7 @@ public class PuffinActions {
      */
     public final Action importPrefs = new AbstractAction("Import preferences…") {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent arg0) {
+        @Override public void actionPerformed(ActionEvent arg0) {
             app.importPreferencesWithDialog();
         }
     };
@@ -898,7 +899,7 @@ public class PuffinActions {
      */
     public final Action clearAmsCalcs = new AbstractAction("Clear AMS calculations") {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent arg0) {
+        @Override public void actionPerformed(ActionEvent arg0) {
             app.clearAmsCalcs();
         }
     };
@@ -909,7 +910,7 @@ public class PuffinActions {
      */
     public final Action setSiteName = new AbstractAction("Set site name…") {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             final String name = JOptionPane.showInputDialog("Site name");
             if (name==null || "".equals(name)) return;
             app.getSuite().setNamedSiteForSamples(app.getSelectedSamples(), name);
@@ -923,7 +924,7 @@ public class PuffinActions {
      */
     public final Action setSitesFromSampleNames = new AbstractAction("Set sites from sample names…") {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             final String maskSpec = JOptionPane.showInputDialog("Character positions to use");
             if (maskSpec==null || "".equals(maskSpec)) return;
             app.getSuite().setSiteNamesBySubstring(app.getSelectedSamples(),
@@ -937,7 +938,7 @@ public class PuffinActions {
      */
     public final Action setSitesByDepth = new AbstractAction("Set sites by depth…") {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             final String thicknessString = JOptionPane.showInputDialog("Thickness of depth slices");
             if (thicknessString==null || "".equals(thicknessString)) return;
             float thickness = Float.NaN;
@@ -957,7 +958,7 @@ public class PuffinActions {
      */
     public final Action clearPreferences = new AbstractAction("Clear preferences") {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             app.clearPreferences();
         }
     };
@@ -967,7 +968,7 @@ public class PuffinActions {
      */
     public final Action runScript = new AbstractAction("Run Python script…") {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             app.runPythonScriptWithDialog();
         }
     };
@@ -977,7 +978,7 @@ public class PuffinActions {
      */
     public final Action importTabularData = new AbstractAction("Import data…") {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             app.showTabularImportDialog();
         }
     };
@@ -988,7 +989,7 @@ public class PuffinActions {
     public final Action openPuffinWebsite = new PuffinAction("PuffinPlot website",
             "Visit the PuffinPlot website", null, false, null) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             app.openWebPage("http://code.google.com/p/puffinplot/");
         }
     };
@@ -999,7 +1000,7 @@ public class PuffinActions {
     public final Action openCiteWindow = new PuffinAction("Cite PuffinPlot…",
             "Show information on citing PuffinPlot", null, false, null) {
         private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             app.getCiteWindow().setVisible(true);
         }
     };
