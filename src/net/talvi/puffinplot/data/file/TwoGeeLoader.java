@@ -144,26 +144,31 @@ public class TwoGeeLoader extends AbstractFileLoader {
                     }
                 } else {
                     Datum tray, normal, yflip;
+                    Datum combined = null;
                     switch (protocol) {
                         case NORMAL:
-                            data.add(d);
+                            //data.add(d);
+                            combined = d;
                             break;
                         case TRAY_NORMAL:
                             tray = d;
                             normal = readDatum(reader.readLine(), reader.getLineNumber());
-                            data.add(combine2(tray, normal, true));
+                            //data.add(combine2(tray, normal, true));
+                            combined = combine2(tray, normal, true);
                             break;
                         case TRAY_NORMAL_IGNORE:
                             tray = d;
                             normal = readDatum(reader.readLine(), reader.getLineNumber());
                             if (trayMoment == null) trayMoment = tray.getMoment(Correction.NONE);
                             normal.setMoment(normal.getMoment(Correction.NONE).minus(trayMoment));
-                            data.add(normal);
+                            //data.add(normal);
+                            combined = normal;
                             break;
                         case NORMAL_TRAY:
                             normal = d;
                             tray = readDatum(reader.readLine(), reader.getLineNumber());
-                            data.add(combine2(tray, normal, false));
+                            //data.add(combine2(tray, normal, false));
+                            combined = combine2(tray, normal, false);
                             break;
                         case TRAY_NORMAL_YFLIP:
                             tray = d;
@@ -172,15 +177,22 @@ public class TwoGeeLoader extends AbstractFileLoader {
                              * so we will read three lines (tray, normal, y-flipped)
                              * and synthesize a Datum from them. */
                             yflip = readDatum(reader.readLine(), reader.getLineNumber());
-                            data.add(combine3(tray, normal, yflip));
+                            //data.add(combine3(tray, normal, yflip));
+                            combined = combine3(tray, normal, yflip);
                             break;
                         case TRAY_FIRST:
                             // can't use combine2 as we want the rest of the
                             // data from d, not the tray measurement
                             final Vec3 normV = d.getMoment(Correction.NONE);
                             d.setMoment(normV.minus(trayMoment));
-                            data.add(d);
+                            // data.add(d);
+                            combined = d;
                             break;
+                    }
+                    if (combined == null) {
+                        break;
+                    } else {
+                        data.add(combined);
                     }
                 }
             }
@@ -192,9 +204,10 @@ public class TwoGeeLoader extends AbstractFileLoader {
         correlateFields();
     }
 
+    /** Subtracts a tray measurement from a sample measurement.
+     */
     private Datum combine2(Datum tray, Datum normal, boolean useTrayData) {
-        /* Subtract a tray measurement from a sample measurement
-         */
+        if (tray == null || normal == null) return null;
         final Vec3 trayV = tray.getMoment(Correction.NONE);
         final Vec3 normV = normal.getMoment(Correction.NONE);
         // The volume correction's already been applied on loading.
@@ -212,6 +225,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
          * measurement, and just poke in the magnetic moment vector
          * calculated from the three readings.
          */
+        if (tray==null || normal==null || reversed==null) return null;
         final Vec3 trayV = tray.getMoment(Correction.NONE);
         final Vec3 normV = normal.getMoment(Correction.NONE);
         final Vec3 revV = reversed.getMoment(Correction.NONE);
@@ -266,7 +280,11 @@ public class TwoGeeLoader extends AbstractFileLoader {
     private Datum readDatum(String line, int lineNumber) {
         Datum d = null;
         if (line == null) {
-            throw new IllegalArgumentException("null line in readDatum");
+            addMessage("File ended unexpectedly at line %d -- "
+                    + "is 2G Protocol correctly set in Preferences?",
+                    lineNumber);
+            return null;
+            //throw new IllegalArgumentException("null line in readDatum");
         }
         if (emptyLine.matcher(line).matches()) return null;
         try {
@@ -499,6 +517,4 @@ public class TwoGeeLoader extends AbstractFileLoader {
         d.setZDrift(r.getDouble("Z drift", d.getZDrift()));
         return d;
     }
-
-
 }
