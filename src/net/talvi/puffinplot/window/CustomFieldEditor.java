@@ -124,6 +124,7 @@ public class CustomFieldEditor extends JFrame {
     }
 
     private class MoveUpListener implements ActionListener {
+        @Override
         public void actionPerformed(ActionEvent e) {
             int index = list.getSelectedIndex() - 1;
             if (index<0) return;
@@ -136,6 +137,7 @@ public class CustomFieldEditor extends JFrame {
     }
 
     private class MoveDownListener implements ActionListener {
+        @Override
         public void actionPerformed(ActionEvent e) {
             int index = list.getSelectedIndex();
             if (index>=fields.size()-1 || index==-1) return;
@@ -148,6 +150,7 @@ public class CustomFieldEditor extends JFrame {
     }
 
     private class RemoveFieldListener implements ActionListener {
+        @Override
         public void actionPerformed(ActionEvent e) {
             int index = list.getSelectedIndex();
             if (index==-1) return;
@@ -168,6 +171,7 @@ public class CustomFieldEditor extends JFrame {
     }
 
     private class AddFieldListener implements ActionListener {
+        @Override
         public void actionPerformed(ActionEvent e) {
             //String name = customFieldName.getText();
             String name = (String) JOptionPane.showInputDialog(
@@ -194,6 +198,7 @@ public class CustomFieldEditor extends JFrame {
     }
 
     private class RenameListener implements ActionListener {
+        @Override
         public void actionPerformed(ActionEvent e) {
             int index = list.getSelectedIndex();
             if (index==-1) return;

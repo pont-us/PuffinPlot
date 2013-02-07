@@ -117,6 +117,7 @@ public class CorrectionWindow extends JFrame implements ActionListener {
      * 
      * @param event the action event to handle
      */
+    @Override
     public void actionPerformed(ActionEvent event) {
         if (event.getSource() == cancelButton)
             setVisible(false);

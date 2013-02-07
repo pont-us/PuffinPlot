@@ -16,7 +16,6 @@
  */
 package net.talvi.puffinplot.window;
 
-import net.talvi.puffinplot.*;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -36,6 +35,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import net.talvi.puffinplot.*;
 import net.talvi.puffinplot.data.Suite;
 
 /**
@@ -64,6 +64,7 @@ class DepthSlider extends JPanel
         setBackground(Color.LIGHT_GRAY);
         setOpaque(true);
         addChangeListener(new ChangeListener() {
+            @Override
             public void stateChanged(ChangeEvent e) {
                 Suite suite = PuffinApp.getInstance().getSuite();
                 if (suite != null) {
@@ -77,18 +78,21 @@ class DepthSlider extends JPanel
         getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control A"), "select_all");
         getActionMap().put("next", new AbstractAction() {
             private static final long serialVersionUID = 1L;
+            @Override
             public void actionPerformed(ActionEvent e) {
                 changeValueBy(1);
             }
         });
         getActionMap().put("previous", new AbstractAction() {
             private static final long serialVersionUID = 1L;
+            @Override
             public void actionPerformed(ActionEvent e) {
                 changeValueBy(-1);
             }
         });
         getActionMap().put("select_all", new AbstractAction() {
             private static final long serialVersionUID = 1L;
+            @Override
             public void actionPerformed(ActionEvent e) {
                 rangeStart = 0;
                 rangeEnd = maximum;
@@ -195,34 +199,41 @@ class DepthSlider extends JPanel
 
     /** Handles a mouse click on this slider. 
      * @param e the event produced by the mouse click */
+    @Override
     public void mouseClicked(MouseEvent e) {
         clickOrDrag(e);
     }
 
     /** Handles a mouse press on this slider. 
      * @param e the event produced by the mouse press */
+    @Override
     public void mousePressed(MouseEvent e) {
         requestFocusInWindow();
     }
 
     /** Handles a mouse release on this slider. 
      * @param e the event produced by the mouse release */
+    @Override
     public void mouseReleased(MouseEvent e) {
        // Do nothing.
     }
 
+    @Override
     public void mouseEntered(MouseEvent e) {
         // Do nothing.
     }
 
+    @Override
     public void mouseExited(MouseEvent e) {
        // Do nothing.
     }
 
+    @Override
     public void mouseDragged(MouseEvent e) {
         clickOrDrag(e);
     }
 
+    @Override
     public void mouseMoved(MouseEvent e) {
         // Do nothing.
     }

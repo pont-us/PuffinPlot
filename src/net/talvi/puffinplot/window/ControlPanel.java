@@ -51,6 +51,7 @@ public class ControlPanel extends JPanel
     
     private Action toggleZplotAction = new AbstractAction() {
         private static final long serialVersionUID = 1L;
+        @Override
         public void actionPerformed(ActionEvent e) {
             vVsBox.toggle();
         }
@@ -127,6 +128,7 @@ public class ControlPanel extends JPanel
      * the suite selection combo box.
      * @param e the action event to handle
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
         /* No way to tell if this was a user click or the box being
          * rebuilt, so we have to use this ugly variable to avoid spurious
@@ -217,6 +219,7 @@ public class ControlPanel extends JPanel
      * 
      * @param e the event corresponding to the change
      */
+    @Override
     public void itemStateChanged(ItemEvent e) {
         final Object s = e.getSource();
         if (s == rotationBox || s == trayButton || s == emptyButton ||
