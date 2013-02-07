@@ -16,15 +16,15 @@
  */
 package net.talvi.puffinplot.data;
 
-import java.util.logging.Logger;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import static java.util.Collections.max;
+import static java.util.Collections.min;
 import java.util.LinkedList;
 import java.util.List;
-import static java.util.Collections.min;
-import static java.util.Collections.max;
+import java.util.logging.Logger;
 
 /**
  * <p>A site is a grouping of samples within a suite. In practice, it usually

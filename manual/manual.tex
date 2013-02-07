@@ -20,6 +20,8 @@
 \usepackage{booktabs}
 \usepackage{listings}
 \usepackage{textcase}
+\usepackage{titlesec} % to start sections on a new page
+\newcommand{\sectionbreak}{\clearpage}
 \usepackage{color}
 \definecolor{mylinkcolour}{RGB}{0,0,160}
 \usepackage{textcomp} % for \textdegree
@@ -71,8 +73,6 @@
 \maketitle
 
 \tableofcontents
-
-\newpage
 
 \section{Introduction}
 
@@ -484,6 +484,8 @@ all steps between the first and last were selected for \caps{pca};
 `N' if any were omitted \\
 \caps{GC} dec (\textdegree) & the declination of the pole to the fitted great circle, if any \\
 \caps{GC} inc (\textdegree) & the inclination of the pole to the fitted great circle, if any \\
+\caps{GC} strike (\textdegree) & the strike of the plane of the fitted great circle, if any \\
+\caps{GC} dip (\textdegree) & the dip of the plane of the fitted great circle, if any \\
 \caps{GC} \caps{mad}1 & the \caps{mad}1 value for the great circle fit,
 indicating goodness of fit (smaller is better). See section~\ref{sec:plot-types} for more details. \\
 \caps{GC} npoints & the number of points used for the great-circle fit \\
@@ -1750,8 +1752,8 @@ commonly used by bibliography management software.
 
 % Define the heading of the bibliography to be empty, so I can put a proper
 % Section heading which will be included in the ToC.
-%\renewcommand*{\refname}{\vspace{-1cm}} 
-\section{Bibliography}
+\renewcommand*{\refname}{\vspace{-1cm}} 
+\section{References}
 \bibliographystyle{apalike-url}
 \bibliography{manual}
 

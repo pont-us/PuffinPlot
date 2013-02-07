@@ -7,8 +7,8 @@ type: :feature
 component: PuffinPlot
 release: "1.03"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2012-06-27 14:35:32.187188 Z
 references: []
 
@@ -22,3 +22,7 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - assigned to release 1.03 from 1.02
   - Need to push this back to get 1.02 out quickly.
+- - 2013-02-07 09:24:55.333668 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - Implemented as specified.

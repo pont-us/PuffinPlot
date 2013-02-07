@@ -16,26 +16,26 @@
  */
 package net.talvi.puffinplot.data;
 
+import Jama.Matrix;
 import static java.lang.Math.PI;
-import static java.lang.Math.atan2;
+import static java.lang.Math.abs;
 import static java.lang.Math.asin;
+import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
+import static java.lang.Math.log10;
+import static java.lang.Math.pow;
+import static java.lang.Math.signum;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.toDegrees;
 import static java.lang.Math.toRadians;
-import static java.lang.Math.signum;
-import static java.lang.Math.log10;
-import static java.lang.Math.pow;
-import static java.lang.Math.abs;
-import Jama.Matrix;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 /**
- * An immutable three-dimensional cartesian vector. The class contains
+ * An immutable three-dimensional Cartesian vector. The class contains
  * many methods for manipulating vectors and collections of vectors.
  * 
  * @author pont
@@ -614,6 +614,27 @@ public class Vec3 {
      * @return this vector's declination in degrees */
     public double getDecDeg() {
         return toDegrees(getDecRad());
+    }
+    
+    /** Returns the strike of the plane normal this vector
+     * @return the strike of the plane normal this vector, in degrees */
+    public double getStrikeDeg() {
+        double decDeg = getDecDeg();
+        // Ensure we have the declination of the *upward* vector 
+        if (getIncDeg() > 0) decDeg += 180;
+        double strike = decDeg - 90;
+        while (strike < 0) { strike += 360; }
+        while (strike > 360) { strike -= 360; }
+        return strike;
+    }
+
+    /** Returns the strike of the plane normal this vector
+     * @return the strike of the plane normal this vector, in degrees */
+    public double getDipDeg() {
+        double incDeg = getIncDeg();
+        // Ensure we have an upward (negative) inclination
+        if (incDeg > 0) incDeg = -incDeg;
+        return incDeg + 90;
     }
 
     /** Returns the sum of a specified collection of vectors. 
