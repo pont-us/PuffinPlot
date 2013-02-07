@@ -1,0 +1,34 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: PuffinPlot does not read MD03_8_Nc.DAT correctly
+desc: |-
+  This is a 2G long core file from Leonardo Sagnotti. It is read
+  as a discrete file with a single sample with the name UNKNOWN.
+  The problem appears to be that there is no Depth column, the
+  depth instead being given in the Position column.
+type: :bugfix
+component: PuffinPlot
+release: "1.03"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :closed
+disposition: :fixed
+creation_time: 2013-02-07 12:41:20.958600 Z
+references: []
+
+id: ed1bf10acf3765da27b9c2934261ab8c60f79bc6
+log_events: 
+- - 2013-02-07 12:41:21.216744 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
+- - 2013-02-07 12:42:41.846414 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    Test file placed in bugs/266_-_PuffinPlot_does_not_read for 
+    reference.
+- - 2013-02-07 12:47:31.051151 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    PuffinPlot now sets measurement type to Continuous if a file contains
+    a Position field but no Sample ID field.

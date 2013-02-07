@@ -389,6 +389,8 @@ public class TwoGeeLoader extends AbstractFileLoader {
             measType = measTypeFromString(r.getString("Meas. type", "sample/continuous"));
         } else if (fieldExists("Depth")) {
             measType = MeasType.CONTINUOUS;
+        } else if (fieldExists("Position") && !fieldExists("Depth")) {
+            measType = MeasType.CONTINUOUS;
         } else {
             measType = MeasType.DISCRETE;
         }

@@ -16,3 +16,11 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2013-02-07 09:31:51.363464 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - commented
+  - |-
+    `n' is presumably number of points used in PCA fit (number of 
+    points for GC fit is already exported). Not sure where an a95 comes
+    into the sample calculations though -- PCA just gives MADs.
+    Probably need to clarify with JMG before implementing.
