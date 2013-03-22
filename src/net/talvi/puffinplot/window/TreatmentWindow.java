@@ -19,76 +19,66 @@ package net.talvi.puffinplot.window;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
 import javax.swing.*;
 import net.talvi.puffinplot.PuffinApp;
+import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.DatumField;
 import net.talvi.puffinplot.data.Sample;
+import net.talvi.puffinplot.data.TreatType;
 
 /**
- * A window allowing the user to edit orientation corrections.
- * Editable fields are provided for the sample and formation
- * orientations and for the magnetic declination.
+ * A window allowing the user to edit treatment type.
  * 
  * @author pont
  */
-public class CorrectionWindow extends JFrame implements ActionListener {
+public class TreatmentWindow extends JFrame implements ActionListener {
 
-    private final static DatumField[] fields = {
-        DatumField.SAMPLE_AZ, DatumField.SAMPLE_DIP, DatumField.VIRT_SAMPLE_HADE,
-        DatumField.FORM_AZ, DatumField.VIRT_FORM_STRIKE, DatumField.FORM_DIP, 
-        DatumField.MAG_DEV
-    };
-    
     private static final long serialVersionUID = 1L;
     private JButton cancelButton;
     private JButton setButton;
-    private Map<DatumField, JCheckBox> checkBoxMap =
-            new EnumMap<DatumField, JCheckBox>(DatumField.class);
-    private Map<DatumField, JTextField> textFieldMap =
-            new EnumMap<DatumField, JTextField>(DatumField.class);
+    private final TreatmentCombo treatmentCombo;
     
+    private static class TreatmentCombo extends JComboBox {
+        
+        public TreatmentCombo() {
+            super();
+            for (TreatType t: TreatType.values()) {
+                addItem(t.getNiceName());
+            }
+        }
+        
+        public TreatType getTreatmentType() {
+            return TreatType.values()[getSelectedIndex()];
+        }
+        
+    }
 
     /** Creates a new correction window. */
-    public CorrectionWindow() {
-        super("Edit corrections");
+    public TreatmentWindow() {
+        super("Set treatment type");
         setResizable(false);
-        final Container cp = getContentPane();
-        cp.setLayout(new BoxLayout(cp, BoxLayout.Y_AXIS));
+        final Container contentPane = getContentPane();
+        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
 
-        cp.add(Box.createRigidArea(new Dimension(0, 10)));
-        JPanel topPanel = new JPanel();
+        contentPane.add(Box.createRigidArea(new Dimension(0, 10)));
+        final JPanel topPanel = new JPanel();
         topPanel.setLayout(new BorderLayout());
-        JLabel label = new JLabel("Select values to modify.");
+        final JLabel label = new JLabel("Set treatment type for selected samples.");
         label.setAlignmentX(CENTER_ALIGNMENT);
         label.setAlignmentY(CENTER_ALIGNMENT);
         label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setVerticalAlignment(SwingConstants.CENTER);
         topPanel.add(label, BorderLayout.CENTER);
-        cp.add(topPanel);
+        contentPane.add(topPanel);
 
-        JPanel fieldPanel = new JPanel();
-        fieldPanel.setLayout(new GridBagLayout());
-        GridBagConstraints gc = new GridBagConstraints();
-        for (DatumField field: fields) {
-            gc.gridwidth = 2;
-            gc.anchor = GridBagConstraints.EAST;
-            JCheckBox checkBox = new JCheckBox(field.getNiceName());
-            checkBox.setHorizontalTextPosition(SwingConstants.LEFT);
-            fieldPanel.add(checkBox, gc);
-            gc.anchor = GridBagConstraints.WEST;
-            gc.gridwidth = GridBagConstraints.REMAINDER;
-            final JTextField textField = new JTextField(6);
-            fieldPanel.add(textField,gc);
-            checkBoxMap.put(field, checkBox);
-            textFieldMap.put(field, textField);
-        }
+        final JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.LINE_AXIS));
+        mainPanel.add(new JLabel("Treatment"));
+        mainPanel.add(treatmentCombo = new TreatmentCombo());
 
         cancelButton = new JButton("Cancel");
         setButton = new JButton("Set");
@@ -102,10 +92,10 @@ public class CorrectionWindow extends JFrame implements ActionListener {
         buttonPanel.add(Box.createRigidArea(new Dimension(10, 0)));
         buttonPanel.add(setButton);
 
-        cp.add(Box.createRigidArea(new Dimension(0, 10)));
-        cp.add(fieldPanel);
-        cp.add(Box.createRigidArea(new Dimension(0, 10)));
-        cp.add(buttonPanel);
+        contentPane.add(Box.createRigidArea(new Dimension(0, 10)));
+        contentPane.add(mainPanel);
+        contentPane.add(Box.createRigidArea(new Dimension(0, 10)));
+        contentPane.add(buttonPanel);
 
         pack();
         setLocationRelativeTo(null);
@@ -122,13 +112,10 @@ public class CorrectionWindow extends JFrame implements ActionListener {
             setVisible(false);
         if (event.getSource() == setButton) {
             final PuffinApp app = PuffinApp.getInstance();
-            List<Sample> samples = app.getSelectedSamples();
-            for (DatumField field : fields) {
-                if (checkBoxMap.get(field).isSelected()) {
-                    String value = textFieldMap.get(field).getText();
-                    for (Sample s: samples) {
-                        s.setValue(field, value);
-                    }
+            final TreatType treatType = treatmentCombo.getTreatmentType();
+            for (Sample sample: app.getSelectedSamples()) {
+                for (Datum datum: sample.getData()) {
+                    datum.setTreatType(treatType);
                 }
             }
             setVisible(false);

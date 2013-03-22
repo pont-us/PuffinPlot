@@ -90,6 +90,7 @@ public final class PuffinApp {
     private final SuiteEqAreaWindow suiteEqAreaWindow;
     private final CorrectionWindow correctionWindow;
     private final SiteMeanWindow siteEqAreaWindow;
+    private final TreatmentWindow treatmentWindow;
     private PrefsWindow prefsWindow;
     private final AboutBox aboutBox;
     private final CiteWindow citeWindow;
@@ -117,7 +118,6 @@ public final class PuffinApp {
                 new MemoryHandler(logStringHandler, 100, Level.OFF));
         logMemoryHandler.setLevel(Level.ALL);
     }
-    
     
     private class PuffinAppSampleClickListener implements SampleClickListener {
 
@@ -151,6 +151,7 @@ public final class PuffinApp {
         suiteEqAreaWindow = new SuiteEqAreaWindow();
         siteEqAreaWindow = new SiteMeanWindow();
         correctionWindow = new CorrectionWindow();
+        treatmentWindow = new TreatmentWindow();
         citeWindow = new CiteWindow();
         // NB main window must be instantiated last, as
         // the Window menu references the other windows
@@ -745,6 +746,15 @@ public final class PuffinApp {
         return correctionWindow;
     }
 
+    
+    /** Returns a window allowing the user to set the treatment type.
+     * @return the ‘set treatment type’ window
+     */
+    public TreatmentWindow getTreatmentWindow() {
+        return treatmentWindow;
+    }
+    
+    
     /** Returns the list of recently used files. 
      * @return the list of recently used files */
     public RecentFileList getRecentFiles() {

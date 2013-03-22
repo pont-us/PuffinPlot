@@ -475,6 +475,19 @@ public class PuffinActions {
     };
     
     /**
+     * Opens a window allowing the user to set the treatment type for
+     * the selected samples.
+     */
+    public final Action setTreatType = new PuffinAction("Set treatment type…",
+            "Set the treatment type for the selected samples.",
+            null, false, KeyEvent.VK_R) {
+        private static final long serialVersionUID = 1L;
+        @Override public void actionPerformed(ActionEvent e) {
+            app.getTreatmentWindow().setVisible(true);
+        }
+    };
+    
+    /**
      * For each selected sample, clears all calculations and deselects all points.
      */
     public final Action clearSampleCalcs = new PuffinAction("Clear sample calculations",

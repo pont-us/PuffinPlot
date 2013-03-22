@@ -134,6 +134,7 @@ public final class MainMenuBar extends JMenuBar {
                 pa.prefs, pa.quit));
         add(makeMenu("Edit", pa.selectAll, pa.clearSelection,
                 movePlotsItem, pa.resetLayout, pa.editCorrections,
+                pa.setTreatType,
                 pa.copyPointSelection, pa.pastePointSelection,
                 makeMenu("Flip selected samples",
                 pa.flipSampleX, pa.flipSampleY, pa.flipSampleZ),
