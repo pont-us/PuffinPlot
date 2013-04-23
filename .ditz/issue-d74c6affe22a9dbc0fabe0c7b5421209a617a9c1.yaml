@@ -1,0 +1,22 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Add "merge measurements" feature
+desc: |-
+  Sometimes you can end up with two measurements for the same depth
+  (or sample name) and demagnetization level in the same file. It
+  would be useful to have a feature whereby these could be combined --
+  either by taking the mean value or by discarding one measurement.
+type: :feature
+component: PuffinPlot
+release: "1.03"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2013-04-23 08:46:38.124197 Z
+references: []
+
+id: d74c6affe22a9dbc0fabe0c7b5421209a617a9c1
+log_events: 
+- - 2013-04-23 08:46:38.651622 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
