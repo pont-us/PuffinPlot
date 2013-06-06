@@ -1,0 +1,24 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Fisher analysis for demagnetization data
+desc: |-
+  Add the ability to calculate Fisher statistics on the directions
+  of individual demagnetization steps. Seems odd but has apparently
+  been spotted in the literature (awaiting refs from Fabio). This is,
+  of course, the very feature that was *removed* for bug
+  92d5a588d100232ba50153691028daa186cece86 , after I had concluded 
+  that nobody would ever need it.
+type: :feature
+component: PuffinPlot
+release: "1.03"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2013-06-06 08:56:15.657919 Z
+references: []
+
+id: 535b1370568dd4b70f8e8f1532adf58751bf833c
+log_events: 
+- - 2013-06-06 08:56:15.858251 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""

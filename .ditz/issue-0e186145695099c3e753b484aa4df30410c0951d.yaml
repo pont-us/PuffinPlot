@@ -1,0 +1,23 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Better feedback to user on importing malformed files
+desc: |-
+  If an imported file doesn't contain enough data to construct a
+  vector for each demagnetization step, PuffinPlot will just quietly
+  work with what it has, even if it's all defaulting to zero. It should
+  warn the user that the imported data is incomplete, in case they 
+  have made a mistake in specifying the import fields.
+type: :bugfix
+component: PuffinPlot
+release: "1.03"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2013-06-06 07:54:33.301533 Z
+references: []
+
+id: 0e186145695099c3e753b484aa4df30410c0951d
+log_events: 
+- - 2013-06-06 07:54:34.205286 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
