@@ -128,7 +128,10 @@ public final class FileFormat {
                     datum.setValue(fieldType, fieldStrings[i]);
             }
         }
-        if (!(Double.isNaN(dec) || Double.isNaN(inc) || Double.isNaN(intensity))) {
+        if (!(Double.isNaN(dec) || Double.isNaN(inc))) {
+            if (Double.isNaN(intensity)) {
+                intensity = 1;
+            }
             datum.setMoment(Vec3.fromPolarDegrees(intensity, inc, dec));
         }
         return datum;
