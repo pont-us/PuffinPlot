@@ -148,6 +148,8 @@ public class PrefsWindow extends JFrame {
         
         miscPanel.add(makeLabelledTickBox("Label treatment steps",
                 "plots.labelTreatmentSteps", false));
+        miscPanel.add(makeLabelledTickBox("Label equal-area plots",
+                "plots.labelEqualAreaPlots", false));
         miscPanel.add(new MagDevTickBox());
         miscPanel.add(makeLabelledPrefBox("Demag y axis",
                 "plots.demag.vAxisLabel", "Magnetization (A/m)"));

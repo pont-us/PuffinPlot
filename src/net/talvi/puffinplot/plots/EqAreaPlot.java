@@ -65,6 +65,8 @@ public abstract class EqAreaPlot extends Plot {
      *  It is set by {@link #updatePlotDimensions(Graphics2D)}. */
     protected int radius;
     
+    protected Preferences prefs;
+    
     /**
      * Creates a new equal-area plot with the supplies parameters.
      * 
@@ -76,6 +78,7 @@ public abstract class EqAreaPlot extends Plot {
     protected EqAreaPlot(GraphDisplay parent, PlotParams params, Preferences prefs,
             boolean taperingEnabled) {
         super(parent, params, prefs);
+        this.prefs = prefs;
         this.taperingEnabled = taperingEnabled;
     }
     
@@ -129,6 +132,9 @@ public abstract class EqAreaPlot extends Plot {
             g.draw(new Line2D.Double(x, yo - l, x, yo + l));
         }
         g.draw(new Line2D.Double(xo - l, yo, xo + l, yo));
+        if (prefs != null && prefs.getBoolean("plots.labelEqualAreaPlots", false)) {
+            g.drawString(getShortName(), (float) (xo + radius/2), (float) (yo + radius));
+        }
     }
 
     /**
@@ -271,4 +277,12 @@ public abstract class EqAreaPlot extends Plot {
     public boolean isTaperingEnabled() {
         return taperingEnabled;
     }
+    
+    /**
+     * Returns a short, human-readable name for this plot.
+     * This is used to label the plots on the graph display during
+     * normal use. (The "nice name" is used when resizing/moving.)
+     * @return a short, human-readable name for this plot
+     */
+    public abstract String getShortName();
 }

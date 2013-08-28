@@ -74,6 +74,11 @@ public class SeparateSuiteEaPlot extends EqAreaPlot {
         return "fisherplot";
     }
 
+    @Override
+    public String getShortName() {
+        return "Suite";
+    }
+    
     /** Draws this plot. 
      * @param g the graphics object to which to draw the plot
      */

@@ -6,8 +6,8 @@ type: :feature
 component: PuffinPlot
 release: "1.03"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2012-11-07 20:37:25.647857 Z
 references: []
 
@@ -17,3 +17,14 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2013-08-28 16:50:27.573513 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2013-08-28 16:51:44.853062 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Equal-area plots are now labelled. Labelling can be activated
+    from the Preferences window ("Misc." tab). I thought it unnecessary
+    to label other plots, since they are clearly distinguishable.

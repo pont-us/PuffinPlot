@@ -69,6 +69,10 @@ public class AmsPlot extends EqAreaPlot {
         return "AMS";
     }
 
+    public String getShortName() {
+        return "AMS";
+    }
+    
     private List<List<Vec3>> paramsToSegments(List<KentParams> kps) {
         List<List<Vec3>> result = new ArrayList<List<Vec3>>();
         if (kps != null) {

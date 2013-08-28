@@ -33,10 +33,8 @@ import net.talvi.puffinplot.window.PlotParams;
  * @author pont
  */
 public class SampleEqAreaPlot extends EqAreaPlot {
-    
-    private Preferences prefs;
 
-      /** Creates a sample equal-area plot with the supplied parameters.
+    /** Creates a sample equal-area plot with the supplied parameters.
      * 
      * @param parent the graph display containing the plot
      * @param params the parameters of the plot
@@ -45,7 +43,6 @@ public class SampleEqAreaPlot extends EqAreaPlot {
     public SampleEqAreaPlot(GraphDisplay parent, PlotParams params,
             Preferences prefs) {
         super(parent, params, prefs);
-        this.prefs = prefs;
     }
 
     @Override
@@ -92,5 +89,10 @@ public class SampleEqAreaPlot extends EqAreaPlot {
         }
 
         drawPoints(g);
+    }
+
+    @Override
+    public String getShortName() {
+        return "Sample";
     }
 }

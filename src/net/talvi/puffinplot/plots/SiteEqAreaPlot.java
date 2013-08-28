@@ -77,6 +77,11 @@ public class SiteEqAreaPlot extends EqAreaPlot {
     public String getNiceName() {
         return "Equal-area (site)";
     }
+    
+    @Override
+    public String getShortName() {
+        return "Site";
+    }
 
     private void drawGreatCircles(Site site) {
         final GreatCircles circles = site.getGreatCircles();

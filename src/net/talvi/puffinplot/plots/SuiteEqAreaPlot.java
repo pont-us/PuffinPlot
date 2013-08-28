@@ -54,6 +54,11 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
         return "Equal-area (suite)";
     }
 
+    @Override
+    public String getShortName() {
+        return "Suite";
+    }
+
     private void drawFisher(FisherValues fv) {
         if (fv==null) return;
         final Vec3 mean = fv.getMeanDirection();
