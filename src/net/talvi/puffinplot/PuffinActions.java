@@ -147,6 +147,36 @@ public class PuffinActions {
         if (pathname != null && extension != null &&
                 !pathname.toLowerCase().endsWith(extension))
             pathname += extension;
+        if (pathname != null) {
+            final File file = new File(pathname);
+            if (file.exists()) {
+                if (file.isDirectory()) {
+                    app.errorDialog("File exists",
+                            "There is already a folder with this filename.\n"
+                            + "Please choose another name for the file.");
+                    pathname = null;
+                } else if (!file.canWrite()) {
+                    app.errorDialog("File exists",
+                            "There is already a file with this filename.\n"
+                            + "This file cannot be overwritten.\n"
+                            + "Please choose another filename.");
+                    pathname = null;
+                } else {
+                    final String[] options = {"Overwrite", "Cancel"};
+                    final int option =
+                            JOptionPane.showOptionDialog(app.getMainWindow(),
+                            "There is already a file with this name.\n"
+                            + "Are you sure you wish to overwrite it?",
+                            "File exists",
+                            JOptionPane.OK_CANCEL_OPTION,
+                            JOptionPane.WARNING_MESSAGE,
+                            null, // icon
+                            options,
+                            options[1]);
+                    if (option==1) pathname = null;
+                }
+            }
+        }
         return pathname;
     }
 
