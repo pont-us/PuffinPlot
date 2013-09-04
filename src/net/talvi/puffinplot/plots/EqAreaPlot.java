@@ -22,6 +22,7 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import static java.lang.Math.abs;
@@ -144,17 +145,25 @@ public abstract class EqAreaPlot extends Plot {
      * @param vectors the vectors to project
      * @return a path containing the projected vectors
      */
-    protected GeneralPath vectorsToPath(List<Vec3> vectors) {
-        GeneralPath path = new GeneralPath();
+    protected Path2D.Double vectorsToPath(List<Vec3> vectors) {
+        Path2D.Double path = new Path2D.Double();
         boolean first = true;
         for (Vec3 v : vectors) {
+            assert(v != null);
             // g.setStroke(new BasicStroke(getUnitSize() * (1-(float)v.z) *20.0f));
             Point2D p = project(v);
+            assert(!Double.isNaN(p.getX()));
+            assert(!Double.isNaN(p.getY()));
+            final double x = p.getX();
+            final double y = p.getY();
+            System.out.println("> "+ x + " " + y);
+            assert(!Double.isNaN(x));
+            assert(!Double.isNaN(y));
             if (first) {
-                path.moveTo((float) p.getX(), (float) p.getY());
+                path.moveTo(x, y);
                 first = false;
             } else {
-                path.lineTo((float) p.getX(), (float) p.getY());
+                path.lineTo(x, y);
             }
         }
         return path;
@@ -171,7 +180,8 @@ public abstract class EqAreaPlot extends Plot {
          for (Vec3 v: vs) { if (v.z > 1e-10) { upperHemisph = false; break; } }
          Stroke stroke = upperHemisph ? getStroke() : getDashedStroke();
          g.setStroke(stroke);
-         g.draw(vectorsToPath(vs));
+         final Path2D.Double path = vectorsToPath(vs);
+         g.draw(path);
      }
 
      /**
@@ -257,8 +267,6 @@ public abstract class EqAreaPlot extends Plot {
      * @return the projection of the supplied vector onto this plot
      */
     protected Point2D.Double project(Vec3 v) {
-        final double h2 = v.x * v.x + v.y * v.y;
-        final double L = (h2 > 0) ? sqrt(1 - abs(v.z)) / sqrt(h2) : 0;
         /* Need to convert from declination (running clockwise from
          * Y axis) to plot co-ordinates (running anticlockwise from X axis).
          * First we flip the x-axis so that we're going anticlockwise
@@ -267,8 +275,13 @@ public abstract class EqAreaPlot extends Plot {
          * to take account of AWT Y-coordinates running top-to-bottom rather
          * than bottom-to-top (let x''' = x'' = y, y''' = -y'' = -x).
          */
-        return new Point2D.Double(xo + radius * v.y * L,
-                yo + radius * (-v.x) * L);
+        final double h2 = v.x * v.x + v.y * v.y;
+        final double L = (h2 > 0) ? sqrt(1 - abs(v.z)) / sqrt(h2) : 0;
+        final double x = xo + radius * v.y * L;
+        final double y = yo + radius * (-v.x) * L;
+        assert(!Double.isNaN(x));
+        assert(!Double.isNaN(y));
+        return new Point2D.Double(x, y);
     }
 
     /** Reports whether tapered lines are enabled for this plot. 

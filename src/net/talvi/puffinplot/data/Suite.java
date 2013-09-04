@@ -413,6 +413,9 @@ public final class Suite {
             case ZPLOT:
                 loader = new ZplotLoader(file);
                 break;
+            case CALTECH:
+                loader = new CaltechLoader(file);
+                break;
             case CUSTOM_TABULAR:
                 loader = new TabularFileLoader(file, format);
                 break;

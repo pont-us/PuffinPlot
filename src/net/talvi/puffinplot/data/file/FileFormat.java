@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.prefs.Preferences;
+import net.talvi.puffinplot.Util;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.DatumField;
 import net.talvi.puffinplot.data.MeasType;
@@ -72,16 +73,6 @@ public final class FileFormat {
         this.columnWidths = columnWidths;
     }
     
-    private double safeParse(String s) {
-        double result = 0;
-        try {
-            result = Double.parseDouble(s);
-        } catch (NumberFormatException e) {
-            // do nothing
-        }
-        return result;
-    }
-    
     private String[] splitLine(String line) {
         if (useFixedWidthColumns) {
             List<String> result = new ArrayList<String>(columnWidths.size());
@@ -116,13 +107,13 @@ public final class FileFormat {
             String valueString = fieldStrings[i];
             switch (fieldType) {
                 case VIRT_MAGNETIZATION:
-                    intensity = safeParse(valueString);
+                    intensity = Util.parseDoubleSafely(valueString);
                     break;
                 case VIRT_DECLINATION:
-                    dec = safeParse(valueString);
+                    dec = Util.parseDoubleSafely(valueString);
                     break;
                 case VIRT_INCLINATION:
-                    inc = safeParse(valueString);
+                    inc = Util.parseDoubleSafely(valueString);
                     break; 
                 default:
                     datum.setValue(fieldType, fieldStrings[i]);

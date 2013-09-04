@@ -17,6 +17,7 @@
 package net.talvi.puffinplot.plots;
 
 import java.awt.Graphics2D;
+import java.util.List;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.GreatCircle;
@@ -71,7 +72,8 @@ public class SampleEqAreaPlot extends EqAreaPlot {
         drawAxes();
         boolean first = true;
         Vec3 prev = null;
-        for (Datum d: sample.getVisibleData()) {
+        final List<Datum> visibleData = sample.getVisibleData();
+        for (Datum d: visibleData) {
             final Vec3 p = d.getMoment(params.getCorrection()).normalize();
             addPoint(d, project(p), p.z>0, first, false);
             if (!first) {

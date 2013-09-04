@@ -5,8 +5,8 @@ type: :feature
 component: PuffinPlot
 release: "1.03"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2012-11-16 22:02:13.559214 Z
 references: []
 
@@ -20,3 +20,15 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - assigned to release 1.03 from 1.1
   - ""
+- - 2013-08-29 19:08:09.321782 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2013-09-04 08:46:32.602242 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Implemented as specified. I assume that various bugs will become
+    apparent as people try it out with more real-world files, but the
+    current implementation has at least been tested with the example
+    files supplied by JMG.

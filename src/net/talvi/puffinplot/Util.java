@@ -159,6 +159,27 @@ public class Util {
         else return null;
     }
 
+    /**
+     * A wrapper around {@code Double.parseDouble} which returns
+     * a default value of {@code 0} if the supplied string cannot
+     * be parsed. ({@code Double.parseDouble}, in contrast, throws
+     * a {@code NumberFormatException}.)
+     * 
+     * @param s A string representation of a floating-point number.
+     * @return A {@code double} with a value corresponding to the
+     * supplied string, or {@code 0} if the string could not be 
+     * interpreted as a floating-point number.
+     */
+    public static double parseDoubleSafely(String s) {
+        double result = 0;
+        try {
+            result = Double.parseDouble(s);
+        } catch (NumberFormatException e) {
+            // do nothing
+        }
+        return result;
+    }
+
     private static class Outcode {
         private int bitField = 0;
         public Outcode(Point2D p, Rectangle2D r) {

@@ -38,6 +38,8 @@ public enum FileType {
     PUFFINPLOT_OLD,
     /** the new PuffinPlot file format */
     PUFFINPLOT_NEW,
+    /** the Caltech (a.k.a. CIT, .sam) file format */
+    CALTECH,
     /** A custom tabular file format defined by a FileFormat object */
     CUSTOM_TABULAR,
     /** unknown file format */
@@ -56,6 +58,7 @@ public enum FileType {
 		String name = file.getName().toLowerCase();
 		if (name.endsWith(".dat")) return TWOGEE;
 		else if (name.endsWith(".txt")) return ZPLOT;
+                else if (name.endsWith(".sam")) return CALTECH;
 		else if (name.endsWith(".ppl")) {
                     BufferedReader reader = null;
                     FileType result = PUFFINPLOT_OLD;

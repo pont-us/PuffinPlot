@@ -129,9 +129,11 @@ public class Vec3 {
      * {@code v0} and {@code v1}
      */
     public static Vec3 equatorPoint(Vec3 v0, Vec3 v1) {
-        return v0.times(signum(v0.z) / v0.z).
+        final Vec3 v = v0.times(signum(v0.z) / v0.z).
                 plus(v1.times(signum(v1.z) / v1.z)).
                 normalize();
+        assert(v.isWellFormed());
+        return v;
     }
 
     /** Returns true if and only if the supplied vector is in the same (upper/lower)
@@ -158,6 +160,7 @@ public class Vec3 {
     public static List<List<Vec3>> interpolateEquatorPoints(List<Vec3> vs) {
         List<List<Vec3>> result = new ArrayList<List<Vec3>>();
         List<Vec3> currentSegment = new ArrayList<Vec3>();
+        // TODO: THIS IS WHERE WE ARE MAKING THE NaNs!
         Vec3 prev = null;
         for (Vec3 v: vs) {
             if (prev == null) {
@@ -189,9 +192,24 @@ public class Vec3 {
      * {@code v0} and {@code v1}
      */
     public static List<Vec3> spherInterpolate(Vec3 v0, Vec3 v1, double stepSize) {
+        assert(v0.isWellFormed());
+        assert(v1.isWellFormed());
         Vec3 v0n = v0.normalize();
         Vec3 v1n = v1.normalize();
-        double omega = Math.acos(v0n.dot(v1n));
+        double dotProduct = v0n.dot(v1n);
+        /* Floating-point rounding errors can produce "normalized" vectors
+         * with a length slightly greater than 1, and in very unlucky cases
+         * a dot product of two normalized vectors which is >1. This
+         * then produces a NaN for the arc cosine, which in turn can
+         * cause Graphics2D.draw(Path2D) to hang if it propagates into
+         * a Path2D. (Perhaps related to http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4587651 ,
+         * but that one reports a crash rather than a hang.) In any case we need
+         * to do the check below to guard against this very rare case.
+         * 
+         */
+        if (dotProduct > 1) dotProduct = 1;
+        if (dotProduct < -1) dotProduct = -1;
+        double omega = Math.acos(dotProduct);
         // TODO fix this for equator-crossing case?
         if (omega < stepSize) return Arrays.asList(new Vec3[] {v0n, v1n});
         int steps = (int) (omega / stepSize) + 1;
@@ -207,6 +225,7 @@ public class Vec3 {
             //if (i>0 && !thisVec.sameHemisphere(prevVec)) {
             // result.add(equatorPoint(prevVec, thisVec));
             //}
+            assert(thisVec.isWellFormed());
             result.add(thisVec);
             prevVec = thisVec;
         }
@@ -837,5 +856,13 @@ public class Vec3 {
     @Override
     public String toString() {
         return String.format("%.2f %.2f %.2f", x, y, z);
+    }
+    
+    /** Checks that this vector contains no NaN or infinite values.
+     * 
+     */
+    public boolean isWellFormed() {
+        return (!Double.isNaN(x)) && (!Double.isNaN(y)) && (!Double.isNaN(z))
+                && (!Double.isInfinite(x)) && (!Double.isInfinite(y)) && (!Double.isInfinite(z));
     }
 }
