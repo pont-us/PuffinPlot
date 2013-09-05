@@ -46,9 +46,10 @@ public class CaltechLoader extends AbstractFileLoader {
     private final File file;
     private final File parentDir; // for locating associated files.
     private LineNumberReader reader = null;
-    // NB this probably won't work for Caltech "NRM" files, which distort
-    // the fixed fields. I don't have any of these files to test with at present,
-    // so for now am not supporting them.
+    /* NB: this probably won't work for Caltech "NRM" files, which apparently
+     * use slightly different field widths.
+     * I don't have any of these files to test with at present,
+     * so for now am not supporting them. */
     private final String patternString = "^(..)(....)(......)(......)(......)(......)"
                 + "(.........)(......)(......)(......)(.........)(.........)"
                 + "(.........)(.........)(...........)(........)";
