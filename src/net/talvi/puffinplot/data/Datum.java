@@ -111,199 +111,199 @@ public class Datum {
     public boolean isSelected()        { return selected; }
     /** Sets the selection state of this datum.
      * @param v {@code true} to select this datum, {@code false} to deselect */
-    public void setSelected(boolean v) { selected = v; }
+    public void setSelected(boolean v) { touch(); selected = v; }
     /** Returns the sample's dip azimuth.
      * @return the sample's dip azimuth in degrees */
     public double getSampAz()          { return sampAz; }
     /** Sets the sample's dip azimuth.
      * @param v the sample dip azimuth to set, in degrees */
-    public void setSampAz(double v)    { sampAz = v; }
+    public void setSampAz(double v)    { touch(); sampAz = v; }
     /** Returns the sample's dip angle.
      * @return the sample's dip angle, in degrees */
     public double getSampDip()         { return sampDip; }
     /** Sets the sample's dip angle.
      * @param v the sample dip angle to set, in degrees */
-    public void setSampDip(double v)   { sampDip = v; }
+    public void setSampDip(double v)   { touch(); sampDip = v; }
     /** Returns the formation dip azimuth.
      * @return the formation dip azimuth in degrees */
     public double getFormAz()          { return formAz; }
     /** Sets the formation dip azimuth.
      * @param v the formation dip azimuth to set, in degrees */
-    public void setFormAz(double v)    { formAz = v; }
+    public void setFormAz(double v)    { touch(); formAz = v; }
     /** Returns the formation dip angle.
      * @return the formation dip angle, in degrees */
     public double getFormDip()         { return formDip; }
     /** Sets the formation dip angle.
      * @param v the formation dip angle to set, in degrees */
-    public void setFormDip(double v)   { formDip = v; }
+    public void setFormDip(double v)   { touch(); formDip = v; }
     /** Returns the local geomagnetic field declination for the sampling site.
      * @return the local geomagnetic field declination, in degrees */
     public double getMagDev()          { return magDev; }
     /** Sets the local geomagnetic field declination for the sampling site.
      * @param v the local geomagnetic field declination to set, in degrees */
-    public void setMagDev(double v)    { magDev = v; }
+    public void setMagDev(double v)    { touch(); magDev = v; }
     /** Reports whether PCA fits for this point should be anchored.
      * @return {@code true} if PCA fits to this point should be anchored */
     public boolean isPcaAnchored()     { return pcaAnchored; }
     /** Sets whether PCA fits for this point should be anchored.
      * @param v {@code true} to set PCA fits for this point to be anchored */
-    public void setPcaAnchored(boolean v) { pcaAnchored = v; }
+    public void setPcaAnchored(boolean v) { touch(); pcaAnchored = v; }
     /** Returns the measurement's data-file line. Not currently used.
      * @return the data-file line for this measurement; not currently used */
     public Line getLine()              { return line; }
     /** Sets the measurement's data-file line. Not currently used.
      * @param v the data-file line to set for this measurement; not currently used */
-    public void setLine(Line v)        { line = v; }
+    public void setLine(Line v)        { touch(); line = v; }
     /** Returns the sample of which this measurement was made.
      * @return the sample on which this measurement was made */
     public Sample getSample()          { return sample; }
     /** Sets the sampe on which this measurement was made.
      * @param v the sample on which this measurement was made */
-    public void setSample(Sample v)    { sample = v; }
+    public void setSample(Sample v)    { touch(); sample = v; }
     /** Reports whether this datum should be hidden on plots.
      * @return {@code true} if this datum should not be displayed on plots */
     public boolean isHidden()          { return hidden; }
     /** Sets whether this datum should be hidden on plots.
      * @param v {@code true} if this datum should not be displayed on plots */
-    public void setHidden(boolean v)   { hidden = v; }
+    public void setHidden(boolean v)   { touch(); hidden = v; }
     /** For continuous measurements, returns the depth of this measurement within the core.
      * @return for continuous measurements, the depth of this measurement within the core */
     public String getDepth()           { return depth; }
     /** For continuous measurements, sets the depth of this measurement within the core.
      * @param v for continuous measurements, the depth of this measurement within the core */
-    public void setDepth(String v)     { depth = v; }
+    public void setDepth(String v)     { touch(); depth = v; }
     /** Returns the magnetic susceptibility of the sample at this stage of treatment
      * @return the magnetic susceptibility of the sample at this stage of treatment */
     public double getMagSus()          { return magSus; }
     /** Sets the magnetic susceptibility of the sample at this stage of treatment.
      * @param v the magnetic susceptibility of the sample at this stage of treatment */
-    public void setMagSus(double v)    { magSus = v; }
+    public void setMagSus(double v)    { touch(); magSus = v; }
     /** Returns the type of this measurement (discrete or continuous).
      * @return the type of this measurement (discrete or continuous) */
     public MeasType getMeasType()      { return measType; }
     /** Sets the type of this measurement (discrete or continuous).
      * @param v the type of this measurement (discrete or continuous) */
-    public void setMeasType(MeasType v){ measType = v; }
+    public void setMeasType(MeasType v){ touch(); measType = v; }
     /** For discrete samples, returns the sample identifier (name).
      * @return for discrete samples, the identifier (name) of the sample */
     public String getDiscreteId()      { return discreteId; }
     /** For discrete samples, sets the sample identifier (name).
      * @param v for discrete samples, the identifier (name) of the sample */
-    public void setDiscreteId(String v){ discreteId = v; }
+    public void setDiscreteId(String v){ touch(); discreteId = v; }
     /** Returns the treatment applied before this measurement (AF, thermal, etc.).
      * @return the treatment applied before this measurement (AF, thermal, etc.) */
     public TreatType getTreatType()    { return treatType; }
     /** Sets the treatment applied before this measurement (AF, thermal, etc.).
      * @param v the treatment applied before this measurement (AF, thermal, etc.) */
-    public void setTreatType(TreatType v) { treatType = v; }
+    public void setTreatType(TreatType v) { touch(); treatType = v; }
     /** For AF or ARM treatment, returns the AF field strength in the x axis.
      * @return for AF or ARM treatment, the AF field strength in the x axis */
     public double getAfX()             { return afx; }
     /** For AF or ARM treatment, sets the AF field strength in the x axis.
      * @param v for AF or ARM treatment, the AF field strength in the x axis*/
-    public void setAfX(double v)       { afx = v; }
+    public void setAfX(double v)       { touch(); afx = v; }
     /** For AF or ARM treatment, returns the AF field strength in the y axis.
      * @return for AF or ARM treatment, the AF field strength in the y axis */
     public double getAfY()             { return afy; }
     /** For AF or ARM treatment, sets the AF field strength in the y axis.
      * @param v for AF or ARM treatment, the AF field strength in the y axis*/
-    public void setAfY(double v)       { afy = v; }
+    public void setAfY(double v)       { touch(); afy = v; }
     /** For AF or ARM treatment, returns the AF field strength in the z axis.
      * @return for AF or ARM treatment, the AF field strength in the z axis */
     public double getAfZ()             { return afz; }
     /** For AF or ARM treatment, sets the AF field strength in the z axis.
      * @param v for AF or ARM treatment, the AF field strength in the z axis*/
-    public void setAfZ(double v)       { afz = v; }
+    public void setAfZ(double v)       { touch(); afz = v; }
     /** For IRM treatment, returns the IRM field strength.
      * @return for IRM treatment, the IRM field strength */
     public double getIrmField()        { return irmField; }
     /** For IRM treatment, sets the IRM field strength.
      * @param v for IRM treatment, the IRM field strength */
-    public void setIrmField(double v)  { irmField = v; }
+    public void setIrmField(double v)  { touch(); irmField = v; }
     /** For ARM treatment, returns the ARM bias field strength.
      * @return for ARM treatment, the ARM bias field strength */
     public double getArmField()        { return armField; }
     /** For ARM treatment, sets the ARM bias field strength.
      * @param v for ARM treatment, the ARM bias field strength */
-    public void setArmField(double v)  { armField = v; }
+    public void setArmField(double v)  { touch(); armField = v; }
     /** For ARM treatment, returns the axis of the ARM field.
      * @return for ARM treatment, the axis of the ARM field */
     public ArmAxis getArmAxis()        { return armAxis; }
     /** For ARM treatment, sets the axis of the ARM field.
      * @param v for ARM treatment, the axis of the ARM field */
-    public void setArmAxis(ArmAxis v)  { armAxis = v; }
+    public void setArmAxis(ArmAxis v)  { touch(); armAxis = v; }
     /** For thermal treatment, returns the temperature in degrees Celsius.
      * @return for thermal treatment, the temperature in degrees Celsius */
     public double getTemp()            { return temp; }
     /** For thermal treatment, sets the temperature in degrees Celsius.
      * @param v for thermal treatment, the temperature in degrees Celsius*/
-    public void setTemp(double v)      { temp = v; }
+    public void setTemp(double v)      { touch(); temp = v; }
     /** For continuous measurements, returns the cross-sectional area of the core.
      * @return the cross-sectional area of the core */
     public double getArea()            { return area; }
     /** For continuous measurements, sets the cross-sectional area of the core.
      * @param v the cross-sectional area of the core */
-    public void setArea(double v)      { area = v; }
+    public void setArea(double v)      { touch(); area = v; }
     /** For discrete measurements, returns the volume of the sample.
      * @return for discrete measurements, the volume of the sample */
     public double getVolume()          { return volume; }
     /** For discrete measurements, sets the volume of the sample.
      * @param v for discrete measurements, the volume of the sample */
-    public void setVolume(double v)    { volume = v; }
+    public void setVolume(double v)    { touch(); volume = v; }
     /** Returns the number of the machine run during which this measurement was made.
      * @return the number of the machine run during which this measurement was made */
     public int getRunNumber()          { return runNumber; }
     /** Sets the number of the machine run during which this measurement was made.
      * @param v the number of the machine run during which this measurement was made */
-    public void setRunNumber(int v)    { runNumber = v; }
+    public void setRunNumber(int v)    { touch(); runNumber = v; }
     /** Returns the timestamp of this measurement.
      * @return the timestamp of this measurement */
     public String getTimestamp()       { return timestamp; }
     /** Sets the timestamp of this measurement.
      * @param v the timestamp of this measurement */
-    public void setTimestamp(String v) { timestamp = v; }
+    public void setTimestamp(String v) { touch(); timestamp = v; }
     /** Returns the x drift correction value.
      * @return the x drift correction value */    
     public double getXDrift()          { return xDrift; }
     /** Sets the x drift correction value.
      * @param v the x drift correction value */    
-    public void setXDrift(double v)    { xDrift = v; }
+    public void setXDrift(double v)    { touch(); xDrift = v; }
     /** Returns the y drift correction value.
      * @return the y drift correction value */    
     public double getYDrift()          { return yDrift; }
     /** Sets the y drift correction value.
      * @param v the y drift correction value */    
-    public void setYDrift(double v)    { yDrift = v; }
+    public void setYDrift(double v)    { touch(); yDrift = v; }
     /** Returns the z drift correction value.
      * @return the z drift correction value */    
     public double getZDrift()          { return zDrift; }
     /** Sets the z drift correction value.
      * @param v the z drift correction value */    
-    public void setZDrift(double v)    { zDrift = v; }
+    public void setZDrift(double v)    { touch(); zDrift = v; }
     /** Returns the number of the measurement tray slot in which the sample was measured.
      * @return the number of the measurement tray slot in which the sample was measured */    
     public int getSlotNumber()         { return slotNumber; }
     /** Sets the number of the measurement tray slot in which the sample was measured.
      * @param v the number of the measurement tray slot in which the sample was measured */
-    public void setSlotNumber(int v)   { slotNumber = v; }
+    public void setSlotNumber(int v)   { touch(); slotNumber = v; }
     /** Returns the data suite containing this measurement.
      * @return the data suite containing this measurement */
     public Suite getSuite()            { return suite; }
     /** Sets the data suite containing this measurement.
      * @param v the data suite containing this measurement */
-    public void setSuite(Suite v)      { suite = v; }
+    public void setSuite(Suite v)      { touch(); suite = v; }
     /** Reports whether this measurement is used for a great-circle fit.
      * @return {@code true} if this measurement is used for a great-circle fit */
     public boolean isOnCircle()        { return onCircle; }
     /** Sets whether this measurement is to be used for a great-circle fit.
      * @param v {@code true} to use this measurement for a great-circle fit */
-    public void setOnCircle(boolean v) { onCircle = v; }
+    public void setOnCircle(boolean v) { touch(); onCircle = v; }
     /** Reports whether this measurement is used for a PCA fit.
      * @return {@code true} if this measurement is used for a PCA fit */
     public boolean isInPca()           { return inPca; }
     /** Sets whether this measurement is to be used for a PCA fit.
      * @param v {@code true} to use this measurement for a PCA fit */
-    public void setInPca(boolean v)    { inPca = v; }
+    public void setInPca(boolean v)    { touch(); inPca = v; }
     
     /** Returns the sample hade for this datum.
      * @return the sample's hade, in degrees */
@@ -317,6 +317,7 @@ public class Datum {
      * @param hadeDeg the hade to set, in degrees
      */
     public void setSampHade(double hadeDeg) {
+        touch();
         sampDip = 90 - hadeDeg;
     }
     
@@ -334,6 +335,7 @@ public class Datum {
      * @param strikeDeg the formation strike, in degrees
      */
     public void setFormStrike(double strikeDeg) {
+        touch();
         double az = strikeDeg + 90;
         if (az > 360) az -= 360;
         formAz = az;
@@ -396,7 +398,7 @@ public class Datum {
      * in A/m.
      * @param v the magnetic dipole moment per unit volume in A/m
      */
-    public void setMoment(Vec3 v)      { moment = v; }
+    public void setMoment(Vec3 v)      { touch(); moment = v; }
 
     /**
      * Returns the measured magnetic dipole moment per unit volume, as
@@ -443,6 +445,7 @@ public class Datum {
      *  @param axis the axis about which to perform the rotation
      */
     public void rot180(MeasurementAxis axis) {
+        touch();
         moment = moment.rot180(axis);
     }
 
@@ -451,6 +454,7 @@ public class Datum {
      * is functionally equivalent to {@code datum.setSelected(!datum.isSelected()}.
      */
     public void toggleSel() {
+        touch();
         setSelected(!isSelected());
     }
 
@@ -650,6 +654,7 @@ public class Datum {
      * not compatible with the format of the field to be set
      */
     public void setValue(DatumField field, String value) {
+        touch();
         try {
             doSetValue(field, value);
         } catch (NumberFormatException e1) {
@@ -798,5 +803,14 @@ public class Datum {
             first = false;
         }
         return sb.toString();
+    }
+
+    /**
+     * Sets this datum's suite as "modified". Intended to be called
+     * from any method that modifies the datum, to keep track of whether
+     * the suite has been saved since the last modification. 
+     */
+    public void touch() {
+        if (suite != null) suite.setSaved(false);
     }
 }

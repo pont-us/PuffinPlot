@@ -52,8 +52,6 @@ import net.talvi.puffinplot.data.Suite.AmsCalcType;
 public class PuffinActions {
 
     private final PuffinApp app;
-    private final boolean useSwingChooserForSave;
-    // control or apple key as appropriate
 
     /**
      * Instantiates a new set of actions which will be performed on the
@@ -64,7 +62,6 @@ public class PuffinActions {
      */
     PuffinActions(PuffinApp app) {
         this.app = app;
-        useSwingChooserForSave = !app.isOnOsX();
     }
     
     /**
@@ -105,80 +102,6 @@ public class PuffinActions {
         }
     };
 
-    String getSavePath(final String title, final String extension,
-            final String type) {
-        String pathname = null;
-        if (useSwingChooserForSave) {
-            JFileChooser chooser = new JFileChooser();
-            if (extension != null && type != null) {
-                chooser.setFileFilter(new FileFilter() {
-                @Override
-                public boolean accept(File f) {
-                    return f.getName().toLowerCase().endsWith(extension) ||
-                            f.isDirectory();
-                }
-
-                @Override
-                public String getDescription() {
-                    return type;
-                }
-            });}
-            int choice = chooser.showSaveDialog(app.getMainWindow());
-            if (choice == JFileChooser.APPROVE_OPTION)
-                pathname = chooser.getSelectedFile().getPath();
-        } else {
-            FileDialog fd = new FileDialog(app.getMainWindow(), title,
-                    FileDialog.SAVE);
-            if (extension != null) {
-            fd.setFilenameFilter(new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    return name.toLowerCase().endsWith(extension) ||
-                            (new File(dir, name)).isDirectory();
-                }
-            });}
-            fd.setVisible(true);
-            if (fd.getFile() == null) { // "cancel" selected
-                pathname = null;
-            } else { // "save" selected
-               pathname = new File(fd.getDirectory(), fd.getFile()).getPath();
-            }
-        }
-        if (pathname != null && extension != null &&
-                !pathname.toLowerCase().endsWith(extension))
-            pathname += extension;
-        if (pathname != null) {
-            final File file = new File(pathname);
-            if (file.exists()) {
-                if (file.isDirectory()) {
-                    app.errorDialog("File exists",
-                            "There is already a folder with this filename.\n"
-                            + "Please choose another name for the file.");
-                    pathname = null;
-                } else if (!file.canWrite()) {
-                    app.errorDialog("File exists",
-                            "There is already a file with this filename.\n"
-                            + "This file cannot be overwritten.\n"
-                            + "Please choose another filename.");
-                    pathname = null;
-                } else {
-                    final String[] options = {"Overwrite", "Cancel"};
-                    final int option =
-                            JOptionPane.showOptionDialog(app.getMainWindow(),
-                            "There is already a file with this name.\n"
-                            + "Are you sure you wish to overwrite it?",
-                            "File exists",
-                            JOptionPane.OK_CANCEL_OPTION,
-                            JOptionPane.WARNING_MESSAGE,
-                            null, // icon
-                            options,
-                            options[1]);
-                    if (option==1) pathname = null;
-                }
-            }
-        }
-        return pathname;
-    }
 
     /**
      * Opens a ‘Save’ dialog box; sample calculations are saved to 
@@ -192,7 +115,7 @@ public class PuffinActions {
                 app.errorDialog("Error saving calculations", "No file loaded.");
                             return;
             }
-            final String pathname = getSavePath("Export sample calculations",
+            final String pathname = app.getSavePath("Export sample calculations",
                     ".csv", "Comma Separated Values");
             if (pathname != null) {
                 try {
@@ -215,7 +138,7 @@ public class PuffinActions {
                 app.errorDialog("Error saving calculation", "No file loaded.");
                             return;
             }
-            String pathname = getSavePath("Export site calculations", ".csv",
+            String pathname = app.getSavePath("Export site calculations", ".csv",
                     "Comma Separated Values");
 
             if (pathname != null) {
@@ -239,7 +162,7 @@ public class PuffinActions {
                 app.errorDialog("Error saving calculation", "No file loaded.");
                 return;
             }
-            String pathname = getSavePath("Export suite calculations", ".csv",
+            String pathname = app.getSavePath("Export suite calculations", ".csv",
                     "Comma Separated Values");
 
             if (pathname != null) {
@@ -263,18 +186,6 @@ public class PuffinActions {
             app.exportCalcsMultiSuite();
         }
     };
-    
-    private void doSaveAs(Suite suite) {
-        String pathname = getSavePath("Save data", ".ppl", "PuffinPlot data");
-        if (pathname != null) try {
-            final File file = new File(pathname);
-            suite.saveAs(file);
-            app.getRecentFiles().add(Collections.singletonList(file));
-            app.getMainWindow().getMainMenuBar().updateRecentFiles();
-        } catch (PuffinUserException ex) {
-            app.errorDialog("Error saving file", ex);
-        }
-    }
 
     /**
      * If a PuffinPlot file is associated with the current suite,
@@ -285,18 +196,7 @@ public class PuffinActions {
             "Re-save the current file", 'S', false, KeyEvent.VK_A) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            Suite suite = app.getSuite();
-            if (suite != null) {
-                if (suite.isFilenameSet()) try {
-                    suite.save();
-                    final File file = suite.getPuffinFile();
-                    app.getRecentFiles().add(Collections.singletonList(file));
-                    app.getMainWindow().getMainMenuBar().updateRecentFiles();
-                } catch (PuffinUserException ex) {
-                    app.errorDialog("Error saving file", ex);
-                }
-                else doSaveAs(suite);
-            }
+            app.save();
         }
     };
 
@@ -309,7 +209,7 @@ public class PuffinActions {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent arg0) {
             Suite suite = app.getSuite();
-            if (suite != null) doSaveAs(suite);
+            if (suite != null) app.doSaveAs(suite);
         }
     };
     
@@ -752,7 +652,7 @@ public class PuffinActions {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
             if (app.getSuite() == null) return;
-            String pathname = getSavePath("Export IRM data", null,
+            String pathname = app.getSavePath("Export IRM data", null,
                     null);
             app.getSuite().exportToFiles(new File(pathname),
                     Arrays.asList(new DatumField[] {DatumField.IRM_FIELD,
@@ -795,7 +695,7 @@ public class PuffinActions {
             '6', false, 0) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            String pathname = getSavePath("Export to SVG (Batik)", ".svg",
+            String pathname = app.getSavePath("Export to SVG (Batik)", ".svg",
                     "Scalable Vector Graphics");
             if (pathname != null)
                 app.getMainWindow().getGraphDisplay().saveToSvgBatik(pathname);
@@ -811,7 +711,7 @@ public class PuffinActions {
             '7', false, 0) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            String pathname = getSavePath("Export to SVG (FreeHEP)", ".svg",
+            String pathname = app.getSavePath("Export to SVG (FreeHEP)", ".svg",
                     "Scalable Vector Graphics");
             if (pathname != null) {
                 try {
@@ -832,7 +732,7 @@ public class PuffinActions {
             '8', false, 0) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            String pathname = getSavePath("Export to PDF", ".pdf",
+            String pathname = app.getSavePath("Export to PDF", ".pdf",
                     "Portable Document Format");
             if (pathname != null)
                 try {
@@ -854,7 +754,7 @@ public class PuffinActions {
             '9', false, 0) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            String pathname = getSavePath("Export to PDF", ".pdf",
+            String pathname = app.getSavePath("Export to PDF", ".pdf",
                     "Portable Document Format");
             if (pathname != null)
                 try {
@@ -920,7 +820,7 @@ public class PuffinActions {
     public final Action exportPrefs = new AbstractAction("Export preferences…") {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent arg0) {
-            String pathname = getSavePath("Export preferences", ".xml",
+            String pathname = app.getSavePath("Export preferences", ".xml",
                     "eXtensible Markup Language");
             if (pathname != null)
                 app.getPrefs().exportToFile(new File(pathname));

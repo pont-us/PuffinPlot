@@ -79,6 +79,7 @@ public class Sample {
     /** Clears all calculations for this sample (PCA, MDF, and great-circle
      * fit) and deselects all data points. */
     public void clearCalculations() {
+        touch();
         pca = null;
         mdf = null;
         greatCircle = null;
@@ -102,6 +103,7 @@ public class Sample {
      * @see #getMdf()
      */
     public void calculateMdf() {
+        touch();
         mdf = MedianDestructiveField.calculate(getVisibleData());
     }
 
@@ -152,6 +154,7 @@ public class Sample {
      * 
      */
     public void calculateMagSusJump() {
+        touch();
         final double limit = 2.5;
         double msj = 0;
         double prevMagSus = 1e200;
@@ -184,6 +187,7 @@ public class Sample {
      * @param axis the axis about which to rotate the data
      */
     public void flip(MeasurementAxis axis) {
+        touch();
         for (Datum d: getData()) d.rot180(axis);
     }
 
@@ -191,6 +195,7 @@ public class Sample {
      * so they will not be shown on plots.
      * @see Datum#isHidden() */
     public void hideSelectedPoints() {
+        touch();
         for (Datum d: getData()) {
             if (d.isSelected()) {
                 d.setSelected(false);
@@ -202,6 +207,7 @@ public class Sample {
     /** Selects all the data points within this sample.
      * @see Datum#setSelected(boolean) */
     public void selectAll() {
+        touch();
         for (Datum d : getData()) d.setSelected(true);
     }
 
@@ -209,6 +215,7 @@ public class Sample {
      * @see Datum#setSelected(boolean)
      * @see Datum#isHidden() */
     public void selectVisible() {
+        touch();
         for (Datum d : getData()) {
             if (!d.isHidden()) d.setSelected(true);
         }
@@ -216,6 +223,7 @@ public class Sample {
 
     /** De-selects all the data points within this sample.  */
     public void selectNone() {
+        touch();
         for (Datum d : getData()) d.setSelected(false);
     }
     
@@ -284,6 +292,7 @@ public class Sample {
      * @param datum a data point to add to this sample
      */
     public void addDatum(Datum datum) {
+        touch();
         if (data.isEmpty()) {
             setSampAz(datum.getSampAz());
             setSampDip(datum.getSampDip());
@@ -306,6 +315,7 @@ public class Sample {
      */
     public void setCorrections(double sampleAz, double sampleDip,
             double formAz, double formDip, double magDev) {
+        touch();
         this.setSampAz(sampleAz);
         this.setSampDip(sampleDip);
         this.setFormAz(formAz);
@@ -322,6 +332,7 @@ public class Sample {
 
     /** Flags all selected data points for inclusion in principal component analysis */
     public void useSelectionForPca() {
+        touch();
         for (Datum d: getData()) d.setInPca(d.isSelected());
     }
     
@@ -334,6 +345,7 @@ public class Sample {
     /** Sets whether principal component analysis should be anchored for this sample
      * @param pcaAnchored {@code true} to anchor principal component analysis for this sample */
     public void setPcaAnchored(boolean pcaAnchored) {
+        touch();
         for (Datum d: getData()) d.setPcaAnchored(pcaAnchored);
     }
     
@@ -354,6 +366,7 @@ public class Sample {
         // the sample. Eventually pcaAnchored will be moved entirely
         // from Datum to its rightful home in Sample and this kind
         // of ugliness will become unnecessary.
+        touch();
         boolean firstDatumAnchored = getData().get(0).isPcaAnchored();
         setPcaAnchored(firstDatumAnchored);
         pca = PcaAnnotated.calculate(this, correction);
@@ -374,6 +387,7 @@ public class Sample {
 
     /** Flags the selected data points for use in the next great-circle fit. */
     public void useSelectionForCircleFit() {
+        touch();
         for (Datum d: getData()) d.setOnCircle(d.isSelected());
     }
 
@@ -402,6 +416,7 @@ public class Sample {
      * @param correction the correction to apply to the magnetic moment data
      */
     public void fitGreatCircle(Correction correction) {
+        touch();
         final List<Vec3> points = getCirclePoints(correction);
         if (points.size() < 2) return;
         greatCircle = new GreatCircle(points);
@@ -495,11 +510,13 @@ public class Sample {
      * on the measurement tray
      */
     public void setEmptySlot(boolean isEmptySlot) {
+        touch();
         this.isEmptySlot = isEmptySlot;
     }
 
     /** Unhides all data points within this sample. */
     public void unhideAllPoints() {
+        touch();
         for (Datum d: getData()) d.setHidden(false);
     }
 
@@ -532,6 +549,7 @@ public class Sample {
      * @see #getSelectionBitSet()
      */
     public void setSelectionBitSet(BitSet selection) {
+        touch();
         for (int i=0; i<Math.min(selection.size(), data.size()); i++) {
             final Datum datum = data.get(i);
             datum.setSelected(selection.get(i));
@@ -547,6 +565,7 @@ public class Sample {
     /** Sets the site for this sample.
      * @param site the site for this sample */
     public void setSite(Site site) {
+        touch();
         this.site = site;
     }
 
@@ -562,6 +581,7 @@ public class Sample {
      */
     public void setAmsFromTensor(double k11, double k22, double k33,
             double k12, double k23, double k13) {
+        touch();
         Matrix scm = new Matrix(Vec3.getSampleCorrectionMatrix(toRadians(getSampAz() + getMagDev()),
                toRadians(getSampDip())));
         Matrix fcm = new Matrix(Vec3.getFormationCorrectionMatrix(toRadians(getFormAz() + getMagDev()),
@@ -581,6 +601,7 @@ public class Sample {
      */
     public void setAmsDirections(double i1, double d1, double i2, double d2,
             double i3, double d3) {
+        touch();
         // ams = Tensor.fromDirections(i1, d1, i2, d2, i3, d3);
         Vec3 k1 = correctFully(Vec3.fromPolarDegrees(1., i1, d1));
         Vec3 k2 = correctFully(Vec3.fromPolarDegrees(1., i2, d2));
@@ -691,6 +712,7 @@ public class Sample {
     /** Sets this sample's dip azimuth in degrees.
      * @param sampAz this sample's dip azimuth in degrees */
     private void setSampAz(double sampAz) {
+        touch();
         this.sampAz = sampAz;
     }
 
@@ -701,6 +723,7 @@ public class Sample {
     }
 
     private void setSampDip(double sampDip) {
+        touch();
         this.sampDip = sampDip;
     }
     
@@ -711,6 +734,7 @@ public class Sample {
     }
 
     private void setSampHade(double sampHade) {
+        touch();
         this.sampDip = 90 - sampHade;
     }
 
@@ -721,6 +745,7 @@ public class Sample {
     }
 
     private void setFormAz(double formAz) {
+        touch();
         this.formAz = formAz;
     }
     
@@ -733,6 +758,7 @@ public class Sample {
     }
 
     private void setFormStrike(double formStrike) {
+        touch();
         double az = formStrike + 90;
         if (az > 360) az -= 360;
         this.formAz = az;
@@ -745,6 +771,7 @@ public class Sample {
     }
 
     private void setFormDip(double formDip) {
+        touch();
         this.formDip = formDip;
     }
 
@@ -755,6 +782,7 @@ public class Sample {
     }
 
     private void setMagDev(double magDev) {
+        touch();
         this.magDev = magDev;
     }
 
@@ -764,6 +792,7 @@ public class Sample {
      * @param value the value to which to set the specified field
      */
     public void setValue(DatumField field, String value) {
+        touch();
         switch (field) {
             case SAMPLE_AZ: setSampAz(parseDouble(value)); break;
             case SAMPLE_DIP: setSampDip(parseDouble(value)); break;
@@ -776,5 +805,14 @@ public class Sample {
         for (Datum d: getData()) {
             d.setValue(field, value);
         }
+    }
+    
+    /**
+     * Sets this sample's suite as "modified". Intended to be called
+     * from any method that modifies the sample, to keep track of whether
+     * the suite has been saved since the last modification. 
+     */
+    public void touch() {
+        if (suite != null) suite.setSaved(false);
     }
 }

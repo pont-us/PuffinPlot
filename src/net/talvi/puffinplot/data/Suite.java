@@ -54,7 +54,8 @@ public final class Suite {
     private CustomFields<String> customFlagNames;
     private CustomFields<String> customNoteNames;
     private List<KentParams> amsBootstrapParams = null;
-    private List<KentParams> hextParams= null;
+    private List<KentParams> hextParams = null;
+    private boolean saved = true;
 
     /** Get the list of warnings produced when data was being loaded from
      * one or more files.
@@ -97,6 +98,7 @@ public final class Suite {
      * are stored in the suite and can be retrieved with
      * {@link #getSuiteMeans()}. */
     public void calculateSuiteMeans() {
+        setSaved(false);
         final List<Sample> selSamps = PuffinApp.getInstance().getSelectedSamples();
         final List<Site> selSites = PuffinApp.getInstance().getSelectedSites();
         suiteCalcs = calculateSuiteMeans(selSamps, selSites);
@@ -153,6 +155,7 @@ public final class Suite {
      * @see Site#doFisher(net.talvi.puffinplot.data.Correction)
      */
     public void calculateSiteFishers(Correction correction) {
+        setSaved(false);
         for (Site site: getSites()) site.doFisher(correction);
     }
 
@@ -229,6 +232,7 @@ public final class Suite {
             fileWriter.close();
             puffinFile = file;
             suiteName = file.getName();
+            setSaved(true);
         } catch (IOException ex) {
             throw new PuffinUserException(ex);
         } finally {
@@ -288,6 +292,7 @@ public final class Suite {
      * data when performing the calculations
      */
     public void doSampleCalculations(Correction correction) {
+        setSaved(false);
         for (Sample sample: getSamples()) {
             sample.doPca(correction);
             sample.fitGreatCircle(correction);
@@ -306,6 +311,7 @@ public final class Suite {
      * data when performing the calculations
      */
     public void doSiteCalculations(Correction correction) {
+        setSaved(false);
         // TODO we can use getSites for this now!
         final Set<Site> sitesDone = new HashSet<Site>();
         for (Sample sample : getSamples()) {
@@ -452,6 +458,7 @@ public final class Suite {
         }
         processPuffinLines(puffinLines);
         updateReverseIndex();
+        setSaved(true);
     }
     
     /** Performs all possible sample and site calculations.
@@ -460,6 +467,7 @@ public final class Suite {
      * data when performing the calculations
      */
     public void doAllCalculations(Correction correction) {
+        setSaved(false);
         doSampleCalculations(correction);
         if (measType.isDiscrete()) {
             doSiteCalculations(correction);
@@ -737,6 +745,7 @@ public final class Suite {
      */
     public void importAmsFromDelimitedFile(List<File> files, boolean directions)
             throws IOException {
+        setSaved(false);
         BufferedReader reader = null;
         directions = false;
         for (File file: files) {
@@ -785,6 +794,7 @@ public final class Suite {
      */
     public void importAmsFromAsc(List<File> files, boolean magneticNorth)
             throws IOException {
+        setSaved(false);
         List<AmsData> allData = new ArrayList<AmsData>();
         for (File file: files) {
             AmsLoader amsLoader = new AmsLoader(file);
@@ -898,6 +908,7 @@ public final class Suite {
 
     /** Clears any AMS calculations on this suite */
     public void clearAmsCalculations() {
+        setSaved(false);
         amsBootstrapParams = null;
         hextParams = null;
     }
@@ -936,6 +947,25 @@ public final class Suite {
      * @return the name of the PuffinPlot file associated with this suite, if any */
     public File getPuffinFile() {
         return puffinFile;
+    }
+
+    /**
+     * @return true if the suite has not been modified since it was last saved
+     */
+    public boolean isSaved() {
+        return saved;
+    }
+
+    /**
+     * Sets this suite's "saved" flag, which records whether the suite
+     * has been saved since its last modification. If this flag is
+     * false, the suite is "modified", and data would be lost by closing it
+     * without saving.
+     * 
+     * @param saved the saved state to set
+     */
+    public void setSaved(boolean saved) {
+        this.saved = saved;
     }
 
     private class CustomFlagNames extends CustomFields<String> {
@@ -1009,6 +1039,7 @@ public final class Suite {
          * to store them (since the sets of samples for AMS calculations
          * isn't necessarily tied to a single Site).
          */
+        setSaved(false);
         List<Tensor> tensors = new ArrayList<Tensor>();
         for (Sample s: samples) {
             if (s.getAms() != null) tensors.add(s.getAms());
@@ -1077,6 +1108,7 @@ public final class Suite {
     /** Clears all sites for this suite.
      */
     public void clearSites() {
+        setSaved(false);
         sites = new ArrayList<Site>();
         for (Sample s: samples) {
             s.setSite(null);
@@ -1103,6 +1135,7 @@ public final class Suite {
      * @param siteNamer the site namer which will produce the site names
      */
     public void setSitesForSamples(Collection<Sample> samples, SiteNamer siteNamer) {
+        setSaved(false);
         for (Sample sample: samples) {
             final Site oldSite = sample.getSite();
             final Site newSite = getOrCreateSite(siteNamer.siteName(sample));
@@ -1123,6 +1156,7 @@ public final class Suite {
      */
     public void setNamedSiteForSamples(Collection<Sample> samples,
             final String siteName) {
+        setSaved(false);
         setSitesForSamples(samples, new SiteNamer() {
             @Override
             public String siteName(Sample sample) {
@@ -1140,6 +1174,7 @@ public final class Suite {
      * @param charMask the mask determining which characters to use for the site name
      */
     public void setSiteNamesBySubstring(Collection<Sample> samples, final BitSet charMask) {
+        setSaved(false);
         setSitesForSamples(samples, new SiteNamer() {
             @Override
             public String siteName(Sample sample) {
@@ -1162,6 +1197,7 @@ public final class Suite {
      * @param samples the samples for which to set site names
      * @param thickness the thickness of each site */
     public void setSiteNamesByDepth(Collection<Sample> samples, final double thickness) {
+        setSaved(false);
         setSitesForSamples(samples, new SiteNamer() {
             @Override
             public String siteName(Sample sample) {
@@ -1213,6 +1249,7 @@ public final class Suite {
      * susceptibility measurements in this suite
      */
     public void rescaleMagSus(double factor) {
+        setSaved(false);
         for (Datum d: data) {
             d.setMagSus(d.getMagSus() * factor);
         }

@@ -479,6 +479,22 @@ public final class PuffinApp {
     public void closeCurrentSuite() {
         if (suites == null || suites.isEmpty()) return;
         int index = suites.indexOf(currentSuite);
+        if (!currentSuite.isSaved()) {
+            final Object[] buttons = {"Save changes",
+                "Discard changes", "Don't close suite"};
+            final int choice = JOptionPane.showOptionDialog(mainWindow,
+                    "This suite has been changed since it was last saved.\n"
+                    + "The changes will be lost if you close it.\n"
+                    + "Would you like to save the changes before closing the suite?",
+                    "Unsaved data",
+                    JOptionPane.YES_NO_CANCEL_OPTION,
+                    JOptionPane.WARNING_MESSAGE,
+                    null,     // no custom icon
+                    buttons,
+                    buttons[2]); // default option
+            if (choice==2) return;
+            if (choice==0) save();
+        }
         suites.remove(currentSuite);
         // Set new current suite to previous (if any), else next (if any),
         // or none.
@@ -528,6 +544,7 @@ public final class PuffinApp {
                 currentSuite = suites.get(suites.size()-1);
                 getMainWindow().suitesChanged();
             }
+            suite.setSaved(true);
         } catch (FileNotFoundException e) {
             errorDialog("File not found", e.getMessage());
         } catch (IOException e) {
@@ -1119,7 +1136,7 @@ public final class PuffinApp {
                 errorDialog("Error saving calculations", "No file loaded.");
                 return;
         }
-        String pathname = actions.getSavePath("Export multi-suite calculations", ".csv",
+        String pathname = getSavePath("Export multi-suite calculations", ".csv",
                 "Comma Separated Values");
         if (pathname != null) {
             try {
@@ -1268,4 +1285,110 @@ public final class PuffinApp {
             app.errorDialog("Error opening web page", ex.getLocalizedMessage());
         }
     }
+    
+    public void save() {
+        final Suite suite = getSuite();
+        if (suite != null) {
+                if (suite.isFilenameSet()) try {
+                    suite.save();
+                    final File file = suite.getPuffinFile();
+                    app.getRecentFiles().add(Collections.singletonList(file));
+                    app.getMainWindow().getMainMenuBar().updateRecentFiles();
+                } catch (PuffinUserException ex) {
+                    app.errorDialog("Error saving file", ex);
+                }
+                else doSaveAs(suite);
+            }
+    }
+    
+    void doSaveAs(Suite suite) {
+        String pathname = getSavePath("Save data", ".ppl", "PuffinPlot data");
+        if (pathname != null) {
+            try {
+                final File file = new File(pathname);
+                suite.saveAs(file);
+                getRecentFiles().add(Collections.singletonList(file));
+                getMainWindow().getMainMenuBar().updateRecentFiles();
+            } catch (PuffinUserException ex) {
+                errorDialog("Error saving file", ex);
+            }
+        }
+    }
+    
+    String getSavePath(final String title, final String extension,
+            final String type) {
+        final boolean useSwingChooserForSave = !app.isOnOsX();
+        String pathname = null;
+        if (useSwingChooserForSave) {
+            JFileChooser chooser = new JFileChooser();
+            if (extension != null && type != null) {
+                chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+                @Override
+                public boolean accept(File f) {
+                    return f.getName().toLowerCase().endsWith(extension) ||
+                            f.isDirectory();
+                }
+
+                @Override
+                public String getDescription() {
+                    return type;
+                }
+            });}
+            int choice = chooser.showSaveDialog(app.getMainWindow());
+            if (choice == JFileChooser.APPROVE_OPTION)
+                pathname = chooser.getSelectedFile().getPath();
+        } else {
+            FileDialog fd = new FileDialog(app.getMainWindow(), title,
+                    FileDialog.SAVE);
+            if (extension != null) {
+            fd.setFilenameFilter(new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String name) {
+                    return name.toLowerCase().endsWith(extension) ||
+                            (new File(dir, name)).isDirectory();
+                }
+            });}
+            fd.setVisible(true);
+            if (fd.getFile() == null) { // "cancel" selected
+                pathname = null;
+            } else { // "save" selected
+               pathname = new File(fd.getDirectory(), fd.getFile()).getPath();
+            }
+        }
+        if (pathname != null && extension != null &&
+                !pathname.toLowerCase().endsWith(extension))
+            pathname += extension;
+        if (pathname != null) {
+            final File file = new File(pathname);
+            if (file.exists()) {
+                if (file.isDirectory()) {
+                    app.errorDialog("File exists",
+                            "There is already a folder with this filename.\n"
+                            + "Please choose another name for the file.");
+                    pathname = null;
+                } else if (!file.canWrite()) {
+                    app.errorDialog("File exists",
+                            "There is already a file with this filename.\n"
+                            + "This file cannot be overwritten.\n"
+                            + "Please choose another filename.");
+                    pathname = null;
+                } else {
+                    final String[] options = {"Overwrite", "Cancel"};
+                    final int option =
+                            JOptionPane.showOptionDialog(app.getMainWindow(),
+                            "There is already a file with this name.\n"
+                            + "Are you sure you wish to overwrite it?",
+                            "File exists",
+                            JOptionPane.OK_CANCEL_OPTION,
+                            JOptionPane.WARNING_MESSAGE,
+                            null, // icon
+                            options,
+                            options[1]);
+                    if (option==1) pathname = null;
+                }
+            }
+        }
+        return pathname;
+    }
+
 }
