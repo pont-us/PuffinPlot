@@ -399,11 +399,16 @@ public final class Suite {
             FileLoader loader = null;
             switch (fileType) {
             case TWOGEE:
-            case PUFFINPLOT_OLD:
                 TwoGeeLoader twoGeeLoader =
                         new TwoGeeLoader(file, protocol,
                         sensorLengths.toVector(), usePolarMoment);
                 loader = twoGeeLoader;
+                break;
+            case PUFFINPLOT_OLD:
+                TwoGeeLoader oldPuffinLoader =
+                        new TwoGeeLoader(file, protocol,
+                        sensorLengths.toVector(), usePolarMoment);
+                loader = oldPuffinLoader;
                 if (files.size()==1) puffinFile = file;
                 break;
             case PUFFINPLOT_NEW:
