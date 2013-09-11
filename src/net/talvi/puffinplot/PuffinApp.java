@@ -475,15 +475,13 @@ public final class PuffinApp {
         getTableWindow().dataChanged();
     }
 
-    /** Closes the suite whose data is currently being displayed. */
-    public void closeCurrentSuite() {
-        if (suites == null || suites.isEmpty()) return;
-        int index = suites.indexOf(currentSuite);
-        if (!currentSuite.isSaved()) {
+    private boolean canSuiteBeClosed(Suite suite) {
+        if (!suite.isSaved()) {
             final Object[] buttons = {"Save changes",
                 "Discard changes", "Don't close suite"};
             final int choice = JOptionPane.showOptionDialog(mainWindow,
-                    "This suite has been changed since it was last saved.\n"
+                    "The suite \""+ suite.getName() + "\" "
+                    + "has been changed since it was last saved.\n"
                     + "The changes will be lost if you close it.\n"
                     + "Would you like to save the changes before closing the suite?",
                     "Unsaved data",
@@ -492,9 +490,18 @@ public final class PuffinApp {
                     null,     // no custom icon
                     buttons,
                     buttons[2]); // default option
-            if (choice==2) return;
-            if (choice==0) save();
+            if (choice==0) save(suite);
+            if (choice==2) return false;
+            else return true;
         }
+        else return true;
+    }
+    
+    /** Closes the suite whose data is currently being displayed. */
+    public void closeCurrentSuite() {
+        if (suites == null || suites.isEmpty()) return;
+        int index = suites.indexOf(currentSuite);
+        if (!canSuiteBeClosed(currentSuite)) return;
         suites.remove(currentSuite);
         // Set new current suite to previous (if any), else next (if any),
         // or none.
@@ -702,6 +709,9 @@ public final class PuffinApp {
     
     /** Terminates this instance of PuffinApp immediately. */
     public void quit() {
+        for (Suite suite: getSuites()) {
+            if (!canSuiteBeClosed(suite)) return;
+        }
         getPrefs().save();
         System.exit(0);
     }
@@ -1287,7 +1297,10 @@ public final class PuffinApp {
     }
     
     public void save() {
-        final Suite suite = getSuite();
+        save(getSuite());
+    }
+    
+    public void save(Suite suite) {
         if (suite != null) {
                 if (suite.isFilenameSet()) try {
                     suite.save();
