@@ -1,0 +1,30 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Macro recording / script building / undo
+desc: |-
+  Although PuffinPlot has a scripting mode, it's not really coupled 
+  to interactive operation: it would be useful to produce a script from
+  an interactive session which would replay all that session's operations
+  to recreate the same result. This would be an excellent way to ensure
+  that results were reproducible, and to make PuffinPlot processing
+  workflows inspectable. It could probably be done using some form of
+  the GoF Command Pattern. Python seems like the most sensible choice
+  for the scripts, since PuffinPlot already bundles the Jython 
+  interpreter. This would also lay a foundation for undo/redo in 
+  PuffinPlot, although this would additionally require coding an inverse
+  operation for each PuffinPlot command -- perhaps not worthwhile until
+  some demand for undo/redo has been demonstrated.
+type: :feature
+component: PuffinPlot
+release: "1.1"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2013-09-12 14:57:26.215747 Z
+references: []
+
+id: 1b00fc0024249a4246ed1b6f5a93ae4aeab768e3
+log_events: 
+- - 2013-09-12 14:57:28.044032 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
