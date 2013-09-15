@@ -174,15 +174,24 @@ public final class MainMenuBar extends JMenuBar {
             super("PCA anchored");
             setToolTipText("If this item is checked, "
                     + "subsequent PCA analyses will be anchored");
-            addItemListener(new ItemListener() {
+            /*
+             * If an ItemListener is used here instead of an 
+             * ActionListener, it will also be called when the item
+             * is set programmatically (e.g. to reflect a state 
+             * taken from a new current sample). An ActionListener
+             * will only be activated when the state is changed by
+             * the user.
+             */
+            addActionListener(new ActionListener() {
                 @Override
-            public void itemStateChanged(ItemEvent event) {
-                for (Sample s: app.getSelectedSamples()) {
-                    s.setPcaAnchored(isSelected());
-                    s.doPca(app.getCorrection());
+                public void actionPerformed(ActionEvent event) {
+                    for (Sample s: app.getSelectedSamples()) {
+                        s.setPcaAnchored(isSelected());
+                        s.doPca(app.getCorrection());
+                    }
+                    app.updateDisplay();
                 }
-                app.updateDisplay();
-            }});
+            });
             setAccelerator(KeyStroke.getKeyStroke('T', modifierKey));
         }
 
