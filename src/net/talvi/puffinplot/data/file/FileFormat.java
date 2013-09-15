@@ -277,4 +277,19 @@ public final class FileFormat {
     public boolean useFixedWidthColumns() {
         return useFixedWidthColumns;
     }
+    
+    public boolean specifiesFullVector() {
+        return (columnMap.containsValue(DatumField.X_MOMENT) &&
+                columnMap.containsValue(DatumField.Y_MOMENT) &&
+                columnMap.containsValue(DatumField.Z_MOMENT)) ||
+                (columnMap.containsValue(DatumField.VIRT_INCLINATION) &&
+                columnMap.containsValue(DatumField.VIRT_DECLINATION) &&
+                columnMap.containsValue(DatumField.VIRT_MAGNETIZATION));
+    }
+    
+    public boolean specifiesDirection() {
+        return specifiesFullVector() ||
+                (columnMap.containsValue(DatumField.VIRT_INCLINATION) &&
+                columnMap.containsValue(DatumField.VIRT_DECLINATION));
+    }
 }

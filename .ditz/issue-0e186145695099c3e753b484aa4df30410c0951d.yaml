@@ -10,8 +10,8 @@ type: :bugfix
 component: PuffinPlot
 release: "1.03"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2013-06-06 07:54:33.301533 Z
 references: []
 
@@ -21,3 +21,18 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - created
   - ""
+- - 2013-09-15 20:56:24.978398 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2013-09-15 20:59:52.342966 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Implemented as specified. On a custom import, a warning is issued
+    if only inclination and declination are specified, stating that
+    intensities will be set to 1. If insufficient data is given for
+    a three-dimensional direction (i.e. import format contains neither
+    x+y+z nor inc+dec) the user is warned that all magnetization vectors
+    will be set to zero. Note that no warnings are given if fields are
+    specified but unreadable: in this case they just default to zero.

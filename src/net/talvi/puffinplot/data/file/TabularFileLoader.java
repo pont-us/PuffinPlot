@@ -39,15 +39,25 @@ public class TabularFileLoader extends AbstractFileLoader {
         this.file = file;
         this.format = format;
         BufferedReader reader = null;
-        try {
-        reader = new BufferedReader(new FileReader(file));
-        List<String> lines = new ArrayList<String>(50);
-        while (true) {
-            final String line = reader.readLine();
-            if (line==null) break;
-            lines.add(line);
+        if (!format.specifiesFullVector()) {
+            if (!format.specifiesDirection()) {
+                addMessage("The specified fields are not sufficient to specify\n"
+                        + "a direction; all magnetization vectors will be set to zero!");
+            } else {
+                addMessage("The specified fields specify a magnetization direction\n"
+                        + "but no magnitude. All magnetization intensities "
+                        + "will be set to 1.");
+            }
         }
-        data = format.readLines(lines);
+        try {
+            reader = new BufferedReader(new FileReader(file));
+            List<String> lines = new ArrayList<String>(50);
+            while (true) {
+                final String line = reader.readLine();
+                if (line==null) break;
+                lines.add(line);
+            }
+            data = format.readLines(lines);
         } catch (IOException ex) {
             addMessage(ex.getLocalizedMessage());
         } finally {
