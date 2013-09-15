@@ -534,9 +534,26 @@ public final class PuffinApp {
             if (warnings.size() > 0) {
                 StringBuilder sb =
                         new StringBuilder("The following problems occurred:\n");
+                int i = 0;
+                final int MAX_WARNINGS = 10;
                 for (String w: warnings) {
+                    if (i == MAX_WARNINGS) {
+                        final int remainder = warnings.size() - MAX_WARNINGS;
+                        if (remainder == 1) {
+                            /* No point adding a "1 more warning omitted" line
+                             * when we could just use that line to show the
+                             * final warning!
+                             */
+                            sb.append(w);
+                        } else {
+                            sb.append("(").append(remainder).
+                                    append(" more errors not shown.)");
+                        }
+                        break;
+                    }
                     sb.append(w);
                     sb.append("\n");
+                    i++;
                 }
                 errorDialog("Errors during file loading", sb.toString());
             }
