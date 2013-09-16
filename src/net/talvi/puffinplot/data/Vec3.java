@@ -160,7 +160,6 @@ public class Vec3 {
     public static List<List<Vec3>> interpolateEquatorPoints(List<Vec3> vs) {
         List<List<Vec3>> result = new ArrayList<List<Vec3>>();
         List<Vec3> currentSegment = new ArrayList<Vec3>();
-        // TODO: THIS IS WHERE WE ARE MAKING THE NaNs!
         Vec3 prev = null;
         for (Vec3 v: vs) {
             if (prev == null) {
@@ -729,6 +728,7 @@ public class Vec3 {
             final Vec3 v1 = Vec3.fromPolarDegrees(1, 90 - radiusDegrees, dec);
             final Vec3 v2 = v1.rotY(Math.PI / 2 - getIncRad());
             final Vec3 v3 = v2.rotZ(getDecRad());
+            assert(v3.isWellFormed());
             result.add(v3);
         }
         result.add(result.get(0));

@@ -126,6 +126,9 @@ public class SiteEqAreaPlot extends EqAreaPlot {
             return;
         }
         final List<Vec3> pcaDirs = new ArrayList<Vec3>(samples.size());
+        if (pcaDirs.isEmpty()) {
+            return;
+        }
         for (Sample s: samples) {
             final PcaValues pcaValues = s.getPcaValues();
             if (pcaValues != null) {
@@ -136,11 +139,13 @@ public class SiteEqAreaPlot extends EqAreaPlot {
         }
         final FisherValues fisherMean = FisherValues.calculate(pcaDirs);
         final Vec3 meanDir = fisherMean.getMeanDirection();
-        drawLineSegments(meanDir.makeSmallCircle(fisherMean.getA95()));
         final PlotPoint meanPoint =
                 ShapePoint.build(this, project(meanDir)).
                 circle().scale(1.5).filled(meanDir.z>0).build();
         meanPoint.draw(g);
+        if (pcaDirs.size() > 1) {
+            drawLineSegments(meanDir.makeSmallCircle(fisherMean.getA95()));
+        }
     }
 
     @Override
