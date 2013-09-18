@@ -253,6 +253,12 @@ public final class Suite {
         return dataByLine.get(lineNumber);
     }
 
+    /**
+     * Adds a datum to the suite. If no corresponding sample exists,
+     * one is created.
+     * 
+     * @param d 
+     */
     private void addDatum(Datum d) {
         if (measType == MeasType.UNSET) measType = d.getMeasType();
         if (d.getMeasType() != measType) {
@@ -876,6 +882,19 @@ public final class Suite {
             } else if ("SAMPLE".equals(parts[0])) {
                 String sampleId = parts[1];
                 Sample sample = getSampleByName(sampleId);
+                /* We create a sample here if returned sample is 
+                 * null, to deal with suites which have samples with no
+                 * associated Datum lines. At present (2013-09-18)
+                 * all samples have data, but implementing #271
+                 * (import of sample-level data) will probably require
+                 * require the ability to save and load files without
+                 * demagnetization steps.
+                 */
+                if (sample == null) {
+                    sample = new Sample(sampleId, this);
+                    samplesById.put(sampleId, sample);
+                    samples.add(sample);
+                }
                 sample.fromString(line.substring(8+sampleId.length()));
             } else if ("SITE".equals(parts[0])) {
                 Site site = getOrCreateSite(parts[1]);
