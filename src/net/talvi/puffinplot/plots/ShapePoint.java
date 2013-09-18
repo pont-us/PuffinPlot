@@ -23,6 +23,7 @@ import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import static java.lang.Math.sqrt;
@@ -63,7 +64,7 @@ class ShapePoint implements PlotPoint {
     }
 
     public static enum PointShape { 
-        SQUARE, CIRCLE, TRIANGLE;
+        SQUARE, CIRCLE, TRIANGLE, DIAMOND;
         
         public static PointShape fromAmsAxis(int axis) {
             switch (axis) {
@@ -135,6 +136,11 @@ class ShapePoint implements PlotPoint {
             this.pointShape = PointShape.TRIANGLE;
             return this;
         }
+
+        public Builder diamond() {
+            this.pointShape = PointShape.DIAMOND;
+            return this;
+        }
         
         public ShapePoint build() {
             return new ShapePoint(this);
@@ -170,17 +176,31 @@ class ShapePoint implements PlotPoint {
                 shape = new Ellipse2D.Double(xo-s, yo-s, s*2, s*2);
                 highlight = new Ellipse2D.Double(xo-hs, yo-hs, hs*2, hs*2);
                 break;
+            case DIAMOND:
+                shape = makeDiamond(s, xo, yo);
+                highlight = makeDiamond(hs, xo, yo);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown point shape: "+
                         b.pointShape.toString());
         }
     }
     
-    private Shape makeTriangle(double s, double xo, double yo) {
-        GeneralPath path = new GeneralPath();
+    private static Shape makeTriangle(double s, double xo, double yo) {
+        final Path2D path = new Path2D.Double();
         path.moveTo(xo - s, yo + s * (1/sqrt(3)));
         path.lineTo(xo + s, yo + s * (1/sqrt(3)));
         path.lineTo(xo, yo - s * (2/sqrt(3)));
+        path.closePath();
+        return path;
+    }
+    
+    private static Shape makeDiamond(double s, double xo, double yo) {
+        final Path2D path = new Path2D.Double();
+        path.moveTo(xo-s, yo);
+        path.lineTo(xo, yo+s);
+        path.lineTo(xo+s, yo);
+        path.lineTo(xo, yo-s);
         path.closePath();
         return path;
     }

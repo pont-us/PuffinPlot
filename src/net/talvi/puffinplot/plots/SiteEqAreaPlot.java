@@ -126,16 +126,25 @@ public class SiteEqAreaPlot extends EqAreaPlot {
             return;
         }
         final List<Vec3> pcaDirs = new ArrayList<Vec3>(samples.size());
-        if (pcaDirs.isEmpty()) {
-            return;
-        }
         for (Sample s: samples) {
             final PcaValues pcaValues = s.getPcaValues();
             if (pcaValues != null) {
-                Vec3 v = pcaValues.getDirection();
-                pcaDirs.add(s.getPcaValues().getDirection());
-                addPoint(null, project(v), v.z>0, false, false);
+                final Vec3 v = pcaValues.getDirection();
+                pcaDirs.add(v);
+                final PlotPoint pcaPoint =
+                        ShapePoint.build(this, project(v)).
+                        diamond().filled(v.z>0).build();
+                pcaPoint.draw(g);
+                //addPoint(null, project(v), v.z>0, false, false);
             }
+        }
+        if (pcaDirs.isEmpty()) {
+            return;
+        }
+        if (site.getGreatCircles() != null) {
+            // If there's a GC calculation, it takes precedence over
+            // a Fisher mean of PCAs.
+            return;
         }
         final FisherValues fisherMean = FisherValues.calculate(pcaDirs);
         final Vec3 meanDir = fisherMean.getMeanDirection();
