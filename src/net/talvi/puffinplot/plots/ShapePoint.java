@@ -21,7 +21,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
@@ -196,6 +195,9 @@ class ShapePoint implements PlotPoint {
     }
     
     private static Shape makeDiamond(double s, double xo, double yo) {
+        // We wish the sides of the dimand to have length 2s, so
+        // the diagonal needs to have length 2s*sqrt(2).
+        s *= Math.sqrt(2.);
         final Path2D path = new Path2D.Double();
         path.moveTo(xo-s, yo);
         path.lineTo(xo, yo+s);

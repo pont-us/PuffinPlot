@@ -322,6 +322,9 @@ public class PuffinActions {
             if (suite == null) {
                 app.errorDialog("Fisher on sample", "No suite loaded.");
             } else {
+                for (Sample s: app.getSelectedSamples()) {
+                    s.calculateFisher(app.getCorrection());
+                }
                 suite.calculateSiteFishers(app.getCorrection());
                 app.getSuiteEqAreaWindow().getPlot().setGroupedBySite(true);
                 app.updateDisplay();

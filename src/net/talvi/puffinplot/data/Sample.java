@@ -51,6 +51,7 @@ public class Sample {
     private double sampAz = Double.NaN, sampDip = Double.NaN;
     private double formAz = Double.NaN, formDip = Double.NaN;
     private double magDev = Double.NaN;
+    private FisherValues fisherValues;
 
     /**
      * Creates a new sample. For discrete samples, the supplied name can
@@ -83,6 +84,7 @@ public class Sample {
         pca = null;
         mdf = null;
         greatCircle = null;
+        fisherValues = null;
         selectNone();
         for (Datum d: getData()) {
             d.setInPca(false);
@@ -382,6 +384,12 @@ public class Sample {
      * @return the results of the last PCA calculation */
     public PcaValues getPcaValues() {
         return pca == null ? null : pca.getPcaValues();
+    }
+    
+    /** Returns the results of the last Fisher calculation.
+     * @return the results of the last PCA calculation */
+    public FisherValues getFisherValues() {
+        return fisherValues == null ? null : fisherValues;
     }
 
 
@@ -814,5 +822,14 @@ public class Sample {
      */
     public void touch() {
         if (suite != null) suite.setSaved(false);
+    }
+
+    public void calculateFisher(Correction correction) {
+        final List<Datum> selection = getSelectedData();
+        final List<Vec3> directions = new ArrayList<Vec3>(selection.size());
+        for (Datum d: selection) {
+            directions.add(d.getMoment(correction));
+        }
+        fisherValues = FisherValues.calculate(directions);
     }
 }
