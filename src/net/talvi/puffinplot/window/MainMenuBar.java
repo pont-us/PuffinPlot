@@ -19,8 +19,7 @@ package net.talvi.puffinplot.window;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -47,9 +46,11 @@ public final class MainMenuBar extends JMenuBar {
     private JMenu recentFilesMenu;
     private final JCheckBoxMenuItem anchorItem;
     private final PuffinApp app = PuffinApp.getInstance();
+    private final int[] recentFileKeycodes;
 
-    private static JMenu makeMenu(String name, Object... things) {
+    private static JMenu makeMenu(String name, int mnemonic, Object... things) {
         JMenu menu = new JMenu(name);
+        menu.setMnemonic(mnemonic);
         logger.log(Level.FINE, "makeMenu {0}", name);
         for (Object thing: things) {
             if (thing instanceof PuffinAction) {
@@ -78,8 +79,12 @@ public final class MainMenuBar extends JMenuBar {
      * Creates a new menu bar and menu tree.
      */
     public MainMenuBar() {
+        this.recentFileKeycodes = new int[] {KeyEvent.VK_1, KeyEvent.VK_2,
+            KeyEvent.VK_3, KeyEvent.VK_4, KeyEvent.VK_5, KeyEvent.VK_6,
+            KeyEvent.VK_7, KeyEvent.VK_8};
         final PuffinActions pa = app.getActions();
         recentFilesMenu = new JMenu("Open recent file");
+        recentFilesMenu.setMnemonic(KeyEvent.VK_R);
         noRecentFiles.setEnabled(false);
         updateRecentFiles();
 
@@ -93,6 +98,7 @@ public final class MainMenuBar extends JMenuBar {
                                 : false;
                     }
                 };
+        movePlotsItem.setMnemonic(KeyEvent.VK_Y);
         movePlotsItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
@@ -119,53 +125,59 @@ public final class MainMenuBar extends JMenuBar {
         });
         useEmptyItem.setAccelerator(KeyStroke.getKeyStroke('Y', modifierKey));
         
-        add(makeMenu("File", pa.open, pa.importTabularData,
+        add(makeMenu("File", KeyEvent.VK_F,
+                pa.open, pa.importTabularData,
                 recentFilesMenu, pa.save, pa.saveAs,
                 pa.close,
-                makeMenu("Export data", pa.exportCalcsSample,
+                makeMenu("Export data", KeyEvent.VK_D,
+                pa.exportCalcsSample,
                 pa.exportCalcsSite, pa.exportCalcsSuite, 
                 pa.exportCalcsMultiSuite, pa.exportIrm),
-                makeMenu("Export graphics",
+                makeMenu("Export graphics", KeyEvent.VK_G,
                 pa.exportSvgBatik, pa.exportSvgFreehep,
                 pa.exportPdfItext, pa.exportPdfFreehep),
                 pa.pageSetup, pa.print, pa.printSuiteEqArea, pa.printGc,
                 pa.importAms, pa.runScript,
                 pa.exportPrefs, pa.importPrefs, pa.clearPreferences,
                 pa.prefs, pa.quit));
-        add(makeMenu("Edit", pa.selectAll, pa.clearSelection,
+        add(makeMenu("Edit",KeyEvent.VK_E,
+                pa.selectAll, pa.clearSelection,
                 movePlotsItem, pa.resetLayout, pa.editCorrections,
                 pa.setTreatType,
                 pa.copyPointSelection, pa.pastePointSelection,
-                makeMenu("Flip selected samples",
+                makeMenu("Flip selected samples", KeyEvent.VK_F,
                 pa.flipSampleX, pa.flipSampleY, pa.flipSampleZ),
-                makeMenu("Edit sites", pa.setSiteName,
+                makeMenu("Edit sites", KeyEvent.VK_I,
+                pa.setSiteName,
                 pa.setSitesFromSampleNames, pa.setSitesByDepth,
                 pa.clearSites),
                 pa.hideSelectedPoints, pa.unhideAllPoints,
                 pa.showCustomFlagsWindow, pa.showCustomNotesWindow,
                 pa.rescaleMagSus));
-        add(makeMenu("Calculations",
+        add(makeMenu("Calculations", KeyEvent.VK_C,
                 pa.pcaOnSelection, anchorItem = new AnchorItem(),
-                pa.fisherBySite, pa.suiteMeans,
+                pa.fisherBySite, pa.fisherOnSample, pa.suiteMeans,
                 pa.mdf, pa.clearSampleCalcs, pa.circleFit, pa.greatCircleAnalysis,
                 pa.clearSiteCalcs,
-                pa.multiSuiteMeans, makeMenu("AMS", pa.bootAmsNaive,
-                pa.bootAmsParam, pa.hextAms,
+                pa.multiSuiteMeans,
+                makeMenu("AMS", KeyEvent.VK_A,
+                pa.bootAmsNaive, pa.bootAmsParam, pa.hextAms,
                 pa.clearAmsCalcs)));
-        add(makeMenu("Window",
-                new WindowMenuItem("Data table") {
+        add(makeMenu("Window", KeyEvent.VK_W,
+                new WindowMenuItem("Data table", KeyEvent.VK_D) {
                     private static final long serialVersionUID = 1L;
                     @Override
                     JFrame window(PuffinApp a) {return a.getTableWindow();}},
-                new WindowMenuItem("Site equal-area plot") {
+                new WindowMenuItem("Site equal-area plot", KeyEvent.VK_I) {
                     private static final long serialVersionUID = 1L;
                     @Override
                     JFrame window(PuffinApp a) {return a.getSiteEqAreaWindow();}},
-                new WindowMenuItem("Suite equal-area plot") {
+                new WindowMenuItem("Suite equal-area plot", KeyEvent.VK_U) {
                     private static final long serialVersionUID = 1L;
                     @Override
                     JFrame window(PuffinApp a) {return a.getSuiteEqAreaWindow();}}));
-        add(makeMenu("Help", pa.openPuffinWebsite, pa.openCiteWindow, pa.about));
+        add(makeMenu("Help", KeyEvent.VK_H,
+                pa.openPuffinWebsite, pa.openCiteWindow, pa.about));
     }
 
     private class AnchorItem extends JCheckBoxMenuItem {
@@ -193,6 +205,7 @@ public final class MainMenuBar extends JMenuBar {
                 }
             });
             setAccelerator(KeyStroke.getKeyStroke('T', modifierKey));
+            setMnemonic(KeyEvent.VK_N);
         }
 
         @Override
@@ -216,13 +229,13 @@ public final class MainMenuBar extends JMenuBar {
      */
     public void updateRecentFiles() {
         recentFilesMenu.removeAll();
-        final RecentFileList recent = PuffinApp.getInstance().getRecentFiles();
+        final RecentFileList recent = app.getRecentFiles();
         final String[] recentFileNames = recent.getFilesetNames();
         if (recentFileNames.length == 0)
             recentFilesMenu.add(noRecentFiles);
         for (int i=0; i<recentFileNames.length; i++) {
-            final int index  = i;
-            recentFilesMenu.add(new AbstractAction() {
+            final int index = i;
+            JMenuItem item = recentFilesMenu.add(new AbstractAction() {
                 private static final long serialVersionUID = 1L;
                 @Override
                 public void actionPerformed(ActionEvent arg0) {
@@ -236,6 +249,7 @@ public final class MainMenuBar extends JMenuBar {
                         super.getValue(key);
                 }
             });
+            item.setMnemonic(recentFileKeycodes[i]);
         }
     }
     

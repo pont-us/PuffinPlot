@@ -82,7 +82,8 @@ public class RecentFileList {
      * The names are expected to be displayed to the user. If a file-set
      * contains only one file, its leafname is used. If it contains more
      * than one file, the leafname of the first file is used, followed
-     * by ‘etc.’.
+     * by ‘etc.’. Each name is prefixed by an index number starting from 1.
+     * This is intended to be used as a menu mnemonic.
      * 
      * @return the list of file-set names from this recent files list
      */
@@ -90,7 +91,8 @@ public class RecentFileList {
         String[] result = new String[fileSets.size()];
         int i=0;
         for (FileSet fileSet: fileSets) {
-            result[i++] = fileSet.getName();
+            result[i] = Integer.toString(i+1) + " " + fileSet.getName();
+            i++;
         }
         return result;
     }

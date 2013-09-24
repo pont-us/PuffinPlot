@@ -26,10 +26,11 @@ import javax.swing.JFrame;
 
 abstract class WindowMenuItem extends JCheckBoxMenuItem {
 
-    public WindowMenuItem(String name) {
+    public WindowMenuItem(String name, int mnemonic) {
         super(name);
+        setMnemonic(mnemonic);
         addItemListener(new ItemListener() {
-
+            @Override
             public void itemStateChanged(ItemEvent arg0) {
                 window().setVisible(WindowMenuItem.super.isSelected());
                 window().invalidate();
