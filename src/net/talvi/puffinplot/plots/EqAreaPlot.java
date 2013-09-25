@@ -47,7 +47,6 @@ import net.talvi.puffinplot.window.PlotParams;
 public abstract class EqAreaPlot extends Plot {
     private static final int decTickStep = 10;
     private static final int incTickNum = 9;
-    private boolean taperingEnabled;
     
     /** The graphics object to which to draw the plot.
      *  It is set by {@link #updatePlotDimensions(Graphics2D)}. */
@@ -73,25 +72,10 @@ public abstract class EqAreaPlot extends Plot {
      * @param parent the graph display containing the plot
      * @param params the plot parameters
      * @param prefs the preferences containing the plot configuration
-     * @param taperingEnabled {@code true} to taper plotted lines according to z position
-     */
-    protected EqAreaPlot(GraphDisplay parent, PlotParams params, Preferences prefs,
-            boolean taperingEnabled) {
-        super(parent, params, prefs);
-        this.prefs = prefs;
-        this.taperingEnabled = taperingEnabled;
-    }
-    
-    /**
-     * Creates a new equal-area plot with the supplies parameters.
-     * Plotted lines will not be tapered.
-     * 
-     * @param parent the graph display containing the plot
-     * @param params the plot parameters
-     * @param prefs the preferences containing the plot configuration
      */
     protected EqAreaPlot(GraphDisplay parent, PlotParams params, Preferences prefs) {
-        this(parent, params, prefs, false);
+        super(parent, params, prefs);
+        this.prefs = prefs;
     }
     
     /**
@@ -168,7 +152,7 @@ public abstract class EqAreaPlot extends Plot {
     }
 
     /**
-     * Draw non-tapered line segments. Assumes all segments in same hemisphere.
+     * Draw line segments. Assumes all segments in same hemisphere.
      * @param vs vectors to project
      */
      private void drawStandardLineSegments(List<Vec3> vs) {
@@ -182,47 +166,15 @@ public abstract class EqAreaPlot extends Plot {
          g.draw(path);
      }
 
-     /**
-      * Draws line segments using a three-dimensional effect,
-      * whereby more distant segments appear thinner and lighter in colour.
-      * Should be made selectable by a user preference at some point. 
-      */
-    private void drawTaperedLineSegments(List<Vec3> vs) {
-         boolean first = true;
-         Point2D pPrev = null;
-         for (Vec3 v : vs) {
-             final Point2D p = project(v);
-             if (!first) {
-                 //g.setColor(Color.BLACK);
-                 float w = (1.0f-(float)v.z)/2f;
-                 float colour = 0.3f*(1f-w);
-                 g.setColor(new Color(colour,colour,colour));
-                 //g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
-                 //        0.8f + w*0.2f));
-                 float width = w * 20.0f;
-                 if (width < 4) {width = 4f;}
-                 g.setStroke(new BasicStroke(getUnitSize() * width,
-                         BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
-                 g.draw(new Line2D.Double(pPrev, p));
-             }
-             first = false;
-             pPrev = p;
-         }
-     }
-
     /**
      * Projects and draws the supplied vectors.
      * 
      * @param vs the vectors to draw
      */
     protected void drawLineSegments(List<Vec3> vs) {
-        if (isTaperingEnabled()) {
-            drawTaperedLineSegments(vs);
-        } else {
-            List<List<Vec3>> vss =  Vec3.interpolateEquatorPoints(vs);
-            for (List<Vec3> part: vss) {
-                drawStandardLineSegments(part);
-            }
+        List<List<Vec3>> vss =  Vec3.interpolateEquatorPoints(vs);
+        for (List<Vec3> part: vss) {
+            drawStandardLineSegments(part);
         }
     }
     
@@ -282,13 +234,6 @@ public abstract class EqAreaPlot extends Plot {
         return new Point2D.Double(x, y);
     }
 
-    /** Reports whether tapered lines are enabled for this plot. 
-     * @return {@code true} if tapered lines are enabled for this plot
-     */
-    public boolean isTaperingEnabled() {
-        return taperingEnabled;
-    }
-    
     /**
      * Returns a short, human-readable name for this plot.
      * This is used to label the plots on the graph display during
