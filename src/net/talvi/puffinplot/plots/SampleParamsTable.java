@@ -91,7 +91,6 @@ public class SampleParamsTable extends Plot {
                 values.set(1, "GC");
                 values.set(2, format("%.1f", gc.getPole().getDecDeg()));
                 values.set(3, format("%.1f", gc.getPole().getIncDeg()));
-                
             } else if (sample.getPcaValues() != null) {
                 final PcaValues pca = sample.getPcaValues();
                 values.set(1, pca.isAnchored() ? "PCAa" : "PCAu");

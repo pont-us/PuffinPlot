@@ -53,7 +53,7 @@ public class SiteEqAreaPlot extends EqAreaPlot {
      */
     public SiteEqAreaPlot(GraphDisplay parent, PlotParams params,
             Rectangle2D dimensions, Preferences prefs) {
-        super(parent, params, prefs, true);
+        super(parent, params, prefs);
         this.dimensions = dimensions;
     }
 

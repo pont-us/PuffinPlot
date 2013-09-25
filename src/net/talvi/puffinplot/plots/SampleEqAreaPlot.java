@@ -89,10 +89,14 @@ public class SampleEqAreaPlot extends EqAreaPlot {
             ShapePoint.build(this, project(pole)).filled(pole.z>0).
                     triangle().build().draw(g);
         }
-        
+        if (sample.getPcaValues() != null) {
+            final Vec3 dir = sample.getPcaValues().getDirection();
+            ShapePoint.build(this, project(dir)).scale(1.5).
+                    filled(dir.z>0).circle().build().draw(g);
+        }
         if (sample.getFisherValues() != null) {
             final Vec3 dir = sample.getFisherValues().getMeanDirection();
-            ShapePoint.build(this, project(dir)).
+            ShapePoint.build(this, project(dir)).scale(1.5).
                     filled(dir.z>0).diamond().build().draw(g);
         }
 

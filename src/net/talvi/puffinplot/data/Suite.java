@@ -498,11 +498,13 @@ public final class Suite {
                     PcaAnnotated.getHeaders(),
                     GreatCircle.getHeaders(),
                     MedianDestructiveField.getHeaders(),
+                    FisherValues.getHeaders(),
                     Tensor.getHeaders());
             for (Sample sample: samples) {
                 final PcaAnnotated pca = sample.getPcaAnnotated();
                 final MedianDestructiveField mdf = sample.getMdf();
                 final GreatCircle circle = sample.getGreatCircle();
+                final FisherValues fisher = sample.getFisherValues();
                 final Tensor ams = sample.getAms();
                 writer.writeCsv(getName(), sample.getNameOrDepth(),
                         String.format(Locale.ENGLISH, "%.4g", sample.getNrm()),
@@ -510,6 +512,7 @@ public final class Suite {
                         pca == null ? PcaAnnotated.getEmptyFields() : pca.toStrings(),
                         circle == null ? GreatCircle.getEmptyFields() : circle.toStrings(),
                         mdf == null ? MedianDestructiveField.getEmptyFields() : mdf.toStrings(),
+                        fisher == null ? FisherValues.getEmptyFields() : fisher.toStrings(),
                         ams == null ? Tensor.getEmptyFields() : ams.toStrings());
             }
         } catch (IOException ex) {
