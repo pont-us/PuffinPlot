@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.prefs.Preferences;
+import net.talvi.puffinplot.data.FisherValues;
 import net.talvi.puffinplot.data.GreatCircle;
 import net.talvi.puffinplot.data.PcaValues;
 import net.talvi.puffinplot.data.Sample;
@@ -96,6 +97,11 @@ public class SampleParamsTable extends Plot {
                 values.set(1, pca.isAnchored() ? "PCAa" : "PCAu");
                 values.set(2, format("%.1f", pca.getDirection().getDecDeg()));
                 values.set(3, format("%.1f", pca.getDirection().getIncDeg()));
+            } else if (sample.getFisherValues() != null) {
+                final FisherValues fisherValues = sample.getFisherValues();
+                values.set(1, "Fisher");
+                values.set(2, format("%.1f", fisherValues.getMeanDirection().getDecDeg()));
+                values.set(3, format("%.1f", fisherValues.getMeanDirection().getIncDeg()));
             }
             
             points.add(new TextLinePoint(this, g, yPos, null, sample, values, xSpacing));

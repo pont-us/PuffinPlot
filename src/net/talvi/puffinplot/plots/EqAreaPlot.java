@@ -155,15 +155,16 @@ public abstract class EqAreaPlot extends Plot {
      * Draw line segments. Assumes all segments in same hemisphere.
      * @param vs vectors to project
      */
-     private void drawStandardLineSegments(List<Vec3> vs) {
+     protected void projectLineSegments(List<Vec3> vs, LineCache cache) {
          // determine whether we're in upper hemisphere, ignoring
          // z co-ordinates very close to zero. 
          boolean upperHemisph = true;
          for (Vec3 v: vs) { if (v.z > 1e-10) { upperHemisph = false; break; } }
-         Stroke stroke = upperHemisph ? getStroke() : getDashedStroke();
-         g.setStroke(stroke);
-         final Path2D.Double path = vectorsToPath(vs);
-         g.draw(path);
+         cache.addPath(vectorsToPath(vs), upperHemisph);
+         //Stroke stroke = upperHemisph ? getStroke() : getDashedStroke();
+         //g.setStroke(stroke);
+         //final Path2D.Double path = vectorsToPath(vs);
+         //g.draw(path);
      }
 
     /**
@@ -173,9 +174,11 @@ public abstract class EqAreaPlot extends Plot {
      */
     protected void drawLineSegments(List<Vec3> vs) {
         List<List<Vec3>> vss =  Vec3.interpolateEquatorPoints(vs);
+        final LineCache lineCache = new LineCache(getStroke(), getDashedStroke());
         for (List<Vec3> part: vss) {
-            drawStandardLineSegments(part);
+            projectLineSegments(part, lineCache);
         }
+        lineCache.draw(g);
     }
     
     /** Draws the projection of a specified great-circle segment.
@@ -195,6 +198,9 @@ public abstract class EqAreaPlot extends Plot {
      * @param dir vector used to choose which path to draw
      */
     protected void drawGreatCircleSegment(Vec3 v0, Vec3 v1, Vec3 dir) {
+        assert(v0.isWellFormed());
+        assert(v1.isWellFormed());
+        assert(dir.isWellFormed());
         drawLineSegments(Vec3.spherInterpDir(v0, v1, dir, 0.05));
     }
 

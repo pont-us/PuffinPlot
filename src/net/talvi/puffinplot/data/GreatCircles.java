@@ -36,18 +36,18 @@ import org.python.util.PythonInterpreter;
  * 
  * @author pont
  */
-public class GreatCircles implements FisherParams {
+public final class GreatCircles implements FisherParams {
 
     private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
     private final List<GreatCircle> circles;
     private final List<Vec3> endpoints;
-    private Vec3 direction;
-    private double a95;
-    private double k;
-    private double R;
-    private int minPoints;
-    private PythonInterpreter interp = new PythonInterpreter();
-    private Preferences prefs = Preferences.userNodeForPackage(net.talvi.puffinplot.PuffinPrefs.class);
+    private final Vec3 direction;
+    private final double a95;
+    private final double k;
+    private final double R;
+    private final int minPoints;
+    private final PythonInterpreter interp = new PythonInterpreter();
+    private final Preferences prefs = Preferences.userNodeForPackage(net.talvi.puffinplot.PuffinPrefs.class);
 
     private static final double MAX_ITERATIONS = 1000;
     private static final double STABLE_LIMIT = Math.PI / 1800; // 0.1 degree
@@ -64,22 +64,21 @@ public class GreatCircles implements FisherParams {
      * @param circles a set of great circles
      */
     public GreatCircles(List<Vec3> endpoints, List<GreatCircle> circles) {
-        if (endpoints == null) this.endpoints = Collections.emptyList();
-        else this.endpoints = endpoints;
-        this.circles = Collections.
+        if (endpoints == null) endpoints = Collections.emptyList();
+        this.endpoints = endpoints;
+        if (circles == null) circles = Collections.emptyList();
+        circles = Collections.
                 unmodifiableList(new ArrayList<GreatCircle>(circles));
-        findDirection();
-    }
-    
-    private void findDirection() {
-        minPoints = getCircles().isEmpty() ? 0 : Integer.MAX_VALUE;
+        this.circles = circles;
+        assert(endpoints.size() > 0 || circles.size() > 1);
+        int minPointsTmp = getCircles().isEmpty() ? 0 : Integer.MAX_VALUE;
         for (GreatCircle gc: getCircles()) {
             final int numPoints = gc.getPoints().size();
-            if (numPoints < minPoints) {
-                minPoints = numPoints; 
+            if (numPoints < minPointsTmp) {
+                minPointsTmp = numPoints; 
             }
         }
-        
+        minPoints = minPointsTmp;
         boolean goodFirstGuess = (endpoints.size() > 0);
         List<Vec3> D;
         if (goodFirstGuess) D = endpoints;
@@ -95,10 +94,8 @@ public class GreatCircles implements FisherParams {
             for (GreatCircle c: circles) guess = guess.plus(c.lastPoint().minus(c.getPoints().get(0)));
             D.add(guess.normalize()); // todo: better guess
         }
-
         List<Vec3> G = new ArrayList<Vec3>(circles.size());
         G.addAll(Collections.nCopies(circles.size(), Vec3.ORIGIN));
-
         boolean converged = false;
         int iter;
         for (iter = 0; iter < MAX_ITERATIONS && !converged; iter++) {
@@ -136,6 +133,13 @@ public class GreatCircles implements FisherParams {
         return circles.size();
     }
     
+    /**
+     * Returns the smallest number of treatment steps used to define 
+     * any of the great circles in this collection.
+     * 
+     * @return the smallest number of treatment steps used to define any of the 
+     * great circles in this collection
+     */
     private int getMinPoints() {
         return minPoints;
     }
@@ -151,12 +155,13 @@ public class GreatCircles implements FisherParams {
 
     /** Returns the great circles which were originally supplied to the constructor.
      * @return the great circles which were originally supplied to the constructor */
-    public List<GreatCircle> getCircles() {
+    public final List<GreatCircle> getCircles() {
         return Collections.unmodifiableList(circles);
     }
 
     /** Returns the best-fit mean direction for the supplied circles and directions. 
      * @return the best-fit mean direction for the supplied circles and directions */
+    @Override
     public Vec3 getMeanDirection() {
         return direction;
     }
@@ -213,10 +218,12 @@ public class GreatCircles implements FisherParams {
         }
     }
 
+    @Override
     public double getA95() {
         return a95;
     }
     
+    @Override
     public double getK() {
         return k;
     }

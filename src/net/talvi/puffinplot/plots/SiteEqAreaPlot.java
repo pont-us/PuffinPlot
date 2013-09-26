@@ -44,6 +44,9 @@ import net.talvi.puffinplot.window.PlotParams;
  */
 public class SiteEqAreaPlot extends EqAreaPlot {
 
+    private FisherValues fisherCache = null;
+    private LineCache lineCache = null;
+    
     /** Creates a site equal area plot with the supplied parameters.
      * 
      * @param parent the graph display containing the plot
@@ -87,10 +90,12 @@ public class SiteEqAreaPlot extends EqAreaPlot {
         final GreatCircles circles = site.getGreatCircles();
         if (circles == null) return;
         final Vec3 meanDir = circles.getMeanDirection();
+        assert(meanDir.isWellFormed());
         double maxRadius = 0;
         Vec3 prevPole = null;
         for (GreatCircle circle: circles.getCircles()) {
             final Vec3 pole = circle.getPole();
+            assert(pole.isWellFormed());
             g.setColor(Color.BLACK);
             final Vec3 segmentStart = pole.nearestOnCircle(circle.getPoints().get(0));
             final Vec3 segmentEnd = pole.nearestOnCircle(meanDir);
@@ -111,11 +116,12 @@ public class SiteEqAreaPlot extends EqAreaPlot {
             // if (prevPole != null) drawGreatCircleSegment(prevPole, pole);
             prevPole = pole;
         }
+        
         final PlotPoint meanPoint = ShapePoint.build(this, project(meanDir)).
                 circle().scale(1.5).filled(meanDir.z>0).build();
         meanPoint.draw(g);
-        //drawLineSegments(meanDir.makeSmallCircle(Math.toDegrees(maxRadius)));
-        drawLineSegments(meanDir.makeSmallCircle(circles.getA95()));
+        final List<Vec3> smallCircle = meanDir.makeSmallCircle(circles.getA95());
+        drawLineSegments(smallCircle);
         List<String> ss = circles.toStrings();
         writeString(g, ss.get(3)+"/"+ss.get(4), xo-radius, yo-radius);
     }
@@ -146,14 +152,26 @@ public class SiteEqAreaPlot extends EqAreaPlot {
             // a Fisher mean of PCAs.
             return;
         }
-        final FisherValues fisherMean = FisherValues.calculate(pcaDirs);
+        final FisherValues fisherMean = site.getFisher();
+        if (fisherMean == null) {
+            return;
+        }
         final Vec3 meanDir = fisherMean.getMeanDirection();
         final PlotPoint meanPoint =
                 ShapePoint.build(this, project(meanDir)).
                 circle().scale(1.5).filled(meanDir.z>0).build();
         meanPoint.draw(g);
         if (pcaDirs.size() > 1) {
-            drawLineSegments(meanDir.makeSmallCircle(fisherMean.getA95()));
+            if (fisherMean != fisherCache) {
+                final List<Vec3> smallCircle = meanDir.makeSmallCircle(fisherMean.getA95());
+                List<List<Vec3>> segments =  Vec3.interpolateEquatorPoints(smallCircle);
+                lineCache = new LineCache(getStroke(), getDashedStroke());
+                for (List<Vec3> part: segments) {
+                    projectLineSegments(part, lineCache);
+                }
+                fisherCache = fisherMean;
+            }
+            lineCache.draw(g);
         }
     }
 
@@ -172,5 +190,11 @@ public class SiteEqAreaPlot extends EqAreaPlot {
         drawGreatCircles(site);
         drawPcas(site);
         drawPoints(g);
+    }
+    
+    @Override
+    public void setDimensions(Rectangle2D dimensions) {
+        fisherCache = null;
+        super.setDimensions(dimensions);
     }
 }

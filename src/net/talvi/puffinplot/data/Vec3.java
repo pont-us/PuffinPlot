@@ -246,6 +246,9 @@ public class Vec3 {
      */
     public static List<Vec3> spherInterpDir(Vec3 v0, Vec3 v1, Vec3 onPath,
             double stepSize) {
+        assert(v0.isWellFormed());
+        assert(v1.isWellFormed());
+        assert(onPath.isWellFormed());
         final Vec3 avgDir = v0.plus(v1).normalize();
         if (avgDir.dot(onPath) > 0) {
             return spherInterpolate(v0, v1, stepSize);
