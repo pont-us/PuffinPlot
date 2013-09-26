@@ -20,7 +20,9 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.data.FisherValues;
 import net.talvi.puffinplot.data.GreatCircle;
@@ -44,8 +46,23 @@ import net.talvi.puffinplot.window.PlotParams;
  */
 public class SiteEqAreaPlot extends EqAreaPlot {
 
+    private static final int GC_CACHE_SIZE = 200;
     private FisherValues fisherCache = null;
-    private LineCache lineCache = null;
+    private LineCache fisherLineCache = null;
+    private GreatCircles gcsCache = null;
+    private LineCache gcsLineCache = null;
+    private Map<GreatCircle, LineCache> gcCache =
+            new GcCache<GreatCircle, LineCache>();
+    
+    private class GcCache<K, V> extends LinkedHashMap<K, V> {
+        public GcCache() {
+            super(GC_CACHE_SIZE, 0.75f, true);
+        }
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<K,V> eldest) {
+            return size() > GC_CACHE_SIZE;
+        }
+    }
     
     /** Creates a site equal area plot with the supplied parameters.
      * 
@@ -105,12 +122,17 @@ public class SiteEqAreaPlot extends EqAreaPlot {
                 ShapePoint.build(this, project(p)).
                         scale(0.8).filled(p.z>=0).build().draw(g);
                 //addPoint(null, project(p), p.z>=0, false, false);
-                drawGreatCircleSegment(p, pole.nearestOnCircle(p));
+                final LineCache lineCache = projectGreatCircleSegment(p, pole.nearestOnCircle(p));
+                lineCache.draw(g);
             }
             final Vec3 nearestPoint = pole.nearestOnCircle(meanDir);
             final double thisRadius = Math.abs(meanDir.angleTo(nearestPoint));
             if (thisRadius > maxRadius) maxRadius = thisRadius;
-            drawGreatCircleSegment(meanDir, nearestPoint);
+            if (true || !gcCache.containsKey(circle)) {
+                final LineCache lineCache = projectGreatCircleSegment(meanDir, nearestPoint);
+                gcCache.put(circle, lineCache);
+            }
+            gcCache.get(circle).draw(g);
             ShapePoint.build(this, project(pole)).filled(pole.z>0).
                     triangle().build().draw(g);
             // if (prevPole != null) drawGreatCircleSegment(prevPole, pole);
@@ -120,8 +142,20 @@ public class SiteEqAreaPlot extends EqAreaPlot {
         final PlotPoint meanPoint = ShapePoint.build(this, project(meanDir)).
                 circle().scale(1.5).filled(meanDir.z>0).build();
         meanPoint.draw(g);
-        final List<Vec3> smallCircle = meanDir.makeSmallCircle(circles.getA95());
-        drawLineSegments(smallCircle);
+        if (!Double.isNaN(circles.getA95())) {
+            if (circles != gcsCache) {
+                final List<Vec3> smallCircle = meanDir.makeSmallCircle(circles.getA95());
+                List<List<Vec3>> segments =  Vec3.interpolateEquatorPoints(smallCircle);
+                drawLineSegments(smallCircle);
+                gcsLineCache = new LineCache(getStroke(), getDashedStroke());
+                for (List<Vec3> part: segments) {
+                    projectLineSegments(part, gcsLineCache);
+                }
+                gcsCache = circles;
+            }
+            gcsLineCache.draw(g);
+
+        }
         List<String> ss = circles.toStrings();
         writeString(g, ss.get(3)+"/"+ss.get(4), xo-radius, yo-radius);
     }
@@ -165,13 +199,13 @@ public class SiteEqAreaPlot extends EqAreaPlot {
             if (fisherMean != fisherCache) {
                 final List<Vec3> smallCircle = meanDir.makeSmallCircle(fisherMean.getA95());
                 List<List<Vec3>> segments =  Vec3.interpolateEquatorPoints(smallCircle);
-                lineCache = new LineCache(getStroke(), getDashedStroke());
+                fisherLineCache = new LineCache(getStroke(), getDashedStroke());
                 for (List<Vec3> part: segments) {
-                    projectLineSegments(part, lineCache);
+                    projectLineSegments(part, fisherLineCache);
                 }
                 fisherCache = fisherMean;
             }
-            lineCache.draw(g);
+            fisherLineCache.draw(g);
         }
     }
 
@@ -195,6 +229,10 @@ public class SiteEqAreaPlot extends EqAreaPlot {
     @Override
     public void setDimensions(Rectangle2D dimensions) {
         fisherCache = null;
+        gcsCache = null;
+        if (!gcCache.isEmpty()) {
+            gcCache = new GcCache<GreatCircle, LineCache>();
+        }
         super.setDimensions(dimensions);
     }
 }

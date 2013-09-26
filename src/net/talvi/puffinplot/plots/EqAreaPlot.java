@@ -167,18 +167,28 @@ public abstract class EqAreaPlot extends Plot {
          //g.draw(path);
      }
 
+     protected LineCache projectLineSegments(List<Vec3> vs) {
+        final List<List<Vec3>> vss;
+        vss = Vec3.interpolateEquatorPoints(vs);
+        final LineCache lineCache = new LineCache(getStroke(), getDashedStroke());
+        for (List<Vec3> part: vss) {
+            projectLineSegments(part, lineCache);
+        }
+        return lineCache;
+    }
+     
     /**
      * Projects and draws the supplied vectors.
      * 
      * @param vs the vectors to draw
      */
     protected void drawLineSegments(List<Vec3> vs) {
-        List<List<Vec3>> vss =  Vec3.interpolateEquatorPoints(vs);
-        final LineCache lineCache = new LineCache(getStroke(), getDashedStroke());
-        for (List<Vec3> part: vss) {
-            projectLineSegments(part, lineCache);
-        }
+        final LineCache lineCache = projectLineSegments(vs);
         lineCache.draw(g);
+    }
+    
+    protected LineCache projectGreatCircleSegment(Vec3 v0, Vec3 v1) {
+        return projectLineSegments(Vec3.spherInterpolate(v0, v1, 0.05));
     }
     
     /** Draws the projection of a specified great-circle segment.
