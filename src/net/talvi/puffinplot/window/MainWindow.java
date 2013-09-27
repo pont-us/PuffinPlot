@@ -103,38 +103,38 @@ public final class MainWindow extends JFrame {
     }
     
     private class WelcomeMessage extends JPanel {
-    public WelcomeMessage() {
-        super();
-        setBorder(new EmptyBorder(12, 12, 12, 12));
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        final PuffinApp.Version version = app.getVersion();
-        final String welcome =
-                String.format("Welcome to PuffinPlot, version %s. "
-                + "This puffin hatched on %s.", version.getVersionString(),
-                version.getDateString());
-        add(new JLabel(welcome));
-        add(new JLabel(String.format(
-                "PuffinPlot is copyright %s by Pontus Lurcock.",
-                version.getYearRange())));
-        final JPanel citePanel = new JPanel();
-        citePanel.setBorder(new EmptyBorder(12, 0, 12, 12));
-        citePanel.setLayout(new BoxLayout(citePanel, BoxLayout.X_AXIS));
-        citePanel.add(new JLabel("If you use PuffinPlot in a published work, please "));
-        JButton citeMeButton =
-                new JButton("click here to cite the PuffinPlot paper.");
-        citePanel.add(citeMeButton);
-        citeMeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                PuffinApp.getInstance().getCiteWindow().setVisible(true);
-            }
-        });
-        citePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        add(citePanel);
-        add(new JLabel("PuffinPlot is distributed under the GNU General Public License."));
-        add(new JLabel("Select ‘About PuffinPlot’ from the Help menu for details."));
-        
-    }
+        public WelcomeMessage() {
+            super();
+            setBorder(new EmptyBorder(12, 12, 12, 12));
+            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+            final PuffinApp.Version version = app.getVersion();
+            final String welcome =
+                    String.format("Welcome to PuffinPlot, version %s. "
+                    + "This puffin hatched on %s.", version.getVersionString(),
+                    version.getDateString());
+            add(new JLabel(welcome));
+            add(new JLabel(String.format(
+                    "PuffinPlot is copyright %s by Pontus Lurcock.",
+                    version.getYearRange())));
+            final JPanel citePanel = new JPanel();
+            citePanel.setBorder(new EmptyBorder(12, 0, 12, 12));
+            citePanel.setLayout(new BoxLayout(citePanel, BoxLayout.X_AXIS));
+            citePanel.add(new JLabel("If you use PuffinPlot in a published work, please "));
+            JButton citeMeButton =
+                    new JButton("click here to cite the PuffinPlot paper.");
+            citePanel.add(citeMeButton);
+            citeMeButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent ae) {
+                    PuffinApp.getInstance().getCiteWindow().setVisible(true);
+                }
+            });
+            citePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+            add(citePanel);
+            add(new JLabel("PuffinPlot is distributed under the GNU General Public License."));
+            add(new JLabel("Select ‘About PuffinPlot’ from the Help menu for details."));
+            
+        }
     }
 
     /**

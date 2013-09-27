@@ -76,14 +76,18 @@ public final class Suite {
             List<Site> selSites) {
         List<Vec3> sampleDirs = new ArrayList<Vec3>(selSamps.size());
         for (Sample sample: selSamps) {
-            PcaValues pca = sample.getPcaValues();
+            final PcaValues pca = sample.getPcaValues();
             if (pca != null) {
                 sampleDirs.add(pca.getDirection());
+            } else {
+                if (sample.getFisherValues() != null) {
+                    sampleDirs.add(sample.getFisherValues().getMeanDirection());
+                }
             }
         }
         List<Vec3> siteDirs = new ArrayList<Vec3>(selSamps.size());
         for (Site site: selSites) {
-            FisherParams fp = site.getMeanDirection();
+            FisherParams fp = site.getFisherParams();
             if (fp != null) {
                 siteDirs.add(fp.getMeanDirection());
             }
@@ -156,7 +160,7 @@ public final class Suite {
      */
     public void calculateSiteFishers(Correction correction) {
         setSaved(false);
-        for (Site site: getSites()) site.doFisher(correction);
+        for (Site site: getSites()) site.calculateFisherStats(correction);
     }
 
     /** Returns the results of the per-site Fisher statistics calculated 
@@ -166,7 +170,7 @@ public final class Suite {
     public List<FisherValues> getSiteFishers() {
         List<FisherValues> result = new ArrayList<FisherValues>(getSites().size());
         for (Site site: getSites()) {
-            if (site.getFisher() != null) result.add(site.getFisher());
+            if (site.getFisherValues() != null) result.add(site.getFisherValues());
         }
         return result;
     }
@@ -324,7 +328,7 @@ public final class Suite {
             final Site site = sample.getSite();
             if (site == null) continue;
             if (sitesDone.contains(site)) continue;
-            site.doFisher(correction);
+            site.calculateFisherStats(correction);
             site.calculateGreatCirclesDirection(correction);
             sitesDone.add(site);
         }
@@ -540,9 +544,9 @@ public final class Suite {
             writer.writeCsv("site", FisherValues.getHeaders(), GreatCircles.getHeaders(),
                     Site.getGreatCircleLimitHeader());
             for (Site site: getSites()) {
-                List<String> fisherCsv = (site.getFisher() == null)
+                List<String> fisherCsv = (site.getFisherValues() == null)
                         ? FisherValues.getEmptyFields()
-                        : site.getFisher().toStrings();
+                        : site.getFisherValues().toStrings();
                 List<String> gcCsv = (site.getGreatCircles() == null)
                         ? GreatCircles.getEmptyFields()
                         : site.getGreatCircles().toStrings();

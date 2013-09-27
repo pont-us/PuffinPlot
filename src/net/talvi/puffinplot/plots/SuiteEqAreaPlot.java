@@ -102,7 +102,7 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
             }
         } else {
             for (Site site: sites) {
-                final FisherParams siteMean = site.getMeanDirection();
+                final FisherParams siteMean = site.getFisherParams();
                 if (siteMean != null) {
                     final Vec3 dir = siteMean.getMeanDirection();
                     addPoint(null, project(dir), dir.z>0, false, false);

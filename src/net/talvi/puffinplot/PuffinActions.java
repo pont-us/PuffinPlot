@@ -323,6 +323,7 @@ public class PuffinActions {
                 app.errorDialog("Fisher on sample", "No suite loaded.");
             } else {
                 for (Sample s: app.getSelectedSamples()) {
+                    s.clearPca();
                     s.calculateFisher(app.getCorrection());
                 }
                 suite.calculateSiteFishers(app.getCorrection());
@@ -455,7 +456,7 @@ public class PuffinActions {
      * For each selected sample, clears all calculations and deselects all points.
      */
     public final Action clearSampleCalcs = new PuffinAction("Clear sample calculations",
-            "Clear point selections and calculations for selected samples",
+            "Clear step selections and calculations for selected samples",
             'Z', false, KeyEvent.VK_C) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
@@ -492,9 +493,9 @@ public class PuffinActions {
      * Copies the range of selected points from the current sample onto
      * a clipboard.
      */
-    public final Action copyPointSelection =
-            new PuffinAction("Copy point selection",
-            "Copy the point selection to the clipboard",
+    public final Action copyStepSelection =
+            new PuffinAction("Copy step selection",
+            "Copy the treatment step selection to the clipboard",
                     'J', false, KeyEvent.VK_C) {
                 private static final long serialVersionUID = 1L;
                 @Override public void actionPerformed(ActionEvent e) {
@@ -504,9 +505,9 @@ public class PuffinActions {
      * For each selected sample, sets the selected points using the 
      * range currently copied to the clipboard.
      */
-    public final Action pastePointSelection =
-            new PuffinAction("Paste point selection",
-            "Select the points corresponding to those copied to the clipboard",
+    public final Action pasteStepSelection =
+            new PuffinAction("Paste step selection",
+            "Select the treatment steps corresponding to those copied to the clipboard",
                     'K', false, KeyEvent.VK_P) {
         private static final long serialVersionUID = 1L;
                 @Override public void actionPerformed(ActionEvent e) {
@@ -516,8 +517,8 @@ public class PuffinActions {
      * For each selected sample, makes the selected points invisible.
      */
     // we can't use ctrl-H because Apples use it already.
-    public final Action hideSelectedPoints = new PuffinAction("Hide points",
-            "Hide the selected points", 'G', false, KeyEvent.VK_H) {
+    public final Action hideSelectedSteps = new PuffinAction("Hide steps",
+            "Hide the selected treatment steps", 'G', false, KeyEvent.VK_H) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
            for (Sample s: app.getSelectedSamples())  s.hideSelectedPoints();
@@ -528,8 +529,8 @@ public class PuffinActions {
     /**
      * For each selected sample, makes all the points visible.
      */
-    public final Action unhideAllPoints = new PuffinAction("Show all points",
-            "Make hidden points visible again for all selected samples", 'G',
+    public final Action unhideAllSteps = new PuffinAction("Show all steps",
+            "Make hidden treatment steps visible again for all selected samples", 'G',
             true, KeyEvent.VK_O) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {

@@ -74,6 +74,9 @@
 \begin{document}
 
 \maketitle
+\begin{center}
+\includegraphics[width=100mm]{figures/cropped-puffin.png}
+\end{center}
 
 \tableofcontents
 
@@ -400,12 +403,12 @@ From left to right, these are:
   `deviation') to avoid any possible confusion with the declinations of
   sample magnetizations.)
 
-\item[Select all] selects all the points in the current sample.
+\item[Select all] selects all the treatment steps in the current sample.
 
-\item[\caps{Pca}] performs principal component analysis for the selected
-  points of all the selected samples.
+\item[\caps{Pca}] performs principal component analysis for the
+  selected points of all the selected samples.
 
-\item[Clear calculations] de-selects all the points in all the selected
+\item[Clear] de-selects all the points in all the selected
   samples, and clears the results of any calculations done on them, such as
   \caps{pca} or great-circle analysis.
 
@@ -498,6 +501,10 @@ at which the \caps{nrm} was reduced to half (in \textdegree C or mT) \\
 \caps{mdf} midpoint reached & `Y' if magnetization
 intensity reached half the \caps{nrm} intensity during demagnetization;
 `N' otherwise \\
+Fisher dec.     & Mean declination of treatment step directions (\textdegree) \\
+Fisher inc.     & Mean inclination of treatment step directions (\textdegree) \\
+Fisher a95      & \alnifi{} of mean treatment step direction (\textdegree) \\
+Fisher k        & {\em k}-value of mean treatment step direction \\
 \caps{ams} dec1 & declination of major axis of \caps{ams} tensor \\
 \caps{ams} inc1 & inclination of major axis of \caps{ams} tensor \\
 \caps{ams} dec2 & declination of intermediate axis of \caps{ams} tensor \\
@@ -522,10 +529,10 @@ section~\ref{sec:annotations} for details. \\ \bottomrule
 \begin{tabular}{lp{90mm}} \toprule
   Field name      & Description \\ \midrule
   site            & Name of site \\
-  Fisher dec.     & Mean declination of \caps{pca} directions (\textdegree) \\
-  Fisher inc.     & Mean inclination of \caps{pca} directions (\textdegree) \\
-  Fisher a95      & \alnifi{} of mean \caps{pca} direction (\textdegree) \\
-  Fisher k        & {\em k}-value of mean \caps{pca} direction \\
+  Fisher dec.     & Mean declination of sample directions (\textdegree) \\
+  Fisher inc.     & Mean inclination of sample directions (\textdegree) \\
+  Fisher a95      & \alnifi{} of mean sample direction (\textdegree) \\
+  Fisher k        & {\em k}-value of mean sample direction \\
   \caps{gc} valid & `Y' if the great-circle fit
   is valid, `N' otherwise. See section~\ref{sec:prefs-misc} for
   details on the validity test and how it may be customized. \\
@@ -646,12 +653,12 @@ to do with manipulation of data points.
 
 \begin{menuitemlist}
 
-\item[Edit\submenu Select all] selects all the points in all the selected
-  samples, excluding points which have been hidden (see \ppcmd{Hide points}
-  below).
+\item[Edit\submenu Select all steps] selects all the treatment steps in all
+  the selected samples, excluding treatment steps which have been hidden (see
+  \ppcmd{Hide points} below).
 
-\item[Edit\submenu Clear selection] de-selects all the points in all the
-  selected samples.
+\item[Edit\submenu Clear step selection] de-selects all the treatment steps
+  in all the selected samples.
 
 \item[Edit\submenu Edit layout] allows you to reposition and resize the plots
   in the main display area. See section~\ref{sec:edit-layout} for details.
@@ -676,22 +683,23 @@ to do with manipulation of data points.
   explicitly in cases where PuffinPlot guesses wrong, or where the wrong
   treatment type is given in the data file.
 
-\item[Edit\submenu Copy point selection] copies the selected treatment steps
+\item[Edit\submenu Copy step selection] copies the selected treatment steps
   for the current sample to an invisible `clipboard'. The selection can be
   pasted from the clipboard to other samples (see \ppcmd{Paste point
     selection}), selecting the same demagnetization steps in those samples.
   This is useful for selecting the same treatment steps in a large number of
   samples without having to manually select them for each sample.
 
-\item[Edit\submenu Paste point selection] takes the selected treatment steps
-  from the clipboard (see \ppcmd{Copy point selection}) and selects the same
-  treatment steps in all the selected samples.
+\item[Edit\submenu Paste step selection] takes the selected treatment steps
+  from the clipboard (see \ppcmd{Copy step selection}) and selects the
+  corresponding treatment steps in all the selected samples.
 
-\item[Edit\submenu Flip selected samples] is a submenu allowing the selected
-  samples to be rotated 180\textdegree{} around a selected axis. Such
-  functionality is rarely required but can be useful, for example, when it is
-  found that a sample has been incorrectly oriented during measurement, or
-  when converting between different orientation conventions.
+\item[Edit\submenu Flip selected samples] is a submenu allowing the
+  demagnetization data from the selected samples to be rotated 180\textdegree{}
+  around a selected axis. Such functionality is rarely required but can be
+  useful, for example, when it is found that a sample has been incorrectly
+  oriented during measurement, or when converting between different
+  orientation conventions.
 
 \item[Edit\submenu Flip selected samples\submenu Flip samples around X axis]
   rotates the magnetic moment values for all selected samples
@@ -735,15 +743,15 @@ CiLpA-10-53 & 3-4,9-11 & Lp-53 \\
   equally thick sites. Each site is named after the shallowest depth within
   it.
 
-\item[Edit\submenu Hide points] hides all the selected points in all the
-  selected samples. This removes them from all the graphical plots (which
+\item[Edit\submenu Hide steps] hides all the selected treatment steps in all
+  the selected samples. This removes them from all the graphical plots (which
   will be rescaled to avoid unnecessary blank space), but not from the data
-  table in the main plot window; on the data table, hidden data points are
-  marked with a dash symbol (--) to their left. Hidden points can be restored
-  using the \ppcmd{Show all points} menu item.
+  table in the main plot window; on the data table, hidden treatment steps
+  are marked with a dash symbol (--) to their left. Hidden steps can be
+  restored using the \ppcmd{Show all steps} menu item.
 
-\item[Edit\submenu Show all points] restores all hidden points in all the
-  selected samples.
+\item[Edit\submenu Show all steps] restores all hidden treatment steps in all
+  the selected samples.
 
 \item[Edit\submenu Edit custom flags\ldots] allows you to add or remove
   user-defined flags for the suite; see section~\ref{sec:annotations} for
@@ -793,6 +801,17 @@ all the selected samples, not just the current sample.
   direction for each selected site using the \caps{pca} directions of its
   samples.
 
+\item[Calculations\submenu Fisher on sample] calculates a direction for each
+  selected sample using the Fisherian mean of the directions for the selected
+  treatment steps. \caps{Pca} is almost always preferable for establishing a
+  reliable sample direction, but this technique can sometimes be useful for
+  determining a polarity from very noisy data. Note that, at present,
+  Fisherian sample directions are {\em not} saved as part of the PuffinPlot
+  file, although they can easily be recalculated if the selected
+  demagnetization points are not changed. The Fisherian mean and associated
+  parameters are, however, included in exported sample data files 
+  (see Table~\ref{tbl:export-sample}).
+
 \item[Calculations\submenu Suite means] calculates Fisherian means across all
   the selected samples, and opens a new window showing an equal-area plot of
   the \caps{pca} directions, the mean direction, and the 95\% confidence
@@ -831,10 +850,10 @@ all the selected samples, not just the current sample.
   activated in the preferences), and in a separate window which is opened
   automatically.
 
-\item[Calculations\submenu Clear site calculations] clears the
-results of any calculations associated with the selected {\em sites}
-(as opposed to samples); at present, this amounts to clearing the
-best-fit great-circle direction for each selected site.
+\item[Calculations\submenu Clear site calculations] clears the results of any
+  calculations associated with the selected {\em sites} (as opposed to
+  samples); at present, this amounts to clearing the best-fit great-circle
+  direction for each selected site.
 
 \item[Calculations\submenu Multi-suite means] calculates Fisherian means
   across all the samples in \emph{all} the currently opened suites. the
@@ -1712,11 +1731,15 @@ contributed to these projects.
 
 \subsection*{People}
 
-PuffinPlot was developed at the Otago Palaeomagnetic Research Facility at the
-University of Otago, Dunedin, New Zealand. Several colleagues provided
-valuable testing and feedback during PuffinPlot's development; in particular
-I thank Christian Ohneiser, Faye Nelson, Claudio Tapia, and Bethany Fox for
-their time and effort.
+PuffinPlot was initially developed at the Otago Palaeomagnetic Research
+Facility at the University of Otago, Dunedin, New Zealand. Several colleagues
+provided valuable testing and feedback during PuffinPlot's early development;
+in particular I thank Christian Ohneiser, Faye Nelson, Claudio Tapia, and
+Bethany Fox for their time and effort. Further improvements were made during
+revision of the PuffinPlot paper, in response to thoughtful suggestions from
+Gary Acton and an anonymous reviewer. Since its initial release, PuffinPlot
+has benefited from bug reports and suggestions from Bill Phillips, Jonathan
+M. Glen, and Fabio Florindo.
 
 \subsection*{Icon}
 

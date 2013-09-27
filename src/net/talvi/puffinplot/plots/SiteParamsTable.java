@@ -89,8 +89,8 @@ public class SiteParamsTable extends Plot {
             values.addAll(Collections.nCopies(columns, "--"));
             values.set(0, site.toString());
             values.set(1, format("%d", site.getSamples().size()));
-            if (site.getFisher() != null) {
-                final FisherValues fvs = site.getFisher();
+            if (site.getFisherValues() != null) {
+                final FisherValues fvs = site.getFisherValues();
                 values.set(2, format("%d", fvs.getNDirs()));
                 values.set(3, "0");
                 final Vec3 direction = fvs.getMeanDirection();

@@ -69,8 +69,13 @@ public class ControlPanel extends JPanel
         add(new JToolBar.Separator());
         add(correctionField = new JLabel());
         add(new JToolBar.Separator());
-        add(new JButton(app.getActions().selectAll));
-        add(new JButton(app.getActions().pcaOnSelection));
+        
+        final JButton selectAllButton = new JButton(app.getActions().selectAll);
+        selectAllButton.setText("Select all");
+        add(selectAllButton);
+        final JButton pcaButton = new JButton(app.getActions().pcaOnSelection);
+        pcaButton.setText("PCA");
+        add(pcaButton);
         final JButton clearButton = new JButton(app.getActions().clearSampleCalcs);
         clearButton.setText("Clear"); // shorter name for the toolbar
         add(clearButton);

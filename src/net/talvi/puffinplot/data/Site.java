@@ -66,17 +66,26 @@ public class Site {
     /** Calculate Fisherian statistics on the PCA directions of samples
      * within this site. The PCA directions will be automatically calculated
      * (or recalculated) before the Fisher statistics are calculated.
+     * If a sample has no calculated PCA direction but does have a 
+     * calculated Fisherian mean of treatment steps, this Fisherian mean
+     * is used as the sample direction.
      * The results are stored within the site.
      * 
      * @param correction the correction to apply to the magnetic moment
      * data when performing the PCA calculations
      */
-    public void doFisher(Correction correction) {
+    public void calculateFisherStats(Correction correction) {
         Collection<Vec3> directions =
                 new ArrayList<Vec3>(getSamples().size());
-        for (Sample s: getSamples()) {
-            s.doPca(correction);
-            if (s.getPcaAnnotated() != null) directions.add(s.getPcaValues().getDirection());
+        for (Sample sample: getSamples()) {
+            sample.doPca(correction);
+            if (sample.getPcaAnnotated() != null) {
+                directions.add(sample.getPcaValues().getDirection());
+            } else {
+                if (sample.getFisherValues() != null) {
+                    directions.add(sample.getFisherValues().getMeanDirection());
+                }
+            }
         }
         if (!directions.isEmpty()) {
             fisher = FisherValues.calculate(directions);
@@ -84,7 +93,7 @@ public class Site {
     }
 
     /** Clears the stored Fisher statistics, if any. */
-    public void clearFisher() {
+    public void clearFisherStats() {
         fisher = null;
     }
 
@@ -136,7 +145,7 @@ public class Site {
 
     /** Returns the Fisher statistics (if any) calculated for this site. 
      * @return the Fisher statistics (if any) calculated for this site */
-    public FisherValues getFisher() {
+    public FisherValues getFisherValues() {
         return fisher;
     }
 
@@ -147,7 +156,8 @@ public class Site {
     }
     
     /**
-     * Returns the Fisherian parameters of the site mean direction.
+     * Returns the Fisherian parameters of the site mean direction,
+     * as calculated by Fisher statistics or great-circle analysis.
      * If a great-circle mean has been calculated, its parameters will be 
      * returned. If there is no great-circle mean but a Fisher mean has been 
      * calculated, the Fisher mean will be returned. If neither type of mean 
@@ -155,7 +165,7 @@ public class Site {
      * 
      * @return the Fisherian parameters of the site mean direction
      */
-    public FisherParams getMeanDirection() {
+    public FisherParams getFisherParams() {
         if (fisher != null) return fisher;
         else if (greatCircles != null && greatCircles.isValid())
             return greatCircles;

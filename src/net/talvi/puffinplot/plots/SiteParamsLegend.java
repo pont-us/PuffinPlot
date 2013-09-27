@@ -107,7 +107,7 @@ public class SiteParamsLegend extends Plot {
         final float xOrig = (float) getDimensions().getMinX();
         final float yOrig = (float) getDimensions().getMinY();
         final FisherParams[] fisherParams =
-                {site.getFisher(), site.getGreatCircles()};
+                {site.getFisherValues(), site.getGreatCircles()};
         float yPos = 0;
         for (int i=0; i<fisherParams.length; i++) {
             FisherParams fp = fisherParams[i];

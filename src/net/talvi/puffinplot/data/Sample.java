@@ -77,6 +77,13 @@ public class Sample {
         this.customNotes = new CustomFields<String>();
     }
     
+    /**
+     * Clears PCA calculations for this sample.
+     */
+    public void clearPca() {
+        pca = null;
+    }
+    
     /** Clears all calculations for this sample (PCA, MDF, and great-circle
      * fit) and deselects all data points. */
     public void clearCalculations() {

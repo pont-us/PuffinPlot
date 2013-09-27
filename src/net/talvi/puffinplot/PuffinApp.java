@@ -1033,7 +1033,7 @@ public final class PuffinApp {
         if (showErrorIfNoSuite()) return;
         for (Site site: getSelectedSites()) {
             site.clearGcFit();
-            site.clearFisher();
+            site.clearFisherStats();
         }
         updateDisplay();
     }

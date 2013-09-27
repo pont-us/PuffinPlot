@@ -11,8 +11,8 @@ type: :feature
 component: PuffinPlot
 release: "1.03"
 reporter: Pontus Lurcock <pont@talvi.net>
-status: :in_progress
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2013-06-06 08:56:15.657919 Z
 references: []
 
@@ -26,3 +26,14 @@ log_events:
   - Pontus Lurcock <pont@talvi.net>
   - changed status from unstarted to in_progress
   - ""
+- - 2013-09-27 10:21:33.787802 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - closed with disposition fixed
+  - |-
+    Fisher means are now handled almost as fully as PCA directions.
+    They are displayed in plots and used in site- and suite-level means,
+    and documented in the manual. However, they are not currently saved
+    as part of a PuffinPlot file. This would be a little awkward to
+    implement and unless there is urgent demand it would be more
+    reasonable to leave it until I implement support for multiple fits
+    per sample (issues #247 and #259).

@@ -176,6 +176,13 @@ public class SiteEqAreaPlot extends EqAreaPlot {
                         diamond().filled(v.z>0).build();
                 pcaPoint.draw(g);
                 //addPoint(null, project(v), v.z>0, false, false);
+            } else if (s.getFisherValues() != null) {
+                final Vec3 v = s.getFisherValues().getMeanDirection();
+                pcaDirs.add(v);
+                final PlotPoint fisherPoint =
+                        ShapePoint.build(this, project(v)).
+                        diamond().filled(v.z>0).build();
+                fisherPoint.draw(g);
             }
         }
         if (pcaDirs.isEmpty()) {
@@ -186,7 +193,7 @@ public class SiteEqAreaPlot extends EqAreaPlot {
             // a Fisher mean of PCAs.
             return;
         }
-        final FisherValues fisherMean = site.getFisher();
+        final FisherValues fisherMean = site.getFisherValues();
         if (fisherMean == null) {
             return;
         }
