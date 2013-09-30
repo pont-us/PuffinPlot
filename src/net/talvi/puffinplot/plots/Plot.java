@@ -21,7 +21,6 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.event.MouseEvent;
-import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
 import static java.awt.font.TextAttribute.SUPERSCRIPT;
 import static java.awt.font.TextAttribute.SUPERSCRIPT_SUPER;
@@ -284,7 +283,12 @@ public abstract class Plot
         String text = significand;
         if (!useAppleSuperscriptHack) {
             // 00D7 is the multiplication sign
+            if (exponent.startsWith("-")) {
+                exponent = "\u2212" + exponent.substring(1); // minus sign
+                //exponent = "\u2013" + exponent.substring(1); // en dash
+            }
             text += " \u00D710" + exponent;
+            
             AttributedString as = new AttributedString(text);
             as.addAttribute(SUPERSCRIPT, SUPERSCRIPT_SUPER,
                     text.length() - exponent.length(), text.length());
@@ -410,7 +414,15 @@ public abstract class Plot
     }
     
     /**
-     * Write some text on this plot.
+     * Write some text on this plot. The text is positioned relative to
+     * a specified point. The parameter {@code dir} controls whether the
+     * text should be offset up, down, left, or right of the point.
+     * In the axis perpendicular to the offset direction, the text is
+     * centred, so for example if the text is placed below the specified
+     * point, it will also be centred horizontally relative to the point.
+     * An angle of rotation can also be specified for the text; note that
+     * at present only rotations of 0 (horizontal, rightward) and pi/2 (vertical,
+     * upward) have been tested.
      * 
      * @param g the graphics context
      * @param text the text to write
@@ -422,32 +434,90 @@ public abstract class Plot
      */
     public void putText(Graphics2D g, AttributedString text, double x,
             double y, Direction dir, double θ, double padding) {
+        AffineTransform initialTransform = g.getTransform();
         applyTextAttributes(text);
-        FontRenderContext frc = g.getFontRenderContext();
-        TextLayout layout = new TextLayout(text.getIterator(), frc);
-        Rectangle2D bounds = AffineTransform.getRotateInstance(θ).
-                createTransformedShape(layout.getBounds()).getBounds2D();
-        double w2 = bounds.getWidth()/2;
-        double h2 = bounds.getHeight()/2;
-        x -= w2;
-        y += h2;
-        w2 += padding;
-        h2 += padding;
-        switch (dir) {
-        case RIGHT: x += w2; break;
-        case DOWN: y += h2; break;
-        case LEFT: x -= w2; break;
-        case UP: y -= h2; break;
-        }
 
-        // Shape bbMoved = AffineTransform.getTranslateInstance(x, y).createTransformedShape(bounds);
-        AffineTransform old = g.getTransform();
-        g.translate(x - bounds.getMinX(), y - bounds.getMaxY());
+        /* The obvious thing to do might be to calculate the bounding box
+         * for unrotated text, then rotate the bounding box if required.
+         * Unfortunately this is unreliable, since it turns out that
+         * orientation can affect text layout. On Linux 64-bit OpenJDK 1.7.0_25,
+         * vertical text is set closer than horizontal. So the bounding box
+         * must be determined by actually creating a TextLayout for a 
+         * rotated FontRenderContext. 
+         */
         g.rotate(θ);
-        // Don't use layout.draw, since that will draw the text as a glyph
-        // vector, which won't be exported as text in SVG, PDF, etc.
+        final TextLayout layout = new TextLayout(text.getIterator(), g.getFontRenderContext());
+        final Rectangle2D transformedBounds = layout.getBounds();
+        g.setTransform(initialTransform);
+
+        /* We now back-rotate the transformed bounding box to use in
+         * calculations requiring the untransformed bounds. 
+         */
+        final Rectangle2D bounds = AffineTransform.getRotateInstance(-θ).
+                createTransformedShape(transformedBounds).getBounds2D();
+
+        /* Translate the co-ordinate system to the "target" point. This isn't
+         * quite where we want it yet: we need to (1) offset in the chosen 
+         * direction, and (2) centre the text relative to the offset point.
+         * Part (1) could be combined with this translate operation (though
+         * I think it's conceptually clearer to separate them), but it's
+         * easier to do part (2) after we've rotated into the text's 
+         * co-ordinate system.
+         */
+        g.translate(x, y);
+        
+        /* Translate the target point to the "offset" point: this is the
+         * point above, below, left, or right of the target point which 
+         * actually defines the text's location. The offset is measured 
+         * from the edge of the text, not its centre, hence the 
+         * additional half-width or half-height offset in the same direction.
+         * Note that we're still working in the unrotated co-ordinate system
+         * here.
+         */
+        final double halfWidth = bounds.getWidth()/2;
+        final double halfHeight = bounds.getHeight()/2;
+        switch (dir) {
+        case RIGHT:
+            g.translate(padding + halfWidth, 0);
+            break;
+        case DOWN:
+            g.translate(0, padding + halfHeight);
+            break;
+        case LEFT:
+            g.translate(-padding - halfWidth, 0);
+            break;
+        case UP:
+            g.translate(0, -padding - halfHeight);
+            break;
+        }
+        
+        /* Having moved to the offset point, we now rotate from the 
+         * graph's orientation to the text's orientation (which may of
+         * course be the same).
+         */
+        g.rotate(θ);
+        
+        /* We have to do some more translation now, in the text's rotated
+         * coordinate system. The offset point is the desired location of the
+         * centre of the text, but drawString wants the location of the bottom
+         * left corner so we move the text half its width to the left and half
+         * its height down.
+         */
+        g.translate(-transformedBounds.getWidth()/2,
+                transformedBounds.getHeight()/2);
+        
+        /* Finally we have to account for the fact that the origin of the
+         * TextLayout from which the bounds were calculated is not at (0,0).
+         * (See TextLayout docs.) 
+         */
+        g.translate(-transformedBounds.getMinX(), -transformedBounds.getMaxY());
+
+        /* We don't use layout.draw, since that will draw the text as a glyph
+         * vector, which won't be exported as text in SVG, PDF, etc. */
         g.drawString(text.getIterator(), 0, 0);
-        g.setTransform(old);
+        
+        /* Finally, we restore the initial co-ordinate system. */
+        g.setTransform(initialTransform);
     }
     
     /**

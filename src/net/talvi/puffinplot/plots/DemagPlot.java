@@ -79,7 +79,7 @@ public class DemagPlot extends Plot {
         List<Datum> data = sample.getVisibleData();
         if (data.isEmpty()) return;
 
-        Rectangle2D dim = cropRectangle(getDimensions(), 270, 200, 50, 250);
+        Rectangle2D dim = cropRectangle(getDimensions(), 320, 100, 50, 290);
         g.setColor(Color.BLACK);
         double maxDemag = Datum.maxTreatmentLevel(data);
         double maxIntens = Datum.maxIntensity(data);

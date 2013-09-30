@@ -29,6 +29,10 @@ import java.util.List;
  * @author pont
  */
 final class PlotAxis {
+    
+    /* Distance between axis and edge of axis label. */
+    private static final int LABEL_PADDING = 23;
+    
     private final Plot plot;
     private final AxisParameters ap;
 
@@ -209,7 +213,7 @@ final class PlotAxis {
                     : new AttributedString(ap.label);
 
             plot.putText(g, as, xOrig + xLen / 2, yOrig + yLen / 2,
-                    ap.direction.labelPos(ap.farSide), ap.direction.labelRot(), 22);
+                    ap.direction.labelPos(ap.farSide), ap.direction.labelRot(), LABEL_PADDING);
         }
         
         if (ap.endLabel != null) {

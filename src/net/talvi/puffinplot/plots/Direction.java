@@ -22,7 +22,13 @@ import static java.lang.Math.abs;
 import java.util.Collection;
 import java.util.EnumSet;
 
-enum Direction {
+/**
+ * A representation of a two-dimensional perpendicular direction.
+ * That is, left, right, up, or down.
+ * 
+ * @author pont
+ */
+public enum Direction {
     RIGHT("R", "E", 0), UP("U", "N", 1), LEFT("L", "W", 2), DOWN("D", "S", 3);
     private final String letter;
     private final String compassDir;
