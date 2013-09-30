@@ -74,8 +74,11 @@
 \begin{document}
 
 \maketitle
+\ifpdf
+\vspace{25mm}
+\fi
 \begin{center}
-\includegraphics[width=100mm]{figures/cropped-puffin.png}
+\includegraphics[width=100mm]{figures/Fratercula_arctica.jpeg}
 \end{center}
 
 \tableofcontents
@@ -266,12 +269,12 @@ as part of a particular study. For a discrete specimen study, this will
 typically correspond to a section in the field; for a long core study, it
 will correspond to a core. A suite is initially created by opening one or
 more data files from a magnetometer; it is saved as a file in PuffinPlot's
-own format. In a discrete study, a suite contains multiple \emph{sites}. A
-site corresponds to a set of samples taken from one spot in a section. A
-site's associated data can include such things as bedding attitude and
-stratigraphic height, as well as calculated parameters such as the mean
-palaeomagnetic direction for all the samples at the site. Site are not
-required: if no sites have been defined, samples are contained directly
+own format. A suite can contain multiple \emph{sites}. A site corresponds to
+a set of samples taken from one spot in a section (or from a particular range
+of depths). A site's associated data can include such things as bedding
+attitude and stratigraphic height, as well as calculated parameters such as
+the mean palaeomagnetic direction for all the samples at the site. Sites are
+not required: if no sites have been defined, samples are contained directly
 within the suite.
 
 Each site (or, if no sites are defined, the suite) contains multiple
@@ -655,7 +658,7 @@ to do with manipulation of data points.
 
 \item[Edit\submenu Select all steps] selects all the treatment steps in all
   the selected samples, excluding treatment steps which have been hidden (see
-  \ppcmd{Hide points} below).
+  \ppcmd{Hide steps} below).
 
 \item[Edit\submenu Clear step selection] de-selects all the treatment steps
   in all the selected samples.
@@ -1743,9 +1746,10 @@ M. Glen, and Fabio Florindo.
 
 \subsection*{Icon}
 
-PuffinPlot's icon is cropped from an illustration by the Finnish artist
-Wilhelm von Wright (1810--1887), published in \emph{Svenska f\aa glar, efter
-  naturen och p\aa{} sten ritade} (2nd ed., 1929).
+PuffinPlot's icon, and the frontispiece for this manual, are from an
+illustration by the Finnish artist Wilhelm von Wright (1810--1887), published
+in \emph{Svenska f\aa glar, efter naturen och p\aa{} sten ritade} (2nd ed.,
+1929).
 
 \appendix
 \section{Citing PuffinPlot\label{sec:citing-puffinplot}}

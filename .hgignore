@@ -11,7 +11,6 @@ syntax: regexp
 ^store/
 ^manual/manual\.(4ct|4tc|aux|bbl|blg|css|dvi|toc)$
 ^manual/manual\.(html|idv|lg|log|out|pdf|tmp|xref)$
-^manual/figures/
 ^manual/hg-cmds.tex$
 ^manual/.*~$
 ^build.credentials.properties$
