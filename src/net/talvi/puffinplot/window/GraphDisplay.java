@@ -145,6 +145,12 @@ public abstract class GraphDisplay extends JPanel implements Printable {
     @Override
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
+        
+        // Uncommenting this line avoids the "anti-aliasing disabled 
+        // by FreeHEP SVG export" bug (#278), but of course also 
+        // disables the actual export!
+        // if (g instanceof SVGGraphics2D) return;
+        
         AffineTransform savedTransform = g2.getTransform();
         g2.transform(zoomTransform);
         super.paint(g2); // draws background and any components
@@ -430,15 +436,15 @@ public abstract class GraphDisplay extends JPanel implements Printable {
     /** Writes the contents of this display to an SVG file using the FreeHEP library.
      * @param filename the name of the file to which to write */
     public void saveToSvgFreehep(String filename) throws IOException {
-        SVGGraphics2D g =
+        final SVGGraphics2D graphics =
                 new org.freehep.graphicsio.svg.SVGGraphics2D(new File(filename),
                 this);
-        UserProperties p = new UserProperties();
-        p.setProperty(SVGGraphics2D.TEXT_AS_SHAPES, false);
-        g.setProperties(p);
-        g.startExport();
-        print(g);
-        g.endExport();
-        g.dispose();
+        final UserProperties userProps = new UserProperties();
+        userProps.setProperty(SVGGraphics2D.TEXT_AS_SHAPES, false);
+        graphics.setProperties(userProps);
+        graphics.startExport();
+        print(graphics);
+        graphics.endExport();
+        graphics.dispose();
     }
 }

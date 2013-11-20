@@ -47,7 +47,8 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
         "DemagPlot", "DemagTable", "SampleParamsLegend",
         "PlotTitle", "SiteParamsLegend",
         "AmsPlot", "TernaryPlot", "SiteEqAreaPlot", "SuiteEqAreaPlot",
-        "SampleParamsTable", "SiteParamsTable", "NrmHistogram"};
+        "SampleParamsTable", "SiteParamsTable", "NrmHistogram",
+        "DepthPlot"};
     private final PlotParams params;
 
     MainGraphDisplay() {

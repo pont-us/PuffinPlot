@@ -93,7 +93,8 @@ public abstract class Plot
             + "nrm_histogram false 778 679 315 131 "
             + "sample_params_table false 478 379 315 331 "
             + "site_params_table false 778 379 315 331 "
-            + "zplotlegend true 856 6 132 63";
+            + "zplotlegend true 856 6 132 63 "
+            + "depth false 50 50 300 200";
 
     static {
         final AffineTransform at = AffineTransform.getTranslateInstance(0, 0.18);

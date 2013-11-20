@@ -74,12 +74,12 @@ public class DemagPlot extends Plot {
     @Override
     public void draw(Graphics2D g) {
         clearPoints();
-        Sample sample = params.getSample();
+        final Sample sample = params.getSample();
         if (sample==null) return;
-        List<Datum> data = sample.getVisibleData();
+        final List<Datum> data = sample.getVisibleData();
         if (data.isEmpty()) return;
 
-        Rectangle2D dim = cropRectangle(getDimensions(), 320, 100, 50, 290);
+        final Rectangle2D dim = cropRectangle(getDimensions(), 320, 100, 50, 290);
         g.setColor(Color.BLACK);
         double maxDemag = Datum.maxTreatmentLevel(data);
         double maxIntens = Datum.maxIntensity(data);
@@ -98,7 +98,7 @@ public class DemagPlot extends Plot {
         }
         if (maxIntens == 0) maxIntens = 1;
 
-        TreatType treatType = sample.getDatum(sample.getNumData() - 1).getTreatType();
+        final TreatType treatType = sample.getDatum(sample.getNumData() - 1).getTreatType();
         final String xAxisLabel;
         double demagRescale = 1;
         if (xBySequence) {
@@ -111,41 +111,42 @@ public class DemagPlot extends Plot {
             }
             xAxisLabel = String.format("%s (%s)", treatType.getAxisLabel(), unit);
         }
-        AxisParameters hAxisParams = new AxisParameters(xAxisLength * demagRescale, Direction.RIGHT).
+        final AxisParameters xAxisParams = 
+                new AxisParameters(xAxisLength * demagRescale, Direction.RIGHT).
                 withLabel(xAxisLabel).withNumberEachTick();
         final MedianDestructiveField midpoint = sample.getMdf();
         if (midpoint != null && midpoint.isHalfIntReached()) {
-            hAxisParams.markedPosition = midpoint.getDemagLevel() * demagRescale;
+            xAxisParams.markedPosition = midpoint.getDemagLevel() * demagRescale;
         }
-        final PlotAxis hAxis = new PlotAxis(hAxisParams, this);
+        final PlotAxis xAxis = new PlotAxis(xAxisParams, this);
         final String vAxisLabel = prefs.get("plots."+getName()+".vAxisLabel",
                 "Magnetization (A/m)");
-        final PlotAxis vAxis =
+        final PlotAxis yAxis =
                 new PlotAxis(new AxisParameters(maxIntens, Direction.UP).
                 withLabel(vAxisLabel).withNumberEachTick(), this);
         
-        double hScale = dim.getWidth() / hAxis.getLength();
-        final double vScale = dim.getHeight() / vAxis.getLength();
+        final double xScale = dim.getWidth() / xAxis.getLength();
+        final double yScale = dim.getHeight() / yAxis.getLength();
         
-        vAxis.draw(g, vScale, (int)dim.getMinX(), (int)dim.getMaxY());
-        hAxis.draw(g, hScale, (int)dim.getMinX(), (int)dim.getMaxY());
+        yAxis.draw(g, yScale, (int)dim.getMinX(), (int)dim.getMaxY());
+        xAxis.draw(g, xScale, (int)dim.getMinX(), (int)dim.getMaxY());
         addPoint(null, new Point2D.Double(dim.getMinX()-10, dim.getMaxY()),
                 true, false, false);
         
         int i = 0;
         for (Datum d: data) {
-            double demagLevel = d.getTreatmentLevel() * demagRescale;
-            double xPos = dim.getMinX() +
-                    (xBySequence ? (i + 1) : demagLevel) * hScale;
+            final double demagLevel = d.getTreatmentLevel() * demagRescale;
+            final double xPos = dim.getMinX() +
+                    (xBySequence ? (i + 1) : demagLevel) * xScale;
             addPoint(d, new Point2D.Double(xPos,
-                    dim.getMaxY() - d.getIntensity() * vScale),
+                    dim.getMaxY() - d.getIntensity() * yScale),
                     true, false, i>0);
             i++;
         }
 
-        if (hAxisParams.markedPosition != null) {
-            final double xPos = dim.getMinX() + hScale * hAxisParams.markedPosition;
-            final double yPos = dim.getMaxY() - midpoint.getIntensity() * vScale;
+        if (xAxisParams.markedPosition != null) {
+            final double xPos = dim.getMinX() + xScale * xAxisParams.markedPosition;
+            final double yPos = dim.getMaxY() - midpoint.getIntensity() * yScale;
             g.draw(new Line2D.Double(dim.getMinX(), yPos,
                     xPos, yPos));
             g.draw(new Line2D.Double(xPos, dim.getMaxY()-getFontSize()*1.5,
@@ -166,20 +167,19 @@ public class DemagPlot extends Plot {
             i = 0;
             boolean first = true;
             for (Datum d: data) {
-            final double xPos = dim.getMinX() +
-                    (xBySequence ? (i + 1) : d.getTreatmentLevel()) * hScale;
-            double magSus = d.getMagSus();
-            if (magSus < 0) magSus = 0;
-            if (d.hasMagSus()) {
-                addPoint(d, new Point2D.Double(xPos,
-                    dim.getMaxY() - magSus * msScale),
-                    false, false, !first);
-                first = false;
-            }
-            i++;
+                final double xPos = dim.getMinX() +
+                    (xBySequence ? (i + 1) : d.getTreatmentLevel()) * xScale;
+                double magSus = d.getMagSus();
+                if (magSus < 0) magSus = 0;
+                if (d.hasMagSus()) {
+                    addPoint(d, new Point2D.Double(xPos,
+                            dim.getMaxY() - magSus * msScale),
+                            false, false, !first);
+                    first = false;
+                }
+                i++;
             }
         }
-
         drawPoints(g);
     }
 }
