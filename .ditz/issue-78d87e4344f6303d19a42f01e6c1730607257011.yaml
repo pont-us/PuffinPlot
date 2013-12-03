@@ -1,0 +1,27 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Add a sample parameter plot
+desc: |-
+  The immediate need is for a depth vs. inclination plot.
+  In the long run, it would be useful to plot various other 
+  parameters too -- declination, NRM intensity, MAD values, etc. --
+  vs. depth, or vs. stratigraphic position or sample index for
+  discrete suites.
+type: :feature
+component: PuffinPlot
+release: "1.03"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :in_progress
+disposition: 
+creation_time: 2013-11-19 22:14:17.306656 Z
+references: []
+
+id: 78d87e4344f6303d19a42f01e6c1730607257011
+log_events: 
+- - 2013-11-19 22:14:18.408808 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
+- - 2013-11-20 16:05:27.020845 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - changed status from unstarted to in_progress
+  - ""
