@@ -405,7 +405,7 @@ public class PuffinActions {
      */
     public final Action clearSiteCalcs = new PuffinAction("Clear site calculations",
             "Clear site Fisher and Great Circle calculations", 'I', true,
-            KeyEvent.VK_R) {
+            KeyEvent.VK_E) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
             app.clearSiteCalculations();
@@ -1009,6 +1009,18 @@ public class PuffinActions {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
             app.getCiteWindow().setVisible(true);
+        }
+    };
+
+    /**
+     * Performs an RPI calculation.
+     */
+    public final Action calculateRpi = new PuffinAction("Calculate RPI",
+            "Calculate relative palaeomagnetic intensity",
+            null, false, KeyEvent.VK_R) {
+        private static final long serialVersionUID = 1L;
+        @Override public void actionPerformed(ActionEvent e) {
+            app.calculateRpi();
         }
     };
 }

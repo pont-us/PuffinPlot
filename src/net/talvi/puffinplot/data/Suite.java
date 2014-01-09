@@ -599,6 +599,11 @@ public final class Suite {
     public Sample getSampleByName(String name) {
         return samplesById.get(name);
     }
+    
+    
+    public Sample getSampleByDepth(double depth) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
     /** Returns the index defining the current sample. 
      * @return the index defining the current sample */

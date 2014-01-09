@@ -1420,5 +1420,48 @@ public final class PuffinApp {
         }
         return pathname;
     }
+    
+    public void calculateRpi() {
+        final Suite nrmSuite = getSuites().get(0);
+        final Suite armSuite = getSuites().get(1);
+        //final double demagStep = 0.05;
+        final File outFile = new File("/home/pont/test.tsv");
+        FileWriter fw = null;
+        try {
+                fw = new FileWriter(outFile);
 
+                for (Sample nrmSample: nrmSuite.getSamples()) {
+                    final String depth = nrmSample.getData().get(0).getDepth();
+                    final Sample armSample = armSuite.getSampleByName(depth);
+                    if (armSample != null) {
+                        final double[] levels = {0.03, 0.04, 0.05, 0.06, 0.07};
+                        fw.write(String.format("%s", depth));
+                        for (double demagStep: levels) {
+                            final Datum nrmStep = nrmSample.getDatumByTreatmentLevel(demagStep);
+                            final Datum armStep = armSample.getDatumByTreatmentLevel(demagStep);
+                            if (nrmStep != null && armStep != null) {
+                                final double nrmInt = nrmStep.getIntensity();
+                                final double armInt = armStep.getIntensity();
+                                //fw.write(String.format("%s\t%g\t%g\t%g\n",
+                                 //   depth, nrmInt, armInt, nrmInt/armInt));
+                                fw.write(String.format("\t%g", nrmInt/armInt));
+                            }
+                        }
+                        fw.write("\n");
+                    }
+                }
+
+            } catch (IOException e) {
+                logger.log(Level.WARNING,
+                        "calculateRpi: exception writing file.", e);
+            } finally {
+                try {
+                    if (fw != null) fw.close();
+                } catch (IOException e2) {
+                    logger.log(Level.WARNING, 
+                            "calculateRpi: exception closing file.", e2);
+                }
+            }
+    }
+    
 }

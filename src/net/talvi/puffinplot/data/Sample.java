@@ -17,6 +17,7 @@
 package net.talvi.puffinplot.data;
 
 import Jama.Matrix;
+import static java.lang.Math.abs;
 import static java.lang.Double.parseDouble;
 import static java.lang.Math.toRadians;
 import java.util.ArrayList;
@@ -295,6 +296,16 @@ public class Sample {
      */
     public Datum getDatum(int i) {
         return getData().get(i);
+    }
+    
+    public Datum getDatumByTreatmentLevel(double level) {
+        final double threshold = 1e-6;
+        for (Datum d: data) {
+                if (abs(d.getTreatmentLevel() - level) < threshold) {
+                    return d;
+                }
+        }
+        return null;
     }
     
     /** Adds a data point to this sample.
