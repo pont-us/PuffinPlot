@@ -63,13 +63,17 @@ public class DepthPlot extends Plot {
         final PlotAxis xAxis = new PlotAxis(xAxisParams, this);
         
         double minInc = 0, maxInc = 0;
+        boolean anyData = false;
         for (Sample s: suite.getSamples()) {
             if (!s.hasData()) continue;
             if (s.getPcaValues() == null) continue;
+            if (Double.isNaN(s.getDepth())) continue;
+            anyData = true;
             final double inc = s.getPcaValues().getDirection().getIncDeg();
             if (inc < minInc) minInc = inc;
             if (inc > maxInc) maxInc = inc;
         }
+        if (!anyData) return;
         
         final AxisParameters upAxisParams = 
                 new AxisParameters(maxInc, Direction.UP).
