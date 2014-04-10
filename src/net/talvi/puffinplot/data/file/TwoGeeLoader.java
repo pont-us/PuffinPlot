@@ -399,7 +399,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
         d.setVolume(r.getDouble("Volume", d.getVolume()));
         final Vec3 momentGaussCm3 = readMagnetizationVector(r);
         if (momentGaussCm3 != null) {
-            // we have a raw magnetic moment in gauss * cm^3.
+            // we have a raw magnetic moment in gauss * cm^3 (a.k.a. emu).
             // First we divide it by the sample volume in cm^3 to get a
             // magnetization in gauss.
             final Vec3 magnetizationGauss;

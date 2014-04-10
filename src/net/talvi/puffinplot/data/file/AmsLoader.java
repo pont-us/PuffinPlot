@@ -34,16 +34,28 @@ import static java.lang.Double.parseDouble;
 
 public class AmsLoader {
     private final File ascFile;
-    private static final String tensorLabel = "Specimen";
     private static final Pattern lastLine =
             Pattern.compile("^\\d\\d-\\d\\d-\\d\\d\\d\\d$");
 
-    /** Creates a new AMS laoder for a specified file. 
+    /** Creates a new AMS loader for a specified file. 
      * @param ascFile the file for which to create the loader */
     public AmsLoader(File ascFile) {
         this.ascFile = ascFile;
     }
 
+    /**
+     * Reads a chunk of a file and splits it into fields.
+     * Fields are delimited by whitespace. The chunk itself is
+     * delimited by the lastLine pattern. If a line begins with
+     * whitespace, field 0 for that line will be an empty string,
+     * with the first non-whitespace content assigned to field 1.
+     * 
+     * @param reader the reader from which to take the data
+     * @return an array of arrays of strings. Each sub-array
+     * contains the string values of the fields in the corresponding
+     * line.
+     * @throws IOException 
+     */
     private String[][] readFileChunk(BufferedReader reader) throws IOException {
         ArrayList<String[]> result = new ArrayList<String[]>(64);
         do {
@@ -63,64 +75,78 @@ public class AmsLoader {
      * @throws IOException if there was an I/O error while reading the file
      */
     public List<AmsData> readFile() throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(ascFile));
-        List<AmsData> result = new ArrayList<AmsData>();
+        final BufferedReader reader =
+                new BufferedReader(new FileReader(ascFile));
+        final List<AmsData> result = new ArrayList<AmsData>();
         do {
-            String[][] chunk = readFileChunk(reader);
+            final String[][] chunk = readFileChunk(reader);
             if (chunk.length<39) break;
-            double[] tensor = {parseDouble(chunk[37][5]),
-                parseDouble(chunk[37][6]), parseDouble(chunk[37][7]),
-                parseDouble(chunk[38][5]),
-                parseDouble(chunk[38][6]), parseDouble(chunk[38][7])};
-            AmsData amsData = new AmsData(chunk[0][0], tensor,
-                    parseDouble(chunk[3][1]), parseDouble(chunk[5][1]),
-                    parseDouble(chunk[16][5]));
-            result.add(amsData);
+            
+            int tensorHeader = -1; // line number of tensor header
+            for (int i=0; i<chunk.length; i++) {
+                // Find the tensor header in the file.
+                if (chunk[i].length >= 5 &&
+                        "Normed".equals(chunk[i][3]) &&
+                        "tensor".equals(chunk[i][4])) {
+                    tensorHeader = i;
+                    break;
+                }
+            }
+            
+            int fTestHeader = -1; // line number of f-test header
+            for (int i=0; i<chunk.length; i++) {
+                // Find the F-test header in the file.
+                if (chunk[i].length == 8 &&
+                        "F".equals(chunk[i][5]) &&
+                        "F12".equals(chunk[i][6]) &&
+                        "F23".equals(chunk[i][7])) {
+                    fTestHeader = i;
+                    break;
+                }
+            }
+            if (tensorHeader == -1 || fTestHeader == -1) {
+                // Without the headers, we can't find the data.
+                throw new IOException("ASC header lines not found "+
+                        "in file " + ascFile.getName());
+            }
+            
+            if (chunk[tensorHeader + 2].length != 8 ||
+                chunk[tensorHeader + 3].length != 8 ||
+                chunk[0].length < 1 ||
+                chunk[3].length < 2 ||
+                chunk[5].length < 2 ||
+                chunk[fTestHeader+2].length < 7) {
+                // The fields we need aren't in the expected positions.
+                throw new IOException("Data fields not found "+
+                        "in file " + ascFile.getName());
+            }
+            
+            try {
+                final double[] tensor = {
+                    parseDouble(chunk[(tensorHeader + 2)][5]),
+                    parseDouble(chunk[(tensorHeader + 2)][6]),
+                    parseDouble(chunk[(tensorHeader + 2)][7]),
+                    parseDouble(chunk[(tensorHeader + 3)][5]),
+                    parseDouble(chunk[(tensorHeader + 3)][6]),
+                    parseDouble(chunk[(tensorHeader + 3)][7])};
+                final String[] fTestLine = chunk[fTestHeader + 2];
+                final AmsData amsData = new AmsData
+                        (chunk[0][0], // sample name
+                        tensor,
+                        parseDouble(chunk[3][1]), // azimuth
+                        parseDouble(chunk[5][1]), // dip
+                        parseDouble(fTestLine[fTestLine.length-3])
+                        /* We count backwards from the end of the line for
+                           the F-test result, because SAFYR has 7 fields
+                           in this line (plus the initial blank) but 
+                           SUSAR has only 6. */
+                        );
+                result.add(amsData);
+            } catch (NumberFormatException e) {
+                throw new IOException("Malformed data "+
+                        "in file " + ascFile.getName());
+            }
         } while (true);
         return result;
     }
-
-    private List<AmsData> oldReadFile() throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(ascFile));
-        List<AmsData> result = new ArrayList<AmsData>();
-        String line = null;
-        boolean tensorFound = false;
-        String name = null;
-        double k11=0, k22=0, k33=0;
-        double sampleAz=0, sampleDip=0;
-        while ((line = reader.readLine()) != null) {
-            String[] parts = line.split("\\s+");
-            if (parts.length > 1) {
-                if ("ANISOTROPY".equals(parts[1])) {
-                    name = parts[0];
-                }
-                if ("ANISOTROPY".equals(parts[2])) {
-                    name = parts[1];
-                }
-                if ("Azi".equals(parts[1])) {
-                    sampleAz = parseDouble(parts[0]);
-                }
-                if ("Dip".equals(parts[1])) {
-                    sampleDip = parseDouble(parts[0]);
-                }
-            }
-            if (tensorFound) {
-                tensorFound = false;
-                double k12 = parseDouble(parts[5]);
-                double k23 = parseDouble(parts[6]);
-                double k13 = parseDouble(parts[7]);
-                final double[] tensor =
-                        new double[] {k11, k22, k33, k12, k23, k13};
-                result.add(new AmsData(name, tensor, sampleAz, sampleDip, 10.));
-            }
-            if (parts.length > 0 && tensorLabel.equals(parts[0])) {
-                tensorFound = true;
-                k11 = parseDouble(parts[5]);
-                k22 = parseDouble(parts[6]);
-                k33 = parseDouble(parts[7]);
-            }
-        }
-        return result;
-    }
-
 }

@@ -905,9 +905,10 @@ public final class PuffinApp {
         }
     }
     
-    /** <p>Shows an <q>open files</q> dialog box; if the user selects any files,
-     * AMS data will be imported from them. The files are expected to
-     * be in Agico ASC format.</p> */
+    /** <p>Shows an <q>open files</q> dialog box; if the user selects
+     * any files, AMS data will be imported from them. The files are 
+     * expected to be in Agico ASC format, as produced by the SAFYR
+     * and SUSAR programs.</p> */
     public void importAmsWithDialog() {
         if (showErrorIfNoSuite()) return;
         try {

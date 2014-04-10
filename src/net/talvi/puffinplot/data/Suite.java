@@ -802,7 +802,7 @@ public final class Suite {
     }
 
     /** Imports AMS data from ASC files in the format produced by
-     * Agico's SAFYR program.
+     * Agico's SAFYR and SUSAR programs.
      * 
      * @param files the ASC files to read
      * @param magneticNorth {@code true} if the sample dip azimuths 

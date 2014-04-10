@@ -14,7 +14,10 @@
 \fi
 \usepackage[round]{natbib}
 \usepackage[utf8]{inputenc}
+\usepackage{color}
+\definecolor{mylinkcolour}{RGB}{0,0,160}
 \usepackage{url}
+\renewcommand\UrlFont{\color{mylinkcolour}\sffamily}
 \usepackage{graphicx}
 \usepackage{float}
 \floatstyle{ruled}
@@ -24,16 +27,14 @@
 \usepackage{listings}
 \usepackage{textcase}
 \usepackage{titlesec} % to start sections on a new page
-\newcommand{\sectionbreak}{\clearpage}
-\usepackage{color}
-\definecolor{mylinkcolour}{RGB}{0,0,160}
+% \newcommand{\sectionbreak}{\clearpage}
 \usepackage{textcomp} % for \textdegree
-\ifpdf
+%\ifpdf
   \usepackage[unicode=true]{hyperref}
   \hypersetup{breaklinks=true,pdfborder={0 0 0},colorlinks=true,
     linkcolor=mylinkcolour,citecolor=mylinkcolour,urlcolor=mylinkcolour,
     filecolor=mylinkcolour}
-\fi
+%\fi
 %\setlength{\parindent}{0pt}
 \setlength{\parskip}{4pt plus 2pt minus 1pt}
 \setlength{\emergencystretch}{3em}  % prevent overfull lines
@@ -114,11 +115,6 @@ including Windows, Linux, and Mac OS X. Java is generally easy to install,
 but detailed instructions for installing it are beyond the scope of this
 manual; please consult the documentation for your operating system or visit
 \url{http://www.java.com/} for details.
-
-\paragraph{Java installation: Mac OS X notes.} On most versions of Mac OS X,
-Java is preinstalled as standard. On version 10.7 (Lion) it must be manually
-installed via \ppcmd{Applications\submenu Utilities\submenu Java
-  Preferences}.
 
 \subsection{Obtaining and installing PuffinPlot}
 
@@ -610,14 +606,16 @@ to change the paper size, orientation, and margins for printing.
   site; see section~\ref{sec:menu-window} for more details.
 
 \item[File\submenu Import AMS\ldots] imports \caps{ams} data from a file. The
-  file must be in the \caps{.asc} format produced by the \ppcmd{Safyr}
-  program distributed with \caps{Agico} kappabridges. The \caps{ams} data is
-  assigned to the appropriate samples within the suite by matching the sample
-  names specified in the \caps{asc} file with the sample names for the
-  demagnetization data. If the \caps{ams} file contains data for samples not
-  in the suite, these samples will be created and added to the suite.
-  \caps{Ams} data is not displayed by default; the equal-area plot of
-  \caps{ams} data can be activated from the \ppcmd{Preferences} window.
+  file must be in the \caps{.asc} format produced by the \ppcmd{Safyr} and
+  \caps{Susar} programs distributed with \caps{Agico} kappabridges. The
+  \caps{ams} data is assigned to the appropriate samples within the suite by
+  matching the sample names specified in the \caps{asc} file with the sample
+  names for the demagnetization data. If the \caps{ams} file contains data
+  for samples not in the suite, these samples will be created and added to
+  the suite. \caps{Ams} data is not displayed by default; the equal-area plot
+  of \caps{ams} data can be activated from the \ppcmd{Preferences} window.
+  AMS import has been tested with data from \caps{Safyr} versions 1.5 and 2.6
+  and \caps{Susar} version 4.0.
 
 \item[File\submenu Run Python script\ldots] runs a user-specified
   external script written in the Python programming language.
@@ -1742,7 +1740,7 @@ Bethany Fox for their time and effort. Further improvements were made during
 revision of the PuffinPlot paper, in response to thoughtful suggestions from
 Gary Acton and an anonymous reviewer. Since its initial release, PuffinPlot
 has benefited from bug reports and suggestions from Bill Phillips, Jonathan
-M. Glen, and Fabio Florindo.
+M. Glen, Fabio Florindo, and Eric Horsman.
 
 \subsection*{Icon}
 
@@ -1751,6 +1749,18 @@ illustration by the Finnish artist Wilhelm von Wright (1810--1887), published
 in \emph{Svenska f\aa glar, efter naturen och p\aa{} sten ritade} (2nd ed.,
 1929).
 
+\section{Future development and bug reporting}
+
+PuffinPlot continues to be developed, albeit slowly and sporadically now that
+its main functionality is stable and fairly complete. Bugs are fixed when
+they are reported, and new features are added when time permits. The
+PuffinPlot project, including downloadable packages of all released versions
+and the complete source code, is hosted at
+\url{http://code.google.com/p/puffinplot/}. Bug reports, feature suggestions,
+and feedback of all kinds are always very welcome. Please send them to
+\textsf{\href{mailto:puffinplot@gmail.com}{puffinplot@gmail.com}}.
+
+\clearpage
 \appendix
 \section{Citing PuffinPlot\label{sec:citing-puffinplot}}
 
@@ -1768,7 +1778,7 @@ user-friendly program for paleomagnetic analysis, \emph{Geochemistry,
 commonly used by bibliography management software.
 
 \subsection*{BibTeX citation record}
-
+\small
 \begin{verbatim}
 @article{lurcock2012puffinplot,
    author = {Lurcock, P. C. and Wilson, G. S.},
@@ -1788,7 +1798,7 @@ commonly used by bibliography management software.
 \end{verbatim}
 
 \subsection*{RIS citation record}
-
+\small
 \begin{verbatim}
  TY  - JOUR
  T1  - PuffinPlot: A versatile, user-friendly program for paleomagnetic analysis
@@ -1806,6 +1816,7 @@ commonly used by bibliography management software.
 
 % Define the heading of the bibliography to be empty, so I can put a proper
 % Section heading which will be included in the ToC.
+\clearpage
 \renewcommand*{\refname}{\vspace{-1cm}} 
 \section{References}
 \bibliographystyle{apalike-url}

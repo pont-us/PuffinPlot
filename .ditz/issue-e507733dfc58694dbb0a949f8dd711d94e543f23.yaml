@@ -1,0 +1,20 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Add a VDS plot
+desc: |-
+  Add a plot showing sum of vector difference magnitudes (VDS) --
+  see Sagnotti 2013 and Gee et al. 1993.
+type: :feature
+component: PuffinPlot
+release: "1.03"
+reporter: Pontus Lurcock <pont@talvi.net>
+status: :unstarted
+disposition: 
+creation_time: 2014-02-28 15:13:20.660314 Z
+references: []
+
+id: e507733dfc58694dbb0a949f8dd711d94e543f23
+log_events: 
+- - 2014-02-28 15:13:21.204267 Z
+  - Pontus Lurcock <pont@talvi.net>
+  - created
+  - ""
