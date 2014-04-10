@@ -14,10 +14,9 @@
     <exec executable="hg" outputproperty="build.hg.tag">
     <arg value="id"/> <arg value="-t"/> <arg value="${basedir}"/>
     </exec>
-    <exec executable="hg" outputproperty="build.hg.date">
+    <exec dir="${basedir}" executable="hg" outputproperty="build.hg.date">
     <arg value="log"/> <arg value="-l1"/> <arg value="-r."/>
     <arg value="--template"/> <arg value="{date|hgdate}"/>
-    <arg value="${basedir}"/>
     </exec>
         <propertyfile file="build/classes/net/talvi/puffinplot/build.properties">
             <entry key="build.date" type="date" value="now" pattern="yyyy-MM-dd HH:mm"/>

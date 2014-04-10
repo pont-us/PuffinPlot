@@ -1244,6 +1244,7 @@ public final class PuffinApp {
         private final String versionString;
         private final String dateString;
         private final String yearRange;
+        
         private Version() {
             String hgRev = getBuildProperty("build.hg.revid");
             final String hgDate = getBuildProperty("build.hg.date");
@@ -1256,16 +1257,20 @@ public final class PuffinApp {
                 versionString = hgRev +
                         (modified ? " (modified)" : "");
             }
-            String hgEpochDate = hgDate.split(" ")[0];
+            /* The filtered hgdate format consists of an epoch time
+             * in UTC, a space, and a timezone offset in seconds.
+             * We don't care about the timezone, so we just take the
+             * first part. */
+            final String hgEpochDate = hgDate.split(" ")[0];
             final String buildDate = getBuildProperty("build.date");
             String dateStringTmp =  buildDate +
                     " (date of build; revision date not available)";
-            final Date date = new Date(Long.parseLong(hgEpochDate) * 1000);
-            DateFormat df = new SimpleDateFormat("yyyy.MM.dd HH:mm");
             try {
+                final Date date = new Date(Long.parseLong(hgEpochDate) * 1000);
+                final DateFormat df = new SimpleDateFormat("yyyy.MM.dd HH:mm");
                 dateStringTmp = df.format(date);
             } catch (NumberFormatException ex) {
-                 // nothing to do
+                 // Nothing to do -- we just fall back to the default string.
             }
             dateString = dateStringTmp;
             
