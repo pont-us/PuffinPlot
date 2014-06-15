@@ -829,7 +829,7 @@ public class Sample {
             case MAG_DEV: setMagDev(parseDouble(value)); break;
         }
         for (Datum d: getData()) {
-            d.setValue(field, value);
+            d.setValue(field, value, 1);
         }
     }
     

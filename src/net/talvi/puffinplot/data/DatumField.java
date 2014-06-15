@@ -52,92 +52,98 @@ public enum DatumField {
 
     // Identifiers
     /** the identifier (name) of a discrete sample */
-    DISCRETE_ID("Sample ID"),
+    DISCRETE_ID("Sample ID", null, String.class, "0", true, false),
     /** the depth in the core of a continuous measurement */
-    DEPTH("Depth"),
+    DEPTH("Depth", null, double.class, "0", true, false),
     /** the number of the machine run during which the measurements were made */
-    RUN_NUMBER("Run #"),
+    RUN_NUMBER("Run #", null, int.class, "0", true, false),
     /** the timestamp of the measurement */
-    TIMESTAMP("Sample Timestamp"),
+    TIMESTAMP("Sample Timestamp", null, String.class, "0", true, false),
     /** for discrete samples, the position of the sample on the measurement tray */
-    SLOT_NUMBER("Tray slot number"),
+    SLOT_NUMBER("Tray slot number", null, int.class, "0", true, false),
 
     // Lab measurements
     /** the type of the measurement (discrete or continuous) */
-    MEAS_TYPE("Measurement type", "Measurement type", "CONTINUOUS", true, false),
+    MEAS_TYPE("Measurement type", "Measurement type", MeasType.class,
+                "CONTINUOUS", true, false),
     /** the x component of the magnetic moment measurement */
-    X_MOMENT("X moment"),
+    X_MOMENT("X moment", null, double.class, "0", true, false),
     /** the y component of the magnetic moment measurement */
-    Y_MOMENT("Y moment"),
+    Y_MOMENT("Y moment", null, double.class, "0", true, false),
     /** the z component of the magnetic moment measurement */
-    Z_MOMENT("Z moment"),
+    Z_MOMENT("Z moment", null, double.class, "0", true, false),
     /** the measured magnetic susceptibility */
-    MAG_SUS("Magnetic susceptibility"),
+    MAG_SUS("Magnetic susceptibility", null, double.class, "0", true, false),
     /** the volume of a discrete sample */
-    VOLUME("Volume"),
+    VOLUME("Volume", null, double.class, "0", true, false),
     /** the cross-sectional area of a continuous core */
-    AREA("Area"),
+    AREA("Area", null, double.class, "0", true, false),
 
     // Field measurements
     /** the sample dip azimuth in degrees */
-    SAMPLE_AZ("Sample azimuth"),
+    SAMPLE_AZ("Sample azimuth", null, double.class, "0", true, false),
     /** the sample dip angle in degrees */
-    SAMPLE_DIP("Sample dip"),
+    SAMPLE_DIP("Sample dip", null, double.class, "0", true, false),
     /** the formation dip azimuth in degrees */
-    FORM_AZ("Formation dip azimuth"),
+    FORM_AZ("Formation dip azimuth", null, double.class, "0", true, false),
     /** the formation dip angle in degrees */
-    FORM_DIP("Formation dip"),
+    FORM_DIP("Formation dip", null, double.class, "0", true, false),
     /** the local geomagnetic field declination at the sampling site */
-    MAG_DEV("Magnetic deviation"),
+    MAG_DEV("Magnetic deviation", null, double.class, "0", true, false),
 
     // Treatments
     /** the type of treatment applied before measurement (thermal, AF, etc.)*/
-    TREATMENT("Treatment type", "Treatment type", "DEGAUSS_XYZ", true, false),
+    TREATMENT("Treatment type", null, TreatType.class,
+                "DEGAUSS_XYZ", true, false),
     /** for treatments involving AF, the AF x-axis field strength in Tesla */
-    AF_X("AF X field"),
+    AF_X("AF X field", null, double.class, "0", true, false),
     /** for treatments involving AF, the AF y-axis field strength in Tesla */
-    AF_Y("AF Y field"),
+    AF_Y("AF Y field", null, double.class, "0", true, false),
     /** for treatments involving AF, the AF z-axis field strength in Tesla */
-    AF_Z("AF Z field"),
+    AF_Z("AF Z field", null, double.class, "0", true, false),
     /** for thermal treatment, the temperature in degrees Celsius */
-    TEMPERATURE("Temperature"),
+    TEMPERATURE("Temperature", null, double.class, "0", true, false),
     /** for IRM treatment, the field strength in Tesla */
-    IRM_FIELD("IRM Gauss"),
+    IRM_FIELD("IRM Gauss", null, double.class, "0", true, false),
     /** for ARM treatment, the biasing field strength in Tesla */
-    ARM_FIELD("ARM Gauss"),
+    ARM_FIELD("ARM Gauss", null, double.class, "0", true, false),
     /** for ARM treatment, the axis along which the biasing field was applied */
-    ARM_AXIS("ARM axis", "ARM axis", "AXIAL", true, false),
+    ARM_AXIS("ARM axis", "ARM axis", ArmAxis.class,
+             "AXIAL", true, false),
 
     // Processing and display parameters
     /** the selection state of the datum */
-    PP_SELECTED("PUFFIN selected", "Selected", "false", false, false),
+    PP_SELECTED("PUFFIN selected", "Selected", boolean.class,
+                "false", false, false),
     /** whether PCA fits are to be anchored for this datum */
-    PP_ANCHOR_PCA("PUFFIN anchor PCA", "PCA anchored", "false", false, false),
+    PP_ANCHOR_PCA("PUFFIN anchor PCA", "PCA anchored", boolean.class,
+                  "false", false, false),
     /** whether this datum should be hidden on plots */
-    PP_HIDDEN("PUFFIN hidden", "Hidden", "false", false, false),
+    PP_HIDDEN("PUFFIN hidden", "Hidden", boolean.class, "false", false, false),
     /** whether this datum is used for a great-circle fit */
-    PP_ONCIRCLE("PUFFIN on circle", "Use for great circle", "false", false, false),
+    PP_ONCIRCLE("PUFFIN on circle", "Use for great circle", boolean.class,
+                "false", false, false),
     /** whether this datum is used for a PCA fit */
-    PP_INPCA("PUFFIN in PCA", "Use for PCA", "false", false, false),
+    PP_INPCA("PUFFIN in PCA", "Use for PCA", boolean.class, "false", false, false),
 
     // Virtual parameters
     // These are not explicitly stored, but are calculated when required
     /** the intensity of the magnetic dipole moment per unit volume (‘magnetization’) */
-    VIRT_MAGNETIZATION("Magnetization", "Magnetization", "0", true, true),
+    VIRT_MAGNETIZATION("Magnetization", null, double.class, "0", true, true),
     /** declination of magnetization vector (degrees) */
-    VIRT_DECLINATION("Declination", "Declination", "0", true, true),
+    VIRT_DECLINATION("Declination", null, double.class, "0", true, true),
     /** inclination of magnetization vector (degrees) */
-    VIRT_INCLINATION("Inclination", "Inclination", "0", true, true),
+    VIRT_INCLINATION("Inclination", null, double.class, "0", true, true),
     /** the temperature at which the magnetic susceptibility increases sharply */
-    VIRT_MSJUMP("MS jump temp.", "MS jump temp.", "0", false, true),
+    VIRT_MSJUMP("MS jump temp.", null, double.class, "0", false, true),
     /** the hade of a discrete sample (degrees) */
-    VIRT_SAMPLE_HADE("Sample hade", "Sample hade", "0", true, true),
+    VIRT_SAMPLE_HADE("Sample hade", null, double.class, "0", true, true),
     /** the strike of the formation orientation (degrees) */
-    VIRT_FORM_STRIKE("Formation strike", "Formation strike", "0", true, true);
-    
+    VIRT_FORM_STRIKE("Formation strike", null, double.class, "0", true, true);
     
     private final String heading;
     private final String niceName;
+    private final Class type;
     private final String defaultValue;
     private final boolean virtual;
     private final boolean importable;
@@ -163,17 +169,19 @@ public enum DatumField {
         realFieldHeadings = Collections.unmodifiableList(realFieldHeadersTmp);
     }
 
-    private DatumField(String heading, String niceName, String defaultValue,
+    private DatumField(String heading, String niceName,
+            Class type, String defaultValue,
             boolean importable, boolean virtual) {
         this.importable = importable;
         this.heading = heading;
-        this.niceName = niceName;
+        if (niceName == null) {
+            this.niceName = heading;
+        } else {
+            this.niceName = niceName;
+        }
+        this.type = type;
         this.virtual = virtual;
         this.defaultValue = defaultValue;
-    }
-
-    private DatumField(String heading) {
-        this(heading, heading, "0", true, false);
     }
 
     /**
@@ -244,5 +252,13 @@ public enum DatumField {
      * @return an unmodifiable list of the headings of the real fields */
     public static List<String> getRealFieldHeadings() {
         return realFieldHeadings;
+    }
+
+    /** Returns the type of this field (double, String, etc.).
+     * 
+     * @return a Class object representing the field's data type
+     */
+    public Class getType() {
+        return type;
     }
 }

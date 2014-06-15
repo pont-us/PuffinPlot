@@ -653,15 +653,17 @@ public class Datum {
      * @throws NumberFormatException if the format of the string is 
      * not compatible with the format of the field to be set
      */
-    public void setValue(DatumField field, String value) {
+    public void setValue(DatumField field, String value, double factor) {
         touch();
         try {
-            doSetValue(field, value);
+            doSetValue(field, value, factor);
         } catch (NumberFormatException e1) {
             logger.warning(String.format("Invalid value %s for field %s; using default %s",
                     value, field.toString(), field.getDefaultValue()));
             try {
-                doSetValue(field, field.getDefaultValue());
+                /* NB default value is already in correct units, so we
+                   set the conversion factor to 1. */
+                doSetValue(field, field.getDefaultValue(), 1.);
             } catch (NumberFormatException e2) {
                 final String msg = String.format("Invalid value "+
                         "when setting field '%s' to value '%s':\n%s",
@@ -675,41 +677,51 @@ public class Datum {
         }
     }
     
-    private void doSetValue(DatumField field, String s) {
+    private void doSetValue(DatumField field, String s, double factor) {
+        double doubleVal = 0;
+        final Class type = field.getType();
+        boolean boolVal = false;
+        int intVal = 0;
+        if (type == double.class) {
+            doubleVal = parseDouble(s) * factor;
+        } else if (type == Boolean.class) {
+            boolVal = Boolean.parseBoolean(s);
+        } else if (type == Integer.class) {
+            intVal = Integer.parseInt(s);
+        }
         switch (field) {
-        case AF_X: afx = parseDouble(s); break;
-        case AF_Y: afy = parseDouble(s); break;
-        case AF_Z: afz = parseDouble(s); break;
-        case TEMPERATURE: temp = parseDouble(s); break;
-        case MAG_SUS: magSus = parseDouble(s); break;
-        case SAMPLE_AZ: setSampAz(parseDouble(s)); break;
-        case SAMPLE_DIP: setSampDip(parseDouble(s)); break;
-        case FORM_AZ: setFormAz(parseDouble(s)); break;
-        case FORM_DIP: setFormDip(parseDouble(s)); break;
-        case MAG_DEV: setMagDev(parseDouble(s)); break;
-        case X_MOMENT: moment = moment.setX(parseDouble(s)); break;
-        case Y_MOMENT: moment = moment.setY(parseDouble(s)); break;
-        case Z_MOMENT: moment = moment.setZ(parseDouble(s)); break;
+        case AF_X: afx = doubleVal; break;
+        case AF_Y: afy = doubleVal; break;
+        case AF_Z: afz = doubleVal; break;
+        case TEMPERATURE: temp = doubleVal; break;
+        case MAG_SUS: magSus = doubleVal; break;
+        case SAMPLE_AZ: setSampAz(doubleVal); break;
+        case SAMPLE_DIP: setSampDip(doubleVal); break;
+        case FORM_AZ: setFormAz(doubleVal); break;
+        case FORM_DIP: setFormDip(doubleVal); break;
+        case MAG_DEV: setMagDev(doubleVal); break;
+        case X_MOMENT: moment = moment.setX(doubleVal); break;
+        case Y_MOMENT: moment = moment.setY(doubleVal); break;
+        case Z_MOMENT: moment = moment.setZ(doubleVal); break;
         case DEPTH: depth = s; break;
-        case IRM_FIELD: setIrmField(parseDouble(s)); break;
-        case ARM_FIELD: armField = parseDouble(s); break;
-        case VOLUME: volume = parseDouble(s); break;
+        case IRM_FIELD: setIrmField(doubleVal); break;
+        case ARM_FIELD: armField = doubleVal; break;
+        case VOLUME: volume = doubleVal; break;
         case DISCRETE_ID: discreteId = s; break;
         case MEAS_TYPE: measType = MeasType.valueOf(s); break;
         case TREATMENT: treatType = TreatType.valueOf(s); break;
         case ARM_AXIS: armAxis = ArmAxis.fromString(s); break;
         case TIMESTAMP: timestamp = s; break;
-        case SLOT_NUMBER: slotNumber = Integer.parseInt(s); break;
-        case RUN_NUMBER: runNumber = Integer.parseInt(s); break;
-        case AREA: area = parseDouble(s); break;
-        case PP_SELECTED: selected = Boolean.parseBoolean(s); break;
-        case PP_ANCHOR_PCA: setPcaAnchored(Boolean.parseBoolean(s)); break;
-        case PP_HIDDEN: setHidden(Boolean.parseBoolean(s)); break;
-        case PP_ONCIRCLE: setOnCircle(Boolean.parseBoolean(s)); break;
-        case PP_INPCA: setInPca(Boolean.parseBoolean(s)); break;
-        case VIRT_SAMPLE_HADE: setSampHade(parseDouble(s)); break;
-        case VIRT_FORM_STRIKE: setFormStrike(parseDouble(s)); break;
-            // TODO strike and hade
+        case SLOT_NUMBER: slotNumber = intVal; break;
+        case RUN_NUMBER: runNumber = intVal; break;
+        case AREA: area = doubleVal; break;
+        case PP_SELECTED: selected = boolVal; break;
+        case PP_ANCHOR_PCA: setPcaAnchored(boolVal); break;
+        case PP_HIDDEN: setHidden(boolVal); break;
+        case PP_ONCIRCLE: setOnCircle(boolVal); break;
+        case PP_INPCA: setInPca(boolVal); break;
+        case VIRT_SAMPLE_HADE: setSampHade(doubleVal); break;
+        case VIRT_FORM_STRIKE: setFormStrike(doubleVal); break;
         default: throw new IllegalArgumentException("Unknown field "+field);
         }
     }
@@ -762,7 +774,7 @@ public class Datum {
         public Datum fromStrings(List<String> strings) {
             final Datum d = new Datum(Vec3.ORIGIN);
             for (int i=0; i<strings.size(); i++) {
-                d.setValue(fields.get(i), strings.get(i));
+                d.setValue(fields.get(i), strings.get(i), 1.);
             }
             return d;
         }

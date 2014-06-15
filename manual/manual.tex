@@ -1126,7 +1126,10 @@ listed below include textual elements such as legends and tables.
   versus intensity of magnetization (in A/m), shown as a line of filled
   points. If magnetic susceptibility measurements have been taken, they are
   overlaid on the same plot as unfilled points, with the scale shown on the
-  right of the graph.
+  right of the graph. If PuffinPlot cannot find any data describing the
+  demagnetization treatment (i.e. AF field strength or temperature),
+  the X axis will be labelled `measurement number', and the X values
+  will correspond to the sequence of the data in the file.
 
 \item[Data table] is a table in which each row represents one demagnetization
   step for the current sample. The columns, from left to right, give the

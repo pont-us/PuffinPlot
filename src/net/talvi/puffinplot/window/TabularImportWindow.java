@@ -19,18 +19,17 @@ package net.talvi.puffinplot.window;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
-import java.util.Map.Entry;
 import javax.swing.*;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.DatumField;
+import net.talvi.puffinplot.data.FieldUnit;
 import net.talvi.puffinplot.data.MeasType;
+import net.talvi.puffinplot.data.MomentUnit;
 import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.file.FileFormat;
-import org.apache.batik.swing.JSVGScrollPane;
 
 /**
  * A window allowing the user to define a custom file format.
@@ -44,6 +43,8 @@ public class TabularImportWindow extends JFrame {
     private HeaderLinesPanel headerLinesPanel;
     private final EnumChooser<MeasType> measTypeChooser;
     private final EnumChooser<TreatType> treatTypeChooser;
+    private final EnumChooser<MomentUnit> momentUnitChooser;
+    private final EnumChooser<FieldUnit> fieldUnitChooser;
     private final FileFormat initialFormat;
     private final StringChooser separatorChooser;
     private final LabelledTextField columnWidthsBox;
@@ -78,6 +79,16 @@ public class TabularImportWindow extends JFrame {
                 TreatType.DEGAUSS_Z, TreatType.IRM, TreatType.ARM},
                 initialFormat.getTreatmentType());
         firstPanel.add(treatTypeChooser);
+        momentUnitChooser = new EnumChooser<MomentUnit>("Unit for magnetic moment",
+                new String[] {"A/m", "mA/m"},
+                new MomentUnit[] {MomentUnit.AM, MomentUnit.MILLIAM},
+                initialFormat.getMomentUnit());
+        firstPanel.add(momentUnitChooser);
+        fieldUnitChooser = new EnumChooser<FieldUnit>("Unit for AF field",
+                new String[] {"millitesla", "tesla"},
+                new FieldUnit[] {FieldUnit.MILLITESLA, FieldUnit.TESLA},
+                initialFormat.getFieldUnit());
+        firstPanel.add(fieldUnitChooser);
         firstPanel.add(separatorChooser = new StringChooser("Column separator",
                 new String[] {"Comma", "Tab", "Single space", "Any white space", "| (pipe)"},
                 new String[] {",", "\t", " ", "\\s+", "|"},
@@ -110,6 +121,7 @@ public class TabularImportWindow extends JFrame {
         final JButton cancelButton = new JButton("Cancel");
         buttonPanel.add(cancelButton);
         cancelButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
                 dispose();
@@ -117,6 +129,7 @@ public class TabularImportWindow extends JFrame {
         
         final JButton importButton = new JButton("Choose files…");
         importButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 final FileFormat format = getFileFormat();
                 format.writeToPrefs(app.getPrefs().getPrefs());
@@ -148,6 +161,7 @@ public class TabularImportWindow extends JFrame {
                 }
             }
             add(label);
+            add(Box.createRigidArea(new Dimension(5,0)));
             add(comboBox);
         }
         
@@ -195,6 +209,7 @@ public class TabularImportWindow extends JFrame {
             final JLabel jLabel = new JLabel(label);
             jLabel.setLabelFor(comboBox);
             add(jLabel);
+            add(Box.createRigidArea(new Dimension(5,0)));
             add(comboBox);
         }
         
@@ -215,12 +230,16 @@ public class TabularImportWindow extends JFrame {
                 fieldMap.put(fieldChooser.getColumnNumber()-1, field);
             }
         }
+                    final Map<DatumField, Double> rescaleMap =
+                    new HashMap<DatumField, Double>();
         return new FileFormat(fieldMap, headerLinesPanel.getNumber(),
                 measTypeChooser.getValue(),
                 treatTypeChooser.getValue(),
                 separatorChooser.getValue(),
                 fixedWidthBox.isSelected(),
-                FileFormat.convertStringToColumnWidths(columnWidthsBox.getValue()));
+                FileFormat.convertStringToColumnWidths(columnWidthsBox.getValue()),
+                momentUnitChooser.getValue(),
+                fieldUnitChooser.getValue());
     }
     
     private class HeaderLinesPanel extends JPanel {

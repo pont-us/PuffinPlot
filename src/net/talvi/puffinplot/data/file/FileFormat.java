@@ -26,7 +26,9 @@ import java.util.prefs.Preferences;
 import net.talvi.puffinplot.Util;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.DatumField;
+import net.talvi.puffinplot.data.FieldUnit;
 import net.talvi.puffinplot.data.MeasType;
+import net.talvi.puffinplot.data.MomentUnit;
 import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.Vec3;
 
@@ -46,6 +48,8 @@ public final class FileFormat {
     private final String separator;
     private final boolean useFixedWidthColumns;
     private final List<Integer> columnWidths;
+    private final MomentUnit momentUnit;
+    private final FieldUnit fieldUnit;
     private final static String prefsPrefix = "fileformat";
     private final static String[] emptyStringArray = {};
     
@@ -63,7 +67,7 @@ public final class FileFormat {
     public FileFormat(Map<Integer,DatumField> columnMap, int headerLines,
             MeasType measurementType, TreatType treatmentType,
             String separator, boolean useFixedWidthColumns,
-            List<Integer> columnWidths) {
+            List<Integer> columnWidths, MomentUnit momentUnit, FieldUnit fieldUnit) {
         this.columnMap = new HashMap<Integer, DatumField>(columnMap);
         this.headerLines = headerLines;
         this.separator = separator;
@@ -71,6 +75,8 @@ public final class FileFormat {
         this.treatmentType = treatmentType;
         this.useFixedWidthColumns = useFixedWidthColumns;
         this.columnWidths = columnWidths;
+        this.momentUnit = momentUnit;
+        this.fieldUnit = fieldUnit;
     }
     
     private String[] splitLine(String line) {
@@ -104,10 +110,25 @@ public final class FileFormat {
         for (int i=0; i<fieldStrings.length; i++) {
             if (!columnMap.containsKey(i)) continue;
             final DatumField fieldType = columnMap.get(i);
-            String valueString = fieldStrings[i];
+            final String valueString = fieldStrings[i];
+            double scale = 1;
+            switch (fieldType) {
+                case X_MOMENT:
+                case Y_MOMENT:
+                case Z_MOMENT:
+                case VIRT_MAGNETIZATION:
+                    scale = getMomentUnit().getFactorForAm();
+                    break;
+                case AF_X:
+                case AF_Y:
+                case AF_Z:
+                    scale = getFieldUnit().getFactorForTesla();
+                    break;
+            }
+            
             switch (fieldType) {
                 case VIRT_MAGNETIZATION:
-                    intensity = Util.parseDoubleSafely(valueString);
+                    intensity = Util.parseDoubleSafely(valueString) * scale;
                     break;
                 case VIRT_DECLINATION:
                     dec = Util.parseDoubleSafely(valueString);
@@ -116,7 +137,7 @@ public final class FileFormat {
                     inc = Util.parseDoubleSafely(valueString);
                     break; 
                 default:
-                    datum.setValue(fieldType, fieldStrings[i]);
+                    datum.setValue(fieldType, fieldStrings[i], scale);
             }
         }
         if (!(Double.isNaN(dec) || Double.isNaN(inc))) {
@@ -201,7 +222,9 @@ public final class FileFormat {
             fieldsBuilder.append(entry.getValue().toString());
             first = false;
         }
-        prefs.put(prefsPrefix+".columnMap", fieldsBuilder.toString());
+        prefs.put(pp+".columnMap", fieldsBuilder.toString());
+        prefs.put(pp+".momentUnit", getMomentUnit().toString());
+        prefs.put(pp+".fieldUnit", getFieldUnit().toString());
     }
     
     /**
@@ -232,8 +255,12 @@ public final class FileFormat {
             final DatumField field = DatumField.valueOf(parts[1]);
             columnMap.put(column, field);
         }
+        final MomentUnit momentUnit =
+                MomentUnit.valueOf(prefs.get(pp+".momentUnit", "AM"));
+        final FieldUnit fieldUnit =
+                FieldUnit.valueOf(prefs.get(pp+".fieldUnit", "TESLA"));
         return new FileFormat(columnMap, headerLines, measType, treatType,
-                separator, useFixedWidth, columnWidths);
+                separator, useFixedWidth, columnWidths, momentUnit, fieldUnit);
     }
 
     /**
@@ -291,5 +318,19 @@ public final class FileFormat {
         return specifiesFullVector() ||
                 (columnMap.containsValue(DatumField.VIRT_INCLINATION) &&
                 columnMap.containsValue(DatumField.VIRT_DECLINATION));
+    }
+
+    /**
+     * @return the momentUnit
+     */
+    public MomentUnit getMomentUnit() {
+        return momentUnit;
+    }
+
+    /**
+     * @return the fieldUnit
+     */
+    public FieldUnit getFieldUnit() {
+        return fieldUnit;
     }
 }
