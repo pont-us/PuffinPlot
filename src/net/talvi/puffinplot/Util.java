@@ -107,13 +107,16 @@ public class Util {
     /**
      * Clips a line to a supplied rectangle.
      * 
-     * @param line a line
-     * @param r a clipping rectangle
-     * @return the line, as clipped to the supplied rectangle
+     * @param line a line (null if none)
+     * @param r a clipping rectangle (null if none)
+     * @return the line, as clipped to the supplied rectangle, if 
+     * the two overlap; null if they do not overlap; null
+     * if either of the input parameters were null
      */
     public static Line2D clipLineToRectangle(Line2D line, Rectangle2D r) {
         // Cohen-Sutherland algorithm, after the description in
         // Foley, van Dam, Feiner, Hughes, & Phillips
+        if (line==null || r == null) return null;
         boolean accept = false, done = false;
         Outcode oc0 = new Outcode(line.getP1(), r),
                 oc1 = new Outcode(line.getP2(), r),
@@ -223,7 +226,8 @@ public class Util {
      * This is the smallest rectangle which contains all the points.
      * 
      * @param points a set of points
-     * @return the smallest rectangle which contains all the points
+     * @return the smallest rectangle which contains all the points,
+     * or null if no points were supplied
      */
     public static Rectangle2D envelope(Collection<Point2D> points) {
         if (points.isEmpty()) return null;
@@ -242,7 +246,7 @@ public class Util {
     }
     
     public static Line2D scaleLine(Line2D line, double scale) {
-        if (scale==1) return line;
+        if (scale==1 || line==null) return line;
         final double x0 = line.getX1();
         final double y0 = line.getY1();
         final double x1 = line.getX2();

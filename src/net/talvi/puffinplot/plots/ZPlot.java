@@ -74,10 +74,22 @@ public class ZPlot extends Plot {
         return new Rectangle2D.Double(xMin, yMin, xMax-xMin, yMax-yMin);
     }
     
+    /**
+     * Draws a line indicating a PCA direction.
+     * 
+     * @param g graphics context
+     * @param x TODO
+     * @param y TODO
+     * @param angleRad TODO
+     * @param colour colour of line
+     * @param clip clipping rectangle (null indicates an infinitely small
+     * clipping rectangle, and no line will be drawn)
+     * @param scale TODO
+     */
     private void drawPcaLine(Graphics2D g, double x, double y,
-            double angleRad, ZplotAxes axes, Color colour, Rectangle2D clip,
+            double angleRad, Color colour, Rectangle2D clip,
             double scale) {
-        // Note that line clipping is done ‘manually’. The previous implementation
+        // Line clipping is done ‘manually’. The previous implementation
         // just used g.setClip(axes.getBounds()) (saving and restoring the
         // previous clip rectangle), but this caused problems, chiefly
         // that the lines would appear at full length in SVG and PDF exports.
@@ -85,15 +97,21 @@ public class ZPlot extends Plot {
         // function in the Java libraries, so I have added a clipping routine
         // to the Util class.
         // SAFE_LENGTH is intended always to reach the edges of the plot.
+        if (clip == null) return;
         final double SAFE_LENGTH = 2000;
         final double dx = SAFE_LENGTH * sin(angleRad);
         final double dy = SAFE_LENGTH * cos(angleRad);
         g.setStroke(getStroke());
         g.setColor(colour);
-        Line2D line = Util.clipLineToRectangle(
+        final Line2D line = Util.clipLineToRectangle(
                 new Line2D.Double(x-dx, y+dy, x+dx, y-dy), clip);
-        line = Util.scaleLine(line, scale);
-        g.draw(line);
+        // If the clipping rectangle is null, or the line does not 
+        // intersect the rectangle, the clipped line will be null.
+        // Util.scaleLine will handle this gracefully but Graphics2D
+        // may not, so we check for a null line here.
+        if (line != null) {
+            g.draw(Util.scaleLine(line, scale));
+        }
     }
     
     @Override
@@ -187,7 +205,7 @@ public class ZPlot extends Plot {
                 clipRectangle = Util.envelope(pcaPointsH);
             }
             drawPcaLine(g, xOffset + x1, yOffset + y1,
-                    decRad, axes, Color.BLUE, clipRectangle, lineScale);
+                    decRad, Color.BLUE, clipRectangle, lineScale);
             
             final double x2 = pca.getOrigin().getComponent(vVs) * scale;
             final double y2 = - pca.getOrigin().getComponent(MeasurementAxis.MINUSZ) * scale;
@@ -214,7 +232,7 @@ public class ZPlot extends Plot {
                     clipRectangle = Util.envelope(pcaPointsV);
                 }
                 drawPcaLine(g, xOffset + x2, yOffset + y2, Math.PI/2 + incCorr,
-                        axes, Color.BLUE, clipRectangle, lineScale);
+                        Color.BLUE, clipRectangle, lineScale);
             }
         }
         drawPoints(g);
