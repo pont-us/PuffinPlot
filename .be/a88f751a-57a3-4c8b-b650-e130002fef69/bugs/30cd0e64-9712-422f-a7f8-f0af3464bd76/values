@@ -1,0 +1,71 @@
+{
+
+
+
+
+
+
+    "creator": "Pontus Lurcock <pont@talvi.net>", 
+
+
+
+
+
+
+    "extra_strings": [
+
+
+
+
+
+
+        "BLOCKS:aa76880b-7b65-421e-8419-cfe55d7c5781"
+
+
+
+
+
+
+    ], 
+
+
+
+
+
+
+    "reporter": "Pontus Lurcock <pont@talvi.net>", 
+
+
+
+
+
+
+    "severity": "minor", 
+
+
+
+
+
+
+    "status": "open", 
+
+
+
+
+
+
+    "summary": "a95s do not project onto upper hemisphere properly", 
+
+
+
+
+
+
+    "time": "Wed, 07 Nov 2012 20:43:24 +0000"
+
+
+
+
+
+
+}

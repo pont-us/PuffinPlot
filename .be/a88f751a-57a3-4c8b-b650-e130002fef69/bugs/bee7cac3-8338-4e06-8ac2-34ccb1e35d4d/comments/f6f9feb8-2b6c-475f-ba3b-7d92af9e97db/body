@@ -1,0 +1,16 @@
+A quick-and-dirty profiling of PuffinPlot while stepping through a
+suite of samples reveals the following breakdown of the event queue:
+
+81% GraphDisplay.paint, which includes
+60.5% DataTable.draw, which includes
+44% TextLinePoint.<init>, which includes
+27.5% TextLayout.<init> and
+12.9% TextLayout.getBounds
+
+DataTable.draw also spends 12.1% of time in String.format.
+
+So there are huge time savings to be made if this can be improved in 
+any way. A Big Dumb Cache is the obvious approach, but perhaps 
+improvements can be made in the way the Java2D API is being used. If
+caching is going the be done, would it be better to institute a 
+more general system for caching whole Plots?

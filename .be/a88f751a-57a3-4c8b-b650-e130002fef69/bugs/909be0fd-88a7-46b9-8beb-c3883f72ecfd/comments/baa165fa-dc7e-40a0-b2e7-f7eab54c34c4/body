@@ -1,0 +1,4 @@
+Need to remove old references to `depth' where no longer used, and
+standardize a terminology -- probably `Sample ID', encompassing either
+depth or name. Replace `name' with `sample id' in contexts where it could
+also refer to a depth.

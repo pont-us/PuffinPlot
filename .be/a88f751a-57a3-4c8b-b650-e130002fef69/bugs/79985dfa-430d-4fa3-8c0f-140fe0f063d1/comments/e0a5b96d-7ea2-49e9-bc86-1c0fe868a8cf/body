@@ -1,0 +1,7 @@
+Perhaps the easiest way to tie this one up for now -- without
+losing any current functionality -- would be to implement another
+SuiteCalcs object, but for all the loaded suites. The calculations
+could be saved as for the other types of calculation, which would
+probably be more useful than the current modal dialog implementation.
+I would open ‘implement proper reversals test’ as a new bug
+for a future version.

@@ -1,0 +1,6 @@
+I think the manual's wrong about relationship between current
+and selected samples in discrete suites -- current is always
+first sample of selection, outline box does not show current and
+doesn't show at all in GTK+ LnF. I think the behaviour's OK
+(for now at least) so just update the documentation. Also check
+that long core current/selection is correctly documented.

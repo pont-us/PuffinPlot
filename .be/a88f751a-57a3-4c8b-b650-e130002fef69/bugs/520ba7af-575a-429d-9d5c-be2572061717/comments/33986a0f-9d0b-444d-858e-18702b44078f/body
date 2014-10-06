@@ -1,0 +1,6 @@
+Have discussed with Christian. We thrashed out the notion of a
+preview window for tabulated data of unknown format, which would allow
+the user to specify which columns meant what. This is technically
+straightforward, but will require some careful UI decisions.
+Christian has put the word out for examples of other data formats,
+so I should have something to work with soon.

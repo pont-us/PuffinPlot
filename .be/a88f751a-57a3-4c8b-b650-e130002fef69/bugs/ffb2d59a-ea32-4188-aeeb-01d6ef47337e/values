@@ -1,0 +1,71 @@
+{
+
+
+
+
+
+
+    "creator": "Pontus Lurcock <pont@ou094023>", 
+
+
+
+
+
+
+    "extra_strings": [
+
+
+
+
+
+
+        "BLOCKS:b4dd06ba-dd5b-4889-b95c-9872a64f16af"
+
+
+
+
+
+
+    ], 
+
+
+
+
+
+
+    "reporter": "Pontus Lurcock <pont@ou094023>", 
+
+
+
+
+
+
+    "severity": "minor", 
+
+
+
+
+
+
+    "status": "fixed", 
+
+
+
+
+
+
+    "summary": "Reformat PCA display", 
+
+
+
+
+
+
+    "time": "Tue, 04 Nov 2008 03:46:31 +0000"
+
+
+
+
+
+
+}

@@ -1,0 +1,71 @@
+{
+
+
+
+
+
+
+    "creator": "Pontus Lurcock <pont@talvi.net>", 
+
+
+
+
+
+
+    "extra_strings": [
+
+
+
+
+
+
+        "BLOCKS:aa76880b-7b65-421e-8419-cfe55d7c5781"
+
+
+
+
+
+
+    ], 
+
+
+
+
+
+
+    "reporter": "Pontus Lurcock <pont@talvi.net>", 
+
+
+
+
+
+
+    "severity": "minor", 
+
+
+
+
+
+
+    "status": "open", 
+
+
+
+
+
+
+    "summary": "Add \"merge measurements\" feature", 
+
+
+
+
+
+
+    "time": "Tue, 23 Apr 2013 08:46:38 +0000"
+
+
+
+
+
+
+}

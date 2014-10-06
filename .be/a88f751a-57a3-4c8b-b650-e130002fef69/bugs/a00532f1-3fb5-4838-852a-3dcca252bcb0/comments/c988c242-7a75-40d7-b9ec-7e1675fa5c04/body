@@ -1,0 +1,8 @@
+`Fisher by site' calculation currently assumes that site code is
+the first two characters, and groups PCA values accordingly. Claudio
+prefixes his sample names with a suite code, so whole sample name
+looks like AB0101.1 rather than 0101.1 -- thus Puffin assumes that 
+everything is in one site!
+
+This could be easily fixed by using all but the last four characters as
+the site code, rather than the first two characters.

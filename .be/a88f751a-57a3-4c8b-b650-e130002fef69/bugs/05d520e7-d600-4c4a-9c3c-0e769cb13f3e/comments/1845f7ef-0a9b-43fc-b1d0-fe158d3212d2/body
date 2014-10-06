@@ -1,0 +1,2 @@
+Turned out to be a one-line fix: adding a Datum.setInPca(false)
+to Sample.clearCalculations().

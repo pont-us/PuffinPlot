@@ -1,0 +1,5 @@
+In the PDF version of the manual, the tables and figure captions
+are hard to distinguish from the text. It would be better to
+put a frame around floats. the float package seems promising for
+this, but I haven't got it to work yet -- possibly an interaction
+with one of the 18 other packages I'm using.

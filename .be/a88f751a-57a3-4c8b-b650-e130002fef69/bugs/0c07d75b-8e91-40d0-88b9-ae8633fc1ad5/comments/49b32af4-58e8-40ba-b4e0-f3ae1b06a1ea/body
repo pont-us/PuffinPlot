@@ -1,0 +1,4 @@
+This is presumably the same one that he reported telephonically,
+which I noted as "when doing any fit (incl PCA) doesn't show mean
+and a95 on plot". Well, PCA doesn't give an a95 of course, but 
+perhaps MAD could be shown somehow?

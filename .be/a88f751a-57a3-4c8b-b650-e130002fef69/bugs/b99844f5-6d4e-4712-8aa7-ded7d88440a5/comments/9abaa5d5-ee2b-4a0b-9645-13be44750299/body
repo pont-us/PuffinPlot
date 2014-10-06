@@ -1,0 +1,9 @@
+The inefficient method of drawing the lines on the equal-area plots
+is producing quite noticeable lag. For every refresh, every line
+segment is recalculated from scratch. So, for example, for an A95
+confidence interval this means calculating a small circle of Vec3s,
+segmenting it in case it crosses the equator, then projecting the
+parts onto the plot area. All these operations are computationally
+expensive. Projected lines on equal-area plots need to be cached
+and only updated at need -- possibly not all of them, but profiling
+can identify the worst culprits.

@@ -1,0 +1,2 @@
+GreatCircles.isValid is currently hard-coded to some fairly
+arbitrary criteria -- make configurable or remove.

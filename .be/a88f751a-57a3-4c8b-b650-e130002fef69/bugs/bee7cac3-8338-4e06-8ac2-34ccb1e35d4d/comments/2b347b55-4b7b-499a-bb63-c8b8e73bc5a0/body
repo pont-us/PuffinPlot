@@ -1,0 +1,3 @@
+If this can be optimized neatly by smarter use of TextLayout, it should
+be. Caching plots is a nice idea, but so low-priority compared to approx.
+30 other issues that it will probably never be worth doing.

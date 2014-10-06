@@ -1,0 +1,9 @@
+Given Python's popularity with the scientific and particularly pmag
+crowd, jython might be the best choice -- it was stagnant for a long
+time but 2.5 has recently come out. See
+http://wiki.python.org/jython/UserGuide#embedding-jython
+org.python.util.PythonInterpreter
+org.python.util.ReadlineConsole
+(also JLineConsole and InteractiveInterpreter in same package)
+http://don.freeshell.org/jython/ and
+http://code.google.com/p/jythonconsole/

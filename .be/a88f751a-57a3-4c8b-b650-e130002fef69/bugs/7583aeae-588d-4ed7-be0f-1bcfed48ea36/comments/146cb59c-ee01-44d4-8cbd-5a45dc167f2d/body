@@ -1,0 +1,3 @@
+Column assignments for custom data import should be saved and
+restored in preferences. However, column assignments are garbled
+upon re-running PuffinPlot.

@@ -1,0 +1,4 @@
+The default error handler currently pops up a dialogue with a single
+OK button; this means that if the error is repeated there is no way
+to quit the application. Put Continue and Quit buttons on the 
+dialogue box.

@@ -1,0 +1,8 @@
+IIRC I'm only using JAMA to calculate eigenvectors for PCA
+analysis. If so it might be worth coding the calculation in
+PuffinPlot itself and dropping JAMA, which accounts for almost 10%
+of PuffinPlot's source code (although of course in the binary it's
+dwarfed by Batik and FreeHEP). Note that the calculation should
+be simplified by the fact that we know the matrix to be symmetric.
+DAIE does it in an Excel spreadsheet which (with all due respect
+to Leo's ingenuity) implies it's not *too* hairy.

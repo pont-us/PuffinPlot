@@ -1,0 +1,3 @@
+When dragging the depth slider, update the current sample to the
+pointer position, so that the display updates to the currently
+changing endpoint of the selection.

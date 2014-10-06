@@ -1,0 +1,2 @@
+Fixed as specified. Crash is still theoretically possible with 
+sufficiently large number of files, but far less likely.

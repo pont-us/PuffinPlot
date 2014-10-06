@@ -1,0 +1,4 @@
+If PuffinPlot is started with no saved preferences, PCA fit
+lines are shown at the "Full" setting. However, the Preferences
+window shows the "Long" setting. Once the setting has been changed,
+the actual appearance corresponds to the setting in all cases.

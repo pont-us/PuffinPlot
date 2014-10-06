@@ -1,0 +1,127 @@
+{
+
+
+
+
+
+
+    "extra_strings": [
+
+
+
+
+
+
+        "BLOCKED-BY:003832f3-2f3b-4bbe-a883-76c79998b792", 
+
+
+
+
+
+
+        "BLOCKED-BY:07e5f884-a979-4e06-aecf-3c6c45870035", 
+
+
+
+
+
+
+        "BLOCKED-BY:194f4f1d-f46a-4161-8371-40785bb4c648", 
+
+
+
+
+
+
+        "BLOCKED-BY:308483ab-c2b1-4f75-a0dd-2e7357d3b9ba", 
+
+
+
+
+
+
+        "BLOCKED-BY:37651eeb-17da-4c9e-a1ac-f60adf36da94", 
+
+
+
+
+
+
+        "BLOCKED-BY:bffa7d87-87aa-42b3-a25f-25d0d129c70b", 
+
+
+
+
+
+
+        "BLOCKED-BY:c79cd634-e6f1-4eb7-b048-24adebaf3311", 
+
+
+
+
+
+
+        "BLOCKED-BY:d0fb0b24-dd1c-4055-98aa-b07854bfe864", 
+
+
+
+
+
+
+        "BLOCKED-BY:d2561f9d-e971-49bb-a07b-037ae30439a5", 
+
+
+
+
+
+
+        "BLOCKED-BY:d3883cb0-4db9-4a00-a2a7-178c048514e8", 
+
+
+
+
+
+
+        "BLOCKED-BY:f89ccd34-bde9-4447-b866-a7315c2fca94"
+
+
+
+
+
+
+    ], 
+
+
+
+
+
+
+    "severity": "target", 
+
+
+
+
+
+
+    "status": "fixed", 
+
+
+
+
+
+
+    "summary": "1.01", 
+
+
+
+
+
+
+    "time": "Mon, 06 Oct 2014 15:56:53 +0000"
+
+
+
+
+
+
+}

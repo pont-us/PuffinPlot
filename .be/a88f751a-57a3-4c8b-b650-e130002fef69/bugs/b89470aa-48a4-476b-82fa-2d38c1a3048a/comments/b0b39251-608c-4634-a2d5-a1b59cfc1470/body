@@ -1,0 +1,5 @@
+Still can't reproduce on my data; waiting for C to send his. From the
+backtrace, looks as though a datum isn't getting its sample field set:
+the exception is raised at
+` if (d.getSample().isEmptySlot()) return d; '
+(line 36 of Line.java)

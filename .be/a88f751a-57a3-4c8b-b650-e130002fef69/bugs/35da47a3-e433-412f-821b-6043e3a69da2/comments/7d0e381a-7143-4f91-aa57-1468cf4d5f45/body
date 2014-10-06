@@ -1,0 +1,5 @@
+This doesn't seem to be as important to people as I thought,
+perhaps because they're better at munging their own data than I
+suspected. Or perhaps everything they wanted really is in there
+already. In any case I'm dropping it from 1.0 to 1.1 since import
+flexibility is far more important and time is limited.

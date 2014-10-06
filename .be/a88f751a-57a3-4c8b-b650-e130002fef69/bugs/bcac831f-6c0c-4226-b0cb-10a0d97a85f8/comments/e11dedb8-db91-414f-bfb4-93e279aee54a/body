@@ -1,0 +1,9 @@
+A very strange bug -- haven't figured out the cause yet. FreeHEP gets
+its own Graphics2D object and I can't see how it could mess with the
+rendering hints for the on-screen one. In any case, the rendering hints
+by the paint() method on every redraw. Adding a
+‘if (g instanceof SVGGraphics2D) return;’ to the start of paint()
+squashes the bug (but of course results in a blank SVG); this implies
+that it's the actual process of drawing to the FreeHEP graphics object
+which disables anti-aliasing, rather than anything peripheral in the
+saveToSvgFreehep method.

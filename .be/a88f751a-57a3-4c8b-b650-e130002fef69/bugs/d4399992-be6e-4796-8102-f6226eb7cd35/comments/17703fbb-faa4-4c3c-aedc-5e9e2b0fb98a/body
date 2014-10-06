@@ -1,0 +1,2 @@
+Site grouping now peels off last three digits of sample code if no
+dot is present, and the last four if there is a dot.

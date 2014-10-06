@@ -1,0 +1,4 @@
+`n' is presumably number of points used in PCA fit (number of 
+points for GC fit is already exported). Not sure where an a95 comes
+into the sample calculations though -- PCA just gives MADs.
+Probably need to clarify with JMG before implementing.

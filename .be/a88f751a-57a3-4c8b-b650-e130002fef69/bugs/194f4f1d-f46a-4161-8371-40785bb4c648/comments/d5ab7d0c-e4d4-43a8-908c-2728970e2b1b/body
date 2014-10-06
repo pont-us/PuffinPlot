@@ -1,0 +1,4 @@
+Defaults were differently set in ZPlot and PrefsWindow; fixed now.
+The fact that the default has to be set identically in two places
+is something of a meta-bug, and I have filed it for future attention
+in ticket #234.

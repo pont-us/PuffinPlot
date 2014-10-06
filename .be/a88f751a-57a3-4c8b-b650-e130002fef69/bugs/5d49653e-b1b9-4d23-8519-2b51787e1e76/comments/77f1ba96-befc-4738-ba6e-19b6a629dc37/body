@@ -1,0 +1,7 @@
+Magnetic susceptibility units are a hard problem: the conversion
+factor is potentially different for every set-up, and is probably
+best determined empirically. I've added a ‘scale mag. sus.’ feature,
+which places the onus on the user since there's no way PuffinPlot
+can deduce the correct factor from the data files themselves.
+This means that there is nothing more to to be done on the SI
+front so I'm closing this ticket.

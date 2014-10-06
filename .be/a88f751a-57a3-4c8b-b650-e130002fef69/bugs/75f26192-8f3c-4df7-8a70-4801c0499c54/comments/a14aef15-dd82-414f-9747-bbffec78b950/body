@@ -1,0 +1,4 @@
+Implemented as specified. I assume that various bugs will become
+apparent as people try it out with more real-world files, but the
+current implementation has at least been tested with the example
+files supplied by JMG.

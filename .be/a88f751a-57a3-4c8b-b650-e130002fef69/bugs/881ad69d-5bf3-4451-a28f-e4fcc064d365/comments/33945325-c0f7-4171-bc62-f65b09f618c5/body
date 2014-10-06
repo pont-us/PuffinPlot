@@ -1,0 +1,5 @@
+By extension: should Zplot settings, current correction settings etc.
+be handled similarly? At this stage maybe it's worth thinking about
+bumping per-sample properties up to the Sample object, even if they
+will be flattened out and repeated in every Datum line on saving
+(and read from the first one on loading).

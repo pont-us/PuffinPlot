@@ -1,0 +1,71 @@
+{
+
+
+
+
+
+
+    "creator": "Pontus Lurcock <pont@talvi.net>", 
+
+
+
+
+
+
+    "extra_strings": [
+
+
+
+
+
+
+        "BLOCKS:f1cda3e3-f668-4c3a-8884-53a517b74548"
+
+
+
+
+
+
+    ], 
+
+
+
+
+
+
+    "reporter": "Pontus Lurcock <pont@talvi.net>", 
+
+
+
+
+
+
+    "severity": "minor", 
+
+
+
+
+
+
+    "status": "fixed", 
+
+
+
+
+
+
+    "summary": "Run script dialog: crash on \u2018cancel\u2019", 
+
+
+
+
+
+
+    "time": "Tue, 07 Feb 2012 03:33:41 +0000"
+
+
+
+
+
+
+}

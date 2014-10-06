@@ -1,0 +1,18 @@
+This one might require a little thought. Anonymous 
+reviewer writes:
+‘The major flaw that was found is in the process of defining the set of
+samples in each site, making sure the PCA analyses ended up in that site,
+and then figuring out a simple way to view and analyze the site mean
+results. This part of the analysis process is very cryptic, and not easy
+to examine or modify. It would be a significant improvement if a data
+table with sample name, PCA results, and the Fisher mean and stats were
+also included in a window- preferable an interactive window (so data can
+be coded, deleted, etc) along with the Site Equal Area plot. Although the
+process would become more familiar with practice, I was never very
+confident that the right results of the PCA analyses were being used for
+the site mean (it took a bit of very close examination to determine this
+was in fact working). The great-circle analysis was very good at the
+individual sample level, but was also a bit cryptic when examining the
+site-level or suite-level results.’
+Since this is described as ‘the major flaw’ I should be thorough
+in addressing it.

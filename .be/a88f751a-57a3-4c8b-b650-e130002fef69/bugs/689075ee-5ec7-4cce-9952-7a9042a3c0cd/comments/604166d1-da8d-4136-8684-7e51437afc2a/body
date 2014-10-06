@@ -1,0 +1,3 @@
+I had omitted to check whether the array of files was
+empty before getting the first element. Now fixed 
+(a one-liner).

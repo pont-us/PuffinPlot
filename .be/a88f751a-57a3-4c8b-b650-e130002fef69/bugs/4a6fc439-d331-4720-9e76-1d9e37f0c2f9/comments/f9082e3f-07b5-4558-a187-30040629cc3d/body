@@ -1,0 +1,11 @@
+Hard work but the rewards would be tremendous. A command console in the
+running program to perform custom manipulations en masse. A headless
+batch mode allowing PP to be incorporated into a publication build
+script. Groovy is an obvious choice for language, but ruby seems well-
+regarded for constructing simple DSLs.
+
+Probably too time-consuming ever to be implemented, but nice to have
+on the wishlist. (Actually, would be easy to do as Groovy hooks 
+straight into the Puffin's guts; the hard bit would be designing
+a DSL simple enough for people to use without intimate knowledge of
+PP's internals.)

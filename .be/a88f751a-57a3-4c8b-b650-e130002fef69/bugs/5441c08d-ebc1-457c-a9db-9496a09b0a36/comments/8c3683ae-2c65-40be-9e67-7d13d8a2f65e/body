@@ -1,0 +1,4 @@
+At present, several classes such as FisherValues use what is
+in effect an implicit interface to export their fields when they
+need to be saved to a file: toStrings(), getHeaders(), and
+getEmptyFields(). These should be codified into an official interface.

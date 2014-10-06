@@ -1,0 +1,9 @@
+At present ‘Fisher by site’ and ‘Great circles’ open up 
+new windows containing a single large equal-area plot.
+These are at least partially redundant now that there are 
+site and suite equal area plots in the main window. Easiest
+would probably be to retain them, but rename them (to ‘site’
+and ‘suite’ something), and don't open them automatically.
+Add the site (great-circle) plot to the Windows menu to
+let it be opened automatically. They're still handy for
+a quick close-up without having to edit the main plot layout.

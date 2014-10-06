@@ -1,0 +1,3 @@
+Implemented almost as specified: pointer is overlain on range selection
+rather than being adjacent. User holds shift to perform a range 
+selection.

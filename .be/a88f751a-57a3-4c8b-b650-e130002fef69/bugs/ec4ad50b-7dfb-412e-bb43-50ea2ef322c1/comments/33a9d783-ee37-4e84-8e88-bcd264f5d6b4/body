@@ -1,0 +1,7 @@
+Currently samples in a long core are kept in a hash table with
+Doubles representing depths as the keys. This seems to work but
+is a little dodgy, given the inherent imprecision of floating-
+point arithmetic. Would it make more sense simply to treat depth
+labels as strings, since they're only accessed by index anyway?
+This would let long core and discrete suites be handled far more
+uniformly.

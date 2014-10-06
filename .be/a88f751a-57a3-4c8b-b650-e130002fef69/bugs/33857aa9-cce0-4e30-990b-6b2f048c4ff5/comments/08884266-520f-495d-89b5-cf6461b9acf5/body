@@ -1,0 +1,4 @@
+In "move mode", plot frames should be labelled with the name of
+the plot, because it's not always obvious what they are. For example,
+If no PCA has been performed, the "PCA table" plot will be completely
+blank.

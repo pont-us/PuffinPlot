@@ -1,0 +1,3 @@
+Puffinplot sample data table only works if site defined --
+should fall back to displaying sample data for whole
+file if no site.

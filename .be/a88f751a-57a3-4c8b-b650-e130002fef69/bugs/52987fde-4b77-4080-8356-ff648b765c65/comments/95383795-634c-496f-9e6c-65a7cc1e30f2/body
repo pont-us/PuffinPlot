@@ -1,0 +1,6 @@
+Suite (formation) direction a little confusing at present --
+I think it's displayed on the suite equal-area plot and (maybe)
+saved in the suite data, but there's no menu item to calculate
+it from site directions -- we've just got one that calculates a suite
+direction from the individual sample directions. I should make
+this all a bit more coherent.

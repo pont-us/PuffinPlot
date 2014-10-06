@@ -1,0 +1,2 @@
+In accordance with the holy precepts of Bloch, any class not
+explicitly designed for subclassing should be declared final.

@@ -1,0 +1,6 @@
+Maybe a bit ambitious, but I just noticed that Gary Acton thinks
+it's handy to have an animated GIF of demag data (each frame being
+the plots for one depth). What about bundling up data & some code
+for a minimal viewer applet -- essentially just the main window
+and slider of PuffinPlot? Would be a nice way to share data.
+Probably fairly niche use though, low priority.

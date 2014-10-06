@@ -1,0 +1,3 @@
+Python scripts can now be run either from a menu item or
+by passing a filename on the command line. The functionality
+is documented in the manual.

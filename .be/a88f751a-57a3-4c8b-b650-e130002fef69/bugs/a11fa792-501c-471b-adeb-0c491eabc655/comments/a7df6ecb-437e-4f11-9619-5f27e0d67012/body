@@ -1,0 +1,3 @@
+The main window geometry -- and, come to think of it, the geometries
+of the data table and suite fisher windows -- should be saved as 
+preferences.

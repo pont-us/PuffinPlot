@@ -1,0 +1,7 @@
+Currently copying a point selection is a single-step process --
+select a set of samples, and use "copy point selection" to transfer
+the current selection to all of them. It's clearly quicker than copy/paste,
+but less intuitive since the copy/paste paradigm is *very* well-
+entrenched. Christian couldn't figure it out by himself, and he's one
+of PuffinPlot's more assiduous users, so this should clearly be changed
+before PuffinPlot gets a wider release.

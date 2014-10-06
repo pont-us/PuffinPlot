@@ -1,0 +1,3 @@
+Perhaps start expanding the Fisher Stats window into a more general
+`per-suite information' graph display, and implement a new DataTable
+for per-site Fisher stats?

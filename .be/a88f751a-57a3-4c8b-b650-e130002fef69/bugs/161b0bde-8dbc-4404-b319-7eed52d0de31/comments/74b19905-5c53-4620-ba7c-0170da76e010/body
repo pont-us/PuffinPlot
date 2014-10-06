@@ -1,0 +1,4 @@
+I suspect that PCA line projections on the Zplot are still relying
+on the window clip area for truncation, meaning that they're
+far too long when exported or printed. Look into this and clip
+them explicitly if necessary.

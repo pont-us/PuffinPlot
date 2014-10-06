@@ -1,0 +1,2 @@
+Multi-suite calculations are now handled very much like
+single-suite calculations, except that they aren't plotted.

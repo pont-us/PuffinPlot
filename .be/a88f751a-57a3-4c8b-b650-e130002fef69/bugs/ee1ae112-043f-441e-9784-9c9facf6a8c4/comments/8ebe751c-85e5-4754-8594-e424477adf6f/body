@@ -1,0 +1,6 @@
+Currently most imported data fields are expected to be in whatever
+units PuffinPlot uses internally -- which means Tesla for AF
+demagnetization fields, and A/m for sample remanences. These units need
+to be selectable by the user during importing, to allow (for example)
+demagnetization fields in mT and remanences in Gauss. Reported by
+Terence Day.

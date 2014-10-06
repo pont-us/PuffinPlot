@@ -1,0 +1,71 @@
+{
+
+
+
+
+
+
+    "creator": "Pontus Lurcock <pont@ou094023>", 
+
+
+
+
+
+
+    "extra_strings": [
+
+
+
+
+
+
+        "BLOCKS:f1cda3e3-f668-4c3a-8884-53a517b74548"
+
+
+
+
+
+
+    ], 
+
+
+
+
+
+
+    "reporter": "Pontus Lurcock <pont@ou094023>", 
+
+
+
+
+
+
+    "severity": "minor", 
+
+
+
+
+
+
+    "status": "fixed", 
+
+
+
+
+
+
+    "summary": "User preference for SQUID orientation", 
+
+
+
+
+
+
+    "time": "Thu, 12 Feb 2009 02:15:54 +0000"
+
+
+
+
+
+
+}

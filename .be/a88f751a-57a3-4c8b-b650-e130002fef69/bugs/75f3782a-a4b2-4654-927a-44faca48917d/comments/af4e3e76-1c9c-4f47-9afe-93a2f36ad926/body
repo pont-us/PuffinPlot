@@ -1,0 +1,3 @@
+Add some indication that the ctrl-S shortcut is performing an action --
+flash some component of the GUI, and/or add a * to the window title
+when a suite is unsaved.

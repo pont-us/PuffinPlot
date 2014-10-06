@@ -1,0 +1,3 @@
+At present, if custom notes or flags are changed, the change only takes
+effect when the current sample changes. The change should happen 
+instantly.

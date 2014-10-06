@@ -1,0 +1,6 @@
+Controlling whether it's applied to the formation correction 
+probably sufficient -- after all, if you're not applying it
+to *anything*, you can just set it to zero. And I suspect that
+the case of wanting your formation correction corrected for
+local magnetic declination, but not your sample correction,
+is rare enough that I can ignore it.

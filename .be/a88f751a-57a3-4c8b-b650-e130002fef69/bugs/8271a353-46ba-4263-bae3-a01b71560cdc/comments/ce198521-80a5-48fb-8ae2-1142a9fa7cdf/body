@@ -1,0 +1,4 @@
+Release information is now gleaned from Mercurial at build time.
+For the manual, it is munged with a Python script and included
+into the LaTeX source. For the program, it is written to a 
+properties file which is packaged and read at run-time.

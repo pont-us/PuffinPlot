@@ -1,0 +1,4 @@
+Currently dragging a box selects points within it, whichever mouse
+button is used. Right-button drag should deselect points instead.
+This would add useful functionality and make selection behaviour more
+consistent (cf. shift-click).

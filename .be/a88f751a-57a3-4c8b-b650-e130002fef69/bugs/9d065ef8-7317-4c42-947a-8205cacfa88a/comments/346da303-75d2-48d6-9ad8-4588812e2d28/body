@@ -1,0 +1,4 @@
+On closing a suite, Puffin now sets the current suit to the previous
+one (if any), otherwise the next one (if any), otherwise none. Replaced
+PuffinApp's currentSuiteIndex with a pointer to the suite itself which
+should make this kind of bug less likely.

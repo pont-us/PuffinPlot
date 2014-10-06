@@ -1,0 +1,40 @@
+Anonymous reviewer writes:
+‘The authors point out that this program is capable of producing
+publication-quality figures with little fuss. I would say this is marginally
+true, especially for the PCA "blue line" fit on the Z-plots. While this is
+interesting and useful during the analysis process (and could be useful as an
+element in a published figure)- I would wish to decrease the length of the
+line and clean-up the various plots. I attempted to do this using both the
+PDF and the SVG files, using Illustrator (CS 5.5). The SVG file did not work
+well at all. The PDF opened in Illustrator- put the manner in which the
+graphical elements were defined and grouped- with a multitude of clipping
+masks- made editing and cleaning up the figure very difficult- more difficult
+than similar plots produced by the other software packages we use. Making
+specific recommendations to make these figures more useful is beyond my
+ability- so I am sorry for just pointing out a problem without having a
+specific recommendation for its solution.’
+
+A bit tricky, this one. In particular, ‘The SVG file did not work well
+at all’ is too vague to be dealt with very specifically, especially
+since I don't have access to Illustrator CS 5.5. Possibly the best
+I can do on this is to add another SVG export option, using the 
+FreeHEP libraries, and hope that this one works better. It might be
+as well to have the two options anyway, since you never know what
+people will want to do with the SVGs, and two export libraries increases
+the chance of compatibility with whatever the files are being 
+fettled with.
+
+Similar comments go for the PDF export. The criticism is a little more
+specific here, but since PDF export is handled by a third-party library
+I can't directly do much about it. Again, adding another option to
+export via FreeHEP might be the best I can do -- and better documentation
+of course.
+
+I will also test the exported files with as many vector editors as
+I can get my hands on, to see if I can replicate the problems which
+Illustrator seems to have. Very hard to fix reliably without contact
+with the user, though.
+
+Finally, this makes me wonder if it would be feasible to incorporate
+‘native’ SVG/PDF export into PuffinPlot -- possibly not as insane
+as it sounds -- I will open a new ticket for it.

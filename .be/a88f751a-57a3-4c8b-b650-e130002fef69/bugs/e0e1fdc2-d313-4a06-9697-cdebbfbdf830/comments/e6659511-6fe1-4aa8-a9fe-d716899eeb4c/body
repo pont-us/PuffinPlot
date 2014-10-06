@@ -1,0 +1,4 @@
+We can't rely on datasets always following OPRF conventions.
+Instead, the current heuristic should be used to set a mutable field,
+which can be overridden by the user. UI could be as simple as: select
+a bunch of samples, hit a button, enter a site name.

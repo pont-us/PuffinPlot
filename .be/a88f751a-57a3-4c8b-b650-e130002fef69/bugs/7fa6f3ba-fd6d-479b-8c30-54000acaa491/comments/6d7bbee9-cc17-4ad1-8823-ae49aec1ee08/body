@@ -1,0 +1,4 @@
+There is now a user preference to allow selection of "Native"
+look and feel (force Aqua, Windows, or GTK+ as appropriate),
+"Java" (Metal) and "Default" (uses system settings, which default
+to Metal on Linux and native toolkits on Windows and Mac).

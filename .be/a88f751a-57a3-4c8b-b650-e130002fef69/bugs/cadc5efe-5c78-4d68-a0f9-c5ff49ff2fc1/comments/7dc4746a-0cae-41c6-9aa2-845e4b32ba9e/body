@@ -1,0 +1,3 @@
+When PP's not in "move plots" mode, grabbing and dragging a blank
+section of the plots window should scroll the window (if it has
+scrollbars).

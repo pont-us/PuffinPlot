@@ -1,0 +1,8 @@
+Currently there are three textual components on the graph display:
+1. Sample name and correction (anchored to top left)
+2. PCA results (anchored to Z-plot)
+3. Fisher results (anchored to equal area plot)
+
+These should all be independently positionable like other plots.
+(This will require variable-width margins since the current margin
+sizes won't let them get small enough).

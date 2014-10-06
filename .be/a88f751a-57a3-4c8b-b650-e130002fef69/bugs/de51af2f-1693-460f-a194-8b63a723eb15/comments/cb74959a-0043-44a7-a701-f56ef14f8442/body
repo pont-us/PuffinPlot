@@ -1,0 +1,5 @@
+Now implemented as a dialogue box accessible from the Edit > 
+Corrections... menu item. won't work for long cores, but this is part
+of a wider UI/design problem of how to handle selection in long cores
+so I will open this as a separate ticket if and when anyone requests
+it.

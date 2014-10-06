@@ -1,0 +1,4 @@
+Just a couple of minor niggles: (1) error should be generated if
+script can't be found, rather than failing silently; (2) display
+should update automatically to show new confidence intervals rather 
+than requiring a click in the plot area as currently.

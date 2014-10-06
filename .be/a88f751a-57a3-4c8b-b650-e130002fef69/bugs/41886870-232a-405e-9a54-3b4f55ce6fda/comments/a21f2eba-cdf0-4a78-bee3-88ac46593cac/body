@@ -1,0 +1,9 @@
+Currently, Suite contains importAmsFromDelimitedFile and
+importAmsFromAsc, but only the latter is actually tied to 
+the user interface. For anyone not using the Agico software,
+this would mean that the only way to import AMS data would be
+to mock-up an Agico ASC file (ugh). I should re-add UI support 
+for the ‘simple’ AMS import. The method supports both raw
+tensors and principal axes directions, but I should probably
+check them both before exposing it to the UI, since it hasn't
+been extensively tested.

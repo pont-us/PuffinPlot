@@ -1,0 +1,3 @@
+getDemagLevel now returns 0 for treatType of UNKNOWN. Augmented
+DataTable to fall back to sequence number when all demag levels
+are zero (DemagPlot already does this).

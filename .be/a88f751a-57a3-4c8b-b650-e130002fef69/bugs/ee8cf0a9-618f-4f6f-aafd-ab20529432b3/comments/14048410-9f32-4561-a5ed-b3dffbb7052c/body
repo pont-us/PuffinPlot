@@ -1,0 +1,2 @@
+Large datasets can take a while to load. A progress dialogue would
+be nice, even if implemented `cheaply' without an ETA.

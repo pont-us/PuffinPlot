@@ -1,0 +1,4 @@
+Currently we can define sites (in various ways) for suites that
+don't have them, but we can't clear defined sites to return to 
+a site-less suite. PuffinPlot should have a "Clear sites" action on
+the "Sites" menu.

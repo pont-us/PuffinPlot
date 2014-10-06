@@ -1,0 +1,3 @@
+Simple fix: changed the plots HashMap to a LinkedHashMap which 
+iterates in insertion order! Also robustified ZplotLegend to
+fail more gracefully if axes == null.

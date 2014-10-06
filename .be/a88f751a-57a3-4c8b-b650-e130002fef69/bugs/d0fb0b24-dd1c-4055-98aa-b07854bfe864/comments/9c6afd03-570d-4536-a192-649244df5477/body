@@ -1,0 +1,6 @@
+Gary Acton writes:
+‘I noticed in the PuffinPlot manual that
+the authors suggest anchored PCA is the primary PCA to use. I don't actually
+agree with that as many data fail to decay precisely to the origin of a
+Zijderveld plot and thus the unanchored version will be needed.’
+Revise the appropriate section of the manual.

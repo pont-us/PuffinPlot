@@ -1,0 +1,3 @@
+Pretty much working, except on the data table, but I am not
+regarding #91 as a blocker for this, since it should automagically
+start working once data table lines are implemented as PlotPoints.

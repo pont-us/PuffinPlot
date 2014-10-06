@@ -1,0 +1,9 @@
+At present, ‘export suite calculations’ just seems to give
+a single mean. If a site contains sites of both polarities,
+it should give both normal and reversed means. Actually on
+closer inspection it's worse: we're just exporting the fisher
+mean of all the individual PCAs. This is certainly worth doing,
+but we definitely also need meta-means of the site means.
+(ISTR Opdyke & Channell has some discussion of which of the 
+techniques is superior but it's as well to do both and let
+the user choose.)

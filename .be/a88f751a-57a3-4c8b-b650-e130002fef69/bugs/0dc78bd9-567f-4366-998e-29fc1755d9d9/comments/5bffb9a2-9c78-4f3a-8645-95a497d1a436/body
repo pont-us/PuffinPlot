@@ -1,0 +1,7 @@
+Now using Window.setIconImages. Seems fine on Windows. A bit 
+ropey on Ubuntu but I don't think the problem there is at my end.
+(Works fine from command line, default icon when run from file
+manager. Very odd.) Suspect there's nothing I can do about it,
+so I'm closing this bug and hoping that a future Ubuntu release will
+fix the problem.
+./

@@ -1,0 +1,3 @@
+AMS confidence regions are currently projected on the fly, which 
+can be uncomfortably slow. The projected points should be cached and
+only recalculated when the AMS statistics are redone.

@@ -1,0 +1,6 @@
+Units on ticks for Zplot axes: they are not shown, and they are
+independently chosen -- so you can get a graph with e.g. a "1.0"
+(with implicit e-7) on one axis, and a "5.0" (with implicit e-8)
+on another axis half as long!
+
+Units need to be standardized and displayed.

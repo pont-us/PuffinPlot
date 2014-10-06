@@ -1,0 +1,21 @@
+Build date: UNKNOWN
+Crash date: 2009-09-23 19:27:56
+java.version    1.5.0_16
+java.vendor     Sun Microsystems Inc.
+os.name         Linux
+os.arch         i386
+os.version      2.6.24-19-generic
+user.name       pont
+java.lang.IndexOutOfBoundsException: Index: 2, Size: 2
+at java.util.ArrayList.RangeCheck(ArrayList.java:546)
+at java.util.ArrayList.get(ArrayList.java:321)
+at net.talvi.puffinplot.PuffinApp.getSuite(PuffinApp.java:299)
+at net.talvi.puffinplot.PuffinApp.getSample(PuffinApp.java:303)
+at net.talvi.puffinplot.window.MainGraphDisplay$1.getSample(MainGraphDisplay.java:30)
+at net.talvi.puffinplot.plots.SampleEqAreaPlot.draw(SampleEqAreaPlot.java:37)
+at net.talvi.puffinplot.window.GraphDisplay.paint(GraphDisplay.java:99)
+...
+
+Looks as though it's just not resetting the current suite index, so
+it falls off the end of the list if you're looking at the last suite and
+close it.

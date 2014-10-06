@@ -1,0 +1,3 @@
+If the display is exported as SVG via the FreeHEP library, anti-aliasing
+is subsequently disabled (for both text and lines) in the main graph
+display.

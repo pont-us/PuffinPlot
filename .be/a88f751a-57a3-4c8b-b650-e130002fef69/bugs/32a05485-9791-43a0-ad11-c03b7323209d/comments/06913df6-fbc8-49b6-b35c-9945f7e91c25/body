@@ -1,0 +1,7 @@
+Request from Christian, who wants to be able to tweak GC fits
+directly from the site EA plot. Need to think a little about exact
+interaction mechanism though. Certainly could implement 
+click-to-remove but then how do you re-add? Or maybe a toggle to
+show all points in the site EA plot, colour-coded according to
+whether they're used for the GC fit, click to toggle their 
+inclusion. Hmm, maybe trickier than I thought.

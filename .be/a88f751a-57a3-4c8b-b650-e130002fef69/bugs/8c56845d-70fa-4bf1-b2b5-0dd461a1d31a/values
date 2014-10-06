@@ -1,0 +1,71 @@
+{
+
+
+
+
+
+
+    "creator": "Pontus Lurcock <pont@talvi.net>", 
+
+
+
+
+
+
+    "extra_strings": [
+
+
+
+
+
+
+        "BLOCKS:ee249a2d-1b87-452f-8132-bb8aa7f2c4e4"
+
+
+
+
+
+
+    ], 
+
+
+
+
+
+
+    "reporter": "Pontus Lurcock <pont@talvi.net>", 
+
+
+
+
+
+
+    "severity": "minor", 
+
+
+
+
+
+
+    "status": "open", 
+
+
+
+
+
+
+    "summary": "Colour-code points by intensity on equal-area plot", 
+
+
+
+
+
+
+    "time": "Thu, 04 Jun 2009 02:44:15 +0000"
+
+
+
+
+
+
+}

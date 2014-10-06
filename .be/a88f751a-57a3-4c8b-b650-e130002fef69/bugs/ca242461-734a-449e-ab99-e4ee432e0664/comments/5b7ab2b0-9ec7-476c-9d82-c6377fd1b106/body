@@ -1,0 +1,4 @@
+Implemented as specified. Last hundred log messages appended to
+crash report file. Of course, there are hardly any messages being logged
+as yet, but these can be added gradually in the course of other
+development and debugging.

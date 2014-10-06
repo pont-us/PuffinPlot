@@ -1,0 +1,2 @@
+The user can now enter their own validity expression, which
+will be evaluated by the jython interpreter. Documented in manual.

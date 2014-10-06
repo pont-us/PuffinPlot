@@ -1,0 +1,3 @@
+Claudio seems to think that great-circle site direction
+calculation only makes use of the circles, not the PCA-determined
+endpoints. I'm fairly sure he's wrong, but I should check.

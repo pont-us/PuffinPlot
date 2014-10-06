@@ -1,0 +1,71 @@
+{
+
+
+
+
+
+
+    "creator": "Pontus Lurcock <pont@talvi.net>", 
+
+
+
+
+
+
+    "extra_strings": [
+
+
+
+
+
+
+        "BLOCKS:ee249a2d-1b87-452f-8132-bb8aa7f2c4e4"
+
+
+
+
+
+
+    ], 
+
+
+
+
+
+
+    "reporter": "Pontus Lurcock <pont@talvi.net>", 
+
+
+
+
+
+
+    "severity": "minor", 
+
+
+
+
+
+
+    "status": "open", 
+
+
+
+
+
+
+    "summary": "Demag plot does not show negative M.S. values", 
+
+
+
+
+
+
+    "time": "Sat, 01 Aug 2009 01:17:48 +0000"
+
+
+
+
+
+
+}

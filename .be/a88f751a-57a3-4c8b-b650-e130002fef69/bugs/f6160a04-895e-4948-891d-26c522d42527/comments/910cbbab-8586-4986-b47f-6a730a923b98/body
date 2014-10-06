@@ -1,0 +1,4 @@
+There are all kinds of useful biplots that might be performed:
+depth or sequence number vs. MDF, NRM, MAD-value etc., NRM vs MDF,
+etc. Would be good to have a configurable plot (either in main 
+plotting area or separate window) which can show these things.

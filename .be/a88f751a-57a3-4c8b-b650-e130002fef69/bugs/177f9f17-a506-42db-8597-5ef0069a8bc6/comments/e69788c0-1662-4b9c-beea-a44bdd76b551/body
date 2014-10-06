@@ -1,0 +1,6 @@
+The path of least resistance seems to be to convert (and update)
+the manual from the thesis to MarkDown (by hand), then use that
+as the source format to produce HTML, PDF and whatever else is
+needed. ConTeXt-to-HTML is possible but hard compared to pandoc.
+We lose some typographical beauty but I think maintaining a 
+ConTeXt version would take too much time and effort.

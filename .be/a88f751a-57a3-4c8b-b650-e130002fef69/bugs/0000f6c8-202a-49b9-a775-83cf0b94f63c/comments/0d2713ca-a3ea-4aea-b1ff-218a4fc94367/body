@@ -1,0 +1,4 @@
+At the very least I should make the tooltip more polite!
+Also clearly a combo box would be more appropriate than a text field.
+(Also maybe it should be presented on file loading, though that's
+probably a different bug.)

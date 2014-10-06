@@ -1,0 +1,5 @@
+PuffinPlot should follow the standard desktop application semantics of
+having a non-interactive "save" action when a filename is already defined,
+falling through to an interactive "save as..." for the first time a file
+is saved. Currently we have a "save as..." labelled as a "save", and nothing
+else.

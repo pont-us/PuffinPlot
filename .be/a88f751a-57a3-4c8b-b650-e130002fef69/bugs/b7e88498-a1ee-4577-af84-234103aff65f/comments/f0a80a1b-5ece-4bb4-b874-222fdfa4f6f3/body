@@ -1,0 +1,3 @@
+Seems to be OK -- results match those of StarMac, except
+for confidence region, which I have opened as a separate
+bug (#209).

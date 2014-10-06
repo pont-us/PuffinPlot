@@ -1,0 +1,4 @@
+Yes, I broke it when trying to make PuffinPlot behave more gracefully
+with broken files. It was throwing away the header line, then trying
+to read the first data line as headers -- oops! Have fixed & tested
+with the file Christian sent me; will wait for his OK before closing.

@@ -1,0 +1,12 @@
+CO 1. Is it possible ion the save calculations section to save the points
+CO: you have selected for the PCA. eg. 100-350°C It is a good thing to
+have in a file so that you see the evolution of unblocking temps or
+coercivity. MDF will tell you a similar thing but it would still be
+useful to have this data because it keep you a bit honest about which
+points you have picked.
+
+PL: Hmm, neat idea. Would you be wanting an exhaustive list of the points
+(along the lines of "100 125 150 175 200 225 250 275 300 325 350") or
+just the range ("100-350")? If the latter, there's some ambiguity, since
+you haven't necessarily selected *all* the points in that range (indeed,
+you might only have selected 100 and 350).

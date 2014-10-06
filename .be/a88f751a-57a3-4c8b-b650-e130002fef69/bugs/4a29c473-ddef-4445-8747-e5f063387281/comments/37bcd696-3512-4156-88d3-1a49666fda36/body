@@ -1,0 +1,3 @@
+The ubiquitous TRAY file produced by the 2G software should be identified
+and (for now) ignored. (At some point in the future it could be used to
+apply an after-the-fact tray correction.)

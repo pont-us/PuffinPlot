@@ -1,0 +1,4 @@
+Currently, PCA recalculation must be explicitly initiated when the
+correction is changed. Once #42 is fixed (so Puffin knows which PCAs
+should be anchored) there will be no reason not to have the PCAs
+follow the vector corrections instantly.

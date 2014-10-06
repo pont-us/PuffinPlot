@@ -1,0 +1,5 @@
+the Correction class and its usage are a bit of a mess -- passed
+around between PuffinApp, PrefsWindow, and CorrectionWindow.
+Includes dead code for old-style tray and empty-slot corrections --
+this should be excised -- it can always be re-added one day if
+required.

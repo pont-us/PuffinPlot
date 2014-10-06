@@ -1,0 +1,6 @@
+Seems to be due to the unicode lower-case alpha character in the
+line -- falling back to default font if Helvetica doesn't contain
+the character? Changing the alpha to an `a' fixes the problem but it's
+rather shoddy to make that substitution. I think this could be solved
+by using an AttributedString with an explicit font change after the
+alpha.

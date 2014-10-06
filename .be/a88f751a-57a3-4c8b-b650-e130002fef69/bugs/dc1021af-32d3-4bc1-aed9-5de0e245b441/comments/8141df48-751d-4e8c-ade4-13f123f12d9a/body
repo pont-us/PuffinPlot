@@ -1,0 +1,3 @@
+Now much better at guessing unspecified treatment and measurement
+types. Option added to use polar magnetization data -- useful when
+sensor lengths unknown.

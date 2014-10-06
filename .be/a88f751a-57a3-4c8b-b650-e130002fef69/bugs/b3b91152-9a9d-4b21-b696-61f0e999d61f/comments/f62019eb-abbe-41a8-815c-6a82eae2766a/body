@@ -1,0 +1,4 @@
+This is a 2G long core file from Leonardo Sagnotti. It is read
+as a discrete file with a single sample with the name UNKNOWN.
+The problem appears to be that there is no Depth column, the
+depth instead being given in the Position column.

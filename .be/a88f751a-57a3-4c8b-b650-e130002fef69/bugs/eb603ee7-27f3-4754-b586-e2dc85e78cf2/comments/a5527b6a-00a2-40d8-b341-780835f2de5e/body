@@ -1,0 +1,4 @@
+I waste a lot of time trying to verify bugs which have already been
+fixed. It would be good to have a mechanism whereby PP can check in
+at talvi.net whether there is a newer version, and exhort the user to
+upgrade if so (especially in the case of a crash).

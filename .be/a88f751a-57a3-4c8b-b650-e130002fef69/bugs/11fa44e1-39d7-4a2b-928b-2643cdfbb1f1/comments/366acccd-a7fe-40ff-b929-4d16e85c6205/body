@@ -1,0 +1,10 @@
+Currently everything is plotted without magnification or reduction
+on screen and scaled to paper size for print. But it looks as though
+insufficient resolution on the canvas itself is producing aliasing
+artifacts on the printouts -- e.g. slightly offset point fills on 
+OS X, and slightly jagged confidence ellipses on equal-area plots.
+Now that scaling is resolution-independent, it would be easy to 
+maintain a very high resolution on the canvas and scale it down by
+(say) 10 for plotting on the screen. (When zooming is implemented,
+the zoom percentage would simply be scaled so that 100% was in fact
+10%.)

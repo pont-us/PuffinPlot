@@ -1,0 +1,1 @@
+Suite constructor now checks that files exist and are readable.

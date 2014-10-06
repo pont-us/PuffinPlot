@@ -1,0 +1,11 @@
+Gary Acton reports:
+‘Neither the menu selection nor the Ctrl-R or Apple-R
+allowed me to use the unanchored PCA.’
+A little baffling, since it works for everyone else.
+My best guess is that he doesn't realize that ‘Anchor PCA’
+is a toggle item which he must disable to get an unanchored PCA,
+rather assuming that ‘PCA’ and ‘Anchor PCA’ immediately
+calculate anchored and unanchored PCAs respectively.
+In this case, it's a problem of poor GUI design and/or poor 
+documentation. Probably the easiest fix would be to improve the
+documentation, tool tips, and menu item wording.

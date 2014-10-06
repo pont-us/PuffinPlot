@@ -1,0 +1,10 @@
+This bug was introduced during the fixing of #266 -- PP was guessing
+Continuous if there was a Position field, even if there was also
+a Sample ID field. I have now modified the logic to guess as follows:
+Depth field -> continuous
+No Depth field, no Sample ID, but Position field present -> continuous
+All other cases -> discrete
+Of course this only takes effect when the measurement type is not
+explicitly specified. Ultimately the user should probably be queried
+in these cases, as I'm not sure that any heuristic will be 100%
+reliable.

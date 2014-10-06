@@ -1,0 +1,5 @@
+Done, with some refactoring: PlotPoint has changed from a private
+inner class to an interface, implemented by SquarePoint (containing
+the guts of the former PlotPoint) and the new TextLinePoint, which
+draws a line of the table as a data point, making it susceptible to
+selection.

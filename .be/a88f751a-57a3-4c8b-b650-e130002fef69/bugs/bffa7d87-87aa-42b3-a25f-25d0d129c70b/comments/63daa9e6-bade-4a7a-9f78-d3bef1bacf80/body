@@ -1,0 +1,2 @@
+GraphDisplay.saveSvgToBatik now explicitly requests UTF-8 encoding.
+I have successfully tested the fix under Windows.

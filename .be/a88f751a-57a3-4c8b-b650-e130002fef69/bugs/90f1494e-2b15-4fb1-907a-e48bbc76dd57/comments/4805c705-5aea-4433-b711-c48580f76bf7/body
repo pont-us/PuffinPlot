@@ -1,0 +1,4 @@
+"Revert to default" now added. Bloody hell that was a rabbit hole.
+Ended up refactoring the whole preferences / plot sizes interface,
+but it was long overdue.
+/

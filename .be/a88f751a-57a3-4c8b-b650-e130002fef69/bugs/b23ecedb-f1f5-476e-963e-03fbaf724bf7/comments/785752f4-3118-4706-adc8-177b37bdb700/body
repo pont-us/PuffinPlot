@@ -1,0 +1,6 @@
+Another advantage with defining an internal vector graphics API:
+I can include things which Graphics2D doesn't support. At present
+I am thinking specifically of grouping graphics elements, which
+is very handy for post-processing of SVG files (it would be nice
+to get one group per plot) but can't AFAIK be represented in
+Graphics2D -- it's irrelevant for drawing to the screen, after all.

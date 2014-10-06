@@ -1,0 +1,2 @@
+PuffinPlot now produces an informative warning when it runs out
+of lines during multi-measurement-protocol file reading.

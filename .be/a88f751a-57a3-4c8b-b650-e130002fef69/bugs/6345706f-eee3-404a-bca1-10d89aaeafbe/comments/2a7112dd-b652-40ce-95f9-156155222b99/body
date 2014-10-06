@@ -1,0 +1,11 @@
+PuffinPlot now uses several external libraries, which are
+automatically wrapped up in the final jar. However, there's
+no explicit documentation on where these libraries should be placed
+so that they can be found by the NetBeans project. It can be
+pieced together from the project file itself, but for someone
+trying to build from scratch it would be good to have a list
+of dependencies and a standard place to put libraries
+(at present they're split between ../libraries and /usr/share/java
+depending on whether they're present in the Ubuntu Lucid repos.
+Clearly it shouldn't be tied to the OS setup like this --
+they should all be ../libraries).

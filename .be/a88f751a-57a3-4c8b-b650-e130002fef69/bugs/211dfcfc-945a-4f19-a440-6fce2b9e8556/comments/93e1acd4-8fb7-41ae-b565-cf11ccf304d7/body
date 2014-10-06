@@ -1,0 +1,6 @@
+Faye pointed out that the tool-tip text for the 
+hideSelectedPoints action (‘Hide the selected points in 
+all selected samples’) can easily be misconstrued to mean
+‘for each selected sample, hide the points corresponding to
+the selection within *this* sample’. She suggests rewording
+to ‘Hide the selected points’.

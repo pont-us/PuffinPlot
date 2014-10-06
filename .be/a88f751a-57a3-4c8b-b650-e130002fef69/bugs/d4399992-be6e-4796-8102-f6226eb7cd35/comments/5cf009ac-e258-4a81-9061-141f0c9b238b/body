@@ -1,0 +1,5 @@
+Christian has a data-set where the sample codes don't include the
+dot between the core number and sample number. Thus site groupings
+are wrong, since PuffinPlot uses the last four characters as the 
+sample ID. PuffinPlot should check for presence of dot and act
+accordingly.

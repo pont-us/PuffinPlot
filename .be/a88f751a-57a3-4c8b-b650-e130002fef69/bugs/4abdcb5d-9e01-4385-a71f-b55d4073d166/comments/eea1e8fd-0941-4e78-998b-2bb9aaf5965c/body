@@ -1,0 +1,2 @@
+Absolutely no need to bomb out when Datum.treatType == UNKNOWN;
+just label it as such and carry on.

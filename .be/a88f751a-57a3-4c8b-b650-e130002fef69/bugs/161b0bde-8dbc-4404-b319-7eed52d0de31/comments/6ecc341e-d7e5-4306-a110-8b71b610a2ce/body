@@ -1,0 +1,6 @@
+Looks as though this was already fixed some time ago -- there is
+definitely an explicit clip being applied in ZPlot.drawLine, and it 
+seems to be fine in PDF and SVG exports as tested by both me and 
+Faye. The only niggle is that the PCA line can sometimes overwrite
+the window scroll bars, but this is relatively minor. I'll open a 
+new bug for it.

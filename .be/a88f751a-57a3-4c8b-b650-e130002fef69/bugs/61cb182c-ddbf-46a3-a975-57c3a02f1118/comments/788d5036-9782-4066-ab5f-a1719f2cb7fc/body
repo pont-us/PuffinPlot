@@ -1,0 +1,6 @@
+JMG writes:
+Site stereonets show incremental sample demag directions for GC
+fits – this is useful, but it is difficult to distinguish them
+from sample means – it would be better if it displayed different
+symbols to represent site means, sample best fits, and individual
+sample steps (in the case of great circles).

@@ -1,0 +1,8 @@
+Now partially implemented. Realized during implementation that
+MS values can simply be folded into the (inferred) corresponding
+remanence Datum objects, since a 2G MS line contains no valid
+fields except for the sample name and MS reading (I think). This
+should simplify a lot of things.
+
+A couple of rough edges (autoscaling; not showing MS axis when
+there's no data) remain.

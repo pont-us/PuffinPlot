@@ -1,0 +1,5 @@
+Selection behaviour is now as follows: a normal click toggles a point's
+selection state iff the pointer is directly over the point. A shift-
+click either selectes (left button) or deselects (right button) all
+points within a certain radius of the pointer. The radius is currently
+defined in a constant in Plot.java.

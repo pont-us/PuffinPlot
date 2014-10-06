@@ -1,0 +1,85 @@
+{
+
+
+
+
+
+
+    "extra_strings": [
+
+
+
+
+
+
+        "BLOCKED-BY:0176fb01-e1cd-4e4b-8d53-e6c872a72a06", 
+
+
+
+
+
+
+        "BLOCKED-BY:0dc78bd9-567f-4366-998e-29fc1755d9d9", 
+
+
+
+
+
+
+        "BLOCKED-BY:7583aeae-588d-4ed7-be0f-1bcfed48ea36", 
+
+
+
+
+
+
+        "BLOCKED-BY:7e36fb32-92ec-4833-9691-c59c58cfddfa", 
+
+
+
+
+
+
+        "BLOCKED-BY:8271a353-46ba-4263-bae3-a01b71560cdc"
+
+
+
+
+
+
+    ], 
+
+
+
+
+
+
+    "severity": "target", 
+
+
+
+
+
+
+    "status": "fixed", 
+
+
+
+
+
+
+    "summary": "1.02", 
+
+
+
+
+
+
+    "time": "Mon, 06 Oct 2014 15:56:53 +0000"
+
+
+
+
+
+
+}

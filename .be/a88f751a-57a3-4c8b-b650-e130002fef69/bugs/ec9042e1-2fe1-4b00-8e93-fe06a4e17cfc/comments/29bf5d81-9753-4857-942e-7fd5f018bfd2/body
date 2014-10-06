@@ -1,0 +1,5 @@
+There seems to be a problem with alpha-95 values calculated
+from great-circle intersection. They are implausibly small,
+and do not match the larger values calculated by starmac
+(although the rest of PP's calculation is in agreement with 
+starmac).

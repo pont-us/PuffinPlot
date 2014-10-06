@@ -1,0 +1,3 @@
+Current semantics are more complicated than necessary. Easiest would
+probably be to remove the "unset empty slot" action entirely -- identical
+effect can be achieved by disabling the empty slot correction.

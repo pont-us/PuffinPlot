@@ -1,0 +1,4 @@
+Make sure that PuffinPlot correctly loads the files solicited by
+Christian from various people. Also look at the MagIC Help Library,
+section 4.2.3 Measurement Data, which provides a great overview
+of currently used file formats.

@@ -1,0 +1,6 @@
+Vec3 contains a number of static methods which operate on 
+sequences of vectors. These would probably be better handled by
+a new companion class which acts as a wrapper around an ordered
+list of vectors and permits operations on them. This might also
+make it easier to keep vector paths immutable, if this proves
+to be a worthwhile endeavour.

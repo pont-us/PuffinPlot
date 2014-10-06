@@ -1,0 +1,16 @@
+Also mentioned by GA in review comments on the paper:
+‘For batch processing (like the many thousands of intervals measured along
+U-channels), an automated PCA that recognizes and removes outliers would be
+useful. That is the primary feature that ZPLOTIT has that PuffinPlot does not
+and is the main reason I wrote ZPLOTIT. The outlier removing capability would
+be easy to incorporate. In ZPLOTIT the user defines a minimum number of steps
+to use in the PCA and a range of demagnetization steps over which to search.
+If the range contains more than the minimum required steps, the program seeks
+outlier steps, which are steps that degrade the PCA line fit significantly.
+The PCA is then computed with and without outliers and the anchored and
+unanchored PCA is provided for comparison. In PuffinPlot, one could
+accomplish this but currently would have to do so for each individual sample,
+which is not feasible when dealing with hundreds of meters of U-channels.’
+This is presumably the algorithm implemented in the Fortran code,
+and also looks similar (or possibly even identical) to the Kirschvink
+algorithm.

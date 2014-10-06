@@ -1,0 +1,3 @@
+Fixed by replacing usages of TextLayout.draw with
+Graphics2D.drawString(AttributedCharacterIterator), as
+suggested in comment.

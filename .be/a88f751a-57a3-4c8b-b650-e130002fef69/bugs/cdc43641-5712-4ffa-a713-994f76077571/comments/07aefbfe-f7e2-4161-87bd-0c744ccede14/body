@@ -1,0 +1,3 @@
+We need a configurable option (probably per-suite) which controls
+whether the local magnetic declination is applied to the sample and
+formation corrections.

@@ -1,0 +1,2 @@
+ARM lines from the 2G file are being plotted as part of the demag curve.
+Anything with ArmAxis==AXIAL should be ignored.

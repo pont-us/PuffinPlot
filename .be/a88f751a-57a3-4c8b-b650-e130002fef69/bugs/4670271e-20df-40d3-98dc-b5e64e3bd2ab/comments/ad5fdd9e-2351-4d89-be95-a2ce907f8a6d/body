@@ -1,0 +1,3 @@
+It looks as though great circles are actually calculated and stored
+twice -- once in the sample and once in the site. Work out whether
+this makes any sense. If so, document; if not, fix.

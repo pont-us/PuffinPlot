@@ -1,0 +1,4 @@
+When publishing several z-plots from a suite, it's common practice
+to use the same scale for them all. Currently PuffinPlot scales
+purely according to the current sample. There should be a capability to
+scale to a selection, or to the whole suite.

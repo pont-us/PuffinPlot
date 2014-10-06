@@ -1,0 +1,3 @@
+See email from Claudio, 2011-12-11. Cause appears to be passing 
+a null value to Collections.unmodifiableCollection in 
+Suite.getAmsBootstrapParams.

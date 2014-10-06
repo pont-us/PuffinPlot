@@ -1,0 +1,2 @@
+Implemented as specified; now bombs out with "malformed Zplot file"
+error if this happens.

@@ -1,0 +1,4 @@
+I don't think there's a reasonable use for this facility --
+PCA is entirely sufficient. The slim probability of anyone needing
+it is outweighed by confusion to people who don't need it, and
+by the maintenance overhead of the (admittedly slight) extra code.

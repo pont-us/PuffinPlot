@@ -1,0 +1,8 @@
+On Mac printouts, the fills for filled points are slightly offset
+up and to the left. Examination of the file shows that it's off by
+exactly half a PDF unit in each direction. Looks as though this is a
+Mac Java bug; should check on Java 6 if I can find a 64-bit Intel
+machine. Haven't thought hard about workarounds yet (shifting the fill
+to compensate is the obvious but nasty one!) -- in worst case, could
+output to PDF via a third-party library like Big Faceless, iText,
+or Batik.

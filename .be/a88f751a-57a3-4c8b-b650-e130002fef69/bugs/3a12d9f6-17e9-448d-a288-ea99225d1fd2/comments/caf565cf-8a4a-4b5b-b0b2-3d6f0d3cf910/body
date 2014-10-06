@@ -1,0 +1,6 @@
+At present, SampleDataPanel destroys and recreates all its components
+on every update, even if it's just an update to a different sample
+within a Suite. Check whether this is taking significant time, and
+if so, implement separate sample-update and suite-update functions,
+with sample-update just updating the contents of the pre-existing 
+components.

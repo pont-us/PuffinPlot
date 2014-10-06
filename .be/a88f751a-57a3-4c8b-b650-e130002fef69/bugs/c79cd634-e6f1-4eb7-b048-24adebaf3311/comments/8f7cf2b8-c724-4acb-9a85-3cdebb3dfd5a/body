@@ -1,0 +1,5 @@
+Exported SVG files (both Batik and FreeHEP) have some text
+(the data table and title) as text, and the rest as glyph shapes.
+Both for editability and file size, it would be nice to have all
+text as text. The fact that some of it works OK should make the
+problem easier to track down.

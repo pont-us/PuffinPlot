@@ -1,0 +1,4 @@
+First stage done: I've created an explicit clipping routine 
+(none in the Java libraries, alas) so we're no longer relying
+on setClip to truncate the lines (which caused problems with 
+vector export anyway).

@@ -1,0 +1,4 @@
+Christian reports that the "unhide quick key doesn't work". (ctrl-shift-
+G, or command-shift-G on Macs). Works fine on Linux. Could be related
+to (1) Macs being different (2) modifier key being different on Macs or
+(3) multiple modifier keys.

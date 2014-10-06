@@ -1,0 +1,5 @@
+Fixing this triggered a major refactoring of the axis plotting code,
+which should stand me in good stead for any further changes. In absence
+of any good examples of layout, I've added the unit specification to
+the legend and the orders of magnitude to the axis tick labels. It will
+be easy to change if necessary.

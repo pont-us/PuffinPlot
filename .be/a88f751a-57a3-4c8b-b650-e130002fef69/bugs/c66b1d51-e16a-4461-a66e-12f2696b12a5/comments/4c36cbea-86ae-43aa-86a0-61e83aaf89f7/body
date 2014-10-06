@@ -1,0 +1,4 @@
+The sample data display (the one showing PCA parameters, etc.)
+should also show the direction of the pole to the fitted great
+circle, and the MAD value of the PCA calculation which produced
+the great-circle fit.

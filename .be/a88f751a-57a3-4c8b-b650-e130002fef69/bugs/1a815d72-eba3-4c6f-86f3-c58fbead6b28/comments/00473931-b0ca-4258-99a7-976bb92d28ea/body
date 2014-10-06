@@ -1,0 +1,6 @@
+Empty-slot correction needs to be re-implemented so it happens on
+loading rather than on-the-fly -- it just gets too complicated
+otherwise, and there are few use cases where you'd actually want
+to toggle it on and off (basically, 1. testing and 2. err, that's
+it). In any case it's unlikely to be widely used so I'm taking
+it out of the 1.0 release.

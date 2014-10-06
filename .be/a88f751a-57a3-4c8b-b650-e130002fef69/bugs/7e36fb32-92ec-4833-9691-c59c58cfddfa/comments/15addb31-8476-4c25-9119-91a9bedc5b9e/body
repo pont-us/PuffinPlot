@@ -1,0 +1,11 @@
+Consider the following crafted file:
+
+depth   demag   dec     inc     int
+1       0       45      45      3
+1       1       45      45      2
+1       2       45      45      1
+
+Import it using the tabular file importer with 3-axis AF demag.
+The demag. of the first point comes up as NaN, which means that
+it isn't plotted on the on-screen display, and is plotted in a
+ludicrous place on the exported graphics files.
