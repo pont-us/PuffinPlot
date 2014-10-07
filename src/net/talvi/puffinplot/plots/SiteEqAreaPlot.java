@@ -18,6 +18,7 @@ package net.talvi.puffinplot.plots;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -51,8 +52,7 @@ public class SiteEqAreaPlot extends EqAreaPlot {
     private LineCache fisherLineCache = null;
     private GreatCircles gcsCache = null;
     private LineCache gcsLineCache = null;
-    private Map<GreatCircle, LineCache> gcCache =
-            new GcCache<GreatCircle, LineCache>();
+    private Map<GreatCircle, LineCache> gcCache = new GcCache<>();
     
     private class GcCache<K, V> extends LinkedHashMap<K, V> {
         public GcCache() {
@@ -159,13 +159,23 @@ public class SiteEqAreaPlot extends EqAreaPlot {
         List<String> ss = circles.toStrings();
         writeString(g, ss.get(3)+"/"+ss.get(4), xo-radius, yo-radius);
     }
-
+    
+    private void writeSampleLabel(Sample s, PlotPoint point) {
+        if (prefs != null &&
+                prefs.getBoolean("plots.labelSamplesInSitePlots", false)) {
+            final Point2D centre = point.getCentre();
+            putText(g, s.getNameOrDepth(), centre.getX(), centre.getY(),
+                    Direction.RIGHT,
+                    0, 6);
+        }
+    }
+    
     private void drawPcas(Site site) {
         final List<Sample> samples = site.getSamples();
         if (samples==null || samples.isEmpty()) {
             return;
         }
-        final List<Vec3> pcaDirs = new ArrayList<Vec3>(samples.size());
+        final List<Vec3> pcaDirs = new ArrayList<>(samples.size());
         for (Sample s: samples) {
             final PcaValues pcaValues = s.getPcaValues();
             if (pcaValues != null) {
@@ -175,6 +185,7 @@ public class SiteEqAreaPlot extends EqAreaPlot {
                         ShapePoint.build(this, project(v)).
                         diamond().filled(v.z>0).build();
                 pcaPoint.draw(g);
+                writeSampleLabel(s, pcaPoint);
                 //addPoint(null, project(v), v.z>0, false, false);
             } else if (s.getFisherValues() != null) {
                 final Vec3 v = s.getFisherValues().getMeanDirection();
@@ -183,6 +194,7 @@ public class SiteEqAreaPlot extends EqAreaPlot {
                         ShapePoint.build(this, project(v)).
                         diamond().filled(v.z>0).build();
                 fisherPoint.draw(g);
+                writeSampleLabel(s, fisherPoint);
             }
         }
         if (pcaDirs.isEmpty()) {
@@ -238,7 +250,7 @@ public class SiteEqAreaPlot extends EqAreaPlot {
         fisherCache = null;
         gcsCache = null;
         if (!gcCache.isEmpty()) {
-            gcCache = new GcCache<GreatCircle, LineCache>();
+            gcCache = new GcCache<>();
         }
         super.setDimensions(dimensions);
     }

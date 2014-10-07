@@ -59,23 +59,22 @@ public abstract class Plot
     /** the plot's dimensions */
     protected Rectangle2D dimensions;
     /** the data points displayed by the plot */
-    List<PlotPoint> points = new LinkedList<PlotPoint>();
+    List<PlotPoint> points = new LinkedList<>();
     private static final float UNIT_SCALE = 0.0001f;
-    private Stroke stroke, dashedStroke;
-    private float unitSize;
+    private final Stroke stroke, dashedStroke;
+    private final float unitSize;
     private static final float LINE_WIDTH_IN_UNITS = 8.0f;
     private static final float TICK_LENGTH_IN_UNITS = 48.0f;
     private static final float FONT_SIZE_IN_UNITS = 120.0f;
     private static final float SLOPPY_SELECTION_RADIUS_IN_UNITS = 128.0f;
     /** the default size of a plotted data point */
     protected static final double PLOT_POINT_SIZE = 24.;
-    private Map<Attribute,Object> attributeMap =
-            new HashMap<Attribute, Object>();
+    private Map<Attribute,Object> attributeMap = new HashMap<>();
     private static final TransformAttribute MAC_SUPERSCRIPT_TRANSFORM;
     private boolean visible;
     private final boolean useAppleSuperscriptHack;
     private final Set<SampleClickListener> sampleClickListeners =
-            new HashSet<SampleClickListener>();
+            new HashSet<>();
 
     /** the default sizes and positions of the plots */
     protected static final String DEFAULT_PLOT_POSITIONS =
@@ -402,7 +401,7 @@ public abstract class Plot
         if (nPoints > 1) {
             PlotPoint prevPoint = points.get(nPoints - 2);
             Point2D centre = prevPoint.getCentre();
-            List<Point2D> others = new ArrayList<Point2D>(2);
+            List<Point2D> others = new ArrayList<>(2);
             others.add(points.get(nPoints - 1).getCentre());
             if (nPoints>2) others.add(points.get(nPoints - 3).getCentre());
             ((ShapePoint)prevPoint).setLabelPos(Direction.safeDirection(centre, others));
@@ -525,7 +524,7 @@ public abstract class Plot
      * Write some text on this plot.
      * 
      * @param g the graphics context
-     * @param text the text to write
+     * @param textString the text to write
      * @param x the x position of the text
      * @param y the y position of the text
      * @param dir the location of the text relative to the given position

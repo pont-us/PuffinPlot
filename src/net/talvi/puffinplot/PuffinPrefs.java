@@ -42,9 +42,9 @@ public final class PuffinPrefs {
     private final PuffinApp app;
     private boolean axisScaleLocked;
     private boolean pcaAnchored;
-    private HashMap<String,Rectangle2D> plotSizes =
-            new HashMap<String, Rectangle2D>();
-    private Preferences prefs = Preferences.userNodeForPackage(PuffinPrefs.class);
+    private final HashMap<String,Rectangle2D> plotSizes = new HashMap<>();
+    private final Preferences prefs =
+            Preferences.userNodeForPackage(PuffinPrefs.class);
     private SensorLengths sensorLengths;
     private TwoGeeLoader.Protocol twoGeeProtocol;
 

@@ -50,8 +50,8 @@ public class PrefsWindow extends JFrame {
     private final JTextField[] sensorLengthField = new JTextField[3];
     private final PresetsBox presetsBox;
     // private final JTextField protocolBox;
-    private List<PlotBox> plotBoxes = new ArrayList<PlotBox>(24);
-    private List<PrefBox> prefBoxes = new ArrayList<PrefBox>();
+    private final List<PlotBox> plotBoxes = new ArrayList<>(24);
+    private final List<PrefBox> prefBoxes = new ArrayList<>();
     private final PuffinPrefs prefs =
             PuffinApp.getInstance().getPrefs();
     
@@ -150,6 +150,8 @@ public class PrefsWindow extends JFrame {
                 "plots.labelTreatmentSteps", false));
         miscPanel.add(makeLabelledTickBox("Label equal-area plots",
                 "plots.labelEqualAreaPlots", false));
+        miscPanel.add(makeLabelledTickBox("Label samples in site plots",
+                "plots.labelSamplesInSitePlots", false));
         miscPanel.add(new MagDevTickBox());
         miscPanel.add(makeLabelledPrefBox("Demag y axis",
                 "plots.demag.vAxisLabel", "Magnetization (A/m)"));
@@ -320,7 +322,7 @@ public class PrefsWindow extends JFrame {
     private class PrefsComboBox extends JComboBox implements ItemListener {
         private static final long serialVersionUID = 1L;
 
-        private String prefsKey;
+        private final String prefsKey;
         
         public PrefsComboBox(String prefsKey, String[] items,
                 String defaultValue) {

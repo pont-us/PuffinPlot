@@ -1,0 +1,9 @@
+A bit terse and I wasn't able to clarify with JMG, but I assume 
+he just wants the sample PCA directions (and now, sample Fisher
+directions) annotated with the sample name on the site equal
+area plot. I have now implemented this, albeit with sample names
+always to the right of the data point which results in more
+text collisions than necessary. But it's not worth implementing
+a smarter algorithm until I know whether there's demand for it,
+so for now I'll call it fixed.
+

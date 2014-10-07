@@ -160,8 +160,8 @@ public class ZPlot extends Plot {
         
         // We keep track of the points used for the PCA calculation in 
         // order to calculate the length for the short-format PCA fit line.
-        final List<Point2D> pcaPointsH = new ArrayList<Point2D>(data.size()+1);
-        final List<Point2D> pcaPointsV = new ArrayList<Point2D>(data.size()+1);
+        final List<Point2D> pcaPointsH = new ArrayList<>(data.size()+1);
+        final List<Point2D> pcaPointsV = new ArrayList<>(data.size()+1);
         
         boolean first = true;
         for (Datum d: data) {
