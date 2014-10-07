@@ -80,7 +80,7 @@ public class Util {
         sc.useLocale(Locale.ENGLISH);
         sc.useDelimiter(", *");
         BitSet result = new BitSet();
-        List<String> rangeExprs = new ArrayList<String>();
+        List<String> rangeExprs = new ArrayList<>();
         while (sc.hasNext()) {
             if (sc.hasNextInt()) {
                 final int val = constrainInt(sc.nextInt(), limit);
