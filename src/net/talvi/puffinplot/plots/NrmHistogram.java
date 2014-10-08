@@ -73,7 +73,7 @@ public class NrmHistogram extends Plot {
         final Sample sample = params.getSample();
         if (sample==null) return;
         Suite suite = sample.getSuite();
-        List<Double> nrms = new ArrayList<Double>(suite.getSamples().size());
+        List<Double> nrms = new ArrayList<>(suite.getSamples().size());
         for (Sample s: suite.getSamples()) {
             if (s.hasData()) {
                 nrms.add(s.getNrm());
@@ -84,7 +84,7 @@ public class NrmHistogram extends Plot {
         final double range = maximum-minimum;
         final int nBuckets = 50;
         Rectangle2D dim = cropRectangle(getDimensions(), 270, 200, 50, 250);
-        List<Integer> buckets = new ArrayList<Integer>(Collections.nCopies(nBuckets, 0));
+        List<Integer> buckets = new ArrayList<>(Collections.nCopies(nBuckets, 0));
         for (double nrm: nrms) {
             int bucket = (int) Math.round(nBuckets * (nrm-minimum)/range);
             if (bucket==nBuckets) bucket--; // rightmost edge of rightmost bucket

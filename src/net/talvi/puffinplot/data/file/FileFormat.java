@@ -63,12 +63,14 @@ public final class FileFormat {
      * @param separator column separator for non-fixed-width-column formats
      * @param useFixedWidthColumns whether this format uses fixed-width columns
      * @param columnWidths the widths of columns for fixed-width-column formats
+     * @param momentUnit units in which magnetic moment per unit volume is expressed
+     * @param fieldUnit units in which magnetic field strength is expressed
      */
     public FileFormat(Map<Integer,DatumField> columnMap, int headerLines,
             MeasType measurementType, TreatType treatmentType,
             String separator, boolean useFixedWidthColumns,
             List<Integer> columnWidths, MomentUnit momentUnit, FieldUnit fieldUnit) {
-        this.columnMap = new HashMap<Integer, DatumField>(columnMap);
+        this.columnMap = new HashMap<>(columnMap);
         this.headerLines = headerLines;
         this.separator = separator;
         this.measurementType = measurementType;
@@ -81,7 +83,7 @@ public final class FileFormat {
     
     private String[] splitLine(String line) {
         if (useFixedWidthColumns) {
-            List<String> result = new ArrayList<String>(columnWidths.size());
+            List<String> result = new ArrayList<>(columnWidths.size());
             int start = 0; // start of current column
             for (int width: columnWidths) {
                 result.add(line.substring(start, start+width));
@@ -157,7 +159,7 @@ public final class FileFormat {
      * @return the data defined by the lines (in the same order)
      */
     public List<Datum> readLines(List<String> lines) {
-        final List<Datum> data = new ArrayList<Datum>(lines.size() - headerLines);
+        final List<Datum> data = new ArrayList<>(lines.size() - headerLines);
         for (int i=headerLines; i<lines.size(); i++) {
             data.add(readLine(lines.get(i)));
         }
@@ -173,7 +175,7 @@ public final class FileFormat {
      */
     public static List<Integer> convertStringToColumnWidths(String widthString) {
         String[] widths = widthString.split(", *");
-        List<Integer> result = new ArrayList<Integer>(widths.length);
+        List<Integer> result = new ArrayList<>(widths.length);
         for (String wString: widths) {
             if ("".equals(wString)) continue;
             try {
@@ -247,7 +249,7 @@ public final class FileFormat {
         final String columnString = prefs.get(pp+".columnMap", "");
         final String[] columnDefs = columnString.split("\t");
         final Map<Integer, DatumField> columnMap =
-                new LinkedHashMap<Integer, DatumField>(columnDefs.length);
+                new LinkedHashMap<>(columnDefs.length);
         for (String columnDef: columnDefs) {
             if ("".equals(columnDef)) continue;
             final String[] parts = columnDef.split(",");

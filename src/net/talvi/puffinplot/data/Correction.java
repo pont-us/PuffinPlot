@@ -41,8 +41,8 @@ import java.util.logging.Logger;
 public class Correction {
 
     private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
-    private boolean tray;
-    private boolean empty;
+    private final boolean tray;
+    private final boolean empty;
     private Rotation rotation;
     public static final Correction NONE =
             new Correction(false, false, Rotation.NONE, false);
@@ -54,6 +54,8 @@ public class Correction {
      * @param tray {@code true} to use the tray correction
      * @param empty {@code} true} to use the empty slot correction
      * @param rotation the type of rotation correction to use
+     * @param magDevAppliedToFormation if true, magnetic deviation correction
+     * will be applied to formation correction
      */
     public Correction(boolean tray, boolean empty, Rotation rotation,
                 boolean magDevAppliedToFormation) {

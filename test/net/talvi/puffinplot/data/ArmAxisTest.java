@@ -12,13 +12,14 @@ import static org.junit.Assert.*;
 @RunWith(value=Parameterized.class)
 public class ArmAxisTest {
 
-    private String name;
-    private ArmAxis value;
+    private final String name;
+    private final ArmAxis value;
 	
     @Parameters
     public static Collection data() {
         return Arrays.asList( new Object[][] {
         		{"AXIAL", ArmAxis.AXIAL},
+                        {"NA", ArmAxis.NONE},
         		{"NONE", ArmAxis.NONE}});
     }
 	
@@ -37,6 +38,7 @@ public class ArmAxisTest {
     @Test
     public void unknownStringTest() throws Exception {
         assertEquals(ArmAxis.fromString("NONEXISTENT"), ArmAxis.UNKNOWN);
+        assertEquals(ArmAxis.fromString("utter gibberish"), ArmAxis.UNKNOWN);
     }
 	
 }

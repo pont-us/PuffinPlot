@@ -9,9 +9,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/pont/files/phd/puffinplot/PuffinPlot/src/net/talvi/puffinplot/Util.java</file>
-            <file>file:/home/pont/files/phd/puffinplot/PuffinPlot/src/net/talvi/puffinplot/data/AmsData.java</file>
+            <file>file:/home/pont/files/phd/puffinplot/PuffinPlot/src/net/talvi/puffinplot/data/Datum.java</file>
+            <file>file:/home/pont/files/phd/puffinplot/PuffinPlot/src/net/talvi/puffinplot/data/file/PplLoader.java</file>
+            <file>file:/home/pont/files/phd/puffinplot/PuffinPlot/src/net/talvi/puffinplot/data/FileType.java</file>
+            <file>file:/home/pont/files/phd/puffinplot/PuffinPlot/src/net/talvi/puffinplot/data/DatumField.java</file>
+            <file>file:/home/pont/files/phd/puffinplot/PuffinPlot/src/net/talvi/puffinplot/window/PrefsWindow.java</file>
+            <file>file:/home/pont/files/phd/puffinplot/PuffinPlot/src/net/talvi/puffinplot/PuffinPrefs.java</file>
             <file>file:/home/pont/files/phd/puffinplot/PuffinPlot/src/net/talvi/puffinplot/plots/ZPlot.java</file>
+            <file>file:/home/pont/files/phd/puffinplot/PuffinPlot/src/net/talvi/puffinplot/data/Suite.java</file>
             <file>file:/home/pont/files/phd/puffinplot/PuffinPlot/test/net/talvi/puffinplot/UtilTest.java</file>
         </group>
     </open-files>

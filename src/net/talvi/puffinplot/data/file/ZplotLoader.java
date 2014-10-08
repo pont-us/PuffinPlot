@@ -51,7 +51,7 @@ public class ZplotLoader extends AbstractFileLoader {
     static {
         String[] fields = {"^Sample", "^Project", "^Demag.*", "^Declin.*", "^Inclin.*",
             "^Intens.*", "^Operation|^Depth"};
-        List<Pattern> fieldPatterns = new ArrayList<Pattern>(fields.length);
+        List<Pattern> fieldPatterns = new ArrayList<>(fields.length);
         for (String field : fields) {
             fieldPatterns.add(Pattern.compile(field));
         }
@@ -63,7 +63,7 @@ public class ZplotLoader extends AbstractFileLoader {
      */
     public ZplotLoader(File file) {
         this.file = file;
-        data = new LinkedList<Datum>();
+        data = new LinkedList<>();
         try {
             reader = new LineNumberReader(new FileReader(file));
             readFile();

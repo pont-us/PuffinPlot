@@ -57,8 +57,8 @@ public class Eigens {
          */
         int[] o = order(eigenvalues);
         Matrix evs = eigDecomp.getV();
-        List<Vec3> vectorsTmp = new ArrayList<Vec3>(3);
-        List<Double> valuesTmp = new ArrayList<Double>(3);
+        List<Vec3> vectorsTmp = new ArrayList<>(3);
+        List<Double> valuesTmp = new ArrayList<>(3);
         double[] v1 = evs.getMatrix(0, 2, o[0], o[0]).getColumnPackedCopy();
         double[] v2 = evs.getMatrix(0, 2, o[1], o[1]).getColumnPackedCopy();
         double[] v3 = evs.getMatrix(0, 2, o[2], o[2]).getColumnPackedCopy();
@@ -110,6 +110,7 @@ public class Eigens {
                 this.index = index;
                 this.value = value;
             }
+            @Override
             public int compareTo(Pair p) {
                 return Double.compare(p.value, value);
             }
@@ -125,7 +126,7 @@ public class Eigens {
             }
         }
 
-        ArrayList<Pair> ps = new ArrayList<Pair>(x.length);
+        ArrayList<Pair> ps = new ArrayList<>(x.length);
         for (int i=0; i<x.length; i++) ps.add(new Pair(i, x[i]));
         Collections.sort(ps);
         int[] result = new int[x.length];

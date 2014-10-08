@@ -31,6 +31,7 @@ import java.awt.print.PageFormat;
 import java.awt.print.PrinterJob;
 import java.io.*;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -51,6 +52,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.UnsupportedLookAndFeelException;
 import net.talvi.puffinplot.data.*;
 import net.talvi.puffinplot.data.Suite.AmsCalcType;
 import net.talvi.puffinplot.data.file.FileFormat;
@@ -81,7 +83,7 @@ public final class PuffinApp {
     private static final MemoryHandler logMemoryHandler;
 
     private final PuffinActions actions;
-    private List<Suite> suites = new ArrayList<Suite>();
+    private final List<Suite> suites = new ArrayList<>();
     private Suite currentSuite;
     private PageFormat currentPageFormat;
     private final MainWindow mainWindow;
@@ -99,8 +101,7 @@ public final class PuffinApp {
     private CustomFieldEditor customNotesWindow;
     private boolean emptyCorrectionActive;
     private Correction correction;
-    private final Map<String,File> lastUsedFileOpenDirs =
-            new HashMap<String,File>();
+    private final Map<String,File> lastUsedFileOpenDirs = new HashMap<>();
     private static final boolean useSwingChooserForOpen = true;
     private BitSet pointSelectionClipboard = new BitSet(0);
     private Properties buildProperties;
@@ -180,6 +181,7 @@ public final class PuffinApp {
     }
 
     private static class ExceptionHandler implements UncaughtExceptionHandler {
+        @Override
         public void uncaughtException(Thread thread, Throwable exception) {
             final String ERROR_FILE = "PUFFIN-ERROR.txt";
             boolean quit = unhandledErrorDialog();
@@ -228,24 +230,28 @@ public final class PuffinApp {
                 Preferences.userNodeForPackage(PuffinPrefs.class);
         String lnf = prefs.get("lookandfeel", "Default");
         try {
-            if ("Native".equals(lnf)) {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } else if ("Metal".equals(lnf)) {
-                UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-            } else if ("Nimbus".equals(lnf)) {
-                /* Nimbus isn't guaranteed to be available on all systems,
-                 * so we make sure it's there before trying to set it.
-                 * If it's not there, nothing will happen so the system
-                 * default will be used.
-                 */
-                for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                    if ("Nimbus".equals(info.getName())) {
-                        UIManager.setLookAndFeel(info.getClassName());
-                        break;
-                    }
-                }
+            if (null != lnf) switch (lnf) {
+                case "Native":
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                    break;
+                case "Metal":
+                    UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+                    break;
+                case "Nimbus":
+                    /* Nimbus isn't guaranteed to be available on all systems,
+                    * so we make sure it's there before trying to set it.
+                    * If it's not there, nothing will happen so the system
+                    * default will be used.
+                    */
+                    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                        if ("Nimbus".equals(info.getName())) {
+                            UIManager.setLookAndFeel(info.getClassName());
+                            break;
+                        }
+                    }   break;
             }
-        } catch (Exception ex) {
+        } catch (ClassNotFoundException | InstantiationException |
+                 IllegalAccessException | UnsupportedLookAndFeelException ex) {
             logger.log(Level.WARNING, "Error setting look-and-feel", ex);
         }
 
@@ -476,25 +482,28 @@ public final class PuffinApp {
     }
 
     private boolean canSuiteBeClosed(Suite suite) {
-        if (!suite.isSaved()) {
+        if (suite.isSaved()) {
+            return true;
+        } else {
             final Object[] buttons = {"Save changes",
                 "Discard changes", "Don't close suite"};
             final int choice = JOptionPane.showOptionDialog(mainWindow,
-                    "The suite \""+ suite.getName() + "\" "
-                    + "has been changed since it was last saved.\n"
-                    + "The changes will be lost if you close it.\n"
-                    + "Would you like to save the changes before closing the suite?",
+                    "The suite \"" + suite.getName() + "\" "
+                            + "has been changed since it was last saved.\n"
+                            + "The changes will be lost if you close it.\n"
+                            + "Would you like to save the changes before "
+                            + "closing the suite?",
                     "Unsaved data",
                     JOptionPane.YES_NO_CANCEL_OPTION,
                     JOptionPane.WARNING_MESSAGE,
                     null,     // no custom icon
                     buttons,
                     buttons[2]); // default option
-            if (choice==0) save(suite);
-            if (choice==2) return false;
-            else return true;
+            if (choice==0) { // "Save changes" chosen
+                save(suite);
+            }
+            return choice != 2; // can close unless "Don't close" chosen
         }
-        else return true;
     }
     
     /** Closes the suite whose data is currently being displayed. */
@@ -516,7 +525,12 @@ public final class PuffinApp {
     }
     
     /** Creates a new suite and reads data into it from the specified files.
-     * @param files the files from which to read data */
+     * @param files the files from which to read data
+     * @param format custom file format
+     *
+     * If format is null, PuffinPlot will assume that the file is in one
+     * of its standard formats (PuffinPlot, 2G, Caltech, or Zplot).
+     */
     public void openFiles(List<File> files, FileFormat format) {
         if (files.isEmpty()) return;
         // If this fileset is already in the recent-files list,
@@ -638,7 +652,9 @@ public final class PuffinApp {
             // We couldn't find the ApplicationAdapter class.
             errorDialog("EAWT error", "Apple EAWT not supported: Application" +
                     " Menu handling disabled\n(" + e + ")");
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | NoSuchMethodException |
+                SecurityException | IllegalAccessException | 
+                IllegalArgumentException | InvocationTargetException e) {
             errorDialog("EAWT error", "Error while loading the OSXAdapter:");
             e.printStackTrace();
         }
@@ -702,7 +718,7 @@ public final class PuffinApp {
      * @return all the sites which contain any of the currently selected samples */
     public List<Site> getSelectedSites() {
         List<Sample> samples = getSelectedSamples();
-        Set<Site> siteSet = new LinkedHashSet<Site>();
+        Set<Site> siteSet = new LinkedHashSet<>();
         for (Sample sample: samples) {
             // re-insertion doesn't affect iteration order
             Site site = sample.getSite();
@@ -710,14 +726,14 @@ public final class PuffinApp {
                 siteSet.add(sample.getSite());
             }
         }
-        return new ArrayList<Site>(siteSet);
+        return new ArrayList<>(siteSet);
     }
     
     /** Gets all the samples in all the sites having at least one selected sample.
      * @return all the samples contained in any site containing at least 
      * one selected sample */
     public List<Sample> getAllSamplesInSelectedSites() {
-        final List<Sample> samples = new ArrayList<Sample>();
+        final List<Sample> samples = new ArrayList<>();
         for (Site s: PuffinApp.getInstance().getSelectedSites()) {
             samples.addAll(s.getSamples());
         }
@@ -910,7 +926,9 @@ public final class PuffinApp {
      * expected to be in Agico ASC format, as produced by the SAFYR
      * and SUSAR programs.</p> */
     public void importAmsWithDialog() {
-        if (showErrorIfNoSuite()) return;
+        if (showErrorIfNoSuite()) {
+            return;
+        }
         try {
             List<File> files = openFileDialog("Select AMS files");
             getSuite().importAmsFromAsc(files, false);
@@ -1138,7 +1156,7 @@ public final class PuffinApp {
     public void calculateMultiSuiteMeans() {
         multiSuiteCalcs = Suite.calculateMultiSuiteMeans(suites);
         StringBuilder meansBuilder = new StringBuilder();
-        List<List<String>> meansStrings = new ArrayList<List<String>>(8);
+        List<List<String>> meansStrings = new ArrayList<>(8);
         meansStrings.add(SuiteCalcs.getHeaders());
         meansStrings.addAll(multiSuiteCalcs.toStrings());
         for (List<String> line: meansStrings) {
@@ -1299,7 +1317,7 @@ public final class PuffinApp {
     }
         
     private void setApplicationIcon() {
-        List<Image> icons = new ArrayList<Image>(10);
+        List<Image> icons = new ArrayList<>(10);
         final Toolkit kit = Toolkit.getDefaultToolkit();
         for (String iconName: "256 128 48 32 16".split(" ")) {
             final URL url =
@@ -1312,9 +1330,7 @@ public final class PuffinApp {
     public void openWebPage(String uriString) {
         try {
             Desktop.getDesktop().browse(new URI(uriString));
-        } catch (URISyntaxException ex) {
-            app.errorDialog("Error opening web page", ex.getLocalizedMessage());
-        } catch (IOException ex) {
+        } catch (URISyntaxException | IOException ex) {
             app.errorDialog("Error opening web page", ex.getLocalizedMessage());
         }
     }

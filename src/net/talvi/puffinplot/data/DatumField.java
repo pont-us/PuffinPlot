@@ -147,16 +147,15 @@ public enum DatumField {
     private final String defaultValue;
     private final boolean virtual;
     private final boolean importable;
-    private final static Map<String, DatumField> nameMap
-            = new HashMap<String, DatumField>();
+    private final static Map<String, DatumField> nameMap = new HashMap<>();
     private static final List<String> realFieldHeadings;
     private static final List<DatumField> realFields;
     
     static {
         final List<DatumField> realFieldsTmp =
-                new ArrayList<DatumField>(values().length - 1);
+                new ArrayList<>(values().length - 1);
         final List<String> realFieldHeadersTmp =
-                new ArrayList<String>(values().length-1);
+                new ArrayList<>(values().length - 1);
         for (DatumField field: values())
         {
             nameMap.put(field.getHeading(), field);

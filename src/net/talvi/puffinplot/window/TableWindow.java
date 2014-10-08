@@ -55,7 +55,7 @@ public class TableWindow extends JFrame {
     
     private static class DataTableModel extends AbstractTableModel {
         private static final long serialVersionUID = 1L;
-        private List<TableModelListener> listeners = new LinkedList<TableModelListener>();
+        private final List<TableModelListener> listeners = new LinkedList<>();
         
         @Override
         public void addTableModelListener(TableModelListener listener) {
@@ -73,6 +73,7 @@ public class TableWindow extends JFrame {
             }
         }
 
+        @Override
         public int getColumnCount() {
             return DatumField.values().length - 1;
         }
@@ -82,6 +83,7 @@ public class TableWindow extends JFrame {
             return DatumField.values()[c].toString().toLowerCase();
         }
           
+        @Override
         public int getRowCount() {
             if (PuffinApp.getInstance() != null &&
                     PuffinApp.getInstance().getSample() != null)
@@ -94,6 +96,7 @@ public class TableWindow extends JFrame {
             return DatumField.values()[c].getClass();
         }
 
+        @Override
         public Object getValueAt(int row, int col) {
             try {
                 Datum d = PuffinApp.getInstance().getSample().getData().get(row);

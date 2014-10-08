@@ -109,12 +109,15 @@ it.
 
 \subsection{Requirements}
 
-PuffinPlot runs on the Java platform (version 6 or later), which is
+PuffinPlot runs on the Java platform (version 7 or later), which is
 preinstalled or freely available for a variety of operating systems,
 including Windows, Linux, and Mac OS X. Java is generally easy to install,
 but detailed instructions for installing it are beyond the scope of this
 manual; please consult the documentation for your operating system or visit
-\url{http://www.java.com/} for details.
+\url{http://www.java.com/} for details. (If for any reason you are
+constrained to use an older version of Java on your system, you may still
+be able to run an older version of PuffinPlot: version 1.02 of PuffinPlot
+works on Java 6, and version 1.01 works on Java 5.)
 
 \subsection{Obtaining and installing PuffinPlot}
 
@@ -968,7 +971,10 @@ associated data files in same folder); and data from the {\sf Zplot} program
 by Stephen Hurst (filename suffix \ppcmd{txt}). Note that there are different
 ways to read 2\caps{g} data files: users are encouraged to read
 section~\ref{sec:prefs-2g-import} and ensure that the preferences are
-correctly set for their needs.
+correctly set for their needs. (In particular, \textbf{magnetization
+vectors may be read incorrectly from 2G long core files if the wrong
+import settings are used}, so it is important to check the settings
+before importing data.)
 
 In general, support for other file formats is straighforward to add, and most
 tabular textual file formats can be opened using the \ppcmd{File\submenu
@@ -1308,6 +1314,16 @@ produced by the \caps{2g} `Long Core' software.
   available protocols.
 
 \end{menuitemlist}
+
+\noindent\textbf{Warning: incorrectly set sensor lengths can produce erroneous data!}
+The sensor lengths are not written to the 2G file, so they \textit{must} be
+correctly set in PuffinPlot's preferences before importing 2G long core data.
+(For discrete data, sensor lengths are not required.) If the sensor lengths
+are not known, use the `Dec/Inc/Intensity' setting in the 2G import tab.
+Failing to correct for sensor length is particularly dangerous because the
+deviations from the true measured vectors are often small enough not to be
+immediately obvious. See Section~3 of \cite{roberts2006high} for a fuller
+discussion of sensor response functions.
 
 \begin{table}
   \caption{\label{tbl:import-protocols}Measurement protocols for 2\caps{g} data files}

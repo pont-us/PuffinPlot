@@ -45,8 +45,8 @@ final class PlotAxis {
     }
 
     static PlotAxis[] makeMatchingAxes(AxisParameters[] params, Plot plot) {
-        List<Double> stepSizes = new ArrayList<Double>(params.length);
-        List<Integer> magnitudes = new ArrayList<Integer>(params.length);
+        List<Double> stepSizes = new ArrayList<>(params.length);
+        List<Integer> magnitudes = new ArrayList<>(params.length);
         for (AxisParameters p: params)
             stepSizes.add(calculateStepSize(p.extent));
         double stepSize = Collections.max(stepSizes);
@@ -54,7 +54,7 @@ final class PlotAxis {
             magnitudes.add(calculateMagnitude(roundUpToNextStep(p.extent, stepSize)));
         int magnitude = Collections.max(magnitudes);
 
-        List<PlotAxis> axes = new ArrayList<PlotAxis>(params.length);
+        List<PlotAxis> axes = new ArrayList<>(params.length);
         for (AxisParameters p: params) {
             AxisParameters newP = new AxisParameters(p);
             newP.stepSize = stepSize;

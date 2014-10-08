@@ -82,6 +82,7 @@ class SampleDataPanel extends JPanel {
             this.sample = sample;
             this.flagNum = flagNum;
             addChangeListener(new ChangeListener() {
+                @Override
                 public void stateChanged(ChangeEvent e) {
                     SampleCheckBox scb = SampleCheckBox.this;
                     scb.sample.getCustomFlags().set(scb.flagNum, isSelected());
@@ -107,14 +108,17 @@ class SampleDataPanel extends JPanel {
             //this.sample = sample;
             //this.flagNum = noteNum;
             getDocument().addDocumentListener(new DocumentListener() {
+                @Override
                 public void insertUpdate(DocumentEvent e) {
                     sample.getCustomNotes().set(noteNum, getText());
                 }
 
+                @Override
                 public void removeUpdate(DocumentEvent e) {
                     sample.getCustomNotes().set(noteNum, getText());
                 }
 
+                @Override
                 public void changedUpdate(DocumentEvent e) {
                     sample.getCustomNotes().set(noteNum, getText());
                 }

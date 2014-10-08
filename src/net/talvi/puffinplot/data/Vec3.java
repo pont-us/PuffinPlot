@@ -158,8 +158,8 @@ public class Vec3 {
      * {@code vs}; none of the sub-lists crosses the equator
      */
     public static List<List<Vec3>> interpolateEquatorPoints(List<Vec3> vs) {
-        List<List<Vec3>> result = new ArrayList<List<Vec3>>();
-        List<Vec3> currentSegment = new ArrayList<Vec3>();
+        List<List<Vec3>> result = new ArrayList<>();
+        List<Vec3> currentSegment = new ArrayList<>();
         Vec3 prev = null;
         for (Vec3 v: vs) {
             if (prev == null) {
@@ -171,7 +171,7 @@ public class Vec3 {
                     Vec3 between = Vec3.equatorPoint(prev, v);
                     currentSegment.add(between);
                     result.add(currentSegment);
-                    currentSegment = new ArrayList<Vec3>();
+                    currentSegment = new ArrayList<>();
                     currentSegment.add(between);
                     currentSegment.add(v);
                 }
@@ -212,7 +212,7 @@ public class Vec3 {
         // TODO fix this for equator-crossing case?
         if (omega < stepSize) return Arrays.asList(new Vec3[] {v0n, v1n});
         int steps = (int) (omega / stepSize) + 1;
-        final List<Vec3> result = new ArrayList<Vec3>(steps+1);
+        final List<Vec3> result = new ArrayList<>(steps+1);
         Vec3 prevVec = null;
 
         for (int i=0; i<steps; i++) {
@@ -256,7 +256,7 @@ public class Vec3 {
             List<Vec3> a = spherInterpolate(v0, v1.invert(), stepSize);
             List<Vec3> b = spherInterpolate(v1.invert(), v0.invert(), stepSize);
             List<Vec3> c = spherInterpolate(v0.invert(), v1, stepSize);
-            List<Vec3> result = new ArrayList<Vec3>(a.size() + b.size() + c.size());
+            List<Vec3> result = new ArrayList<>(a.size() + b.size() + c.size());
             result.addAll(a);
             result.addAll(b);
             result.addAll(c);
@@ -405,7 +405,7 @@ public class Vec3 {
      * @return list of points on great circle
      */
     public List<Vec3> greatCirclePoints(int n, boolean closed) {
-        final List<Vec3> points = new ArrayList<Vec3>(n+1);
+        final List<Vec3> points = new ArrayList<>(n+1);
         for (int i=0; i<n; i++) {
             points.add(correctTilt(Vec3.fromPolarRadians(1, 0, 2*PI*i/n)));
         }
@@ -726,7 +726,7 @@ public class Vec3 {
      * @return a list of vectors defining a small circle around this vector's direction
      */
     public List<Vec3> makeSmallCircle(double radiusDegrees) {
-        List<Vec3> result = new ArrayList<Vec3>();
+        List<Vec3> result = new ArrayList<>();
         for (double dec = 0; dec < 360; dec += 5) {
             final Vec3 v1 = Vec3.fromPolarDegrees(1, 90 - radiusDegrees, dec);
             final Vec3 v2 = v1.rotY(Math.PI / 2 - getIncRad());
@@ -745,7 +745,7 @@ public class Vec3 {
             double eta, double etad, double etai,
             double zeta, double zetad, double zetai) {
         final int N = 64;
-        List<Vec3> vs = new ArrayList<Vec3>(N);
+        List<Vec3> vs = new ArrayList<>(N);
         // we're going to draw the ellipse at the top of the unit
         // sphere, then rotate it down into position.
 
@@ -786,7 +786,7 @@ public class Vec3 {
         // if (eta>PI/2) eta = PI/2+0.1;
         final double zeta = kentParams.getZetaMag();
         // final int N = (int) (1000*sqrt(1+eta*eta+zeta*zeta));
-        List<Vec3> vs = new ArrayList<Vec3>(1000);
+        List<Vec3> vs = new ArrayList<>(1000);
         // we're going to draw the ellipse at the bottom of the unit
         // sphere, then rotate it down into position.
 
@@ -862,7 +862,8 @@ public class Vec3 {
     }
     
     /** Checks that this vector contains no NaN or infinite values.
-     * 
+     *
+     * @return true iff this vector contains no NaN or infinite values
      */
     public boolean isWellFormed() {
         return (!Double.isNaN(x)) && (!Double.isNaN(y)) && (!Double.isNaN(z))

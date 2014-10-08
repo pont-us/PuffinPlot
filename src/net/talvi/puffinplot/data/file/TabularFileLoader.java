@@ -25,10 +25,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import net.talvi.puffinplot.data.DatumField;
 
 /**
  *
@@ -54,7 +51,7 @@ public class TabularFileLoader extends AbstractFileLoader {
         }
         try {
             reader = new BufferedReader(new FileReader(file));
-            List<String> lines = new ArrayList<String>(50);
+            final List<String> lines = new ArrayList<>(50);
             while (true) {
                 final String line = reader.readLine();
                 if (line==null) break;

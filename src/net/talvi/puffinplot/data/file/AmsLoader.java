@@ -57,7 +57,7 @@ public class AmsLoader {
      * @throws IOException 
      */
     private String[][] readFileChunk(BufferedReader reader) throws IOException {
-        ArrayList<String[]> result = new ArrayList<String[]>(64);
+        ArrayList<String[]> result = new ArrayList<>(64);
         do {
             String line = reader.readLine();
             if (line==null) break;
@@ -77,7 +77,7 @@ public class AmsLoader {
     public List<AmsData> readFile() throws IOException {
         final BufferedReader reader =
                 new BufferedReader(new FileReader(ascFile));
-        final List<AmsData> result = new ArrayList<AmsData>();
+        final List<AmsData> result = new ArrayList<>();
         do {
             final String[][] chunk = readFileChunk(reader);
             if (chunk.length<39) break;

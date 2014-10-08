@@ -73,9 +73,9 @@ public class Sample {
         }
         this.depth = depthTmp;
         this.suite = suite;
-        this.data = new ArrayList<Datum>();
-        this.customFlags = new CustomFields<Boolean>();
-        this.customNotes = new CustomFields<String>();
+        this.data = new ArrayList<>();
+        this.customFlags = new CustomFields<>();
+        this.customNotes = new CustomFields<>();
     }
     
     /**
@@ -252,7 +252,7 @@ public class Sample {
     /** Returns all the visible (non-hidden) data points within this sample.
      * @return all the visible (non-hidden) data points within this sample */
     public List<Datum> getVisibleData() {
-        List<Datum> visibleData = new ArrayList<Datum>(getNumData());
+        List<Datum> visibleData = new ArrayList<>(getNumData());
         for (Datum d: getData()) if (!d.isHidden()) visibleData.add(d);
         return visibleData;
     }
@@ -260,7 +260,7 @@ public class Sample {
     /** Returns all the selected data points within this sample.
      * @return all the selected data points within this sample */
     public List<Datum> getSelectedData() {
-        LinkedList<Datum> selData = new LinkedList<Datum>();
+        LinkedList<Datum> selData = new LinkedList<>();
         for (Datum d: getData()) if (d.isSelected()) selData.add(d);
         return selData;
     }
@@ -429,7 +429,7 @@ public class Sample {
      * @return the magnetic moment vectors used for the current great-circle fit
      */
     public List<Vec3> getCirclePoints(Correction correction) {
-        List<Vec3> result = new ArrayList<Vec3>(getData().size());
+        List<Vec3> result = new ArrayList<>(getData().size());
         for (Datum d: getData()) {
             if (d.isOnCircle()) result.add(d.getMoment(correction));
         }
@@ -665,7 +665,7 @@ public class Sample {
      */
     public List<String> exportFields(List<DatumField> fields) {
         final List<Datum> ds = getData();
-        List<String> result = new ArrayList<String>(ds.size());
+        List<String> result = new ArrayList<>(ds.size());
         for (Datum d: ds) {
             result.add(d.exportFieldValues(fields, "\t"));
         }
@@ -680,7 +680,7 @@ public class Sample {
      * @return a list of Strings representing data pertaining to this sample
      */
     public List<String> toStrings() {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         if (customFlags.size()>0) {
             result.add("CUSTOM_FLAGS\t" + customFlags.exportAsString());
         }
@@ -699,21 +699,23 @@ public class Sample {
      */
     public void fromString(String string) {
         String[] parts = string.split("\t", -1); // don't discard trailing empty strings
-        if ("CUSTOM_FLAGS".equals(parts[0])) {
-            List<Boolean> flags = new ArrayList<Boolean>(parts.length-1);
-            for (int i=1; i<parts.length; i++) {
-                flags.add(Boolean.parseBoolean(parts[i]));
-            }
-            customFlags = new CustomFields<Boolean>(flags);
-        } else if ("CUSTOM_NOTES".equals(parts[0])) {
-            List<String> notes = new ArrayList<String>(parts.length-1);
-            for (int i=1; i<parts.length; i++) {
-                notes.add(parts[i]);
-            }
-            customNotes = new CustomFields<String>(notes);
-        } else if ("SITE".equals(parts[0])) {
-            Site mySite = suite.getOrCreateSite(parts[1]);
-            mySite.addSample(this);
+        if (null != parts[0]) switch (parts[0]) {
+            case "CUSTOM_FLAGS":
+                final List<Boolean> flags = new ArrayList<>(parts.length-1);
+                for (int i=1; i<parts.length; i++) {
+                    flags.add(Boolean.parseBoolean(parts[i]));
+                }   customFlags = new CustomFields<>(flags);
+                break;
+            case "CUSTOM_NOTES":
+                final List<String> notes = new ArrayList<>(parts.length-1);
+                for (int i=1; i<parts.length; i++) {
+                    notes.add(parts[i]);
+                }   customNotes = new CustomFields<>(notes);
+                break;
+            case "SITE":
+                Site mySite = suite.getOrCreateSite(parts[1]);
+                mySite.addSample(this);
+                break;
         }
     }
 
@@ -844,7 +846,7 @@ public class Sample {
 
     public void calculateFisher(Correction correction) {
         final List<Datum> selection = getSelectedData();
-        final List<Vec3> directions = new ArrayList<Vec3>(selection.size());
+        final List<Vec3> directions = new ArrayList<>(selection.size());
         for (Datum d: selection) {
             directions.add(d.getMoment(correction));
         }

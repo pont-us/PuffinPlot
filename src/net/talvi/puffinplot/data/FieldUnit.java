@@ -27,7 +27,7 @@ public enum FieldUnit {
     TESLA(1),
     MILLITESLA(0.001);
     
-    private double factor;
+    private final double factor;
 
     private FieldUnit(double factor) {
         this.factor = factor;

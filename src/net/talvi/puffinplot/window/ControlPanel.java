@@ -44,12 +44,12 @@ public class ControlPanel extends JPanel
     private static final long serialVersionUID = 1L;
     private final JLabel correctionField;
     JComboBox suiteBox;
-    private RotationBox rotationBox;
+    private final RotationBox rotationBox;
     VVsBox vVsBox;
     private static final PuffinApp app = PuffinApp.getInstance();
     private static final Preferences prefs = app.getPrefs().getPrefs();
     
-    private Action toggleZplotAction = new AbstractAction() {
+    private final Action toggleZplotAction = new AbstractAction() {
         private static final long serialVersionUID = 1L;
         @Override
         public void actionPerformed(ActionEvent e) {

@@ -54,7 +54,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
     private final File file;
     private LineNumberReader reader;
     private final Protocol protocol;
-    private Set<String> requestedFields = new HashSet<String>();
+    private Set<String> requestedFields = new HashSet<>();
     private boolean usePolarMoment; // use d/i/i rather than x/y/z fields
 
     /**
@@ -83,6 +83,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
      * @param file the file to read
      * @param protocol the measurement protocol which was used to create the data
      * @param sensorLengths the effective sensor lengths (only used for long core data)
+     * @param usePolarMoment read magnetic moment from dec/inc/intensity, not x/y/z
      */
     public TwoGeeLoader(File file, Protocol protocol, Vec3 sensorLengths,
             boolean usePolarMoment) {
@@ -109,12 +110,12 @@ public class TwoGeeLoader extends AbstractFileLoader {
             addMessage("%s is empty.", fileName);
             reader.close();
         } else {
-            fields = new HashMap<String, Integer>();
+            fields = new HashMap<>();
             String[] fieldNames = fieldsLine.split(("\\t"));
             for (int i=0; i<fieldNames.length; i++)
                 fields.put(fieldNames[i], i);
         }
-        data = new LinkedList<Datum>();
+        data = new LinkedList<>();
         Vec3 trayMoment = null; // only used for TRAY_FIRST and TRAY_NORMAL_IGNORE
         String line;
         while ((line = reader.readLine()) != null) {
@@ -126,74 +127,72 @@ public class TwoGeeLoader extends AbstractFileLoader {
                 trayMoment = d.getMoment(Correction.NONE);
                 continue;
             }
-            if (d != null) {
-                if (d.isMagSusOnly()) {
-                    /* The only way we can tie a mag. sus. value to a
-                     * treatment step is by assuming it comes after
-                     * the associated magnetic moment measurement.
-                     * If the first line is mag. sus., we throw it away
-                     * since we don't know the treatment step.
-                     */
-                    if (data.size()>0) {
-                        Datum dPrev = data.get(data.size() - 1);
-                        if (!dPrev.isMagSusOnly()) {
-                            dPrev.setMagSus(d.getMagSus());
-                        } else {
-                            data.add(d);
-                        }
-                    }
-                } else {
-                    Datum tray, normal, yflip;
-                    Datum combined = null;
-                    switch (protocol) {
-                        case NORMAL:
-                            //data.add(d);
-                            combined = d;
-                            break;
-                        case TRAY_NORMAL:
-                            tray = d;
-                            normal = readDatum(reader.readLine(), reader.getLineNumber());
-                            //data.add(combine2(tray, normal, true));
-                            combined = combine2(tray, normal, true);
-                            break;
-                        case TRAY_NORMAL_IGNORE:
-                            tray = d;
-                            normal = readDatum(reader.readLine(), reader.getLineNumber());
-                            if (trayMoment == null) trayMoment = tray.getMoment(Correction.NONE);
-                            normal.setMoment(normal.getMoment(Correction.NONE).minus(trayMoment));
-                            //data.add(normal);
-                            combined = normal;
-                            break;
-                        case NORMAL_TRAY:
-                            normal = d;
-                            tray = readDatum(reader.readLine(), reader.getLineNumber());
-                            //data.add(combine2(tray, normal, false));
-                            combined = combine2(tray, normal, false);
-                            break;
-                        case TRAY_NORMAL_YFLIP:
-                            tray = d;
-                            normal = readDatum(reader.readLine(), reader.getLineNumber());
-                            /* We're using the two-position measurement protocol,
-                             * so we will read three lines (tray, normal, y-flipped)
-                             * and synthesize a Datum from them. */
-                            yflip = readDatum(reader.readLine(), reader.getLineNumber());
-                            //data.add(combine3(tray, normal, yflip));
-                            combined = combine3(tray, normal, yflip);
-                            break;
-                        case TRAY_FIRST:
-                            // can't use combine2 as we want the rest of the
-                            // data from d, not the tray measurement
-                            final Vec3 normV = d.getMoment(Correction.NONE);
-                            d.setMoment(normV.minus(trayMoment));
-                            // data.add(d);
-                            combined = d;
-                            break;
-                    }
-                    if (combined == null) {
-                        break;
+            if (d.isMagSusOnly()) {
+                /* The only way we can tie a mag. sus. value to a
+                * treatment step is by assuming it comes after
+                * the associated magnetic moment measurement.
+                * If the first line is mag. sus., we throw it away
+                * since we don't know the treatment step.
+                */
+                if (data.size()>0) {
+                    Datum dPrev = data.get(data.size() - 1);
+                    if (!dPrev.isMagSusOnly()) {
+                        dPrev.setMagSus(d.getMagSus());
                     } else {
-                        data.add(combined);
+                        data.add(d);
                     }
+                }
+            } else {
+                Datum tray, normal, yflip;
+                Datum combined = null;
+                switch (protocol) {
+                    case NORMAL:
+                        //data.add(d);
+                        combined = d;
+                        break;
+                    case TRAY_NORMAL:
+                        tray = d;
+                        normal = readDatum(reader.readLine(), reader.getLineNumber());
+                        //data.add(combine2(tray, normal, true));
+                        combined = combine2(tray, normal, true);
+                        break;
+                    case TRAY_NORMAL_IGNORE:
+                        tray = d;
+                        normal = readDatum(reader.readLine(), reader.getLineNumber());
+                        if (trayMoment == null) trayMoment = tray.getMoment(Correction.NONE);
+                        normal.setMoment(normal.getMoment(Correction.NONE).minus(trayMoment));
+                        //data.add(normal);
+                        combined = normal;
+                        break;
+                    case NORMAL_TRAY:
+                        normal = d;
+                        tray = readDatum(reader.readLine(), reader.getLineNumber());
+                        //data.add(combine2(tray, normal, false));
+                        combined = combine2(tray, normal, false);
+                        break;
+                    case TRAY_NORMAL_YFLIP:
+                        tray = d;
+                        normal = readDatum(reader.readLine(), reader.getLineNumber());
+                        /* We're using the two-position measurement protocol,
+                        * so we will read three lines (tray, normal, y-flipped)
+                        * and synthesize a Datum from them. */
+                        yflip = readDatum(reader.readLine(), reader.getLineNumber());
+                        //data.add(combine3(tray, normal, yflip));
+                        combined = combine3(tray, normal, yflip);
+                        break;
+                    case TRAY_FIRST:
+                        // can't use combine2 as we want the rest of the
+                        // data from d, not the tray measurement
+                        final Vec3 normV = d.getMoment(Correction.NONE);
+                        d.setMoment(normV.minus(trayMoment));
+                        // data.add(d);
+                        combined = d;
+                        break;
+                }
+                if (combined == null) {
+                    break;
+                } else {
+                    data.add(combined);
                 }
             }
             if (messages.size() > MAX_WARNINGS) {
@@ -262,10 +261,10 @@ public class TwoGeeLoader extends AbstractFileLoader {
      * (2) requested but not found
      */
     private void correlateFields() {
-        Set<String> fileFieldSet = new HashSet<String>(fields.keySet());
-        Set<String> notUsed = new HashSet<String>(fileFieldSet);
+        Set<String> fileFieldSet = new HashSet<>(fields.keySet());
+        Set<String> notUsed = new HashSet<>(fileFieldSet);
         notUsed.removeAll(requestedFields);
-        Set<String> notInFile = new HashSet<String>(requestedFields);
+        Set<String> notInFile = new HashSet<>(requestedFields);
         notInFile.removeAll(fileFieldSet);
         logger.info(String.format("Field headers in file %s\n" +
                 "Not found in file: %s\nIn file but ignored: %s", file,
@@ -303,7 +302,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
 
     private class FieldReader {
 
-        private String[] values;
+        private final String[] values;
 
         FieldReader(String line) {
             values = line.split("\\t");

@@ -21,12 +21,9 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.EnumMap;
-import java.util.Map;
 import javax.swing.*;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.Datum;
-import net.talvi.puffinplot.data.DatumField;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.TreatType;
 
@@ -38,8 +35,8 @@ import net.talvi.puffinplot.data.TreatType;
 public class TreatmentWindow extends JFrame implements ActionListener {
 
     private static final long serialVersionUID = 1L;
-    private JButton cancelButton;
-    private JButton setButton;
+    private final JButton cancelButton;
+    private final JButton setButton;
     private final TreatmentCombo treatmentCombo;
     
     private static class TreatmentCombo extends JComboBox {

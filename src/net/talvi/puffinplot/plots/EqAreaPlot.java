@@ -150,14 +150,21 @@ public abstract class EqAreaPlot extends Plot {
     }
 
     /**
-     * Draw line segments. Assumes all segments in same hemisphere.
+     * Project and cache line segments.
+     * Assumes all segments in same hemisphere.
      * @param vs vectors to project
+     * @param cache line cache in which to store projected vector path
      */
      protected void projectLineSegments(List<Vec3> vs, LineCache cache) {
          // determine whether we're in upper hemisphere, ignoring
          // z co-ordinates very close to zero. 
          boolean upperHemisph = true;
-         for (Vec3 v: vs) { if (v.z > 1e-10) { upperHemisph = false; break; } }
+         for (Vec3 v: vs) {
+             if (v.z > 1e-10) {
+                 upperHemisph = false;
+                 break;
+             }
+         }
          cache.addPath(vectorsToPath(vs), upperHemisph);
          //Stroke stroke = upperHemisph ? getStroke() : getDashedStroke();
          //g.setStroke(stroke);

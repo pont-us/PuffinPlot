@@ -7,7 +7,6 @@ package net.talvi.puffinplot;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.BitSet;
-import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -82,9 +81,9 @@ public class UtilTest {
     }
     
     private class ClipTester {
-        private Rectangle2D[] rectangles;
-        private Line2D[] lines;
-        private Line2D[][] clips;
+        private final Rectangle2D[] rectangles;
+        private final Line2D[] lines;
+        private final Line2D[][] clips;
         
         public ClipTester(double[][] rectangles, double[][] lines,
                 double[][] clips) {

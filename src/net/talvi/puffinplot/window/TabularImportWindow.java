@@ -39,8 +39,8 @@ import net.talvi.puffinplot.data.file.FileFormat;
 public class TabularImportWindow extends JFrame {
     private static final long serialVersionUID = 1L;
     
-    private List<FieldChooser> fieldChoosers = new ArrayList<FieldChooser>(20);
-    private HeaderLinesPanel headerLinesPanel;
+    private final List<FieldChooser> fieldChoosers = new ArrayList<>(20);
+    private final HeaderLinesPanel headerLinesPanel;
     private final EnumChooser<MeasType> measTypeChooser;
     private final EnumChooser<TreatType> treatTypeChooser;
     private final EnumChooser<MomentUnit> momentUnitChooser;
@@ -68,23 +68,23 @@ public class TabularImportWindow extends JFrame {
         firstPanel.setBorder(BorderFactory.createTitledBorder("General settings"));
         headerLinesPanel = new HeaderLinesPanel();
         firstPanel.add(headerLinesPanel);
-        measTypeChooser = new EnumChooser<MeasType>("Measurement type",
+        measTypeChooser = new EnumChooser<>("Measurement type",
                 new String[] {"Continuous", "Discrete"},
                 new MeasType[] {MeasType.CONTINUOUS, MeasType.DISCRETE},
                 initialFormat.getMeasurementType());
         firstPanel.add(measTypeChooser);
-        treatTypeChooser = new EnumChooser<TreatType>("Treatment type",
+        treatTypeChooser = new EnumChooser<>("Treatment type",
                 "Thermal#AF (3-axis)#AF (z-axis)#IRM#ARM".split("#"),
                 new TreatType[] {TreatType.THERMAL, TreatType.DEGAUSS_XYZ,
                 TreatType.DEGAUSS_Z, TreatType.IRM, TreatType.ARM},
                 initialFormat.getTreatmentType());
         firstPanel.add(treatTypeChooser);
-        momentUnitChooser = new EnumChooser<MomentUnit>("Unit for magnetic moment",
+        momentUnitChooser = new EnumChooser<>("Unit for magnetic moment",
                 new String[] {"A/m", "mA/m"},
                 new MomentUnit[] {MomentUnit.AM, MomentUnit.MILLIAM},
                 initialFormat.getMomentUnit());
         firstPanel.add(momentUnitChooser);
-        fieldUnitChooser = new EnumChooser<FieldUnit>("Unit for AF field",
+        fieldUnitChooser = new EnumChooser<>("Unit for AF field",
                 new String[] {"millitesla", "tesla"},
                 new FieldUnit[] {FieldUnit.MILLITESLA, FieldUnit.TESLA},
                 initialFormat.getFieldUnit());
@@ -223,15 +223,13 @@ public class TabularImportWindow extends JFrame {
      */
     public FileFormat getFileFormat() {
         final Map<Integer, DatumField> fieldMap =
-                new HashMap<Integer,DatumField>(fieldChoosers.size());
+                new HashMap<>(fieldChoosers.size());
         for (FieldChooser fieldChooser: fieldChoosers) {
             final DatumField field = fieldChooser.getField();
             if (field != null) {
                 fieldMap.put(fieldChooser.getColumnNumber()-1, field);
             }
         }
-                    final Map<DatumField, Double> rescaleMap =
-                    new HashMap<DatumField, Double>();
         return new FileFormat(fieldMap, headerLinesPanel.getNumber(),
                 measTypeChooser.getValue(),
                 treatTypeChooser.getValue(),
@@ -293,8 +291,8 @@ public class TabularImportWindow extends JFrame {
         
         static {
             DatumField[] allValues = DatumField.values();
-            fieldStrings = new ArrayList<String>(allValues.length+1);
-            fields = new ArrayList<DatumField>(allValues.length+1);
+            fieldStrings = new ArrayList<>(allValues.length+1);
+            fields = new ArrayList<>(allValues.length+1);
             fields.add(null);
             fieldStrings.add("[Ignore this column]");
             for (DatumField field: allValues) {

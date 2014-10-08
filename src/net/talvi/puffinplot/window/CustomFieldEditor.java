@@ -43,16 +43,16 @@ import net.talvi.puffinplot.data.CustomFields;
 public class CustomFieldEditor extends JFrame {
     private static final long serialVersionUID = 1L;
 
-    private JPanel contentPane;
-    private JList list;
-    private DefaultListModel listModel;
+    private final JPanel contentPane;
+    private final JList list;
+    private final DefaultListModel listModel;
     private static final String addString = "Add…";
     private static final String removeString = "Remove";
-    private JButton removeButton;
-    private JButton addButton;
-    private JButton renameButton;
-    private JButton upButton;
-    private JButton downButton;
+    private final JButton removeButton;
+    private final JButton addButton;
+    private final JButton renameButton;
+    private final JButton upButton;
+    private final JButton downButton;
     private final CustomFields<String> fields;
 
     /**

@@ -42,18 +42,20 @@ public class SampleChooser extends JPanel {
     private static final long serialVersionUID = 7533359714843605451L;
     private DepthSlider depthSlider;
     private SampleList sampleList;
-    private JScrollPane samplePane;
+    private final JScrollPane samplePane;
 
-    private Action nextAction = new AbstractAction() {
+    private final Action nextAction = new AbstractAction() {
         private static final long serialVersionUID = 1L;
+        @Override
         public void actionPerformed(ActionEvent e) {
             depthSlider.changeValueBy(1);
             sampleList.changeIndexBy(1);
         }
     };
     
-    private Action prevAction = new AbstractAction() {
+    private final Action prevAction = new AbstractAction() {
         private static final long serialVersionUID = 1L;
+        @Override
         public void actionPerformed(ActionEvent e) {
             depthSlider.changeValueBy(-1);
             sampleList.changeIndexBy(-1);
@@ -85,17 +87,18 @@ public class SampleChooser extends JPanel {
         if (suite == null) return Collections.emptyList();
         switch (suite.getMeasType()) {
         case DISCRETE:
-            Object[] names = sampleList.getSelectedValues();
-            samples = new ArrayList<Sample>(names.length);
-            for (int i = 0; i < names.length; i++)
-                samples.add(suite.getSampleByName((String) names[i]));
+            List names = sampleList.getSelectedValuesList();
+            samples = new ArrayList<>(names.size());
+            for (Object name : names) {
+                samples.add(suite.getSampleByName((String) name));
+            }
             break;
         case CONTINUOUS:
             int start = depthSlider.getRangeStart();
             int end = depthSlider.getRangeEnd();
             int value = depthSlider.getValue();
             if (start > -1) {
-                samples = new ArrayList<Sample>(end - start + 2);
+                samples = new ArrayList<>(end - start + 2);
                 if (value < start) samples.add(suite.getSampleByIndex(value));
                 for (int i = start; i <= end; i++) {
                     samples.add(suite.getSampleByIndex(i));
@@ -121,11 +124,13 @@ public class SampleChooser extends JPanel {
             this.model = model;
             setAlignmentY(0);
             addListSelectionListener(new ListSelectionListener() {
+            @Override
             public void valueChanged(ListSelectionEvent e) {
-                if (getSelectedIndex() != -1)
+                if (getSelectedIndex() != -1) {
                     PuffinApp.getInstance().getSuite().
                             setCurrentSampleIndex(getSelectedIndex());
-                    PuffinApp.getInstance().updateDisplay();
+                }
+                PuffinApp.getInstance().updateDisplay();
             }
             });
         }

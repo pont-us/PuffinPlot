@@ -54,9 +54,8 @@ class DepthSlider extends JPanel
     private int rangeEnd = -1;
     private static final RenderingHints renderingHints =
             PuffinRenderingHints.getInstance();
-    private static double POINTER_HALFHEIGHT = 10;
-    private List<ChangeListener> changeListeners =
-            new LinkedList<ChangeListener>();
+    private static final double POINTER_HALFHEIGHT = 10;
+    private final List<ChangeListener> changeListeners = new LinkedList<>();
 
     /** Creates a new slider. */
     public DepthSlider() {

@@ -74,7 +74,8 @@ public class PplLoader extends AbstractFileLoader {
             if (version != 2 && version != 3) {
                 throw new IOException(String.format("%s is of version %d,"
                         + "which cannot be "
-                        + "loaded by this version of PuffinPlot."));
+                        + "loaded by this version of PuffinPlot.",
+                        file, version));
             }
             final String headerLine = reader.readLine();
             if (headerLine == null) {
@@ -84,9 +85,7 @@ public class PplLoader extends AbstractFileLoader {
             treatmentField = headers.indexOf("TREATMENT");
             datumReader = new Datum.Reader(headers);
             readFile();
-        } catch (IOException e) {
-            addMessage(e.getMessage());
-        } catch (MalformedFileException e) {
+        } catch (IOException | MalformedFileException e) {
             addMessage(e.getMessage());
         } finally {
             try {
@@ -135,7 +134,7 @@ public class PplLoader extends AbstractFileLoader {
             addDatum(d);
         }
         if (line != null) {
-            extraLines = new ArrayList<String>();
+            extraLines = new ArrayList<>();
             while ((line = reader.readLine()) != null) {
                 extraLines.add(line);
             }

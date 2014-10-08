@@ -57,6 +57,7 @@ public class SuiteEqAreaDisplay extends GraphDisplay implements Printable {
      * otherwise {@link #NO_SUCH_PAGE}
      * @throws PrinterException if a printing error occurred
      */
+    @Override
     public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
             throws PrinterException {
         if (pageIndex > 0) return NO_SUCH_PAGE;

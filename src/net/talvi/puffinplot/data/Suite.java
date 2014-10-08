@@ -39,7 +39,7 @@ public final class Suite {
     private List<Datum> data;
     private List<Site> sites;
     private File puffinFile;
-    private List<Sample> samples = new ArrayList<Sample>(); // samples in order
+    private List<Sample> samples = new ArrayList<>(); // samples in order
     private LinkedHashMap<String, Sample> samplesById; // name or depth as appropriate
     private HashMap<Sample, Integer> indicesBySample; // maps sample to index
     private Map<Integer, Line> dataByLine;
@@ -66,7 +66,7 @@ public final class Suite {
     }
 
     private void updateReverseIndex() {
-        indicesBySample = new HashMap<Sample, Integer>(getNumSamples());
+        indicesBySample = new HashMap<>(getNumSamples());
         for (int i=0; i<samples.size(); i++) {
             indicesBySample.put(samples.get(i), i);
         }
@@ -74,7 +74,7 @@ public final class Suite {
     
     private static SuiteCalcs calculateSuiteMeans(List<Sample> selSamps,
             List<Site> selSites) {
-        List<Vec3> sampleDirs = new ArrayList<Vec3>(selSamps.size());
+        List<Vec3> sampleDirs = new ArrayList<>(selSamps.size());
         for (Sample sample: selSamps) {
             final PcaValues pca = sample.getPcaValues();
             if (pca != null) {
@@ -85,7 +85,7 @@ public final class Suite {
                 }
             }
         }
-        List<Vec3> siteDirs = new ArrayList<Vec3>(selSamps.size());
+        List<Vec3> siteDirs = new ArrayList<>(selSamps.size());
         for (Site site: selSites) {
             FisherParams fp = site.getFisherParams();
             if (fp != null) {
@@ -116,8 +116,8 @@ public final class Suite {
      * @return the results of the calculation
      */
     public static SuiteCalcs calculateMultiSuiteMeans(List<Suite> suites) {
-        final List<Sample> selSamps = new ArrayList<Sample>();
-        final List<Site> selSites = new ArrayList<Site>();
+        final List<Sample> selSamps = new ArrayList<>();
+        final List<Site> selSites = new ArrayList<>();
         for (Suite suite: suites) {
             selSamps.addAll(suite.getSamples());
             selSites.addAll(suite.getSites());
@@ -131,7 +131,7 @@ public final class Suite {
      * normal and reversed modes of the data in the suites, in that order
      */
     public static List<FisherValues> doReversalTest(List<Suite> suites) {
-        List<Vec3> normal = new ArrayList<Vec3>(), reversed = new ArrayList<Vec3>();
+        List<Vec3> normal = new ArrayList<>(), reversed = new ArrayList<>();
         for (Suite suite: suites) {
             for (Sample sample: suite.getSamples()) {
                 PcaValues pca = sample.getPcaValues();
@@ -168,7 +168,7 @@ public final class Suite {
      * @return the results of previously calculated per-site Fisher statistics
      */
     public List<FisherValues> getSiteFishers() {
-        List<FisherValues> result = new ArrayList<FisherValues>(getSites().size());
+        List<FisherValues> result = new ArrayList<>(getSites().size());
         for (Site site: getSites()) {
             if (site.getFisherValues() != null) result.add(site.getFisherValues());
         }
@@ -282,7 +282,7 @@ public final class Suite {
     }
 
     private List<File> expandDirs(List<File> files) {
-        List<File> result = new ArrayList<File>();
+        List<File> result = new ArrayList<>();
         for (File file: files) {
             if (file.isDirectory())
                 result.addAll(expandDirs(Arrays.asList(file.listFiles())));
@@ -323,7 +323,7 @@ public final class Suite {
     public void doSiteCalculations(Correction correction) {
         setSaved(false);
         // TODO we can use getSites for this now!
-        final Set<Site> sitesDone = new HashSet<Site>();
+        final Set<Site> sitesDone = new HashSet<>();
         for (Sample sample : getSamples()) {
             final Site site = sample.getSite();
             if (site == null) continue;
@@ -367,7 +367,7 @@ public final class Suite {
      * @param usePolarMoment for 2G files only: use polar (dec/inc/int)
      * data fields instead of Cartesian ones (X/Y/Z) to determine magnetic moment
      * @param format explicitly specified file format (null to automatically
-     * guess between 2G, PuffinPlot, and Zplot).
+     * guess between 2G, PuffinPlot, Caltech, and Zplot).
      * @throws IOException if an I/O error occurred while reading the files 
      */
     public Suite(List<File> files, SensorLengths sensorLengths,
@@ -377,18 +377,18 @@ public final class Suite {
         if (files.size() == 1) suiteName = files.get(0).getName();
         else suiteName = files.get(0).getParentFile().getName();
         files = expandDirs(files);
-        final ArrayList<Datum> dataArray = new ArrayList<Datum>();
+        final ArrayList<Datum> dataArray = new ArrayList<>();
         data = dataArray;
-        samplesById = new LinkedHashMap<String, Sample>();
-        dataByLine = new HashMap<Integer, Line>();
+        samplesById = new LinkedHashMap<>();
+        dataByLine = new HashMap<>();
         measType = MeasType.UNSET;
-        loadWarnings = new ArrayList<String>();
+        loadWarnings = new ArrayList<>();
         hasUnknownTreatType = false;
         final List<String> emptyStringList = Collections.emptyList();
         customFlagNames = new CustomFlagNames(emptyStringList);
         customNoteNames = new CustomNoteNames(emptyStringList);
         List<String> puffinLines = emptyStringList;
-        sites = new ArrayList<Site>();
+        sites = new ArrayList<>();
 
         for (File file: files) {
             if (!file.exists()) {
@@ -399,7 +399,7 @@ public final class Suite {
                 loadWarnings.add(String.format("File \"%s\" is unreadable.", file.getName()));
                 continue;
             }
-            FileType fileType = null;
+            FileType fileType = FileType.UNKNOWN;
             if (format != null) {
                 // explicit format specified: use the custom format loader
                 fileType = FileType.CUSTOM_TABULAR;
@@ -457,7 +457,7 @@ public final class Suite {
         if (hasUnknownTreatType)
             loadWarnings.add("One or more treatment types were not recognized.");
         if (measType.isDiscrete()) {
-            emptyTraySamples = new ArrayList<Sample>();
+            emptyTraySamples = new ArrayList<>();
             int slot = 1;
             while (true) {
                 String slotId = "TRAY" + slot;
@@ -698,7 +698,7 @@ public final class Suite {
      * @return strings representing data about this suite
      */
     public List<String> toStrings() {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         if (customFlagNames.size()>0) {
             result.add("CUSTOM_FLAG_NAMES\t"+customFlagNames.exportAsString());
         }
@@ -714,10 +714,13 @@ public final class Suite {
      */
     public void fromString(String string) {
         String[] parts = string.split("\t");
-        if ("CUSTOM_FLAG_NAMES".equals(parts[0])) {
-            customFlagNames = new CustomFlagNames(Arrays.asList(parts).subList(1, parts.length));
-        } else if ("CUSTOM_NOTE_NAMES".equals(parts[0])) {
-            customNoteNames = new CustomNoteNames(Arrays.asList(parts).subList(1, parts.length));
+        if (null != parts[0]) switch (parts[0]) {
+            case "CUSTOM_FLAG_NAMES":
+                customFlagNames = new CustomFlagNames(Arrays.asList(parts).subList(1, parts.length));
+                break;
+            case "CUSTOM_NOTE_NAMES":
+                customNoteNames = new CustomNoteNames(Arrays.asList(parts).subList(1, parts.length));
+                break;
         }
     }
 
@@ -813,7 +816,7 @@ public final class Suite {
     public void importAmsFromAsc(List<File> files, boolean magneticNorth)
             throws IOException {
         setSaved(false);
-        List<AmsData> allData = new ArrayList<AmsData>();
+        List<AmsData> allData = new ArrayList<>();
         for (File file: files) {
             AmsLoader amsLoader = new AmsLoader(file);
             allData.addAll(amsLoader.readFile());
@@ -888,29 +891,32 @@ public final class Suite {
 
     private void processPuffinLines(List<String> lines) {
         for (String line: lines) {
-            String[] parts = line.split("\t");
-            if ("SUITE".equals(parts[0])) {
-                fromString(line.substring(6));
-            } else if ("SAMPLE".equals(parts[0])) {
-                String sampleId = parts[1];
-                Sample sample = getSampleByName(sampleId);
-                /* We create a sample here if returned sample is 
-                 * null, to deal with suites which have samples with no
-                 * associated Datum lines. At present (2013-09-18)
-                 * all samples have data, but implementing #271
-                 * (import of sample-level data) will probably require
-                 * require the ability to save and load files without
-                 * demagnetization steps.
-                 */
-                if (sample == null) {
-                    sample = new Sample(sampleId, this);
-                    samplesById.put(sampleId, sample);
-                    samples.add(sample);
-                }
-                sample.fromString(line.substring(8+sampleId.length()));
-            } else if ("SITE".equals(parts[0])) {
-                Site site = getOrCreateSite(parts[1]);
-                site.fromString(line.substring(6+parts[1].length()));
+            final String[] parts = line.split("\t");
+            if (null != parts[0]) switch (parts[0]) {
+                case "SUITE":
+                    fromString(line.substring(6));
+                    break;
+                case "SAMPLE":
+                    final String sampleId = parts[1];
+                    Sample sample = getSampleByName(sampleId);
+                    /* We create a sample here if returned sample is
+                    * null, to deal with suites which have samples with no
+                    * associated Datum lines. At present (2013-09-18)
+                    * all samples have data, but implementing #271
+                    * (import of sample-level data) will probably
+                    * require the ability to save and load files without
+                    * demagnetization steps.
+                    */
+                    if (sample == null) {
+                        sample = new Sample(sampleId, this);
+                        samplesById.put(sampleId, sample);
+                        samples.add(sample);
+                    }   sample.fromString(line.substring(8+sampleId.length()));
+                    break;
+                case "SITE":
+                    final Site site = getOrCreateSite(parts[1]);
+                    site.fromString(line.substring(6+parts[1].length()));
+                    break;
             }
         }
     }
@@ -1071,7 +1077,7 @@ public final class Suite {
          * isn't necessarily tied to a single Site).
          */
         setSaved(false);
-        List<Tensor> tensors = new ArrayList<Tensor>();
+        List<Tensor> tensors = new ArrayList<>();
         for (Sample s: samples) {
             if (s.getAms() != null) tensors.add(s.getAms());
         }
@@ -1140,7 +1146,7 @@ public final class Suite {
      */
     public void clearSites() {
         setSaved(false);
-        sites = new ArrayList<Site>();
+        sites = new ArrayList<>();
         for (Sample s: samples) {
             s.setSite(null);
         }

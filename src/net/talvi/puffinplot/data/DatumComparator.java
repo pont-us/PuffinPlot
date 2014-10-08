@@ -60,6 +60,7 @@ public class DatumComparator implements Comparator<Datum> {
      * equal to, or greater than the corresponding value from the second datum)
      * @see java.lang.Double#compare(double, double) 
      */
+    @Override
     public int compare(Datum datum1, Datum datum2) {
         // TODO ensure that the moment is non-null.
         return Double.compare(datum1.getMoment(corr).getComponent(axis),

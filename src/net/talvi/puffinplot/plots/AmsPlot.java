@@ -42,8 +42,8 @@ public class AmsPlot extends EqAreaPlot {
 
     private List<KentParams> cachedBootstrapParams;
     private List<KentParams> cachedHextParams;
-    private List<List<Vec3>> cachedBootstrapRegions = new ArrayList<List<Vec3>>();
-    private List<List<Vec3>> cachedHextRegions = new ArrayList<List<Vec3>>();    
+    private List<List<Vec3>> cachedBootstrapRegions = new ArrayList<>();
+    private List<List<Vec3>> cachedHextRegions = new ArrayList<>();    
     
     /** Creates an AMS plot with the supplied parameters.
      * 
@@ -69,12 +69,13 @@ public class AmsPlot extends EqAreaPlot {
         return "AMS";
     }
 
+    @Override
     public String getShortName() {
         return "AMS";
     }
     
     private List<List<Vec3>> paramsToSegments(List<KentParams> kps) {
-        List<List<Vec3>> result = new ArrayList<List<Vec3>>();
+        List<List<Vec3>> result = new ArrayList<>();
         if (kps != null) {
             for (KentParams kp: kps) {
                 List<List<Vec3>> segments =
@@ -113,7 +114,7 @@ public class AmsPlot extends EqAreaPlot {
          for (Vec3 v: vs) { if (v.z > 1e-10) { upperHemisph = false; break; } }
          List<Vec3> vs2 = vs;
          if (upperHemisph) {
-             vs2 = new ArrayList<Vec3>(vs.size());
+             vs2 = new ArrayList<>(vs.size());
              for (Vec3 v: vs) {
                  vs2.add(v.invert());
              }

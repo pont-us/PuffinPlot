@@ -59,7 +59,7 @@ public final class MainWindow extends JFrame {
     private final JPanel welcomeMessage;
     private final SampleDataPanel sampleDataPanel;
     private final JSplitPane splitPane;
-    private int splitPaneDividerWidth;
+    private final int splitPaneDividerWidth;
     private final PuffinApp app;
 
     /**

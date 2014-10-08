@@ -30,8 +30,8 @@ import net.talvi.puffinplot.data.Datum;
  */
 abstract class AbstractFileLoader implements FileLoader {
 
-    protected List<String> messages = new LinkedList<String>();
-    protected List<Datum> data = new ArrayList<Datum>();;
+    protected List<String> messages = new LinkedList<>();
+    protected List<Datum> data = new ArrayList<>();;
 
     protected void addMessage(String message, Object... args) {
         messages.add(String.format(message, args));
@@ -41,14 +41,17 @@ abstract class AbstractFileLoader implements FileLoader {
         data.add(d);
     }
 
+    @Override
     public List<Datum> getData() {
         return data;
     }
 
+    @Override
     public List<String> getExtraLines() {
         return Collections.EMPTY_LIST;
     }
 
+    @Override
     public List<String> getMessages() {
         return Collections.unmodifiableList(messages);
     }

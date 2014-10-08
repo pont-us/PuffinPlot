@@ -43,7 +43,7 @@ public class SensorLengths {
     private final String preset;
     private final List<String> lengths;
     private final static HashMap<String, List<String>> PRESETS =
-            new LinkedHashMap<String, List<String>>();
+            new LinkedHashMap<>();
 
     static {
         addPreset("1:1:1", "1", "1", "1");
@@ -117,22 +117,26 @@ public class SensorLengths {
 
     /** Creates a new sensor lengths object from a string definition.
      * The definition must be in the format produced by {@link #toString()}.
+     * 
      * @param string a string definition
      * @return the sensor lengths specified in the string
+     * @throws IllegalArgumentException if the string is null or not recognized
      */
     public static SensorLengths fromString(String string) {
         Scanner sc = new Scanner(string);
         sc.useLocale(Locale.ENGLISH);
         sc.useDelimiter("\t");
         String type = sc.next();
-        if ("PRESET".equals(type)) {
-            String preset = sc.next();
-            return SensorLengths.fromPresetName(preset);
-        } else if ("CUSTOM".equals(type)) {
-            return SensorLengths.fromStrings(sc.next(), sc.next(), sc.next());
-        } else {
-            throw new IllegalArgumentException("Unknown SensorLengths type "+type);
+        if (null != type) switch (type) {
+            case "PRESET":
+                final String preset = sc.next();
+                return SensorLengths.fromPresetName(preset);
+            case "CUSTOM":
+                return SensorLengths.fromStrings(sc.next(), sc.next(), sc.next());
+            default:
+                throw new IllegalArgumentException("Unknown SensorLengths type "+type);
         }
+        throw new IllegalArgumentException("null passed to SensorLengths.fromString");
     }
 
     /**

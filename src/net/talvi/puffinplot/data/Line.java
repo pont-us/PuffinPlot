@@ -41,7 +41,7 @@ public class Line {
      */
     public Line(int lineNumber) {
         this.lineNumber = lineNumber;
-        data = new HashSet<Datum>();
+        data = new HashSet<>();
     }
 
     /** Associates a Datum with this line. This indicates that the line number

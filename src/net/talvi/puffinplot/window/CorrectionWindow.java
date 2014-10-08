@@ -47,12 +47,12 @@ public class CorrectionWindow extends JFrame implements ActionListener {
     };
     
     private static final long serialVersionUID = 1L;
-    private JButton cancelButton;
-    private JButton setButton;
-    private Map<DatumField, JCheckBox> checkBoxMap =
-            new EnumMap<DatumField, JCheckBox>(DatumField.class);
-    private Map<DatumField, JTextField> textFieldMap =
-            new EnumMap<DatumField, JTextField>(DatumField.class);
+    private final JButton cancelButton;
+    private final JButton setButton;
+    private final Map<DatumField, JCheckBox> checkBoxMap =
+            new EnumMap<>(DatumField.class);
+    private final Map<DatumField, JTextField> textFieldMap =
+            new EnumMap<>(DatumField.class);
     
 
     /** Creates a new correction window. */

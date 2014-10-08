@@ -29,7 +29,7 @@ class ZplotAxes {
             new Direction[] { RIGHT, DOWN, LEFT, UP };
     private final double scale;
     private final double xOffset, yOffset;
-    private /* final */ PlotAxis[] axes;
+    private final PlotAxis[] axes;
     
     public ZplotAxes(Rectangle2D dataArea, Rectangle2D plotArea,
             MeasurementAxis vVs, Plot plot) {

@@ -46,7 +46,7 @@ public class PcaValuesTest {
          {2,2,1},
          {1,1,0}};
         
-        ArrayList<Vec3> points = new ArrayList<Vec3>(coords.length);
+        ArrayList<Vec3> points = new ArrayList<>(coords.length);
         for (double[] coord: coords)
             points.add(new Vec3(coord[0], coord[1], coord[2]));
         

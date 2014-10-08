@@ -25,9 +25,9 @@ import net.talvi.puffinplot.data.Vec3;
 class TwoGeeHelper {
 
     private static final Map<String, TreatType> treatTypeMap =
-            new HashMap<String, TreatType>();
+            new HashMap<>();
     private static final Map<String, MeasType> measTypeMap =
-            new HashMap<String, MeasType>();
+            new HashMap<>();
 
     private static final String[] treatTypeMappings = {
         "NONE", "none",

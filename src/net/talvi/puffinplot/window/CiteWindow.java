@@ -16,16 +16,10 @@
  */
 package net.talvi.puffinplot.window;
 
-import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -37,7 +31,6 @@ import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-import net.talvi.puffinplot.PuffinActions;
 import net.talvi.puffinplot.PuffinApp;
 
 /**
@@ -162,6 +155,7 @@ public class CiteWindow extends JFrame {
         onlinePaperButton.setAlignmentX(CENTER_ALIGNMENT);
         final PuffinApp app = PuffinApp.getInstance();
         onlinePaperButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 app.openWebPage("http://dx.doi.org/10.1029/2012GC004098");
             }});
@@ -188,6 +182,7 @@ public class CiteWindow extends JFrame {
         closeButton.setText("Close this window");
         closeButton.setAlignmentX(CENTER_ALIGNMENT);
         closeButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 setVisible(false);
             }

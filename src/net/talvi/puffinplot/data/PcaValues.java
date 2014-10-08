@@ -61,7 +61,7 @@ public class PcaValues {
         Vec3 origin = anchored ? Vec3.ORIGIN : Vec3.mean(points);
         if (!anchored) {
             // translate points to be centred on centre of mass
-            movedPoints = new ArrayList<Vec3>(points.size());
+            movedPoints = new ArrayList<>(points.size());
             for (Vec3 p: points) movedPoints.add(p.minus(origin));
         }
 

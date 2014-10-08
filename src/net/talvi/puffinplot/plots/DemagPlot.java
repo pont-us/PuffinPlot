@@ -144,7 +144,7 @@ public class DemagPlot extends Plot {
             i++;
         }
 
-        if (xAxisParams.markedPosition != null) {
+        if (midpoint != null && xAxisParams.markedPosition != null) {
             final double xPos = dim.getMinX() + xScale * xAxisParams.markedPosition;
             final double yPos = dim.getMaxY() - midpoint.getIntensity() * yScale;
             g.draw(new Line2D.Double(dim.getMinX(), yPos,

@@ -58,7 +58,7 @@ public class FisherValues implements FisherParams {
      * @return the Fisherian statistics for the supplied vectors
      */
     public static FisherValues calculate(Collection<Vec3> vectors) {
-        List<Vec3> normPoints = new ArrayList<Vec3>(vectors.size());
+        List<Vec3> normPoints = new ArrayList<>(vectors.size());
         double N = vectors.size();
         for (Vec3 point: vectors) normPoints.add(point.normalize());
         // R is the vector sum length
@@ -68,10 +68,12 @@ public class FisherValues implements FisherParams {
         return new FisherValues(normPoints, a95, k, Vec3.meanDirection(normPoints));
     }
     
+    @Override
     public double getA95() {
         return a95;
     }
 
+    @Override
     public double getK() {
         return k;
     }
@@ -85,6 +87,7 @@ public class FisherValues implements FisherParams {
         return directions.size();
     }
 
+    @Override
     public Vec3 getMeanDirection() {
         return meanDirection;
     }

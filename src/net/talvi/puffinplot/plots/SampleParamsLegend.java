@@ -69,7 +69,7 @@ public class SampleParamsLegend extends Plot {
         final PcaValues pca = sample.getPcaValues();
         final GreatCircle gc = sample.getGreatCircle();
         
-        List<String> strings = new ArrayList<String>(10);
+        List<String> strings = new ArrayList<>(10);
                 
         if (gc != null) {
             strings.addAll(Arrays.asList(

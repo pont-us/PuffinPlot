@@ -82,7 +82,7 @@ public class DemagTable extends Plot {
         final List<Datum> data = sample.getData();
         if (data.isEmpty()) return;
 
-        final List<String> headers2 = new ArrayList<String>(headers);
+        final List<String> headers2 = new ArrayList<>(headers);
         if (sample.getDatum(0).getTreatType() == TreatType.THERMAL)
             headers2.set(0, "temp.");
         points.add(new TextLinePoint(this, g, 10, null, null, headers2, xSpacing));
@@ -91,7 +91,7 @@ public class DemagTable extends Plot {
         float yPos = 2 * ySpacing;
         for (Datum d: data) {
             if (yPos > getDimensions().getHeight()) break;
-            final List<String> values = new ArrayList<String>(4);
+            final List<String> values = new ArrayList<>(4);
             final Vec3 p = d.getMoment(params.getCorrection());
             final String demag = useSequence ? Integer.toString(sequence)
                     : d.getFormattedTreatmentLevel();

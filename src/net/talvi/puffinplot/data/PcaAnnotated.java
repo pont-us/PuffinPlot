@@ -40,7 +40,7 @@ public class PcaAnnotated {
     private static final List<String> HEADERS;
 
     static {
-        List<String> hA = new ArrayList<String>();
+        List<String> hA = new ArrayList<>();
         hA.addAll(PcaValues.getHeaders());
         hA.addAll(Arrays.asList("PCA start (°C or mT)", "PCA end (°C or mT)",
                 "PCA contiguous"));
@@ -68,8 +68,8 @@ public class PcaAnnotated {
      */
     public static PcaAnnotated calculate(Sample sample, Correction correction) {
         List<Datum> rawData = sample.getVisibleData();
-        List<Vec3> points = new ArrayList<Vec3>(rawData.size());
-        List<Datum> data = new ArrayList<Datum>(rawData.size());
+        List<Vec3> points = new ArrayList<>(rawData.size());
+        List<Datum> data = new ArrayList<>(rawData.size());
         
         int runEndsSeen = 0;
         boolean thisIsPca = false, lastWasPca = false;
@@ -106,7 +106,7 @@ public class PcaAnnotated {
      * @return the parameters as a list of strings
      */
     public List<String> toStrings() {
-        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> result = new ArrayList<>();
         result.addAll(pcaValues.toStrings());
         result.add(Double.toString(demagStart));
         result.add(Double.toString(demagEnd));

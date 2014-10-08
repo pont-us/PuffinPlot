@@ -85,7 +85,7 @@ public class SiteParamsTable extends Plot {
         float yPos = 2 * ySpacing;
         for (Site site: sites) {
             if (yPos > getDimensions().getHeight()) break;
-            final List<String> values = new ArrayList<String>(columns);
+            final List<String> values = new ArrayList<>(columns);
             values.addAll(Collections.nCopies(columns, "--"));
             values.set(0, site.toString());
             values.set(1, format("%d", site.getSamples().size()));

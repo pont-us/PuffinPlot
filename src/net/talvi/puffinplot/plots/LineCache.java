@@ -37,8 +37,6 @@ import java.util.List;
  * 
  * @author pont
  */
-
-
 public class LineCache {
         
     private final List<Path2D> solidPaths;
@@ -49,8 +47,8 @@ public class LineCache {
     public LineCache(Stroke solidStroke, Stroke dashedStroke) {
         this.solidStroke = solidStroke;
         this.dashedStroke = dashedStroke;
-        solidPaths = new ArrayList<Path2D>();
-        dashedPaths = new ArrayList<Path2D>();
+        solidPaths = new ArrayList<>();
+        dashedPaths = new ArrayList<>();
     }
     
     public void addPath(Path2D path, boolean solid) {

@@ -63,7 +63,7 @@ public class CaltechLoader extends AbstractFileLoader {
     public CaltechLoader(File file) {
         this.file = file;
         this.parentDir = file.getParentFile();
-        data = new LinkedList<Datum>();
+        data = new LinkedList<>();
         try {
             reader = new LineNumberReader(new FileReader(file));
             readFile();
@@ -96,55 +96,56 @@ public class CaltechLoader extends AbstractFileLoader {
     }
 
     private void readSubFile(File file) throws IOException {
-        BufferedReader subReader = new BufferedReader(new FileReader(file));
-        String line;
-        /* "In the first line the first four characters are the 
-         locality id, the next 9 the sample id, and the
-         remainder (to 255) is a sample comment."  */
-        line = subReader.readLine();
-        int lastPosition = line.length() > 13 ? 13 : line.length();
-        final String sampleName = line.substring(4, lastPosition);
-
-        /* "the first character is ignored, the next 6 comprise the 
-         * stratigraphic level (usually in meters). The remaining fields are 
-         * all the same format: first character ignored (should
-         * be a blank space) and then 5 characters used. These are the core 
-         * strike, core dip, bedding strike, bedding dip, and core volume or mass." */
-        final String sampleData = subReader.readLine();
-        final double stratLev = parseDoubleSafely(sampleData.substring(1, 7));
-        final double coreStrike = parseDoubleSafely(sampleData.substring(8, 13));
-        final double coreDip = parseDoubleSafely(sampleData.substring(14, 19));
-        final double bedStrike = parseDoubleSafely(sampleData.substring(20, 25));
-        final double bedDip = parseDoubleSafely(sampleData.substring(26, 31));
-        
-        /* The example files I have seem to use more than 5 characters for
-         * core volume or mass, so I am using the whole rest of the line
-         * for this field, since it's the last one anyway.
-         */
-        final double coreVolOrMass = parseDoubleSafely(sampleData.substring(32));
-
-        
-        /* According to the Paleomag manual, data should start here.
-         * However, example files from JMG all have line 3 blank.
-         * So we assume that data lines start here, but check for blank
-         * lines before attempting to interpret them.
-         */
-        
-        while ((line = subReader.readLine()) != null) {
-            if (line.trim().isEmpty()) continue;
-            Datum d = lineToDatum(line);
-            if (d != null) {
-                d.setDiscreteId(sampleName);
-                //d.setSampAz((coreStrike + 90) % 360);
-                d.setSampAz((coreStrike + 270) % 360);
-                //d.setSampDip(coreDip);
-                d.setSampHade(coreDip);
-                d.setFormAz((bedStrike + 90) % 360);
-                d.setFormDip(bedDip);
-                data.add(d);
+        try (BufferedReader subReader =
+                new BufferedReader(new FileReader(file))) {
+            String line;
+            /* "In the first line the first four characters are the
+            locality id, the next 9 the sample id, and the
+            remainder (to 255) is a sample comment."  */
+            line = subReader.readLine();
+            int lastPosition = line.length() > 13 ? 13 : line.length();
+            final String sampleName = line.substring(4, lastPosition);
+            
+            /* "the first character is ignored, the next 6 comprise the
+            * stratigraphic level (usually in meters). The remaining fields are
+            * all the same format: first character ignored (should
+            * be a blank space) and then 5 characters used. These are the core
+            * strike, core dip, bedding strike, bedding dip, and core volume or mass." */
+            final String sampleData = subReader.readLine();
+            final double stratLev = parseDoubleSafely(sampleData.substring(1, 7));
+            final double coreStrike = parseDoubleSafely(sampleData.substring(8, 13));
+            final double coreDip = parseDoubleSafely(sampleData.substring(14, 19));
+            final double bedStrike = parseDoubleSafely(sampleData.substring(20, 25));
+            final double bedDip = parseDoubleSafely(sampleData.substring(26, 31));
+            
+            /* The example files I have seem to use more than 5 characters for
+            * core volume or mass, so I am using the whole rest of the line
+            * for this field, since it's the last one anyway.
+            */
+            final double coreVolOrMass = parseDoubleSafely(sampleData.substring(32));
+            
+            
+            /* According to the Paleomag manual, data should start here.
+            * However, example files from JMG all have line 3 blank.
+            * So we assume that data lines start here, but check for blank
+            * lines before attempting to interpret them.
+            */
+            
+            while ((line = subReader.readLine()) != null) {
+                if (line.trim().isEmpty()) continue;
+                Datum d = lineToDatum(line);
+                if (d != null) {
+                    d.setDiscreteId(sampleName);
+                    //d.setSampAz((coreStrike + 90) % 360);
+                    d.setSampAz((coreStrike + 270) % 360);
+                    //d.setSampDip(coreDip);
+                    d.setSampHade(coreDip);
+                    d.setFormAz((bedStrike + 90) % 360);
+                    d.setFormDip(bedDip);
+                    data.add(d);
+                }
             }
         }
-        subReader.close();
     }
 
     private Datum lineToDatum(String pmagLine) {
@@ -185,12 +186,16 @@ public class CaltechLoader extends AbstractFileLoader {
         d.setMeasType(MeasType.DISCRETE);
         
         final String treatment = matcher.group(1);
-        if ("AF".equals(treatment)) {
-            d.setTreatType(TreatType.DEGAUSS_XYZ);
-        } else if ("TT".equals(treatment)) {
-            d.setTreatType(TreatType.THERMAL);
-        } else {
-            d.setTreatType(TreatType.UNKNOWN);
+        if (null != treatment) switch (treatment) {
+            case "AF":
+                d.setTreatType(TreatType.DEGAUSS_XYZ);
+                break;
+            case "TT":
+                d.setTreatType(TreatType.THERMAL);
+                break;
+            default:
+                d.setTreatType(TreatType.UNKNOWN);
+                break;
         }
         
         d.setAfX(demagLevel);

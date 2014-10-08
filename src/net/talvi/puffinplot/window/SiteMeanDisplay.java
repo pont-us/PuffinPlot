@@ -46,10 +46,13 @@ public class SiteMeanDisplay extends GraphDisplay implements Printable {
         zoomTransform = AffineTransform.getScaleInstance(1.0, 1.0);
 
         PlotParams params = new PlotParams() {
+            @Override
             public Sample getSample() {
                 return PuffinApp.getInstance().getSample(); }
+            @Override
             public Correction getCorrection() {
                 throw new UnsupportedOperationException(); }
+            @Override
             public MeasurementAxis getAxis() {
                 throw new UnsupportedOperationException(); }
         };
@@ -70,6 +73,7 @@ public class SiteMeanDisplay extends GraphDisplay implements Printable {
      * otherwise {@link #NO_SUCH_PAGE}
      * @throws PrinterException if a printing error occurred
      */
+    @Override
     public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
             throws PrinterException {
         if (pageIndex > 0) return NO_SUCH_PAGE;

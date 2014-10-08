@@ -7,6 +7,7 @@ package net.talvi.puffinplot.data;
 
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -44,7 +45,7 @@ public class TreatTypeTest {
         TreatType.DEGAUSS_Z,
         TreatType.ARM, TreatType.IRM, TreatType.THERMAL, TreatType.UNKNOWN};
         TreatType[] result = TreatType.values();
-        assertEquals(expResult, result);
+        Assert.assertArrayEquals(expResult, result);
     }
 
     @Test

@@ -80,17 +80,13 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         setPreferredSize(new Dimension(1200, 800));
         setMaximumSize(getPreferredSize());
         zoomTransform = AffineTransform.getScaleInstance(1.0, 1.0);
-
         setLayout(null);
-        // LinkedHashMap because ZplotLegend has to be drawn after
-        // Zplot, since it must read the order of magnitude from the
-        // axes.
-        plots = new LinkedHashMap<String,Plot>();
-
+        // LinkedHashMap because ZplotLegend has to be drawn after Zplot,
+        // since it must read the order of magnitude from the axes.
+        plots = new LinkedHashMap<>();
         setOpaque(true);
         setBackground(Color.WHITE);
         setVisible(true);
-        
         mouseListener = new GdMouseListener();
         addMouseListener(mouseListener);
         addMouseMotionListener(mouseListener);
@@ -119,7 +115,7 @@ public abstract class GraphDisplay extends JPanel implements Printable {
      * @return a list of the plots which are currently visible */
     public List<Plot> getVisiblePlots() {
         final Collection<Plot> ps = getPlots();
-        final List<Plot> result = new ArrayList<Plot>(ps.size());
+        final List<Plot> result = new ArrayList<>(ps.size());
         for (Plot p: ps) if (p.isVisible()) result.add(p);
         return result;
     }

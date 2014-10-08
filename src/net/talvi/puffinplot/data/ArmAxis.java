@@ -46,8 +46,14 @@ public enum ArmAxis {
      * @return the ARM axis specified by the supplied string
      */
     public static ArmAxis fromString(String name) {
-        if ("AXIAL".equals(name)) return AXIAL;
-        else if ("NONE".equals(name) || "NA".equals(name)) return NONE;
-        else return UNKNOWN;
+        switch (name) {
+            case "AXIAL":
+                return AXIAL;
+            case "NONE":
+            case "NA":
+                return NONE;
+            default:
+                return UNKNOWN;
+        }
     }
 }

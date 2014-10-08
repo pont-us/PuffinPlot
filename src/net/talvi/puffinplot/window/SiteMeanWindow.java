@@ -19,7 +19,6 @@ package net.talvi.puffinplot.window;
 import java.awt.Dimension;
 import javax.swing.JFrame;
 import net.talvi.puffinplot.PuffinApp;
-import net.talvi.puffinplot.data.GreatCircles;
 import net.talvi.puffinplot.plots.SiteEqAreaPlot;
 
 /**
@@ -30,7 +29,7 @@ import net.talvi.puffinplot.plots.SiteEqAreaPlot;
  * @author pont
  */
 public class SiteMeanWindow extends JFrame {
-    private SiteMeanDisplay graphDisplay;
+    private final SiteMeanDisplay graphDisplay;
 
     /**
      * Creates a new site mean window.

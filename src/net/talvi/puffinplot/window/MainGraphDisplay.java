@@ -22,6 +22,7 @@ import java.awt.Graphics2D;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.PuffinApp;
@@ -91,7 +92,10 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
                         getConstructor(GraphDisplay.class, PlotParams.class, Preferences.class).
                         newInstance(this, params, pref));
             }
-        } catch (Exception ex) {
+        } catch (ClassNotFoundException | NoSuchMethodException |
+                SecurityException | InstantiationException |
+                IllegalAccessException | IllegalArgumentException |
+                InvocationTargetException ex) {
             throw new Error(ex);
         }
         // The legend will always be drawn after the Zplot (as required),

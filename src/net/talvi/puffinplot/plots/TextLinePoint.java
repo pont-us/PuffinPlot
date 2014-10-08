@@ -39,7 +39,7 @@ class TextLinePoint implements PlotPoint {
     private final Datum datum;
     private final Sample sample;
     private final double yPos;
-    private List<Double> xSpacing;
+    private final List<Double> xSpacing;
     private Rectangle2D bbox;
     private final List<AttributedCharacterIterator> strings;
     private final double xMin;
@@ -51,7 +51,7 @@ class TextLinePoint implements PlotPoint {
         this.sample = sample;
         this.yPos = yOffset + plot.getDimensions().getMinY();
         this.xSpacing = xSpacing;
-        this.strings = new ArrayList<AttributedCharacterIterator>(values.size());
+        this.strings = new ArrayList<>(values.size());
         double xPos = 10;
         xMin = plot.getDimensions().getMinX();
         final FontMetrics metrics = g.getFontMetrics();

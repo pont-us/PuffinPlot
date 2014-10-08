@@ -76,7 +76,7 @@ public class Site {
      */
     public void calculateFisherStats(Correction correction) {
         Collection<Vec3> directions =
-                new ArrayList<Vec3>(getSamples().size());
+                new ArrayList<>(getSamples().size());
         for (Sample sample: getSamples()) {
             sample.doPca(correction);
             if (sample.getPcaAnnotated() != null) {
@@ -109,8 +109,8 @@ public class Site {
      * @see GreatCircles
      */
     public void calculateGreatCirclesDirection(Correction correction) {
-        List<Vec3> endpoints = new LinkedList<Vec3>();
-        LinkedList<GreatCircle> circles = new LinkedList<GreatCircle>();
+        List<Vec3> endpoints = new LinkedList<>();
+        LinkedList<GreatCircle> circles = new LinkedList<>();
         for (Sample sample: getSamples()) {
             /* We assume that if there's a great circle then it should be
              * used (and that if a PCA fit is present for the same site, it's
@@ -198,8 +198,8 @@ public class Site {
      * great-circle analysis
      */
     public List<String> getGreatCircleLimitStrings() {
-        final List<Double> firsts = new ArrayList<Double>(samples.size());
-        final List<Double> lasts = new ArrayList<Double>(samples.size());
+        final List<Double> firsts = new ArrayList<>(samples.size());
+        final List<Double> lasts = new ArrayList<>(samples.size());
         for (Sample s: samples) {
             final double first = s.getFirstGcStep();
             if (first != -1) firsts.add(first);
@@ -247,7 +247,7 @@ public class Site {
     /** Returns a list of strings giving information about this site.
      * @return  a list of strings giving information about this site */
     public List<String> toStrings() {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         if (!Double.isNaN(height)) {
             result.add("HEIGHT\t" + Double.toString(height));
         }

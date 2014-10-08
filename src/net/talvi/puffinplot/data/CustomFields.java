@@ -34,7 +34,7 @@ public class CustomFields<T> {
      * @param initialValues the values with which to initialize the fields
      */
     public CustomFields(List<T> initialValues) {
-        values = new ArrayList<T>(initialValues.size());
+        values = new ArrayList<>(initialValues.size());
         values.addAll(initialValues);
     }
 
@@ -76,7 +76,7 @@ public class CustomFields<T> {
      * @param fillWith the value with which to fill the list
      */
     public void setSize(int newSize, T fillWith) {
-        values = new ArrayList<T>(newSize);
+        values = new ArrayList<>(newSize);
         values.addAll(Collections.nCopies(newSize, fillWith));
     }
 

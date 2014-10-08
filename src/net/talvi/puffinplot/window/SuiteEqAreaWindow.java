@@ -30,7 +30,7 @@ import net.talvi.puffinplot.plots.SeparateSuiteEaPlot;
  * @author pont
  */
 public class SuiteEqAreaWindow extends JFrame {
-    private SuiteEqAreaDisplay graphDisplay;
+    private final SuiteEqAreaDisplay graphDisplay;
 
     /**
      * Creates a new suite equal-area window.

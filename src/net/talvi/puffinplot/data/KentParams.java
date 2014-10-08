@@ -113,7 +113,7 @@ public class KentParams {
         InputStream inputStream = process.getInputStream();
         BufferedReader reader =
                 new BufferedReader(new InputStreamReader(inputStream));
-        List<String> output = new ArrayList<String>(8);
+        List<String> output = new ArrayList<>(8);
         try {
             process.waitFor();
         } catch (InterruptedException e) {
@@ -146,7 +146,7 @@ public class KentParams {
             boolean parametric, String scriptPath) throws IOException {
         File tempFile = null;
         FileWriter writer = null;
-        List<KentParams> result = new ArrayList<KentParams>(3);
+        List<KentParams> result = new ArrayList<>(3);
         try {
             tempFile = File.createTempFile("puffin", "tensors");
             writer = new FileWriter(tempFile);
@@ -154,7 +154,7 @@ public class KentParams {
                 writer.write(t.toTensorComponentString() + "\n");
             }
             writer.close();
-            ArrayList<String> args = new ArrayList<String>(4);
+            ArrayList<String> args = new ArrayList<>(4);
             Collections.addAll(args, scriptPath, "-f", tempFile.getAbsolutePath());
             if (parametric) args.add("-par");
             List<String> output = execute(args.toArray(new String[] {}));
@@ -192,7 +192,7 @@ public class KentParams {
      */
    public static List<KentParams> calculateHext(List<Tensor> tensors,
            String scriptPath) throws IOException {
-       final List<KentParams> result = new ArrayList<KentParams>(3);
+       final List<KentParams> result = new ArrayList<>(3);
        File tempFile = null;
        FileWriter writer = null;
        try {

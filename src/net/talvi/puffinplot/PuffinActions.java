@@ -77,7 +77,7 @@ public class PuffinActions {
      * to open as a new data suite.
      */
     public final Action open = new PuffinAction("Open…",
-            "Open a 2G, PPL, or ZPlot data file.", 'O', false,
+            "Open a 2G, PPL, Caltech, or ZPlot data file.", 'O', false,
             KeyEvent.VK_O) {
         private static final long serialVersionUID = 1L;
         @Override
