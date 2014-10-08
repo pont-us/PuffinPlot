@@ -650,6 +650,11 @@ public class Datum {
      * 
      * @param field the field to set the value of
      * @param value a string representation of the value to set the field to
+     * @param factor conversion factor for double values
+     * 
+     * For double values, the field is set to the parsed value multiplied
+     * by the conversion factor.
+     * 
      * @throws NumberFormatException if the format of the string is 
      * not compatible with the format of the field to be set
      */
@@ -684,9 +689,9 @@ public class Datum {
         int intVal = 0;
         if (type == double.class) {
             doubleVal = parseDouble(s) * factor;
-        } else if (type == Boolean.class) {
+        } else if (type == boolean.class) {
             boolVal = Boolean.parseBoolean(s);
-        } else if (type == Integer.class) {
+        } else if (type == int.class) {
             intVal = Integer.parseInt(s);
         }
         switch (field) {
@@ -749,7 +754,7 @@ public class Datum {
      * datum objects.
      */
     public static class Reader {
-        private List<DatumField> fields;
+        private final List<DatumField> fields;
 
         /**
          * Create a new reader using the supplied header strings.
@@ -758,7 +763,7 @@ public class Datum {
          * @param headers list of headers defining the data format
          */
         public Reader(List<String> headers) {
-            fields = new ArrayList<DatumField>(headers.size());
+            fields = new ArrayList<>(headers.size());
             for (String s: headers) fields.add(DatumField.valueOf(s));
         }
 
@@ -790,7 +795,7 @@ public class Datum {
      */
     public List<String> toStrings() {
         List<String> result =
-                new ArrayList<String>(DatumField.getRealFields().size());
+                new ArrayList<>(DatumField.getRealFields().size());
         for (DatumField df : DatumField.getRealFields()) {
             result.add(getValue(df));
         }
