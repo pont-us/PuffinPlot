@@ -9,6 +9,7 @@ syntax: regexp
 ^dist/
 ^build/
 ^store/
+^nbproject/private/
 ^manual/manual\.(4ct|4tc|aux|bbl|blg|css|dvi|toc)$
 ^manual/manual\.(html|idv|lg|log|out|pdf|tmp|xref)$
 ^manual/hg-cmds.tex$
