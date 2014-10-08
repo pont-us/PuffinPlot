@@ -547,7 +547,8 @@ public final class PuffinApp {
             List<String> warnings = suite.getLoadWarnings();
             if (warnings.size() > 0) {
                 StringBuilder sb =
-                        new StringBuilder("The following problems occurred:\n");
+                        new StringBuilder(warnings.size() == 1 ? "" :
+                                "The following problems occurred:\n");
                 int i = 0;
                 final int MAX_WARNINGS = 10;
                 for (String w: warnings) {
@@ -569,7 +570,9 @@ public final class PuffinApp {
                     sb.append("\n");
                     i++;
                 }
-                errorDialog("Errors during file loading", sb.toString());
+                errorDialog(warnings.size() == 1 ?
+                        "Error during file opening" :
+                        "Errors during file opening", sb.toString());
             }
             
             if (suite.getNumSamples() == 0) {

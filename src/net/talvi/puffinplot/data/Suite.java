@@ -389,7 +389,8 @@ public final class Suite {
         customNoteNames = new CustomNoteNames(emptyStringList);
         List<String> puffinLines = emptyStringList;
         sites = new ArrayList<>();
-
+        boolean sensorLengthWarning = false;
+        
         for (File file: files) {
             if (!file.exists()) {
                 loadWarnings.add(String.format("File \"%s\" does not exist.", file.getName()));
@@ -452,7 +453,21 @@ public final class Suite {
                 loadWarnings.addAll(loader.getMessages());
                 puffinLines = loader.getExtraLines();
             }
+            if (fileType == FileType.TWOGEE &&
+                    measType.isContinuous() &&
+                    "1:1:1".equals(sensorLengths.getPreset()) &&
+                    !usePolarMoment) {
+                sensorLengthWarning = true;
+
+            }
         }
+        
+        if (sensorLengthWarning) {
+            loadWarnings.add("Reading vector long core data with unset sensor\n" +
+                    "lengths! Magnetization vectors may be incorrect. See\n" +
+                    "PuffinPlot manual for details.");
+        }
+        
         setCurrentSampleIndex(0);
         if (hasUnknownTreatType)
             loadWarnings.add("One or more treatment types were not recognized.");
