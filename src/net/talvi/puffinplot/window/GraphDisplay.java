@@ -21,7 +21,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -63,7 +62,6 @@ public abstract class GraphDisplay extends JPanel implements Printable {
     private static final long serialVersionUID = -5730958004698337302L;
     /** A map from internal plot names to the plots themselves. */
     protected Map<String,Plot> plots;
-    private static final RenderingHints renderingHints = PuffinRenderingHints.getInstance();
     /** A transformation applied to the graphics before painting them,
      * intended to be used for zooming in and out of the display.
      * It is initially set to the identity transformation. */
@@ -141,16 +139,10 @@ public abstract class GraphDisplay extends JPanel implements Printable {
     @Override
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
-        
-        // Uncommenting this line avoids the "anti-aliasing disabled 
-        // by FreeHEP SVG export" bug (#278), but of course also 
-        // disables the actual export!
-        // if (g instanceof SVGGraphics2D) return;
-        
         AffineTransform savedTransform = g2.getTransform();
         g2.transform(zoomTransform);
         super.paint(g2); // draws background and any components
-        g2.setRenderingHints(renderingHints);
+        g2.setRenderingHints(PuffinRenderingHints.getInstance());
         g2.setPaint(Color.BLACK);
         g2.setPaintMode();
         final List<Plot> visiblePlots = getVisiblePlots();
@@ -430,7 +422,8 @@ public abstract class GraphDisplay extends JPanel implements Printable {
     }
     
     /** Writes the contents of this display to an SVG file using the FreeHEP library.
-     * @param filename the name of the file to which to write */
+     * @param filename the name of the file to which to write
+     * @throws java.io.IOException */
     public void saveToSvgFreehep(String filename) throws IOException {
         final SVGGraphics2D graphics =
                 new org.freehep.graphicsio.svg.SVGGraphics2D(new File(filename),
