@@ -40,11 +40,11 @@ public class PcaAnnotated {
     private static final List<String> HEADERS;
 
     static {
-        List<String> hA = new ArrayList<>();
-        hA.addAll(PcaValues.getHeaders());
-        hA.addAll(Arrays.asList("PCA start (°C or mT)", "PCA end (°C or mT)",
+        List<String> headers = new ArrayList<>();
+        headers.addAll(PcaValues.getHeaders());
+        headers.addAll(Arrays.asList("PCA start (°C or mT)", "PCA end (°C or mT)",
                 "PCA contiguous"));
-        HEADERS = Collections.unmodifiableList(hA);
+        HEADERS = Collections.unmodifiableList(headers);
     }
 
     private PcaAnnotated(PcaValues pcaValues, double demagStart,

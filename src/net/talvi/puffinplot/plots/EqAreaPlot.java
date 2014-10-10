@@ -81,7 +81,7 @@ public abstract class EqAreaPlot extends Plot {
      * and {@link #yo} according to the supplied argument and the
      * current plot dimensions.
      * This method should be called before redrawing the plot.
-     * @param g the field {@link g} will be set to this value
+     * @param g the field {@link #g} will be set to this value
      */
     protected void updatePlotDimensions(Graphics2D g) {
         final Rectangle2D dims = getDimensions();

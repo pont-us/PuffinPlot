@@ -289,7 +289,7 @@ public class Sample {
         return getData().size();
     }
 
-    /** Returns a specified data point from this sample 
+    /** Returns a specified data point from this sample. 
      * @param i the index of the requested data point
      * @return the data point with the selected index, if it exists
      * @throws IndexOutOfBoundsException if no data point with the selected index exists
@@ -665,7 +665,7 @@ public class Sample {
      */
     public List<String> exportFields(List<DatumField> fields) {
         final List<Datum> ds = getData();
-        List<String> result = new ArrayList<>(ds.size());
+        final List<String> result = new ArrayList<>(ds.size());
         for (Datum d: ds) {
             result.add(d.exportFieldValues(fields, "\t"));
         }

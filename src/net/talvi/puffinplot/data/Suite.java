@@ -156,7 +156,7 @@ public final class Suite {
      * @param correction the correction to apply to the magnetic moment
      * measurements when performing the PCA calculations
      * @see #getSiteFishers()
-     * @see Site#doFisher(net.talvi.puffinplot.data.Correction)
+     * @see Site#calculateFisherStats(net.talvi.puffinplot.data.Correction)
      */
     public void calculateSiteFishers(Correction correction) {
         setSaved(false);
@@ -337,7 +337,7 @@ public final class Suite {
     /**
      * <p>Creates a new suite from the specified files.
      * The is a convenience method for
-     * {@link Suite(List, SensorLengths, TwoGeeLoader.Protocol)}
+     * {@link #Suite(List, SensorLengths, TwoGeeLoader.Protocol, boolean, FileFormat)}
      * using the default sensor lengths (1, 1, 1), protocol 
      * ({@code NORMAL}), and Cartesian (X/Y/Z) magnetic moment fields.
      * </p>
@@ -494,7 +494,7 @@ public final class Suite {
     public void doAllCalculations(Correction correction) {
         setSaved(false);
         doSampleCalculations(correction);
-        if (measType.isDiscrete()) {
+        if (!getSites().isEmpty()) {
             doSiteCalculations(correction);
         }
     }
@@ -514,6 +514,7 @@ public final class Suite {
             writer.writeCsv("Suite", measType.getColumnHeader(),
                     "NRM intensity (A/m)",
                     "MS jump temp. (°C)",
+                    "Steps",
                     PcaAnnotated.getHeaders(),
                     GreatCircle.getHeaders(),
                     MedianDestructiveField.getHeaders(),
@@ -528,6 +529,7 @@ public final class Suite {
                 writer.writeCsv(getName(), sample.getNameOrDepth(),
                         String.format(Locale.ENGLISH, "%.4g", sample.getNrm()),
                         String.format(Locale.ENGLISH, "%.4g", sample.getMagSusJump()),
+                        sample.getData().size(),
                         pca == null ? PcaAnnotated.getEmptyFields() : pca.toStrings(),
                         circle == null ? GreatCircle.getEmptyFields() : circle.toStrings(),
                         mdf == null ? MedianDestructiveField.getEmptyFields() : mdf.toStrings(),
@@ -556,7 +558,8 @@ public final class Suite {
         }
         try {
             writer = new CsvWriter(new FileWriter(file));
-            writer.writeCsv("site", FisherValues.getHeaders(), GreatCircles.getHeaders(),
+            writer.writeCsv("Site", "Samples",
+                    FisherValues.getHeaders(), GreatCircles.getHeaders(),
                     Site.getGreatCircleLimitHeader());
             for (Site site: getSites()) {
                 List<String> fisherCsv = (site.getFisherValues() == null)
@@ -568,7 +571,8 @@ public final class Suite {
                 List<String> gcCsv2 = (site.getGreatCircles() == null)
                         ? Collections.nCopies(4, "")
                         : site.getGreatCircleLimitStrings();
-                writer.writeCsv(site, fisherCsv, gcCsv, gcCsv2);
+                writer.writeCsv(site, Integer.toString(site.getSamples().size()),
+                        fisherCsv, gcCsv, gcCsv2);
             }
         } catch (IOException ex) {
            throw new Error(ex);

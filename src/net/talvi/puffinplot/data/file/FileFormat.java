@@ -168,7 +168,7 @@ public final class FileFormat {
     
     /**
      * Turns a string containing comma-separated decimal integers into a
-     * {@link List} of {@link Integer.
+     * {@link List} of {@link Integer}.
      * 
      * @param widthString a string of comma-separated decimal integers
      * @return the list of integers defined by the input string

@@ -210,9 +210,11 @@ public enum DatumField {
     }
     
     /**
-     * Currently only used in {@link Datum#setValue(DatumField, String)}.
+     * Returns this field's default value.
      * 
-     * @return a string representation of the default value for the field
+     * Currently only used in {@link Datum#setValue(DatumField, String, double)}.
+     * 
+     * @return a string representation of the default value for this field
      */
     public String getDefaultValue() {
         return defaultValue;
@@ -231,7 +233,7 @@ public enum DatumField {
      * which may be specified for custom data import. Note that (perhaps
      * counterintuitively) the virtual fields for declination, inclination, 
      * and magnetization <em>are</em> importable, although they cannot
-     * be set by {@link Datum#setValue(DatumField, String)}: they are
+     * be set by {@link Datum#setValue(DatumField, String, double)}: they are
      * handled as a special case by {@link FileFormat#readLine(String)}.
      * @return {@code true} if this field is importable
      */

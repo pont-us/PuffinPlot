@@ -405,6 +405,7 @@ public final class PuffinApp {
         for (Site site: getSelectedSites()) {
             site.calculateGreatCirclesDirection(getCorrection());
         }
+        updateDisplay();
         if (popUpWindow) siteEqAreaWindow.setVisible(true);
     }
 

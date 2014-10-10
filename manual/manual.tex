@@ -75,11 +75,11 @@
 \begin{document}
 
 \maketitle
-\ifpdf
-\vspace{25mm}
-\fi
+%\ifpdf
+%\vspace{5mm}
+%\fi
 \begin{center}
-\includegraphics[width=100mm]{figures/Fratercula_arctica.jpeg}
+\includegraphics[width=70mm]{figures/Fratercula_arctica.jpeg}
 \end{center}
 
 \tableofcontents
@@ -469,12 +469,14 @@ various kinds of data to \caps{csv} files.
 \begin{tabular}{lp{90mm}} \toprule
 Field name           & Description \\ \midrule
 Suite                & Suite name \\
-sample               & Sample name \\
+Sample               & Sample name (only present in discrete files)\\
+Depth                & Depth in core (only present in long core files)\\
 \caps{nrm} intensity (A/m) & \caps{Nrm} intensity in A/m \\
 \caps{ms} jump temp. (\textdegree C) & For thermal demagnetization, the
 temperature step at which the first jump in magnetic susceptibility occurs.
 A jump is defined as a susceptibility of at least 2.5 times the previous value.
 \\
+Steps                  & Number of treatment steps for this sample\\
 \caps{pca} dec. (\textdegree)     & Declination of \caps{pca} direction (\textdegree)\\
 \caps{pca} inc. (\textdegree)     & Inclination of \caps{pca} direction (\textdegree)\\
 \caps{pca} \caps{mad}1 &  The Maximum Angle of Deviation
@@ -507,6 +509,7 @@ Fisher dec.     & Mean declination of treatment step directions (\textdegree) \\
 Fisher inc.     & Mean inclination of treatment step directions (\textdegree) \\
 Fisher a95      & \alnifi{} of mean treatment step direction (\textdegree) \\
 Fisher k        & {\em k}-value of mean treatment step direction \\
+Fisher nDirs    & number of directions used to calculate mean\\
 \caps{ams} dec1 & declination of major axis of \caps{ams} tensor \\
 \caps{ams} inc1 & inclination of major axis of \caps{ams} tensor \\
 \caps{ams} dec2 & declination of intermediate axis of \caps{ams} tensor \\
@@ -530,11 +533,13 @@ section~\ref{sec:annotations} for details. \\ \bottomrule
 
 \begin{tabular}{lp{90mm}} \toprule
   Field name      & Description \\ \midrule
-  site            & Name of site \\
+  Site            & Name of site \\
+  Samples         & Number of samples at this site \\
   Fisher dec.     & Mean declination of sample directions (\textdegree) \\
   Fisher inc.     & Mean inclination of sample directions (\textdegree) \\
   Fisher a95      & \alnifi{} of mean sample direction (\textdegree) \\
   Fisher k        & {\em k}-value of mean sample direction \\
+  Fisher nDirs    & number of directions used to calculate site mean\\
   \caps{gc} valid & `Y' if the great-circle fit
   is valid, `N' otherwise. See section~\ref{sec:prefs-misc} for
   details on the validity test and how it may be customized. \\
@@ -1772,7 +1777,7 @@ illustration by the Finnish artist Wilhelm von Wright (1810--1887), published
 in \emph{Svenska f\aa glar, efter naturen och p\aa{} sten ritade} (2nd ed.,
 1929).
 
-\clearpage
+%\clearpage
 
 \section{Future development and bug reporting}
 

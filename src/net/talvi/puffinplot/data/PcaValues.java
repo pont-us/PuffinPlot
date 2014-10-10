@@ -34,16 +34,19 @@ public class PcaValues {
     private final Vec3 direction;
     private final Vec3 origin;
     private final boolean anchored;
+    private final int nPoints;
     private static final List<String> HEADERS =
-        Arrays.asList("PCA dec. (°)", "PCA inc. (°)", "PCA MAD1", "PCA MAD3", "PCA anchored", "PCA equation");
+        Arrays.asList("PCA dec. (°)", "PCA inc. (°)", "PCA MAD1", "PCA MAD3",
+                "PCA anchored", "PCA equation", "PCA npoints");
     
     private PcaValues(Vec3 direction, double mad1, double mad3,
-            Vec3 origin, boolean anchored) {
+            Vec3 origin, boolean anchored, int nPoints) {
         this.direction = direction;
         this.mad1 = mad1;
         this.mad3 = mad3;
         this.origin = origin;
         this.anchored = anchored;
+        this.nPoints = nPoints;
     }
 
     /**
@@ -83,7 +86,8 @@ public class PcaValues {
             minus(movedPoints.get(0));
         if (trend.dot(pComp) > 0) pComp = pComp.invert();
 
-        return new PcaValues(pComp, eigen.getMad1(), eigen.getMad3(), origin, anchored);
+        return new PcaValues(pComp, eigen.getMad1(), eigen.getMad3(), origin,
+                anchored, points.size());
     }
 
     /** Returns the maximum angle of planar deviation.
@@ -126,6 +130,13 @@ public class PcaValues {
         return anchored;
     }
 
+    /** Returns the number of points used in this PCA.
+     * @return the number of points used in this PCA
+     */
+    public int getNpoints() {
+        return nPoints;
+    }
+    
     private String fmt(double d) {
         return String.format(Locale.ENGLISH, "%.1f", d);
     }
@@ -142,7 +153,7 @@ public class PcaValues {
      * @return a String giving an equation for the PCA line
      */
     public String getEquation() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         if (origin != Vec3.ORIGIN) {
             sb.append(origin.toCustomString("(", ")", " ", 2, true));
             sb.append(" + ");
@@ -161,6 +172,6 @@ public class PcaValues {
         return Arrays.asList(fmt(direction.getDecDeg()), 
                 fmt(direction.getIncDeg()),
             fmt(getMad1()), fmt(getMad3()), anchored ? "Y" : "N",
-            getEquation());
+            getEquation(), Integer.toString(getNpoints()));
     }
 }

@@ -24,9 +24,9 @@ import java.util.regex.Pattern;
  */
 public enum MeasType {
     /** measurement was on a discrete sample */
-    DISCRETE("discrete", "sample"),
+    DISCRETE("discrete", "Sample"),
     /** measurement was on a continuous long core or u-channel */
-    CONTINUOUS("continuous", "depth"),
+    CONTINUOUS("continuous", "Depth"),
     /** a measurement run was recorded, but no measurement was actually made */
     NONE("^na$", "no measurement type"),
     /** this value has not yet been set */

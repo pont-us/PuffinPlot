@@ -31,7 +31,7 @@ import net.talvi.puffinplot.plots.SeparateSuiteEaPlot;
  * at suite level.
  * 
  * @see net.talvi.puffinplot.plots.SeparateSuiteEaPlot
- * @see FisherWindow
+ * @see SuiteEqAreaWindow
  * @author pont
  */
 public class SuiteEqAreaDisplay extends GraphDisplay implements Printable {
