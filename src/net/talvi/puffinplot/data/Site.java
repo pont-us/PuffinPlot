@@ -125,7 +125,8 @@ public class Site {
                 endpoints.add(sample.getPcaValues().getDirection());
             }
         }
-        if (endpoints.size() > 0 || circles.size() > 1) {
+        if ((endpoints.size() > 0 && circles.size() > 0)
+                || circles.size() > 1) {
             greatCircles = new GreatCircles(endpoints, circles);
         }
     }
