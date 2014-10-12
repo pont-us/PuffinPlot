@@ -1,0 +1,6 @@
+I've compared the counterintuitively strange-looking projection with
+PmagPy's equarea_ell.py and with Stereonet v9. equarea_ell is a bit
+buggy and actually plots two (very similar) projected lines; PuffinPlot
+matches one of them exactly. PuffinPlot also matches Stereonet's
+projection. Absent a test case from JMG, I'm closing this as can't
+reproduce.
