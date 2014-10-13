@@ -390,8 +390,9 @@ public abstract class Plot
      * @param special {@code true} if the point should be highlighted
      * @param line {@code true} if a line should be drawn from the previous 
      * point to this one.
+     * @return the point which was created
      */
-    protected void addPoint(Datum d, Point2D p, boolean filled,
+    protected PlotPoint addPoint(Datum d, Point2D p, boolean filled,
             boolean special, boolean line) {
         final ShapePoint pp = ShapePoint.build(this, p).datum(d).
                 filled(filled).lineToHere(line).special(special).
@@ -406,6 +407,7 @@ public abstract class Plot
             if (nPoints>2) others.add(points.get(nPoints - 3).getCentre());
             ((ShapePoint)prevPoint).setLabelPos(Direction.safeDirection(centre, others));
         }
+        return pp;
     }
     
     /** Clear this plot's internal buffer of points. */

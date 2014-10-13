@@ -16,6 +16,7 @@
  */
 package net.talvi.puffinplot.window;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -54,6 +55,7 @@ public class PrefsWindow extends JFrame {
     private final List<PrefBox> prefBoxes = new ArrayList<>();
     private final PuffinPrefs prefs =
             PuffinApp.getInstance().getPrefs();
+    private final static Dimension prefDim = new Dimension(100, 30);
     
     /**
      * Creates a new preferences window.
@@ -62,7 +64,7 @@ public class PrefsWindow extends JFrame {
         super("Preferences");
         final Insets insets = new Insets(0,0,0,0);
         final int BOTH = GridBagConstraints.BOTH;
-        setPreferredSize(new Dimension(400, 500));
+        setPreferredSize(new Dimension(500, 500));
         setLayout(new GridBagLayout());
         JTabbedPane tp = new JTabbedPane();
         add(tp, new GridBagConstraints(0, 0, 2, 1, 0.99, 0.99,
@@ -146,14 +148,18 @@ public class PrefsWindow extends JFrame {
         
         miscPanel.add(Box.createVerticalGlue());
         
-        miscPanel.add(makeLabelledTickBox("Label treatment steps",
-                "plots.labelTreatmentSteps", false));
-        miscPanel.add(makeLabelledTickBox("Label equal-area plots",
-                "plots.labelEqualAreaPlots", false));
-        miscPanel.add(makeLabelledTickBox("Label samples in site plots",
-                "plots.labelSamplesInSitePlots", false));
-        miscPanel.add(new MagDevTickBox());
-        miscPanel.add(makeLabelledPrefBox("Demag y axis",
+        miscPanel.add(makeAlignedCheckBox(new PrefsCheckBox(
+                "Label treatment steps", "plots.labelTreatmentSteps", false)));
+        miscPanel.add(makeAlignedCheckBox(new PrefsCheckBox(
+                "Label equal-area plots", "plots.labelEqualAreaPlots", false)));
+        miscPanel.add(makeAlignedCheckBox(new PrefsCheckBox(
+                "Label samples in site plots", "plots.labelSamplesInSitePlots",
+                false)));
+        miscPanel.add(makeAlignedCheckBox(new PrefsCheckBox(
+                "Label points in suite plots", "plots.labelPointsInSuitePlots",
+                false)));
+        miscPanel.add(makeAlignedCheckBox(new MagDevCheckBox()));
+        miscPanel.add(makeLabelledPrefBox("Demag. y-axis label",
                 "plots.demag.vAxisLabel", "Magnetization (A/m)"));
         miscPanel.add(makeLabelledPrefBox("PmagPy folder",
                 "data.pmagPyPath", "/usr/local/bin"));
@@ -204,31 +210,43 @@ public class PrefsWindow extends JFrame {
         setLocationRelativeTo(PuffinApp.getInstance().getMainWindow());
     }
 
+    // For layout debugging.
+    private void redBorder(JComponent comp) {
+        comp.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.red),
+                comp.getBorder()));
+        if (comp instanceof AbstractButton) {
+            ((AbstractButton) comp).setBorderPainted(true);
+        }
+    }
+    
     private JPanel makeLabelledPrefBox(String labelString, String pref,
             String defaultValue) {
         final JPanel panel = new JPanel(false);
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
         panel.add(Box.createRigidArea((new Dimension(8,0))));
         final JLabel label = new JLabel(labelString);
-        label.setMaximumSize(new Dimension(200, 30));
+        label.setHorizontalAlignment(JLabel.RIGHT);
+        label.setPreferredSize(prefDim);
+        label.setMaximumSize(new Dimension(400, 50));
         panel.add(label);
+        panel.add(Box.createRigidArea((new Dimension(8,0))));
         JTextField field = new PrefBox(pref, defaultValue);
-        field.setMaximumSize(new Dimension(300, 50));
+        field.setPreferredSize(prefDim);
+        field.setMaximumSize(new Dimension(800, 50));
         panel.add(field);
+        panel.add(Box.createRigidArea((new Dimension(8,0))));
         return panel;
     }
     
-    private JPanel makeLabelledTickBox(String labelString, String pref,
-            boolean defaultValue) {
+    private JPanel makeAlignedCheckBox(JCheckBox checkBox) {
         final JPanel panel = new JPanel(false);
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-        panel.add(Box.createRigidArea((new Dimension(8,0))));
-        final JLabel label = new JLabel("");
-        label.setMaximumSize(new Dimension(200, 30));
-        panel.add(label);
-        PrefsTickBox tickBox = new PrefsTickBox(labelString, pref, defaultValue);
-        tickBox.setMaximumSize(new Dimension(300, 50));
-        panel.add(tickBox);
+        panel.add(Box.createRigidArea((new Dimension(100, 0))));
+        //redBorder(checkBox);
+        checkBox.setMaximumSize(new Dimension(800, 50));
+        checkBox.setPreferredSize(prefDim);
+        panel.add(checkBox);
         return panel;
     }
     
@@ -238,12 +256,18 @@ public class PrefsWindow extends JFrame {
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
         panel.add(Box.createRigidArea((new Dimension(8,0))));
         final JLabel label = new JLabel(labelString);
-        label.setMaximumSize(new Dimension(200, 30));
+        label.setPreferredSize(prefDim);
+        label.setMaximumSize(new Dimension(400, 50));
+        label.setHorizontalAlignment(JLabel.RIGHT);
+        //redBorder(label);
         panel.add(label);
-        PrefsComboBox box = new PrefsComboBox(pref, values, defaultValue);
-        box.setMaximumSize(new Dimension(300, 50));
+        panel.add(Box.createRigidArea((new Dimension(8,0))));
+        final JComboBox box = new PrefsComboBox(pref, values, defaultValue);
+        box.setPreferredSize(prefDim);
+        box.setMaximumSize(new Dimension(800, 50));
         box.setToolTipText(toolTip);
         panel.add(box);
+        panel.add(Box.createRigidArea((new Dimension(8,0))));
         return panel;
     }
     
@@ -288,10 +312,10 @@ public class PrefsWindow extends JFrame {
             prefs.getPrefs().put(key, getText());
         }
     }    
-    private class PrefsTickBox extends JCheckBox implements ItemListener {
+    private class PrefsCheckBox extends JCheckBox implements ItemListener {
         private static final long serialVersionUID = 1L;
         final private String key;
-        public PrefsTickBox(String labelString, String key,
+        public PrefsCheckBox(String labelString, String key,
             boolean defaultValue) {
             super(labelString,
                   prefs.getPrefs().getBoolean(key, defaultValue));
@@ -305,9 +329,9 @@ public class PrefsWindow extends JFrame {
         }
     }
     
-    private class MagDevTickBox extends JCheckBox implements ItemListener {
+    private class MagDevCheckBox extends JCheckBox implements ItemListener {
         private static final long serialVersionUID = 1L;
-        public MagDevTickBox() {
+        public MagDevCheckBox() {
             super("Bedding is vs. magnetic north",
                    PuffinApp.getInstance().getCorrection().isMagDevAppliedToFormation());
             addItemListener(this);

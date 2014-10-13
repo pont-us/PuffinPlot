@@ -1392,9 +1392,13 @@ names. The plot types are detailed in section~\ref{sec:plot-types}.
   (sample, site, suite, and AMS) will be shown with text labels at the bottom
   right, making them easier to distinguish from one another.
 
-\item[Label samples in site plot] If this box is ticked, sample 
+\item[Label samples in site plots] If this box is ticked, sample 
   directions (PCA or Fisher) will be labelled with the sample's
-  name in the site equal-area plot.
+  name or depth in the site equal-area plot.
+
+\item[Label points in suite plots] If this box is ticked, sample 
+  and site directions will be labelled with the appropriate name or
+  depth in the suite equal-area plot.
 
 \item[Bedding is vs. magnetic north.] If this box is ticked, the bedding
   azimuth for formation orientation correction is assumed to be relative to
@@ -1403,8 +1407,8 @@ names. The plot types are detailed in section~\ref{sec:plot-types}.
   it is relative to geographic north, a magnetic declination of zero can be
   specified.)
 
-\item[Demag y axis] allows to you customize the text which labels the {\em y}
-  axis of the demagnetization-intensity plot.
+\item[Demag. y-axis label] allows to you customize the text which labels the
+  {\em y} axis of the demagnetization-intensity plot.
 
 \item[PmagPy folder] sets the location of the PmagPy programs. If you wish to
   do calculations of \caps{ams} statistics within PuffinPlot, it is necessary
@@ -1468,9 +1472,9 @@ which means that a great-circle fit will be considered valid if it has an
 at least five circles. Setting the validity expression to \texttt{True}
 will cause all great-circle fits to be considered valid.
 
-\item[Zplot \caps{pca} display] controls the manner in which \caps{pca} directions are
-  shown on the Zijderveld plot (see section~\ref{sec:plot-types}). The
-  available settings are:
+\item[Zplot \caps{pca} display] controls the manner in which \caps{pca}
+  directions are shown on the Zijderveld plot (see
+  section~\ref{sec:plot-types}). The available settings are:
 
 \begin{description}
 \item[Full] \caps{pca} lines will extend right to the edges of the Zijderveld

@@ -235,7 +235,7 @@ public class Site {
         samples.remove(sample);
     }
 
-    Object getName() {
+    public String getName() {
         return name;
     }
     

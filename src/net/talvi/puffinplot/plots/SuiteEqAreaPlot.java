@@ -17,6 +17,7 @@
 package net.talvi.puffinplot.plots;
 
 import java.awt.Graphics2D;
+import java.awt.geom.Point2D;
 import java.util.List;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.data.*;
@@ -77,7 +78,17 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
             drawFisher(means.getAll());
         }
     }
-    
+
+    private void writePointLabel(String s, PlotPoint point) {
+        if (prefs != null &&
+                prefs.getBoolean("plots.labelPointsInSuitePlots", false)) {
+            final Point2D centre = point.getCentre();
+            putText(g, s, centre.getX(), centre.getY(),
+                    Direction.RIGHT,
+                    0, 6);
+        }
+    }
+
     @Override
     public void draw(Graphics2D g) {
         updatePlotDimensions(g);
@@ -94,7 +105,10 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
                 final PcaValues pca = s.getPcaValues();
                 if (pca != null) {
                     final Vec3 dir = pca.getDirection();
-                    addPoint(null, project(dir), dir.z>0, false, false);
+                    final PlotPoint p =
+                        ShapePoint.build(this, project(dir)).filled(dir.z>0).build();
+                    writePointLabel(s.getNameOrDepth(), p);
+                    p.draw(g);
                 }
             }
             if (suiteCalcs != null) {
@@ -105,7 +119,9 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
                 final FisherParams siteMean = site.getFisherParams();
                 if (siteMean != null) {
                     final Vec3 dir = siteMean.getMeanDirection();
-                    addPoint(null, project(dir), dir.z>0, false, false);
+                    PlotPoint p = ShapePoint.build(this, project(dir)).filled(dir.z>0).build();
+                    writePointLabel(site.getName(), p);
+                    p.draw(g);
                 }
             }
             if (suiteCalcs != null) {
