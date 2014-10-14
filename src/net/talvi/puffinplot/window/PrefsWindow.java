@@ -17,9 +17,12 @@
 package net.talvi.puffinplot.window;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -52,7 +55,7 @@ public class PrefsWindow extends JFrame {
     private final PresetsBox presetsBox;
     // private final JTextField protocolBox;
     private final List<PlotBox> plotBoxes = new ArrayList<>(24);
-    private final List<PrefBox> prefBoxes = new ArrayList<>();
+    private final List<PrefTextField> prefTextFields = new ArrayList<>();
     private final PuffinPrefs prefs =
             PuffinApp.getInstance().getPrefs();
     private final static Dimension prefDim = new Dimension(100, 30);
@@ -62,7 +65,7 @@ public class PrefsWindow extends JFrame {
      */
     public PrefsWindow() {
         super("Preferences");
-        final Insets insets = new Insets(0,0,0,0);
+        final Insets insets = new Insets(4,4,4,4);
         final int BOTH = GridBagConstraints.BOTH;
         setPreferredSize(new Dimension(500, 500));
         setLayout(new GridBagLayout());
@@ -76,15 +79,20 @@ public class PrefsWindow extends JFrame {
         squidPanel.setBorder(BorderFactory.createTitledBorder("SQUID sensor lengths"));
         String[] labels = {"x", "y", "z"};
         List<String> lengths = prefs.getSensorLengths().getLengths();
-        squidPanel.add(new JLabel("Presets"),
-                new GridBagConstraints(0, 0, 1, 1, 0.8, 0.8, GridBagConstraints.LINE_START,
-                BOTH, insets, 0, 0));
-        for (int i=0; i<3; i++) sensorLengthField[i] = new JTextField(lengths.get(i), 7);
+        final JLabel presetsLabel = new JLabel("Presets");
+        presetsLabel.setHorizontalAlignment(JLabel.RIGHT);
+        squidPanel.add(presetsLabel,
+                new GridBagConstraints(0, 0, 1, 1, 0.8, 0.8,
+                        GridBagConstraints.LINE_START,
+                        BOTH, insets, 0, 0));
+        for (int i=0; i<3; i++) {
+            sensorLengthField[i] = new JTextField(lengths.get(i), 7);
+        }
         presetsBox = new PresetsBox();
 
-        squidPanel.add(presetsBox,
-                new GridBagConstraints(1, 0, 1, 1, 0.8, 0.8, GridBagConstraints.LINE_START,
-                BOTH, insets, 1, 1));
+        squidPanel.add(presetsBox, new GridBagConstraints(1, 0, 1, 1, 0.8, 0.8,
+                        GridBagConstraints.LINE_START,
+                        BOTH, insets, 1, 1));
         for (int i=0; i<3; i++) {
             final GridBagConstraints c = new GridBagConstraints();
             c.gridy = i + 1;
@@ -135,23 +143,33 @@ public class PrefsWindow extends JFrame {
                 "measurementProtocol", protocolStrings, "NORMAL",
                 "The measurement protocol to use when reading 2G files."), gbc2);
         
-        JPanel plotsPanel = new JPanel(false);
+        final JPanel plotsPanel = new JPanel(false);
         plotsPanel.setLayout(new BoxLayout(plotsPanel, BoxLayout.Y_AXIS));
-        plotsPanel.add(new JLabel("Visible plots"));
+        final JLabel plotsLabel = new JLabel("<html><b>Visible plots</b></html>");
+        plotsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        plotsLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        //redBorder(plotsLabel);
+        plotsPanel.add(Box.createRigidArea((new Dimension(0,8))));
+        plotsPanel.add(plotsLabel);
+        plotsPanel.add(Box.createRigidArea((new Dimension(0,8))));
+        final JPanel plotsSubPanel = new JPanel(false);
+        plotsSubPanel.setLayout(new GridLayout(0, 2));
+
         for (Plot plot: PuffinApp.getInstance().getMainWindow().getGraphDisplay().getPlots()) {
             PlotBox pb = new PlotBox(plot);
-            plotsPanel.add(pb);
+            plotsSubPanel.add(pb);
             plotBoxes.add(pb);
         }
+        plotsPanel.add(plotsSubPanel);
+        
         JPanel miscPanel = new JPanel(false);
         miscPanel.setLayout(new BoxLayout(miscPanel, BoxLayout.Y_AXIS));
         
         miscPanel.add(Box.createVerticalGlue());
-        
-        miscPanel.add(makeAlignedCheckBox(new PrefsCheckBox(
-                "Label treatment steps", "plots.labelTreatmentSteps", false)));
         miscPanel.add(makeAlignedCheckBox(new PrefsCheckBox(
                 "Label equal-area plots", "plots.labelEqualAreaPlots", false)));
+        miscPanel.add(makeAlignedCheckBox(new PrefsCheckBox(
+                "Label treatment steps", "plots.labelTreatmentSteps", false)));
         miscPanel.add(makeAlignedCheckBox(new PrefsCheckBox(
                 "Label samples in site plots", "plots.labelSamplesInSitePlots",
                 false)));
@@ -159,16 +177,16 @@ public class PrefsWindow extends JFrame {
                 "Label points in suite plots", "plots.labelPointsInSuitePlots",
                 false)));
         miscPanel.add(makeAlignedCheckBox(new MagDevCheckBox()));
-        miscPanel.add(makeLabelledPrefBox("Demag. y-axis label",
+        miscPanel.add(makeLabelledPrefTextField("Demag. y-axis label",
                 "plots.demag.vAxisLabel", "Magnetization (A/m)"));
-        miscPanel.add(makeLabelledPrefBox("PmagPy folder",
+        miscPanel.add(makeLabelledPrefTextField("PmagPy folder",
                 "data.pmagPyPath", "/usr/local/bin"));
-        miscPanel.add(makeLabelledPrefBox("Font",
+        miscPanel.add(makeLabelledPrefTextField("Font",
                 "plots.fontFamily", "Arial"));
         miscPanel.add(makeLabelledPrefComboBox("Look and feel",
                 "lookandfeel", new String[] {"Default", "Native", "Metal", "Nimbus"},
                 "Default", "PuffinPlot's appearance (changes take effect on restart)"));
-        miscPanel.add(makeLabelledPrefBox("GC validity",
+        miscPanel.add(makeLabelledPrefTextField("GC validity",
                 "data.greatcircles.validityExpr", "N>=3 and a95<3.5 and k>3"));
         miscPanel.add(makeLabelledPrefComboBox("Zplot PCA display",
                 "plots.zplotPcaDisplay", new String[] {"Full", "Long", "Short", "None"},
@@ -220,7 +238,7 @@ public class PrefsWindow extends JFrame {
         }
     }
     
-    private JPanel makeLabelledPrefBox(String labelString, String pref,
+    private JPanel makeLabelledPrefTextField(String labelString, String pref,
             String defaultValue) {
         final JPanel panel = new JPanel(false);
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
@@ -231,7 +249,8 @@ public class PrefsWindow extends JFrame {
         label.setMaximumSize(new Dimension(400, 50));
         panel.add(label);
         panel.add(Box.createRigidArea((new Dimension(8,0))));
-        JTextField field = new PrefBox(pref, defaultValue);
+        final PrefTextField field = new PrefTextField(pref, defaultValue);
+        prefTextFields.add(field);
         field.setPreferredSize(prefDim);
         field.setMaximumSize(new Dimension(800, 50));
         panel.add(field);
@@ -276,7 +295,7 @@ public class PrefsWindow extends JFrame {
         prefs.set2gProtocol(TwoGeeLoader.Protocol.valueOf(
                 prefs.getPrefs().get("measurementProtocol", "NORMAL")));
         for (PlotBox plotBox: plotBoxes) plotBox.applySetting();
-        for (PrefBox prefBox: prefBoxes) prefBox.storeValue();
+        for (PrefTextField prefBox: prefTextFields) prefBox.storeValue();
         try {
             prefs.getPrefs().flush();
         } catch (BackingStoreException ex) {
@@ -287,31 +306,38 @@ public class PrefsWindow extends JFrame {
         PuffinApp.getInstance().updateDisplay();
     }
 
-    private class PlotBox extends JCheckBox {
+    private class PlotBox extends JPanel {
         private static final long serialVersionUID = 1L;
         private final Plot plot;
+        private final JCheckBox checkBox;
         public PlotBox(Plot plot) {
-            super(plot.getNiceName(), plot.isVisible());
+            super();
+            setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+            add(Box.createRigidArea((new Dimension(8, 0))));
+            checkBox = new JCheckBox(plot.getNiceName(), plot.isVisible());
+            add(checkBox);
             this.plot = plot;
         }
 
         public void applySetting() {
-            plot.setVisible(isSelected());
+            plot.setVisible(checkBox.isSelected());
         }
     }
 
-    private class PrefBox extends JTextField {
+    private class PrefTextField extends JTextField {
         private static final long serialVersionUID = 1L;
         final private String key;
-        public PrefBox(String key, String def) {
+        
+        private PrefTextField(String key, String def) {
             super(prefs.getPrefs().get(key, def));
             this.key = key;
-            prefBoxes.add(this);
         }
+        
         public void storeValue() {
             prefs.getPrefs().put(key, getText());
         }
-    }    
+    }
+    
     private class PrefsCheckBox extends JCheckBox implements ItemListener {
         private static final long serialVersionUID = 1L;
         final private String key;
