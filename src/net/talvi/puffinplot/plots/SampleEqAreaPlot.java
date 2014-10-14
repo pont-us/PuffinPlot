@@ -99,6 +99,11 @@ public class SampleEqAreaPlot extends EqAreaPlot {
             ShapePoint.build(this, project(dir)).scale(1.5).
                     filled(dir.z>0).diamond().build().draw(g);
         }
+        if (sample.getImportedDirection() != null) {
+            final Vec3 dir = sample.getImportedDirection();
+            ShapePoint.build(this, project(dir)).scale(1.5).
+                    filled(dir.z>0).triangle().build().draw(g);
+        }
 
         drawPoints(g);
     }

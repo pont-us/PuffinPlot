@@ -63,9 +63,9 @@ public final class SuiteCalcs {
         }
         
         public List<List<String>> toStrings() {
-            List<List<String>> result = new ArrayList<List<String>>(3);
+            List<List<String>> result = new ArrayList<>(3);
             for (int i=0; i<3; i++) {
-                final List<String> strings = new ArrayList<String>(8);
+                final List<String> strings = new ArrayList<>(8);
                 strings.add(i==0 ? "All" : i==1 ? "Upper" : "Lower");
                 strings.addAll((i==0 ? all : i==1 ? upper : lower).toStrings());
                 result.add(strings);
@@ -74,8 +74,8 @@ public final class SuiteCalcs {
         }
         
         public static Means calculate(Collection<Vec3> directions) {
-            final List<Vec3> upperDirs = new ArrayList<Vec3>(directions.size());
-            final List<Vec3> lowerDirs = new ArrayList<Vec3>(directions.size());
+            final List<Vec3> upperDirs = new ArrayList<>(directions.size());
+            final List<Vec3> lowerDirs = new ArrayList<>(directions.size());
             for (Vec3 direction: directions) {
                 if (direction.z > 0) {
                     lowerDirs.add(direction);

@@ -30,6 +30,7 @@ import net.talvi.puffinplot.data.GreatCircle;
 import net.talvi.puffinplot.data.PcaValues;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Site;
+import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 
@@ -80,7 +81,6 @@ public class SampleParamsTable extends Plot {
         
         points.add(new TextLinePoint(this, g, 10, null, null, headers, xSpacing));
 
-        int sequence = 1;
         float yPos = 2 * ySpacing;
         for (Sample sample: site.getSamples()) {
             if (yPos > getDimensions().getHeight()) break;
@@ -98,15 +98,19 @@ public class SampleParamsTable extends Plot {
                 values.set(2, format("%.1f", pca.getDirection().getDecDeg()));
                 values.set(3, format("%.1f", pca.getDirection().getIncDeg()));
             } else if (sample.getFisherValues() != null) {
-                final FisherValues fisherValues = sample.getFisherValues();
+                final Vec3 vector = sample.getFisherValues().getMeanDirection();
                 values.set(1, "Fisher");
-                values.set(2, format("%.1f", fisherValues.getMeanDirection().getDecDeg()));
-                values.set(3, format("%.1f", fisherValues.getMeanDirection().getIncDeg()));
+                values.set(2, format("%.1f", vector.getDecDeg()));
+                values.set(3, format("%.1f", vector.getIncDeg()));
+            } else if (sample.getImportedDirection()!= null) {
+                final Vec3 vector = sample.getImportedDirection();
+                values.set(1, "Import");
+                values.set(2, format("%.1f", vector.getDecDeg()));
+                values.set(3, format("%.1f", vector.getIncDeg()));
             }
             
             points.add(new TextLinePoint(this, g, yPos, null, sample, values, xSpacing));
             yPos += ySpacing;
-            sequence++;
         }
         g.setColor(Color.BLACK);
         drawPoints(g);

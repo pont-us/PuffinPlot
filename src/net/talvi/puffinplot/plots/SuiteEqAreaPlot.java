@@ -63,8 +63,10 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
     private void drawFisher(FisherValues fv) {
         if (fv==null) return;
         final Vec3 mean = fv.getMeanDirection();
-        drawLineSegments(mean.makeSmallCircle(fv.getA95()));
-        PlotPoint meanPoint = 
+        if (fv.getA95() > 0) {
+            drawLineSegments(mean.makeSmallCircle(fv.getA95()));
+        }
+        final PlotPoint meanPoint = 
                 ShapePoint.build(this, project(mean)).
                 circle().build();
         meanPoint.draw(g);
@@ -94,20 +96,19 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
         updatePlotDimensions(g);
         clearPoints();
         drawAxes();
-        final Sample sample = params.getSample();
-        if (sample==null) return;
-        final Suite suite = sample.getSuite();
+        final Sample selectedSample = params.getSample();
+        if (selectedSample==null) return;
+        final Suite suite = selectedSample.getSuite();
         if (suite==null) return;
         List<Site> sites = suite.getSites();
         final SuiteCalcs suiteCalcs = suite.getSuiteMeans();
         if (sites == null || sites.isEmpty()) {
-            for (Sample s: suite.getSamples()) {
-                final PcaValues pca = s.getPcaValues();
-                if (pca != null) {
-                    final Vec3 dir = pca.getDirection();
-                    final PlotPoint p =
-                        ShapePoint.build(this, project(dir)).filled(dir.z>0).build();
-                    writePointLabel(s.getNameOrDepth(), p);
+            for (Sample sample: suite.getSamples()) {
+                final Vec3 dir = sample.getDirection();
+                if (dir != null) {
+                    final PlotPoint p = ShapePoint.build(this, project(dir)).
+                            filled(dir.z>0).build();
+                    writePointLabel(sample.getNameOrDepth(), p);
                     p.draw(g);
                 }
             }

@@ -60,7 +60,7 @@ public class PlotTitle extends Plot {
     @Override
     public void draw(Graphics2D g) {
         final Sample sample = params.getSample();
-        if (sample==null || !sample.hasData()) return;
+        if (sample==null) return;
 
         g.setFont(Font.getFont(getTextAttributes()));
         g.setColor(Color.BLACK);
@@ -81,5 +81,4 @@ public class PlotTitle extends Plot {
                 (int) getDimensions().getMinX(),
                 (int) getDimensions().getMinY() + 32);
     }
-    
 }

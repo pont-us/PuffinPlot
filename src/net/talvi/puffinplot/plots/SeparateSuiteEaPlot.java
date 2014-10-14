@@ -136,9 +136,7 @@ public class SeparateSuiteEaPlot extends EqAreaPlot {
                 g.setStroke(thinStroke);
                 for (Sample s: PuffinApp.getInstance().getSelectedSamples()) {
                     if (s == null) continue;
-                    final PcaValues pca = s.getPcaValues();
-                    if (pca == null) continue;
-                    final Vec3 direction = pca.getDirection();
+                    final Vec3 direction = s.getDirection();
                     if (direction == null) continue;
                     final Point2D.Double p = project(direction);
                     g.draw(new Line2D.Double(p.x - 10, p.y, p.x + 10, p.y));

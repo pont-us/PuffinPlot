@@ -763,7 +763,8 @@ public class PuffinActions {
      * as a PDF file.
      */
     public final Action exportPdfItext = new PuffinAction("Export PDF (iText)…",
-            "Print data for selected samples to a PDF file, using the iText graphics library",
+            "Print data for selected samples to a PDF file, "
+                    + "using the iText graphics library",
             '8', false, KeyEvent.VK_P) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
@@ -772,10 +773,9 @@ public class PuffinActions {
             if (pathname != null)
                 try {
                 app.exportPdfItext(new File(pathname));
-            } catch (DocumentException ex) {
-                Logger.getLogger(PuffinActions.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(PuffinActions.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (DocumentException | FileNotFoundException ex) {
+                Logger.getLogger(PuffinActions.class.getName()).
+                        log(Level.SEVERE, null, ex);
             }
         }
     };
@@ -784,8 +784,10 @@ public class PuffinActions {
      * Opens a save dialog allowing the current main display to be saved
      * as a PDF file.
      */
-    public final Action exportPdfFreehep = new PuffinAction("Export PDF (FreeHEP)…",
-            "Print data for selected samples to a PDF file, using the FreeHEP graphics library",
+    public final Action exportPdfFreehep = new PuffinAction(
+            "Export PDF (FreeHEP)…",
+            "Print data for selected samples to a PDF file, "
+                    + "using the FreeHEP graphics library",
             '9', false, KeyEvent.VK_D) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
@@ -816,7 +818,8 @@ public class PuffinActions {
      * Calculates parametric bootstrap AMS statistics on the selected samples.
      */
     public final Action bootAmsParam = new PuffinAction("Parametric bootstrap AMS",
-            "Calculate parametric bootstrap statistics for AMS data of selected samples",
+            "Calculate parametric bootstrap statistics "
+                    + "for AMS data of selected samples",
             null, false, KeyEvent.VK_P) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
@@ -853,7 +856,8 @@ public class PuffinActions {
      * Exports the current user preferences to an XML file.
      */
     public final Action exportPrefs = new PuffinAction("Export preferences…",
-            "Save the current preferences to a file, allowing them to be restored later.",
+            "Save the current preferences to a file, "
+                    + "allowing them to be restored later.",
             null, false, KeyEvent.VK_X) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent arg0) {
@@ -868,7 +872,8 @@ public class PuffinActions {
      * Imports user preferences from an XML file.
      */
     public final Action importPrefs = new PuffinAction("Import preferences…",
-            "Read preferences from a file, discarding your current preferences.",
+            "Read preferences from a file, "
+                    + "discarding your current preferences.",
             null, false, KeyEvent.VK_T) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent arg0) {
@@ -903,7 +908,8 @@ public class PuffinActions {
      */
     public final Action setSiteName = 
             new PuffinAction("Set site name…",
-            "Define a single site name for all selected samples", null, false, KeyEvent.VK_N) {
+            "Define a single site name for all selected samples",
+                    null, false, KeyEvent.VK_N) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
             final String name = JOptionPane.showInputDialog("Site name");
@@ -919,10 +925,12 @@ public class PuffinActions {
      */
     public final Action setSitesFromSampleNames = 
         new PuffinAction("Set sites from sample names…",
-            "Automatically define site sames using parts of the sample names.", null, false, KeyEvent.VK_S) {
+            "Automatically define site sames using parts of the sample names.",
+                null, false, KeyEvent.VK_S) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            final String maskSpec = JOptionPane.showInputDialog("Character positions to use");
+            final String maskSpec =
+                    JOptionPane.showInputDialog("Character positions to use");
             if (maskSpec==null || "".equals(maskSpec)) return;
             app.getSuite().setSiteNamesBySubstring(app.getSelectedSamples(),
                     Util.numberRangeStringToBitSet(maskSpec, 256));
@@ -939,13 +947,15 @@ public class PuffinActions {
             null, false, KeyEvent.VK_D) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            final String thicknessString = JOptionPane.showInputDialog("Thickness of depth slices");
+            final String thicknessString =
+                    JOptionPane.showInputDialog("Thickness of depth slices");
             if (thicknessString==null || "".equals(thicknessString)) return;
             float thickness = Float.NaN;
             try {
                 thickness = Float.parseFloat(thicknessString);
             } catch (NumberFormatException ex) {
-                app.errorDialog("Invalid number", thicknessString+" is not a number.");
+                app.errorDialog("Invalid number",
+                        thicknessString + " is not a number.");
             }
             if (Float.isNaN(thickness)) return;
             app.getSuite().setSiteNamesByDepth(app.getSelectedSamples(),
@@ -988,6 +998,11 @@ public class PuffinActions {
             app.showTabularImportDialog();
         }
     };
+    
+    //public final Action importDirectionalData =
+    //       new PuffinAction("Import direction data…",
+    //     "Import sample-level directional data without demagnetization steps",
+    //   null, false, )
     
     /**
      * Opens the PuffinPlot website.

@@ -65,10 +65,11 @@ public class Site {
 
     /** Calculate Fisherian statistics on the PCA directions of samples
      * within this site. The PCA directions will be automatically calculated
-     * (or recalculated) before the Fisher statistics are calculated.
-     * If a sample has no calculated PCA direction but does have a 
-     * calculated Fisherian mean of treatment steps, this Fisherian mean
-     * is used as the sample direction.
+     * (or recalculated) before the Fisher statistics are calculated,
+     * if sufficient points have been selected for the operation.
+     * If no PCA direction is available, the sample Fisher mean (if any)
+     * and the imported sample direction (if any) are used in turn as
+     * fallbacks.
      * The results are stored within the site.
      * 
      * @param correction the correction to apply to the magnetic moment
@@ -79,12 +80,8 @@ public class Site {
                 new ArrayList<>(getSamples().size());
         for (Sample sample: getSamples()) {
             sample.doPca(correction);
-            if (sample.getPcaAnnotated() != null) {
-                directions.add(sample.getPcaValues().getDirection());
-            } else {
-                if (sample.getFisherValues() != null) {
-                    directions.add(sample.getFisherValues().getMeanDirection());
-                }
+            if (sample.getDirection() != null) {
+                directions.add(sample.getDirection());
             }
         }
         if (!directions.isEmpty()) {

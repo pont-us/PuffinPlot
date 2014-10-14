@@ -172,6 +172,9 @@ public class SampleChooser extends JPanel {
                 sampleList.setSelectedIndex(0);
                 setVisibility(false, true);
                 break;
+            case UNSET:
+                setVisibility(false, false);
+                break;
             default:
                 throw new RuntimeException("No such measurement type.");
         }

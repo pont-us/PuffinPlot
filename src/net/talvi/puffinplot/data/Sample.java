@@ -53,6 +53,7 @@ public class Sample {
     private double formAz = Double.NaN, formDip = Double.NaN;
     private double magDev = Double.NaN;
     private FisherValues fisherValues;
+    private Vec3 importedDirection = null;
 
     /**
      * Creates a new sample. For discrete samples, the supplied name can
@@ -397,19 +398,40 @@ public class Sample {
     public PcaAnnotated getPcaAnnotated() {
         return pca;
     }
-
+    
     /** Returns the results of the last PCA calculation.
+     * Returns null if there is no stored PCA calculation.
      * @return the results of the last PCA calculation */
     public PcaValues getPcaValues() {
         return pca == null ? null : pca.getPcaValues();
     }
     
     /** Returns the results of the last Fisher calculation.
-     * @return the results of the last PCA calculation */
+     * Returns null if there are no stored Fisher statistics.
+     * @return the results of the last Fisher calculation */
     public FisherValues getFisherValues() {
-        return fisherValues == null ? null : fisherValues;
+        return fisherValues;
+    }
+    
+    public Vec3 getImportedDirection() {
+        return importedDirection;
+    }
+    
+    public void setImportedDirection(Vec3 importedDirection) {
+        this.importedDirection = importedDirection;
     }
 
+    public Vec3 getDirection() {
+        if (getPcaAnnotated() != null) {
+            return getPcaValues().getDirection();
+        } else if (getFisherValues() != null) {
+            return getFisherValues().getMeanDirection();
+        } else if (getImportedDirection() != null) {
+            return getImportedDirection();
+        } else {
+            return null;
+        }
+    }
 
     /** Flags the selected data points for use in the next great-circle fit. */
     public void useSelectionForCircleFit() {

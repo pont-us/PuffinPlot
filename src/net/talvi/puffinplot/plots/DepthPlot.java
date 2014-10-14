@@ -66,10 +66,10 @@ public class DepthPlot extends Plot {
         boolean anyData = false;
         for (Sample s: suite.getSamples()) {
             if (!s.hasData()) continue;
-            if (s.getPcaValues() == null) continue;
+            if (s.getDirection() == null) continue;
             if (Double.isNaN(s.getDepth())) continue;
             anyData = true;
-            final double inc = s.getPcaValues().getDirection().getIncDeg();
+            final double inc = s.getDirection().getIncDeg();
             if (inc < minInc) minInc = inc;
             if (inc > maxInc) maxInc = inc;
         }
@@ -90,9 +90,9 @@ public class DepthPlot extends Plot {
         
         for (Sample s: suite.getSamples()) {
             if (!s.hasData()) continue;
-            if (s.getPcaValues() == null) continue;
+            if (s.getDirection() == null) continue;
             final double depth = s.getDepth();
-            final double inc = s.getPcaValues().getDirection().getIncDeg();
+            final double inc = s.getDirection().getIncDeg();
             final double xPos = dim.getMinX() + depth * xScale;
             final double yPos = dim.getMaxY() - downAxis.getLength() - inc * yScale;
             final Point2D p = new Point2D.Double(xPos, yPos);

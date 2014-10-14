@@ -37,19 +37,20 @@ import net.talvi.puffinplot.data.file.*;
 public final class Suite {
 
     private List<Datum> data;
-    private List<Site> sites;
+    private List<Site> sites = new ArrayList<>();
     private File puffinFile;
-    private List<Sample> samples = new ArrayList<>(); // samples in order
-    private LinkedHashMap<String, Sample> samplesById; // name or depth as appropriate
+    private final List<Sample> samples = new ArrayList<>(); // samples in order
+    private final LinkedHashMap<String, Sample> samplesById =
+            new LinkedHashMap<>(); // name or depth as appropriate
     private HashMap<Sample, Integer> indicesBySample; // maps sample to index
-    private Map<Integer, Line> dataByLine;
-    private int currentSampleIndex = 0;
-    private MeasType measType;
-    private String suiteName;
+    private final Map<Integer, Line> dataByLine = new HashMap<>();
+    private int currentSampleIndex = -1;
+    private MeasType measType = MeasType.UNSET;
+    private String name;
     private List<Sample> emptyTraySamples;
     private SuiteCalcs suiteCalcs;
-    private List<String> loadWarnings;
-    private boolean hasUnknownTreatType;
+    private final List<String> loadWarnings = new ArrayList<>();
+    private boolean hasUnknownTreatType = false;
     private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
     private CustomFields<String> customFlagNames;
     private CustomFields<String> customNoteNames;
@@ -76,13 +77,8 @@ public final class Suite {
             List<Site> selSites) {
         List<Vec3> sampleDirs = new ArrayList<>(selSamps.size());
         for (Sample sample: selSamps) {
-            final PcaValues pca = sample.getPcaValues();
-            if (pca != null) {
-                sampleDirs.add(pca.getDirection());
-            } else {
-                if (sample.getFisherValues() != null) {
-                    sampleDirs.add(sample.getFisherValues().getMeanDirection());
-                }
+            if (sample.getDirection() != null) {
+                sampleDirs.add(sample.getDirection());
             }
         }
         List<Vec3> siteDirs = new ArrayList<>(selSamps.size());
@@ -134,9 +130,9 @@ public final class Suite {
         List<Vec3> normal = new ArrayList<>(), reversed = new ArrayList<>();
         for (Suite suite: suites) {
             for (Sample sample: suite.getSamples()) {
-                PcaValues pca = sample.getPcaValues();
-                if (pca != null) {
-                 (pca.getDirection().z > 0 ? normal : reversed).add(pca.getDirection());
+                final Vec3 vector = sample.getDirection();
+                if (vector != null) {
+                    (vector.z > 0 ? normal : reversed).add(vector);
                 }
             }
         }
@@ -235,7 +231,7 @@ public final class Suite {
             }
             fileWriter.close();
             puffinFile = file;
-            suiteName = file.getName();
+            name = file.getName();
             setSaved(true);
         } catch (IOException ex) {
             throw new PuffinUserException(ex);
@@ -335,31 +331,19 @@ public final class Suite {
     }
 
     /**
-     * <p>Creates a new suite from the specified files.
-     * The is a convenience method for
-     * {@link #Suite(List, SensorLengths, TwoGeeLoader.Protocol, boolean, FileFormat)}
-     * using the default sensor lengths (1, 1, 1), protocol 
-     * ({@code NORMAL}), and Cartesian (X/Y/Z) magnetic moment fields.
-     * </p>
-     * 
-     * @param files the files from which to load the data
-     * @throws IOException if an I/O error occurred while reading the files 
+     * Creates a new, empty suite.
      */
-    public Suite(List<File> files) throws IOException {
-            this(files, SensorLengths.fromPresetName("1:1:1"),
-                    TwoGeeLoader.Protocol.NORMAL, false, null);
+    public Suite() {
+        this.name = "[Empty suite]";
     }
     
     /**
-     * <p>Creates a new suite from the specified files.</p>
+     * <p>Reads data into this suite from the specified files.</p>
      * 
-     * <p>Note that this may return an empty suite, in which case it is the
-     * caller's responsibility to notice this and deal with it.
-     * We can't just throw an exception if the suite's empty,
-     * because then we lose the load warnings (which will probably explain
-     * to the user <i>why</i> the suite's empty and are thus quite important).</p>
+     * <p>After readFiles returns, #getLoadWarnings() can be used
+     * to return a list of problems that occurred during file reading.</p>
      * 
-     * @param files the files from which to load the data
+     * @param files the files from which to read the data
      * @param sensorLengths for 2G long core files only: the effective lengths 
      * of the magnetometer's SQUID sensors,
      * used to correct Cartesian magnetic moment data
@@ -370,25 +354,19 @@ public final class Suite {
      * guess between 2G, PuffinPlot, Caltech, and Zplot).
      * @throws IOException if an I/O error occurred while reading the files 
      */
-    public Suite(List<File> files, SensorLengths sensorLengths,
+    public void readFiles(List<File> files, SensorLengths sensorLengths,
             TwoGeeLoader.Protocol protocol, boolean usePolarMoment,
             FileFormat format) throws IOException {
         assert(files.size() > 0);
-        if (files.size() == 1) suiteName = files.get(0).getName();
-        else suiteName = files.get(0).getParentFile().getName();
+        if (files.size() == 1) name = files.get(0).getName();
+        else name = files.get(0).getParentFile().getName();
         files = expandDirs(files);
         final ArrayList<Datum> dataArray = new ArrayList<>();
         data = dataArray;
-        samplesById = new LinkedHashMap<>();
-        dataByLine = new HashMap<>();
-        measType = MeasType.UNSET;
-        loadWarnings = new ArrayList<>();
-        hasUnknownTreatType = false;
         final List<String> emptyStringList = Collections.emptyList();
         customFlagNames = new CustomFlagNames(emptyStringList);
         customNoteNames = new CustomNoteNames(emptyStringList);
         List<String> puffinLines = emptyStringList;
-        sites = new ArrayList<>();
         boolean sensorLengthWarning = false;
         
         for (File file: files) {
@@ -484,6 +462,30 @@ public final class Suite {
         processPuffinLines(puffinLines);
         updateReverseIndex();
         setSaved(true);
+    }
+    
+    public void readDirectionalData(File file) throws IOException {
+        final List<String> emptyStringList = Collections.emptyList();
+        customFlagNames = new CustomFlagNames(emptyStringList);
+        customNoteNames = new CustomNoteNames(emptyStringList);
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split("\t");
+                String sampleName = parts[0];
+                double dec = Double.parseDouble(parts[1]);
+                double inc = Double.parseDouble(parts[2]);
+                Vec3 v = Vec3.fromPolarDegrees(1., inc, dec);
+                Sample sample = new Sample(sampleName, this);
+                sample.setImportedDirection(v);
+                samples.add(sample);
+                samplesById.put(sampleName, sample);
+            }
+        }
+        name = "Dir data test";
+        measType = MeasType.DISCRETE;
+        
+        updateReverseIndex();
     }
     
     /** Performs all possible sample and site calculations.
@@ -663,7 +665,7 @@ public final class Suite {
     /** Returns the name of this suite.
      * @return the name of this suite */
     public String getName() {
-        return suiteName;
+        return name;
     }
 
     /** Returns the number of samples in this suite.
@@ -672,11 +674,18 @@ public final class Suite {
         return samplesById.size();
     }
 
-    /** Returns the sample with the specified index. 
+    /** Returns the sample with the specified index.
+     * 
+     * If the suite contains no samples, or the index is -1, returns null.
+     * 
      * @param i an index number for a sample
      * @return the sample with the specified index */
     public Sample getSampleByIndex(int i) {
-        return samples.get(i);
+        if (getSamples().isEmpty() || i==-1) {
+            return null;
+        } else {
+            return samples.get(i);
+        }
     }
 
     /** Returns the index of a specified sample within this suite.

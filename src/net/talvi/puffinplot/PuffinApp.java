@@ -178,6 +178,18 @@ public final class PuffinApp {
         mainWindow.getMainMenuBar().updateRecentFiles();
         mainWindow.setVisible(true);
         logger.info("PuffinApp instantiation complete.");
+        
+        //Suite test = new Suite();
+        //try {
+        //    test.readDirectionalData(new File("/home/pont/dirtest.txt"));
+        //} catch (IOException ex) {
+        //    Logger.getLogger(PuffinApp.class.getName()).log(Level.SEVERE, null, ex);
+        //}
+        //suites.add(test);
+        //currentSuite = test;
+        //getMainWindow().suitesChanged();
+        //mainWindow.updateSampleDataPanel();
+        //updateDisplay();
     }
 
     private static class ExceptionHandler implements UncaughtExceptionHandler {
@@ -539,8 +551,9 @@ public final class PuffinApp {
         // added to the top and the last member removed.
         recentFiles.add(files);
         
+        final Suite suite = new Suite();
         try {
-            Suite suite = new Suite(files, prefs.getSensorLengths(),
+            suite.readFiles(files, prefs.getSensorLengths(),
                     prefs.get2gProtocol(),
                     !"X/Y/Z".equals(prefs.getPrefs().get("readTwoGeeMagFrom", "X/Y/Z")),
                     format);

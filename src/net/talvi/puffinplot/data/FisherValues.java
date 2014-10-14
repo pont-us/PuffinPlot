@@ -58,6 +58,7 @@ public class FisherValues implements FisherParams {
      * @return the Fisherian statistics for the supplied vectors
      */
     public static FisherValues calculate(Collection<Vec3> vectors) {
+        if (vectors.isEmpty()) return null;
         List<Vec3> normPoints = new ArrayList<>(vectors.size());
         double N = vectors.size();
         for (Vec3 point: vectors) normPoints.add(point.normalize());

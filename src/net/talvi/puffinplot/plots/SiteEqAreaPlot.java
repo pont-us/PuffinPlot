@@ -175,34 +175,24 @@ public class SiteEqAreaPlot extends EqAreaPlot {
         if (samples==null || samples.isEmpty()) {
             return;
         }
-        final List<Vec3> pcaDirs = new ArrayList<>(samples.size());
-        for (Sample s: samples) {
-            final PcaValues pcaValues = s.getPcaValues();
-            if (pcaValues != null) {
-                final Vec3 v = pcaValues.getDirection();
-                pcaDirs.add(v);
-                final PlotPoint pcaPoint =
+        final List<Vec3> sampleDirs = new ArrayList<>(samples.size());
+        for (Sample sample: samples) {
+            if (sample.getDirection() != null) {
+                final Vec3 v = sample.getDirection();
+                sampleDirs.add(v);
+                final PlotPoint point =
                         ShapePoint.build(this, project(v)).
                         diamond().filled(v.z>0).build();
-                pcaPoint.draw(g);
-                writeSampleLabel(s, pcaPoint);
-                //addPoint(null, project(v), v.z>0, false, false);
-            } else if (s.getFisherValues() != null) {
-                final Vec3 v = s.getFisherValues().getMeanDirection();
-                pcaDirs.add(v);
-                final PlotPoint fisherPoint =
-                        ShapePoint.build(this, project(v)).
-                        diamond().filled(v.z>0).build();
-                fisherPoint.draw(g);
-                writeSampleLabel(s, fisherPoint);
+                point.draw(g);
+                writeSampleLabel(sample, point);
             }
         }
-        if (pcaDirs.isEmpty()) {
+        if (sampleDirs.isEmpty()) {
             return;
         }
         if (site.getGreatCircles() != null) {
             // If there's a GC calculation, it takes precedence over
-            // a Fisher mean of PCAs.
+            // a mean of PCAs, sample Fisher means, or imported directions.
             return;
         }
         final FisherValues fisherMean = site.getFisherValues();
@@ -214,10 +204,10 @@ public class SiteEqAreaPlot extends EqAreaPlot {
                 ShapePoint.build(this, project(meanDir)).
                 circle().scale(1.5).filled(meanDir.z>0).build();
         meanPoint.draw(g);
-        if (pcaDirs.size() > 1) {
+        if (sampleDirs.size() > 1) {
             if (fisherMean != fisherCache) {
                 final List<Vec3> smallCircle = meanDir.makeSmallCircle(fisherMean.getA95());
-                List<List<Vec3>> segments =  Vec3.interpolateEquatorPoints(smallCircle);
+                final List<List<Vec3>> segments =  Vec3.interpolateEquatorPoints(smallCircle);
                 fisherLineCache = new LineCache(getStroke(), getDashedStroke());
                 for (List<Vec3> part: segments) {
                     projectLineSegments(part, fisherLineCache);
