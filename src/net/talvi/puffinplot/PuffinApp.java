@@ -899,6 +899,7 @@ public final class PuffinApp {
         List<File> files = Collections.emptyList();
         if (useSwingChooserForOpen) {
             final JFileChooser chooser = new JFileChooser(startingDir);
+            chooser.setDialogTitle(title);
             chooser.setMultiSelectionEnabled(true);
             chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
             int choice = chooser.showOpenDialog(getMainWindow());
@@ -1390,6 +1391,7 @@ public final class PuffinApp {
         String pathname = null;
         if (useSwingChooserForSave) {
             JFileChooser chooser = new JFileChooser();
+            chooser.setDialogTitle(title);
             if (extension != null && type != null) {
                 chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
                 @Override

@@ -138,7 +138,6 @@ public final class MainMenuBar extends JMenuBar {
                 pa.exportPdfItext, pa.exportPdfFreehep),
                 pa.pageSetup, pa.print, pa.printSuiteEqArea, pa.printGc,
                 pa.importAms, pa.runScript,
-                pa.exportPrefs, pa.importPrefs, pa.clearPreferences,
                 pa.prefs, pa.quit));
         add(makeMenu("Edit",KeyEvent.VK_E,
                 pa.selectAll, pa.clearSelection,

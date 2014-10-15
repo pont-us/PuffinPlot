@@ -629,20 +629,6 @@ to change the paper size, orientation, and margins for printing.
   external script written in the Python programming language.
   See section~\ref{sec:scripting} for details.
 
-\item[File\submenu Export preferences\ldots] saves your current preferences
-  to a file. In conjunction with the \ppcmd{Import preferences} feature, this
-  allows you to transfer your preferences from one computer to another. It
-  also allows you to keep multiple sets of preferences and switch between
-  them as needed. Probably the most useful application is to save different
-  plot layouts for different sets of data.
-
-\item[File\submenu Import preferences\ldots] sets your preferences from a
-  file saved using \ppcmd{Export preferences}. See the description of
-  \ppcmd{Export preferences} for details.
-
-\item[File\submenu Clear preferences] clears all changed preferences,
-  resetting them to their default values.
-
 \item[File\submenu Preferences\ldots] opens the preferences window. See
   section~\ref{sec:preferences} for details. On Mac OS X, this item is found
   on the \ppcmd{PuffinPlot} menu to the left of the \ppcmd{File} menu, rather
@@ -1277,7 +1263,30 @@ can be done using the \ppcmd{Export preferences…} and \ppcmd{Import
 
 \subsection{\label{sec:preferences}The preferences window}
 
-The preferences window is divided into three tabs.
+The preferences window is divided into three tabs, with four
+action buttons at the bottom.
+
+\subsubsection{The action buttons}
+
+\begin{menuitemlist}
+
+\item[Clear] clears all changed preferences,
+  resetting them to their default values.
+
+\item[Import] sets your preferences from a
+  file saved using \ppcmd{Export preferences}. See the description of
+  \ppcmd{Export preferences} for details.
+
+\item[Export] saves your current preferences
+  to a file. In conjunction with the \ppcmd{Import preferences} feature, this
+  allows you to transfer your preferences from one computer to another. It
+  also allows you to keep multiple sets of preferences and switch between
+  them as needed. Probably the most useful application is to save different
+  plot layouts for different sets of data.
+
+\item[Close] closes the Preferences window.
+
+\end{menuitemlist}
 
 \subsubsection{\label{sec:prefs-2g-import}The \ppcmd{2G import} tab}
 
@@ -1781,17 +1790,19 @@ illustration by the Finnish artist Wilhelm von Wright (1810--1887), published
 in \emph{Svenska f\aa glar, efter naturen och p\aa{} sten ritade} (2nd ed.,
 1929).
 
-%\clearpage
+\clearpage
 
 \section{Future development and bug reporting}
 
-PuffinPlot continues to be developed, albeit slowly and sporadically now that
-its main functionality is stable and fairly complete. Bugs are fixed when
-they are reported, and new features are added when time permits. The
-PuffinPlot project, including downloadable packages of all released versions
-and the complete source code, is hosted at
-\url{http://code.google.com/p/puffinplot/}. Bug reports, feature suggestions,
-and feedback of all kinds are always very welcome. Please send them to
+PuffinPlot continues to be developed, albeit slowly and sporadically now
+that its main functionality is stable and fairly complete. Bugs in
+existing functionality are fixed as quickly as possible when they are
+reported, and new features are added when time permits. The PuffinPlot
+project, including downloadable packages of all released versions and
+the complete source code, is hosted at
+\url{http://code.google.com/p/puffinplot/}. Bug reports, feature
+suggestions, and feedback of all kinds are always very welcome. Please
+send them to
 \textsf{\href{mailto:puffinplot@gmail.com}{puffinplot@gmail.com}}.
 
 \clearpage

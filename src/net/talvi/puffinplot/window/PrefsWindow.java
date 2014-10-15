@@ -36,6 +36,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import javax.swing.*;
+import net.talvi.puffinplot.PuffinActions;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.PuffinPrefs;
 import net.talvi.puffinplot.data.SensorLengths;
@@ -70,7 +71,7 @@ public class PrefsWindow extends JFrame {
         setPreferredSize(new Dimension(500, 500));
         setLayout(new GridBagLayout());
         JTabbedPane tp = new JTabbedPane();
-        add(tp, new GridBagConstraints(0, 0, 2, 1, 0.99, 0.99,
+        add(tp, new GridBagConstraints(0, 0, 4, 1, 0.99, 0.99,
                 GridBagConstraints.LINE_START, BOTH,
                 insets, 0, 0));
         JPanel loadingPanel = new JPanel(false);
@@ -221,13 +222,42 @@ public class PrefsWindow extends JFrame {
                 applySettings();
             }
         });
+        
+        PuffinActions actions = PuffinApp.getInstance().getActions();
+        add(makeActionButton(actions.clearPreferences, "Clear"),
+                new GridBagConstraints(
+                0, 1, 1, 1, 1, .01, GridBagConstraints.LINE_START,
+                BOTH, insets, 0, 0));
+        add(makeActionButton(actions.importPrefs, "Import"),
+                new GridBagConstraints(
+                1, 1, 1, 1, 1, .01, GridBagConstraints.LINE_START,
+                BOTH, insets, 0, 0));
+        add(makeActionButton(actions.exportPrefs, "Export"),
+                new GridBagConstraints(
+                2, 1, 1, 1, 1, .01, GridBagConstraints.LINE_START,
+                BOTH, insets, 0, 0));
         add(closeButton, new GridBagConstraints(
-                0, 1, 1, 1, 0.01, 0.01, GridBagConstraints.LINE_END,
-                GridBagConstraints.VERTICAL, insets, 4, 4));
+                3, 1, 1, 1, 1, .01, GridBagConstraints.LINE_END,
+                BOTH, new Insets(4, 50, 4, 4), 20, 0));
         pack();
         setLocationRelativeTo(PuffinApp.getInstance().getMainWindow());
     }
 
+    private JButton makeActionButton(final Action action, String name) {
+        final JButton button = new JButton(name);
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                applySettings();
+                action.actionPerformed(new ActionEvent(this,
+                        ActionEvent.ACTION_PERFORMED, null));
+            }
+        });
+        button.setToolTipText((String) action.getValue(Action.SHORT_DESCRIPTION));
+        button.setMaximumSize(new Dimension(300, 50));
+        return button;
+    }
+    
     // For layout debugging.
     private void redBorder(JComponent comp) {
         comp.setBorder(BorderFactory.createCompoundBorder(
@@ -338,20 +368,17 @@ public class PrefsWindow extends JFrame {
         }
     }
     
-    private class PrefsCheckBox extends JCheckBox implements ItemListener {
+    private class PrefsCheckBox extends JCheckBox{
         private static final long serialVersionUID = 1L;
-        final private String key;
-        public PrefsCheckBox(String labelString, String key,
+        public PrefsCheckBox(String label, final String key,
             boolean defaultValue) {
-            super(labelString,
-                  prefs.getPrefs().getBoolean(key, defaultValue));
-            this.key = key;
-            addItemListener(this);
-        }
-
-        @Override
-        public void itemStateChanged(ItemEvent e) {
-            prefs.getPrefs().putBoolean(key, isSelected());
+            super(label, prefs.getPrefs().getBoolean(key, defaultValue));
+            addItemListener(new ItemListener() {
+                @Override
+                public void itemStateChanged(ItemEvent e) {
+                    prefs.getPrefs().putBoolean(key, isSelected());
+                }
+            });
         }
     }
     

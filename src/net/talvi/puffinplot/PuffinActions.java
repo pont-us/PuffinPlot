@@ -851,10 +851,23 @@ public class PuffinActions {
             app.rescaleMagSus();
         }
     };
-
+        
+    /**
+     * Clears the current user preferences, resetting them to their default values.
+     */
+    public final Action clearPreferences = new PuffinAction("Clear preferences",
+            "Reset all preferences to the default values.",
+            null, false, KeyEvent.VK_L) {
+        private static final long serialVersionUID = 1L;
+        @Override public void actionPerformed(ActionEvent e) {
+            app.clearPreferences();
+        }
+    };
+    
     /**
      * Exports the current user preferences to an XML file.
      */
+    
     public final Action exportPrefs = new PuffinAction("Export preferences…",
             "Save the current preferences to a file, "
                     + "allowing them to be restored later.",
@@ -960,18 +973,6 @@ public class PuffinActions {
             if (Float.isNaN(thickness)) return;
             app.getSuite().setSiteNamesByDepth(app.getSelectedSamples(),
                     thickness);
-        }
-    };
-    
-    /**
-     * Clears the current user preferences, resetting them to their default values.
-     */
-    public final Action clearPreferences = new PuffinAction("Clear preferences",
-            "Reset all preferences to the default values.",
-            null, false, KeyEvent.VK_L) {
-        private static final long serialVersionUID = 1L;
-        @Override public void actionPerformed(ActionEvent e) {
-            app.clearPreferences();
         }
     };
 
