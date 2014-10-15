@@ -119,7 +119,7 @@ public final class PuffinApp {
                 new MemoryHandler(logStringHandler, 100, Level.OFF));
         logMemoryHandler.setLevel(Level.ALL);
     }
-    
+
     private class PuffinAppSampleClickListener implements SampleClickListener {
 
         public PuffinAppSampleClickListener() { }
@@ -178,18 +178,7 @@ public final class PuffinApp {
         mainWindow.getMainMenuBar().updateRecentFiles();
         mainWindow.setVisible(true);
         logger.info("PuffinApp instantiation complete.");
-        
-        //Suite test = new Suite();
-        //try {
-        //    test.readDirectionalData(new File("/home/pont/dirtest.txt"));
-        //} catch (IOException ex) {
-        //    Logger.getLogger(PuffinApp.class.getName()).log(Level.SEVERE, null, ex);
-        //}
-        //suites.add(test);
-        //currentSuite = test;
-        //getMainWindow().suitesChanged();
-        //mainWindow.updateSampleDataPanel();
-        //updateDisplay();
+
     }
 
     private static class ExceptionHandler implements UncaughtExceptionHandler {
@@ -1266,6 +1255,25 @@ public final class PuffinApp {
         importWindow.setVisible(true);
         // The window will call back to importTabularDataWithFormat.
     }
+    
+    void showImportDirectionDialog() {
+        final List<File> files = openFileDialog("Open direction file");
+        if (files==null || files.isEmpty()) {
+            return;
+        }
+        final Suite suite = new Suite();
+        try {
+            suite.readDirectionalData(files);
+        } catch (IOException ex) {
+            Logger.getLogger(PuffinApp.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        suites.add(suite);
+        currentSuite = suite;
+        getMainWindow().suitesChanged();
+        mainWindow.updateSampleDataPanel();
+        updateDisplay();
+    }
+    
     
     public void importTabularDataWithFormat(FileFormat format) {
         final List<File> files = openFileDialog("Select file(s) to import");

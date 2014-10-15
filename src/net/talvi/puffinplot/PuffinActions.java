@@ -991,7 +991,7 @@ public class PuffinActions {
     /**
      * Imports data from a tabular file.
      */
-    public final Action importTabularData = new PuffinAction("Import data…",
+    public final Action importTabularData = new PuffinAction("Import custom format…",
             "Import a text file in a format not directly supported by PuffinPlot",
             null, false, KeyEvent.VK_I) {
         private static final long serialVersionUID = 1L;
@@ -1000,10 +1000,15 @@ public class PuffinActions {
         }
     };
     
-    //public final Action importDirectionalData =
-    //       new PuffinAction("Import direction data…",
-    //     "Import sample-level directional data without demagnetization steps",
-    //   null, false, )
+    public final Action importDirectionalData = new PuffinAction(
+            "Import direction data…",
+            "Import sample-level directional data without demagnetization steps",
+            null, false, KeyEvent.VK_D) {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    app.showImportDirectionDialog();
+                }
+    };
     
     /**
      * Opens the PuffinPlot website.

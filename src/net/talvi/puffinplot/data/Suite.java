@@ -52,8 +52,10 @@ public final class Suite {
     private final List<String> loadWarnings = new ArrayList<>();
     private boolean hasUnknownTreatType = false;
     private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
-    private CustomFields<String> customFlagNames;
-    private CustomFields<String> customNoteNames;
+    private CustomFlagNames customFlagNames =
+            new CustomFlagNames(Collections.<String>emptyList());
+    private CustomNoteNames customNoteNames =
+            new CustomNoteNames(Collections.<String>emptyList());
     private List<KentParams> amsBootstrapParams = null;
     private List<KentParams> hextParams = null;
     private boolean saved = true;
@@ -266,11 +268,11 @@ public final class Suite {
         }
         data.add(d);
         if (d.getTreatType() == TreatType.UNKNOWN) hasUnknownTreatType = true;
-        String name = d.getIdOrDepth();
-        Sample s = samplesById.get(name);
+        String datumName = d.getIdOrDepth();
+        Sample s = samplesById.get(datumName);
         if (s == null) {
-            s = new Sample(name, this);
-            samplesById.put(name, s);
+            s = new Sample(datumName, this);
+            samplesById.put(datumName, s);
             samples.add(s);
         }
         d.setSuite(this);
@@ -363,10 +365,7 @@ public final class Suite {
         files = expandDirs(files);
         final ArrayList<Datum> dataArray = new ArrayList<>();
         data = dataArray;
-        final List<String> emptyStringList = Collections.emptyList();
-        customFlagNames = new CustomFlagNames(emptyStringList);
-        customNoteNames = new CustomNoteNames(emptyStringList);
-        List<String> puffinLines = emptyStringList;
+        List<String> puffinLines = Collections.emptyList();
         boolean sensorLengthWarning = false;
         
         for (File file: files) {
@@ -464,27 +463,25 @@ public final class Suite {
         setSaved(true);
     }
     
-    public void readDirectionalData(File file) throws IOException {
-        final List<String> emptyStringList = Collections.emptyList();
-        customFlagNames = new CustomFlagNames(emptyStringList);
-        customNoteNames = new CustomNoteNames(emptyStringList);
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split("\t");
-                String sampleName = parts[0];
-                double dec = Double.parseDouble(parts[1]);
-                double inc = Double.parseDouble(parts[2]);
-                Vec3 v = Vec3.fromPolarDegrees(1., inc, dec);
-                Sample sample = new Sample(sampleName, this);
-                sample.setImportedDirection(v);
-                samples.add(sample);
-                samplesById.put(sampleName, sample);
+    public void readDirectionalData(Collection<File> files) throws IOException {
+        for (File file: files) {
+            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] parts = line.split("\t");
+                    String sampleName = parts[0];
+                    final double dec = Double.parseDouble(parts[1]);
+                    final double inc = Double.parseDouble(parts[2]);
+                    Vec3 v = Vec3.fromPolarDegrees(1., inc, dec);
+                    Sample sample = new Sample(sampleName, this);
+                    sample.setImportedDirection(v);
+                    samples.add(sample);
+                    samplesById.put(sampleName, sample);
+                }
             }
         }
-        name = "Dir data test";
+        name = "Direction data";
         measType = MeasType.DISCRETE;
-        
         updateReverseIndex();
     }
     
@@ -803,12 +800,12 @@ public final class Suite {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     final double[] v = new double[6];
-                    Scanner s = new Scanner(line);
-                    String name = s.next();
-                    if (!containsSample(name)) {
-                        insertNewSample(name);
+                    final Scanner s = new Scanner(line);
+                    String sampleName = s.next();
+                    if (!containsSample(sampleName)) {
+                        insertNewSample(sampleName);
                     }
-                    Sample sample = getSampleByName(name);
+                    final Sample sample = getSampleByName(sampleName);
                     for (int i = 0; i < 6; i++) v[i] = s.nextDouble();
                     if (directions) {
                         sample.setAmsDirections(v[0], v[1], v[2],
@@ -844,25 +841,25 @@ public final class Suite {
     public void importAmsFromAsc(List<File> files, boolean magneticNorth)
             throws IOException {
         setSaved(false);
-        List<AmsData> allData = new ArrayList<>();
+        final List<AmsData> allData = new ArrayList<>();
         for (File file: files) {
-            AmsLoader amsLoader = new AmsLoader(file);
+            final AmsLoader amsLoader = new AmsLoader(file);
             allData.addAll(amsLoader.readFile());
         }
         for (AmsData ad: allData) {
-            String name = ad.getName();
+            final String sampleName = ad.getName();
             if (ad.getfTest() < 3.9715) continue;
-            if (!containsSample(name)) {
-                insertNewSample(name);
+            if (!containsSample(sampleName)) {
+                insertNewSample(sampleName);
             }
-            Sample sample = getSampleByName(name);
+            final Sample sample = getSampleByName(sampleName);
             if (!sample.hasData()) {
                 double azimuth = ad.getSampleAz();
                 if (!magneticNorth) azimuth -= getMagDev();
                 sample.setCorrections(azimuth, ad.getSampleDip(),
                         getFormAz(), getFormDip(), getMagDev());
             }
-            double[] v = ad.getTensor();
+            final double[] v = ad.getTensor();
             sample.setAmsFromTensor(v[0], v[1], v[2], v[3], v[4], v[5]);
         }
         updateReverseIndex();

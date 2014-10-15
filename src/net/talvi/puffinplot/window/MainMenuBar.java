@@ -126,7 +126,11 @@ public final class MainMenuBar extends JMenuBar {
         useEmptyItem.setAccelerator(KeyStroke.getKeyStroke('Y', modifierKey));
         
         add(makeMenu("File", KeyEvent.VK_F,
-                pa.open, pa.importTabularData,
+                pa.open, 
+                makeMenu("Import", KeyEvent.VK_I,
+                        pa.importTabularData,
+                        pa.importDirectionalData,
+                        pa.importAms),
                 recentFilesMenu, pa.save, pa.saveAs,
                 pa.close,
                 makeMenu("Export data", KeyEvent.VK_D,
@@ -137,7 +141,7 @@ public final class MainMenuBar extends JMenuBar {
                 pa.exportSvgBatik, pa.exportSvgFreehep,
                 pa.exportPdfItext, pa.exportPdfFreehep),
                 pa.pageSetup, pa.print, pa.printSuiteEqArea, pa.printGc,
-                pa.importAms, pa.runScript,
+                pa.runScript,
                 pa.prefs, pa.quit));
         add(makeMenu("Edit",KeyEvent.VK_E,
                 pa.selectAll, pa.clearSelection,
