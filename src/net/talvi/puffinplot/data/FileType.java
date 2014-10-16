@@ -30,20 +30,17 @@ import java.util.logging.Logger;
  */
 public enum FileType {
     
-    /** DAT file from 2G enterprises Long Core software */
-    TWOGEE,
-    /** TXT file in the format used by Steve Hurst's Zplot program */
-    ZPLOT,
-    /** the old PuffinPlot file format */
-    PUFFINPLOT_OLD,
-    /** the new PuffinPlot file format */
-    PUFFINPLOT_NEW,
-    /** the Caltech (a.k.a. CIT, .sam) file format */
-    CALTECH,
-    /** A custom tabular file format defined by a FileFormat object */
-    CUSTOM_TABULAR,
-    /** unknown file format */
-    UNKNOWN;
+    
+    TWOGEE,         // DAT file from 2G enterprises Long Core software
+    ZPLOT,          // TXT file format used by Steve Hurst's Zplot program
+    PUFFINPLOT_OLD, // the old PuffinPlot file format
+    PUFFINPLOT_NEW, // the new PuffinPlot file format
+    CALTECH,        // the Caltech (a.k.a. CIT, .sam) file format
+    IAPD,           // The (Super-)IAPD format (Torsvik et al.)
+    DIRECTIONS,     // Sample-level directional data
+    CUSTOM_TABULAR, // custom tabular format defined by a FileFormat object
+    UNKNOWN;        // unknown file format
+
 
     private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
     

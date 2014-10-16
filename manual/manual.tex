@@ -436,9 +436,36 @@ saving files.
   data into PuffinPlot as a new suite. See
   section~\ref{sec:file-types} for details of supported filetypes.
 
-\item[File\submenu Import data\ldots] imports data from a file format
-  specified by the user. This feature allows most textual, tabular data files
-  to be read by PuffinPlot. See section~\ref{sec:import-data} for details.
+\item[File\submenu Import] is a submenu allowing the import of
+  data from certain file formats.
+
+\item[File\submenu Import\submenu Import custom format\ldots] imports
+  data from a file format specified by the user. This feature allows
+  most textual, tabular data files to be read by PuffinPlot. See
+  section~\ref{sec:import-data} for details.
+
+\item[File\submenu Import\submenu Import direction data\ldots]
+  creates a new suite from a file of sample-level directional data.
+  This lets you use PuffinPlot to analyse directions even when no
+  demagnetization data is available (or when the data is not 
+  palaeomagnetic in origin). Input files must contain three fields
+  per line, with no header lines: sample name or depth; declination
+  in degrees; and inclination in degrees. Fields are separated
+  by commas, tabs, or space characters.
+
+\item[File\submenu Import\submenu Import AMS\ldots] imports \caps{ams}
+  data from a file. The file must be in the \caps{.asc} format produced
+  by the \ppcmd{Safyr} and \caps{Susar} programs distributed with
+  \caps{Agico} kappabridges. The \caps{ams} data is assigned to the
+  appropriate samples within the suite by matching the sample names
+  specified in the \caps{asc} file with the sample names for the
+  demagnetization data. If the \caps{ams} file contains data for samples
+  not in the suite, these samples will be created and added to the
+  suite. \caps{Ams} data is not displayed by default; the equal-area
+  plot of \caps{ams} data can be activated from the \ppcmd{Preferences}
+  window. AMS import has been tested with data from \caps{Safyr}
+  versions 1.5 and 2.6 and \caps{Susar} version 4.0.
+
 
 \item[File\submenu Open recent file] is a submenu which contains the names of
   the last eight files which have been opened in PuffinPlot, allowing them to
@@ -612,18 +639,6 @@ to change the paper size, orientation, and margins for printing.
 \item[File\submenu Print site EA window\ldots] prints the contents of a
   separate window showing an equal-area plot of directions at the current
   site; see section~\ref{sec:menu-window} for more details.
-
-\item[File\submenu Import AMS\ldots] imports \caps{ams} data from a file. The
-  file must be in the \caps{.asc} format produced by the \ppcmd{Safyr} and
-  \caps{Susar} programs distributed with \caps{Agico} kappabridges. The
-  \caps{ams} data is assigned to the appropriate samples within the suite by
-  matching the sample names specified in the \caps{asc} file with the sample
-  names for the demagnetization data. If the \caps{ams} file contains data
-  for samples not in the suite, these samples will be created and added to
-  the suite. \caps{Ams} data is not displayed by default; the equal-area plot
-  of \caps{ams} data can be activated from the \ppcmd{Preferences} window.
-  AMS import has been tested with data from \caps{Safyr} versions 1.5 and 2.6
-  and \caps{Susar} version 4.0.
 
 \item[File\submenu Run Python script\ldots] runs a user-specified
   external script written in the Python programming language.
@@ -1082,7 +1097,8 @@ series of 50 samples, it can be done in four quick steps:
 
 \end{enumerate}
 
-This will immediately perform \caps{pca} on all 50 selected samples.
+\noindent This will immediately perform \caps{pca} on all 50 selected
+samples.
 
 \subsection{Plots and other data displays}
 

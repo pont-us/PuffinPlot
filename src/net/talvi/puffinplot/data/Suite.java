@@ -468,7 +468,7 @@ public final class Suite {
             try (BufferedReader br = new BufferedReader(new FileReader(file))) {
                 String line;
                 while ((line = br.readLine()) != null) {
-                    String[] parts = line.split("\t");
+                    String[] parts = line.split("[ \t,]+");
                     String sampleName = parts[0];
                     final double dec = Double.parseDouble(parts[1]);
                     final double inc = Double.parseDouble(parts[2]);
@@ -481,7 +481,15 @@ public final class Suite {
             }
         }
         name = "Direction data";
-        measType = MeasType.DISCRETE;
+        measType = MeasType.CONTINUOUS;
+        for (Sample sample: samples) {
+            try {
+                Double.parseDouble(sample.getNameOrDepth());
+            } catch (NumberFormatException ex) {
+                measType = MeasType.DISCRETE;
+                break;
+            }
+        }
         updateReverseIndex();
     }
     
@@ -724,6 +732,7 @@ public final class Suite {
      */
     public List<String> toStrings() {
         List<String> result = new ArrayList<>();
+        result.add("MEASUREMENT_TYPE\t" + getMeasType().toString());
         if (customFlagNames.size()>0) {
             result.add("CUSTOM_FLAG_NAMES\t"+customFlagNames.exportAsString());
         }
@@ -740,12 +749,22 @@ public final class Suite {
     public void fromString(String string) {
         String[] parts = string.split("\t");
         if (null != parts[0]) switch (parts[0]) {
+            case "MEASUREMENT_TYPE":
+                setMeasType(MeasType.valueOf(parts[1]));
+                break;
             case "CUSTOM_FLAG_NAMES":
                 customFlagNames = new CustomFlagNames(Arrays.asList(parts).subList(1, parts.length));
                 break;
             case "CUSTOM_NOTE_NAMES":
                 customNoteNames = new CustomNoteNames(Arrays.asList(parts).subList(1, parts.length));
                 break;
+        }
+    }
+    
+    private void setMeasType(MeasType measType) {
+        this.measType = measType;
+        for (Datum d: getData()) {
+            d.setMeasType(measType);
         }
     }
 

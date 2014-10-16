@@ -47,21 +47,21 @@
 
 
 
-    "status": "fixed", 
+    "status": "open", 
 
 
 
 
 
 
-    "summary": "Allow import of sample-level data [271]", 
+    "summary": "Add support for IAPD files", 
 
 
 
 
 
 
-    "time": "Thu, 06 Jun 2013 08:18:40 +0000"
+    "time": "Thu, 16 Oct 2014 14:47:15 +0000"
 
 
 

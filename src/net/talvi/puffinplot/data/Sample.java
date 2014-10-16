@@ -712,6 +712,11 @@ public class Sample {
         if (site != null) {
             result.add("SITE\t" + site.getName());
         }
+        if (importedDirection != null) {
+            result.add(String.format("IMPORTED_DIRECTION\t%.3f\t%.3f",
+                    importedDirection.getDecDeg(),
+                    importedDirection.getIncDeg()));
+        }
         return result;
     }
     
@@ -735,8 +740,13 @@ public class Sample {
                 }   customNotes = new CustomFields<>(notes);
                 break;
             case "SITE":
-                Site mySite = suite.getOrCreateSite(parts[1]);
+                final Site mySite = suite.getOrCreateSite(parts[1]);
                 mySite.addSample(this);
+                break;
+            case "IMPORTED_DIRECTION":
+                final double dec = Double.parseDouble(parts[1]);
+                final double inc = Double.parseDouble(parts[2]);
+                importedDirection = Vec3.fromPolarDegrees(1., inc, dec);
                 break;
         }
     }
