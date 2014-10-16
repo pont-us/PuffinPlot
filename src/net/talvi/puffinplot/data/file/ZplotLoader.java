@@ -123,13 +123,13 @@ public class ZplotLoader extends AbstractFileLoader {
         Scanner s = new Scanner(zPlotLine);
         s.useLocale(Locale.ENGLISH); // don't want to be using commas as decimal separators...
         s.useDelimiter(delimPattern);
-        String depthOrSample = s.next();
-        String project = s.next();
-        double demag = s.nextDouble();
-        double dec = s.nextDouble();
-        double inc = s.nextDouble();
-        double intens = s.nextDouble();
-        String operation = s.next();
+        final String depthOrSample = s.next();
+        final String project = s.next();
+        final double demag = s.nextDouble();
+        final double dec = s.nextDouble();
+        final double inc = s.nextDouble();
+        final double intens = s.nextDouble();
+        final String operation = s.next();
 
         Datum d = new Datum(gaussToAm(Vec3.fromPolarDegrees(intens, inc, dec)));
         if (measType == MeasType.UNSET) {

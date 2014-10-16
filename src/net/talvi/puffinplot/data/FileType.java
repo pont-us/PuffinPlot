@@ -54,6 +54,7 @@ public enum FileType {
 	static public FileType guess(File file) throws IOException {
 		String name = file.getName().toLowerCase();
 		if (name.endsWith(".dat")) return TWOGEE;
+                else if (name.endsWith(".iapd")) return IAPD;
 		else if (name.endsWith(".txt")) return ZPLOT;
                 else if (name.endsWith(".sam")) return CALTECH;
 		else if (name.endsWith(".ppl")) {

@@ -382,7 +382,7 @@ public final class Suite {
                 // explicit format specified: use the custom format loader
                 fileType = FileType.CUSTOM_TABULAR;
             } else {
-                // no format specified: gues the file type
+                // no format specified: guess the file type
                 try {
                     fileType = FileType.guess(file);
                 } catch (IOException ex) {
@@ -414,6 +414,9 @@ public final class Suite {
                 break;
             case CALTECH:
                 loader = new CaltechLoader(file);
+                break;
+            case IAPD:
+                loader = new IapdLoader(file);
                 break;
             case CUSTOM_TABULAR:
                 loader = new TabularFileLoader(file, format);

@@ -101,7 +101,8 @@ public class DemagTable extends Plot {
             // Don't use .1g, it tickles a bug in Java (#6469160) which
             // throws an ArrayFormatException (at least in Sun Java 5 & 6)
             values.add(format("%.2e", p.mag()));
-            values.add(format("%.1e", d.getMagSus()));
+            values.add(Double.isNaN(d.getMagSus()) ? "-" :
+                       format("%.1e", d.getMagSus()));
             points.add(new TextLinePoint(this, g, yPos, d, null, values, xSpacing));
             yPos += ySpacing;
             sequence++;
