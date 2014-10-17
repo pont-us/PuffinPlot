@@ -36,7 +36,7 @@ import net.talvi.puffinplot.data.file.FileFormat;
  * 
  * @author pont
  */
-public class TabularImportWindow extends JFrame {
+public class TabularImportWindow extends JDialog {
     private static final long serialVersionUID = 1L;
     
     private final List<FieldChooser> fieldChoosers = new ArrayList<>(20);
@@ -49,6 +49,7 @@ public class TabularImportWindow extends JFrame {
     private final StringChooser separatorChooser;
     private final LabelledTextField columnWidthsBox;
     private final JCheckBox fixedWidthBox;
+    private FileFormat format;
     
     /**
      * Creates a new tabular import window. The supplied PuffinPlot 
@@ -58,7 +59,7 @@ public class TabularImportWindow extends JFrame {
      * @param app the PuffinPlot application for which this window is to be used
      */
     public TabularImportWindow(final PuffinApp app) {
-        super("Import data");
+        super(app.getMainWindow(), "Import data", true);
         setPreferredSize(new Dimension(400, 500));
         this.initialFormat = FileFormat.readFromPrefs(app.getPrefs().getPrefs());
         final Container contentPane = getContentPane();
@@ -123,24 +124,36 @@ public class TabularImportWindow extends JFrame {
         cancelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                format = null;
                 setVisible(false);
                 dispose();
             }});
         
-        final JButton importButton = new JButton("Choose files…");
-        importButton.addActionListener(new ActionListener() {
+        final JButton okButton = new JButton("OK");
+        okButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                final FileFormat format = getFileFormat();
-                format.writeToPrefs(app.getPrefs().getPrefs());
+                format = createFileFormat();
                 setVisible(false);
                 dispose();
-                app.importTabularDataWithFormat(format);
             }});
-        buttonPanel.add(importButton);
+        buttonPanel.add(okButton);
         contentPane.add(buttonPanel);
         pack();
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(PuffinApp.getInstance().getMainWindow());
+    }
+
+    /**
+     * Returns the chosen format.
+     * 
+     * Note that this will be null unless the user has clicked the "OK"
+     * button.
+     * 
+     * @return the format chosen by the user
+     */
+    public FileFormat getFormat() {
+        return format;
     }
     
     private class StringChooser extends JPanel {
@@ -221,7 +234,7 @@ public class TabularImportWindow extends JFrame {
     /**
      * @return the file format defined by the current settings of this window
      */
-    public FileFormat getFileFormat() {
+    private FileFormat createFileFormat() {
         final Map<Integer, DatumField> fieldMap =
                 new HashMap<>(fieldChoosers.size());
         for (FieldChooser fieldChooser: fieldChoosers) {

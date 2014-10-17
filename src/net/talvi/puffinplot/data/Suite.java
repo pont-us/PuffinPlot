@@ -352,16 +352,20 @@ public final class Suite {
      * @param protocol for 2G files only: the measurement protocol used
      * @param usePolarMoment for 2G files only: use polar (dec/inc/int)
      * data fields instead of Cartesian ones (X/Y/Z) to determine magnetic moment
+     * @param fileType type of the specified files
      * @param format explicitly specified file format (null to automatically
      * guess between 2G, PuffinPlot, Caltech, and Zplot).
      * @throws IOException if an I/O error occurred while reading the files 
      */
     public void readFiles(List<File> files, SensorLengths sensorLengths,
             TwoGeeLoader.Protocol protocol, boolean usePolarMoment,
-            FileFormat format) throws IOException {
+            FileType fileType, FileFormat format) throws IOException {
         assert(files.size() > 0);
-        if (files.size() == 1) name = files.get(0).getName();
-        else name = files.get(0).getParentFile().getName();
+        if (files.size() == 1) {
+            name = files.get(0).getName();
+        } else {
+            name = files.get(0).getParentFile().getName();
+        }
         files = expandDirs(files);
         final ArrayList<Datum> dataArray = new ArrayList<>();
         data = dataArray;
@@ -377,19 +381,7 @@ public final class Suite {
                 loadWarnings.add(String.format("File \"%s\" is unreadable.", file.getName()));
                 continue;
             }
-            FileType fileType = FileType.UNKNOWN;
-            if (format != null) {
-                // explicit format specified: use the custom format loader
-                fileType = FileType.CUSTOM_TABULAR;
-            } else {
-                // no format specified: guess the file type
-                try {
-                    fileType = FileType.guess(file);
-                } catch (IOException ex) {
-                    loadWarnings.add(String.format("Error guessing type of file \"%s\": %s",
-                            file.getName(), ex.getLocalizedMessage()));
-                }
-            }
+
             FileLoader loader = null;
             switch (fileType) {
             case TWOGEE:
@@ -421,6 +413,10 @@ public final class Suite {
             case CUSTOM_TABULAR:
                 loader = new TabularFileLoader(file, format);
                 break;
+            case DIRECTIONS:
+                readDirectionalData(files);
+                return;
+                // break;
             default:
                 loadWarnings.add(String.format("%s is of unknown file type.", file.getName()));
                 break;
@@ -483,7 +479,6 @@ public final class Suite {
                 }
             }
         }
-        name = "Direction data";
         measType = MeasType.CONTINUOUS;
         for (Sample sample: samples) {
             try {
@@ -735,7 +730,7 @@ public final class Suite {
      */
     public List<String> toStrings() {
         List<String> result = new ArrayList<>();
-        result.add("MEASUREMENT_TYPE\t" + getMeasType().toString());
+        result.add("MEASUREMENT_TYPE\t" + getMeasType().name());
         if (customFlagNames.size()>0) {
             result.add("CUSTOM_FLAG_NAMES\t"+customFlagNames.exportAsString());
         }

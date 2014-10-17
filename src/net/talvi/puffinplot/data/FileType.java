@@ -30,19 +30,22 @@ import java.util.logging.Logger;
  */
 public enum FileType {
     
-    
-    TWOGEE,         // DAT file from 2G enterprises Long Core software
-    ZPLOT,          // TXT file format used by Steve Hurst's Zplot program
-    PUFFINPLOT_OLD, // the old PuffinPlot file format
-    PUFFINPLOT_NEW, // the new PuffinPlot file format
-    CALTECH,        // the Caltech (a.k.a. CIT, .sam) file format
-    IAPD,           // The (Super-)IAPD format (Torsvik et al.)
-    DIRECTIONS,     // Sample-level directional data
-    CUSTOM_TABULAR, // custom tabular format defined by a FileFormat object
-    UNKNOWN;        // unknown file format
-
+    TWOGEE("2G cryomagnetometer"),  // DAT, 2G Long Core software
+    ZPLOT("Zplot (Hurst)"),         // TXT, Steve Hurst's Zplot program
+    PUFFINPLOT_OLD("Old PuffinPlot format"), // PPL, old PuffinPlot file format
+    PUFFINPLOT_NEW("PuffinPlot"),   // PPL, new PuffinPlot file format
+    CALTECH("Caltech (.sam)"),      // SAM, Caltech (a.k.a. CIT)
+    IAPD("IAPD"),                   // DAT, [Super-]IAPD[2000] (Torsvik et al.)
+    DIRECTIONS("Sample directions"), // Sample-level directional data
+    CUSTOM_TABULAR("Custom format"), // custom tabular, defined by a FileFormat
+    UNKNOWN("Unknown");              // unknown file format
 
     private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
+    private final String niceName;
+    
+    private FileType(String niceName) {
+        this.niceName = niceName;
+    }
     
     /**
      * Attempts to guess the type of a file from its name and contents.
@@ -75,4 +78,15 @@ public enum FileType {
                 }
 		else return UNKNOWN;
 	}
+
+    /**
+     * Returns a user-friendly name for this filetype.
+     * 
+     * The returned string is suitable for display in a user interface.
+     * 
+     * @return the name of this filetype
+     */
+    public String getNiceName() {
+        return niceName;
+    }
 }

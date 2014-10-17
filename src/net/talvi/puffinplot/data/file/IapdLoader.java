@@ -66,10 +66,11 @@ public class IapdLoader extends AbstractFileLoader {
         while ((line = reader.readLine()) != null) {
             final Datum d = new Datum();
             final String[] parts = line.trim().split(" +");
-            d.setAfX(parseDouble(parts[0]));
-            d.setAfY(parseDouble(parts[0]));
-            d.setAfZ(parseDouble(parts[0]));
-            d.setMoment(Vec3.fromPolarDegrees(parseDouble(parts[1]),
+            final double af = parseDouble(parts[0]) / 1000;
+            d.setAfX(af);
+            d.setAfY(af);
+            d.setAfZ(af);
+            d.setMoment(Vec3.fromPolarDegrees(parseDouble(parts[1]) / 1000,
                     parseDouble(parts[6]),
                     parseDouble(parts[5])));
             d.setDiscreteId(sampleName);

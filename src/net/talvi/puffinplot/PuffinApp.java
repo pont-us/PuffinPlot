@@ -522,30 +522,48 @@ public final class PuffinApp {
         getMainWindow().suitesChanged();
     }
 
-    public void openFiles(List<File> files) {
-        openFiles(files, null);
-    }
-    
     /** Creates a new suite and reads data into it from the specified files.
+     * 
      * @param files the files from which to read data
-     * @param format custom file format
      *
-     * If format is null, PuffinPlot will assume that the file is in one
-     * of its standard formats (PuffinPlot, 2G, Caltech, or Zplot).
-     */
-    public void openFiles(List<File> files, FileFormat format) {
+    */
+    public void openFiles(List<File> files) {
         if (files.isEmpty()) return;
         // If this fileset is already in the recent-files list,
         // it will be bumped up to the top; otherwise it will be
         // added to the top and the last member removed.
         recentFiles.add(files);
-        
-        final Suite suite = new Suite();
+
         try {
+            final FileType guessedType = FileType.guess(files.get(0));
+            FileType fileType = null;
+            if (guessedType != FileType.PUFFINPLOT_NEW &&
+                    guessedType != FileType.PUFFINPLOT_OLD) {
+                final FiletypeDialog ft = new FiletypeDialog(getMainWindow());
+                ft.setVisible(true);
+                fileType = ft.getFileType();
+            }
+            
+            if (fileType == null) {
+                return;
+            }
+
+            FileFormat format = null;
+            if (fileType == FileType.CUSTOM_TABULAR) {
+                TabularImportWindow importWindow = new TabularImportWindow(this);
+                importWindow.setVisible(true);
+                format = importWindow.getFormat();
+                if (format == null) {
+                    return;
+                }
+                format.writeToPrefs(app.getPrefs().getPrefs());
+            }
+            
+            final Suite suite = new Suite();
             suite.readFiles(files, prefs.getSensorLengths(),
                     prefs.get2gProtocol(),
                     !"X/Y/Z".equals(prefs.getPrefs().get("readTwoGeeMagFrom", "X/Y/Z")),
-                    format);
+                    fileType, format);
             suite.doAllCalculations(getCorrection());
             List<String> warnings = suite.getLoadWarnings();
             if (warnings.size() > 0) {
@@ -1274,10 +1292,9 @@ public final class PuffinApp {
         updateDisplay();
     }
     
-    
     public void importTabularDataWithFormat(FileFormat format) {
         final List<File> files = openFileDialog("Select file(s) to import");
-        openFiles(files, format);
+        //openFiles(files, format);
     }
     
     public Version getVersion() {
