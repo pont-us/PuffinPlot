@@ -988,18 +988,6 @@ public class PuffinActions {
         }
     };
     
-    /**
-     * Imports data from a tabular file.
-     */
-    public final Action importTabularData = new PuffinAction("Import custom format…",
-            "Import a text file in a format not directly supported by PuffinPlot",
-            null, false, KeyEvent.VK_I) {
-        private static final long serialVersionUID = 1L;
-        @Override public void actionPerformed(ActionEvent e) {
-            app.showTabularImportDialog();
-        }
-    };
-    
     public final Action importDirectionalData = new PuffinAction(
             "Import direction data…",
             "Import sample-level directional data without demagnetization steps",

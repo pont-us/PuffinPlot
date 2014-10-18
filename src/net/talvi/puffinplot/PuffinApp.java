@@ -1292,11 +1292,6 @@ public final class PuffinApp {
         updateDisplay();
     }
     
-    public void importTabularDataWithFormat(FileFormat format) {
-        final List<File> files = openFileDialog("Select file(s) to import");
-        //openFiles(files, format);
-    }
-    
     public Version getVersion() {
         return version;
     }

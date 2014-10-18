@@ -59,6 +59,9 @@
 \newcommand{\submenu}{ \textgreater{} } % htlatex doesn't like `>'.
 \newcommand{\alnifi}{$\alpha_{95}$}
 \newcommand{\quot}[1]{`#1'}
+\newcommand{\mypara}[1]{\noindent\textbf{#1}
+
+\noindent } % htlatex doesn't like \paragraph
 
 % ======== Title
 
@@ -163,7 +166,7 @@ PuffinPlot can also be started from a terminal prompt by setting the current
 folder to the one containing PuffinPlot, and typing \textsf{java -jar
   PuffinPlot.jar}.
 
-\paragraph{Note for Windows users.} Under Windows, other programs may
+\textbf{Note for Windows users.} Under Windows, other programs may
 occasionally interfere with the Java platform; if you have the Java platform
 installed on Windows but are still unable to run \ppcmd{jar} files such as
 \ppcmd{PuffinPlot.jar}, the situation can usually be fixed by running the
@@ -202,10 +205,16 @@ command-A, etc.
 
 \subsection{Opening a file}
 
-To open a file, select \textsf{Open\ldots} from the \textsf{File} menu. This
-will allow you to choose one or more files to open from a standard file
-selection window. You may also select an entire folder; in this case
-every file within the folder will be opened.
+To open a file, select \textsf{Open\ldots} from the \textsf{File} menu.
+This will allow you to choose one or more files to open from a standard
+file selection window. You may also select an entire folder; in this
+case every file within the folder will be opened and combined into a
+single suite. \textbf{Note:} if you open multiple files or a whole
+folder, they must have the same file type, the same treatment type
+(thermal, alternating-field, etc.), and the same sample type (discrete
+or continuous). Opening, for example, a mixture of Caltech and IAPD
+files, or a mixture of discrete and continuous files, may result
+in errors during file reading.
 
 \begin{figure}[htbp]
 \centering
@@ -327,13 +336,12 @@ The sample chooser takes two forms, depending on whether the current
 suite of data is for discrete samples or for a continuous long core
 measurement.
 
-\paragraph{Using the discrete sample chooser}
-
-The discrete sample chooser shows the names of the samples in the current
-suite. The selected sample or samples are highlighted in a different colour.
-The selected sample is the current sample, and its data is displayed in the
-main plot area. If more than one sample is selected, the first of the
-selected samples is the current sample.
+\mypara{Using the discrete sample chooser} The discrete sample chooser
+shows the names of the samples in the current suite. The selected sample
+or samples are highlighted in a different colour. The selected sample is
+the current sample, and its data is displayed in the main plot area. If
+more than one sample is selected, the first of the selected samples is
+the current sample.
 
 To select a single sample, click on its name. To select a contiguous range of
 samples, click at one end of the range, then hold down \ppcmd{Shift} while
@@ -341,26 +349,24 @@ clicking at the other end of the range. To select multiple, non-contiguous
 samples, hold down \ppcmd{Ctrl} while clicking. To select all samples, press
 \ppcmd{Ctrl-A}.
 
-\paragraph{Using the continuous sample chooser}
-
-The continuous sample chooser is a vertical grey bar representing the total
-length of the measured core, striped with horizontal white lines representing
-the individual measurements at each depth. (If there are too many
+\mypara{Using the continuous sample chooser} The continuous sample
+chooser is a vertical grey bar representing the total length of the
+measured core, striped with horizontal white lines representing the
+individual measurements at each depth. (If there are too many
 measurements for all the requisite white lines to be displayed, they are
-omitted.) A black triangle and line show the current depth; this is the depth
-for which the data is displayed in the main window. If there are selected
-samples, they are highlighted in red on the sample chooser.
+omitted.) A black triangle and line show the current depth; this is the
+depth for which the data is displayed in the main window. If there are
+selected samples, they are highlighted in red on the sample chooser.
 
 To select a single depth, click on the appropriate part of the sample
 chooser. To scroll rapidly through a range of samples, click and drag the
 mouse along the sample chooser. To select a range of samples, hold down
 \ppcmd{Shift}, then click, drag, and release the mouse on the chooser.
 
-\paragraph{Keyboard shortcuts for sample selection}
-
-Use \ppcmd{Ctrl-B} and \ppcmd{Ctrl-N} to change the current sample. Use
-\ppcmd{Ctrl-A} to select all the samples in the current suite. You can also
-use the up and down arrow keys to change the sample.
+\mypara{Keyboard shortcuts for sample selection} Use \ppcmd{Ctrl-B} and
+\ppcmd{Ctrl-N} to change the current sample. Use \ppcmd{Ctrl-A} to
+select all the samples in the current suite. You can also use the up and
+down arrow keys to change the sample.
 
 \subsubsection{\label{sec:toolbar}Toolbar}
 
@@ -432,40 +438,9 @@ saving files.
 
 \begin{menuitemlist}
 
-\item[File\submenu Open\ldots] loads one or more files of demagnetization
+\item[File\submenu Open\ldots] reads one or more files of demagnetization
   data into PuffinPlot as a new suite. See
   section~\ref{sec:file-types} for details of supported filetypes.
-
-\item[File\submenu Import] is a submenu allowing the import of
-  data from certain file formats.
-
-\item[File\submenu Import\submenu Import custom format\ldots] imports
-  data from a file format specified by the user. This feature allows
-  most textual, tabular data files to be read by PuffinPlot. See
-  section~\ref{sec:import-data} for details.
-
-\item[File\submenu Import\submenu Import direction data\ldots]
-  creates a new suite from a file of sample-level directional data.
-  This lets you use PuffinPlot to analyse directions even when no
-  demagnetization data is available (or when the data is not 
-  palaeomagnetic in origin). Input files must contain three fields
-  per line, with no header lines: sample name or depth; declination
-  in degrees; and inclination in degrees. Fields are separated
-  by commas, tabs, or space characters.
-
-\item[File\submenu Import\submenu Import AMS\ldots] imports \caps{ams}
-  data from a file. The file must be in the \caps{.asc} format produced
-  by the \ppcmd{Safyr} and \caps{Susar} programs distributed with
-  \caps{Agico} kappabridges. The \caps{ams} data is assigned to the
-  appropriate samples within the suite by matching the sample names
-  specified in the \caps{asc} file with the sample names for the
-  demagnetization data. If the \caps{ams} file contains data for samples
-  not in the suite, these samples will be created and added to the
-  suite. \caps{Ams} data is not displayed by default; the equal-area
-  plot of \caps{ams} data can be activated from the \ppcmd{Preferences}
-  window. AMS import has been tested with data from \caps{Safyr}
-  versions 1.5 and 2.6 and \caps{Susar} version 4.0.
-
 
 \item[File\submenu Open recent file] is a submenu which contains the names of
   the last eight files which have been opened in PuffinPlot, allowing them to
@@ -603,13 +578,13 @@ range of its values across all the samples at a site.
   a \caps{csv} file containing the Fisherian parameters for mean directions
   calculated across the entire suite; see the documentation for the
   \ppcmd{Calculate\submenu Suite means} menu item
-  (section~\ref{sec:functions-calcs}) or details.
+  (section~\ref{sec:functions-calcs}) for details.
 
 \item[File\submenu Export data\submenu Export multi-suite calculations\ldots]
   saves a \caps{csv} file containing the Fisherian parameters for mean
   directions calculated across all the currently open suites; see the
   documentation for the \ppcmd{Calculate\submenu Multi-suite means} menu item
-  (section~\ref{sec:functions-calcs}) or details.
+  (section~\ref{sec:functions-calcs}) for details.
 
 \item[File\submenu Export data\submenu Export IRM data\ldots] saves files
   containing \caps{irm} acquisition data. It produces a folder of files, one
@@ -639,6 +614,19 @@ to change the paper size, orientation, and margins for printing.
 \item[File\submenu Print site EA window\ldots] prints the contents of a
   separate window showing an equal-area plot of directions at the current
   site; see section~\ref{sec:menu-window} for more details.
+
+\item[File\submenu Import AMS\ldots] imports \caps{ams} data from a file
+  and adds it to the current suite. The file must be in the \caps{.asc}
+  format produced by the \ppcmd{Safyr} and \caps{Susar} programs
+  distributed with \caps{Agico} kappabridges. The \caps{ams} data is
+  assigned to the appropriate samples within the suite by matching the
+  sample names specified in the \caps{asc} file with the sample names
+  for the demagnetization data. If the \caps{ams} file contains data for
+  samples not in the suite, these samples will be created and added to
+  the suite. \caps{Ams} data is not displayed by default; the equal-area
+  plot of \caps{ams} data can be activated from the \ppcmd{Preferences}
+  window. AMS import has been tested with data from \caps{Safyr}
+  versions 1.5 and 2.6 and \caps{Susar} version 4.0.
 
 \item[File\submenu Run Python script\ldots] runs a user-specified
   external script written in the Python programming language.
@@ -873,17 +861,16 @@ all the selected samples, not just the current sample.
 
 \end{menuitemlist}
 
-\paragraph{\caps{Ams} calculations}
-
-PuffinPlot can show the results of statistical calculations on \caps{ams}
-tensors, giving mean directions and confidence ellipses for the principal
-axes by one of three methods; at present, however, these calculations cannot
-be performed by PuffinPlot itself. Instead, it makes use of two Python
-scripts from the PmagPy suite \citep{tauxe2010paleomagnetism},
-\ppcmd{bootams.py} and \ppcmd{s\_hext.py}. In order to calculate \caps{ams}
-statistics, these scripts must first be installed on the computer running
-PuffinPlot, and the folder containing them must be specified in the
-\ppcmd{Preferences} window. The PmagPy programs may be obtained from
+\mypara{\caps{Ams} calculations} PuffinPlot can show the results of
+statistical calculations on \caps{ams} tensors, giving mean directions
+and confidence ellipses for the principal axes by one of three methods;
+at present, however, these calculations cannot be performed by
+PuffinPlot itself. Instead, it makes use of two Python scripts from the
+PmagPy suite \citep{tauxe2010paleomagnetism}, \ppcmd{bootams.py} and
+\ppcmd{s\_hext.py}. In order to calculate \caps{ams} statistics, these
+scripts must first be installed on the computer running PuffinPlot, and
+the folder containing them must be specified in the \ppcmd{Preferences}
+window. The PmagPy programs may be obtained from
 \url{http://earthref.org/PMagPy/}.
 
 All \caps{ams} calculations operate on the currently selected samples.
@@ -970,17 +957,49 @@ This section presents PuffinPlot's features in moderate detail.
 
 \subsubsection{\label{sec:file-types}Supported file types}
 
-PuffinPlot can automatically open four types of file: its own filetype
-(filename suffix \ppcmd{ppl}); data produced from 2\caps{g} cryomagnetometers
-(filename suffix \ppcmd{dat}); data in the Caltech format (\ppcmd{sam}, with
-associated data files in same folder); and data from the {\sf Zplot} program
-by Stephen Hurst (filename suffix \ppcmd{txt}). Note that there are different
-ways to read 2\caps{g} data files: users are encouraged to read
-section~\ref{sec:prefs-2g-import} and ensure that the preferences are
-correctly set for their needs. (In particular, \textbf{magnetization
-vectors may be read incorrectly from 2G long core files if the wrong
-import settings are used}, so it is important to check the settings
-before importing data.)
+PuffinPlot can read a number of commonly used palaeomagnetic data
+formats:
+
+\begin{description}
+
+\item[PuffinPlot] (filename suffix \ppcmd{ppl}): PuffinPlot's own file
+  format.
+
+\item[2G] (filename suffix \ppcmd{dat}): files produced by the `Long
+  Core' program used with 2G Enterprises cryomagnetometers.
+
+\item[Caltech] (filename suffix \ppcmd{sam}, with associated data files
+  in same folder): format used at the Caltech Paleomagnetics Laboratory
+  and supported by the `Paleomag' program of \cite{jones2002paleomag}.
+
+\item[IAPD] (filename suffix \ppcmd{dat}): format used by the IAPD
+  program and its successors, developed by T. H. Torsvik et al. and
+  used at the Geological Survey of Norway.
+
+\item[Zplot] (filename suffix \ppcmd{txt}): format used by the 
+  `Zplot' program developed by Steve Hurst at Woods Hole.
+
+\item[Sample directions] (filename suffix \ppcmd{txt}): a file of
+  sample-level directional data. This lets you use PuffinPlot to analyse
+  directions even when no demagnetization data is available (or when the
+  data is not palaeomagnetic in origin). Input files must contain three
+  fields per line, with no header lines: sample name or depth;
+  declination in degrees; and inclination in degrees. Fields are
+  separated by commas, tabs, or space characters.
+
+\item[Custom formats] This option imports data from a file format freely
+  defined by the user, within certain limits. Custom formats allow
+  PuffinPlot to read a large variety of textual, tabular data formats.
+  See section~\ref{sec:import-data} for details.
+
+\end{description}
+
+\noindent Note that there are different ways to read 2\caps{g} data
+files: users are encouraged to read section~\ref{sec:prefs-2g-import}
+and ensure that the preferences are correctly set for their needs. (In
+particular, \textbf{magnetization vectors may be read incorrectly from
+  2G long core files if the wrong import settings are used}, so it is
+important to check the settings before importing data.)
 
 In general, support for other file formats is straighforward to add, and most
 tabular textual file formats can be opened using the \ppcmd{File\submenu
@@ -988,15 +1007,16 @@ tabular textual file formats can be opened using the \ppcmd{File\submenu
 
 \subsubsection{\label{sec:import-data}Importing data}
 
-When \ppcmd{File\submenu Import data\ldots} is selected, PuffinPlot shows a
-window allowing you to describe a text-based, tabular file format; once you
-have specified a format, you can choose one or more files in that format,
-which PuffinPlot will then open. The file is assumed to contain one magnetic
-measurement per line. The file format specification consists of several
-parts, which are described below.
+When \ppcmd{File\submenu Import data\ldots} is selected, PuffinPlot
+shows a window allowing you to describe a text-based, tabular file
+format; once you have specified a format, you can choose one or more
+files in that format, which PuffinPlot will then open. The file is
+assumed to contain one magnetic measurement per line. The file format
+specification consists of two parts: \emph{General settings} and
+\emph{Column definitions}.
 
-\paragraph{General settings} describes parameters relating to the file as a
-whole, rather than individual columns.
+\mypara{General settings} This part describes parameters relating to the
+file as a whole, rather than individual columns.
 
 \begin{description}
 
@@ -1035,7 +1055,8 @@ whole, rather than individual columns.
 
 \end{description}
 
-\paragraph{Column definitions}
+\mypara{Column definitions} This part gives the column number for each
+item of measurement data to be read.
 
 \begin{description}
 
@@ -1214,14 +1235,15 @@ listed below include textual elements such as legends and tables.
   section~\ref{sec:functions-calcs}), the mean directions and confidence
   ellipses are also shown.
 
-\item[Ternary demag.] is an experimental ternary plot designed to display
-  data from triaxial \caps{irm} demagnetization experiments conducted
-  according to the method of \cite{lowrie1990identification}. The position of
-  a point on the plot reflects the relative strengths of the three axes of
-  magnetization, which in turn correspond to high, medium, and low coercivity
-  components. The path produced by points at successive demagnetization steps
-  thus shows the relative effects of thermal unblocking and alteration on
-  these components.
+\item[Ternary demag.] is an experimental ternary plot designed to
+  display data from triaxial \caps{irm} demagnetization experiments
+  conducted according to the method of \cite{lowrie1990identification}.
+  The position of a point on the plot reflects the relative strengths of
+  the three axes of magnetization, which in turn correspond to high,
+  medium, and low coercivity components. The path produced by points at
+  successive demagnetization steps thus shows the relative effects of
+  thermal unblocking (and possibly thermal alteration) on these
+  components.
 
 \item[Equal-area (site)] shows all the great circles fitted at the current
   sample's site, along with a best-fit direction calculated by the method of
@@ -1346,14 +1368,16 @@ produced by the \caps{2g} `Long Core' software.
 \end{menuitemlist}
 
 \noindent\textbf{Warning: incorrectly set sensor lengths can produce erroneous data!}
-The sensor lengths are not written to the 2G file, so they \textit{must} be
-correctly set in PuffinPlot's preferences before importing 2G long core data.
-(For discrete data, sensor lengths are not required.) If the sensor lengths
-are not known, use the `Dec/Inc/Intensity' setting in the 2G import tab.
-Failing to correct for sensor length is particularly dangerous because the
-deviations from the true measured vectors are often small enough not to be
-immediately obvious. See Section~3 of \cite{roberts2006high} for a fuller
-discussion of sensor response functions.
+The sensor lengths are not written to the 2G file, so they \textit{must}
+be correctly set in PuffinPlot's preferences before importing 2G long
+core data from the X/Y/Z vector components. (when importing discrete
+data, or reading from the polar fields in the 2G file, sensor lengths
+are not required.) If the sensor lengths are not known, use the
+`Dec/Inc/Intensity' setting in the 2G import tab. Failing to correct for
+sensor length is particularly dangerous because the deviations from the
+correct vectors are often small enough not to be immediately obvious. See
+Section~3 of \cite{roberts2006high} for a fuller discussion of sensor
+response functions.
 
 \begin{table}
   \caption{\label{tbl:import-protocols}Measurement protocols for 2\caps{g} data files}
@@ -1532,20 +1556,18 @@ adding short items of information which are not automatically inferred by
 PuffinPlot -- for example, \quot{number of components} or \quot{behaviour
   type}.
 
-\paragraph{Adding annotation categories}
+\mypara{Adding annotation categories} Annotations categories defined by
+selecting the \ppcmd{Edit custom flags\ldots} or \ppcmd{Edit custom
+  notes\ldots} item from the \ppcmd{Edit} menu. This will show a window
+allowing you to add, rearrange, or remove the annotation categories. If
+an annotation category is removed, all annotations made within that
+category will be lost.
 
-Annotations categories defined by selecting the \ppcmd{Edit custom
-  flags\ldots} or \ppcmd{Edit custom notes\ldots} item from the \ppcmd{Edit}
-menu. This will show a window allowing you to add, rearrange, or remove the
-annotation categories. If an annotation category is removed, all annotations
-made within that category will be lost.
-
-\paragraph{Using annotations}
-
-When custom flags or notes have been defined, an extra panel appears at the
-right-hand side of the main window. For each custom note category there is a
-text box into which text may be typed. For each custom flag category there is
-a tick box which may be selected or de-selected.
+\mypara{Using annotations} When custom flags or notes have been defined,
+an extra panel appears at the right-hand side of the main window. For
+each custom note category there is a text box into which text may be
+typed. For each custom flag category there is a tick box which may be
+selected or de-selected.
 
 Annotations are saved with the rest of the data in the PuffinPlot file; they
 are also exported in the sample data \caps{csv} file produced by the
@@ -1688,7 +1710,7 @@ direction for each sample. Note that virtually all of PuffinPlot's data and
 functionality is available to the Python script, so far more complex examples
 are possible.
 
-\paragraph{Internal documentation for PuffinPlot} To write scripts
+\mypara{Internal documentation for PuffinPlot} To write scripts
 interacting with PuffinPlot, some knowledge of its internals is of course
 necessary. PuffinPlot comes with complete documentation (JavaDoc) for all its
 accessible data structures. If more detail is required, the source code is
@@ -1790,14 +1812,15 @@ contributed to these projects.
 \subsection*{People}
 
 PuffinPlot was initially developed at the Otago Palaeomagnetic Research
-Facility at the University of Otago, Dunedin, New Zealand. Several colleagues
-provided valuable testing and feedback during PuffinPlot's early development;
-in particular I thank Christian Ohneiser, Faye Nelson, Claudio Tapia, and
-Bethany Fox for their time and effort. Further improvements were made during
-revision of the PuffinPlot paper, in response to thoughtful suggestions from
-Gary Acton and an anonymous reviewer. Since its initial release, PuffinPlot
-has benefited from bug reports and suggestions from Bill Phillips, Jonathan
-M. Glen, Fabio Florindo, Eric Horsman, Terence Day, and Yoichi Usui.
+Facility at the University of Otago, Dunedin, New Zealand. Several
+colleagues provided valuable testing and feedback during PuffinPlot's
+early development; in particular I thank Christian Ohneiser, Faye
+Nelson, Claudio Tapia, and Bethany Fox for their time and effort.
+Further improvements were made during revision of the PuffinPlot paper,
+in response to thoughtful suggestions from Gary Acton and an anonymous
+reviewer. Since its initial release, PuffinPlot has benefited from bug
+reports and suggestions from Bill Phillips, Jonathan M. Glen, Fabio
+Florindo, Eric Horsman, Terence Day, Yoichi Usui, and Adrian Muxworthy.
 
 \subsection*{Icon}
 
@@ -1806,7 +1829,7 @@ illustration by the Finnish artist Wilhelm von Wright (1810--1887), published
 in \emph{Svenska f\aa glar, efter naturen och p\aa{} sten ritade} (2nd ed.,
 1929).
 
-\clearpage
+%\clearpage
 
 \section{Future development and bug reporting}
 
