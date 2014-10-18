@@ -76,11 +76,11 @@ public class Util {
      * @return a bit-set representation of the specified range
      */
     public static BitSet numberRangeStringToBitSet(String input, int limit) {
-        Scanner sc = new Scanner(input);
+        final Scanner sc = new Scanner(input);
         sc.useLocale(Locale.ENGLISH);
         sc.useDelimiter(", *");
-        BitSet result = new BitSet();
-        List<String> rangeExprs = new ArrayList<>();
+        final BitSet result = new BitSet();
+        final List<String> rangeExprs = new ArrayList<>();
         while (sc.hasNext()) {
             if (sc.hasNextInt()) {
                 final int val = constrainInt(sc.nextInt(), limit);
@@ -92,7 +92,7 @@ public class Util {
         for (String rangeExpr: rangeExprs) {
             int start = -1;
             int end = -1;
-            Scanner sc2 = new Scanner(rangeExpr);
+            final Scanner sc2 = new Scanner(rangeExpr);
             sc2.useLocale(Locale.ENGLISH);
             sc2.useDelimiter("-");
             if (sc2.hasNextInt()) start = constrainInt(sc2.nextInt(), limit);

@@ -820,21 +820,22 @@ public final class Suite {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     final double[] v = new double[6];
-                    final Scanner s = new Scanner(line);
-                    String sampleName = s.next();
+                    final Scanner sc = new Scanner(line);
+                    sc.useLocale(Locale.ENGLISH);
+                    String sampleName = sc.next();
                     if (!containsSample(sampleName)) {
                         insertNewSample(sampleName);
                     }
                     final Sample sample = getSampleByName(sampleName);
-                    for (int i = 0; i < 6; i++) v[i] = s.nextDouble();
+                    for (int i = 0; i < 6; i++) v[i] = sc.nextDouble();
                     if (directions) {
                         sample.setAmsDirections(v[0], v[1], v[2],
                                 v[3], v[4], v[5]);
                     } else {
                         if (!sample.hasData()) {
-                            sample.setCorrections(s.nextDouble(),
-                                    s.nextDouble(), s.nextDouble(),
-                                    s.nextDouble(), s.nextDouble());
+                            sample.setCorrections(sc.nextDouble(),
+                                    sc.nextDouble(), sc.nextDouble(),
+                                    sc.nextDouble(), sc.nextDouble());
                         }
                         sample.setAmsFromTensor(v[0], v[1], v[2],
                                 v[3], v[4], v[5]);

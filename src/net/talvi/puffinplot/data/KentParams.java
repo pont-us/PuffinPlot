@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Scanner;
 import static java.lang.Math.toRadians;
+import java.util.Locale;
 
 /**
  * <p>A class representing the parameters of a Kent confidence ellipse.
@@ -92,6 +93,7 @@ public class KentParams {
      */
     public KentParams(String line) {
         Scanner sc = new Scanner(line);
+        sc.useLocale(Locale.ENGLISH);
         tau = sc.nextDouble();
         tauSigma = sc.nextDouble();
         double dec = sc.nextDouble();
@@ -146,7 +148,7 @@ public class KentParams {
             boolean parametric, String scriptPath) throws IOException {
         File tempFile = null;
         FileWriter writer = null;
-        List<KentParams> result = new ArrayList<>(3);
+        final List<KentParams> result = new ArrayList<>(3);
         try {
             tempFile = File.createTempFile("puffin", "tensors");
             writer = new FileWriter(tempFile);
@@ -164,11 +166,12 @@ public class KentParams {
                 System.out.println(s);
             }
             for (int i=4; i<7; i++) {
-                Scanner s = new Scanner(output.get(i));
-                result.add(new KentParams(s.nextDouble(), s.nextDouble(),
-                        s.nextDouble(), s.nextDouble(),
-                        s.nextDouble(), s.nextDouble(), s.nextDouble(),
-                        s.nextDouble(), s.nextDouble(), s.nextDouble()));
+                Scanner sc = new Scanner(output.get(i));
+                sc.useLocale(Locale.ENGLISH);
+                result.add(new KentParams(sc.nextDouble(), sc.nextDouble(),
+                        sc.nextDouble(), sc.nextDouble(),
+                        sc.nextDouble(), sc.nextDouble(), sc.nextDouble(),
+                        sc.nextDouble(), sc.nextDouble(), sc.nextDouble()));
             }
         } finally {
             if (tempFile != null && tempFile.exists()) tempFile.delete();
@@ -206,11 +209,12 @@ public class KentParams {
            List<String> output = execute(args);
            tempFile.delete();
            for (int i=2; i<5; i++) {
-               final Scanner s = new Scanner(output.get(i));
-               result.add(new KentParams(s.nextDouble(), 0.,
-                       s.nextDouble(), s.nextDouble(),
-                       s.nextDouble(), s.nextDouble(), s.nextDouble(),
-                       s.nextDouble(), s.nextDouble(), s.nextDouble()));
+               final Scanner sc = new Scanner(output.get(i));
+               sc.useLocale(Locale.ENGLISH);
+               result.add(new KentParams(sc.nextDouble(), 0.,
+                       sc.nextDouble(), sc.nextDouble(),
+                       sc.nextDouble(), sc.nextDouble(), sc.nextDouble(),
+                       sc.nextDouble(), sc.nextDouble(), sc.nextDouble()));
            }
        } finally {
            if (tempFile != null && tempFile.exists()) tempFile.delete();

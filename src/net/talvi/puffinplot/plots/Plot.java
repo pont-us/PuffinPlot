@@ -146,7 +146,7 @@ public abstract class Plot
 
     private void setDimensionsFromPrefsString(String spec) {
         final Scanner scanner = new Scanner(spec);
-        scanner.useLocale(Locale.ENGLISH); // use `.' for decimals
+        scanner.useLocale(Locale.ENGLISH); // ensure "." for decimal point
         while (scanner.hasNext()) {
             String plotName = scanner.next();
             if (getName().equals(plotName)) {

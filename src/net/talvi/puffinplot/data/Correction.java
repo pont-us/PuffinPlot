@@ -179,20 +179,22 @@ public class Correction {
      * @see #toString()
      */
     public static Correction fromString(String string) {
-        Scanner s = new Scanner(string);
-        Correction c = null;
+        final Scanner scanner = new Scanner(string);
+        scanner.useLocale(Locale.ENGLISH);
+        Correction correction = null;
         try {
             // At present, the two booleans should always be false.
-            c = new Correction(s.nextBoolean(), s.nextBoolean(),
-                    Rotation.valueOf(s.next()),
-                    s.nextBoolean());
+            correction = new Correction(scanner.nextBoolean(),
+                    scanner.nextBoolean(),
+                    Rotation.valueOf(scanner.next()),
+                    scanner.nextBoolean());
         } catch (InputMismatchException e) {
-            c = NONE;
+            correction = NONE;
             logger.info("Malformed correction string in preferences: defaulting to no correction.");
         } catch (NoSuchElementException e) {
-            c = NONE;
+            correction = NONE;
             logger.info("Malformed correction string in preferences: defaulting to no correction.");
         } 
-        return c;
+        return correction;
     }
 }

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 import java.util.prefs.Preferences;
 
@@ -235,6 +236,7 @@ public class RecentFileList {
         public static FileSet fromString(String s) {
             if (s==null) return null;
             final Scanner scanner = new Scanner(s);
+            scanner.useLocale(Locale.ENGLISH);
             final int numPaths = scanner.nextInt();
             if (numPaths<2) return null;
             final List<Integer> lengths = new ArrayList<>(numPaths);
