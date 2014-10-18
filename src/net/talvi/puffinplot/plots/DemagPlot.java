@@ -22,6 +22,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
+import java.util.Locale;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.MedianDestructiveField;
@@ -109,7 +110,8 @@ public class DemagPlot extends Plot {
                 unit = "m" + unit;
                 demagRescale = 1000;
             }
-            xAxisLabel = String.format("%s (%s)", treatType.getAxisLabel(), unit);
+            xAxisLabel = String.format(Locale.ENGLISH,
+                    "%s (%s)", treatType.getAxisLabel(), unit);
         }
         final AxisParameters xAxisParams = 
                 new AxisParameters(xAxisLength * demagRescale, Direction.RIGHT).

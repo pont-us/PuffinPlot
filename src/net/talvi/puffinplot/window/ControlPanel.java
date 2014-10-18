@@ -21,6 +21,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.Locale;
 import java.util.prefs.Preferences;
 import javax.swing.*;
 import net.talvi.puffinplot.PuffinApp;
@@ -102,18 +103,20 @@ public class ControlPanel extends JPanel
     }
     
     private String sampleOrientation(Sample s) {
-        final String format =
+        final String displayMode =
                 prefs.get("display.sampleOrientation", "Azimuth/Dip");
-        return String.format("Samp. %.1f/%.1f",
+        return String.format(Locale.ENGLISH,
+                "Samp. %.1f/%.1f",
                 s.getSampAz(),
-                "Azimuth/Dip".equals(format) ? s.getSampDip() : s.getSampHade());
+                "Azimuth/Dip".equals(displayMode) ? s.getSampDip() : s.getSampHade());
     }
     
     private String formationOrientation(Sample s) {
-        final String format =
+        final String displayMode =
                 prefs.get("display.formationOrientation", "Dip azimuth/Dip");
-        return String.format("Form. %.1f/%.1f",
-                "Dip azimuth/Dip".equals(format) ? s.getFormAz() : s.getFormStrike(),
+        return String.format(Locale.ENGLISH,
+                "Form. %.1f/%.1f",
+                "Dip azimuth/Dip".equals(displayMode) ? s.getFormAz() : s.getFormStrike(),
                 s.getFormDip());
     }
     
@@ -124,8 +127,9 @@ public class ControlPanel extends JPanel
             correctionField.setText(
                     sampleOrientation(s) + " " +
                     formationOrientation(s) + " " +
-                    String.format("Dev. %.1f Anc:%s",
-                    s.getMagDev(), s.isPcaAnchored() ? "Y" : "N"));
+                    String.format(Locale.ENGLISH,
+                            "Dev. %.1f Anc:%s",
+                            s.getMagDev(), s.isPcaAnchored() ? "Y" : "N"));
     }
 
     /** Handles action events. Currently the only action event 

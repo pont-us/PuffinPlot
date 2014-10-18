@@ -149,7 +149,9 @@ public final class GreatCircles implements FisherParams {
         final double NN = getM() + getN() / 2.0;
         final double v = 1 - ((NN-1)/(k*R)) *
                 ( Math.pow(1/p, 1/(NN-1)) - 1 );
-        logger.log(Level.INFO, String.format("%d %d %f %f %f %f", getM(), getN(), NN, k, R, v));
+        logger.log(Level.INFO, String.format(Locale.ENGLISH,
+                "%d %d %f %f %f %f",
+                getM(), getN(), NN, k, R, v));
         return Math.toDegrees(Math.acos(v));
     }
 

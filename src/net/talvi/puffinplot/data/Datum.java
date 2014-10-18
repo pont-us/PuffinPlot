@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
@@ -507,10 +508,12 @@ public class Datum {
      */
     public String getFormattedTreatmentLevel() {
         if (getTreatType().getUnit().equals("T")) {
-            // turn T into mT
-            return String.format("%.0f", getTreatmentLevel() * 1000);
+            // magnetic treatment -- turn T into mT
+            return String.format(Locale.ENGLISH, "%.0f",
+                    getTreatmentLevel() * 1000);
         } else {
-            return String.format("%.0f", getTreatmentLevel());
+            // no conversion required for thermal treatment
+            return String.format(Locale.ENGLISH, "%.0f", getTreatmentLevel());
         }
     }
 
@@ -663,14 +666,16 @@ public class Datum {
         try {
             doSetValue(field, value, factor);
         } catch (NumberFormatException e1) {
-            logger.warning(String.format("Invalid value %s for field %s; using default %s",
+            logger.warning(String.format(Locale.ENGLISH,
+                    "Invalid value %s for field %s; using default %s",
                     value, field.toString(), field.getDefaultValue()));
             try {
                 /* NB default value is already in correct units, so we
                    set the conversion factor to 1. */
                 doSetValue(field, field.getDefaultValue(), 1.);
             } catch (NumberFormatException e2) {
-                final String msg = String.format("Invalid value "+
+                final String msg = String.format(Locale.ENGLISH,
+                        "Invalid value "+
                         "when setting field '%s' to value '%s':\n%s",
                         field.toString(), value, e2.getMessage());
                 logger.warning(msg);

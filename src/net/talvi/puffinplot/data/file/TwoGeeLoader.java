@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -266,7 +267,8 @@ public class TwoGeeLoader extends AbstractFileLoader {
         notUsed.removeAll(requestedFields);
         Set<String> notInFile = new HashSet<>(requestedFields);
         notInFile.removeAll(fileFieldSet);
-        logger.info(String.format("Field headers in file %s\n" +
+        logger.info(String.format(Locale.ENGLISH,
+                "Field headers in file %s\n" +
                 "Not found in file: %s\nIn file but ignored: %s", file,
                 Arrays.toString(notInFile.toArray()),
                 Arrays.toString(notUsed.toArray())));

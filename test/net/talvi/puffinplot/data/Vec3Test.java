@@ -5,8 +5,7 @@
 
 package net.talvi.puffinplot.data;
 
-import Jama.Matrix;
-import java.util.Collection;
+import java.util.Locale;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -73,7 +72,8 @@ public class Vec3Test {
                 for (double offset: offsets) {
                     Vec3 expected = Vec3.fromPolarDegrees(mag, inc+offset, dec);
                     Vec3 result = original.addIncRad(Math.toRadians(offset));
-                    String msg = String.format("D %g I %g + %g", dec, inc, offset);
+                    String msg = String.format(Locale.ENGLISH,
+                            "D %g I %g + %g", dec, inc, offset);
                     assertEquals(msg, expected.x, result.x, tolerance);
                     assertEquals(msg, expected.y, result.y, tolerance);
                     assertEquals(msg, expected.z, result.z, tolerance);

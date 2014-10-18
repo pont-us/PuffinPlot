@@ -25,6 +25,7 @@ import java.util.BitSet;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * This class represents a sample on which measurements have been made.
@@ -713,7 +714,8 @@ public class Sample {
             result.add("SITE\t" + site.getName());
         }
         if (importedDirection != null) {
-            result.add(String.format("IMPORTED_DIRECTION\t%.3f\t%.3f",
+            result.add(String.format(Locale.ENGLISH,
+                    "IMPORTED_DIRECTION\t%.3f\t%.3f",
                     importedDirection.getDecDeg(),
                     importedDirection.getIncDeg()));
         }

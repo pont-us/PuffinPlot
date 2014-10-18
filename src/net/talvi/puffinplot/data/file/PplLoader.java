@@ -32,6 +32,7 @@ import net.talvi.puffinplot.data.Datum;
 import java.util.regex.Pattern;
 import static net.talvi.puffinplot.data.file.TwoGeeHelper.*;
 import static java.lang.Double.isNaN;
+import java.util.Locale;
 
 /**
  * A loader for PuffinPlot's own file format.
@@ -72,7 +73,8 @@ public class PplLoader extends AbstractFileLoader {
             String versionString = matcher.group(1);
             version = Integer.parseInt(versionString);
             if (version != 2 && version != 3) {
-                throw new IOException(String.format("%s is of version %d,"
+                throw new IOException(String.format(Locale.ENGLISH,
+                        "%s is of version %d,"
                         + "which cannot be "
                         + "loaded by this version of PuffinPlot.",
                         file, version));
@@ -114,7 +116,8 @@ public class PplLoader extends AbstractFileLoader {
             try {
                 d = datumReader.fromStrings(values);
             } catch (NumberFormatException e) {
-                final String msg = String.format("Error at line %d "+
+                final String msg = String.format(Locale.ENGLISH,
+                        "Error at line %d "+
                         "of file %s:\n%s", reader.getLineNumber(),
                         file.getName(), e.getMessage());
                 throw new MalformedFileException(msg);

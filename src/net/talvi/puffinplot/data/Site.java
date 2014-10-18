@@ -24,6 +24,7 @@ import static java.util.Collections.max;
 import static java.util.Collections.min;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
@@ -171,7 +172,7 @@ public class Site {
     }
 
     private String fmt(double x) {
-        return String.format("%g", x);
+        return String.format(Locale.ENGLISH, "%g", x);
     }
 
     /** Returns headers for information on the treatment steps used

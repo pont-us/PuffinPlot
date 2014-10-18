@@ -19,13 +19,12 @@ package net.talvi.puffinplot.plots;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import static java.lang.String.format;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.prefs.Preferences;
-import net.talvi.puffinplot.data.FisherValues;
 import net.talvi.puffinplot.data.GreatCircle;
 import net.talvi.puffinplot.data.PcaValues;
 import net.talvi.puffinplot.data.Sample;
@@ -70,6 +69,10 @@ public class SampleParamsTable extends Plot {
     public String getNiceName() {
         return "Sample parameter table";
     }
+    
+    private static String fmt(Object... args) {
+        return String.format(Locale.ENGLISH, "%.1f", args);
+    }
 
     @Override
     public void draw(Graphics2D g) {
@@ -90,23 +93,23 @@ public class SampleParamsTable extends Plot {
             if (sample.getGreatCircle() != null) {
                 final GreatCircle gc = sample.getGreatCircle();
                 values.set(1, "GC");
-                values.set(2, format("%.1f", gc.getPole().getDecDeg()));
-                values.set(3, format("%.1f", gc.getPole().getIncDeg()));
+                values.set(2, fmt(gc.getPole().getDecDeg()));
+                values.set(3, fmt(gc.getPole().getIncDeg()));
             } else if (sample.getPcaValues() != null) {
                 final PcaValues pca = sample.getPcaValues();
                 values.set(1, pca.isAnchored() ? "PCAa" : "PCAu");
-                values.set(2, format("%.1f", pca.getDirection().getDecDeg()));
-                values.set(3, format("%.1f", pca.getDirection().getIncDeg()));
+                values.set(2, fmt(pca.getDirection().getDecDeg()));
+                values.set(3, fmt(pca.getDirection().getIncDeg()));
             } else if (sample.getFisherValues() != null) {
                 final Vec3 vector = sample.getFisherValues().getMeanDirection();
                 values.set(1, "Fisher");
-                values.set(2, format("%.1f", vector.getDecDeg()));
-                values.set(3, format("%.1f", vector.getIncDeg()));
+                values.set(2, fmt(vector.getDecDeg()));
+                values.set(3, fmt(vector.getIncDeg()));
             } else if (sample.getImportedDirection()!= null) {
                 final Vec3 vector = sample.getImportedDirection();
                 values.set(1, "Import");
-                values.set(2, format("%.1f", vector.getDecDeg()));
-                values.set(3, format("%.1f", vector.getIncDeg()));
+                values.set(2, fmt(vector.getDecDeg()));
+                values.set(3, fmt(vector.getIncDeg()));
             }
             
             points.add(new TextLinePoint(this, g, yPos, null, sample, values, xSpacing));

@@ -198,9 +198,11 @@ public final class PuffinApp {
                 w.println("Crash date: " + df.format(now));
                 for (String prop : new String[]{"java.version", "java.vendor",
                             "os.name", "os.arch", "os.version", "user.name"}) {
-                    w.println(String.format("%-16s%s", prop,
+                    w.println(String.format(Locale.ENGLISH,
+                            "%-16s%s", prop,
                             System.getProperty(prop)));
                 }
+                w.println("Locale: " + Locale.getDefault().toString());
                 exception.printStackTrace(w);
                 w.println("\nLog messages: \n");
                 logMemoryHandler.push();
@@ -537,8 +539,10 @@ public final class PuffinApp {
         try {
             final FileType guessedType = FileType.guess(files.get(0));
             FileType fileType = null;
-            if (guessedType != FileType.PUFFINPLOT_NEW &&
-                    guessedType != FileType.PUFFINPLOT_OLD) {
+            if (guessedType == FileType.PUFFINPLOT_NEW ||
+                    guessedType == FileType.PUFFINPLOT_OLD) {
+                fileType = guessedType;
+            } else {
                 final FiletypeDialog ft = new FiletypeDialog(getMainWindow());
                 ft.setVisible(true);
                 fileType = ft.getFileType();
@@ -1496,16 +1500,15 @@ public final class PuffinApp {
                     final Sample armSample = armSuite.getSampleByName(depth);
                     if (armSample != null) {
                         final double[] levels = {0.03, 0.04, 0.05, 0.06, 0.07};
-                        fw.write(String.format("%s", depth));
+                        fw.write(depth);
                         for (double demagStep: levels) {
                             final Datum nrmStep = nrmSample.getDatumByTreatmentLevel(demagStep);
                             final Datum armStep = armSample.getDatumByTreatmentLevel(demagStep);
                             if (nrmStep != null && armStep != null) {
                                 final double nrmInt = nrmStep.getIntensity();
                                 final double armInt = armStep.getIntensity();
-                                //fw.write(String.format("%s\t%g\t%g\t%g\n",
-                                 //   depth, nrmInt, armInt, nrmInt/armInt));
-                                fw.write(String.format("\t%g", nrmInt/armInt));
+                                fw.write(String.format(Locale.ENGLISH,
+                                        "\t%g", nrmInt/armInt));
                             }
                         }
                         fw.write("\n");

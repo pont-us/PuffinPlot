@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Locale;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -109,11 +110,13 @@ public final class MainWindow extends JFrame {
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             final PuffinApp.Version version = app.getVersion();
             final String welcome =
-                    String.format("Welcome to PuffinPlot, version %s. "
-                    + "This puffin hatched on %s.", version.getVersionString(),
+                    String.format(Locale.ENGLISH,
+                            "Welcome to PuffinPlot, version %s. "
+                                    + "This puffin hatched on %s.",
+                            version.getVersionString(),
                     version.getDateString());
             add(new JLabel(welcome));
-            add(new JLabel(String.format(
+            add(new JLabel(String.format(Locale.ENGLISH,
                     "PuffinPlot is copyright %s by Pontus Lurcock.",
                     version.getYearRange())));
             final JPanel citePanel = new JPanel();

@@ -22,6 +22,7 @@ import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * An axis for a plot.
@@ -181,7 +182,7 @@ final class PlotAxis {
                 int length_int = (int) length;
                 String text = Math.abs(length - length_int) < 0.0001
                         ? Integer.toString(length_int)
-                        : String.format("%.1f", length);
+                        : String.format(Locale.ENGLISH, "%.1f", length);
                 AttributedString as = (ap.magnitudeOnTicks && getMagnitude() != 0)
                     ? plot.timesTenToThe(text, getMagnitude())
                     : new AttributedString(text);
@@ -197,7 +198,8 @@ final class PlotAxis {
         if (getLength()!=0) {
             if (ap.markedPosition != null) {
                 AttributedString mark = new AttributedString
-                        (String.format("%.2f", ap.markedPosition * Math.pow(10, -getMagnitude())));
+                        (String.format(Locale.ENGLISH,
+                                "%.2f", ap.markedPosition * Math.pow(10, -getMagnitude())));
                 plot.putText(g, mark,
                         xOrig + x * ap.markedPosition * scale,
                         yOrig + y * ap.markedPosition * scale,

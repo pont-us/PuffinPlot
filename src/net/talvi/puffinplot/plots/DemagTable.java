@@ -22,6 +22,7 @@ import static java.lang.String.format;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.Sample;
@@ -96,13 +97,13 @@ public class DemagTable extends Plot {
             final String demag = useSequence ? Integer.toString(sequence)
                     : d.getFormattedTreatmentLevel();
             values.add(demag);
-            values.add(format("%.1f", p.getDecDeg()));
-            values.add(format("% .1f", p.getIncDeg()));
+            values.add(format(Locale.ENGLISH, "%.1f", p.getDecDeg()));
+            values.add(format(Locale.ENGLISH, "% .1f", p.getIncDeg()));
             // Don't use .1g, it tickles a bug in Java (#6469160) which
             // throws an ArrayFormatException (at least in Sun Java 5 & 6)
-            values.add(format("%.2e", p.mag()));
+            values.add(format(Locale.ENGLISH, "%.2e", p.mag()));
             values.add(Double.isNaN(d.getMagSus()) ? "-" :
-                       format("%.1e", d.getMagSus()));
+                       format(Locale.ENGLISH, "%.1e", d.getMagSus()));
             points.add(new TextLinePoint(this, g, yPos, d, null, values, xSpacing));
             yPos += ySpacing;
             sequence++;

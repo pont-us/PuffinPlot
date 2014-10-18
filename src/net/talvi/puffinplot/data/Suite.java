@@ -374,11 +374,13 @@ public final class Suite {
         
         for (File file: files) {
             if (!file.exists()) {
-                loadWarnings.add(String.format("File \"%s\" does not exist.", file.getName()));
+                loadWarnings.add(String.format(Locale.ENGLISH,
+                        "File \"%s\" does not exist.", file.getName()));
                 continue;
             }
             if (!file.canRead()) {
-                loadWarnings.add(String.format("File \"%s\" is unreadable.", file.getName()));
+                loadWarnings.add(String.format(Locale.ENGLISH,
+                        "File \"%s\" is unreadable.", file.getName()));
                 continue;
             }
 
@@ -418,7 +420,8 @@ public final class Suite {
                 return;
                 // break;
             default:
-                loadWarnings.add(String.format("%s is of unknown file type.", file.getName()));
+                loadWarnings.add(String.format(Locale.ENGLISH,
+                        "%s is of unknown file type.", file.getName()));
                 break;
             }
             if (loader != null) {
@@ -890,13 +893,15 @@ public final class Suite {
     public void exportToFiles(File directory, List<DatumField> fields) {
         if (directory.exists()) {
             if (!directory.isDirectory()) {
-                logger.info(String.format("exportToFiles: %s is not a directory",
+                logger.info(String.format(Locale.ENGLISH,
+                        "exportToFiles: %s is not a directory",
                         directory.toString()));
                 return;
             }
         } else {
             if (!directory.mkdirs()) {
-                logger.info(String.format("exportToFiles: couldn't create %s",
+                logger.info(String.format(Locale.ENGLISH,
+                        "exportToFiles: couldn't create %s",
                         directory.toString()));
                 return;
             }

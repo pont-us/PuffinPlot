@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * An immutable three-dimensional Cartesian vector. The class contains
@@ -835,8 +836,9 @@ public class Vec3 {
     String toCustomString(String pre, String post, String sep, int dp,
             boolean scale) {
         // TODO tidy up: this code's a mess.
-        final String format = String.format("%s%%.%df%s%%.%df%s%%.%df%s",
-                    pre, dp, sep, dp, sep, dp, post);
+        final String format = String.format(Locale.ENGLISH,
+                "%s%%.%df%s%%.%df%s%%.%df%s",
+                pre, dp, sep, dp, sep, dp, post);
         final Vec3 vec;
         int oom = 0;
         if (scale) {
@@ -849,7 +851,7 @@ public class Vec3 {
         }
         String result = String.format(format, vec.x, vec.y, vec.z);
         if (scale) {
-            result += String.format("e%d", oom);
+            result += String.format(Locale.ENGLISH, "e%d", oom);
         }
         return result;
     }
@@ -858,7 +860,7 @@ public class Vec3 {
      * @return a string representation of this vector */
     @Override
     public String toString() {
-        return String.format("%.2f %.2f %.2f", x, y, z);
+        return String.format(Locale.ENGLISH, "%.2f %.2f %.2f", x, y, z);
     }
     
     /** Checks that this vector contains no NaN or infinite values.

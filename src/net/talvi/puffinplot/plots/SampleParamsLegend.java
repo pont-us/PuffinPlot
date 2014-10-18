@@ -21,6 +21,7 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.data.GreatCircle;
 import net.talvi.puffinplot.data.PcaValues;
@@ -73,17 +74,21 @@ public class SampleParamsLegend extends Plot {
                 
         if (gc != null) {
             strings.addAll(Arrays.asList(
-                String.format("GC  dec %.2f / inc %.2f", gc.getPole().getDecDeg(),
-                    gc.getPole().getIncDeg()),
-                String.format("GC  MAD1 %.2f", gc.getMad1())));
+                String.format(Locale.ENGLISH,
+                        "GC  dec %.2f / inc %.2f", gc.getPole().getDecDeg(),
+                        gc.getPole().getIncDeg()),
+                String.format(Locale.ENGLISH,
+                        "GC  MAD1 %.2f", gc.getMad1())));
         }
         
         if (pca != null) {
             strings.addAll(Arrays.asList(
-                String.format("PCA  dec %.2f / inc %.2f",
-                    pca.getDirection().getDecDeg(),
-                    pca.getDirection().getIncDeg()),
-                String.format("PCA  MAD1 %.2f / MAD3 %.2f",
+                String.format(Locale.ENGLISH,
+                        "PCA  dec %.2f / inc %.2f",
+                        pca.getDirection().getDecDeg(),
+                        pca.getDirection().getIncDeg()),
+                String.format(Locale.ENGLISH,
+                        "PCA  MAD1 %.2f / MAD3 %.2f",
                     pca.getMad1(), pca.getMad3()),
                 pca.getEquation()));
         }

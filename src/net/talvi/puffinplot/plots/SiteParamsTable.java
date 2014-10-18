@@ -19,11 +19,11 @@ package net.talvi.puffinplot.plots;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import static java.lang.String.format;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.data.*;
 import net.talvi.puffinplot.window.GraphDisplay;
@@ -67,6 +67,10 @@ public class SiteParamsTable extends Plot {
     public String getNiceName() {
         return "Site parameter table";
     }
+        
+    private static String fmt(String format, Object... args) {
+        return String.format(Locale.ENGLISH, format, args);
+    }
 
     @Override
     public void draw(Graphics2D g) {
@@ -76,7 +80,6 @@ public class SiteParamsTable extends Plot {
         final Suite suite = sample.getSuite();
         if (suite==null) return;
         List<Site> sites = suite.getSites();
-        
         
         points.add(new TextLinePoint(this, g, 10, null, null, headers, xSpacing));
 
@@ -88,22 +91,22 @@ public class SiteParamsTable extends Plot {
             final List<String> values = new ArrayList<>(columns);
             values.addAll(Collections.nCopies(columns, "--"));
             values.set(0, site.toString());
-            values.set(1, format("%d", site.getSamples().size()));
+            values.set(1, fmt("%d", site.getSamples().size()));
             if (site.getFisherValues() != null) {
                 final FisherValues fvs = site.getFisherValues();
-                values.set(2, format("%d", fvs.getNDirs()));
+                values.set(2, fmt("%d", fvs.getNDirs()));
                 values.set(3, "0");
                 final Vec3 direction = fvs.getMeanDirection();
-                values.set(4, format("%.1f", direction.getDecDeg()));
-                values.set(5, format("%.1f", direction.getIncDeg()));
+                values.set(4, fmt("%.1f", direction.getDecDeg()));
+                values.set(5, fmt("%.1f", direction.getIncDeg()));
                 values.set(6, "Fisher");
             } else if (site.getGreatCircles() != null) {
                 final GreatCircles gcs = site.getGreatCircles();
-                values.set(2, format("%d", gcs.getM()));
-                values.set(3, format("%d", gcs.getN()));
+                values.set(2, fmt("%d", gcs.getM()));
+                values.set(3, fmt("%d", gcs.getN()));
                 final Vec3 direction = gcs.getMeanDirection();
-                values.set(4, format("%.1f", direction.getDecDeg()));
-                values.set(5, format("%.1f", direction.getIncDeg()));
+                values.set(4, fmt("%.1f", direction.getDecDeg()));
+                values.set(5, fmt("%.1f", direction.getIncDeg()));
                 values.set(6, "GC " + (gcs.isValid() ? "(v)" : "(i)"));
             }
             

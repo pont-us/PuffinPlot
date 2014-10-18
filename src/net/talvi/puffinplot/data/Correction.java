@@ -17,6 +17,7 @@
 package net.talvi.puffinplot.data;
 
 import java.util.InputMismatchException;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.logging.Logger;
@@ -164,7 +165,8 @@ public class Correction {
      */
     @Override
     public String toString() {
-        return String.format("%b %b %s %b", tray, empty, getRotation().name(),
+        return String.format(Locale.ENGLISH,
+                "%b %b %s %b", tray, empty, getRotation().name(),
                 magDevAppliedToFormation);
     }
 

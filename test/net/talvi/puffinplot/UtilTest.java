@@ -7,6 +7,7 @@ package net.talvi.puffinplot;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.BitSet;
+import java.util.Locale;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -114,12 +115,14 @@ public class UtilTest {
         }
         
         private void prettyPrint(Line2D line) {
-            System.out.println(String.format("%.3f %.3f %.3f %.3f",
+            System.out.println(String.format(Locale.ENGLISH,
+                    "%.3f %.3f %.3f %.3f",
                     line.getX1(), line.getY1(), line.getX2(), line.getY2()));
         }
         
         private void prettyPrint(Rectangle2D rect) {
-            System.out.println(String.format("%.3f %.3f %.3f %.3f",
+            System.out.println(String.format(Locale.ENGLISH,
+                    "%.3f %.3f %.3f %.3f",
                     rect.getMinX(), rect.getMinY(), rect.getWidth(), rect.getHeight()));
         }
         

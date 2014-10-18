@@ -21,6 +21,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
+import java.util.Locale;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.data.FisherParams;
 import net.talvi.puffinplot.data.Sample;
@@ -75,7 +76,8 @@ public class SiteParamsLegend extends Plot {
 
     private AttributedCharacterIterator layoutFisherParams(Graphics2D g, String name,
             FisherParams fp) {
-        final String s = String.format("%s  dec %.1f / inc %.1f / "
+        final String s = String.format(Locale.ENGLISH,
+                "%s  dec %.1f / inc %.1f / "
                 + "%s95 %.1f / k %.1f", name,
                 fp.getMeanDirection().getDecDeg(),
                 fp.getMeanDirection().getIncDeg(),
