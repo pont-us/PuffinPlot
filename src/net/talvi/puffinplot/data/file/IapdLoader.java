@@ -23,6 +23,7 @@ import java.io.LineNumberReader;
 import java.util.LinkedList;
 import net.talvi.puffinplot.data.Datum;
 import static java.lang.Double.parseDouble;
+import java.util.Map;
 import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.Vec3;
@@ -36,19 +37,32 @@ public class IapdLoader extends AbstractFileLoader {
     
     private LineNumberReader reader;
     private final File file;
+    private final Map<Object, Object> importOptions;
     
-    public IapdLoader(File file) {
+    public IapdLoader(File file, Map<Object,Object> importOptions) {
                 this.file = file;
         data = new LinkedList<>();
+        this.importOptions = importOptions;
         try {
             reader = new LineNumberReader(new FileReader(file));
             readFile();
         } catch (IOException e) {
-
+            messages.add("Error reading " + file.getName());
+            messages.add(e.getMessage());
         }
     }
 
     private void readFile() throws IOException {
+        
+        TreatType treatType = TreatType.DEGAUSS_XYZ;
+        MeasType measType = MeasType.DISCRETE;
+        if (importOptions.containsKey(TreatType.class)) {
+            treatType = (TreatType) importOptions.get(TreatType.class);
+        }
+        if (importOptions.containsKey(MeasType.class)) {
+            measType = (MeasType) importOptions.get(MeasType.class);
+        }
+        
         final String headerLine = reader.readLine();
         if (headerLine == null) {
             addMessage("%s is empty", file.getName());
@@ -66,10 +80,26 @@ public class IapdLoader extends AbstractFileLoader {
         while ((line = reader.readLine()) != null) {
             final Datum d = new Datum();
             final String[] parts = line.trim().split(" +");
-            final double af = parseDouble(parts[0]) / 1000;
-            d.setAfX(af);
-            d.setAfY(af);
-            d.setAfZ(af);
+            final double treatmentLevel = parseDouble(parts[0]);
+            
+            switch (treatType) {
+                case THERMAL:
+                    d.setTemp(treatmentLevel);
+                    break;
+                case ARM:
+                case DEGAUSS_XYZ:
+                    d.setAfX(treatmentLevel / 1000);
+                    d.setAfY(treatmentLevel / 1000);
+                    d.setAfZ(treatmentLevel / 1000);
+                    break;
+                case DEGAUSS_Z:
+                    d.setAfZ(treatmentLevel / 1000);
+                    break;
+                case IRM:
+                    d.setIrmField(treatmentLevel / 1000);
+                    break;
+            }
+            
             d.setMoment(Vec3.fromPolarDegrees(parseDouble(parts[1]) / 1000,
                     parseDouble(parts[6]),
                     parseDouble(parts[5])));
@@ -79,8 +109,8 @@ public class IapdLoader extends AbstractFileLoader {
             d.setFormAz(formAz);
             d.setFormDip(formDip);
             d.setVolume(volume);
-            d.setTreatType(TreatType.DEGAUSS_XYZ);
-            d.setMeasType(MeasType.DISCRETE);
+            d.setTreatType(treatType);
+            d.setMeasType(measType);
             data.add(d);
         }
     }

@@ -117,7 +117,7 @@ public class TabularImportWindow extends JDialog {
         columnPanel.setBorder(BorderFactory.createTitledBorder("Column definitions"));
         columnPanel.add(scrollPane, BorderLayout.CENTER);
         contentPane.add(columnPanel);
-        JPanel buttonPanel = new JPanel();
+        final JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
         final JButton cancelButton = new JButton("Cancel");
         buttonPanel.add(cancelButton);

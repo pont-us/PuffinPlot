@@ -21,6 +21,7 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -29,6 +30,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import net.talvi.puffinplot.data.FileType;
+import static java.awt.event.KeyEvent.getExtendedKeyCodeForChar;
 
 /**
  *
@@ -52,6 +54,7 @@ public class FiletypeDialog extends JDialog {
             if (ft != FileType.UNKNOWN) {
                 final JButton button = new JButton(ft.getNiceName());
                 button.setAlignmentX(Component.CENTER_ALIGNMENT);
+                button.setMnemonic(getExtendedKeyCodeForChar(ft.getShortcut()));
                 button.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -76,6 +79,7 @@ public class FiletypeDialog extends JDialog {
                     }
                 });
         cancelButton.setAlignmentX(CENTER_ALIGNMENT);
+        cancelButton.setMnemonic(KeyEvent.VK_ESCAPE);
         cp.add(cancelButton);
         setContentPane(cp);
         pack();

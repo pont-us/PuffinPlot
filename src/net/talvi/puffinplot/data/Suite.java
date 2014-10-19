@@ -355,11 +355,13 @@ public final class Suite {
      * @param fileType type of the specified files
      * @param format explicitly specified file format (null to automatically
      * guess between 2G, PuffinPlot, Caltech, and Zplot).
+     * @param importOptions extra options passed to file importers
      * @throws IOException if an I/O error occurred while reading the files 
      */
     public void readFiles(List<File> files, SensorLengths sensorLengths,
             TwoGeeLoader.Protocol protocol, boolean usePolarMoment,
-            FileType fileType, FileFormat format) throws IOException {
+            FileType fileType, FileFormat format,
+            Map<Object,Object> importOptions) throws IOException {
         assert(files.size() > 0);
         if (files.size() == 1) {
             name = files.get(0).getName();
@@ -389,13 +391,13 @@ public final class Suite {
             case TWOGEE:
                 TwoGeeLoader twoGeeLoader =
                         new TwoGeeLoader(file, protocol,
-                        sensorLengths.toVector(), usePolarMoment);
+                                sensorLengths.toVector(), usePolarMoment);
                 loader = twoGeeLoader;
                 break;
             case PUFFINPLOT_OLD:
                 TwoGeeLoader oldPuffinLoader =
                         new TwoGeeLoader(file, protocol,
-                        sensorLengths.toVector(), usePolarMoment);
+                                sensorLengths.toVector(), usePolarMoment);
                 loader = oldPuffinLoader;
                 if (files.size()==1) puffinFile = file;
                 break;
@@ -410,7 +412,7 @@ public final class Suite {
                 loader = new CaltechLoader(file);
                 break;
             case IAPD:
-                loader = new IapdLoader(file);
+                loader = new IapdLoader(file, importOptions);
                 break;
             case CUSTOM_TABULAR:
                 loader = new TabularFileLoader(file, format);

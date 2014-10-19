@@ -178,7 +178,6 @@ public final class PuffinApp {
         mainWindow.getMainMenuBar().updateRecentFiles();
         mainWindow.setVisible(true);
         logger.info("PuffinApp instantiation complete.");
-
     }
 
     private static class ExceptionHandler implements UncaughtExceptionHandler {
@@ -553,21 +552,36 @@ public final class PuffinApp {
             }
 
             FileFormat format = null;
-            if (fileType == FileType.CUSTOM_TABULAR) {
-                TabularImportWindow importWindow = new TabularImportWindow(this);
-                importWindow.setVisible(true);
-                format = importWindow.getFormat();
-                if (format == null) {
-                    return;
-                }
-                format.writeToPrefs(app.getPrefs().getPrefs());
+            Map<Object,Object> importOptions = new HashMap<>();
+            switch (fileType) {
+                case CUSTOM_TABULAR:
+                    final TabularImportWindow tabularDialog =
+                            new TabularImportWindow(this);
+                    tabularDialog.setVisible(true);
+                    format = tabularDialog.getFormat();
+                    if (format == null) {
+                        return;
+                    }
+                    format.writeToPrefs(app.getPrefs().getPrefs());
+                    break;
+                case IAPD:
+                    final IapdImportDialog iapdDialog =
+                            new IapdImportDialog(getMainWindow());
+                    if (!iapdDialog.wasOkPressed()) {
+                        return;
+                    }
+                    importOptions.put(TreatType.class,
+                            iapdDialog.getTreatType());
+                    importOptions.put(MeasType.class,
+                            iapdDialog.getMeasType());
+                    break;
             }
             
             final Suite suite = new Suite();
             suite.readFiles(files, prefs.getSensorLengths(),
                     prefs.get2gProtocol(),
                     !"X/Y/Z".equals(prefs.getPrefs().get("readTwoGeeMagFrom", "X/Y/Z")),
-                    fileType, format);
+                    fileType, format, importOptions);
             suite.doAllCalculations(getCorrection());
             List<String> warnings = suite.getLoadWarnings();
             if (warnings.size() > 0) {

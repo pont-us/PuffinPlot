@@ -27,10 +27,10 @@ public enum TreatType {
     /** static alternating-field treatment along three orthogonal axes */
     DEGAUSS_XYZ("3-axis degauss", "3-axis AF strength", "T"),
     /** static alternating-field treatment along one axis*/
-    DEGAUSS_Z("z-axis degauss", "Z-axis AF strength", "T"),
+    DEGAUSS_Z("Z-axis degauss", "Z-axis AF strength", "T"),
     /** anhysteretic remanent magnetization: alternating-field treatment with 
      a DC biasing field */
-    ARM("z-axis ARM", "AF strength", "T"), //AF usually more interesting than bias
+    ARM("Z-axis ARM", "AF strength", "T"), //AF usually more interesting than bias
     /** isothermal remanent magnetization: a pulsed non-alternating field */
     IRM("IRM", "IRM field", "T"),
     /** heating */
@@ -43,7 +43,7 @@ public enum TreatType {
     // The actual quantifiable `thing' applied (temperature or field)
     private final String treatment;
     // Unit name for the applied `thing'
-    private String unit;
+    private final String unit;
 
     private TreatType(String name, String treatment, String unit) {
         this.name = name;

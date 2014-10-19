@@ -24,11 +24,11 @@ import java.util.regex.Pattern;
  */
 public enum MeasType {
     /** measurement was on a discrete sample */
-    DISCRETE("discrete", "Sample"),
+    DISCRETE("Discrete", "discrete", "Sample"),
     /** measurement was on a continuous long core or u-channel */
-    CONTINUOUS("continuous", "Depth"),
+    CONTINUOUS("Continuous", "continuous", "Depth"),
     /** a measurement run was recorded, but no measurement was actually made */
-    NONE("^na$", "no measurement type"),
+    NONE("None", "^na$", "no measurement type"),
     /** this value has not yet been set */
     UNSET(),
     /** the measurement type data could not be interpreted */
@@ -36,14 +36,18 @@ public enum MeasType {
     
     private final String columnHeader;
     private final Pattern namePattern;
+    private final String niceName;
     
     private MeasType() {
+        niceName = null;
         namePattern = null;
         columnHeader = null;
     }
     
-    private MeasType(String name, String columnHeader) {
-        namePattern = Pattern.compile(name, Pattern.CASE_INSENSITIVE);
+    private MeasType(String niceName, String namePattern, String columnHeader) {
+        this.niceName = niceName;
+        this.namePattern = Pattern.compile(namePattern,
+                Pattern.CASE_INSENSITIVE);
         this.columnHeader = columnHeader;
     }
     
@@ -56,8 +60,11 @@ public enum MeasType {
      * @return the corresponding measurement type
      */
     public static MeasType fromString(String string) {
-        for (MeasType mt: MeasType.values())
-            if (mt.matches(string)) return mt;
+        for (MeasType mt : MeasType.values()) {
+            if (mt.matches(string)) {
+                return mt;
+            }
+        }
         return UNKNOWN;
     }
 
@@ -90,6 +97,13 @@ public enum MeasType {
      * @return {@code true} if this field is {@code CONTINUOUS} */
     public boolean isContinuous() {
         return this == CONTINUOUS;
+    }
+
+    /**
+     * @return a name suitable for display to a user
+     */
+    public String getNiceName() {
+        return niceName;
     }
 
 }
