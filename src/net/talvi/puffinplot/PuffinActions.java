@@ -368,7 +368,8 @@ public class PuffinActions {
             if (suite == null) {
                 app.errorDialog("Calculate suite means", "No suite loaded.");
             } else {
-                suite.calculateSuiteMeans();
+                suite.calculateSuiteMeans(app.getSelectedSamples(),
+                        app.getSelectedSites());
                 app.getSuiteEqAreaWindow().getPlot().setGroupedBySite(false);
                 //app.getFisherWindow().setVisible(true);
             }

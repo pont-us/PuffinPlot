@@ -21,10 +21,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.PuffinUserException;
 import net.talvi.puffinplot.data.file.*;
 
@@ -59,6 +61,13 @@ public final class Suite {
     private List<KentParams> amsBootstrapParams = null;
     private List<KentParams> hextParams = null;
     private boolean saved = true;
+    private Date creationDate;
+    private FileType originalFileType;
+    private static final DateFormat iso8601format =
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+    private Date modificationDate;
+    private final String suiteCreator;
+    private String fileCreator;
 
     /** Get the list of warnings produced when data was being loaded from
      * one or more files.
@@ -74,16 +83,28 @@ public final class Suite {
             indicesBySample.put(samples.get(i), i);
         }
     }
-    
-    private static SuiteCalcs calculateSuiteMeans(List<Sample> selSamps,
+
+    /** Calculates Fisher statistics on all the calculated PCA 
+     * directions for samples within the suite. The Fisher parameters
+     * are stored in the suite and can be retrieved with
+     * {@link #getSuiteMeans()}.
+     * @param selSamples samples for which to calculate means
+     * @param selSites sites for which to calculate means
+     */
+    public void calculateSuiteMeans(List<Sample> selSamples,
             List<Site> selSites) {
-        List<Vec3> sampleDirs = new ArrayList<>(selSamps.size());
-        for (Sample sample: selSamps) {
+        suiteCalcs = doCalculateSuiteMeans(selSamples, selSites);
+    }
+    
+    private static SuiteCalcs doCalculateSuiteMeans(List<Sample> selSamples,
+            List<Site> selSites) {
+        final List<Vec3> sampleDirs = new ArrayList<>(selSamples.size());
+        for (Sample sample: selSamples) {
             if (sample.getDirection() != null) {
                 sampleDirs.add(sample.getDirection());
             }
         }
-        List<Vec3> siteDirs = new ArrayList<>(selSamps.size());
+        final List<Vec3> siteDirs = new ArrayList<>(selSamples.size());
         for (Site site: selSites) {
             FisherParams fp = site.getFisherParams();
             if (fp != null) {
@@ -95,17 +116,6 @@ public final class Suite {
                 SuiteCalcs.Means.calculate(sampleDirs));
     }
     
-    /** Calculates Fisher statistics on all the calculated PCA 
-     * directions for samples within the suite. The Fisher parameters
-     * are stored in the suite and can be retrieved with
-     * {@link #getSuiteMeans()}. */
-    public void calculateSuiteMeans() {
-        setSaved(false);
-        final List<Sample> selSamps = PuffinApp.getInstance().getSelectedSamples();
-        final List<Site> selSites = PuffinApp.getInstance().getSelectedSites();
-        suiteCalcs = calculateSuiteMeans(selSamps, selSites);
-    }
-
     /** Calculates and returns Fisher statistics on all the calculated PCA 
      * directions for samples within supplied suite. The Fisher parameters
      * are stored in the suite and can be retrieved with
@@ -120,7 +130,7 @@ public final class Suite {
             selSamps.addAll(suite.getSamples());
             selSites.addAll(suite.getSites());
         }
-        return calculateSuiteMeans(selSamps, selSites);
+        return doCalculateSuiteMeans(selSamps, selSites);
     }
     
     /** Performs a reversal test on a list of suites. 
@@ -193,7 +203,8 @@ public final class Suite {
      * @param file the file to which to save the suite's data
      * @throws PuffinUserException if an error occurred while saving data
      */
-    public void saveAs(File file) throws PuffinUserException {
+    public void saveAs(File file)
+            throws PuffinUserException {
         List<String> fields = DatumField.getRealFieldHeadings();
 
         FileWriter fileWriter = null;
@@ -226,6 +237,9 @@ public final class Suite {
                             site.getName(), line);
                     fileWriter.write(w);
                 }
+            }
+            if (!saved) {
+                modificationDate = new Date();
             }
             for (String line: toStrings()) {
                 fileWriter.write(String.format(Locale.ENGLISH, "SUITE\t%s\n",
@@ -334,11 +348,37 @@ public final class Suite {
 
     /**
      * Creates a new, empty suite.
+     * @param creator a string identifying the program and version creating the suite
      */
-    public Suite() {
+    public Suite(String creator) {
+        this.suiteCreator = creator;
+        this.fileCreator = creator;
         this.name = "[Empty suite]";
+        creationDate = new Date();
+        modificationDate = new Date();
+        // If we subsequently read a PuffinPlot file, file creator and 
+        // creation date will be overwritten by the stored values.
     }
     
+    /**
+     * Convenience method for reading PuffinPlot files.
+     * 
+     * This method is a wrapper for the fully specified method
+     * #ReadFiles(List<File>, SensorLengths, TwoGeeLoader.Protocol, boolean,
+     * FileType, FileFormat, Map<Object,Object>) which provides
+     * defaults for all the arguments except for the list of
+     * file names. The filetype is set to PUFFINPLOT_NEW.
+     * 
+     * @param files
+     * @throws IOException
+     */
+    public void readFiles(List<File> files) throws IOException {
+        readFiles(files, SensorLengths.fromPresetName("1:1:1"),
+                TwoGeeLoader.Protocol.NORMAL, false,
+                FileType.PUFFINPLOT_NEW, null,
+                Collections.EMPTY_MAP);
+    }
+
     /**
      * <p>Reads data into this suite from the specified files.</p>
      * 
@@ -373,6 +413,9 @@ public final class Suite {
         data = dataArray;
         List<String> puffinLines = Collections.emptyList();
         boolean sensorLengthWarning = false;
+        // If fileType is PUFFINPLOT_NEW, originalFileType can
+        // be overrwritten by value specified in file.
+        originalFileType = fileType;
         
         for (File file: files) {
             if (!file.exists()) {
@@ -742,6 +785,11 @@ public final class Suite {
         if (customNoteNames.size()>0) {
             result.add("CUSTOM_NOTE_NAMES\t"+customNoteNames.exportAsString());
         }
+        result.add("CREATION_DATE\t" + iso8601format.format(creationDate));
+        result.add("MODIFICATION_DATE\t" + iso8601format.format(modificationDate));
+        result.add("ORIGINAL_FILE_TYPE\t" + originalFileType.name());
+        result.add("ORIGINAL_CREATOR_PROGRAM\t" + fileCreator);
+        result.add("SAVED_BY_PROGRAM\t" + suiteCreator);
         return result;
     }
 
@@ -760,6 +808,34 @@ public final class Suite {
                 break;
             case "CUSTOM_NOTE_NAMES":
                 customNoteNames = new CustomNoteNames(Arrays.asList(parts).subList(1, parts.length));
+                break;
+            case "CREATION_DATE":
+            {
+                try {
+                    creationDate = iso8601format.parse(parts[1]);
+                } catch (ParseException ex) {
+                    logger.log(Level.SEVERE, null, ex);
+                }
+            }
+            break;
+            case "MODIFICATION_DATE":
+            {
+                try {
+                    modificationDate = iso8601format.parse(parts[1]);
+                } catch (ParseException ex) {
+                    logger.log(Level.SEVERE, null, ex);
+                }
+            }
+            break;
+            case "ORIGINAL_FILE_TYPE":
+                originalFileType = FileType.valueOf(parts[1]);
+                break;
+            case "ORIGINAL_CREATOR_PROGRAM":
+                fileCreator = parts[1];
+            case "SAVED_BY_PROGRAM":
+                // There's no need to actually store the value of this field --
+                // it will be overwritten in any case if the file is saved.
+                logger.log(Level.INFO, "File saved by: {0}", parts[1]);
                 break;
         }
     }
@@ -1053,6 +1129,15 @@ public final class Suite {
      */
     public void setSaved(boolean saved) {
         this.saved = saved;
+    }
+
+    /**
+     * Get a string identifying the program and version which created this suite.
+     * 
+     * @return the creator
+     */
+    public String getCreator() {
+        return suiteCreator;
     }
 
     private class CustomFlagNames extends CustomFields<String> {

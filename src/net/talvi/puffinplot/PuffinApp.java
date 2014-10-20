@@ -577,7 +577,7 @@ public final class PuffinApp {
                     break;
             }
             
-            final Suite suite = new Suite();
+            final Suite suite = new Suite("PuffinPlot " + version.versionString);
             suite.readFiles(files, prefs.getSensorLengths(),
                     prefs.get2gProtocol(),
                     !"X/Y/Z".equals(prefs.getPrefs().get("readTwoGeeMagFrom", "X/Y/Z")),
@@ -1297,7 +1297,7 @@ public final class PuffinApp {
         if (files==null || files.isEmpty()) {
             return;
         }
-        final Suite suite = new Suite();
+        final Suite suite = new Suite("PuffinPlot " + version.versionString);
         try {
             suite.readDirectionalData(files);
         } catch (IOException ex) {

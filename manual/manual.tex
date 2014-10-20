@@ -1739,15 +1739,14 @@ also freely available.
   \lstset{language=Python}
 \begin{lstlisting}
 ### Import the required libraries.
-from net.talvi.puffinplot import PuffinApp
 from net.talvi.puffinplot.data import Suite
 from net.talvi.puffinplot.data import Correction
 from java.io import File
 
-### Start PuffinPlot and open a data file.
-puffin_app = PuffinApp()         # Create the PuffinPlot application
+### Create a Suite and read a data file into it.
 input_file = File("example.ppl") # Specify an input file
-suite = Suite([input_file])      # Read the data into a Suite object
+suite = Suite("Example script")  # create a new Suite
+suite.readFiles([input_file])    # Read the data into a Suite object
 samples = suite.getSamples()     # Get a list of the Samples in the Suite
 
 ### Calculate and display the mean NRM.
@@ -1755,9 +1754,9 @@ total_nrm = sum([sample.getNrm() for sample in samples])
 print total_nrm / suite.getNumSamples()
 
 ### Perform a PCA calculation for each sample.
-for sample in samples:          # do this for each sample:
-    sample.selectAll()          # select all points in the sample
-    sample.useSelectionForPca() # and mark them for use in PCA
+for sample in samples:           # do this for each sample:
+    sample.selectAll()           # select all points in the sample
+    sample.useSelectionForPca( ) # and mark them for use in PCA
 suite.doSampleCalculations(Correction.NONE)    # perform PCA for each sample
 
 ### Save the results of the PCA calculation.
