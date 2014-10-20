@@ -67,8 +67,7 @@ public final class GreatCircles implements FisherParams {
         if (endpoints == null) endpoints = Collections.emptyList();
         this.endpoints = endpoints;
         if (circles == null) circles = Collections.emptyList();
-        circles = Collections.
-                unmodifiableList(new ArrayList<GreatCircle>(circles));
+        circles = Collections.unmodifiableList(new ArrayList<>(circles));
         this.circles = circles;
         assert(endpoints.size() > 0 || circles.size() > 1);
         int minPointsTmp = getCircles().isEmpty() ? 0 : Integer.MAX_VALUE;
@@ -86,7 +85,7 @@ public final class GreatCircles implements FisherParams {
             // can't use SingletonList since it's immutable,
             // and we want to remove this guess after the first 
             // iteration
-            D = new ArrayList<Vec3>(1);
+            D = new ArrayList<>(1);
             // We need to provide a starting point for the iteration.
             // Let's use the resultant direction of the last moments
             // in the great circle paths.
@@ -94,7 +93,7 @@ public final class GreatCircles implements FisherParams {
             for (GreatCircle c: circles) guess = guess.plus(c.lastPoint().minus(c.getPoints().get(0)));
             D.add(guess.normalize()); // todo: better guess
         }
-        List<Vec3> G = new ArrayList<Vec3>(circles.size());
+        List<Vec3> G = new ArrayList<>(circles.size());
         G.addAll(Collections.nCopies(circles.size(), Vec3.ORIGIN));
         boolean converged = false;
         int iter;

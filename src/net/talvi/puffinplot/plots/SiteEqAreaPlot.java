@@ -28,7 +28,6 @@ import java.util.prefs.Preferences;
 import net.talvi.puffinplot.data.FisherValues;
 import net.talvi.puffinplot.data.GreatCircle;
 import net.talvi.puffinplot.data.GreatCircles;
-import net.talvi.puffinplot.data.PcaValues;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Site;
 import net.talvi.puffinplot.data.Vec3;
@@ -103,17 +102,24 @@ public class SiteEqAreaPlot extends EqAreaPlot {
         return "Site";
     }
 
+    private Color getHighlightColour() {
+        return (prefs != null &&
+                prefs.getBoolean("plots.highlightCurrentSample", false)) ?
+                Color.RED : Color.BLACK;
+    }
+    
     private void drawGreatCircles(Site site) {
         final GreatCircles circles = site.getGreatCircles();
         if (circles == null) return;
         final Vec3 meanDir = circles.getMeanDirection();
         assert(meanDir.isWellFormed());
         double maxRadius = 0;
-        Vec3 prevPole = null;
+        final GreatCircle currentGc =
+                params.getSample().getGreatCircle();
         for (GreatCircle circle: circles.getCircles()) {
             final Vec3 pole = circle.getPole();
             assert(pole.isWellFormed());
-            g.setColor(Color.BLACK);
+            g.setColor(circle == currentGc ? getHighlightColour() : Color.BLACK);
             final Vec3 segmentStart = pole.nearestOnCircle(circle.getPoints().get(0));
             final Vec3 segmentEnd = pole.nearestOnCircle(meanDir);
             drawGreatCircleSegment(segmentStart,
@@ -135,8 +141,7 @@ public class SiteEqAreaPlot extends EqAreaPlot {
             gcCache.get(circle).draw(g);
             ShapePoint.build(this, project(pole)).filled(pole.z>0).
                     triangle().build().draw(g);
-            // if (prevPole != null) drawGreatCircleSegment(prevPole, pole);
-            prevPole = pole;
+            g.setColor(Color.BLACK);
         }
         
         final PlotPoint meanPoint = ShapePoint.build(this, project(meanDir)).
@@ -175,6 +180,7 @@ public class SiteEqAreaPlot extends EqAreaPlot {
         if (samples==null || samples.isEmpty()) {
             return;
         }
+        
         final List<Vec3> sampleDirs = new ArrayList<>(samples.size());
         for (Sample sample: samples) {
             if (sample.getDirection() != null) {
@@ -183,7 +189,10 @@ public class SiteEqAreaPlot extends EqAreaPlot {
                 final PlotPoint point =
                         ShapePoint.build(this, project(v)).
                         diamond().filled(v.z>0).build();
+                g.setColor(sample == params.getSample() ?
+                        getHighlightColour() : Color.BLACK);
                 point.draw(g);
+                g.setColor(Color.BLACK);
                 writeSampleLabel(sample, point);
             }
         }
@@ -203,9 +212,12 @@ public class SiteEqAreaPlot extends EqAreaPlot {
         final PlotPoint meanPoint =
                 ShapePoint.build(this, project(meanDir)).
                 circle().scale(1.5).filled(meanDir.z>0).build();
+        g.setColor(Color.BLACK);
         meanPoint.draw(g);
-        if (sampleDirs.size() > 1) {
+        if (fisherMean.getNDirs() > 1) {
             if (fisherMean != fisherCache) {
+                assert(!(Double.isNaN(fisherMean.getA95()) ||
+                         Double.isInfinite(fisherMean.getA95())));
                 final List<Vec3> smallCircle = meanDir.makeSmallCircle(fisherMean.getA95());
                 final List<List<Vec3>> segments =  Vec3.interpolateEquatorPoints(smallCircle);
                 fisherLineCache = new LineCache(getStroke(), getDashedStroke());

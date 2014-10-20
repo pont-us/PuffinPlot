@@ -68,7 +68,7 @@ public class PrefsWindow extends JFrame {
         super("Preferences");
         final Insets insets = new Insets(4,4,4,4);
         final int BOTH = GridBagConstraints.BOTH;
-        setPreferredSize(new Dimension(500, 500));
+        setPreferredSize(new Dimension(500, 560));
         setLayout(new GridBagLayout());
         JTabbedPane tp = new JTabbedPane();
         add(tp, new GridBagConstraints(0, 0, 4, 1, 0.99, 0.99,
@@ -176,6 +176,9 @@ public class PrefsWindow extends JFrame {
                 false)));
         miscPanel.add(makeAlignedCheckBox(new PrefsCheckBox(
                 "Label points in suite plots", "plots.labelPointsInSuitePlots",
+                false)));
+        miscPanel.add(makeAlignedCheckBox(new PrefsCheckBox(
+                "Highlight current sample/site", "plots.highlightCurrentSample",
                 false)));
         miscPanel.add(makeAlignedCheckBox(new MagDevCheckBox()));
         miscPanel.add(makeLabelledPrefTextField("Demag. y-axis label",

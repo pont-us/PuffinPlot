@@ -159,8 +159,9 @@ public final class MainMenuBar extends JMenuBar {
                 pa.multiSuiteMeans,
                 makeMenu("AMS", KeyEvent.VK_A,
                         pa.bootAmsNaive, pa.bootAmsParam, pa.hextAms,
-                        pa.clearAmsCalcs),
-                pa.calculateRpi));
+                        pa.clearAmsCalcs)
+                //, pa.calculateRpi
+        ));
         add(makeMenu("Window", KeyEvent.VK_W,
                 new WindowMenuItem("Data table", KeyEvent.VK_D) {
                     private static final long serialVersionUID = 1L;

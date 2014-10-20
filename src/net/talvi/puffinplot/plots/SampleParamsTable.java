@@ -48,6 +48,7 @@ public class SampleParamsTable extends Plot {
     private final int ySpacing = (int) (120 * getUnitSize());
     private final List<String> headers = 
             Arrays.asList(new String[] {"Sample", "type", "dec.", "inc."});
+    private final Preferences prefs;
     
     /** Creates a sample parameter table with the supplied parameters.
      * 
@@ -58,6 +59,7 @@ public class SampleParamsTable extends Plot {
     public SampleParamsTable(GraphDisplay parent, PlotParams params,
             Preferences prefs) {
         super(parent, params, prefs);
+        this.prefs = prefs;
     }
     
     @Override
@@ -82,8 +84,12 @@ public class SampleParamsTable extends Plot {
         final Site site = selectedSample.getSite();
         if (site==null) return;
         
-        points.add(new TextLinePoint(this, g, 10, null, null, headers, xSpacing));
+        points.add(new TextLinePoint(this, g, 10, null, null, headers, xSpacing, Color.BLACK));
 
+        final Color highlightColour = (prefs != null &&
+                prefs.getBoolean("plots.highlightCurrentSample", false)) ?
+                Color.RED : Color.BLACK;
+        
         float yPos = 2 * ySpacing;
         for (Sample sample: site.getSamples()) {
             if (yPos > getDimensions().getHeight()) break;
@@ -112,7 +118,9 @@ public class SampleParamsTable extends Plot {
                 values.set(3, fmt(vector.getIncDeg()));
             }
             
-            points.add(new TextLinePoint(this, g, yPos, null, sample, values, xSpacing));
+            points.add(new TextLinePoint(this, g, yPos, null, sample, values,
+                    xSpacing, sample == params.getSample() ?
+                    highlightColour : Color.BLACK));
             yPos += ySpacing;
         }
         g.setColor(Color.BLACK);

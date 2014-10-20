@@ -16,6 +16,7 @@
  */
 package net.talvi.puffinplot.plots;
 
+import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
@@ -43,15 +44,18 @@ class TextLinePoint implements PlotPoint {
     private Rectangle2D bbox;
     private final List<AttributedCharacterIterator> strings;
     private final double xMin;
+    private final Color colour;
 
     public TextLinePoint(Plot plot, Graphics2D g, double yOffset, Datum d,
-            Sample sample, List<String> values, List<Double> xSpacing) {
+            Sample sample, List<String> values, List<Double> xSpacing,
+            Color colour) {
         this.plot = plot;
         this.datum = d;
         this.sample = sample;
         this.yPos = yOffset + plot.getDimensions().getMinY();
         this.xSpacing = xSpacing;
         this.strings = new ArrayList<>(values.size());
+        this.colour = colour;
         double xPos = 10;
         xMin = plot.getDimensions().getMinX();
         final FontMetrics metrics = g.getFontMetrics();
@@ -77,6 +81,7 @@ class TextLinePoint implements PlotPoint {
 
     @Override
     public void draw(Graphics2D g) {
+        g.setColor(colour);
         if (datum != null) {
             if (datum.isSelected()) {
                 plot.writeString(g, "*", (float) xMin, (float) yPos);

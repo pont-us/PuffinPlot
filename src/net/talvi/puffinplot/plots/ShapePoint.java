@@ -210,8 +210,10 @@ class ShapePoint implements PlotPoint {
     @Override
     public void draw(Graphics2D g) {
         g.setStroke(plot.getStroke());
-        g.setColor(getDatum() != null && getDatum().isSelected() ?
-                Color.RED : Color.BLACK);
+        if (datum != null) {
+            g.setColor(getDatum().isSelected() ? Color.RED : Color.BLACK);
+        }
+
         g.draw(shape);
         if (special) {
             g.draw(highlight);

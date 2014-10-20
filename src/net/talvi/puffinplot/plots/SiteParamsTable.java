@@ -46,6 +46,7 @@ public class SiteParamsTable extends Plot {
     private final List<String> headers = 
             Arrays.asList(new String[] {"Site", "n", "PCA", "GC", "dec.",
                 "inc.", "type"});
+    private final Preferences prefs;
     
     /** Creates a sample parameter table with the supplied parameters.
      * 
@@ -56,6 +57,7 @@ public class SiteParamsTable extends Plot {
     public SiteParamsTable(GraphDisplay parent, PlotParams params,
             Preferences prefs) {
         super(parent, params, prefs);
+        this.prefs = prefs;
     }
     
     @Override
@@ -81,10 +83,12 @@ public class SiteParamsTable extends Plot {
         if (suite==null) return;
         List<Site> sites = suite.getSites();
         
-        points.add(new TextLinePoint(this, g, 10, null, null, headers, xSpacing));
+        points.add(new TextLinePoint(this, g, 10, null, null, headers, xSpacing, Color.BLACK));
 
+        final Color highlightColour = (prefs != null &&
+                prefs.getBoolean("plots.highlightCurrentSample", false)) ?
+                Color.RED : Color.BLACK;
         final int columns = headers.size();
-        int sequence = 1;
         float yPos = 2 * ySpacing;
         for (Site site: sites) {
             if (yPos > getDimensions().getHeight()) break;
@@ -114,9 +118,9 @@ public class SiteParamsTable extends Plot {
             List<Sample> siteSamples = site.getSamples();
             if (!siteSamples.isEmpty()) firstSample = siteSamples.get(0);
             points.add(new TextLinePoint(this, g, yPos, null, firstSample,
-                    values, xSpacing));
+                    values, xSpacing, site == params.getSample().getSite()?
+                    highlightColour : Color.BLACK));
             yPos += ySpacing;
-            sequence++;
         }
         g.setColor(Color.BLACK);
         drawPoints(g);

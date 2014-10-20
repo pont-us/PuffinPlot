@@ -53,6 +53,11 @@ public class FisherValues implements FisherParams {
      * Fisher (1953) method, for a collection of vectors. The vectors
      * do not need to be normalized; since Fisherian statistics are
      * purely directional, their magnitudes will not influence the result.
+     * Passing an empty collection of vectors will return a null
+     * FisherValues object. Passing a singleton collection will return
+     * a FisherValues object with the direction of the single vector
+     * as the mean, but the a95 and k values are entirely undefined; they may
+     * be NaN or infinity.
      * 
      * @param vectors the points on which to calculate statistics
      * @return the Fisherian statistics for the supplied vectors

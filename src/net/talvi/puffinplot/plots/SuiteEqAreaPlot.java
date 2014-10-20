@@ -16,6 +16,7 @@
  */
 package net.talvi.puffinplot.plots;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.util.List;
@@ -97,6 +98,10 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
         clearPoints();
         drawAxes();
         final Sample selectedSample = params.getSample();
+        final Color highlightColour = (prefs != null &&
+                prefs.getBoolean("plots.highlightCurrentSample", false)) ?
+                Color.RED : Color.BLACK;
+        
         if (selectedSample==null) return;
         final Suite suite = selectedSample.getSuite();
         if (suite==null) return;
@@ -108,8 +113,11 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
                 if (dir != null) {
                     final PlotPoint p = ShapePoint.build(this, project(dir)).
                             filled(dir.z>0).build();
-                    writePointLabel(sample.getNameOrDepth(), p);
+                    g.setColor(sample == selectedSample ?
+                            highlightColour : Color.BLACK);
                     p.draw(g);
+                    g.setColor(Color.BLACK);
+                    writePointLabel(sample.getNameOrDepth(), p);
                 }
             }
             if (suiteCalcs != null) {
@@ -121,8 +129,11 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
                 if (siteMean != null) {
                     final Vec3 dir = siteMean.getMeanDirection();
                     PlotPoint p = ShapePoint.build(this, project(dir)).filled(dir.z>0).build();
-                    writePointLabel(site.getName(), p);
+                    g.setColor(site == selectedSample.getSite() ?
+                            highlightColour : Color.BLACK);
                     p.draw(g);
+                    g.setColor(Color.BLACK);
+                    writePointLabel(site.getName(), p);
                 }
             }
             if (suiteCalcs != null) {

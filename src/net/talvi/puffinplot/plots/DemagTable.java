@@ -86,7 +86,7 @@ public class DemagTable extends Plot {
         final List<String> headers2 = new ArrayList<>(headers);
         if (sample.getDatum(0).getTreatType() == TreatType.THERMAL)
             headers2.set(0, "temp.");
-        points.add(new TextLinePoint(this, g, 10, null, null, headers2, xSpacing));
+        points.add(new TextLinePoint(this, g, 10, null, null, headers2, xSpacing, Color.BLACK));
         final boolean useSequence = (Datum.maxTreatmentLevel(data) == 0);
         int sequence = 1;
         float yPos = 2 * ySpacing;
@@ -104,7 +104,7 @@ public class DemagTable extends Plot {
             values.add(format(Locale.ENGLISH, "%.2e", p.mag()));
             values.add(Double.isNaN(d.getMagSus()) ? "-" :
                        format(Locale.ENGLISH, "%.1e", d.getMagSus()));
-            points.add(new TextLinePoint(this, g, yPos, d, null, values, xSpacing));
+            points.add(new TextLinePoint(this, g, yPos, d, null, values, xSpacing, Color.BLACK));
             yPos += ySpacing;
             sequence++;
         }

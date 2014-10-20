@@ -52,7 +52,7 @@ public final class GreatCircle {
      */
     public GreatCircle(List<Vec3> vectors) {
         final List<Vec3> pointsUnscaled = vectors;
-        points = new ArrayList<Vec3>(vectors.size());
+        points = new ArrayList<>(vectors.size());
         for (Vec3 p: pointsUnscaled) {
             this.points.add(p.normalize());
         }
