@@ -72,7 +72,7 @@ public final class MainWindow extends JFrame {
         addWindowListener(new WindowAdapter() {
             @Override public void windowClosing(WindowEvent e) {app.quit();}});
         setTitle("PuffinPlot");
-        setPreferredSize(new Dimension(800,400));
+        setPreferredSize(new Dimension(1000,700));
         menuBar = new MainMenuBar();
         setJMenuBar(menuBar);
         
