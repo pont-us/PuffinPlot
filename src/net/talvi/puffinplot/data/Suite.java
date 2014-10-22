@@ -364,8 +364,8 @@ public final class Suite {
      * Convenience method for reading PuffinPlot files.
      * 
      * This method is a wrapper for the fully specified method
-     * #ReadFiles(List<File>, SensorLengths, TwoGeeLoader.Protocol, boolean,
-     * FileType, FileFormat, Map<Object,Object>) which provides
+     * {@code ReadFiles(List<File>, SensorLengths, TwoGeeLoader.Protocol, boolean,
+     * FileType, FileFormat, Map<Object,Object>)} which provides
      * defaults for all the arguments except for the list of
      * file names. The filetype is set to PUFFINPLOT_NEW.
      * 
@@ -1140,6 +1140,114 @@ public final class Suite {
         return suiteCreator;
     }
 
+    private static class TreatAndStep {
+        private final TreatType treatType;
+        private final Double treatStep;
+        
+        public TreatAndStep(Datum datum) {
+            this.treatType = datum.getTreatType();
+            this.treatStep = datum.getTreatmentStep();
+        }
+        
+        @Override
+        public int hashCode() {
+            return treatType.hashCode() ^ treatStep.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final TreatAndStep other = (TreatAndStep) obj;
+            if (this.treatType != other.treatType) {
+                return false;
+            }
+            if (!Objects.equals(this.treatStep, other.treatStep)) {
+                return false;
+            }
+            return true;
+        }
+    }
+            
+    /**
+     * Sets the magnetization vector of {@code datum} to the mean of the
+     * magnetization vectors of {@code data}.
+     *
+     * @param datum recipient of the mean magnetization vector
+     * @param data data from which to calculate the mean magnetization vector
+     */
+    private static void setVectorToMean(Datum datum, List<Datum> data) {
+        final Collection<Vec3> vectors = new ArrayList<>(data.size());
+        for (Datum d : data) {
+            vectors.add(d.getMoment());
+        }
+        datum.setMoment(Vec3.meanDirection(vectors));
+    }
+        
+    /**
+    This (currently untested) function should merge duplicate measurements
+    within the Sample, but the Suite also has references to the Datum
+    instances which need to be updated. The idea is that this sample
+    is called for each sample that needs merging, and the union of the
+    returned collections is then passed to a function in Suite which
+    will remove the listed Datum objects from its data list. (I don't
+    think Suite keeps any caches which need to be updated, but I should
+    check this when implementing.) This method should be kept
+    package-private, or moved to Suite and kept fully private -- if
+    it's called without corresponding updates to Suite.data, the data
+    structures end up in an inconsistent state and strange results will
+    probably ensure.
+     */
+    private Collection mergeDuplicateMeasurementsInSample(Sample sample) {
+        Map<TreatAndStep, List<Datum>> treatMap = new HashMap<>();
+        for (Datum d : sample.getData()) {
+            final TreatAndStep key = new TreatAndStep(d);
+            if (!treatMap.containsKey(key)) {
+                treatMap.put(key, new ArrayList<Datum>());
+            }
+            treatMap.get(key).add(d);
+        }
+        // First check if any merging needs to be done at all, to avoid
+        // needlessly creating a new object.
+        boolean anyMergables = false;
+        for (List<Datum> ds : treatMap.values()) {
+            if (ds.size() > 1) {
+                anyMergables = true;
+                break;
+            }
+        }
+        if (!anyMergables) {
+            return Collections.EMPTY_LIST;
+        }
+        Collection<Datum> toRemove = new HashSet<>(treatMap.size());
+        for (Datum d : sample.getData()) {
+            List<Datum> duplicates = treatMap.get(new TreatAndStep(d));
+            if (duplicates.get(0) == d) {
+                setVectorToMean(d, duplicates);
+            } else {
+                toRemove.add(d);
+            }
+        }
+        sample.getData().removeAll(toRemove);
+        // TODO implement a Sample method for this -- getData() returns an unmodifiable list
+        return toRemove;
+    }
+    
+    /*
+    WARNING: completely untested!
+    */
+    public void mergeDuplicateMeasurements(Collection<Sample> samples) {
+        final Set<Datum> toRemove = new HashSet<>();
+        for (Sample sample: samples) {
+            toRemove.addAll(mergeDuplicateMeasurementsInSample(sample));
+        }
+        data.removeAll(toRemove);
+    }
+    
     private class CustomFlagNames extends CustomFields<String> {
         public CustomFlagNames(List<String> list) {
             super(list);
@@ -1426,4 +1534,5 @@ public final class Suite {
             d.setMagSus(d.getMagSus() * factor);
         }
     }
+    
 }
