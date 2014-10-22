@@ -1,7 +1,6 @@
 package net.talvi.puffinplot.data;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

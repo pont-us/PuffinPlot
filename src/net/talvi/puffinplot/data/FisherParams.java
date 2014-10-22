@@ -34,7 +34,9 @@ public interface FisherParams {
      * @return the mean direction */
     Vec3 getMeanDirection();
 
-    /** Returns the alpha-95 value denoting the 95% confidence interval.  
+    /** Returns the alpha-95 value denoting the 95% confidence interval. 
+     * The returned value is in degrees.
+     * 
      * @return the alpha-95 value denoting the 95% confidence interval
      */
     double getA95();
