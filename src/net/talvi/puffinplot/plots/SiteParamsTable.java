@@ -41,11 +41,11 @@ public class SiteParamsTable extends Plot {
     private final double us = getUnitSize();
     private final List<Double> xSpacing =
             Arrays.asList(500*us, 250*us, 270*us, 250*us, 400*us, 400*us,
-            400*us);
+            400*us, 400*us);
     private final int ySpacing = (int) (120 * getUnitSize());
     private final List<String> headers = 
             Arrays.asList(new String[] {"Site", "n", "PCA", "GC", "dec.",
-                "inc.", "type"});
+                "inc.", "a95", "type"});
     private final Preferences prefs;
     
     /** Creates a sample parameter table with the supplied parameters.
@@ -81,7 +81,7 @@ public class SiteParamsTable extends Plot {
         if (sample==null) return;
         final Suite suite = sample.getSuite();
         if (suite==null) return;
-        List<Site> sites = suite.getSites();
+        final List<Site> sites = suite.getSites();
         
         points.add(new TextLinePoint(this, g, 10, null, null, headers, xSpacing, Color.BLACK));
 
@@ -103,7 +103,8 @@ public class SiteParamsTable extends Plot {
                 final Vec3 direction = fvs.getMeanDirection();
                 values.set(4, fmt("%.1f", direction.getDecDeg()));
                 values.set(5, fmt("%.1f", direction.getIncDeg()));
-                values.set(6, "Fisher");
+                values.set(6, fmt("%.1f", fvs.getA95()));
+                values.set(7, "Fshr");
             } else if (site.getGreatCircles() != null) {
                 final GreatCircles gcs = site.getGreatCircles();
                 values.set(2, fmt("%d", gcs.getM()));
@@ -111,7 +112,8 @@ public class SiteParamsTable extends Plot {
                 final Vec3 direction = gcs.getMeanDirection();
                 values.set(4, fmt("%.1f", direction.getDecDeg()));
                 values.set(5, fmt("%.1f", direction.getIncDeg()));
-                values.set(6, "GC " + (gcs.isValid() ? "(v)" : "(i)"));
+                values.set(6, fmt("%.1f", gcs.getA95()));
+                values.set(7, "GC:" + (gcs.isValid() ? "v" : "i"));
             }
             
             Sample firstSample = null;

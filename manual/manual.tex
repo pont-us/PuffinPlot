@@ -1210,10 +1210,11 @@ listed below include textual elements such as legends and tables.
   \item[GC] the number of great circles fitted for samples at the site
   \item[dec.] the declination of the site mean direction
   \item[inc.] the inclination of the site mean direction
-  \item[type] the type of analysis used: `Fisher' for \cite{fisher1953sphere}
+  \item[a95] the \alnifi{} value of the site mean direction
+  \item[type] the type of analysis used: `Fshr' for \cite{fisher1953sphere}
     analysis on \caps{pca} directions; `GC' for great-circle analysis
-    \citep{mcfadden1988circles}. `GC' is suffixed with either `(v)' for valid
-    or `(i)' for invalid. See section~\ref{sec:prefs-misc} for details on the
+    \citep{mcfadden1988circles}. `GC' is suffixed with either `v' for valid
+    or `i' for invalid. See section~\ref{sec:prefs-misc} for details on the
     validity test and how it may be customized.
   \end{description}
 
@@ -1372,7 +1373,7 @@ produced by the \caps{2g} `Long Core' software.
 \noindent\textbf{Warning: incorrectly set sensor lengths can produce erroneous data!}
 The sensor lengths are not written to the 2G file, so they \textit{must}
 be correctly set in PuffinPlot's preferences before importing 2G long
-core data from the X/Y/Z vector components. (when importing discrete
+core data from the X/Y/Z vector components. (When importing discrete
 data, or reading from the polar fields in the 2G file, sensor lengths
 are not required.) If the sensor lengths are not known, use the
 `Dec/Inc/Intensity' setting in the 2G import tab. Failing to correct for
