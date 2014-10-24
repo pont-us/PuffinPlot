@@ -22,8 +22,10 @@ import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.tan;
-import static java.lang.Math.toDegrees;
-import static java.lang.Math.toRadians;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * A class representing a virtual geomagnetic pole.
@@ -37,22 +39,22 @@ public class VGP {
 
     private final double dp;
     private final double dm;
-    private final double longitude;
-    private final double latitude;
+    private final Location location;
     
-    private VGP(double longitude, double latitude, double dp, double dm) {
-        this.longitude = toDegrees(longitude);
-        this.latitude = toDegrees(latitude);
+    private static final List<String> HEADERS =
+        Arrays.asList("VGP lat (°)", "VGP long (°)", "VGP dp (°)", "VGP dm (°)");
+    
+    private VGP(Location location, double dp, double dm) {
+        this.location = location;
         this.dp = dp;
         this.dm = dm;
     }
     
-    public static VGP calculate(Vec3 direction, double a95, double longitude,
-            double latitude) {
+    public static VGP calculate(Vec3 direction, double a95, Location site) {
         final double I_m = direction.getIncRad();
         final double D_m = direction.getDecRad();
-        final double λ_s = toRadians(longitude);
-        final double φ_s = toRadians(latitude);
+        final double λ_s = site.getLatRad();
+        final double φ_s = site.getLongRad();
         final double p = atan2(2, tan(I_m));
         final double λ_p = asin(sin(λ_s)*cos(p) + cos(λ_s)*sin(p)*cos(D_m));
         final double β = asin((sin(p)*sin(D_m)) / (cos(λ_p)));
@@ -60,15 +62,45 @@ public class VGP {
                 φ_s + β : φ_s + PI - β;
         final double dp = a95 * ((1+3*cos(p)*cos(p)) / 2);
         final double dm = a95 * (sin(p) / cos(I_m));
-        return new VGP(φ_p, λ_p, dp, dm);
+        return new VGP(Location.fromRadians(λ_p, φ_p), dp, dm);
     }
     
-    public static VGP calculate(FisherParams parameters, double longitude,
-            double latitude) {
+    public static VGP calculate(FisherParams parameters, Location site) {
         return calculate(parameters.getMeanDirection(),
-                parameters.getA95(), longitude, latitude);
+                parameters.getA95(), site);
+    }
+    
+    /** Returns the headers describing the parameters as a list of strings.
+     * @return the headers describing the parameters
+     */
+    public static List<String> getHeaders() {
+        return HEADERS;
     }
 
+    /** Returns a list of empty strings equal in length to the number of parameters.
+     * @return  a list of empty strings equal in length to the number of parameters
+     */
+    public static List<String> getEmptyFields() {
+        return Collections.nCopies(HEADERS.size(), "");
+    }
+
+    private String fmt(double d) {
+        return String.format(Locale.ENGLISH, "%.2f", d);
+    }
+
+    /** Returns the VGP parameters as a list of strings.
+     * The order of the parameters is the same as the order of
+     * the headers provided by {@link #getHeaders()}.
+     * @return the VGP parameters as a list of strings
+     */
+    public List<String> toStrings() {
+        return Arrays.asList(
+                fmt(getLocation().getLatDeg()),
+                fmt(getLocation().getLongDeg()),
+                fmt(getDp()), fmt(getDm()));
+    }
+
+            
     /**
      * @return the dp
      */
@@ -84,17 +116,10 @@ public class VGP {
     }
 
     /**
-     * @return the longitude
+     * @return the location
      */
-    public double getLongitude() {
-        return longitude;
+    public Location getLocation() {
+        return location;
     }
-
-    /**
-     * @return the latitude
-     */
-    public double getLatitude() {
-        return latitude;
-    }
-    
+   
 }

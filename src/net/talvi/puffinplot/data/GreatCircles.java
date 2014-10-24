@@ -205,7 +205,11 @@ public final class GreatCircles implements FisherParams {
      */
     public boolean isValid() {
         final String validityCondition =
-                prefs.get("data.greatcircles.validityExpr", "N>=3 and a95<3.5 and k>3");
+                prefs.get("data.greatcircles.validityExpr", "True");
+        if ("True".equals(validityCondition)) {
+            // Avoid firing up a Python interpreter for the most common case.
+            return true;
+        }
         interp.set("a95", a95);
         interp.set("k", k);
         interp.set("N", getN());

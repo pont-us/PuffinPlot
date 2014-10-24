@@ -1,0 +1,71 @@
+{
+
+
+
+
+
+
+    "creator": "Pontus Lurcock <pont@talvi.net>", 
+
+
+
+
+
+
+    "extra_strings": [
+
+
+
+
+
+
+        "BLOCKS:aa76880b-7b65-421e-8419-cfe55d7c5781"
+
+
+
+
+
+
+    ], 
+
+
+
+
+
+
+    "reporter": "Pontus Lurcock <pont@talvi.net>", 
+
+
+
+
+
+
+    "severity": "minor", 
+
+
+
+
+
+
+    "status": "open", 
+
+
+
+
+
+
+    "summary": "Site param table doesn't update", 
+
+
+
+
+
+
+    "time": "Fri, 24 Oct 2014 09:13:03 +0000"
+
+
+
+
+
+
+}

@@ -57,14 +57,13 @@ public class VGPTest {
     @Test
     public void testCalculate() {
         System.out.println("calculate");
-        Vec3 direction = Vec3.fromPolarDegrees(1., 45, 25);
+        Vec3 direction = Vec3.fromPolarDegrees(1, 45, 25);
         double a95 = 5.0;
-        double longitude = 30.0;
-        double latitude = 250.0;
-        VGP vgp = VGP.calculate(direction, a95, longitude, latitude);
+        final Location loc = Location.fromDegrees(30, 250);
+        final VGP vgp = VGP.calculate(direction, a95, loc);
         final double delta = 0.1;
-        assertEquals(67.8, vgp.getLatitude(), delta);
-        assertEquals(342.7, vgp.getLongitude(), delta);
+        assertEquals(67.8, vgp.getLocation().getLatDeg(), delta);
+        assertEquals(342.7, vgp.getLocation().getLongDeg(), delta);
         assertEquals(4.0, vgp.getDp(), delta);
         assertEquals(6.3, vgp.getDm(), delta);
     }

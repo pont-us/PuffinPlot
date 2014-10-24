@@ -1,0 +1,9 @@
+It should be possible to generate a script from the current state of
+PuffinPlot, without logging all the user's actions. Just loop through
+all current datum objects, samples, and sites, churning out commands to
+produce whatever selections and calculations are currently present,
+then export all the calculations. If it's OK to generate from the 
+PuffinPlot file we can archive that with the script. If not, things get
+a little trickier since we need to archive the original files and
+"replay" any relevant import options. Prefs file also needs to be
+exported and archived.

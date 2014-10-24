@@ -45,6 +45,8 @@ public class Site {
     private FisherValues fisher;
     private GreatCircles greatCircles;
     private double height = Double.NaN;
+    private Location location = null;
+    private VGP vgp = null;
 
     /**
      * Creates a site containing the specified samples.
@@ -61,7 +63,7 @@ public class Site {
      * @param name the name of the site */
     public Site(String name) {
         this.name = name;
-        this.samples = new ArrayList<Sample>();
+        this.samples = new ArrayList<>();
     }
 
     /** Calculate Fisherian statistics on the PCA directions of samples
@@ -70,8 +72,8 @@ public class Site {
      * if sufficient points have been selected for the operation.
      * If no PCA direction is available, the sample Fisher mean (if any)
      * and the imported sample direction (if any) are used in turn as
-     * fallbacks.
-     * The results are stored within the site.
+     * fallbacks. The results are stored within the site. If the 
+     * site has a location set, the VGP will also be calculated and stored.
      * 
      * @param correction the correction to apply to the magnetic moment
      * data when performing the PCA calculations
@@ -88,6 +90,9 @@ public class Site {
         if (!directions.isEmpty()) {
             fisher = FisherValues.calculate(directions);
         }
+        if (getLocation() != null) {
+            calculateVgp();
+        }
     }
 
     /** Clears the stored Fisher statistics, if any. */
@@ -100,7 +105,8 @@ public class Site {
      * into a calculation of the mean direction. If no great circle 
      * has been fitted for a site, the PCA direction (if any) is used.
      * Mean direction estimate is by the method of McFadden and McElhinny
-     * (1988).
+     * (1988). If the site has a location set, the VGP will also be 
+     * calculated and stored.
      * 
      * @param correction the correction to apply to the magnetic moment
      * data when fitting the great circles.
@@ -126,6 +132,9 @@ public class Site {
         if ((endpoints.size() > 0 && circles.size() > 0)
                 || circles.size() > 1) {
             greatCircles = new GreatCircles(endpoints, circles);
+        }
+        if (getLocation() != null) {
+            calculateVgp();
         }
     }
 
@@ -250,6 +259,11 @@ public class Site {
         if (!Double.isNaN(height)) {
             result.add("HEIGHT\t" + Double.toString(height));
         }
+        if (location != null) {
+            result.add(String.format("LOCATION\t%s\t%s",
+                    Double.toString(location.getLatDeg()),
+                    Double.toString(location.getLongDeg())));
+        }
         return result;
     }
 
@@ -259,8 +273,48 @@ public class Site {
      */
     public void fromString(String string) {
         String[] parts = string.split("\t", -1); // don't discard trailing empty strings
-        if ("HEIGHT".equals(parts[0])) {
+        switch (parts[0]) {
+            case "HEIGHT":
             height = Double.parseDouble(parts[1]);
+                break;
+            case "LOCATION":
+                location = Location.fromDegrees(Double.parseDouble(parts[1]),
+                        Double.parseDouble(parts[2]));
+                break;
         }
+    }
+
+    /**
+     * @return the location
+     */
+    public Location getLocation() {
+        return location;
+    }
+
+    /**
+     * @param location the location to set
+     */
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+    
+    public Vec3 getMeanDirection() {
+        if (getFisherParams() != null) {
+            return getFisherParams().getMeanDirection();
+        }
+        return null;
+    }
+    
+    public void calculateVgp() {
+        if (getLocation() != null && getFisherParams() != null) {
+            vgp = VGP.calculate(getFisherParams(), getLocation());
+        }
+    }
+
+    /**
+     * @return the vgp
+     */
+    public VGP getVgp() {
+        return vgp;
     }
 }

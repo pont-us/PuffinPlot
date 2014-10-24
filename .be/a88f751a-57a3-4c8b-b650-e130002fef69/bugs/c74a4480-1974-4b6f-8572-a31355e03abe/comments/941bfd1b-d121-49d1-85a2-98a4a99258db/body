@@ -1,0 +1,23 @@
+The following from Adrian Muxworthy:
+***
+Just looking at the "Fisher by site". It does not seem to update properly,
+e.g., if the user selects points for PCA for a site, then calculates the
+Fisher site mean, it produces the fisher site mean in the site table.
+However, if the user wishes to go back and revise their PCA choices, the
+Fisher site mean does not update to include the new picks, it seems to
+continue with the old ones, even if cleared, re-picked and saved. Perhaps a
+quick investigation might resolve this.
+
+a) Fisher by site. Just tested on my Mac using the native mac program; it
+seems to work fine. The issue arose on my phd student's windows 7 machine
+using puffin plot. On refreshing the "fisher by site" by pressing the
+option in the calculations menu, it did not update properly. Leaving the
+old fisher by site calculation in the table. The figures etc are all
+updated, but that is from a different process I guess.
+***
+
+So far have attempted (and failed) to reproduce using PP 1.02 on:
+Windows 7 / Java 8
+Windows 7 / Java 7
+Windows XP / Java 6
+

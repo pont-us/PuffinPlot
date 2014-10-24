@@ -613,19 +613,26 @@ public final class Suite {
             writer = new CsvWriter(new FileWriter(file));
             writer.writeCsv("Site", "Samples",
                     FisherValues.getHeaders(), GreatCircles.getHeaders(),
-                    Site.getGreatCircleLimitHeader());
+                    Site.getGreatCircleLimitHeader(),
+                    Location.getHeaders(), VGP.getHeaders());
             for (Site site: getSites()) {
-                List<String> fisherCsv = (site.getFisherValues() == null)
+                final List<String> fisherCsv = (site.getFisherValues() == null)
                         ? FisherValues.getEmptyFields()
                         : site.getFisherValues().toStrings();
-                List<String> gcCsv = (site.getGreatCircles() == null)
+                final List<String> gcCsv = (site.getGreatCircles() == null)
                         ? GreatCircles.getEmptyFields()
                         : site.getGreatCircles().toStrings();
-                List<String> gcCsv2 = (site.getGreatCircles() == null)
+                final List<String> gcCsv2 = (site.getGreatCircles() == null)
                         ? Collections.nCopies(4, "")
                         : site.getGreatCircleLimitStrings();
+                final List<String> locCsv = (site.getLocation()== null)
+                        ? Location.getEmptyFields()
+                        : site.getLocation().toStrings();
+                final List<String> vgpCsv = (site.getVgp()== null)
+                        ? VGP.getEmptyFields()
+                        : site.getVgp().toStrings();                
                 writer.writeCsv(site, Integer.toString(site.getSamples().size()),
-                        fisherCsv, gcCsv, gcCsv2);
+                        fisherCsv, gcCsv, gcCsv2, locCsv, vgpCsv);
             }
         } catch (IOException ex) {
            throw new Error(ex);
@@ -1188,7 +1195,7 @@ public final class Suite {
         datum.setMoment(Vec3.meanDirection(vectors));
     }
         
-    /**
+    /*
     This (currently untested) function should merge duplicate measurements
     within the Sample, but the Suite also has references to the Datum
     instances which need to be updated. The idea is that this sample
