@@ -18,6 +18,7 @@ package net.talvi.puffinplot.data;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -876,6 +877,23 @@ public final class Suite {
             if (!Double.isNaN(v)) return v;
         }
         return 0;
+    }
+    
+    public void importLocations(File file) throws IOException {
+        try (BufferedReader reader =
+                   new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                final String[] parts = line.split(" *, *");
+                final String siteName = parts[0];
+                final Site site = getSiteByName(siteName);
+                if (site != null) {
+                    final double latitude = Double.parseDouble(parts[1]);
+                    final double longitude = Double.parseDouble(parts[2]);
+                    site.setLocation(Location.fromDegrees(latitude, longitude));
+                }
+            }
+        }
     }
 
     /**

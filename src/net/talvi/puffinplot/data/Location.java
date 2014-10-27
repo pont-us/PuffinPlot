@@ -103,6 +103,6 @@ public class Location {
      */
     public List<String> toStrings() {
         return Arrays.asList(Double.toString(getLatDeg()),
-                Double.toString(getLatDeg()));
+                Double.toString(getLongDeg()));
     }
 }

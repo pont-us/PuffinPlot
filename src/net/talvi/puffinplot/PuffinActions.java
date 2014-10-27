@@ -82,7 +82,7 @@ public class PuffinActions {
         private static final long serialVersionUID = 1L;
         @Override
         public void actionPerformed(ActionEvent e) {
-            app.openFilesWithDialog();
+            app.showOpenFilesDialog();
         }
     };
 
@@ -660,10 +660,10 @@ public class PuffinActions {
      * from which to import AMS data.
      */
     public final Action importAms = new PuffinAction("Import AMS…",
-            "Import AMS data from Agico ASC file", null, false, KeyEvent.VK_M) {
+            "Import AMS data from Agico ASC file", null, false, KeyEvent.VK_A) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            app.importAmsWithDialog();
+            app.showImportAmsDialog();
         }
     };
 
@@ -891,7 +891,7 @@ public class PuffinActions {
             null, false, KeyEvent.VK_T) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent arg0) {
-            app.importPreferencesWithDialog();
+            app.showImportPreferencesDialog();
         }
     };
 
@@ -985,20 +985,10 @@ public class PuffinActions {
             null, false, KeyEvent.VK_Y) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            app.runPythonScriptWithDialog();
+            app.showRunPythonScriptDialog();
         }
     };
-    
-    public final Action importDirectionalData = new PuffinAction(
-            "Import direction data…",
-            "Import sample-level directional data without demagnetization steps",
-            null, false, KeyEvent.VK_D) {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    app.showImportDirectionDialog();
-                }
-    };
-    
+
     /**
      * Opens the PuffinPlot website.
      */
@@ -1031,6 +1021,18 @@ public class PuffinActions {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
             app.calculateRpi();
+        }
+    };
+    
+    /**
+     * Imports site location data.
+     */
+    public final Action importLocations = new PuffinAction("Import site locations",
+            "Import site co-ordinates from a CSV file.",
+            null, false, KeyEvent.VK_L) {
+        private static final long serialVersionUID = 1L;
+        @Override public void actionPerformed(ActionEvent e) {
+            app.showImportLocationsDialog();
         }
     };
 }

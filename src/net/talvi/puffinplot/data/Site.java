@@ -174,10 +174,13 @@ public class Site {
      * @return the Fisherian parameters of the site mean direction
      */
     public FisherParams getFisherParams() {
-        if (fisher != null) return fisher;
-        else if (greatCircles != null && greatCircles.isValid())
+        if (greatCircles != null && greatCircles.isValid()) {
             return greatCircles;
-        else return null;
+        } else if (fisher != null) {
+            return fisher;
+        } else {
+            return null;
+        }
     }
 
     private String fmt(double x) {

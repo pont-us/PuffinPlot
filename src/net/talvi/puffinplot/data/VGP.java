@@ -58,8 +58,8 @@ public class VGP {
         final double p = atan2(2, tan(I_m));
         final double λ_p = asin(sin(λ_s)*cos(p) + cos(λ_s)*sin(p)*cos(D_m));
         final double β = asin((sin(p)*sin(D_m)) / (cos(λ_p)));
-        final double φ_p = (cos(p) >= sin(λ_s)*sin(λ_p)) ?
-                φ_s + β : φ_s + PI - β;
+        final double φ_p = (((cos(p) >= sin(λ_s)*sin(λ_p)) ?
+                φ_s + β : φ_s + PI - β) + (2*PI)) % (2*PI);
         final double dp = a95 * ((1+3*cos(p)*cos(p)) / 2);
         final double dm = a95 * (sin(p) / cos(I_m));
         return new VGP(Location.fromRadians(λ_p, φ_p), dp, dm);

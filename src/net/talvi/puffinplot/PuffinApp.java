@@ -948,7 +948,7 @@ public final class PuffinApp {
     
     /** Shows an ‘open files’ dialog box; if the user selects any files,
      * they will be opened in a new suite. */
-    public void openFilesWithDialog() {
+    public void showOpenFilesDialog() {
         List<File> files = openFileDialog("Open file(s)");
         if (files != null) openFiles(files);
     }
@@ -968,7 +968,7 @@ public final class PuffinApp {
      * any files, AMS data will be imported from them. The files are 
      * expected to be in Agico ASC format, as produced by the SAFYR
      * and SUSAR programs.</p> */
-    public void importAmsWithDialog() {
+    public void showImportAmsDialog() {
         if (showErrorIfNoSuite()) {
             return;
         }
@@ -986,7 +986,7 @@ public final class PuffinApp {
      * the current preferences will be overwritten with preferences data
      * from that file. The file is expected to contain Java Preferences
      * data in XML format.</p> */
-    public void importPreferencesWithDialog() {
+    public void showImportPreferencesDialog() {
         List<File> files = openFileDialog("Import preferences file");
         if (files != null && files.size() > 0) {
             getPrefs().importFromFile(files.get(0));
@@ -1272,7 +1272,7 @@ public final class PuffinApp {
      * Opens a file selection dialog and runs the Python script
      * (if any) which the user selects from that dialog. 
      */
-    public void runPythonScriptWithDialog() {
+    public void showRunPythonScriptDialog() {
         final List<File> files = openFileDialog("Select Python script");
         if (files.isEmpty()) return;
         final File file = files.get(0);
@@ -1286,29 +1286,20 @@ public final class PuffinApp {
         }
     }
     
-    public void showTabularImportDialog() {
-        TabularImportWindow importWindow = new TabularImportWindow(this);
-        importWindow.setVisible(true);
-        // The window will call back to importTabularDataWithFormat.
-    }
-    
-    void showImportDirectionDialog() {
-        final List<File> files = openFileDialog("Open direction file");
-        if (files==null || files.isEmpty()) {
-            return;
-        }
-        final Suite suite = new Suite("PuffinPlot " + version.versionString);
+    void showImportLocationsDialog() {
+        final List<File> files = openFileDialog("Select location file");
+        if (files.isEmpty()) return;
+        final File file = files.get(0);
+        final Suite suite = getSuite();
+        if (suite==null) return;
         try {
-            suite.readDirectionalData(files);
+            suite.importLocations(file);
         } catch (IOException ex) {
-            Logger.getLogger(PuffinApp.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
+            errorDialog("Error importing locations", ex.getLocalizedMessage());
         }
-        suites.add(suite);
-        currentSuite = suite;
-        getMainWindow().suitesChanged();
-        mainWindow.updateSampleDataPanel();
-        updateDisplay();
     }
+
     
     public Version getVersion() {
         return version;
