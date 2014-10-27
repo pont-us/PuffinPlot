@@ -558,7 +558,13 @@ section~\ref{sec:annotations} for details. \\ \bottomrule
   \caps{t}1min & See note below \\
   \caps{t}1max & See note below \\
   \caps{t}2min & See note below \\
-  \caps{t}2max & See note below \\ \bottomrule
+  \caps{t}2max & See note below \\
+  Lat (°) & Site latitude \\
+  Long (°) &  Site longitude \\
+  VGP lat (°) & VGP latitude \\
+  VGP long (°) & VGP longitude \\
+  VGP dp (°) & \emph{dp}, the first semi-axis of the \caps{vgp} confidence ellipse \\
+  VGP dm (°) & \emph{dm}, the second semi-axis of the \caps{vgp} confidence ellipse\\ \bottomrule
 \end{tabular}
 
 \smallskip
@@ -598,6 +604,31 @@ range of its values across all the samples at a site.
   for exporting the plots for the current and selected samples.
   See section~\ref{sec:graphics-export} for full details.
 
+\item[File\submenu Import data] is a submenu with functions to import
+  additional data into the current suite.
+
+\item[File\submenu Import data\submenu Import site locations\ldots]
+  imports co-ordinates (latitude and longitude) for sites in the suite.
+  These co-ordinates are used to calculate virtual geomagnetic poles
+  from site directions. The location file should be in \caps{csv}
+  (comma-separated value) format with no header line. Column 1 contains
+  the site name, column 2 the latitude (degrees north from equator,
+  negative for southern hemisphere), and column 3 the longitude (degrees
+  east of Greenwich).
+
+\item[File\submenu Import data\submenu Import AMS\ldots] imports
+  \caps{ams} data from a file and adds it to the current suite. The file
+  must be in the \caps{.asc} format produced by the \ppcmd{Safyr} and
+  \caps{Susar} programs distributed with \caps{Agico} kappabridges. The
+  \caps{ams} data is assigned to the appropriate samples within the
+  suite by matching the sample names specified in the \caps{asc} file
+  with the sample names for the demagnetization data. If the \caps{ams}
+  file contains data for samples not in the suite, these samples will be
+  created and added to the suite. \caps{Ams} data is not displayed by
+  default; the equal-area plot of \caps{ams} data can be activated from
+  the \ppcmd{Preferences} window. AMS import has been tested with data
+  from \caps{Safyr} versions 1.5 and 2.6 and \caps{Susar} version 4.0.
+
 \item[File\submenu Page Setup\ldots] opens a window allowing you
 to change the paper size, orientation, and margins for printing.
 
@@ -616,19 +647,6 @@ to change the paper size, orientation, and margins for printing.
 \item[File\submenu Print site EA window\ldots] prints the contents of a
   separate window showing an equal-area plot of directions at the current
   site; see section~\ref{sec:menu-window} for more details.
-
-\item[File\submenu Import AMS\ldots] imports \caps{ams} data from a file
-  and adds it to the current suite. The file must be in the \caps{.asc}
-  format produced by the \ppcmd{Safyr} and \caps{Susar} programs
-  distributed with \caps{Agico} kappabridges. The \caps{ams} data is
-  assigned to the appropriate samples within the suite by matching the
-  sample names specified in the \caps{asc} file with the sample names
-  for the demagnetization data. If the \caps{ams} file contains data for
-  samples not in the suite, these samples will be created and added to
-  the suite. \caps{Ams} data is not displayed by default; the equal-area
-  plot of \caps{ams} data can be activated from the \ppcmd{Preferences}
-  window. AMS import has been tested with data from \caps{Safyr}
-  versions 1.5 and 2.6 and \caps{Susar} version 4.0.
 
 \item[File\submenu Run Python script\ldots] runs a user-specified
   external script written in the Python programming language.

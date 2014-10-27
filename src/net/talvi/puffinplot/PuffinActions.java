@@ -1027,7 +1027,8 @@ public class PuffinActions {
     /**
      * Imports site location data.
      */
-    public final Action importLocations = new PuffinAction("Import site locations",
+    public final Action importLocations =
+            new PuffinAction("Import site locations…",
             "Import site co-ordinates from a CSV file.",
             null, false, KeyEvent.VK_L) {
         private static final long serialVersionUID = 1L;
