@@ -77,6 +77,7 @@ public class IapdLoader extends AbstractFileLoader {
         final double volume = parseDouble(header[5]);
         
         String line;
+        double a95max = 0;
         while ((line = reader.readLine()) != null) {
             final Datum d = new Datum();
             final String[] parts = line.trim().split(" +");
@@ -111,7 +112,15 @@ public class IapdLoader extends AbstractFileLoader {
             d.setVolume(volume);
             d.setTreatType(treatType);
             d.setMeasType(measType);
+            final double a95 = parseDouble(parts[4]);
+            if (a95 > a95max) {
+                a95max = a95;
+            }
             data.add(d);
+        }
+        if (a95max >= 5) {
+            addMessage("File \"%s\" has high α95 values (max. %.1f).",
+                    file.getName(), a95max);
         }
     }
 }

@@ -212,9 +212,9 @@ case every file within the folder will be opened and combined into a
 single suite. \textbf{Note:} if you open multiple files or a whole
 folder, they must have the same file type, the same treatment type
 (thermal, alternating-field, etc.), and the same sample type (discrete
-or continuous). Opening, for example, a mixture of Caltech and IAPD
-files, or a mixture of discrete and continuous files, may result
-in errors during file reading.
+or continuous). Opening, for example, a mixture of Caltech and
+\caps{iapd} files, or a mixture of discrete and continuous files, may
+result in errors during file reading.
 
 \begin{figure}[htbp]
 \centering
@@ -992,9 +992,12 @@ formats:
   in same folder): format used at the Caltech Paleomagnetics Laboratory
   and supported by the `Paleomag' program of \cite{jones2002paleomag}.
 
-\item[IAPD] (filename suffix \ppcmd{dat}): format used by the IAPD
-  program and its successors, developed by T. H. Torsvik et al. and
-  used at the Geological Survey of Norway.
+\item[IAPD] (filename suffix \ppcmd{dat}): format used by the
+  \caps{iapd} program and its successors, developed by T. H. Torsvik et
+  al. and used at the Geological Survey of Norway. IAPD files contain an
+  `a95' value for each treatment step which gives an indication of the
+  measurement's reliability. PuffinPlot does not import these values,
+  but will show a warning if any of them has a value of 5 or greater.
 
 \item[Zplot] (filename suffix \ppcmd{txt}): format used by the 
   `Zplot' program developed by Steve Hurst at Woods Hole.
