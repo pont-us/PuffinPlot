@@ -1249,6 +1249,37 @@ listed below include textual elements such as legends and tables.
   and the \alnifi{} and $k$ parameters. If no site mean direction has been
   calculated for the current site, this plot is invisible.
 
+\item[Equal-area (site)] shows all the great circles fitted at the current
+  sample's site, along with a best-fit direction calculated by the method of
+  \cite{mcfadden1988circles}. On this plot, the calculated site direction is
+  shown as a circle. Any sample PCA directions are shown as diamonds.
+  Demagnetization steps used for the great-circle fits are shown as squares.
+  Poles to the great circles are shown as triangles.
+
+\item[Equal-area (suite)] shows all the site means for the suite, and a
+  Fisherian mean and 95\% confidence interval for them. If two polarities are
+  present in the suite, two means are calculated and shown. If no sites
+  are defined, individual sample \caps{pca} directions and their means
+  are plotted instead. Note that, for site means calculated by great-circle
+  analysis, only valid means are shown. See section~\ref{sec:prefs-misc}
+  for details on how validity is determined.
+
+\item[VGP table] is a table showing virtual geomagnetic pole (VGP) data
+  for each site in the current suite. The columns are: site name, $\phi$
+  (site latitude), $\lambda$ (site longitude), VGP $\phi$ (VGP
+  latitude), VGP $\lambda$ (VGP longitude), dp (first semi-axis of VGP
+  confidence ellipse), and dm (second semi-axis of VGP confidence
+  ellipse). VGPs can only be calculated for sites whose location has been set;
+  See \emph{Import site locations\ldots} in Section~\ref{sec:menu-file} for details
+  on reading site locations from a \caps{csv} file.
+
+\item[Zplot key] is a legend for the Zijderveld plot, showing the
+  interpretations of the filled and unfilled points and giving the units in
+  which the axes are calibrated.
+
+\item[\caps{Nrm} Histogram] shows a histogram of \caps{nrm} intensities
+  across the whole suite.
+
 \item[\caps{Ams}] is a lower-hemisphere equal-area plot of \caps{ams} data,
   if any has been imported. Maximum, intermediate, and minimum anisotropy
   axes are shown as squares, triangles, and circles respectively. If
@@ -1265,28 +1296,6 @@ listed below include textual elements such as legends and tables.
   successive demagnetization steps thus shows the relative effects of
   thermal unblocking (and possibly thermal alteration) on these
   components.
-
-\item[Equal-area (site)] shows all the great circles fitted at the current
-  sample's site, along with a best-fit direction calculated by the method of
-  \cite{mcfadden1988circles}. On this plot, the calculated site direction is
-  shown as a circle. Any sample PCA directions are shown as diamonds.
-  Demagnetization steps used for the great-circle fits are shown as squares.
-  Poles to the great circles are shown as triangles.
-
-\item[Equal-area (suite)] shows all the site means for the suite, and a
-  Fisherian mean and 95\% confidence interval for them. If two polarities are
-  present in the suite, two means are calculated and shown. If no sites
-  are defined, individual sample \caps{pca} directions and their means
-  are plotted instead. Note that, for site means calculated by great-circle
-  analysis, only valid means are shown. See section~\ref{sec:prefs-misc}
-  for details on how validity is determined.
-
-\item[\caps{Nrm} Histogram] shows a histogram of \caps{nrm} intensities
-  across the whole suite.
-
-\item[Zplot key] is a legend for the Zijderveld plot, showing the
-  interpretations of the filled and unfilled points and giving the units in
-  which the axes are calibrated.
 
 \end{menuitemlist}
 

@@ -175,6 +175,8 @@ public final class PuffinApp {
                 addSampleClickListener(scListener);
         display.getPlotByClassName("SiteParamsTable").
                 addSampleClickListener(scListener);
+        display.getPlotByClassName("VgpTable").
+                addSampleClickListener(scListener);
         mainWindow.getMainMenuBar().updateRecentFiles();
         mainWindow.setVisible(true);
         logger.info("PuffinApp instantiation complete.");

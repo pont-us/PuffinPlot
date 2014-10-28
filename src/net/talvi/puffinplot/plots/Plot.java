@@ -91,6 +91,7 @@ public abstract class Plot
             "equarea_suite false 191 541 186 197 " +
             "sample_params_table false 9 341 254 241 " +
             "site_params_table false 519 457 318 134 " +
+            "vgp_table false 619 557 318 134 " +
             "nrm_histogram false 771 542 226 115 " +
             "zplotlegend true 779 7 156 58 " +
             "depth false 50 50 300 200 ";

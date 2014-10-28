@@ -30,31 +30,26 @@ import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 
 /**
- * A table showing site mean directions for the whole suite.
- * The table shows the site name, the calculation method
- * (anchored or unanchored PCA or great circle), declination,
- * and inclination. For PCA the principal direction is shown;
- * for great circles, the direction of the pole is shown.
  */
-public class SiteParamsTable extends Plot {
+public class VgpTable extends Plot {
 
     private final double us = getUnitSize();
     private final List<Double> xSpacing =
-            Arrays.asList(500*us, 250*us, 270*us, 250*us, 400*us, 400*us,
-            400*us, 400*us);
+            Arrays.asList(500*us, 400*us, 400*us, 400*us, 400*us, 400*us,
+            400*us);
     private final int ySpacing = (int) (120 * getUnitSize());
     private final List<String> headers = 
-            Arrays.asList(new String[] {"Site", "n", "PCA", "GC", "dec.",
-                "inc.", "a95", "type"});
+            Arrays.asList(new String[] {"Site", "φ", "λ", "VGP φ", "VGP λ",
+                "dp", "dm"});
     private final Preferences prefs;
     
-    /** Creates a site parameter table with the supplied parameters.
+    /** Creates a sample parameter table with the supplied parameters.
      * 
      * @param parent the graph display containing the plot
      * @param params the parameters of the plot
      * @param prefs the preferences containing the plot configuration
      */
-    public SiteParamsTable(GraphDisplay parent, PlotParams params,
+    public VgpTable(GraphDisplay parent, PlotParams params,
             Preferences prefs) {
         super(parent, params, prefs);
         this.prefs = prefs;
@@ -62,12 +57,12 @@ public class SiteParamsTable extends Plot {
     
     @Override
     public String getName() {
-        return "site_params_table";
+        return "vgp_table";
     }
     
     @Override
     public String getNiceName() {
-        return "Site parameter table";
+        return "VGP table";
     }
         
     private static String fmt(String format, Object... args) {
@@ -95,25 +90,16 @@ public class SiteParamsTable extends Plot {
             final List<String> values = new ArrayList<>(columns);
             values.addAll(Collections.nCopies(columns, "--"));
             values.set(0, site.toString());
-            values.set(1, fmt("%d", site.getSamples().size()));
-            if (site.getFisherValues() != null) {
-                final FisherValues fvs = site.getFisherValues();
-                values.set(2, fmt("%d", fvs.getNDirs()));
-                values.set(3, "0");
-                final Vec3 direction = fvs.getMeanDirection();
-                values.set(4, fmt("%.1f", direction.getDecDeg()));
-                values.set(5, fmt("%.1f", direction.getIncDeg()));
-                values.set(6, fmt("%.1f", fvs.getA95()));
-                values.set(7, "Fshr");
-            } else if (site.getGreatCircles() != null) {
-                final GreatCircles gcs = site.getGreatCircles();
-                values.set(2, fmt("%d", gcs.getM()));
-                values.set(3, fmt("%d", gcs.getN()));
-                final Vec3 direction = gcs.getMeanDirection();
-                values.set(4, fmt("%.1f", direction.getDecDeg()));
-                values.set(5, fmt("%.1f", direction.getIncDeg()));
-                values.set(6, fmt("%.1f", gcs.getA95()));
-                values.set(7, "GC:" + (gcs.isValid() ? "v" : "i"));
+            if (site.getLocation() != null) {
+                values.set(1, fmt("%.1f", site.getLocation().getLatDeg()));
+                values.set(2, fmt("%.1f", site.getLocation().getLongDeg()));
+            }
+            if (site.getVgp() != null) {
+                final VGP vgp = site.getVgp();
+                values.set(3, fmt("%.1f", vgp.getLocation().getLatDeg()));
+                values.set(4, fmt("%.1f", vgp.getLocation().getLongDeg()));
+                values.set(5, fmt("%.1f", vgp.getDp()));
+                values.set(6, fmt("%.1f", vgp.getDm()));
             }
             
             Sample firstSample = null;
