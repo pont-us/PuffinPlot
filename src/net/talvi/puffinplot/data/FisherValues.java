@@ -59,6 +59,14 @@ public class FisherValues implements FisherParams {
      * as the mean, but the a95 and k values are entirely undefined; they may
      * be NaN or infinity.
      * 
+     * The a95 value is not guaranteed to represent a real number:
+     * some sets of directions may produce an undefined (NaN or
+     * infinite) a95. This is a consequence of the definition, rather than
+     * of the implementation here; see equation 6.21 in Butler (1992)
+     * and note that R may be arbitrarily small, putting the RHS
+     * out of the domain of the cosine function. (Theoretically R may
+     * even be zero, but this is extremely unlikely for any real data set.)
+     * 
      * @param vectors the points on which to calculate statistics
      * @return the Fisherian statistics for the supplied vectors
      */
@@ -77,6 +85,10 @@ public class FisherValues implements FisherParams {
     @Override
     public double getA95() {
         return a95;
+    }
+    
+    public boolean isA95Valid() {
+        return !(Double.isNaN(a95) || Double.isInfinite(a95));
     }
 
     @Override

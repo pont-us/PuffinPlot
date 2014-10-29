@@ -102,30 +102,38 @@ public class SeparateSuiteEaPlot extends EqAreaPlot {
         boolean firstPoint = true;
         for (FisherValues fisher: fishers) {
             final Vec3 v = fisher.getMeanDirection();
-            Point2D meanPoint = project(v);
+            final Point2D meanPoint = project(v);
             addPoint(null, meanPoint, v.z>0, firstPoint, !firstPoint);
 
-            GeneralPath ellipse = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 72);
-            boolean firstEllipsePoint = true;
-            for (double dec = 0; dec < 360; dec += 5) {
-                Vec3 circlePoint =
-                        (Vec3.fromPolarDegrees(1, 90-fisher.getA95(), dec));
-                Vec3 w = circlePoint.rotY(Math.PI / 2 - v.getIncRad());
-                w = w.rotZ(v.getDecRad());
-                Point2D.Double p = project(w);
-                if (firstEllipsePoint) ellipse.moveTo((float) p.x, (float) p.y);
-                else ellipse.lineTo((float) p.x, (float) p.y);
-                firstEllipsePoint = false;
+            if (fisher.isA95Valid()) {
+                final GeneralPath ellipse =
+                        new GeneralPath(GeneralPath.WIND_EVEN_ODD, 72);
+                boolean firstEllipsePoint = true;
+                for (double dec = 0; dec < 360; dec += 5) {
+                    Vec3 circlePoint =
+                            (Vec3.fromPolarDegrees(1, 90-fisher.getA95(), dec));
+                    Vec3 w = circlePoint.rotY(Math.PI / 2 - v.getIncRad());
+                    w = w.rotZ(v.getDecRad());
+                    Point2D.Double p = project(w);
+                    if (firstEllipsePoint) {
+                        ellipse.moveTo((float) p.x, (float) p.y);
+                    } else {
+                        ellipse.lineTo((float) p.x, (float) p.y);
+                    }
+                    firstEllipsePoint = false;
+                }
+                ellipse.closePath();
+                
+                g.setComposite(translucent);
+                g.fill(ellipse);
+                g.setComposite(opaque);
+                final Stroke oldStroke = g.getStroke();
+                g.setStroke(thinStroke);
+                g.draw(ellipse);
+                g.setStroke(oldStroke);
             }
-            ellipse.closePath();
-              
-            g.setComposite(translucent);
-            g.fill(ellipse);
-            g.setComposite(opaque);
-            Stroke oldStroke = g.getStroke();
-            g.setStroke(thinStroke);
-            g.draw(ellipse);
             
+            final Stroke oldStroke = g.getStroke();
             if (groupedBySite) {
                 g.setStroke(dashedStroke);
                 for (Vec3 w : fisher.getDirections()) {

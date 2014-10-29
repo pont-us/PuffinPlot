@@ -147,10 +147,11 @@ public class SiteEqAreaPlot extends EqAreaPlot {
         final PlotPoint meanPoint = ShapePoint.build(this, project(meanDir)).
                 circle().scale(1.5).filled(meanDir.z>0).build();
         meanPoint.draw(g);
-        if (!Double.isNaN(circles.getA95())) {
+        if (!(Double.isNaN(circles.getA95()) ||
+                Double.isInfinite(circles.getA95()))) {
             if (circles != gcsCache) {
                 final List<Vec3> smallCircle = meanDir.makeSmallCircle(circles.getA95());
-                List<List<Vec3>> segments =  Vec3.interpolateEquatorPoints(smallCircle);
+                final List<List<Vec3>> segments =  Vec3.interpolateEquatorPoints(smallCircle);
                 drawLineSegments(smallCircle);
                 gcsLineCache = new LineCache(getStroke(), getDashedStroke());
                 for (List<Vec3> part: segments) {
@@ -161,8 +162,8 @@ public class SiteEqAreaPlot extends EqAreaPlot {
             gcsLineCache.draw(g);
 
         }
-        List<String> ss = circles.toStrings();
-        writeString(g, ss.get(3)+"/"+ss.get(4), xo-radius, yo-radius);
+        final List<String> strings = circles.toStrings();
+        writeString(g, strings.get(3)+"/"+strings.get(4), xo-radius, yo-radius);
     }
     
     private void writeSampleLabel(Sample s, PlotPoint point) {
@@ -216,13 +217,13 @@ public class SiteEqAreaPlot extends EqAreaPlot {
         meanPoint.draw(g);
         if (fisherMean.getNDirs() > 1) {
             if (fisherMean != fisherCache) {
-                assert(!(Double.isNaN(fisherMean.getA95()) ||
-                         Double.isInfinite(fisherMean.getA95())));
-                final List<Vec3> smallCircle = meanDir.makeSmallCircle(fisherMean.getA95());
-                final List<List<Vec3>> segments =  Vec3.interpolateEquatorPoints(smallCircle);
                 fisherLineCache = new LineCache(getStroke(), getDashedStroke());
-                for (List<Vec3> part: segments) {
-                    projectLineSegments(part, fisherLineCache);
+                if (fisherMean.isA95Valid()) {
+                    final List<Vec3> smallCircle = meanDir.makeSmallCircle(fisherMean.getA95());
+                    final List<List<Vec3>> segments =  Vec3.interpolateEquatorPoints(smallCircle);
+                    for (List<Vec3> part: segments) {
+                        projectLineSegments(part, fisherLineCache);
+                    }
                 }
                 fisherCache = fisherMean;
             }

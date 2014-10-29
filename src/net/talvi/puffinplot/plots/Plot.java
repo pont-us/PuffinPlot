@@ -549,6 +549,9 @@ public abstract class Plot
      * @param e the event associated with the click
      */
     public void mouseClicked(java.awt.geom.Point2D position, MouseEvent e) {
+        if (!isVisible()) {
+            return;
+        }
         final boolean sloppy = e.isShiftDown();
         for (PlotPoint p : points) {
             final Datum d = p.getDatum();

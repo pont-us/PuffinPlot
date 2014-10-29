@@ -64,7 +64,7 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
     private void drawFisher(FisherValues fv) {
         if (fv==null) return;
         final Vec3 mean = fv.getMeanDirection();
-        if (fv.getA95() > 0) {
+        if (fv.isA95Valid() && fv.getA95() > 0) {
             drawLineSegments(mean.makeSmallCircle(fv.getA95()));
         }
         final PlotPoint meanPoint = 
