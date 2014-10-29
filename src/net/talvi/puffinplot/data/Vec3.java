@@ -739,96 +739,53 @@ public class Vec3 {
         return result;
     }
 
-    // TODO this has much in common with the makeEllipse(KentParams).
-    // if it's useful to make this method public and keep them
-    // both, the common code should be factored out.
-    private static List<Vec3> makeEllipse(double dec, double inc,
-            double eta, double etad, double etai,
-            double zeta, double zetad, double zetai) {
-        final int N = 64;
-        List<Vec3> vs = new ArrayList<>(N);
-        // we're going to draw the ellipse at the top of the unit
-        // sphere, then rotate it down into position.
-
-        // ed and ei tell us which way the ellipse is pointing.
-        // (zd and zi are orthogonal so we'll ignore them.)
-        // TODO
-        Vec3 centre = Vec3.fromPolarDegrees(1., inc, dec);
-        Vec3 etaDir = Vec3.fromPolarDegrees(1., etai, etad);
-        Vec3 etaDirTop =
-                etaDir.rotZ(-centre.getDecRad()).rotY(centre.getIncRad()-PI/2.).
-                rotZ(centre.getDecRad());
-
-        // draw the ellipse at the top
-        double stepSize = 2.*PI / N;
-        for (int i=0; i<N; i++) {
-            double theta = i * stepSize;
-            double a = (eta*sin(theta));
-            double b = zeta*cos(theta);
-            double r = eta*zeta/sqrt(a*a+b*b);
-            Vec3 v1 = Vec3.fromPolarRadians(1., 0.5*PI-r, theta + etaDirTop.getDecRad());
-            Vec3 v2 = v1.
-                    rotZ(-centre.getDecRad()).rotY(PI/2.-centre.getIncRad()).
-                    rotZ(centre.getDecRad());
-            vs.add(v2);
-        }
-        vs.add(centre);
-
-        return vs;
-    }
-
     /** Returns a list of points outlining the confidence ellipse for
      * a supplied set of Kent statistical parameters.
      * @param kentParams a set of Kent parameters
      * @return the confidence ellipse of the supplied parameters
      */
     public static List<Vec3> makeEllipse(KentParams kentParams) {
-        double eta = kentParams.getEtaMag();
-        // if (eta>PI/2) eta = PI/2+0.1;
+        final double eta = kentParams.getEtaMag();
         final double zeta = kentParams.getZetaMag();
-        // final int N = (int) (1000*sqrt(1+eta*eta+zeta*zeta));
-        List<Vec3> vs = new ArrayList<>(1000);
-        // we're going to draw the ellipse at the bottom of the unit
-        // sphere, then rotate it down into position.
+        final List<Vec3> vs = new ArrayList<>(1000);
+        // We create each ellipse point at the top (?) of the unit
+        // sphere, then rotate it into position.
 
         // ed and ei tell us which way the ellipse is pointing.
         // (zd and zi are orthogonal so we'll ignore them.)
-        Vec3 centre = kentParams.getMean();
-        Vec3 etaDir = kentParams.getEtaDir();
+        final Vec3 centre = kentParams.getMean();
+        final Vec3 etaDir = kentParams.getEtaDir();
         // calculate the direction of the eta axis
-        Vec3 etaDirTop =
+        final Vec3 etaDirTop =
                 etaDir.rotZ(-centre.getDecRad()).rotY(centre.getIncRad()-PI/2.).
                 rotZ(centre.getDecRad());
 
-        // draw the ellipse
-        double stepSize = 1e-4;
-        double stepLimit = 1e-2;
-        double thetaLimit = 2*PI/50.;
-        Vec3 vPrev = null;
-        double thetaPrev = -100;
-        int n=0;
+        final double stepSize = 1e-4; // unprojected minimum step size (radians)
+        final double stepLimit = 1e-2; // skip projected steps smaller than this...
+        final double thetaLimit = 2*PI/50.; // ... unless unprojected step larger than this
+        Vec3 vPrev = null; // the last projected vector we created
+        double thetaPrev = -100; // the last theta at which we created a vector
+
         for (double theta=0; theta<2*PI; theta += stepSize) {
-            // final double theta = i * stepSize;
             final double a = eta*sin(theta);
             final double b = zeta*cos(theta);
             final double r = eta*zeta/sqrt(a*a+b*b);
-            // Calculate a point centred around zero
-            Vec3 v1 = Vec3.fromPolarRadians(1., 0.5*PI-r, theta + etaDirTop.getDecRad());
-            // rotate it into position
+            // Calculate a point centred around zero.
+            final Vec3 vUnrot = Vec3.fromPolarRadians(1., 0.5*PI-r,
+                    theta + etaDirTop.getDecRad());
 
-            //v2 = v1;
-            if (vPrev==null || abs(vPrev.angleTo(v1)) > stepLimit ||
+            // Check whether to skip this point.
+            if (vPrev==null || abs(vPrev.angleTo(vUnrot)) > stepLimit ||
                         (theta - thetaPrev) > thetaLimit) {
-                    Vec3 v2 = v1.rotZ(-centre.getDecRad()).
-                            rotY(PI / 2. - centre.getIncRad()).
+                // Rotate the point into position.
+                Vec3 vRotated = vUnrot.rotZ(-centre.getDecRad()).
+                        rotY(PI / 2. - centre.getIncRad()).
                         rotZ(centre.getDecRad());
-                    //System.out.println(":"+v2.z);
-                    vs.add(v2);
-                    vPrev = v1;
-                    thetaPrev = theta;
-                    n++;
-                }
+                vs.add(vRotated);
+                vPrev = vUnrot;
+                thetaPrev = theta;
             }
+        }
         vs.add(vs.get(0)); // close the path
         return vs;
     }

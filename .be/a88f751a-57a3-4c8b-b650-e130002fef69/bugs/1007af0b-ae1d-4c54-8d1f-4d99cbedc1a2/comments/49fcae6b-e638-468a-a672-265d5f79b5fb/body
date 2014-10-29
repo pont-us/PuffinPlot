@@ -1,0 +1,7 @@
+Automatic site recalculation now implemented; with luck this
+might also improve things for the user who reported 
+a88/c74 "Site param table doesn't update" (currently 
+irreproducible). Automatic suite recalculation not implemented,
+since suite calculations operate on currently selected samples,
+so an automatic recalculation might change which samples/sites
+are included in the suite statistics.

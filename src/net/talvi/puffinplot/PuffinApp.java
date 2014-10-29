@@ -401,31 +401,65 @@ public final class PuffinApp {
      * For all selected sites, calculates the site mean direction by 
      * best-fit intersection of great circles fitted to that
      * site's samples.
-     * 
-     * @param popUpWindow if {@code true}, open a new window showing 
-     * great circle directions
      */
-    public void calculateGreatCirclesDirections(boolean popUpWindow) {
+    public void calculateGreatCirclesDirections() {
         for (Site site: getSelectedSites()) {
             site.calculateGreatCirclesDirection(getCorrection());
         }
         updateDisplay();
-        if (popUpWindow) siteEqAreaWindow.setVisible(true);
     }
 
     /**
+     * Redo existing site calculations affected by specified samples.
+     * 
+     * Any existing great-circle or Fisherian calculations will be done
+     * for any site containing one of the specified samples. Site 
+     * calculations will not be done for sites that don't have them already.
+     * 
+     * This method does not update the display.
+     * 
+     * @param samples samples which have changed
+     */
+    private void recalculateAffectedSites(Collection<Sample> samples) {
+        Set<Site> affectedSites = new HashSet<>();
+        for (Sample sample: samples) {
+            if (sample.getSite() != null) {
+                affectedSites.add(sample.getSite());
+            }
+        }
+        for (Site site: affectedSites) {
+            if (site.getFisherValues() != null) {
+                site.calculateFisherStats(correction);
+            }
+            if (site.getGreatCircles() != null) {
+                // PCAs are also used in GC calculations, so this needs
+                // to be recalculated even if only the PCA has changed.
+                site.calculateGreatCirclesDirection(correction);
+            }
+        }
+    }
+    
+    /**
      * For all selected samples, fit a great circle to the selected points.
+     * 
+     * 
      */
     public void fitGreatCirclesToSelection() {
         for (Sample sample: getSelectedSamples()) {
             sample.useSelectionForCircleFit();
             sample.fitGreatCircle(getCorrection());
         }
+        recalculateAffectedSites(getSelectedSamples());
+        updateDisplay();
     }
-
+    
     /**
      * For all selected samples, determine a best-fit line to the selected
      * points by principal component analysis.
+     * 
+     * Any affected Fisherian site means or great-circle directions will be
+     * recalculated automatically. These directions will not be calculated for
+     * any sites that don't have them already.
      */
     public void doPcaOnSelection() {
         for (Sample sample: getSelectedSamples()) {
@@ -434,7 +468,22 @@ public final class PuffinApp {
                 sample.doPca(getCorrection());
             }
         }
+        recalculateAffectedSites(getSelectedSamples());
         updateDisplay();
+    }
+    
+    /**
+     * Clear selected points and stored calculations for selected samples.
+     * 
+     * Any affected site data will also be recalculated.
+     * 
+     */
+    public void clearSelectedSampleCalculations() {
+        for (Sample s: getSelectedSamples()) {
+                s.clearCalculations();
+            }
+        recalculateAffectedSites(getSelectedSamples());
+        app.updateDisplay();
     }
     
     /** Returns the preferences for this PuffinApp.
@@ -761,11 +810,11 @@ public final class PuffinApp {
     /** Gets all the sites containing any of the currently selected samples.
      * @return all the sites which contain any of the currently selected samples */
     public List<Site> getSelectedSites() {
-        List<Sample> samples = getSelectedSamples();
-        Set<Site> siteSet = new LinkedHashSet<>();
+        final List<Sample> samples = getSelectedSamples();
+        final Set<Site> siteSet = new LinkedHashSet<>();
         for (Sample sample: samples) {
             // re-insertion doesn't affect iteration order
-            Site site = sample.getSite();
+            final Site site = sample.getSite();
             if (site != null) {
                 siteSet.add(sample.getSite());
             }

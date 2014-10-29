@@ -169,7 +169,9 @@ public final class Suite {
      */
     public void calculateSiteFishers(Correction correction) {
         setSaved(false);
-        for (Site site: getSites()) site.calculateFisherStats(correction);
+        for (Site site: getSites()) {
+            site.calculateFisherStats(correction);
+        }
     }
 
     /** Returns the results of the per-site Fisher statistics calculated 

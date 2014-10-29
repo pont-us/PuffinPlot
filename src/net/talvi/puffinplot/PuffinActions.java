@@ -214,8 +214,9 @@ public class PuffinActions {
             "Save this suite of data in a new file.", 'S', true, KeyEvent.VK_A) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent arg0) {
-            Suite suite = app.getSuite();
-            if (suite != null) app.doSaveAs(suite);
+            if (app.getSuite() != null) {
+                app.doSaveAs(app.getSuite());
+            }
         }
     };
     
@@ -289,7 +290,9 @@ public class PuffinActions {
             KeyEvent.VK_E) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            for (Sample s : app.getSuite().getSamples()) s.setEmptySlot(false);
+            for (Sample s : app.getSuite().getSamples()) {
+                s.setEmptySlot(false);
+            }
             app.getSample().setEmptySlot(true);
             app.updateDisplay();
         }
@@ -303,7 +306,9 @@ public class PuffinActions {
     public final Action unsetEmptySlot = new AbstractAction("Unset empty slot") {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            for (Sample s : app.getSuite().getSamples()) s.setEmptySlot(false);
+            for (Sample s : app.getSuite().getSamples()) {
+                s.setEmptySlot(false);
+            }
             app.updateDisplay();
         }
     };
@@ -384,8 +389,6 @@ public class PuffinActions {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
             app.fitGreatCirclesToSelection();
-            app.calculateGreatCirclesDirections(false);
-            app.updateDisplay();
         }
     };
 
@@ -397,7 +400,7 @@ public class PuffinActions {
             "Great circle analysis for site", 'I', false, KeyEvent.VK_L) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-        app.calculateGreatCirclesDirections(false);
+            app.calculateGreatCirclesDirections();
         }
     };
 
@@ -423,7 +426,7 @@ public class PuffinActions {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
             for (Sample s: app.getSelectedSamples()) s.calculateMdf();
-            app.getMainWindow().repaint();
+            app.updateDisplay();
         }
     };
 
@@ -461,8 +464,7 @@ public class PuffinActions {
             'Z', false, KeyEvent.VK_C) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            for (Sample s: app.getSelectedSamples()) s.clearCalculations();
-            app.getMainWindow().repaint();
+            app.clearSelectedSampleCalculations();
         }
     };
     
@@ -473,8 +475,10 @@ public class PuffinActions {
             "Select all visible treatment steps in selected samples", 'D', false, KeyEvent.VK_A) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            for (Sample s: app.getSelectedSamples()) s.selectVisible();
-                app.getMainWindow().repaint();
+            for (Sample s: app.getSelectedSamples()) {
+                s.selectVisible();
+            }
+            app.updateDisplay();
         }
     };
 
@@ -486,7 +490,7 @@ public class PuffinActions {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
             for (Sample s: app.getSelectedSamples()) s.selectNone();
-                app.getMainWindow().repaint();
+                app.updateDisplay();
         }
     };
 
@@ -523,7 +527,7 @@ public class PuffinActions {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
            for (Sample s: app.getSelectedSamples())  s.hideSelectedPoints();
-            app.getMainWindow().repaint();
+            app.updateDisplay();
         }
     };
 
@@ -536,7 +540,7 @@ public class PuffinActions {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
             for (Sample s : app.getSelectedSamples()) s.unhideAllPoints();
-            app.getMainWindow().repaint();
+            app.updateDisplay();
         }
     };
 
