@@ -15,8 +15,6 @@ wget ftp://ftp.slac.stanford.edu/software/freehep/VectorGraphics/v2.1.1/vectorgr
 
 wget http://central.maven.org/maven2/com/lowagie/itext/2.1.7/itext-2.1.7.jar
 
-# wget http://central.maven.org/maven2/javax/xml/jaxp-api/1.3.1/jaxp-api-1.3.1.jar
-
 ### unpack the needed libraries
 
 cd ..
@@ -26,12 +24,12 @@ cd ..
 jar xf packages/jython-installer-2.5.3.jar jython.jar
 
 # Batik dependencies:
-# batik-svggen batik-awt-util batik-util xml-apis batik-dom
+# batik-svggen batik-awt-util batik-util batik-dom
+# (xml-apis part of Java since 1.6)
 unzip -j packages/batik-1.7.zip \
   batik-1.7/lib/batik-svggen.jar \
   batik-1.7/lib/batik-awt-util.jar \
   batik-1.7/lib/batik-util.jar \
-  batik-1.7/lib/xml-apis.jar \
   batik-1.7/lib/batik-dom.jar
 
 # The itext jar is not additionally packaged, so we can just

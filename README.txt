@@ -1,5 +1,11 @@
 # PuffinPlot development notes
 
+PuffinPlot is a program for palaeomagnetic data plotting and analysis,
+written by Pontus Lurcock. This readme describes the requirements for
+building PuffinPlot and its documentation from source, and is intended
+for developers rather than users. Users are advised to download the
+latest PuffinPlot release and consult the included user manual instead.
+
 ## Building PuffinPlot
 
 PuffinPlot is developed as a NetBeans project (http://netbeans.org/),
@@ -39,7 +45,6 @@ directory should contain the following jar files:
 | freehep-xml.jar             | 2.1.1                    |
 | itext.jar                   | 2.1.7                    |
 | jython.jar                  | 2.5.3                    |
-| xml-apis.jar                | 1.3.04 (from batik 1.7)  |
 
 The script `fetch-libs.sh` in the PuffinPlot directory will
 automatically create the `puffinplot-lib` directory, download the

@@ -1,0 +1,4 @@
+On reflection, if we're allowed to archive the PuffinPlot file,
+reproducibility should be achievable with a simple suite.readFiles(...)
+and suite.doAllCalculations() followed by the appropriate data export.
+Almost too easy!

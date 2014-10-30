@@ -48,20 +48,20 @@ public class Eigens {
      * @param matrix the matrix on which to perform eigen analysis
      */
     public Eigens(Matrix matrix) {
-        EigenvalueDecomposition eigDecomp = matrix.eig();
-        double[] eigenvalues = eigDecomp.getRealEigenvalues();
+        final EigenvalueDecomposition eigDecomp = matrix.eig();
+        final double[] eigenvalues = eigDecomp.getRealEigenvalues();
 
         /* There has to be a less horrific method of arranging the
          * results in order of decreasing eigenvalue magnitude,
          * but I haven't yet discovered it.
          */
-        int[] o = order(eigenvalues);
-        Matrix evs = eigDecomp.getV();
-        List<Vec3> vectorsTmp = new ArrayList<>(3);
-        List<Double> valuesTmp = new ArrayList<>(3);
-        double[] v1 = evs.getMatrix(0, 2, o[0], o[0]).getColumnPackedCopy();
-        double[] v2 = evs.getMatrix(0, 2, o[1], o[1]).getColumnPackedCopy();
-        double[] v3 = evs.getMatrix(0, 2, o[2], o[2]).getColumnPackedCopy();
+        final int[] o = order(eigenvalues);
+        final Matrix evs = eigDecomp.getV();
+        final List<Vec3> vectorsTmp = new ArrayList<>(3);
+        final List<Double> valuesTmp = new ArrayList<>(3);
+        final double[] v1 = evs.getMatrix(0, 2, o[0], o[0]).getColumnPackedCopy();
+        final double[] v2 = evs.getMatrix(0, 2, o[1], o[1]).getColumnPackedCopy();
+        final double[] v3 = evs.getMatrix(0, 2, o[2], o[2]).getColumnPackedCopy();
         vectorsTmp.add(new Vec3(v1[0], v1[1], v1[2]));
         vectorsTmp.add(new Vec3(v2[0], v2[1], v2[2]));
         vectorsTmp.add(new Vec3(v3[0], v3[1], v3[2]));
@@ -82,7 +82,7 @@ public class Eigens {
      * @return the eigenvectors and eigenvalues of the orientation tensor
      */
     public static Eigens fromVectors(Collection<Vec3> vectors, boolean normalize) {
-        Matrix orientationTensor = new Matrix(3,3); // zeros
+        final Matrix orientationTensor = new Matrix(3,3); // zeros
         for (Vec3 vector: vectors) {
             orientationTensor.plusEquals(normalize
                     ? vector.normalize().oTensor()
@@ -95,10 +95,13 @@ public class Eigens {
      * @return a matrix of the eigenvectors
      */
     public Matrix toMatrix() {
-        Vec3 v1 = getVectors().get(0);
-        Vec3 v2 = getVectors().get(1);
-        Vec3 v3 = getVectors().get(2);
-        double[] elts = {v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, v3.x, v3.y, v3.z};
+        final Vec3 v1 = getVectors().get(0);
+        final Vec3 v2 = getVectors().get(1);
+        final Vec3 v3 = getVectors().get(2);
+        final double[] elts = {
+            v1.x, v1.y, v1.z,
+            v2.x, v2.y, v2.z,
+            v3.x, v3.y, v3.z };
         return new Matrix(elts, 3);
     }
 
@@ -127,10 +130,14 @@ public class Eigens {
         }
 
         ArrayList<Pair> ps = new ArrayList<>(x.length);
-        for (int i=0; i<x.length; i++) ps.add(new Pair(i, x[i]));
+        for (int i=0; i<x.length; i++) {
+            ps.add(new Pair(i, x[i]));
+        }
         Collections.sort(ps);
-        int[] result = new int[x.length];
-        for (int i=0; i<x.length; i++) result[i] = ps.get(i).index;
+        final int[] result = new int[x.length];
+        for (int i=0; i<x.length; i++) {
+            result[i] = ps.get(i).index;
+        }
         return result;
     }
 
