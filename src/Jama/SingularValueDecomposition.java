@@ -1,5 +1,5 @@
 package Jama;
-import Jama.util.Maths;
+import Jama.util.*;
 
    /** Singular Value Decomposition.
    <P>
@@ -17,8 +17,6 @@ import Jama.util.Maths;
 
 public class SingularValueDecomposition implements java.io.Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
 /* ------------------------
    Class variables
  * ------------------------ */
@@ -45,8 +43,8 @@ public class SingularValueDecomposition implements java.io.Serializable {
  * ------------------------ */
 
    /** Construct the singular value decomposition
+       Structure to access U, S and V.
    @param Arg    Rectangular matrix
-   Constructs:     Structure to access U, S and V.
    */
 
    public SingularValueDecomposition (Matrix Arg) {
@@ -546,4 +544,5 @@ public class SingularValueDecomposition implements java.io.Serializable {
       }
       return r;
    }
+  private static final long serialVersionUID = 1;
 }

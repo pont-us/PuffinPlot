@@ -1,5 +1,5 @@
 package Jama;
-import Jama.util.Maths;
+import Jama.util.*;
 
 /** Eigenvalues and eigenvectors of a real matrix. 
 <P>
@@ -19,8 +19,6 @@ import Jama.util.Maths;
 
 public class EigenvalueDecomposition implements java.io.Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
 /* ------------------------
    Class variables
  * ------------------------ */
@@ -620,6 +618,7 @@ public class EigenvalueDecomposition implements java.io.Serializable {
    
             // Double QR step involving rows l:n and columns m:n
    
+
             for (int k = m; k <= n-1; k++) {
                boolean notlast = (k != n-1);
                if (k != m) {
@@ -627,15 +626,14 @@ public class EigenvalueDecomposition implements java.io.Serializable {
                   q = H[k+1][k-1];
                   r = (notlast ? H[k+2][k-1] : 0.0);
                   x = Math.abs(p) + Math.abs(q) + Math.abs(r);
-                  if (x != 0.0) {
-                     p = p / x;
-                     q = q / x;
-                     r = r / x;
+                  if (x == 0.0) {
+                      continue;
                   }
+                  p = p / x;
+                  q = q / x;
+                  r = r / x;
                }
-               if (x == 0.0) {
-                  break;
-               }
+
                s = Math.sqrt(p * p + q * q + r * r);
                if (p < 0) {
                   s = -s;
@@ -857,8 +855,8 @@ public class EigenvalueDecomposition implements java.io.Serializable {
  * ------------------------ */
 
    /** Check for symmetry, then construct the eigenvalue decomposition
+       Structure to access D and V.
    @param Arg    Square matrix
-   Creates:     Structure to access D and V.
    */
 
    public EigenvalueDecomposition (Matrix Arg) {
@@ -954,4 +952,5 @@ public class EigenvalueDecomposition implements java.io.Serializable {
       }
       return X;
    }
+  private static final long serialVersionUID = 1;
 }

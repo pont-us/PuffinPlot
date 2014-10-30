@@ -16,9 +16,7 @@ public class CholeskyDecomposition implements java.io.Serializable {
    Class variables
  * ------------------------ */
 
-	private static final long serialVersionUID = 1L;
-
-/** Array for internal storage of decomposition.
+   /** Array for internal storage of decomposition.
    @serial internal array storage.
    */
    private double[][] L;
@@ -38,8 +36,8 @@ public class CholeskyDecomposition implements java.io.Serializable {
  * ------------------------ */
 
    /** Cholesky algorithm for symmetric and positive definite matrix.
+       Structure to access L and isspd flag.
    @param  Arg   Square, symmetric matrix.
-   Creates:     Structure to access L and isspd flag.
    */
 
    public CholeskyDecomposition (Matrix Arg) {
@@ -197,5 +195,7 @@ public class CholeskyDecomposition implements java.io.Serializable {
       
       return new Matrix(X,n,nx);
    }
+  private static final long serialVersionUID = 1;
+
 }
 
