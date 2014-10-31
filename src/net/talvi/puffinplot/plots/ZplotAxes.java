@@ -32,8 +32,7 @@ class ZplotAxes {
     private final PlotAxis[] axes;
     
     public ZplotAxes(Rectangle2D dataArea, Rectangle2D plotArea,
-            MeasurementAxis vVs, MeasurementAxis hprojRight,
-            MeasurementAxis hprojUp, Plot plot) {
+            MeasurementAxis vVs, MeasurementAxis[] hprojAxes, Plot plot) {
         super();
 
         Rectangle2D.Double extDataArea = new Rectangle2D.Double();
@@ -50,13 +49,7 @@ class ZplotAxes {
             -extDataArea.getMinX(),
             extDataArea.getMaxY()
         };
-        
-        final MeasurementAxis[] hprojAxes = {
-            hprojRight,
-            hprojUp.opposite(),
-            hprojRight.opposite(),
-            hprojUp
-        };
+
         
         // Generate the correct labels for the axes
         final String[] labels = new String[4];

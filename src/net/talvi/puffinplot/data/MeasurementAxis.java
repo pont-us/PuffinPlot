@@ -59,12 +59,26 @@ public enum MeasurementAxis {
         this.direction = direction;
     }
     
+    /**
+     * Returns an axis pointing in the opposite direction to this axis.
+     * 
+     * @return the opposing axis
+     */
     public MeasurementAxis opposite() {
         return opposite;
     }
 
     /**
-     * @return the direction
+     * Returns a compass (field) direction corresponding to this axis.
+     * 
+     * The returned direction should be interpreted as a compass
+     * direction rather than a "paper" (up/down/left/right) direction.
+     * The direction indicates the original field orientation corresponding
+     * to this measurement axis.
+     * 
+     * This method is useful for determining labels on Zijderveld plots.
+     * 
+     * @return the compass direction for this axis
      */
     public Direction getDirection() {
         return direction;

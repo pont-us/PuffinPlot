@@ -140,16 +140,27 @@ public class ZPlot extends Plot {
         clearPoints();
         final Correction correction = params.getCorrection();
         final MeasurementAxis vProjXax = params.getVprojXaxis();
-
+        final MeasurementAxis hProjXax = params.getHprojXaxis();
+        final MeasurementAxis hProjYax = params.getHprojYaxis();
+        
         final Rectangle2D extent1 =
-                extent(data, correction, params.getHprojXaxis(), params.getHprojYaxis());
+                extent(data, correction, hProjXax, hProjYax);
         final Rectangle2D extent2 =
                 extent(data, correction, vProjXax, MeasurementAxis.MINUSZ);
 
-        final Rectangle2D dim = cropRectangle(getDimensions(), 250, 250, 200, 200);
+        final Rectangle2D dimensions =
+                cropRectangle(getDimensions(), 250, 250, 200, 200);
 
-        axes = new ZplotAxes(extent1.createUnion(extent2), dim, vProjXax,
-                params.getHprojXaxis(), params.getHprojYaxis(), this);
+                
+        final MeasurementAxis[] hProjAxes = {
+            hProjXax,
+            hProjYax.opposite(),
+            hProjXax.opposite(),
+            hProjYax
+        };
+        
+        axes = new ZplotAxes(extent1.createUnion(extent2), dimensions, vProjXax,
+                hProjAxes, this);
         
         g.setColor(Color.BLACK);
         g.setStroke(getStroke());
@@ -163,9 +174,7 @@ public class ZPlot extends Plot {
         // order to calculate the length for the short-format PCA fit line.
         final List<Point2D> pcaPointsH = new ArrayList<>(data.size()+1);
         final List<Point2D> pcaPointsV = new ArrayList<>(data.size()+1);
-        
-        final MeasurementAxis hProjXax = params.getHprojXaxis();
-        final MeasurementAxis hProjYax = params.getHprojYaxis();
+
         
         boolean first = true;
         for (Datum d: data) {
@@ -175,19 +184,23 @@ public class ZPlot extends Plot {
             final double y = yOffset - v.getComponent(hProjYax) * scale;
             final Point2D point = new Point2D.Double(x, y);
             addPoint(d, point, true, first, !first);
-            if (d.isInPca()) pcaPointsH.add(point);
-            
+            if (d.isInPca()) {
+                pcaPointsH.add(point);
+            }
             first = false;
         }
+        
         first = true;
         for (Datum d: data) {
             Vec3 v = d.getMoment(correction);
             // Now plot the point in the vertical plane
-            final double x2 = xOffset + v.getComponent(vProjXax) * scale;
-            final double y2 = yOffset - v.getComponent(MeasurementAxis.MINUSZ) * scale;
-            final Point2D point = new Point2D.Double(x2, y2);
+            final double x = xOffset + v.getComponent(vProjXax) * scale;
+            final double y = yOffset - v.getComponent(MeasurementAxis.MINUSZ) * scale;
+            final Point2D point = new Point2D.Double(x, y);
             addPoint(d, point, false, first, !first);
-            if (d.isInPca()) pcaPointsV.add(point);
+            if (d.isInPca()) {
+                pcaPointsV.add(point);
+            }
             first = false;
         }
         
@@ -204,13 +217,15 @@ public class ZPlot extends Plot {
             
             final double incRad = pca.getDirection().getIncRad();
             final double decRad = pca.getDirection().getDecRad();
-            final double x1 = pca.getOrigin().y * scale;
-            final double y1 = - pca.getOrigin().x * scale;
+            final double x1 = pca.getOrigin().getComponent(hProjXax) * scale;
+            final double y1 = - pca.getOrigin().getComponent(hProjYax) * scale;
             if ("Short".equals(pcaStyle)) {
                 clipRectangle = Util.envelope(pcaPointsH);
             }
+            
             drawPcaLine(g, xOffset + x1, yOffset + y1,
-                    decRad, Color.BLUE, clipRectangle, lineScale);
+                    transformDeclination(decRad, hProjAxes),
+                    Color.BLUE, clipRectangle, lineScale);
             
             final double x2 = pca.getOrigin().getComponent(vProjXax) * scale;
             final double y2 = - pca.getOrigin().getComponent(MeasurementAxis.MINUSZ) * scale;
@@ -243,6 +258,49 @@ public class ZPlot extends Plot {
         drawPoints(g);
     }
 
+    /**
+     * Projects a declination for plotting on non-standard axes.
+     * 
+     * If the declination can't be projected onto the provided axes,
+     * Double.NaN will be returned.
+     * 
+     * @param dec the declination in radians
+     * @param axes the axes on which it is to be plotted (right, down, left, up)
+     * @return an angle in radians measured clockwise from vertical, which will
+     * represent the declination on the specified axes
+     */
+    private double transformDeclination(double dec, MeasurementAxis[] axes) {
+        assert(axes.length == 4);
+
+        // First, find the North (==MeasurementAxis.X) axis,
+        // so we can add an offset to plot the
+        // declination relative to it.
+        final int northIndex =
+                java.util.Arrays.asList(axes).indexOf(MeasurementAxis.X);
+        
+        // If there's no North axis, give up.
+        if (northIndex == -1) {
+            return Double.NaN;
+        }
+        
+        // Now try to find an East (==MeasurementAxis.Y) axis adjacent
+        // to the North axis.
+        int direction = 0;
+        if (axes[(northIndex+3)%4] == MeasurementAxis.Y) {
+            direction = -1; // East axis anticlockwise of North axis
+        } else if (axes[(northIndex+1)%4] == MeasurementAxis.Y) {
+            direction = 1; // East axis anticlockwise of North axis
+        } else {
+            return Double.NaN;
+        }
+        
+        // When calculating the final angle we need to add 1 to the north
+        // index since the axes array starts with the right (positive-X)
+        // axis.
+        
+        return ((Math.PI/2)*(northIndex+1) + direction*dec) % (2*Math.PI);
+    }
+    
     /** Returns the legend for this plot. 
      * @return the legend for this plot */
     public ZplotLegend getLegend() {
