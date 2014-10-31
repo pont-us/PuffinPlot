@@ -32,7 +32,8 @@ class ZplotAxes {
     private final PlotAxis[] axes;
     
     public ZplotAxes(Rectangle2D dataArea, Rectangle2D plotArea,
-            MeasurementAxis vVs, Plot plot) {
+            MeasurementAxis vVs, MeasurementAxis hprojRight,
+            MeasurementAxis hprojUp, Plot plot) {
         super();
 
         Rectangle2D.Double extDataArea = new Rectangle2D.Double();
@@ -50,19 +51,41 @@ class ZplotAxes {
             extDataArea.getMaxY()
         };
         
+        final MeasurementAxis[] hprojAxes = {
+            hprojRight,
+            hprojUp.opposite(),
+            hprojRight.opposite(),
+            hprojUp
+        };
+        
         // Generate the correct labels for the axes
-        String[] labels = new String[4];
+        final String[] labels = new String[4];
         for (int i=0; i<4; i++) {
-            Direction dir = directions[i];
-            labels[i] = dir.getCompassDir()+",";
+            final Direction dir = directions[i];
+            
+            // Look up the horizontal label
+            final String hprojLabel = hprojAxes[i].getDirection().getCompassDir();
+            String vprojLabel = null;
+            
+            // Determine the vertical label
             if (dir.isHorizontal()) {
+                // horizontal axis depends on the current projection
                 switch (vVs) {
-                    case X: labels[i] += dir.rotAcw90().getCompassDir(); break;
-                    case Y: labels[i] += dir.getCompassDir(); break;
-                    case H: labels[i] += "H"; break;
+                    case X: vprojLabel = dir.rotAcw90().getCompassDir(); break;
+                    case Y: vprojLabel = dir.getCompassDir(); break;
+                    case H: vprojLabel = "H"; break;
+                    default: throw new Error("No such axis "+vVs.name());
                 }
+            } else {
+                // vertical axis is invariant: set up or down as appropriate
+                vprojLabel = dir.getLetter();
             }
-            else labels[i] += dir.getLetter();
+            
+            if (hprojLabel.equals(vprojLabel)) {
+                labels[i] = hprojLabel;
+            } else {
+                labels[i] = hprojLabel + "," + vprojLabel;
+            }
         }
         
         PlotAxis.AxisParameters[] aps = new PlotAxis.AxisParameters[4];

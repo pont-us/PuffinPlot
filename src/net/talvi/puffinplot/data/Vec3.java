@@ -457,6 +457,8 @@ public class Vec3 {
             case X: return x;
             case Y: return y;
             case Z: return z;
+            case MINUSX: return -x;
+            case MINUSY: return -y;
             case MINUSZ: return -z;
             case H: return sqrt(x*x+y*y);
             default: throw new IllegalArgumentException("invalid axis "+component);

@@ -69,8 +69,18 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
                 return app.getCorrection();
             }
             @Override
-            public MeasurementAxis getAxis() {
-                return app.getMainWindow().getControlPanel().getAxis();
+            public MeasurementAxis getVprojXaxis() {
+                return app.getMainWindow().getControlPanel().getVprojXaxis();
+            }
+
+            @Override
+            public MeasurementAxis getHprojXaxis() {
+                return app.getMainWindow().getControlPanel().getHprojXaxis();
+            }
+
+            @Override
+            public MeasurementAxis getHprojYaxis() {
+                return app.getMainWindow().getControlPanel().getHprojYaxis();
             }
         };
         createPlots();

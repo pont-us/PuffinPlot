@@ -1,0 +1,4 @@
+I'm reducing the scope of this issue to just implementing
+"west-upward" horizontal projections. I've opened a new ticket 
+(a88/9c82 Full control over Zplot projection planes) for a more
+complete implementation.

@@ -89,16 +89,16 @@ public class ZPlot extends Plot {
     private void drawPcaLine(Graphics2D g, double x, double y,
             double angleRad, Color colour, Rectangle2D clip,
             double scale) {
-        // Line clipping is done ‘manually’. The previous implementation
-        // just used g.setClip(axes.getBounds()) (saving and restoring the
-        // previous clip rectangle), but this caused problems, chiefly
-        // that the lines would appear at full length in SVG and PDF exports.
-        // Unfortunately there seems to be no appropriate clipping
-        // function in the Java libraries, so I have added a clipping routine
-        // to the Util class.
+        /* Line clipping is done ‘manually’. The previous implementation just
+         used g.setClip(axes.getBounds()) (saving and restoring the previous
+         clip rectangle), but this caused problems, chiefly that the lines
+         would appear at full length in SVG and PDF exports. Unfortunately
+         there seems to be no appropriate clipping function in the Java
+         libraries, so I have added a clipping routine to the Util class. */
+        
         // SAFE_LENGTH is intended always to reach the edges of the plot.
         if (clip == null) return;
-        final double SAFE_LENGTH = 2000;
+        final double SAFE_LENGTH = 10000;
         final double dx = SAFE_LENGTH * sin(angleRad);
         final double dy = SAFE_LENGTH * cos(angleRad);
         g.setStroke(getStroke());
@@ -139,16 +139,17 @@ public class ZPlot extends Plot {
         
         clearPoints();
         final Correction correction = params.getCorrection();
-        final MeasurementAxis vVs = params.getAxis();
+        final MeasurementAxis vProjXax = params.getVprojXaxis();
 
         final Rectangle2D extent1 =
-                extent(data, correction, MeasurementAxis.Y, MeasurementAxis.X);
+                extent(data, correction, params.getHprojXaxis(), params.getHprojYaxis());
         final Rectangle2D extent2 =
-                extent(data, correction, vVs, MeasurementAxis.MINUSZ);
+                extent(data, correction, vProjXax, MeasurementAxis.MINUSZ);
 
         final Rectangle2D dim = cropRectangle(getDimensions(), 250, 250, 200, 200);
 
-        axes = new ZplotAxes(extent1.createUnion(extent2), dim, vVs, this);
+        axes = new ZplotAxes(extent1.createUnion(extent2), dim, vProjXax,
+                params.getHprojXaxis(), params.getHprojYaxis(), this);
         
         g.setColor(Color.BLACK);
         g.setStroke(getStroke());
@@ -163,22 +164,26 @@ public class ZPlot extends Plot {
         final List<Point2D> pcaPointsH = new ArrayList<>(data.size()+1);
         final List<Point2D> pcaPointsV = new ArrayList<>(data.size()+1);
         
+        final MeasurementAxis hProjXax = params.getHprojXaxis();
+        final MeasurementAxis hProjYax = params.getHprojYaxis();
+        
         boolean first = true;
         for (Datum d: data) {
             final Vec3 v = d.getMoment(correction);
             // Plot the point in the horizontal plane
-            final double x1 = xOffset + v.y * scale;
-            final double y1 = yOffset - v.x * scale;
-            final Point2D point = new Point2D.Double(x1, y1);
+            final double x = xOffset + v.getComponent(hProjXax) * scale;
+            final double y = yOffset - v.getComponent(hProjYax) * scale;
+            final Point2D point = new Point2D.Double(x, y);
             addPoint(d, point, true, first, !first);
             if (d.isInPca()) pcaPointsH.add(point);
+            
             first = false;
         }
         first = true;
         for (Datum d: data) {
             Vec3 v = d.getMoment(correction);
             // Now plot the point in the vertical plane
-            final double x2 = xOffset + v.getComponent(vVs) * scale;
+            final double x2 = xOffset + v.getComponent(vProjXax) * scale;
             final double y2 = yOffset - v.getComponent(MeasurementAxis.MINUSZ) * scale;
             final Point2D point = new Point2D.Double(x2, y2);
             addPoint(d, point, false, first, !first);
@@ -207,11 +212,11 @@ public class ZPlot extends Plot {
             drawPcaLine(g, xOffset + x1, yOffset + y1,
                     decRad, Color.BLUE, clipRectangle, lineScale);
             
-            final double x2 = pca.getOrigin().getComponent(vVs) * scale;
+            final double x2 = pca.getOrigin().getComponent(vProjXax) * scale;
             final double y2 = - pca.getOrigin().getComponent(MeasurementAxis.MINUSZ) * scale;
             double incCorr = 0;
 
-            switch (vVs) {
+            switch (vProjXax) {
                 // We don't necessarily want the actual line of inclination; we
                 // want the projection of that line onto the appropriate plane.
                 case X:
@@ -221,7 +226,7 @@ public class ZPlot extends Plot {
                     incCorr = atan(sin(incRad) / (cos(incRad) * sin(decRad)));
                     break;
             }
-            if (vVs == MeasurementAxis.X || vVs == MeasurementAxis.Y) {
+            if (vProjXax == MeasurementAxis.X || vProjXax == MeasurementAxis.Y) {
                 /* If we're plotting vertical projections vs. `H', there's
                  * no meaningful way to display the vertical component of the
                  * PCA: the projection plane is changing with every point

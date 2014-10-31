@@ -53,8 +53,16 @@ public class SiteMeanDisplay extends GraphDisplay implements Printable {
             public Correction getCorrection() {
                 throw new UnsupportedOperationException(); }
             @Override
-            public MeasurementAxis getAxis() {
+            public MeasurementAxis getVprojXaxis() {
                 throw new UnsupportedOperationException(); }
+            @Override
+            public MeasurementAxis getHprojXaxis() {
+                throw new UnsupportedOperationException();
+            }
+            @Override
+            public MeasurementAxis getHprojYaxis() {
+                throw new UnsupportedOperationException();
+            }
         };
 
         Plot plot = new SiteEqAreaPlot(this, params,

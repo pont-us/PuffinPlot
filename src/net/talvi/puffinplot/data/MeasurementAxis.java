@@ -16,6 +16,8 @@
  */
 package net.talvi.puffinplot.data;
 
+import net.talvi.puffinplot.plots.Direction;
+
 /**
  * An axis along which a magnetic moment measurement was made.
  * 
@@ -24,15 +26,47 @@ package net.talvi.puffinplot.data;
 
 public enum MeasurementAxis {
     /** the x axis */
-    X,
+    X(Direction.UP),
     /** the y axis */
-    Y,
+    Y(Direction.RIGHT),
     /** the z axis */
-    Z,
+    Z(null),
+    /** the inverted X axis */
+    MINUSX(Direction.DOWN),
+    /** the inverted Y axis */
+    MINUSY(Direction.LEFT),
     /** the inverted z axis */
-    MINUSZ,
+    MINUSZ(null),
     /** a virtual axis used in the modified Zijderveld plot, corresponding
      to the direction of the horizontal component of a data point.
      @see net.talvi.puffinplot.plots.ZPlot */
-    H;
+    H(null);
+    
+    private MeasurementAxis opposite;
+    private final Direction direction;
+    
+    static {
+        X.opposite = MINUSX;
+        Y.opposite = MINUSY;
+        Z.opposite = MINUSZ;
+        MINUSX.opposite = X;
+        MINUSY.opposite = Y;
+        MINUSZ.opposite = Z;
+    }
+
+    
+    private MeasurementAxis(Direction direction) {
+        this.direction = direction;
+    }
+    
+    public MeasurementAxis opposite() {
+        return opposite;
+    }
+
+    /**
+     * @return the direction
+     */
+    public Direction getDirection() {
+        return direction;
+    }
 }

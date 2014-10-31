@@ -24,12 +24,17 @@ import java.util.EnumSet;
 
 /**
  * A representation of a two-dimensional perpendicular direction.
- * That is, left, right, up, or down.
+ * That is, left, right, up, or down, or the equivalent compass 
+ * direction.
  * 
  * @author pont
  */
 public enum Direction {
-    RIGHT("R", "E", 0), UP("U", "N", 1), LEFT("L", "W", 2), DOWN("D", "S", 3);
+    RIGHT("R", "E", 0),
+    UP("U", "N", 1),
+    LEFT("L", "W", 2),
+    DOWN("D", "S", 3);
+    
     private final String letter;
     private final String compassDir;
     private final int position;

@@ -44,8 +44,12 @@ public interface PlotParams {
      * @return the correction to be applied to magnetic moment data */
     public Correction getCorrection();
 
-    /** Returns the vertical projection axis for a Zijderveld plot.
+    /** Returns the X axis of the vertical projection of a Zijderveld plot.
      * @return the vertical projection axis for a Zijderveld plot */
-    public MeasurementAxis getAxis();
+    public MeasurementAxis getVprojXaxis();
+    
+    public MeasurementAxis getHprojXaxis();
+    
+    public MeasurementAxis getHprojYaxis();
 
 }

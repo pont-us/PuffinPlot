@@ -47,6 +47,8 @@ public class ControlPanel extends JPanel
     JComboBox suiteBox;
     private final RotationBox rotationBox;
     VVsBox vVsBox;
+    private final HprojBox hprojBox;
+    private final JRadioButton emptyButton;
     private static final PuffinApp app = PuffinApp.getInstance();
     private static final Preferences prefs = app.getPrefs().getPrefs();
     
@@ -58,7 +60,6 @@ public class ControlPanel extends JPanel
         }
     };
     private final JRadioButton trayButton;
-    private final JRadioButton emptyButton;
     
     /** Creates a new control panel */
     public ControlPanel() {
@@ -67,6 +68,7 @@ public class ControlPanel extends JPanel
         add(rotationBox = new RotationBox());
         trayButton = emptyButton = null;
         add(vVsBox = new VVsBox());
+        add(hprojBox = new HprojBox());
         add(new JToolBar.Separator());
         add(correctionField = new JLabel());
         add(new JToolBar.Separator());
@@ -149,13 +151,29 @@ public class ControlPanel extends JPanel
         }
     }
     
-    /** Returns the currently selected vertical projection for the 
-     * Zijderveld plot. 
-     * @return  the currently selected vertical projection for the 
-     * Zijderveld plot
+    /** Returns the X-axis of the vertical Zijderveld plot. 
+     * @return the X-axis of the vertical Zijderveld plot
      */
-    public MeasurementAxis getAxis() {
+    public MeasurementAxis getVprojXaxis() {
         return vVsBox.axis();
+    }
+        
+    /** Returns the X-axis of the horizontal Zijderveld plot. 
+     * @return the X-axis of the horizontal Zijderveld plot
+     */
+    public MeasurementAxis getHprojXaxis() {
+        // N up: Y
+        // W up: X
+        return hprojBox.getXaxis();
+    }
+        
+    /** Returns the Y-axis of the horizontal Zijderveld plot. 
+     * @return the Y-axis of the horizontal Zijderveld plot
+     */
+    public MeasurementAxis getHprojYaxis() {
+        // N up: X
+        // W up: -Y
+        return hprojBox.getYaxis();
     }
     
     /** Returns the correction to apply to magnetic moment data. 
@@ -200,6 +218,32 @@ public class ControlPanel extends JPanel
         }
     }
     
+    private class HprojBox extends JComboBox {
+        
+        private static final long serialVersionUID = 1L;
+
+        HprojBox() {
+            super(new String[] {"N is up", "W is up"});
+            addItemListener(ControlPanel.this);
+        }
+        
+        public MeasurementAxis getXaxis() {
+            switch (getSelectedIndex()) {
+            case 0: return MeasurementAxis.Y;
+            case 1: return MeasurementAxis.X;
+            default: throw new RuntimeException("unknown horizontal projection x-axis");
+            }
+        }
+        
+        public MeasurementAxis getYaxis() {
+            switch (getSelectedIndex()) {
+            case 0: return MeasurementAxis.X;
+            case 1: return MeasurementAxis.MINUSY;
+            default: throw new RuntimeException("unknown horizontal projection y-axis");
+            }
+        }
+    }
+    
     private class RotationBox extends JComboBox {
         private static final long serialVersionUID = 1L;
 
@@ -232,7 +276,7 @@ public class ControlPanel extends JPanel
     public void itemStateChanged(ItemEvent e) {
         final Object s = e.getSource();
         if (s == rotationBox || s == trayButton || s == emptyButton ||
-                s == vVsBox) {
+                s == vVsBox || s == hprojBox) {
             app.setCorrection(getCorrection());
             app.redoCalculations();
             app.getMainWindow().repaint();
