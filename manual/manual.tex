@@ -10,7 +10,7 @@
 \ifpdf
   \usepackage[T1]{fontenc}
   \usepackage[bitstream-charter]{mathdesign}
-  \renewcommand{\sfdefault}{fvs}
+  \renewcommand{\sfdefault}{fvs} % Bera Sans
 \fi
 \usepackage[round]{natbib}
 \usepackage[utf8]{inputenc}
@@ -387,13 +387,19 @@ From left to right, these are:
     corr.}), or in tectonic co-ordinates, corrected for both sample
   orientation and bedding orientation (\ppcmd{form. corr.}).
 
-\item[Zijderveld projection type.] This chooser controls the vertical
-  projection used in the Zijderveld plot. The {\em y} axis always corresponds
-  to the vertical direction; the chooser controls the {\em x} axis, which may
-  correspond to North (\ppcmd{V vs. N}) or East (\ppcmd{V vs. E}). The third
-  option, \ppcmd{V vs. H}, projects each data point separately, in the plane
-  containing itself and the origin; this is sometimes referred to as a
-  `modified Zijderveld' plot.
+\item[Zijderveld vertical projection (`V vs. \ldots').] This chooser
+  controls the vertical projection used in the Zijderveld plot. The {\em
+    y} axis always corresponds to the vertical direction; the chooser
+  controls the {\em x} axis, which may correspond to North (\ppcmd{V vs.
+    N}) or East (\ppcmd{V vs. E}). The third option, \ppcmd{V vs. H},
+  projects each data point separately, in the plane containing itself
+  and the origin; this is sometimes referred to as a `modified
+  Zijderveld' plot.
+
+\item[Zijderveld horizontal projection (`N is up'/`W is up').] This
+  chooser controls the horizontal projection used in the Zijderveld
+  plot. The upward direction on the plot can correspond to either 
+  north or west.
 
 \item[Sample orientation] (\ppcmd{Samp}). The first number is the azimuth of
   the sample orientation; the second is its either its dip angle or its hade,
