@@ -24,7 +24,9 @@ package net.talvi.puffinplot.data;
  * @author pont
  */
 public enum FieldUnit {
+    /** tesla (T) */
     TESLA(1),
+    /** millitesla (mT) */
     MILLITESLA(0.001);
     
     private final double factor;
@@ -33,6 +35,10 @@ public enum FieldUnit {
         this.factor = factor;
     }
     
+    /**
+     * @return the number by which a value expressed in this unit must be 
+     * multiplied, in order to produce a value expressed in tesla
+     */
     public double getFactorForTesla() {
         return factor;
     }

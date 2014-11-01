@@ -1247,6 +1247,9 @@ public final class PuffinApp {
         
     }
     
+    /**
+     * Calculate means across all currently loaded suites.
+     */
     public void calculateMultiSuiteMeans() {
         multiSuiteCalcs = Suite.calculateMultiSuiteMeans(suites);
         StringBuilder meansBuilder = new StringBuilder();
@@ -1351,11 +1354,18 @@ public final class PuffinApp {
         }
     }
 
-    
+    /**
+     * Returns the version of this PuffinPlot build.
+     * 
+     * @return the version of this PuffinPlot build
+     */
     public Version getVersion() {
         return version;
     }
     
+    /**
+     * A class containing information about PuffinPlot's version.
+     */
     public class Version {
         private final String versionString;
         private final String dateString;
@@ -1401,14 +1411,23 @@ public final class PuffinApp {
             }
         }
 
+        /**
+         * @return a string representing this Version
+         */
         public String getVersionString() {
             return versionString;
         }
 
+        /**
+         * @return a string representing the release date of this Version
+         */
         public String getDateString() {
             return dateString;
         }
         
+        /**
+         * @return a string representing the copyright year range of this Version
+         */
         public String getYearRange() {
             return yearRange;
         }
@@ -1425,6 +1444,11 @@ public final class PuffinApp {
         getMainWindow().setIconImages(icons);
     }
     
+    /**
+     * Opens the specified URI in the default system browser.
+     * 
+     * @param uriString the URI to open
+     */
     public void openWebPage(String uriString) {
         try {
             Desktop.getDesktop().browse(new URI(uriString));
@@ -1433,10 +1457,24 @@ public final class PuffinApp {
         }
     }
     
+    /**
+     * Saves the current suite under its current filename.
+     * 
+     * If the suite has no current filename, one will be requested from
+     * the user using a standard file dialog.
+     */
     public void save() {
         save(getSuite());
     }
     
+    /**
+     * Saves the specified suite under its current filename.
+     * 
+     * If the suite has no current filename, one will be requested from
+     * the user using a standard file dialog.
+     * 
+     * @param suite the suite to save
+     */
     public void save(Suite suite) {
         if (suite != null) {
                 if (suite.isFilenameSet()) try {
@@ -1542,6 +1580,11 @@ public final class PuffinApp {
         return pathname;
     }
     
+    /**
+     * Calculate RPI using two loaded suites.
+     * 
+     * Currently experimental.
+     */
     public void calculateRpi() {
         final Suite nrmSuite = getSuites().get(0);
         final Suite armSuite = getSuites().get(1);

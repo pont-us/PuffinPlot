@@ -245,6 +245,16 @@ public class Util {
         return new Rectangle2D.Double(x0, y0, x1-x0, y1-y0);
     }
     
+    /**
+     * Scales a line around its midpoint.
+     * 
+     * Given a line with length L, returns a line with length scale*L,
+     * with the same midpoint and direction as the provided line.
+     * 
+     * @param line the line to scale
+     * @param scale the scale factor
+     * @return the scaled line
+     */
     public static Line2D scaleLine(Line2D line, double scale) {
         if (scale==1 || line==null) return line;
         final double x0 = line.getX1();

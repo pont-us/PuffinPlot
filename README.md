@@ -60,7 +60,8 @@ containing it is also given.
 On most Debian-based operating systems, all the TeX dependencies should
 be installable with the command
 
-```sudo apt-get install tex4ht texlive-fonts-extra texlive-fonts-recommended texlive-latex-base texlive-latex-extra texlive-latex-recommended
+```
+sudo apt-get install tex4ht texlive-fonts-extra texlive-fonts-recommended texlive-latex-base texlive-latex-extra texlive-latex-recommended
 ```
 
 #### Programs
@@ -118,7 +119,7 @@ the solution is to increase the memory allocation pool size using
 the ANT_OPTS environment variable, thus:
 
 ```
-  ANT_OPTS=-Xmx512m
+ANT_OPTS=-Xmx512m
 ```
 
 (or some other suitably large value).

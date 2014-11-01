@@ -912,6 +912,9 @@ public class PuffinActions {
         }
     };
     
+    /**
+     * Clears all site definitions.
+     */
     public final Action clearSites = new PuffinAction("Clear sites",
             "Remove all current site definitions", null, false, KeyEvent.VK_C) {
         private static final long serialVersionUID = 1L;

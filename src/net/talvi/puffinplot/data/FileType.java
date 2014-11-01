@@ -30,15 +30,24 @@ import java.util.logging.Logger;
  */
 public enum FileType {
     
-    TWOGEE("2G cryomagnetometer", '2'),  // DAT, 2G Long Core software
-    ZPLOT("Zplot (Hurst)", 'z'),         // TXT, Steve Hurst's Zplot program
-    PUFFINPLOT_OLD("Old PuffinPlot format", 'o'), // PPL, old PuffinPlot file format
-    PUFFINPLOT_NEW("PuffinPlot", 'p'),   // PPL, new PuffinPlot file format
-    CALTECH("Caltech (.sam)", 's'),      // SAM, Caltech (a.k.a. CIT)
-    IAPD("IAPD", 'i'),                   // DAT, [Super-]IAPD[2000] (Torsvik et al.)
-    DIRECTIONS("Sample directions", 'd'), // Sample-level directional data
-    CUSTOM_TABULAR("Custom format", 'c'), // custom tabular, defined by a FileFormat
-    UNKNOWN("Unknown", 'u');              // unknown file format
+    /** DAT, 2G Long Core software */
+    TWOGEE("2G cryomagnetometer", '2'),
+    /** TXT, Steve Hurst's Zplot program */
+    ZPLOT("Zplot (Hurst)", 'z'),
+    /** PPL, old PuffinPlot file format */
+    PUFFINPLOT_OLD("Old PuffinPlot format", 'o'),
+    /** PPL, new PuffinPlot file format */
+    PUFFINPLOT_NEW("PuffinPlot", 'p'),
+    /** SAM, Caltech (a.k.a. CIT) */
+    CALTECH("Caltech (.sam)", 's'),
+    /** DAT, [Super-]IAPD[2000] (Torsvik et al.) */
+    IAPD("IAPD", 'i'),
+    /** Sample-level directional data */
+    DIRECTIONS("Sample directions", 'd'),
+    /** Custom tabular, defined by a FileFormat */
+    CUSTOM_TABULAR("Custom format", 'c'),
+    /** Unknown file format */
+    UNKNOWN("Unknown", 'u');
 
     private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
     private final String niceName;

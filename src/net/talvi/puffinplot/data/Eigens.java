@@ -155,6 +155,9 @@ public class Eigens {
         return values;
     }
     
+    /**
+     * @return the MAD1 (Maximum Angular Deviation planarity) index
+     */
     public double getMad1() {
         final double lmax = getValues().get(0);
         final double lint = getValues().get(1);
@@ -164,6 +167,9 @@ public class Eigens {
         return mad1;
     }
     
+    /**
+     * @return the MAD3 (Maximum Angular Deviation linearity) index
+     */
     public double getMad3() {
         final double lmax = getValues().get(0);
         final double lint = getValues().get(1);

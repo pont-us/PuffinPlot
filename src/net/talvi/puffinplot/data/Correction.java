@@ -45,9 +45,15 @@ public class Correction {
     private final boolean tray;
     private final boolean empty;
     private Rotation rotation;
+    private boolean magDevAppliedToFormation;
+    
+    /**
+     * The null correction.
+     * 
+     * Applying this correction to a direction should leave it unchanged.
+     */
     public static final Correction NONE =
             new Correction(false, false, Rotation.NONE, false);
-    private boolean magDevAppliedToFormation;
     
     /**
      * Creates a new set of corrections
