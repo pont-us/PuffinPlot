@@ -6,10 +6,6 @@
 package net.talvi.puffinplot.data;
 
 import java.util.Locale;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -19,25 +15,9 @@ import static org.junit.Assert.*;
  */
 public class Vec3Test {
 
-    public Vec3Test() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
-
+    /**
+     *  Tests the {@link Vec3#addDecRad(double)} method.
+     */
     @Test
     public void testAddDecRad() {
         System.out.println("addDecRad");
@@ -57,7 +37,10 @@ public class Vec3Test {
             }
         }
     }
-
+    
+    /**
+     *  Tests the {@link Vec3#addIncRad(double)} method.
+     */
     @Test
     public void testAddIncRad() {
         System.out.println("addIncRad");

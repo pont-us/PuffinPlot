@@ -34,7 +34,8 @@ import javax.swing.border.EmptyBorder;
 import net.talvi.puffinplot.PuffinApp;
 
 /**
- *
+ * A window which displays information on how to cite PuffinPlot.
+ * 
  * @author pont
  */
 public class CiteWindow extends JFrame {
@@ -103,6 +104,9 @@ public class CiteWindow extends JFrame {
             "  url = {http://dx.doi.org/10.1029/2012GC004098}\n" +
             "}\n";
     
+    /**
+     * Creates a new CiteWindow.
+     */
     public CiteWindow() {
         setMinimumSize(new Dimension(400, 200));
         setPreferredSize(new java.awt.Dimension(600, 400));

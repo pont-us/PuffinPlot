@@ -74,15 +74,29 @@ public class Location {
         return toRadians(longitude);
     }
     
+    /**
+     * Returns a Location representing the supplied degree co-ordinates.
+     * 
+     * @param latDeg latitude of the Location in degrees
+     * @param longDeg longitude of the Location in degrees
+     * @return a Location representing the supplied co-ordinates
+     */
     public static Location fromDegrees(double latDeg, double longDeg) {
         return new Location(latDeg, longDeg);
     }
     
+    /**
+     * Returns a Location representing the supplied radian co-ordinates.
+     * 
+     * @param latRad latitude of the Location in radians
+     * @param longRad longitude of the Location in radians
+     * @return a Location representing the supplied co-ordinates
+     */
     public static Location fromRadians(double latRad, double longRad) {
         return new Location(toDegrees(latRad), toDegrees(longRad));
     }
     
-       /** Returns the headers describing the parameters as a list of strings.
+    /** Returns the headers describing the parameters as a list of strings.
      * @return the headers describing the parameters
      */
     public static List<String> getHeaders() {

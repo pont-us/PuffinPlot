@@ -8,10 +8,6 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.BitSet;
 import java.util.Locale;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -20,25 +16,6 @@ import static org.junit.Assert.*;
  * @author pont
  */
 public class UtilTest {
-    
-    public UtilTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
 
     private BitSet makeBitSet(String spec) {
         BitSet result = new BitSet();
@@ -147,6 +124,9 @@ public class UtilTest {
 
     }
     
+    /**
+     * Tests the {@link Util#clipLineToRectangle(java.awt.geom.Line2D, java.awt.geom.Rectangle2D)} method.
+     */
     @Test
     public void testClipLineToRectangle() {
         System.out.println("clipLineToRectangle");

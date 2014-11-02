@@ -16,10 +16,6 @@
  */
 package net.talvi.puffinplot.data;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -31,25 +27,6 @@ import static org.junit.Assert.*;
  * @author pont
  */
 public class VGPTest {
-    
-    public VGPTest() {
-    }
-    
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
 
     /**
      * Test of calculate method, of class VGP.

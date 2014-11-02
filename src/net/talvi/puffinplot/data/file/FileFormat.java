@@ -307,6 +307,14 @@ public final class FileFormat {
         return useFixedWidthColumns;
     }
     
+    /**
+     * Determines whether this format specifies a full magnetization vector.
+     * 
+     * For a full magnetization vector, the format must contain either
+     * all three Cartesian co-ordinates, or all three polar co-ordinates.
+     * 
+     * @return {@code true} iff this format specifies a full magnetization vector
+     */
     public boolean specifiesFullVector() {
         return (columnMap.containsValue(DatumField.X_MOMENT) &&
                 columnMap.containsValue(DatumField.Y_MOMENT) &&
@@ -316,6 +324,15 @@ public final class FileFormat {
                 columnMap.containsValue(DatumField.VIRT_MAGNETIZATION));
     }
     
+    /**
+     * Determines whether this format specifies a three-dimensional direction.
+     * 
+     * For a three-dimensional direction, the format must contain either
+     * all three Cartesian co-ordinates, or both inclination and declination
+     * fields.
+     * 
+     * @return {@code true} iff this format specifies a three-dimensional direction
+     */
     public boolean specifiesDirection() {
         return specifiesFullVector() ||
                 (columnMap.containsValue(DatumField.VIRT_INCLINATION) &&

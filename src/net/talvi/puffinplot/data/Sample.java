@@ -300,6 +300,17 @@ public class Sample {
         return getData().get(i);
     }
     
+    /**
+     * Returns a Datum from the Sample with the specified treatment level.
+     * 
+     * If the Sample contains more than one Datum at the given level, only
+     * the first is returned. If there is not matching Datum, {@code null}
+     * is returned. Any treatment levels differing by less that 1e-6 are
+     * considered equal.
+     * 
+     * @param level a treatment level
+     * @return the first datum in the sample with the given treatment level
+     */
     public Datum getDatumByTreatmentLevel(double level) {
         final double threshold = 1e-6;
         for (Datum d: data) {
@@ -414,14 +425,42 @@ public class Sample {
         return fisherValues;
     }
     
+    /**
+     * Returns the imported sample direction, if any.
+     * 
+     * The imported direction may be set with
+     * {@link #setImportedDirection(net.talvi.puffinplot.data.Vec3)}
+     * or {@link #fromString(java.lang.String)}.
+     * If no imported direction has been set, null is returned.
+     * 
+     * @return this sample's imported direction, if any
+     */
     public Vec3 getImportedDirection() {
         return importedDirection;
     }
     
+    /**
+     * Sets an imported direction for this sample.
+     * 
+     * The direction can be retrieved with
+     * {@link #setImportedDirection(net.talvi.puffinplot.data.Vec3)} and is
+     * exported by {@link #toStrings()}.
+     * 
+     * @param importedDirection the imported direction to set
+     */
     public void setImportedDirection(Vec3 importedDirection) {
         this.importedDirection = importedDirection;
     }
 
+    /**
+     * Returns the sample direction.
+     * 
+     * If there is a PCA direction, it will be returned; the method falls
+     * back to the Fisher direction and the imported direction in that 
+     * order. If none of those are set, {@code null} is returned.
+     * 
+     * @return the sample direction, if any
+     */
     public Vec3 getDirection() {
         if (getPcaAnnotated() != null) {
             return getPcaValues().getDirection();
@@ -878,6 +917,11 @@ public class Sample {
         if (suite != null) suite.setSaved(false);
     }
 
+    /**
+     * Calculates a Fisherian mean for the selected demagnetization steps.
+     * 
+     * @param correction the correction to apply to the moment measurements
+     */
     public void calculateFisher(Correction correction) {
         final List<Datum> selection = getSelectedData();
         final List<Vec3> directions = new ArrayList<>(selection.size());

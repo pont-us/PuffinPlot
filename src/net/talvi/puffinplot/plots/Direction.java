@@ -25,14 +25,19 @@ import java.util.EnumSet;
 /**
  * A representation of a two-dimensional perpendicular direction.
  * That is, left, right, up, or down, or the equivalent compass 
- * direction.
+ * point.
  * 
  * @author pont
  */
 public enum Direction {
+    
+    /** right or east */
     RIGHT("R", "E", 0),
+    /** up or north */
     UP("U", "N", 1),
+    /** left or west */
     LEFT("L", "W", 2),
+    /** down or south */
     DOWN("D", "S", 3);
     
     private final String letter;
@@ -50,31 +55,56 @@ public enum Direction {
         this.position = position;
     }
 
+    /**
+     * @return true iff direction is left or right
+     */
     boolean isHorizontal() {
         return (position % 2) == 0;
     }
 
+    /**
+     * Determines a suitable position for a label for an axis with this direction.
+     * 
+     * @param farSide true iff the label should be placed on the non-standard
+     * side (right or above rather than left or below)
+     * @return a direction indicating the position of the label relative to the axis
+     */
     Direction labelPos(boolean farSide) {
         final Direction d = this.isHorizontal() ? DOWN : LEFT;
         return farSide ? d.opposite() : d;
     }
 
+    /**
+     * @return a direction corresponding to a 90-degree anticlockwise rotation of this direction
+     */
     Direction rotAcw90() {
         return ordering[(position + 1) % 4];
     }
 
+    /**
+     * @return the opposite direction to this direction
+     */
     public Direction opposite() {
         return ordering[(position + 2) % 4];
     }
 
+    /**
+     * @return the rotation in radians for a label applied to an axis in this direction
+     */
     double labelRot() {
         return this.isHorizontal() ? 0 : -Math.PI / 2;
     }
 
+    /**
+     * @return a one-letter string (N, S, E, W) corresponding to this direction's compass point
+     */
     public String getCompassDir() {
         return compassDir;
     }
 
+    /**
+     * @return a one-letter string (U, D, L, R) corresponding to this direction
+     */
     public String getLetter() {
         return letter;
     }

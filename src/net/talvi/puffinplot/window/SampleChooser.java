@@ -191,6 +191,13 @@ public class SampleChooser extends JPanel {
         return depthSlider.getValue();
     }
     
+    /**
+     * Updates the displayed value from the current PuffinPlot application.
+     * 
+     * This sample chooser's display is updated to show the currently
+     * selected sample in the currently displayed suite of the PuffinPlot
+     * application returned by {@link PuffinApp#getInstance()}.
+     */
     public void updateValueFromSuite() {
         final Suite suite = PuffinApp.getInstance().getSuite();
         final int index = suite.getCurrentSampleIndex();

@@ -23,6 +23,7 @@ import java.util.List;
 
 /**
  * Represents a set of calculations for a suite of data.
+ * 
  * Specifically, these are various kinds of formation mean direction.
  * 
  * @author pont
@@ -32,36 +33,58 @@ public final class SuiteCalcs {
     private static final List<String> HEADERS;
     
     static {
-        List<String> headersTemp = new ArrayList<String>();
+        List<String> headersTemp = new ArrayList<>();
         headersTemp.add("Type");
         headersTemp.add("Group");
         headersTemp.addAll(FisherValues.getHeaders());
         HEADERS = Collections.unmodifiableList(headersTemp);
     }
     
+    /**
+     * Fisher statistics for the suite.
+     */
     public final static class Means {
         private final FisherValues all;
         private final FisherValues upper;
         private final FisherValues lower;
         
-        public Means(FisherValues all, FisherValues upper, FisherValues lower) {
+        /**
+         * Create a new set of Fisher statistics for a Suite.
+         * 
+         * @param all statistics for the whole suite
+         * @param upper statistics for the upper-hemisphere directions
+         * @param lower statistics for the lower-hemisphere directions
+         */
+        private Means(FisherValues all, FisherValues upper, FisherValues lower) {
             this.all = all;
             this.upper = upper;
             this.lower = lower;
         }
 
+        /**
+         * @return Fisher statistics on a whole suite.
+         */
         public FisherValues getAll() {
             return all;
         }
 
+        /**
+         * @return Fisher statistics on the upper-hemisphere directions in a suite.
+         */
         public FisherValues getUpper() {
             return upper;
         }
 
+        /**
+         * @return Fisher statistics on the lower-hemisphere directions in a suite.
+         */
         public FisherValues getLower() {
             return lower;
         }
         
+        /**
+         * @return a string-matrix representation of these statistics
+         */
         public List<List<String>> toStrings() {
             List<List<String>> result = new ArrayList<>(3);
             for (int i=0; i<3; i++) {
@@ -73,6 +96,16 @@ public final class SuiteCalcs {
             return result;
         }
         
+        /**
+         * Calculate Fisher statistics on a set of directions.
+         * 
+         * Separate statistics are calculated for the whole set of directions,
+         * for the upper-hemisphere directions only, and for the lower-hemisphere
+         * directions only.
+         * 
+         * @param directions directions on which to calculate statistics
+         * @return the calculated statistics
+         */
         public static Means calculate(Collection<Vec3> directions) {
             final List<Vec3> upperDirs = new ArrayList<>(directions.size());
             final List<Vec3> lowerDirs = new ArrayList<>(directions.size());
@@ -92,25 +125,40 @@ public final class SuiteCalcs {
     private final Means bySite;
     private final Means bySample;
     
+    /**
+     * Creates a new SuiteCalcs object.
+     * 
+     * @param bySite statistics calculated by site
+     * @param bySample statistics calculated by sample
+     */
     public SuiteCalcs(Means bySite, Means bySample) {
         this.bySite = bySite;
         this.bySample = bySample;
     }
     
+    /**
+     * @return suite statistics calculated by site
+     */
     public Means getBySite() {
         return bySite;
     }
 
+    /**
+     * @return suite statistics calculated by sample
+     */
     public Means getBySample() {
         return bySample;
     }
     
+    /**
+     * @return a string-matrix representation of these suite statistics.
+     */
     public List<List<String>> toStrings() {
-        List<List<String>> result = new ArrayList<List<String>>(6);
+        List<List<String>> result = new ArrayList<>(6);
         for (int i=0; i<2; i++) {
             final Means means = i==0 ? bySite : bySample;
             for (int j=0; j<3; j++) {
-                final List<String> strings = new ArrayList<String>(8);
+                final List<String> strings = new ArrayList<>(8);
                 strings.add(i==0 ? "Site" : "Sample");
                 strings.addAll(means.toStrings().get(j));
                 result.add(strings);
@@ -119,6 +167,9 @@ public final class SuiteCalcs {
         return result;
     } 
     
+    /**
+     * @return headers corresponding to fields returned by {@link #toStrings()}.
+     */
     public static List<String> getHeaders() {
         return HEADERS;
     }

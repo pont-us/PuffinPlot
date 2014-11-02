@@ -47,6 +47,11 @@ public class IapdImportDialog extends JDialog {
     private TreatType treatType = null;
     private boolean okPressed = false;
         
+    /**
+     * Creates a new IapdImportDialog.
+     * 
+     * @param parent the parent frame of the dialog
+     */
     public IapdImportDialog(Frame parent) {
         super(parent, "IAPD import options", true);
         

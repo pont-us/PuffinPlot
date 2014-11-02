@@ -44,6 +44,12 @@ public class LineCache {
     private final Stroke solidStroke;
     private final Stroke dashedStroke;
     
+    /**
+     * Creates a new LineCache.
+     * 
+     * @param solidStroke the Stroke to use for drawing solid lines
+     * @param dashedStroke the Stroke to use for drawing dashed lines
+     */
     public LineCache(Stroke solidStroke, Stroke dashedStroke) {
         this.solidStroke = solidStroke;
         this.dashedStroke = dashedStroke;
@@ -51,10 +57,21 @@ public class LineCache {
         dashedPaths = new ArrayList<>();
     }
     
+    /**
+     * Adds a path to this cache.
+     * 
+     * @param path the path to add
+     * @param solid {@code true} to add to the solid paths, {@code false} to add to the dashed paths
+     */
     public void addPath(Path2D path, boolean solid) {
         (solid ? solidPaths : dashedPaths).add(path);
     }
     
+    /**
+     * Draws the paths in this cache.
+     * 
+     * @param g the graphics context in which to draw the paths
+     */
     public void draw(Graphics2D g) {
         g.setStroke(solidStroke);
         for (Path2D path: solidPaths) {

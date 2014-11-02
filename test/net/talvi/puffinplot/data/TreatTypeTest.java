@@ -5,11 +5,7 @@
 
 package net.talvi.puffinplot.data;
 
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -19,35 +15,22 @@ import static org.junit.Assert.*;
  */
 public class TreatTypeTest {
 
-    public TreatTypeTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
-
+    /**
+     * Tests that the possible values of TreatType are as expected.
+     */
     @Test
     public void testValues() {
         System.out.println("values");
         TreatType[] expResult = {TreatType.NONE, TreatType.DEGAUSS_XYZ,
-        TreatType.DEGAUSS_Z,
-        TreatType.ARM, TreatType.IRM, TreatType.THERMAL, TreatType.UNKNOWN};
+            TreatType.DEGAUSS_Z, TreatType.ARM, TreatType.IRM,
+            TreatType.THERMAL, TreatType.UNKNOWN};
         TreatType[] result = TreatType.values();
         Assert.assertArrayEquals(expResult, result);
     }
 
+    /**
+     * Tests the {@link TreatType#getAxisLabel()} method.
+     */
     @Test
     public void testGetAxisLabel() {
         System.out.println("getAxisLabel");

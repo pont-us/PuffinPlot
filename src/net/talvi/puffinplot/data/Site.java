@@ -245,6 +245,9 @@ public class Site {
         samples.remove(sample);
     }
 
+    /**
+     * @return the name of this site
+     */
     public String getName() {
         return name;
     }
@@ -301,6 +304,14 @@ public class Site {
         this.location = location;
     }
     
+    /**
+     * Returns the site mean direction.
+     * 
+     * See {@link #getFisherParams()} for details of how the mean
+     * direction is chosen.
+     * 
+     * @return the site mean direction, or null if none exists
+     */
     public Vec3 getMeanDirection() {
         if (getFisherParams() != null) {
             return getFisherParams().getMeanDirection();
@@ -308,6 +319,11 @@ public class Site {
         return null;
     }
     
+    /**
+     * Calculates a virtual geomagnetic pole for the site, if possible.
+     * 
+     * A site mean and location are necessary to calculate a VGP.
+     */
     public void calculateVgp() {
         if (getLocation() != null && getFisherParams() != null) {
             vgp = VGP.calculate(getFisherParams(), getLocation());
@@ -315,7 +331,7 @@ public class Site {
     }
 
     /**
-     * @return the vgp
+     * @return the site VGP (virtual geomagnetic pole)
      */
     public VGP getVgp() {
         return vgp;

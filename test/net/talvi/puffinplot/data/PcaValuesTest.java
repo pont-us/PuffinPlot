@@ -1,34 +1,19 @@
 package net.talvi.puffinplot.data;
 
 import java.util.ArrayList;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+/**
+ * Tests the {@link PcaValues} class.
+ * 
+ * @author pont
+ */
 public class PcaValuesTest {
 
-    public PcaValuesTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
-
+    /**
+     * Tests the {@link PcaValues#calculate(java.util.List, boolean)} method.
+     */
     @Test
     public void testCalculate() {
         System.out.println("calculate");

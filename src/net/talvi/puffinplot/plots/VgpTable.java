@@ -30,6 +30,7 @@ import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 
 /**
+ * A table which displays site location and VGP data.
  */
 public class VgpTable extends Plot {
 

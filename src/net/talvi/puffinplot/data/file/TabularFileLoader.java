@@ -28,13 +28,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * A loader for a tabular text file with a custom format.
+ * 
+ * The format is specified by a {@link FileFormat} object.
+ * 
  * @author pont
  */
 public class TabularFileLoader extends AbstractFileLoader {
     private final File file;
     private final FileFormat format;
     
+    /**
+     * Creates a new TabularFileLoader.
+     * 
+     * @param file the file from which to read data
+     * @param format the format in which the data is stored in the file
+     */
     public TabularFileLoader(File file, FileFormat format) {
         this.file = file;
         this.format = format;

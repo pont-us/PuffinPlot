@@ -25,7 +25,9 @@ package net.talvi.puffinplot.data;
  */
 public enum MomentUnit {
     
+    /** amperes per metre (A/m) */
     AM(1),
+    /** milliamperes per metre (mA/m) */
     MILLIAM(0.001);
     
     private final double factor;

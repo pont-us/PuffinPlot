@@ -50,7 +50,7 @@ public class VGP {
         this.dm = dm;
     }
     
-    public static VGP calculate(Vec3 direction, double a95, Location site) {
+    static VGP calculate(Vec3 direction, double a95, Location site) {
         final double I_m = direction.getIncRad();
         final double D_m = direction.getDecRad();
         final double λ_s = site.getLatRad();
@@ -65,6 +65,16 @@ public class VGP {
         return new VGP(Location.fromRadians(λ_p, φ_p), dp, dm);
     }
     
+    /**
+     * Calculate a VGP for the given direction and location.
+     * 
+     * The 95% confidence ellipse will also be calculated, using the a95 value
+     * from the Fisher parameters.
+     * 
+     * @param parameters direction and a95 at sample site
+     * @param site location of sample site
+     * @return the VGP for the given direction and location
+     */
     public static VGP calculate(FisherParams parameters, Location site) {
         return calculate(parameters.getMeanDirection(),
                 parameters.getA95(), site);

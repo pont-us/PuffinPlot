@@ -62,6 +62,8 @@ public abstract class EqAreaPlot extends Plot {
      *  It is set by {@link #updatePlotDimensions(Graphics2D)}. */
     protected int radius;
     
+    /** The preferences governing various options for this plot.
+     */
     protected Preferences prefs;
     
     /**
@@ -172,7 +174,7 @@ public abstract class EqAreaPlot extends Plot {
          //g.draw(path);
      }
 
-     protected LineCache projectLineSegments(List<Vec3> vs) {
+     private LineCache projectLineSegments(List<Vec3> vs) {
         final List<List<Vec3>> vss;
         vss = Vec3.interpolateEquatorPoints(vs);
         final LineCache lineCache = new LineCache(getStroke(), getDashedStroke());
@@ -192,6 +194,13 @@ public abstract class EqAreaPlot extends Plot {
         lineCache.draw(g);
     }
     
+    /**
+     * Create a projection of a great-circle segment.
+     * 
+     * @param v0 first endpoint of the great-circle segment
+     * @param v1 second endpoint of the great-circle segment
+     * @return line segments corresponding to a projection of the segment
+     */
     protected LineCache projectGreatCircleSegment(Vec3 v0, Vec3 v1) {
         return projectLineSegments(Vec3.spherInterpolate(v0, v1, 0.05));
     }

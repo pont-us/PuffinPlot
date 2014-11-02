@@ -39,6 +39,21 @@ public class IapdLoader extends AbstractFileLoader {
     private final File file;
     private final Map<Object, Object> importOptions;
     
+    /**
+     * Creates a new IapdLoader.
+     * 
+     * Valid import option keys are:
+     * 
+     * {@code TreatType.class}; value must be an instance of {@link TreatType}
+     * {@code MeasType.class}; value must be an instance of {@link MeasType}
+     * 
+     * These keys respectively specify the treatment type and measurement
+     * type for the data in the file. If they are omitted, defaults will
+     * be used.
+     * 
+     * @param file the file from which to read data
+     * @param importOptions import options for reading the data
+     */
     public IapdLoader(File file, Map<Object,Object> importOptions) {
                 this.file = file;
         data = new LinkedList<>();

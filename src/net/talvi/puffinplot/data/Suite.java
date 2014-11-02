@@ -512,16 +512,26 @@ public final class Suite {
         setSaved(true);
     }
     
+    /**
+     * Reads sample direction data from text files.
+     * 
+     * Text files should have no header lines. Columns should be separated by
+     * commas, spaces, or tabs. Column 1 is sample name, column 2 is declination
+     * in degrees, column 3 is inclination in degrees.
+     * 
+     * @param files files from which to read
+     * @throws IOException if an error occurred while reading the files
+     */
     public void readDirectionalData(Collection<File> files) throws IOException {
         for (File file: files) {
             try (BufferedReader br = new BufferedReader(new FileReader(file))) {
                 String line;
                 while ((line = br.readLine()) != null) {
-                    String[] parts = line.split("[ \t,]+");
-                    String sampleName = parts[0];
+                    final String[] parts = line.split("[ \t,]+");
+                    final String sampleName = parts[0];
                     final double dec = Double.parseDouble(parts[1]);
                     final double inc = Double.parseDouble(parts[2]);
-                    Vec3 v = Vec3.fromPolarDegrees(1., inc, dec);
+                    final Vec3 v = Vec3.fromPolarDegrees(1., inc, dec);
                     Sample sample = new Sample(sampleName, this);
                     sample.setImportedDirection(v);
                     samples.add(sample);
@@ -679,11 +689,6 @@ public final class Suite {
      */
     public Sample getSampleByName(String name) {
         return samplesById.get(name);
-    }
-    
-    
-    public Sample getSampleByDepth(double depth) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     /** Returns the index defining the current sample. 
@@ -880,6 +885,17 @@ public final class Suite {
         return 0;
     }
     
+    
+    /**
+     * Imports site locations from a CSV file.
+     * 
+     * File format: CSV, no header line. Column 1 contains the site name, column
+     * 2 the latitude (degrees north from equator, negative for southern
+     * hemisphere), and column 3 the longitude (degrees east of Greenwich).
+     *
+     * @param file the file from which to read site locations
+     * @throws IOException if an error occurred while reading the file
+     */
     public void importLocations(File file) throws IOException {
         try (BufferedReader reader =
                    new BufferedReader(new FileReader(file))) {
@@ -1263,9 +1279,13 @@ public final class Suite {
         return toRemove;
     }
     
-    /*
-    WARNING: completely untested!
-    */
+    /**
+     * Merges Datum objects with the same Sample and treatment step (EXPERIMENTAL).
+     * 
+     * This function is currently untested and not accessible from the GUI.
+     * 
+     * @param samples samples containing the Datum objects to merge (where possible)
+     */
     public void mergeDuplicateMeasurements(Collection<Sample> samples) {
         final Set<Datum> toRemove = new HashSet<>();
         for (Sample sample: samples) {

@@ -33,13 +33,21 @@ import net.talvi.puffinplot.data.FileType;
 import static java.awt.event.KeyEvent.getExtendedKeyCodeForChar;
 
 /**
- *
+ * A dialog allowing the user to select a file type.
+ * 
+ * The file types presented are those from which PuffinPlot can read data.
+ * 
  * @author pont
  */
 public class FiletypeDialog extends JDialog {
     
     private FileType fileType = null;
     
+    /**
+     * Creates a new FiletypeDialog.
+     * 
+     * @param owner the owner of the dialog
+     */
     public FiletypeDialog(Frame owner) {
         super(owner, "Select filetype", true);
         JPanel cp = new JPanel();
