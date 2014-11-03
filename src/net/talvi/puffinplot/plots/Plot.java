@@ -35,7 +35,6 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
-import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.window.GraphDisplay;
@@ -72,7 +71,6 @@ public abstract class Plot
     private Map<Attribute,Object> attributeMap = new HashMap<>();
     private static final TransformAttribute MAC_SUPERSCRIPT_TRANSFORM;
     private boolean visible;
-    private final boolean useAppleSuperscriptHack;
     private final Set<SampleClickListener> sampleClickListeners =
             new HashSet<>();
 
@@ -139,10 +137,6 @@ public abstract class Plot
         
         attributeMap.put(TextAttribute.FAMILY, fontFamily);
         attributeMap.put(TextAttribute.SIZE, getFontSize());
-        useAppleSuperscriptHack = PuffinApp.getInstance().isOnOsX() &&
-                (PuffinApp.getInstance().getOsxPointVersion() < 6 ||
-                System.getProperty("java.version").startsWith("1.5"));
-                
     }
 
     private void setDimensionsFromPrefsString(String spec) {
@@ -282,46 +276,17 @@ public abstract class Plot
      */
     protected AttributedString timesTenToThe(String significand, String exponent) {
         String text = significand;
-        if (!useAppleSuperscriptHack) {
-            // 00D7 is the multiplication sign
-            if (exponent.startsWith("-")) {
-                exponent = "\u2212" + exponent.substring(1); // minus sign
-                //exponent = "\u2013" + exponent.substring(1); // en dash
-            }
-            text += " \u00D710" + exponent;
-            
-            AttributedString as = new AttributedString(text);
-            as.addAttribute(SUPERSCRIPT, SUPERSCRIPT_SUPER,
-                    text.length() - exponent.length(), text.length());
-            return as;
-        } else {
-            /* This is a fairly horrendous workaround for some fairly
-             * horrendous bugs in Apple Java text rendering. Superscript
-             * attributes don't work properly; the obvious workaround for
-             * that (manually creating a scale-and-translate attribute)
-             * doesn't work either, since for some reason the transform
-             * is applied once to the first character in the run, then
-             * twice to subsequent characters. To get around this, we
-             * (1) create a transform which, when applied twice over,
-             * produces an acceptable superscript effect, and (2) insert
-             * a zero-width space as the first character in the run,
-             * which "soaks up" the single application of the transform.
-             * Much tedious trial and error went into this; test any changes
-             * thoroughly!
-             * 
-             * Works for Java 1.5.0 on OS X 10.5.8 PPC, tested 2011-12-08.
-             * Now that recent Macs can do superscript properly, it's
-             * probably not worth individually crafting and testing 
-             * workarounds for every Java/OS X/architecture combination.
-             * I will trust that this one is acceptable until/unless
-             * I get a bug report about it.
-             */
-            text += " \u00D710\u200B" + exponent;
-            AttributedString as = new AttributedString(text);
-            as.addAttribute(TextAttribute.TRANSFORM, MAC_SUPERSCRIPT_TRANSFORM,
-                    text.length() - exponent.length() - 1, text.length());
-            return as;
+        // 00D7 is the multiplication sign
+        if (exponent.startsWith("-")) {
+            exponent = "\u2212" + exponent.substring(1); // minus sign
+            //exponent = "\u2013" + exponent.substring(1); // en dash
         }
+        text += " \u00D710" + exponent;
+        
+        AttributedString as = new AttributedString(text);
+        as.addAttribute(SUPERSCRIPT, SUPERSCRIPT_SUPER,
+                text.length() - exponent.length(), text.length());
+        return as;
     }
 
     /**
