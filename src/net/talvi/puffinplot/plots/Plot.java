@@ -76,10 +76,10 @@ public abstract class Plot
 
     /** the default sizes and positions of the plots */
     protected static final String DEFAULT_PLOT_POSITIONS =
-            "equarea true 264 259 333 324 " +
+            "equarea true 308 259 289 324 " +
             "zplot true 600 73 337 509 " +
             "demag true 336 73 262 172 " +
-            "datatable true 8 72 326 267 " +
+            "datatable true 8 72 326 415 " +
             "pcatable true 259 6 198 59 " +
             "title true 4 5 251 59 " +
             "sitetable true 464 6 292 58 " +
