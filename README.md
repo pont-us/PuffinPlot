@@ -112,13 +112,6 @@ other targets.
 the external libraries as well as the PuffinPlot code itself.
 * `build-manual` creates PDF and HTML manuals from the LaTeX sources.
 * `macbundle` creates a Mac OS X application from a PuffinPlot jar.
-* `upload-release` uploads a release to Google Code project hosting.
-
-For the `upload-release` target, which uploads binaries and archives to
-Google project hosting, a valid user name and password must be supplied
-in a file named build.credentials.properties. The file
-build.credentials.example shows the correct format for the credentials
-file.
 
 It is possible for large uploads to exceed Ant's available memory. At the
 time of writing, this is not a problem, but if it becomes a problem

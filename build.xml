@@ -124,28 +124,6 @@
             <zipfileset dir="${basedir}" includes="LICENCE" fullpath="LICENCE"/>
         </zip>
     </target>
-    
-    <target name="upload-release"
-        description="Uploads an archive of PuffinPlot binaries and documentation">
-    <taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask"
-        classpath="libs/ant-googlecode.jar" name="gcupload"/>
-    <property file="build.credentials.properties" />
-    <fail unless="gc.username"
-        message="Missing property 'gc.username' from file 'build.credentials.properties'."/>
-    <fail unless="gc.password"
-        message="Missing property 'gc.password' from file 'build.credentials.properties'."/>
-    <property file="release.properties" />
-    <fail unless="release.version" message="No version number."/>
-    <property name="release.pathname" value="${basedir}/dist/puffinplot-${release.version}"/>
-    <gcupload
-        username="${gc.username}"
-        password="${gc.password}"
-        projectname="puffinplot" 
-        filename="${release.pathname}.zip" 
-        targetfilename="puffinplot-${release.version}.zip"
-        summary="PuffinPlot archive containing program and documentation."
-        labels="Type-Archive, OpSys-All" />
-    </target>
 
     <!--
     There exist several targets which are by default empty and which can be 
