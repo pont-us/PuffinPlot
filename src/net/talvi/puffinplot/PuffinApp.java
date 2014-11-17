@@ -102,7 +102,6 @@ public final class PuffinApp {
     private boolean emptyCorrectionActive;
     private Correction correction;
     private final Map<String,File> lastUsedFileOpenDirs = new HashMap<>();
-    private static final boolean useSwingChooserForOpen = true;
     private BitSet pointSelectionClipboard = new BitSet(0);
     private Properties buildProperties;
     private static final boolean MAC_OS_X =
@@ -973,6 +972,7 @@ public final class PuffinApp {
         }
         final File startingDir = lastUsedFileOpenDirs.get(title);
         List<File> files = Collections.emptyList();
+        final boolean useSwingChooserForOpen = !isOnOsX();
         if (useSwingChooserForOpen) {
             final JFileChooser chooser = new JFileChooser(startingDir);
             chooser.setDialogTitle(title);
@@ -986,12 +986,15 @@ public final class PuffinApp {
         } else {
             final FileDialog fd = new FileDialog(getMainWindow(), title,
                     FileDialog.LOAD);
+            fd.setMultipleMode(true);
+            System.setProperty("apple.awt.fileDialogForDirectories", "true");
             fd.setVisible(true);
+            final File[] fileArray = fd.getFiles();
             String filename = fd.getFile();
-            if (filename != null) {
+            if (fileArray.length != 0) {
                 final File file = new File(fd.getDirectory(), fd.getFile());
-                files = Collections.singletonList(file);
                 lastUsedFileOpenDirs.put(title, new File(fd.getDirectory()));
+                files = Arrays.asList(fileArray);
             }
         }
         return files;

@@ -71,7 +71,19 @@
              classname="com.oracle.appbundler.AppBundlerTask"   
              classpath="../puffinplot-lib/appbundler.jar" />
 
-    <target name="macbundle">
+    <!-- macbundle notes:
+    Setting the correct name in the application menu title and relevant
+    menu items is harder than it seems. The official technique (name
+    and displayname properties in the plist) doesn't change the menu
+    items (though it does change the title).
+    http://comments.gmane.org/gmane.comp.java.openjdk.macosx-port.devel/6737
+    mentions three command-line options which can be passed to achieve
+    the desired effect; I have successfully tested two of them, and
+    use them both here just in case one breaks in a later OS X Java version.
+    (For good measure I also set the properties.)
+    -->
+    
+    <target name="macbundle" depends="package-for-store">
         <fail unless="release.version" message="No version number."/>
         <delete dir="${basedir}/dist/${ant.project.name}.app" />
         <tstamp>
@@ -81,13 +93,15 @@
         </tstamp>
         <appbundler outputdirectory="dist"
             name="${ant.project.name}"
-            displayname="PuffinPlot"
+            displayname="${ant.project.name}"
             icon="apple-resources/icons/${ant.project.name}.icns"
             signature="Pont"
             shortversion="${release.version}"
             copyright="${copyright_msg}"
             identifier="net.talvi.puffinplot.PuffinApp"
             mainclassname="net.talvi.puffinplot.PuffinApp">
+            <option value="-Xdock:name=${ant.project.name}" />
+            <option value="-Dapple.awt.application.name=${ant.project.name}" />
             <classpath file="${basedir}/dist/single-jar/${ant.project.name}.jar" />
         </appbundler>
     </target>

@@ -1,0 +1,11 @@
+I seem to recall that I used the Swing file dialog for opening
+files even on OS X, because the native dialog didn't support 
+directory selection, or perhaps multiple file selection, or
+perhaps both. As of Java 7 multiple file selection is supported;
+https://developer.apple.com/library/mac/documentation/Java/Conceptual/Java14Development/07-NativePlatformIntegration/NativePlatformIntegration.html
+gives a method for supporting directory selection. More seriously,
+in my OS X testing it seems impossible to change directory in 
+the Swing chooser on OS X, except by dragging a directory to the
+dialog! Nobody else has reported this problem so perhaps it's a quirk
+of my test system, but it's still a strong reason for changing to
+the native dialog if possible.

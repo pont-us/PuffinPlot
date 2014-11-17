@@ -1,0 +1,71 @@
+{
+
+
+
+
+
+
+    "creator": "Pontus Lurcock <pont@talvi.net>", 
+
+
+
+
+
+
+    "extra_strings": [
+
+
+
+
+
+
+        "BLOCKS:aa76880b-7b65-421e-8419-cfe55d7c5781"
+
+
+
+
+
+
+    ], 
+
+
+
+
+
+
+    "reporter": "Pontus Lurcock <pont@talvi.net>", 
+
+
+
+
+
+
+    "severity": "minor", 
+
+
+
+
+
+
+    "status": "fixed", 
+
+
+
+
+
+
+    "summary": "Improve OS X open file dialog", 
+
+
+
+
+
+
+    "time": "Mon, 17 Nov 2014 13:59:34 +0000"
+
+
+
+
+
+
+}
