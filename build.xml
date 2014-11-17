@@ -5,19 +5,26 @@
 <project name="PuffinPlot" default="default" basedir=".">
     <description>Builds, tests, and runs the project PuffinPlot.</description>
     <import file="nbproject/build-impl.xml"/>
+    <property file="release.properties"/>
     
     <target name="-pre-jar">
-    <property file="release.properties"/>
-    <exec executable="hg" outputproperty="build.hg.revid">
-    <arg value="id"/> <arg value="-i"/> <arg value="${basedir}"/>
-    </exec>
-    <exec executable="hg" outputproperty="build.hg.tag">
-    <arg value="id"/> <arg value="-t"/> <arg value="${basedir}"/>
-    </exec>
-    <exec dir="${basedir}" executable="hg" outputproperty="build.hg.date">
-    <arg value="log"/> <arg value="-l1"/> <arg value="-r."/>
-    <arg value="--template"/> <arg value="{date|hgdate}"/>
-    </exec>
+        <exec executable="hg" outputproperty="build.hg.revid">
+            <arg value="id"/> 
+            <arg value="-i"/> 
+            <arg value="${basedir}"/>
+        </exec>
+        <exec executable="hg" outputproperty="build.hg.tag">
+            <arg value="id"/> 
+            <arg value="-t"/> 
+            <arg value="${basedir}"/>
+        </exec>
+        <exec dir="${basedir}" executable="hg" outputproperty="build.hg.date">
+            <arg value="log"/> 
+            <arg value="-l1"/> 
+            <arg value="-r."/>
+            <arg value="--template"/> 
+            <arg value="{date|hgdate}"/>
+        </exec>
         <propertyfile file="build/classes/net/talvi/puffinplot/build.properties">
             <entry key="build.date" type="date" value="now" pattern="yyyy-MM-dd HH:mm"/>
             <entry key="build.year" type="date" value="now" pattern="yyyy"/>
@@ -60,20 +67,29 @@
         <delete file="${store.dir}/temp_final.jar"/>
     </target>
     
-    <target name="macbundle" depends="package-for-store"
-            description="Creates an OS X application.">
+    <taskdef name="appbundler"
+             classname="com.oracle.appbundler.AppBundlerTask"   
+             classpath="../puffinplot-lib/appbundler.jar" />
+
+    <target name="macbundle">
+        <fail unless="release.version" message="No version number."/>
         <delete dir="${basedir}/dist/${ant.project.name}.app" />
-        <taskdef name="jarbundler"
-                 classpath="libs/jarbundler.jar"
-                 classname="net.sourceforge.jarbundler.JarBundler"/>
-        <jarbundler dir="${basedir}/dist" verbose="true" showPlist="true"
-                    name="${ant.project.name}"
-                    mainclass="net.talvi.puffinplot.PuffinApp"
-                    jar="${basedir}/dist/single-jar/${ant.project.name}.jar"
-                    icon="apple-resources/icons/${ant.project.name}.icns"
-                    version="UNKNOWN"
-                    stubfile="apple-resources/JavaApplicationStub"
-        />
+        <tstamp>
+            <format property="copyright_msg"
+                    pattern="'Copyright 2012-'yyyy' Pontus Lurcock'"
+                    locale="en"/>
+        </tstamp>
+        <appbundler outputdirectory="dist"
+            name="${ant.project.name}"
+            displayname="PuffinPlot"
+            icon="apple-resources/icons/${ant.project.name}.icns"
+            signature="Pont"
+            shortversion="${release.version}"
+            copyright="${copyright_msg}"
+            identifier="net.talvi.puffinplot.PuffinApp"
+            mainclassname="net.talvi.puffinplot.PuffinApp">
+            <classpath file="${basedir}/dist/single-jar/${ant.project.name}.jar" />
+        </appbundler>
     </target>
     
     <target name="build-manual">
@@ -90,11 +106,11 @@
             <zipfileset dir="${basedir}/dist/javadoc" prefix="JavaDoc" />
             <zipfileset dir="${basedir}/dist/${ant.project.name}.app"
                 prefix="${ant.project.name}.app"
-                excludes="Contents/MacOS/JavaApplicationStub"/>
+                excludes="Contents/MacOS/JavaAppLauncher"/>
             <zipfileset dir="${basedir}/dist/${ant.project.name}.app"
                 prefix="${ant.project.name}.app"
                 filemode="755"
-                includes="Contents/MacOS/JavaApplicationStub"/>
+                includes="Contents/MacOS/JavaAppLauncher"/>
             <zipfileset file="${basedir}/dist/single-jar/${ant.project.name}.jar"
                 filemode="755"/>
             <zipfileset dir="${basedir}/manual" prefix="Manual">

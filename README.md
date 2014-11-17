@@ -21,6 +21,7 @@ PuffinPlot uses the following external Java libraries, or parts of them:
 * batik http://xmlgraphics.apache.org/batik/
 * FreeHEP http://java.freehep.org/
 * jython http://www.jython.org/
+* appbundler https://java.net/projects/appbundler
 
 These libraries are not included in the PuffinPlot repository itself.
 The NetBeans project and build script look for the required jar files
@@ -45,11 +46,17 @@ directory should contain the following jar files:
 | freehep-xml.jar             | 2.1.1                    |
 | itext.jar                   | 2.1.7                    |
 | jython.jar                  | 2.5.3                    |
+| appbundler.jar              | 1.0                      |
 
 The script `fetch-libs.sh` in the PuffinPlot directory will
 automatically create the `puffinplot-lib` directory, download the
 required software packages, and extract the jar files. (Download
 locations correct as of 2014-10-16.)
+
+appbundler is not used by PuffinPlot itself, but it used during the
+build process to create a Mac application bundle containing PuffinPlot.
+Note that there is more than one library called ‘appbundler’;
+PuffinPlot uses the one provided by Oracle.
 
 ### TeX dependencies
 

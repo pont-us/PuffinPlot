@@ -15,6 +15,8 @@ wget ftp://ftp.slac.stanford.edu/software/freehep/VectorGraphics/v2.1.1/vectorgr
 
 wget http://central.maven.org/maven2/com/lowagie/itext/2.1.7/itext-2.1.7.jar
 
+wget https://java.net/projects/appbundler/downloads/download/appbundler-1.0.jar
+
 ### unpack the needed libraries
 
 cd ..
@@ -49,3 +51,7 @@ tar -zxv --strip-components=2 --transform s/-[0-9.]*jar/.jar/ \
   vectorgraphics-2.1.1/lib/freehep-graphicsio-svg-2.1.1.jar \
   vectorgraphics-2.1.1/lib/freehep-xml-2.1.1.jar \
   vectorgraphics-2.1.1/lib/freehep-graphicsio-2.1.1.jar
+
+# The appbundler jar is not additionally packaged, so we can just
+# link it.
+ln -s packages/appbundler-1.0.jar appbundler.jar
