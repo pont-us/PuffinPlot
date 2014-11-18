@@ -24,6 +24,7 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.prefs.Preferences;
@@ -101,36 +102,37 @@ public class SeparateSuiteEaPlot extends EqAreaPlot {
 
         boolean firstPoint = true;
         for (FisherValues fisher: fishers) {
+            if (fisher==null) continue;
             final Vec3 v = fisher.getMeanDirection();
             final Point2D meanPoint = project(v);
             addPoint(null, meanPoint, v.z>0, firstPoint, !firstPoint);
 
             if (fisher.isA95Valid()) {
-                final GeneralPath ellipse =
+                final GeneralPath pathToFill =
                         new GeneralPath(GeneralPath.WIND_EVEN_ODD, 72);
                 boolean firstEllipsePoint = true;
-                for (double dec = 0; dec < 360; dec += 5) {
-                    Vec3 circlePoint =
-                            (Vec3.fromPolarDegrees(1, 90-fisher.getA95(), dec));
-                    Vec3 w = circlePoint.rotY(Math.PI / 2 - v.getIncRad());
-                    w = w.rotZ(v.getDecRad());
-                    Point2D.Double p = project(w);
+                final List<Vec3> errorCircle =
+                        fisher.getMeanDirection().makeSmallCircle(fisher.getA95());
+                final List<Vec3> errorCircleInterpolated = new ArrayList();
+                for (List<Vec3> vs: Vec3.interpolateEquatorPoints(errorCircle)) {
+                    errorCircleInterpolated.addAll(vs);
+                }
+
+                for (Vec3 cVec: errorCircleInterpolated) {
+                    final Point2D.Double p = project(cVec);
                     if (firstEllipsePoint) {
-                        ellipse.moveTo((float) p.x, (float) p.y);
+                        pathToFill.moveTo((float) p.x, (float) p.y);
                     } else {
-                        ellipse.lineTo((float) p.x, (float) p.y);
+                        pathToFill.lineTo((float) p.x, (float) p.y);
                     }
                     firstEllipsePoint = false;
                 }
-                ellipse.closePath();
+                pathToFill.closePath();
                 
                 g.setComposite(translucent);
-                g.fill(ellipse);
+                g.fill(pathToFill);
                 g.setComposite(opaque);
-                final Stroke oldStroke = g.getStroke();
-                g.setStroke(thinStroke);
-                g.draw(ellipse);
-                g.setStroke(oldStroke);
+                drawLineSegments(errorCircle);
             }
             
             final Stroke oldStroke = g.getStroke();

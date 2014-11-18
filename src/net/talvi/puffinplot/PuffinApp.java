@@ -28,6 +28,8 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.*;
 import java.lang.Thread.UncaughtExceptionHandler;
@@ -1468,6 +1470,37 @@ public final class PuffinApp {
      */
     public void save() {
         save(getSuite());
+    }
+    
+    /**
+     * Shows a print dialog.
+     * 
+     * @param window An identifier specifying the window to print;
+     * valid values are MAIN, SITE, and SUITE.
+     */
+    public void showPrintDialog(String window) {
+        final PrinterJob job = PrinterJob.getPrinterJob();
+        Printable printable = null;
+        switch (window) {
+            case "MAIN":
+                printable = getMainWindow().getGraphDisplay();
+                break;
+            case "SITE":
+                printable = (Printable) getSiteEqAreaWindow().getContentPane();
+                break;
+            case "SUITE":
+                printable = (Printable) getSuiteEqAreaWindow().getContentPane();
+                break;
+        }
+        job.setPrintable(printable, getCurrentPageFormat());
+        try {
+            /* Note: if we pass an attribute set to printDialog(),
+            * it forces the use of a cross-platform Swing print
+            * dialog rather than the default native one. */
+            if (job.printDialog()) job.print();
+        } catch (PrinterException pe) {
+            errorDialog("Printing error", pe.getLocalizedMessage());
+        }
     }
     
     /**

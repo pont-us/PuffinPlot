@@ -19,7 +19,7 @@
 
 
 
-        "BLOCKS:0c974a87-ab13-4683-88c7-95ad82ad3053"
+        "BLOCKS:aa76880b-7b65-421e-8419-cfe55d7c5781"
 
 
 
@@ -47,21 +47,21 @@
 
 
 
-    "status": "fixed", 
+    "status": "open", 
 
 
 
 
 
 
-    "summary": "Data point fills are off on Mac printouts [56]", 
+    "summary": "Superscripts print wrong on OS X", 
 
 
 
 
 
 
-    "time": "Fri, 24 Apr 2009 04:30:34 +0000"
+    "time": "Tue, 18 Nov 2014 08:31:52 +0000"
 
 
 

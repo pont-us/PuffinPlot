@@ -1,0 +1,2 @@
+No longer occurs in Java 7, and PuffinPlot >=1.03 won't run on
+Java <7, so I'm closing this.

@@ -564,21 +564,7 @@ public class PuffinActions {
             "Print the selected samples", 'P', false, KeyEvent.VK_P) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            PrinterJob job = PrinterJob.getPrinterJob();
-            job.setPrintable(app.getMainWindow().getGraphDisplay(),
-                             app.getCurrentPageFormat());
-            PrintService[] services = PrinterJob.lookupPrintServices();
-            if (services.length > 0) {
-                try {
-                    job.setPrintService(services[0]);
-                    /* Note: if we pass an attribute set to printDialog(),
-                     * it forces the use of a cross-platform Swing print
-                     * dialog rather than the default native one. */
-                    if (job.printDialog()) job.print();
-                } catch (PrinterException pe) {
-                    System.err.println(pe);
-                }
-            }
+            app.showPrintDialog("MAIN");
         }
     };
     
@@ -590,21 +576,7 @@ public class PuffinActions {
             null, false, KeyEvent.VK_N) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            PrinterJob job = PrinterJob.getPrinterJob();
-            job.setPrintable((Printable) app.getSiteEqAreaWindow().getContentPane(),
-                    app.getCurrentPageFormat());
-            PrintService[] services = PrinterJob.lookupPrintServices();
-            if (services.length > 0) {
-                try {
-                    job.setPrintService(services[0]);
-                    /* Note: if we pass an attribute set to printDialog(),
-                     * it forces the use of a cross-platform Swing print
-                     * dialog rather than the default native one. */
-                    if (job.printDialog()) job.print();
-                } catch (PrinterException pe) {
-                    System.err.println(pe);
-                }
-            }
+            app.showPrintDialog("SITE");
         }
     };
     
@@ -617,22 +589,7 @@ public class PuffinActions {
             null, false, KeyEvent.VK_U) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            PrinterJob job = PrinterJob.getPrinterJob();
-            job.setPrintable((Printable) app.getSuiteEqAreaWindow().getContentPane(),
-                    app.getCurrentPageFormat());
-            PrintService[] services = PrinterJob.lookupPrintServices();
-            if (services.length > 0) {
-                try {
-                    job.setPrintService(services[0]);
-                    /* Note: if we pass an attribute set to printDialog(),
-                     * it forces the use of a cross-platform Swing print
-                     * dialog rather than the default native one.
-                    */
-                    if (job.printDialog()) job.print();
-                } catch (PrinterException pe) {
-                    System.err.println(pe);
-                }
-            }
+            app.showPrintDialog("SUITE");
         }
     };
     

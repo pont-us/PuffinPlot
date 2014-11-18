@@ -1,0 +1,7 @@
+This appears to be caused be PrinterJob.lookUpPrintServices()
+returning an empty list on OS X -- see http://stackoverflow.com/q/23362369
+for another report, albeit currently without a good solution.
+However, it seems that there's no actual need to call 
+setPrintService on the job, so I have simply removed both the
+lookupPrintServices call and the setPrintService call. Seems to
+work fine on both Ubuntu and OS X.
