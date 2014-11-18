@@ -19,6 +19,7 @@ package net.talvi.puffinplot.plots;
 import java.awt.BasicStroke;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
@@ -35,10 +36,12 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
+import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
+import net.talvi.puffinplot.window.PuffinRenderingHints;
 
 /**
  * An abstract superclass for all plots and other data displays.
@@ -267,39 +270,51 @@ public abstract class Plot
 
     /**
      * Returns an attributed string representing a number in scientific
-     * notation. For example, a significand of 12 and an exponent of 34
-     * would produce the string 12 &times; 10<sup>34</sup>.
-     * 
+     * notation. By default a notation of the form "12 &times; 10<sup>34</sup>."
+     * is produced; if the rendering hints of the supplied graphics object
+     * contain the key {@link PuffinRenderingHints#KEY_E_NOTATION}, a notation
+     * of the form "12E34." is produced instead.
+     *
      * @param significand the significand of the number
      * @param exponent the exponent of the number
+     * @param g a graphics context
      * @return an attributed string representing the number in scientific notation
      */
-    protected AttributedString timesTenToThe(String significand, String exponent) {
-        String text = significand;
-        // 00D7 is the multiplication sign
-        if (exponent.startsWith("-")) {
-            exponent = "\u2212" + exponent.substring(1); // minus sign
-            //exponent = "\u2013" + exponent.substring(1); // en dash
+    protected AttributedString timesTenToThe(String significand, String exponent, Graphics2D g) {
+        if (!g.getRenderingHints().containsKey(PuffinRenderingHints.KEY_E_NOTATION)) {
+            String text = significand;
+            // 00D7 is the multiplication sign
+            if (exponent.startsWith("-")) {
+                exponent = "\u2212" + exponent.substring(1); // minus sign
+                //exponent = "\u2013" + exponent.substring(1); // en dash
+            }
+            text += " \u00D710" + exponent;
+            
+            AttributedString as = new AttributedString(text);
+            as.addAttribute(SUPERSCRIPT, SUPERSCRIPT_SUPER,
+                    text.length() - exponent.length(), text.length());
+            
+            return as;
+        } else {
+            return new AttributedString(significand + "E" + exponent);
         }
-        text += " \u00D710" + exponent;
-        
-        AttributedString as = new AttributedString(text);
-        as.addAttribute(SUPERSCRIPT, SUPERSCRIPT_SUPER,
-                text.length() - exponent.length(), text.length());
-        return as;
     }
 
     /**
      * Returns an attributed string representing a number in scientific
-     * notation. For example, a significand of 12 and an exponent of 34
-     * would produce the string 12 &times; 10<sup>34</sup>.
+     * notation. See {@link #timesTenToThe(java.lang.String, java.lang.String, java.awt.Graphics2D)}
+     * for details of the notation produced.
+     * 
+     * @see #timesTenToThe(java.lang.String, java.lang.String, java.awt.Graphics2D) 
      * 
      * @param significand the significand of the number
      * @param exponent the exponent of the number
+     * @param g a graphics context
      * @return an attributed string representing the number in scientific notation
      */
-    protected AttributedString timesTenToThe(String significand, int exponent) {
-        return timesTenToThe(significand, Integer.toString(exponent));
+    protected AttributedString timesTenToThe(String significand, int exponent,
+            Graphics2D g) {
+        return timesTenToThe(significand, Integer.toString(exponent), g);
     }
 
     /** Returns a cropped version of a specified rectangle. 

@@ -30,7 +30,7 @@ import java.util.Map;
  * 
  * @author pont
  */
-final class PuffinRenderingHints extends RenderingHints {
+public final class PuffinRenderingHints extends RenderingHints {
 
     private boolean dirty;
     
@@ -95,5 +95,23 @@ final class PuffinRenderingHints extends RenderingHints {
     public Object remove(Object key) {
         dirty = true;
         return super.remove(key);
+    }
+    
+    public static final PuffinRenderingHints.Key KEY_E_NOTATION = new PuffinRenderingHints.Key(0);
+    
+    public static class Key extends RenderingHints.Key {
+        
+        public Key(int privateKey) {
+            super(privateKey);    
+        }
+        
+        @Override
+        public boolean isCompatibleValue(Object val) {
+            if (intKey()==0) {
+                return true; // value ignored
+            }
+            return false;
+        }
+        
     }
 }

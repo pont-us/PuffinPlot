@@ -354,8 +354,8 @@ public class ZPlot extends Plot {
             writeString(g, "horizontal", (float) (xOrig + 50 * getUnitSize()),
                     (float) (yOrig + lineOffs + textOffs));
             final AttributedString units = axes != null
-                    ? timesTenToThe("Units: A/m", axes.getMagnitude())
-                    : timesTenToThe("Units: A/m", "?");
+                    ? timesTenToThe("Units: A/m", axes.getMagnitude(), g)
+                    : timesTenToThe("Units: A/m", "?", g);
             writeString(g, units, (float) xOrig,
                     (float) (yOrig + 2 * lineOffs + textOffs));
             drawPoints(g);

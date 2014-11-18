@@ -19,6 +19,7 @@ package net.talvi.puffinplot.window;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
@@ -135,6 +136,19 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
             return NO_SUCH_PAGE;
         }
         printPageIndex = pageIndex;
+        Graphics2D g2 = (Graphics2D) graphics;
+
+        if (PuffinApp.getInstance().isOnOsX()) {
+            /* Superscript don't print properly on OS X (at least not
+             * on Java 7 or Java 8u25), so we set a rendering hint that
+             * tells the plotting code to fall back to E notation.
+             * See bug 698def95-724d-44fb-9088-d3d7192e98ef .
+             */
+            final RenderingHints rh = g2.getRenderingHints();
+            rh.put(PuffinRenderingHints.KEY_E_NOTATION, Boolean.TRUE);
+            g2.setRenderingHints(rh);
+        }
+
         printPlots(pf, graphics);
         return PAGE_EXISTS;
     }

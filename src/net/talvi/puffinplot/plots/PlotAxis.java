@@ -184,7 +184,7 @@ final class PlotAxis {
                         ? Integer.toString(length_int)
                         : String.format(Locale.ENGLISH, "%.1f", length);
                 AttributedString as = (ap.magnitudeOnTicks && getMagnitude() != 0)
-                    ? plot.timesTenToThe(text, getMagnitude())
+                    ? plot.timesTenToThe(text, getMagnitude(), g)
                     : new AttributedString(text);
                 plot.putText(g, as,
                         xOrig + x * pos, yOrig + y * pos,
@@ -211,7 +211,7 @@ final class PlotAxis {
         }
         if (ap.label != null) {
             AttributedString as = (ap.magnitudeOnLabel && getMagnitude() != 0)
-                    ? plot.timesTenToThe(ap.label, getMagnitude())
+                    ? plot.timesTenToThe(ap.label, getMagnitude(), g)
                     : new AttributedString(ap.label);
 
             plot.putText(g, as, xOrig + xLen / 2, yOrig + yLen / 2,
