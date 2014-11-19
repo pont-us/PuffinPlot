@@ -1,0 +1,5 @@
+Currently PuffinPlot's graph display uses hyphens for minus signs.
+This is not a significant problem, but a proper minus sign character
+would look better. Simple to implement in principle, but needs
+testing on all platforms to make sure that the glyph is displayed
+correctly.

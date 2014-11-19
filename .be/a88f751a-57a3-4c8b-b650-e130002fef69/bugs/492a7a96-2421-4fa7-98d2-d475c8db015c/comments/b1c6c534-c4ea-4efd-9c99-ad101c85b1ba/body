@@ -1,0 +1,25 @@
+PuffinPlot's current graphics export options are a little unsatisfying:
+there are two options each for PDF and SVG export, since I added FreeHEP
+export when a reviewer of the PuffinPlot paper complained about problems
+with vector export using Batik and iText. We thus have three different
+libraries which between them produce two different variants of each
+format. Clearly it would be better to have one well-tested, *reliable*
+export option for each format. It would also be good to add EPS export,
+which might be more reliable than PDF or SVG for import into Adobe
+Illustrator.
+
+There are a couple of promising vector export libraries which might
+solve some of these problems: jfreesvg and vectorgraphics2d. The
+first only exports SVG; the second, PDF, SVG, and EPS. Both of them
+are free software, and both are very compact compared to the current
+libraries -- this gives me a better chance of being able to correct
+any deficiences myself, since the source code will be more navigable
+than e.g. Batik. (It will also cut PuffinPlot's download size a bit,
+but most of the bulk is Jython so the overall effect won't be huge.)
+
+For EPS export there is also http://www.abeel.be/wiki/EPSGraphics and
+https://github.com/matmas/java-eps-graphics
+
+It would also be worth doing a more thorough web search for other
+options: evidently a lot has happened in this domain since I last
+evaluated the available libraries.
