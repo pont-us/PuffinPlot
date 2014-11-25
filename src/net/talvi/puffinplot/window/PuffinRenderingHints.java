@@ -67,44 +67,77 @@ public final class PuffinRenderingHints extends RenderingHints {
         super.put(KEY_TEXT_ANTIALIASING, VALUE_TEXT_ANTIALIAS_ON);
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void putAll(Map<?,?> m) {
         dirty = true;
         super.putAll(m);
     }
-    
+        
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object put(Object key, Object value) {
         dirty = true;
         return super.put(key, value);
     }
-    
+        
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void add(RenderingHints hints) {
         dirty = true;
         super.add(hints);
     }
-    
+        
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void clear() {
         dirty = true;
         super.clear();
     }
-    
+        
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object remove(Object key) {
         dirty = true;
         return super.remove(key);
     }
     
+    /**
+     * Use E notation rather than superscript notation for orders of magnitude.
+     * The value is ignored; the key's existence indicates that E notation
+     * should be used.
+     */
     public static final PuffinRenderingHints.Key KEY_E_NOTATION = new PuffinRenderingHints.Key(0);
     
+    /**
+     * A key for a PuffinPlot rendering hint.
+     */
     public static class Key extends RenderingHints.Key {
         
+        /**
+         * Construct a key using the indicated private key.
+         * 
+         * @see RenderingHints#Key
+         * 
+         * @param privateKey the specified key
+         */
         public Key(int privateKey) {
             super(privateKey);    
         }
         
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean isCompatibleValue(Object val) {
             if (intKey()==0) {
