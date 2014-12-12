@@ -66,9 +66,38 @@ public class IapdLoader extends AbstractFileLoader {
             messages.add(e.getMessage());
         }
     }
+    
+    private static class ParsedDoubles {
+        public final boolean success;
+        private final double[] values;
+        
+        private ParsedDoubles(boolean success, double[] values) {
+            this.success = success;
+            this.values = values;
+        }
+        
+        public static ParsedDoubles parse(String[] strings, double[] defaults,
+                int startAt) {
+            boolean success = true;
+            double[] values = new double[defaults.length];
+            for (int i=startAt; i<defaults.length; i++) {
+                values[i] = defaults[i];
+                try {
+                    values[i] = Double.parseDouble(strings[i]);
+                } catch (NumberFormatException |
+                        ArrayIndexOutOfBoundsException e) {
+                    success = false;
+                }
+            }
+            return new ParsedDoubles(success, values);
+        }
+        
+        public double get(int i) {
+            return values[i];
+        }
+    }
 
     private void readFile() throws IOException {
-        
         TreatType treatType = TreatType.DEGAUSS_XYZ;
         MeasType measType = MeasType.DISCRETE;
         if (importOptions.containsKey(TreatType.class)) {
@@ -84,19 +113,35 @@ public class IapdLoader extends AbstractFileLoader {
             return;
         }
         String[] header = headerLine.trim().split(" +");
-        final String sampleName = header[0];
-        final double sampleAz = parseDouble(header[1]);
-        final double sampleDip = parseDouble(header[2]);
-        final double formAz = parseDouble(header[3]);
-        final double formDip = parseDouble(header[4]);
-        final double volume = parseDouble(header[5]);
+        String sampleName = "Unknown";
+        if (header.length > 0) {
+            if (header[0].isEmpty()) {
+                addMessage("No sample name in %s", file.getName());
+            } else {
+                sampleName = header[0];
+            }
+        } else {
+            // Should never happen, since split should always return
+            // a non-empty array, but best to cover it just in case.
+            addMessage("No header data in %s", file.getName());
+        }
+        
+        final ParsedDoubles headerValues = ParsedDoubles.parse(header, new double[] {0, 0, 90, 0, 0, 10}, 1);
+        if (!headerValues.success) {
+            addMessage("Malformed header in %s", file.getName());
+        }
         
         String line;
         double a95max = 0;
+        boolean success = true;
+        final double[] defaults = {0, 0, 0, 0, 0, 0, 0};
         while ((line = reader.readLine()) != null) {
             final Datum d = new Datum();
             final String[] parts = line.trim().split(" +");
-            final double treatmentLevel = parseDouble(parts[0]);
+            
+            final ParsedDoubles fields = ParsedDoubles.parse(parts, defaults, 0);
+            success = success && fields.success;
+            final double treatmentLevel = fields.get(0);
             
             switch (treatType) {
                 case THERMAL:
@@ -116,22 +161,24 @@ public class IapdLoader extends AbstractFileLoader {
                     break;
             }
             
-            d.setMoment(Vec3.fromPolarDegrees(parseDouble(parts[1]) / 1000,
-                    parseDouble(parts[6]),
-                    parseDouble(parts[5])));
+            d.setMoment(Vec3.fromPolarDegrees(fields.get(1) / 1000,
+                    fields.get(6), fields.get(5)));
             d.setDiscreteId(sampleName);
-            d.setSampAz(sampleAz);
-            d.setSampDip(sampleDip);
-            d.setFormAz(formAz);
-            d.setFormDip(formDip);
-            d.setVolume(volume);
+            d.setSampAz(headerValues.get(1));
+            d.setSampDip(headerValues.get(2));
+            d.setFormAz(headerValues.get(3));
+            d.setFormDip(headerValues.get(4));
+            d.setVolume(headerValues.get(5));
             d.setTreatType(treatType);
             d.setMeasType(measType);
-            final double a95 = parseDouble(parts[4]);
+            final double a95 = fields.get(4);
             if (a95 > a95max) {
                 a95max = a95;
             }
             data.add(d);
+        }
+        if (!success) {
+            addMessage("Malformed data fields in \"%s\".", file.getName());
         }
         if (a95max >= 5) {
             addMessage("File \"%s\" has high α95 values (max. %.1f).",

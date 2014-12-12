@@ -841,21 +841,21 @@ all the selected samples, not just the current sample.
   parameters are, however, included in exported sample data files 
   (see Table~\ref{tbl:export-sample}).
 
-\item[Calculations\submenu Suite means] calculates Fisherian means across all
-  the selected samples, and opens a new window showing an equal-area plot of
-  the \caps{pca} directions, the mean direction, and the 95\% confidence
-  circle. Two sets of means are actually calculated: one set is calculated
-  from the \caps{pca} directions of individual samples, and the other from
-  the site mean directions (if any have been computed). Note that, if there
-  are site means computed by great-circle intersection, only those considered
-  valid are used; see section~\ref{sec:prefs-misc} for details of the
-  validity test. Each set of means consists of an overall mean and individual
-  means for the upper and lower hemisphere, to cater for data sets containing
-  reversals. All these means can be exported as a \caps{csv} file using the
-  \ppcmd{File\submenu Export Data\submenu Export suite calculations\ldots}
-  menu item. Note that (like most PuffinPlot functions) this feature operates
-  on all the \emph{selected} samples; to calculate means for the entire suite
-  you must first select all the samples.
+\item[Calculations\submenu Suite means] calculates Fisherian means
+  across all the selected samples. Two sets of means are actually
+  calculated: one set is calculated from the \caps{pca} directions of
+  individual samples, and the other from the site mean directions (if
+  any have been computed). Note that, if there are site means computed
+  by great-circle intersection, only those considered valid are used;
+  see section~\ref{sec:prefs-misc} for details of the validity test.
+  Each set of means consists of an overall mean and individual means for
+  the upper and lower hemisphere, to cater for data sets containing
+  reversals. All these means can be exported as a \caps{csv} file using
+  the \ppcmd{File\submenu Export Data\submenu Export suite
+    calculations\ldots} menu item. Note that (like most PuffinPlot
+  functions) this feature operates on all the \emph{selected} samples;
+  to calculate means for the entire suite you must first select all the
+  samples.
 
 \item[Calculations\submenu MDF] calculates the Median Destructive Field (or,
   for thermal demagnetization, the Median Destructive Temperature) of the
@@ -1253,9 +1253,12 @@ listed below include textual elements such as legends and tables.
   Clicking on a line within the site parameter table will jump to the first
   sample of the corresponding site.
 
-\item[Title] simply shows the name of the current sample and the current
-  site, for a discrete suite. For a continuous (long core) suite, it shows
-  the current depth.
+\item[Title] shows the name of the current sample and the current site,
+  for a discrete suite. For a continuous (long core) suite, it shows the
+  current depth. This plot also shows suite-level Fisher statistics
+  calculated over samples and over sites, if these are available (see
+  the \ppcmd{Calculate\submenu Suite means} function in
+  section~\ref{sec:functions-calcs}).
 
 \item[Site parameters] shows the site mean direction as calculated either by
   Fisher statistics or by the great-circle technique of
@@ -1283,9 +1286,10 @@ listed below include textual elements such as legends and tables.
   (site latitude), $\lambda$ (site longitude), VGP $\phi$ (VGP
   latitude), VGP $\lambda$ (VGP longitude), dp (first semi-axis of VGP
   confidence ellipse), and dm (second semi-axis of VGP confidence
-  ellipse). VGPs can only be calculated for sites whose location has been set;
-  See \emph{Import site locations\ldots} in Section~\ref{sec:menu-file} for details
-  on reading site locations from a \caps{csv} file.
+  ellipse). VGPs can only be calculated for sites whose location has
+  been set; See \emph{Import site locations\ldots} in
+  Section~\ref{sec:menu-file} for details on reading site locations from
+  a \caps{csv} file.
 
 \item[Zplot key] is a legend for the Zijderveld plot, showing the
   interpretations of the filled and unfilled points and giving the units in
