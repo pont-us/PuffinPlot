@@ -19,16 +19,12 @@ package net.talvi.puffinplot;
 import com.lowagie.text.DocumentException;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.print.Printable;
-import java.awt.print.PrinterException;
-import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.print.PrintService;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
@@ -369,14 +365,13 @@ public class PuffinActions {
             'F', true, KeyEvent.VK_U) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            Suite suite = app.getSuite();
+            final Suite suite = app.getSuite();
             if (suite == null) {
                 app.errorDialog("Calculate suite means", "No suite loaded.");
             } else {
                 suite.calculateSuiteMeans(app.getSelectedSamples(),
                         app.getSelectedSites());
                 app.getSuiteEqAreaWindow().getPlot().setGroupedBySite(false);
-                //app.getFisherWindow().setVisible(true);
             }
         }
     };

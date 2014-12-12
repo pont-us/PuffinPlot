@@ -90,7 +90,8 @@ public final class SuiteCalcs {
             for (int i=0; i<3; i++) {
                 final List<String> strings = new ArrayList<>(8);
                 strings.add(i==0 ? "All" : i==1 ? "Upper" : "Lower");
-                strings.addAll((i==0 ? all : i==1 ? upper : lower).toStrings());
+                FisherValues values = i==0 ? all : i==1 ? upper : lower;
+                strings.addAll(FisherValues.toStrings(values));
                 result.add(strings);
             }
             return result;

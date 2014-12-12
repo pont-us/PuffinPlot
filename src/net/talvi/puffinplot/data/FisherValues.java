@@ -127,11 +127,31 @@ public class FisherValues implements FisherParams {
      * The order of the parameters is the same as the order of
      * the headers provided by {@link #getHeaders()}.
      * @return the statistical parameters as a list of strings
+     * @see #toStrings(net.talvi.puffinplot.data.FisherValues) 
      */
     public List<String> toStrings() {
         return Arrays.asList(fmt(getMeanDirection().getDecDeg()),
                 fmt(getMeanDirection().getIncDeg()), fmt(getA95()),
                 fmt(getK()), Integer.toString(getNDirs()));
+    }
+    
+    /** Returns the statistical parameters as a list of strings.
+     * The order of the parameters is the same as the order of
+     * the headers provided by {@link #getHeaders()}.
+     * It returns the same result as the corresponding instance method
+     * for any non-null input, but (unlike the instance method)
+     * also works for a {@code null} {@code FisherValues}.
+     * @param fisherValues the fisher parameters to return as strings
+     * @return the statistical parameters as a list of strings,
+     * or a list of empty strings if {@code fisherValues} was {@code null}
+     * @see #toStrings() 
+     */
+    public static List<String> toStrings(FisherValues fisherValues) {
+        if (fisherValues != null) {
+            return fisherValues.toStrings();
+        } else {
+            return getEmptyFields();
+        }
     }
 
     /** Returns a string representation of the parameters.

@@ -106,7 +106,7 @@ public final class Suite {
         }
         final List<Vec3> siteDirs = new ArrayList<>(selSamples.size());
         for (Site site: selSites) {
-            FisherParams fp = site.getFisherParams();
+            final FisherParams fp = site.getFisherParams();
             if (fp != null) {
                 siteDirs.add(fp.getMeanDirection());
             }
