@@ -372,6 +372,7 @@ public class PuffinActions {
                 suite.calculateSuiteMeans(app.getSelectedSamples(),
                         app.getSelectedSites());
                 app.getSuiteEqAreaWindow().getPlot().setGroupedBySite(false);
+                app.updateDisplay();
             }
         }
     };

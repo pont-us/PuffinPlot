@@ -19,14 +19,12 @@ package net.talvi.puffinplot.plots;
 import java.awt.BasicStroke;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
 import static java.awt.font.TextAttribute.SUPERSCRIPT;
 import static java.awt.font.TextAttribute.SUPERSCRIPT_SUPER;
 import java.awt.font.TextLayout;
-import java.awt.font.TransformAttribute;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -36,7 +34,6 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
-import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.window.GraphDisplay;
@@ -72,7 +69,6 @@ public abstract class Plot
     /** the default size of a plotted data point */
     protected static final double PLOT_POINT_SIZE = 24.;
     private Map<Attribute,Object> attributeMap = new HashMap<>();
-    private static final TransformAttribute MAC_SUPERSCRIPT_TRANSFORM;
     private boolean visible;
     private final Set<SampleClickListener> sampleClickListeners =
             new HashSet<>();
@@ -82,10 +78,10 @@ public abstract class Plot
             "equarea true 308 259 289 324 " +
             "zplot true 600 73 337 509 " +
             "demag true 336 73 262 172 " +
-            "datatable true 8 72 326 415 " +
-            "pcatable true 259 6 198 59 " +
-            "title true 4 5 251 59 " +
-            "sitetable true 464 6 292 58 " +
+            "datatable true 6 144 326 437 " +
+            "pcatable true 10 80 318 59 " +
+            "title true 11 8 379 64 " +
+            "sitetable true 421 6 335 65 " +
             "ams false 380 541 197 191 " +
             "ternaryplot false 584 541 183 188 " +
             "equarea_site false 6 541 182 193 " +
@@ -96,12 +92,6 @@ public abstract class Plot
             "nrm_histogram false 771 542 226 115 " +
             "zplotlegend true 779 7 156 58 " +
             "depth false 50 50 300 200 ";
-
-    static {
-        final AffineTransform at = AffineTransform.getTranslateInstance(0, 0.18);
-        at.concatenate(AffineTransform.getScaleInstance(0.8, 0.8));
-        MAC_SUPERSCRIPT_TRANSFORM = new TransformAttribute(at);
-    }
 
     /** Creates a plot with the supplied parameters.
      * 

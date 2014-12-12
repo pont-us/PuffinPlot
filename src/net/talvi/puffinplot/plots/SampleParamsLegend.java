@@ -97,7 +97,7 @@ public class SampleParamsLegend extends Plot {
             g.setColor(Color.BLACK);
             for (int i=0; i<strings.size(); i++) {
               writeString(g, strings.get(i),
-                      (int) getDimensions().getMinX() + 10,
+                      (int) getDimensions().getMinX(),
                       (int) (getDimensions().getMinY() + (i+1) * getFontSize() * 1.2));
             }
         }
