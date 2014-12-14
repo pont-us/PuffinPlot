@@ -138,6 +138,7 @@ public final class MainMenuBar extends JMenuBar {
                         pa.exportSvgBatik, pa.exportSvgFreehep,
                         pa.exportPdfItext, pa.exportPdfFreehep),
                 makeMenu("Import data", KeyEvent.VK_I,
+                        pa.appendFiles,
                         pa.importLocations, pa.importAms),
                 pa.pageSetup, pa.print, pa.printSuiteEqArea, pa.printGc,
                 pa.runScript, pa.prefs, pa.quit));
@@ -244,7 +245,7 @@ public final class MainMenuBar extends JMenuBar {
                 @Override
                 public void actionPerformed(ActionEvent arg0) {
                     PuffinApp.getInstance().
-                            openFiles(recent.getFilesAndReorder(index));
+                            openFiles(recent.getFilesAndReorder(index), true);
                 }
                 @Override
                 public Object getValue(String key) {

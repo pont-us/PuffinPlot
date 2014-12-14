@@ -160,7 +160,10 @@ public final class MainWindow extends JFrame {
     
     /**
      * Informs this window that the list of currently loaded data suites
-     * has changed. Calling this method allows this window to update its display
+     * has changed.
+     * This method should also be called when the name of a suite changes,
+     * and when samples are added to or removed from the current suite.
+     * Calling this method allows this window to update its display
      * accordingly.
      */
     public void suitesChanged() {

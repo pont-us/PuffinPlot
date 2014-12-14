@@ -73,12 +73,26 @@ public class PuffinActions {
      * to open as a new data suite.
      */
     public final Action open = new PuffinAction("Open…",
-            "Open a data file.", 'O', false,
+            "Open a data file in a new suite.", 'O', false,
             KeyEvent.VK_O) {
         private static final long serialVersionUID = 1L;
         @Override
         public void actionPerformed(ActionEvent e) {
-            app.showOpenFilesDialog();
+            app.showOpenFilesDialog(true);
+        }
+    };
+    
+    /**
+     * Opens a dialog box allowing the user to choose one or more files
+     * to append to the current data suite.
+     */
+    public final Action appendFiles = new PuffinAction("Append more palaeomagnetic data…",
+            "Open a data file and append the data to the current suite.", 'O', true,
+            KeyEvent.VK_P) {
+        private static final long serialVersionUID = 1L;
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            app.showOpenFilesDialog(false);
         }
     };
 

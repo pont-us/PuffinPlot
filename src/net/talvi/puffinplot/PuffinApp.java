@@ -575,21 +575,27 @@ public final class PuffinApp {
         getMainWindow().suitesChanged();
     }
 
-    /** Creates a new suite and reads data into it from the specified files.
+    /** Reads data into the current suite, or a new suite,
+     * from the specified files.
      * 
      * @param files the files from which to read data
+     * @param createNewSuite whether to create a new suite; if this parameter
+     *   is {@code true} or if there is no current suite, a new suite will be
+     *   created for the data.
      *
     */
-    public void openFiles(List<File> files) {
+    public void openFiles(List<File> files, boolean createNewSuite) {
         if (files.isEmpty()) return;
         // If this fileset is already in the recent-files list,
         // it will be bumped up to the top; otherwise it will be
         // added to the top and the last member removed.
         recentFiles.add(files);
+        
+        final boolean reallyCreateNewSuite = createNewSuite || getSuite()==null;
 
         try {
             final FileType guessedType = FileType.guess(files.get(0));
-            FileType fileType = null;
+            FileType fileType;
             if (guessedType == FileType.PUFFINPLOT_NEW ||
                     guessedType == FileType.PUFFINPLOT_OLD) {
                 fileType = guessedType;
@@ -629,15 +635,20 @@ public final class PuffinApp {
                     break;
             }
             
-            final Suite suite = new Suite("PuffinPlot " + version.versionString);
+            final Suite suite;
+            if (reallyCreateNewSuite) {
+                suite = new Suite("PuffinPlot " + version.versionString);
+            } else {
+                suite = getSuite();
+            }
             suite.readFiles(files, prefs.getSensorLengths(),
                     prefs.get2gProtocol(),
                     !"X/Y/Z".equals(prefs.getPrefs().get("readTwoGeeMagFrom", "X/Y/Z")),
                     fileType, format, importOptions);
             suite.doAllCalculations(getCorrection());
-            List<String> warnings = suite.getLoadWarnings();
+            final List<String> warnings = suite.getLoadWarnings();
             if (warnings.size() > 0) {
-                StringBuilder sb =
+                final StringBuilder sb =
                         new StringBuilder(warnings.size() == 1 ? "" :
                                 "The following problems occurred:\n");
                 int i = 0;
@@ -670,13 +681,18 @@ public final class PuffinApp {
                 errorDialog("Error during file loading",
                         "The selected file(s) contained no readable data.");
             } else {
-                suites.add(suite);
+                if (reallyCreateNewSuite) {
+                    suites.add(suite);
+                }
             }
-            if (suites.size() > 0) {
+            if (suites.size() > 0 && reallyCreateNewSuite) {
                 currentSuite = suites.get(suites.size()-1);
-                getMainWindow().suitesChanged();
             }
-            suite.setSaved(true);
+            getMainWindow().suitesChanged();
+            // A newly created suite is of course unmodified. If on the other
+            // hand we have appended data to an existing suite, it *is* now
+            // modified.
+            suite.setSaved(reallyCreateNewSuite);
         } catch (FileNotFoundException e) {
             errorDialog("File not found", e.getMessage());
         } catch (IOException e) {
@@ -1016,14 +1032,20 @@ public final class PuffinApp {
             lastUsedFileOpenDirs.put(title, new File(fd.getDirectory()));
             files = Arrays.asList(fileArray);
         }
-        if (files != null) openFiles(files);
+        if (files != null) openFiles(files, true);
     }
     
     /** Shows an ‘open files’ dialog box; if the user selects any files,
-     * they will be opened in a new suite. */
-    public void showOpenFilesDialog() {
+     * they will be opened in a new suite.
+     * @param createNewSuite If {@code true}, or if there is no current suite,
+     * a new suite will be created for the data from the files; otherwise,
+     * the data will be added to the current suite.
+     */
+    public void showOpenFilesDialog(boolean createNewSuite) {
         List<File> files = openFileDialog("Open file(s)");
-        if (files != null) openFiles(files);
+        if (files != null) {
+            openFiles(files, createNewSuite);
+        }
     }
     
     private boolean showErrorIfNoSuite() {

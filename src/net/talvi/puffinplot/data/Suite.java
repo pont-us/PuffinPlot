@@ -405,10 +405,12 @@ public final class Suite {
             FileType fileType, FileFormat format,
             Map<Object,Object> importOptions) throws IOException {
         assert(files.size() > 0);
-        if (files.size() == 1) {
-            name = files.get(0).getName();
-        } else {
-            name = files.get(0).getParentFile().getName();
+        if (data == null) { // only set the name if suite is empty
+            if (files.size() == 1) {
+                name = files.get(0).getName();
+            } else {
+                name = files.get(0).getParentFile().getName();
+            }
         }
         files = expandDirs(files);
         final ArrayList<Datum> dataArray = new ArrayList<>();

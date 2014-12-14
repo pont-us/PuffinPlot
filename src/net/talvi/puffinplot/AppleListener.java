@@ -80,7 +80,8 @@ public class AppleListener extends ApplicationAdapter {
      */
     @Override
     public void handleOpenFile(ApplicationEvent event) {
-        puffinApp.openFiles(Collections.singletonList(new File(event.getFilename())));
+        puffinApp.openFiles(Collections.singletonList(new File(event.getFilename())),
+                true);
     }
 
     /**
