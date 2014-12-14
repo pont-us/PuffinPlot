@@ -53,6 +53,7 @@ public final class MainMenuBar extends JMenuBar {
         menu.setMnemonic(mnemonic);
         logger.log(Level.FINE, "makeMenu {0}", name);
         for (Object thing: things) {
+            if (thing == null) continue;
             if (thing instanceof PuffinAction) {
                 PuffinAction puffinAction = (PuffinAction) thing;
                 if (!puffinAction.isExcludedFromMenu()) menu.add(puffinAction);
@@ -126,7 +127,9 @@ public final class MainMenuBar extends JMenuBar {
         useEmptyItem.setAccelerator(KeyStroke.getKeyStroke('Y', modifierKey));
         
         add(makeMenu("File", KeyEvent.VK_F,
-                pa.open, recentFilesMenu, pa.save, pa.saveAs, pa.close,
+                pa.open,
+                app.isOnOsX() ? pa.openFolder : null,
+                recentFilesMenu, pa.save, pa.saveAs, pa.close,
                 makeMenu("Export data", KeyEvent.VK_D,
                         pa.exportCalcsSample,
                         pa.exportCalcsSite, pa.exportCalcsSuite, 

@@ -989,17 +989,34 @@ public final class PuffinApp {
             final FileDialog fd = new FileDialog(getMainWindow(), title,
                     FileDialog.LOAD);
             fd.setMultipleMode(true);
-            System.setProperty("apple.awt.fileDialogForDirectories", "true");
+            // System.setProperty("apple.awt.fileDialogForDirectories", "true");
             fd.setVisible(true);
             final File[] fileArray = fd.getFiles();
-            String filename = fd.getFile();
             if (fileArray.length != 0) {
-                final File file = new File(fd.getDirectory(), fd.getFile());
                 lastUsedFileOpenDirs.put(title, new File(fd.getDirectory()));
                 files = Arrays.asList(fileArray);
             }
         }
         return files;
+    }
+    
+    public void showMacOpenFolderDialog() {
+        final String title = "Open folder";
+        if (!lastUsedFileOpenDirs.containsKey(title)) {
+            lastUsedFileOpenDirs.put(title, null);
+        }
+        List<File> files = Collections.emptyList();
+        final FileDialog fd = new FileDialog(getMainWindow(), title,
+                    FileDialog.LOAD);
+        fd.setMultipleMode(true);
+        System.setProperty("apple.awt.fileDialogForDirectories", "true");
+        fd.setVisible(true);
+        final File[] fileArray = fd.getFiles();
+        if (fileArray.length != 0) {
+            lastUsedFileOpenDirs.put(title, new File(fd.getDirectory()));
+            files = Arrays.asList(fileArray);
+        }
+        if (files != null) openFiles(files);
     }
     
     /** Shows an ‘open files’ dialog box; if the user selects any files,

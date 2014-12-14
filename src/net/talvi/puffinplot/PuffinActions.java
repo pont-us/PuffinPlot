@@ -73,12 +73,26 @@ public class PuffinActions {
      * to open as a new data suite.
      */
     public final Action open = new PuffinAction("Open…",
-            "Open a 2G, PPL, Caltech, or ZPlot data file.", 'O', false,
+            "Open a data file.", 'O', false,
             KeyEvent.VK_O) {
         private static final long serialVersionUID = 1L;
         @Override
         public void actionPerformed(ActionEvent e) {
             app.showOpenFilesDialog();
+        }
+    };
+
+    /**
+     * Opens a dialog box allowing the user to choose a folder
+     * to open as a new data suite.
+     */
+    public final Action openFolder = new PuffinAction("Open folder…",
+            "Open a folder of data files.", null, false,
+            KeyEvent.VK_L) {
+        private static final long serialVersionUID = 1L;
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            app.showMacOpenFolderDialog();
         }
     };
 
