@@ -1164,6 +1164,28 @@ public final class PuffinApp {
         updateDisplay();
     }
     
+    
+    void invertSelectedSamples() {
+                final List<Sample> samples = getSelectedSamples();
+        if (samples.isEmpty()) return;
+        final String msgFmt = 
+                "You are about to invert the magnetization data for "
+                + "%d selected sample%s.\n"
+                + "Are you sure you wish to do this?\n"
+                + "Press OK to confirm, or Cancel to abort.";
+        final String msg = String.format(msgFmt, samples.size(),
+                samples.size()==1 ? "" : "s");
+        final int choice = JOptionPane.showConfirmDialog(getMainWindow(), msg,
+                "Invert samples", JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.WARNING_MESSAGE);
+        if (choice == JOptionPane.OK_OPTION) {
+            for (Sample sample: getSelectedSamples()) {
+                sample.invertMoments();
+            }
+        }
+        updateDisplay();
+    }
+    
     /**
      * Scales all magnetic susceptibility values in the current suite by
      * a user-specified factor.

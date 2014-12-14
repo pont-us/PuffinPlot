@@ -195,14 +195,26 @@ public class Sample {
     }
 
     /**
-     * Rotates all magnetic moment data 180 degrees about the sepcified axis.
+     * Rotates all magnetic moment data 180 degrees about the specified axis.
      * @param axis the axis about which to rotate the data
      */
     public void flip(MeasurementAxis axis) {
         touch();
-        for (Datum d: getData()) d.rot180(axis);
+        for (Datum d: getData()) {
+            d.rot180(axis);
+        }
     }
-
+    
+    /**
+     * Inverts all magnetic moment data.
+     */
+    public void invertMoments() {
+        touch();
+        for (Datum d: getData()) {
+            d.invertMoment();
+        }
+    }
+    
     /** Sets all the selected data points within this sample to be hidden,
      * so they will not be shown on plots.
      * @see Datum#isHidden() */

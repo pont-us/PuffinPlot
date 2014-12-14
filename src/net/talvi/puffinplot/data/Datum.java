@@ -450,6 +450,15 @@ public class Datum {
         moment = moment.rot180(axis);
     }
 
+    
+    /**
+     * Inverts magnetic moment data.
+     */
+    void invertMoment() {
+        touch();
+        moment = moment.invert();
+    }
+    
     /**
      * Toggles the datum's selection state. {@code datum.toggleSel()}
      * is functionally equivalent to {@code datum.setSelected(!datum.isSelected()}.

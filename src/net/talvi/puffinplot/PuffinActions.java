@@ -293,6 +293,18 @@ public class PuffinActions {
     };
     
     /**
+     * Inverts every vector in the currently selected samples.
+     */
+    public final Action invertSamples = new PuffinAction("Invert sample directions",
+            "Invert all magnetization directions for selected samples", null, false,
+            KeyEvent.VK_I) {
+        private static final long serialVersionUID = 1L;
+        @Override public void actionPerformed(ActionEvent arg0) {
+            app.invertSelectedSamples();
+        }
+    };
+    
+    /**
      * Performs principal component analysis on the selected points of the
      * selected samples.
      */
