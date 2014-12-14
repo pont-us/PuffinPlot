@@ -103,7 +103,7 @@ public class Vec3 {
     }
     
     /**
-     * Rotates the vector by180 degrees about the specified axis.
+     * Rotates the vector by 180 degrees about the specified axis.
      * Since x is up in magnetometer co-ordinates, specifying the x axis 
      * corrects the data for a specimen placed in the magnetometer back-to-front.
      * 

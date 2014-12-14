@@ -86,12 +86,12 @@ public class PlotTitle extends Plot {
         if (suite.getSuiteMeans() != null) {
             int yPos = 48;
             final SuiteCalcs means = suite.getSuiteMeans();
-            final String bySampleString = writeSuiteMeans(means.getBySample());
+            final String bySampleString = writeSuiteMeans(means.getDirsBySample());
             if (bySampleString != null) {
                 g.drawString("Sample mean: " + bySampleString, minX, minY + yPos);
                 yPos += 16;
             }
-            final String bySiteString = writeSuiteMeans(means.getBySite());
+            final String bySiteString = writeSuiteMeans(means.getDirsBySite());
             if (bySiteString != null) {
                 g.drawString("Site mean: " + bySiteString, minX, minY + yPos);
             }

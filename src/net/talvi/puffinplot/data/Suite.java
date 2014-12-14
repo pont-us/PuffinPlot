@@ -111,9 +111,28 @@ public final class Suite {
                 siteDirs.add(fp.getMeanDirection());
             }
         }
+        final List<Vec3> sampleVgps = new ArrayList<>(selSamples.size());
+        for (Sample sample: selSamples) {
+                if (sample.getSite().getLocation() != null &&
+                        sample.getDirection() != null &&
+                        sample.getDirection().isWellFormed()) {
+                    final double alpha95 = 0; // arbitrary
+                    sampleVgps.add(VGP.calculate(sample.getDirection(),
+                            alpha95, sample.getSite().getLocation()).getLocation().toVec3());
+                }
+        }
+        final List<Vec3> siteVgps = new ArrayList<>(selSamples.size());
+        for (Site site: selSites) {
+            if (site.getVgp() != null) {
+                siteVgps.add(site.getVgp().getLocation().toVec3());
+                }
+            }
+        
         return new SuiteCalcs(
                 SuiteCalcs.Means.calculate(siteDirs),
-                SuiteCalcs.Means.calculate(sampleDirs));
+                SuiteCalcs.Means.calculate(sampleDirs),
+                SuiteCalcs.Means.calculate(siteVgps),
+                SuiteCalcs.Means.calculate(sampleVgps));
     }
     
     /** Calculates and returns Fisher statistics on all the calculated PCA 

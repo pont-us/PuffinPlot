@@ -92,7 +92,7 @@ public class SeparateSuiteEaPlot extends EqAreaPlot {
         if (suite==null) return;
         List<FisherValues> fishers = groupedBySite 
                 ? suite.getSiteFishers()
-                : Collections.singletonList(suite.getSuiteMeans().getBySample().getAll());
+                : Collections.singletonList(suite.getSuiteMeans().getDirsBySample().getAll());
         if (fishers==null) return;
 
         final AlphaComposite translucent =

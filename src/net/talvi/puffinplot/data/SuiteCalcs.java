@@ -39,7 +39,7 @@ public final class SuiteCalcs {
         headersTemp.addAll(FisherValues.getHeaders());
         HEADERS = Collections.unmodifiableList(headersTemp);
     }
-    
+
     /**
      * Fisher statistics for the suite.
      */
@@ -123,46 +123,75 @@ public final class SuiteCalcs {
         }
     }
     
-    private final Means bySite;
-    private final Means bySample;
+    private final Means dirsBySite;
+    private final Means dirsBySample;
+    private final Means vgpsBySite;
+    private final Means vgpsBySample;
     
     /**
      * Creates a new SuiteCalcs object.
      * 
-     * @param bySite statistics calculated by site
-     * @param bySample statistics calculated by sample
+     * @param dirsBySite direction statistics calculated by site
+     * @param dirsBySample direction statistics calculated by sample
+     * @param vgpsBySite VGP statistics calculated by site
+     * @param vgpsBySample VGP statistics calculated by sample
      */
-    public SuiteCalcs(Means bySite, Means bySample) {
-        this.bySite = bySite;
-        this.bySample = bySample;
+    public SuiteCalcs(Means dirsBySite, Means dirsBySample,
+            Means vgpsBySite, Means vgpsBySample) {
+        this.dirsBySite = dirsBySite;
+        this.dirsBySample = dirsBySample;
+        this.vgpsBySite = vgpsBySite;
+        this.vgpsBySample = vgpsBySample;
     }
     
     /**
      * @return suite statistics calculated by site
      */
-    public Means getBySite() {
-        return bySite;
+    public Means getDirsBySite() {
+        return dirsBySite;
     }
 
     /**
      * @return suite statistics calculated by sample
      */
-    public Means getBySample() {
-        return bySample;
+    public Means getDirsBySample() {
+        return dirsBySample;
+    }
+    
+    /**
+     * @return the vgpsBySite
+     */
+    public Means getVgpsBySite() {
+        return vgpsBySite;
+    }
+
+    /**
+     * @return the vgpsBySample
+     */
+    public Means getVgpsBySample() {
+        return vgpsBySample;
     }
     
     /**
      * @return a string-matrix representation of these suite statistics.
      */
     public List<List<String>> toStrings() {
-        List<List<String>> result = new ArrayList<>(6);
-        for (int i=0; i<2; i++) {
-            final Means means = i==0 ? bySite : bySample;
-            for (int j=0; j<3; j++) {
-                final List<String> strings = new ArrayList<>(8);
-                strings.add(i==0 ? "Site" : "Sample");
-                strings.addAll(means.toStrings().get(j));
-                result.add(strings);
+        List<List<String>> result = new ArrayList<>(12);
+        for (int type=0; type<2; type++) {
+            for (int grouping=0; grouping<2; grouping++) {
+                final Means means;
+                if (type==0 /* direction */) {
+                    means = grouping==0 ? dirsBySite : dirsBySample;
+                } else /* VGP */ {
+                    means = grouping==0 ? vgpsBySite : vgpsBySample;
+                }
+                for (int hemisphere=0; hemisphere<3; hemisphere++) {
+                    final List<String> strings = new ArrayList<>(8);
+                    strings.add((grouping==0 ? "Site " : "Sample ") +
+                            (type==0 ? "dir" : "VGP"));
+                    strings.addAll(means.toStrings().get(hemisphere));
+                    result.add(strings);
+                }
             }
         }
         return result;

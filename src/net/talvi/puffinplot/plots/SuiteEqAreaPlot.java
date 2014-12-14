@@ -121,7 +121,7 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
                 }
             }
             if (suiteCalcs != null) {
-                drawMeans(suiteCalcs.getBySample());
+                drawMeans(suiteCalcs.getDirsBySample());
             }
         } else {
             for (Site site: sites) {
@@ -137,7 +137,7 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
                 }
             }
             if (suiteCalcs != null) {
-                drawMeans(suiteCalcs.getBySite());
+                drawMeans(suiteCalcs.getDirsBySite());
             }
         }
         drawPoints(g);

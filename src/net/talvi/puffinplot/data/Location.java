@@ -119,4 +119,12 @@ public class Location {
         return Arrays.asList(Double.toString(getLatDeg()),
                 Double.toString(getLongDeg()));
     }
+    
+    public Vec3 toVec3() {
+        return Vec3.fromPolarDegrees(1, latitude, longitude);
+    }
+    
+    public static Location fromVec3(Vec3 v) {
+        return new Location(v.getIncDeg(), v.getDecDeg());
+    }
 }
