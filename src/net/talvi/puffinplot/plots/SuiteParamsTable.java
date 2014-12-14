@@ -32,25 +32,23 @@ import net.talvi.puffinplot.window.PlotParams;
 /**
  * A table which displays site location and VGP data.
  */
-public class VgpTable extends Plot {
+public class SuiteParamsTable extends Plot {
 
     private final double us = getUnitSize();
     private final List<Double> xSpacing =
-            Arrays.asList(500*us, 400*us, 400*us, 400*us, 400*us, 400*us,
-            400*us);
+            Arrays.asList(600*us, 400*us, 400*us, 400*us, 400*us);
     private final int ySpacing = (int) (120 * getUnitSize());
     private final List<String> headers = 
-            Arrays.asList(new String[] {"Site", "λ", "φ", "VGP λ", "VGP φ",
-                "dp", "dm"});
+            Arrays.asList(new String[] {"Param", "dec/φ", "inc/λ", "α95", "k"});
     private final Preferences prefs;
     
-    /** Creates a sample parameter table with the supplied parameters.
+    /** Creates a suite parameter table with the supplied parameters.
      * 
      * @param parent the graph display containing the plot
      * @param params the parameters of the plot
      * @param prefs the preferences containing the plot configuration
      */
-    public VgpTable(GraphDisplay parent, PlotParams params,
+    public SuiteParamsTable(GraphDisplay parent, PlotParams params,
             Preferences prefs) {
         super(parent, params, prefs);
         this.prefs = prefs;
@@ -58,12 +56,12 @@ public class VgpTable extends Plot {
     
     @Override
     public String getName() {
-        return "vgp_table";
+        return "suite_table";
     }
     
     @Override
     public String getNiceName() {
-        return "VGP table";
+        return "Suite table";
     }
         
     private static String fmt(String format, Object... args) {
@@ -77,40 +75,36 @@ public class VgpTable extends Plot {
         if (sample==null) return;
         final Suite suite = sample.getSuite();
         if (suite==null) return;
-        final List<Site> sites = suite.getSites();
+        final SuiteCalcs suiteCalcs = suite.getSuiteMeans();
+        if (suiteCalcs==null) return;
         
         points.add(new TextLinePoint(this, g, 10, null, null, headers, xSpacing, Color.BLACK));
 
-        final Color highlightColour = (prefs != null &&
-                prefs.getBoolean("plots.highlightCurrentSample", false)) ?
-                Color.RED : Color.BLACK;
         final int columns = headers.size();
         float yPos = 2 * ySpacing;
-        for (Site site: sites) {
-            if (yPos > getDimensions().getHeight()) break;
-            final List<String> values = new ArrayList<>(columns);
-            values.addAll(Collections.nCopies(columns, "--"));
-            values.set(0, site.toString());
-            if (site.getLocation() != null) {
-                values.set(1, fmt("%.1f", site.getLocation().getLatDeg()));
-                values.set(2, fmt("%.1f", site.getLocation().getLongDeg()));
+
+        for (int type=0; type<2; type++) {
+            for (int grouping=0; grouping<2; grouping++) {
+                final SuiteCalcs.Means means;
+                if (type==0 /* direction */) {
+                    means = grouping==0 ? suiteCalcs.getDirsBySite() : suiteCalcs.getDirsBySample();
+                } else /* VGP */ {
+                    means = grouping==0 ? suiteCalcs.getVgpsBySite() : suiteCalcs.getVgpsBySample();
+                }
+                final List<String> values = new ArrayList<>(columns);
+                values.addAll(Collections.nCopies(columns, "--"));
+                values.set(0, (grouping==0 ? "Site " : "Sample ") +
+                        (type==0 ? "dir" : "VGP"));
+                values.set(1, fmt("%.1f", means.getAll().getMeanDirection().getDecDeg()));
+                values.set(2, fmt("%.1f", means.getAll().getMeanDirection().getIncDeg()));
+                values.set(3, fmt("%.1f", means.getAll().getA95()));
+                values.set(4, fmt("%.1f", means.getAll().getK()));
+                points.add(new TextLinePoint(this, g, yPos, null, null,
+                        values, xSpacing, Color.BLACK));
+                yPos += ySpacing;
             }
-            if (site.getVgp() != null) {
-                final VGP vgp = site.getVgp();
-                values.set(3, fmt("%.1f", vgp.getLocation().getLatDeg()));
-                values.set(4, fmt("%.1f", vgp.getLocation().getLongDeg()));
-                values.set(5, fmt("%.1f", vgp.getDp()));
-                values.set(6, fmt("%.1f", vgp.getDm()));
-            }
-            
-            Sample firstSample = null;
-            List<Sample> siteSamples = site.getSamples();
-            if (!siteSamples.isEmpty()) firstSample = siteSamples.get(0);
-            points.add(new TextLinePoint(this, g, yPos, null, firstSample,
-                    values, xSpacing, site == params.getSample().getSite()?
-                    highlightColour : Color.BLACK));
-            yPos += ySpacing;
         }
+
         g.setColor(Color.BLACK);
         drawPoints(g);
     }

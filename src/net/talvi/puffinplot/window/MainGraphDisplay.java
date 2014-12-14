@@ -50,7 +50,7 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
         "PlotTitle", "SiteParamsLegend",
         "AmsPlot", "TernaryPlot", "SiteEqAreaPlot", "SuiteEqAreaPlot",
         "SampleParamsTable", "SiteParamsTable", "NrmHistogram",
-        "VgpTable"
+        "VgpTable", "SuiteParamsTable"
         // "DepthPlot"
     };
     private final PlotParams params;
