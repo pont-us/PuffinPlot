@@ -95,10 +95,13 @@ public class SuiteParamsTable extends Plot {
                 values.addAll(Collections.nCopies(columns, "--"));
                 values.set(0, (grouping==0 ? "Site " : "Sample ") +
                         (type==0 ? "dir" : "VGP"));
-                values.set(1, fmt("%.1f", means.getAll().getMeanDirection().getDecDeg()));
-                values.set(2, fmt("%.1f", means.getAll().getMeanDirection().getIncDeg()));
-                values.set(3, fmt("%.1f", means.getAll().getA95()));
-                values.set(4, fmt("%.1f", means.getAll().getK()));
+                if (means != null && means.getAll() != null &&
+                        means.getAll().getMeanDirection() != null) {
+                    values.set(1, fmt("%.1f", means.getAll().getMeanDirection().getDecDeg()));
+                    values.set(2, fmt("%.1f", means.getAll().getMeanDirection().getIncDeg()));
+                    values.set(3, fmt("%.1f", means.getAll().getA95()));
+                    values.set(4, fmt("%.1f", means.getAll().getK()));
+                }
                 points.add(new TextLinePoint(this, g, yPos, null, null,
                         values, xSpacing, Color.BLACK));
                 yPos += ySpacing;

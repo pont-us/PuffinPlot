@@ -113,7 +113,8 @@ public final class Suite {
         }
         final List<Vec3> sampleVgps = new ArrayList<>(selSamples.size());
         for (Sample sample: selSamples) {
-                if (sample.getSite().getLocation() != null &&
+                if (sample.getSite() != null &&
+                        sample.getSite().getLocation() != null &&
                         sample.getDirection() != null &&
                         sample.getDirection().isWellFormed()) {
                     final double alpha95 = 0; // arbitrary
