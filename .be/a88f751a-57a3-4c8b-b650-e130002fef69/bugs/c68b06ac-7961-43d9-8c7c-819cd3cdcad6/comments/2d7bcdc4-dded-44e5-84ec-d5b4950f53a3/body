@@ -1,0 +1,5 @@
+The new data append feature doesn't do much sanity checking and
+it would probably be possible to force a crash or some very odd
+behaviour by trying to combine incompatible files -- e.g. appending
+a discrete file to a continuous suite. Subject it to some unpleasant
+tests and make sure that it declines gracefully in such cases.

@@ -734,24 +734,29 @@ to do with manipulation of data points.
   from the clipboard (see \ppcmd{Copy step selection}) and selects the
   corresponding treatment steps in all the selected samples.
 
-\item[Edit\submenu Flip selected samples] is a submenu allowing the
+\item[Edit\submenu Rotate/invert samples] is a submenu allowing the
   demagnetization data from the selected samples to be rotated 180\textdegree{}
   around a selected axis. Such functionality is rarely required but can be
   useful, for example, when it is found that a sample has been incorrectly
   oriented during measurement, or when converting between different
   orientation conventions.
 
-\item[Edit\submenu Flip selected samples\submenu Flip samples around X axis]
+\item[Edit\submenu Rotate/invert samples\submenu Flip samples around X axis]
   rotates the magnetic moment values for all selected samples
   180\textdegree{} around the X axis.
 
-\item[Edit\submenu Flip selected samples\submenu Flip samples around Y axis]
+\item[Edit\submenu Rotate/invert samples\submenu Flip samples around Y axis]
   rotates the magnetic moment values for all selected samples
   180\textdegree{} around the Y axis.
 
-\item[Edit\submenu Flip selected samples\submenu Flip samples around Z axis]
+\item[Edit\submenu Rotate/invert samples\submenu Flip samples around Z axis]
   rotates the magnetic moment values for all selected samples
   180\textdegree{} around the Z axis.
+
+\item[Edit\submenu Rotate/invert samples\submenu Invert sample directions]
+  Inverts every magnetization vector in every selected sample.
+  (Each of the x, y, and z co-ordinates of each vector is negated;
+  this corresponds to a point reflection through the origin.)
 
 \item[Edit\submenu Edit sites] is a submenu allowing site names to be
   set for samples in various ways.
@@ -861,12 +866,14 @@ all the selected samples, not just the current sample.
   see section~\ref{sec:prefs-misc} for details of the validity test.
   Each set of means consists of an overall mean and individual means for
   the upper and lower hemisphere, to cater for data sets containing
-  reversals. All these means can be exported as a \caps{csv} file using
-  the \ppcmd{File\submenu Export Data\submenu Export suite
-    calculations\ldots} menu item. Note that (like most PuffinPlot
-  functions) this feature operates on all the \emph{selected} samples;
-  to calculate means for the entire suite you must first select all the
-  samples.
+  reversals. Corresponding VGPs are also calculated. All these means can
+  be exported as a \caps{csv} file using the \ppcmd{File\submenu Export
+    Data\submenu Export suite calculations\ldots} menu item. The overall
+  means and VGPs (but not the individual upper/lower hemisphere means)
+  are also shown in the \ppcmd{Suite table} plot if it is active. Note
+  that (like most PuffinPlot functions) this feature operates on all the
+  \emph{selected} samples; to calculate means for the entire suite you
+  must first select all the samples.
 
 \item[Calculations\submenu MDF] calculates the Median Destructive Field (or,
   for thermal demagnetization, the Median Destructive Temperature) of the
@@ -1301,6 +1308,15 @@ listed below include textual elements such as legends and tables.
   been set; See \emph{Import site locations\ldots} in
   Section~\ref{sec:menu-file} for details on reading site locations from
   a \caps{csv} file.
+
+\item[Suite table] is a table showing suite-level mean direction and VGP
+  data. The parameters shown are: `Site dir', the mean direction
+  calculated from site mean directions; `Sample dir', the mean direction
+  calculated from sample mean directions; `Site VGP', the mean of the
+  VGPs of sites; and `Sample VGP', the mean of the VGPs corresponding
+  to individual sample directions. As with most PuffinPlot operations,
+  the parameters shown are calculated using only the samples and sites
+  selected at the time the calculation is done.
 
 \item[Zplot key] is a legend for the Zijderveld plot, showing the
   interpretations of the filled and unfilled points and giving the units in
