@@ -1,0 +1,2 @@
+For Open File dialogs, PuffinPlot should remember the last used
+directory even across restarts. Reported by RB, 2014-12-14.

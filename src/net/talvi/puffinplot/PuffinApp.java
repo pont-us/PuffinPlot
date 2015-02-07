@@ -103,7 +103,7 @@ public final class PuffinApp {
     private CustomFieldEditor customNotesWindow;
     private boolean emptyCorrectionActive;
     private Correction correction;
-    private final Map<String,File> lastUsedFileOpenDirs = new HashMap<>();
+    private final IdToFileMap lastUsedFileOpenDirs;
     private BitSet pointSelectionClipboard = new BitSet(0);
     private Properties buildProperties;
     private static final boolean MAC_OS_X =
@@ -148,6 +148,7 @@ public final class PuffinApp {
         loadBuildProperties();
         version = new Version();
         prefs = new PuffinPrefs(this);
+        lastUsedFileOpenDirs = new IdToFileMap(prefs.getPrefs());
         actions = new PuffinActions(this);
         tableWindow = new TableWindow();
         suiteEqAreaWindow = new SuiteEqAreaWindow();
@@ -985,10 +986,8 @@ public final class PuffinApp {
     }
         
     private List<File> openFileDialog(String title) {
-        if (!lastUsedFileOpenDirs.containsKey(title)) {
-            lastUsedFileOpenDirs.put(title, null);
-        }
         final File startingDir = lastUsedFileOpenDirs.get(title);
+        // Returns null if none set, but JFileChooser handles it appropriately.
         List<File> files = Collections.emptyList();
         final boolean useSwingChooserForOpen = !isOnOsX();
         if (useSwingChooserForOpen) {
@@ -1018,12 +1017,13 @@ public final class PuffinApp {
     
     public void showMacOpenFolderDialog() {
         final String title = "Open folder";
-        if (!lastUsedFileOpenDirs.containsKey(title)) {
-            lastUsedFileOpenDirs.put(title, null);
-        }
         List<File> files = Collections.emptyList();
         final FileDialog fd = new FileDialog(getMainWindow(), title,
                     FileDialog.LOAD);
+        final String lastUsedDir = lastUsedFileOpenDirs.getString(title);
+        if (lastUsedDir != null) {
+            fd.setDirectory(lastUsedDir);
+        }
         fd.setMultipleMode(true);
         System.setProperty("apple.awt.fileDialogForDirectories", "true");
         fd.setVisible(true);

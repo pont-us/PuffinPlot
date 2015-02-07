@@ -1,0 +1,71 @@
+{
+
+
+
+
+
+
+    "creator": "Pontus Lurcock <pont@talvi.net>", 
+
+
+
+
+
+
+    "extra_strings": [
+
+
+
+
+
+
+        "BLOCKS:aa76880b-7b65-421e-8419-cfe55d7c5781"
+
+
+
+
+
+
+    ], 
+
+
+
+
+
+
+    "reporter": "Pontus Lurcock <pont@talvi.net>", 
+
+
+
+
+
+
+    "severity": "minor", 
+
+
+
+
+
+
+    "status": "open", 
+
+
+
+
+
+
+    "summary": "Clear GC fits without clearing PCAs", 
+
+
+
+
+
+
+    "time": "Fri, 06 Feb 2015 17:12:07 +0000"
+
+
+
+
+
+
+}

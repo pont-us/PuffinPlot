@@ -211,7 +211,7 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         try {
             return zoomTransform.createInverse();
         } catch (NoninvertibleTransformException ex) {
-            Logger.getLogger(GraphDisplay.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger("net.talvi.puffinplot").log(Level.SEVERE, null, ex);
             // This is a "can't-happen" so rethrowing an error is appropriate.
             // It will be caught by the default handler.
             throw new Error(ex);
