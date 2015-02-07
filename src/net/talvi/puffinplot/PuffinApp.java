@@ -475,6 +475,34 @@ public final class PuffinApp {
     }
     
     /**
+     * Clear PCA calculations for selected samples.
+     * 
+     * Any affected site data will also be recalculated.
+     * 
+     */
+    public void clearSelectedSamplePcas() {
+        for (Sample s: getSelectedSamples()) {
+            s.clearPca();
+        }
+        recalculateAffectedSites(getSelectedSamples());
+        app.updateDisplay();
+    }
+    
+    /**
+     * Clear great circle fits for selected samples.
+     * 
+     * Any affected site data will also be recalculated.
+     * 
+     */
+    public void clearSelectedSampleGcs() {
+        for (Sample s: getSelectedSamples()) {
+            s.clearGreatCircle();
+        }
+        recalculateAffectedSites(getSelectedSamples());
+        app.updateDisplay();
+    }
+    
+    /**
      * Clear selected points and stored calculations for selected samples.
      * 
      * Any affected site data will also be recalculated.
@@ -482,8 +510,8 @@ public final class PuffinApp {
      */
     public void clearSelectedSampleCalculations() {
         for (Sample s: getSelectedSamples()) {
-                s.clearCalculations();
-            }
+            s.clearCalculations();
+        }
         recalculateAffectedSites(getSelectedSamples());
         app.updateDisplay();
     }

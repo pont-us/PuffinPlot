@@ -493,10 +493,34 @@ public class PuffinActions {
     };
     
     /**
+     * For each selected sample, clears PCA calculation.
+     */
+    public final Action clearSamplePca = new PuffinAction("Clear sample PCAs",
+            "Clear PCA calculations for selected samples",
+            null, false, null) {
+        private static final long serialVersionUID = 1L;
+        @Override public void actionPerformed(ActionEvent e) {
+            app.clearSelectedSamplePcas();
+        }
+    };
+    
+    /**
+     * For each selected sample, clears great circle fit.
+     */
+    public final Action clearSampleGreatCircle = new PuffinAction("Clear sample GC fits",
+            "Clear great-circle fits for selected samples",
+            null, false, null) {
+        private static final long serialVersionUID = 1L;
+        @Override public void actionPerformed(ActionEvent e) {
+            app.clearSelectedSampleGcs();
+        }
+    };
+    
+    /**
      * For each selected sample, clears all calculations and deselects all points.
      */
     public final Action clearSampleCalcs = new PuffinAction("Clear sample calculations",
-            "Clear step selections and calculations for selected samples",
+            "Clear all calculations and selected steps for selected samples",
             'Z', false, KeyEvent.VK_C) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {

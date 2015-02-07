@@ -84,22 +84,33 @@ public class Sample {
      * Clears PCA calculations for this sample.
      */
     public void clearPca() {
+        touch();
         pca = null;
+        for (Datum d: getData()) {
+            d.setInPca(false);
+        }
+    }
+    
+    /**
+     * Clears great-circle fit for this sample.
+     */
+    public void clearGreatCircle() {
+        touch();
+        greatCircle = null;
+        for (Datum d: getData()) {
+            d.setOnCircle(false);
+        }
     }
     
     /** Clears all calculations for this sample (PCA, MDF, and great-circle
      * fit) and deselects all data points. */
     public void clearCalculations() {
         touch();
-        pca = null;
-        mdf = null;
-        greatCircle = null;
+        clearPca();
+        clearGreatCircle();
         fisherValues = null;
+        mdf = null;
         selectNone();
-        for (Datum d: getData()) {
-            d.setInPca(false);
-            d.setOnCircle(false);
-        }
     }
     
     /** Returns the suite containing this sample.
@@ -248,7 +259,9 @@ public class Sample {
     /** De-selects all the data points within this sample.  */
     public void selectNone() {
         touch();
-        for (Datum d : getData()) d.setSelected(false);
+        for (Datum d : getData()) {
+            d.setSelected(false);
+        }
     }
     
     /** Reports whether this sample contains any data. 
