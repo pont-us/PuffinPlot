@@ -96,16 +96,7 @@ public class SiteParamsTable extends Plot {
             values.addAll(Collections.nCopies(columns, "--"));
             values.set(0, site.toString());
             values.set(1, fmt("%d", site.getSamples().size()));
-            if (site.getFisherValues() != null) {
-                final FisherValues fvs = site.getFisherValues();
-                values.set(2, fmt("%d", fvs.getNDirs()));
-                values.set(3, "0");
-                final Vec3 direction = fvs.getMeanDirection();
-                values.set(4, fmt("%.1f", direction.getDecDeg()));
-                values.set(5, fmt("%.1f", direction.getIncDeg()));
-                values.set(6, fmt("%.1f", fvs.getA95()));
-                values.set(7, "Fshr");
-            } else if (site.getGreatCircles() != null) {
+            if (site.getGreatCircles() != null && site.getGreatCircles().isValid()) {
                 final GreatCircles gcs = site.getGreatCircles();
                 values.set(2, fmt("%d", gcs.getM()));
                 values.set(3, fmt("%d", gcs.getN()));
@@ -114,7 +105,16 @@ public class SiteParamsTable extends Plot {
                 values.set(5, fmt("%.1f", direction.getIncDeg()));
                 values.set(6, fmt("%.1f", gcs.getA95()));
                 values.set(7, "GC:" + (gcs.isValid() ? "v" : "i"));
-            }
+            } else if (site.getFisherValues() != null) {
+                final FisherValues fvs = site.getFisherValues();
+                values.set(2, fmt("%d", fvs.getNDirs()));
+                values.set(3, "0");
+                final Vec3 direction = fvs.getMeanDirection();
+                values.set(4, fmt("%.1f", direction.getDecDeg()));
+                values.set(5, fmt("%.1f", direction.getIncDeg()));
+                values.set(6, fmt("%.1f", fvs.getA95()));
+                values.set(7, "Fshr");
+            } 
             
             Sample firstSample = null;
             List<Sample> siteSamples = site.getSamples();

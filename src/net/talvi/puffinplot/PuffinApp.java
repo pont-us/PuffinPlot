@@ -423,7 +423,7 @@ public final class PuffinApp {
      * @param samples samples which have changed
      */
     private void recalculateAffectedSites(Collection<Sample> samples) {
-        Set<Site> affectedSites = new HashSet<>();
+        final Set<Site> affectedSites = new HashSet<>();
         for (Sample sample: samples) {
             if (sample.getSite() != null) {
                 affectedSites.add(sample.getSite());

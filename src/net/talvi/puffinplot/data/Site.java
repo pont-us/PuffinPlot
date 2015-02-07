@@ -74,6 +74,8 @@ public class Site {
      * and the imported sample direction (if any) are used in turn as
      * fallbacks. The results are stored within the site. If the 
      * site has a location set, the VGP will also be calculated and stored.
+     * If no sample directions exist for this site, the site's current
+     * Fisherian statistics (if any) will be cleared.
      * 
      * @param correction the correction to apply to the magnetic moment
      * data when performing the PCA calculations
@@ -89,10 +91,14 @@ public class Site {
         }
         if (!directions.isEmpty()) {
             fisher = FisherValues.calculate(directions);
+        } else {
+            // No sample directions -- clear any existing Fisher stats.
+            clearFisherStats();
         }
         if (getLocation() != null) {
             calculateVgp();
         }
+
     }
 
     /** Clears the stored Fisher statistics, if any. */
@@ -132,6 +138,8 @@ public class Site {
         if ((endpoints.size() > 0 && circles.size() > 0)
                 || circles.size() > 1) {
             greatCircles = new GreatCircles(endpoints, circles);
+        } else {
+            clearGcFit();
         }
         if (getLocation() != null) {
             calculateVgp();
@@ -327,6 +335,8 @@ public class Site {
     public void calculateVgp() {
         if (getLocation() != null && getFisherParams() != null) {
             vgp = VGP.calculate(getFisherParams(), getLocation());
+        } else {
+            vgp = null;
         }
     }
 
