@@ -38,9 +38,10 @@ import net.talvi.puffinplot.data.Sample;
  * 
  * @author pont
  */
-public class CorrectionWindow extends JFrame implements ActionListener {
+public class EditSampleParametersWindow extends JFrame {
 
     private final static DatumField[] fields = {
+        DatumField.VOLUME,
         DatumField.SAMPLE_AZ, DatumField.SAMPLE_DIP, DatumField.VIRT_SAMPLE_HADE,
         DatumField.FORM_AZ, DatumField.VIRT_FORM_STRIKE, DatumField.FORM_DIP, 
         DatumField.MAG_DEV
@@ -53,10 +54,11 @@ public class CorrectionWindow extends JFrame implements ActionListener {
             new EnumMap<>(DatumField.class);
     private final Map<DatumField, JTextField> textFieldMap =
             new EnumMap<>(DatumField.class);
+    private final ActionListener actionListener;
     
 
     /** Creates a new correction window. */
-    public CorrectionWindow() {
+    public EditSampleParametersWindow() {
         super("Edit corrections");
         setResizable(false);
         final Container cp = getContentPane();
@@ -92,8 +94,9 @@ public class CorrectionWindow extends JFrame implements ActionListener {
 
         cancelButton = new JButton("Cancel");
         setButton = new JButton("Set");
-        setButton.addActionListener(this);
-        cancelButton.addActionListener(this);
+        actionListener = new EspwActionListener();
+        setButton.addActionListener(actionListener);
+        cancelButton.addActionListener(actionListener);
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
@@ -111,28 +114,31 @@ public class CorrectionWindow extends JFrame implements ActionListener {
         setLocationRelativeTo(null);
     }
 
-    /** <p>Handle an action event. The events handled are clicks on the
-     * <q>Cancel</q> and <q>Set</q> buttons.</p>
-     * 
-     * @param event the action event to handle
-     */
-    @Override
-    public void actionPerformed(ActionEvent event) {
-        if (event.getSource() == cancelButton)
-            setVisible(false);
-        if (event.getSource() == setButton) {
-            final PuffinApp app = PuffinApp.getInstance();
-            List<Sample> samples = app.getSelectedSamples();
-            for (DatumField field : fields) {
-                if (checkBoxMap.get(field).isSelected()) {
-                    String value = textFieldMap.get(field).getText();
-                    for (Sample s: samples) {
-                        s.setValue(field, value);
+    
+    private class EspwActionListener implements ActionListener {
+        /** <p>Handle an action event. The events handled are clicks on the
+         * <q>Cancel</q> and <q>Set</q> buttons.</p>
+         *
+         * @param event the action event to handle
+         */
+        @Override
+        public void actionPerformed(ActionEvent event) {
+            if (event.getSource() == cancelButton)
+                setVisible(false);
+            if (event.getSource() == setButton) {
+                final PuffinApp app = PuffinApp.getInstance();
+                final List<Sample> samples = app.getSelectedSamples();
+                for (DatumField field : fields) {
+                    if (checkBoxMap.get(field).isSelected()) {
+                        final String value = textFieldMap.get(field).getText();
+                        for (Sample s: samples) {
+                            s.setValue(field, value);
+                        }
                     }
                 }
+                setVisible(false);
+                app.updateDisplay();
             }
-            setVisible(false);
-            app.updateDisplay();
         }
     }
 }

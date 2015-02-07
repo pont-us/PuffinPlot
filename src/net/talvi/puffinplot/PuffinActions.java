@@ -470,12 +470,12 @@ public class PuffinActions {
      * Opens a window allowing the user to edit the sample and formation
      * orientations and the local magnetic declination.
      */
-    public final Action editCorrections = new PuffinAction("Corrections…",
-            "Edit sample and formation orientations, and local geomagnetic field declination",
+    public final Action editSampleParameters = new PuffinAction("Sample parameters…",
+            "Edit sample volume, sample and formation orientations, and local geomagnetic field declination",
             null, false, KeyEvent.VK_R) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            app.getCorrectionWindow().setVisible(true);
+            app.getEditSampleParametersWindow().setVisible(true);
         }
     };
     

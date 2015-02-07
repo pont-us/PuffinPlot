@@ -145,7 +145,7 @@ public final class MainMenuBar extends JMenuBar {
         
         add(makeMenu("Edit",KeyEvent.VK_E,
                 pa.selectAll, pa.clearSelection,
-                movePlotsItem, pa.resetLayout, pa.editCorrections,
+                movePlotsItem, pa.resetLayout, pa.editSampleParameters,
                 pa.setTreatType,
                 pa.copyStepSelection, pa.pasteStepSelection,
                 makeMenu("Rotate/invert samples", KeyEvent.VK_F,

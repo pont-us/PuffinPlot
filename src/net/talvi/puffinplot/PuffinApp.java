@@ -92,7 +92,7 @@ public final class PuffinApp {
     private final PuffinPrefs prefs;
     private final TableWindow tableWindow;
     private final SuiteEqAreaWindow suiteEqAreaWindow;
-    private final CorrectionWindow correctionWindow;
+    private final EditSampleParametersWindow editSampleParametersWindow;
     private final SiteMeanWindow siteEqAreaWindow;
     private final TreatmentWindow treatmentWindow;
     private PrefsWindow prefsWindow;
@@ -153,7 +153,7 @@ public final class PuffinApp {
         tableWindow = new TableWindow();
         suiteEqAreaWindow = new SuiteEqAreaWindow();
         siteEqAreaWindow = new SiteMeanWindow();
-        correctionWindow = new CorrectionWindow();
+        editSampleParametersWindow = new EditSampleParametersWindow();
         treatmentWindow = new TreatmentWindow();
         citeWindow = new CiteWindow();
         // NB main window must be instantiated last, as
@@ -938,11 +938,12 @@ public final class PuffinApp {
         return siteEqAreaWindow;
     }
     
-    /** Returns the window for user editing of correction data
-     * (sample orientation, formation orientation, geomagnetic declination)
-     * @return the correction editing window */
-    public CorrectionWindow getCorrectionWindow() {
-        return correctionWindow;
+    /** Returns the window for user editing of correction data.
+     * (sample volume, sample orientation, formation orientation,
+     *  geomagnetic declination)
+     * @return the sample parameter editing window */
+    public EditSampleParametersWindow getEditSampleParametersWindow() {
+        return editSampleParametersWindow;
     }
 
     
