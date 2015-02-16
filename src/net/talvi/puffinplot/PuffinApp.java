@@ -1064,14 +1064,14 @@ public final class PuffinApp {
         if (files != null) openFiles(files, true);
     }
     
-    /** Shows an ‘open files’ dialog box; if the user selects any files,
-     * they will be opened in a new suite.
+    /** Shows an ‘open files’ dialog box.
+     * 
      * @param createNewSuite If {@code true}, or if there is no current suite,
      * a new suite will be created for the data from the files; otherwise,
      * the data will be added to the current suite.
      */
     public void showOpenFilesDialog(boolean createNewSuite) {
-        List<File> files = openFileDialog("Open file(s)");
+        final List<File> files = openFileDialog("Open file(s)");
         if (files != null) {
             openFiles(files, createNewSuite);
         }

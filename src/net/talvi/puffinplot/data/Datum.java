@@ -21,9 +21,11 @@ import static java.lang.Double.parseDouble;
 import static java.lang.Math.toRadians;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -843,5 +845,21 @@ public class Datum {
      */
     public void touch() {
         if (suite != null) suite.setSaved(false);
+    }
+    
+    /**
+     * Returns a set of all the measurement types of the supplied data.
+     * 
+     * 
+     * @param data a collection of Datum objects
+     * @return exactly those measurement types which are present in the
+     * suppled data
+     */
+    public static Set<MeasType> measTypes(Collection<Datum> data) {
+        Set<MeasType> result = new HashSet<>(MeasType.values().length);
+        for (Datum d: data) {
+            result.add(d.getMeasType());
+        }
+        return result;
     }
 }

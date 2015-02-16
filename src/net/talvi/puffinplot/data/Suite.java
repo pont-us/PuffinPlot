@@ -425,13 +425,23 @@ public final class Suite {
             FileType fileType, FileFormat format,
             Map<Object,Object> importOptions) throws IOException {
         assert(files.size() > 0);
-        if (data == null) { // only set the name if suite is empty
+        if (isEmpty()) { // only set the name if suite is empty
             if (files.size() == 1) {
                 name = files.get(0).getName();
             } else {
                 name = files.get(0).getParentFile().getName();
             }
         }
+        
+        // Remember whether the suite was initially empty -- this is needed
+        // to correctly set the saved state later.
+        final boolean wasEmpty = isEmpty();
+        
+        // Clear any existing load warnings: if we're appending data to
+        // a suite with existing data, it may contain warnings from a previous
+        // readFiles call.
+        loadWarnings.clear();
+        
         files = expandDirs(files);
         final ArrayList<Datum> dataArray = new ArrayList<>();
         data = dataArray;
@@ -493,14 +503,52 @@ public final class Suite {
                         "%s is of unknown file type.", file.getName()));
                 break;
             }
+            
             if (loader != null) {
-                dataArray.ensureCapacity(dataArray.size() + loader.getData().size());
-                for (Datum d: loader.getData()) {
-                    if (!d.ignoreOnLoading()) addDatum(d);
+                final List<Datum> loadedData = loader.getData();
+                
+                final Set<MeasType> measTypes = Datum.measTypes(loadedData);
+                
+                boolean dataIsOk = true;
+                if (measTypes.contains(MeasType.DISCRETE) &&
+                        measTypes.contains((MeasType.CONTINUOUS))) {
+                    // The loaded file mixes measurement types. This should
+                    // never happen in normal circumstances, but it's
+                    // conceivable that, for example, a user concatenated
+                    // incompatible files by mistake.
+                    
+                    dataIsOk = false;
+                    loadWarnings.add(String.format(Locale.ENGLISH,
+                        "%s mixes discrete and continuous measurements.\n"
+                                + "Ignoring this file.", file.getName()));
+                    
+                } else if (getMeasType().isActualMeasurement() &&
+                        !measTypes.contains(getMeasType())) {
+                    
+                    final MeasType loadedType =
+                            measTypes.contains(MeasType.CONTINUOUS) ?
+                            MeasType.CONTINUOUS : MeasType.DISCRETE;
+                    dataIsOk = false;
+                    loadWarnings.add(String.format(Locale.ENGLISH,
+                            "%s contains %s measurements, \n"
+                                    + "but the suite contains %s data.\n"
+                                    + "Ignoring this file.", file.getName(),
+                                    loadedType.getNiceName().toLowerCase(),
+                                    getMeasType().getNiceName().toLowerCase()
+                                    ));
                 }
-                loadWarnings.addAll(loader.getMessages());
-                puffinLines = loader.getExtraLines();
+                
+                if (dataIsOk) {
+                    dataArray.ensureCapacity(dataArray.size() + loadedData.size());
+                    for (Datum d: loadedData) {
+                        // TODO: check for matching measurement type here
+                        if (!d.ignoreOnLoading()) addDatum(d);
+                    }
+                    loadWarnings.addAll(loader.getMessages());
+                    puffinLines = loader.getExtraLines();
+                }
             }
+            
             if (fileType == FileType.TWOGEE &&
                     measType.isContinuous() &&
                     "1:1:1".equals(sensorLengths.getPreset()) &&
@@ -531,7 +579,21 @@ public final class Suite {
         }
         processPuffinLines(puffinLines);
         updateReverseIndex();
-        setSaved(true);
+        
+        // A suite isn't considered "unsaved" if it was empty before this
+        // file was loaded.
+        setSaved(wasEmpty);
+    }
+
+    /**
+     * Determines whether this suite is empty.
+     * 
+     * An empty suite is one that contains no demagnetization data.
+     * 
+     * @return {@code true} iff this suite is empty
+     */
+    public boolean isEmpty() {
+        return data == null;
     }
     
     /**
