@@ -47,4 +47,8 @@ public interface FisherParams {
      * parameter <i>κ</i>
      */
     double getK();
+    
+    double getR();
+    
+    int getN();
 }

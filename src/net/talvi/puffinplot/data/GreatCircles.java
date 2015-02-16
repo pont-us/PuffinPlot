@@ -128,6 +128,7 @@ public final class GreatCircles implements FisherParams {
 
     /** Returns the number of great circles used in the calculation.
      * @return the number of great circles used in the calculation */
+    @Override
     public int getN() {
         return circles.size();
     }
@@ -234,5 +235,10 @@ public final class GreatCircles implements FisherParams {
     @Override
     public double getK() {
         return k;
+    }
+    
+    @Override
+    public double getR() {
+        return R;
     }
 }

@@ -36,10 +36,10 @@ public class SuiteParamsTable extends Plot {
 
     private final double us = getUnitSize();
     private final List<Double> xSpacing =
-            Arrays.asList(600*us, 400*us, 400*us, 400*us, 400*us);
+            Arrays.asList(600*us, 400*us, 400*us, 400*us, 400*us, 400*us);
     private final int ySpacing = (int) (120 * getUnitSize());
     private final List<String> headers = 
-            Arrays.asList(new String[] {"Param", "dec/φ", "inc/λ", "α95", "k"});
+            Arrays.asList(new String[] {"Param", "dec/φ", "inc/λ", "α95", "k", "R"});
     private final Preferences prefs;
     
     /** Creates a suite parameter table with the supplied parameters.
@@ -101,6 +101,7 @@ public class SuiteParamsTable extends Plot {
                     values.set(2, fmt("%.1f", means.getAll().getMeanDirection().getIncDeg()));
                     values.set(3, fmt("%.1f", means.getAll().getA95()));
                     values.set(4, fmt("%.1f", means.getAll().getK()));
+                    values.set(5, fmt("%.1f", means.getAll().getR()));
                 }
                 points.add(new TextLinePoint(this, g, yPos, null, null,
                         values, xSpacing, Color.BLACK));

@@ -34,6 +34,8 @@ public class FisherValues implements FisherParams {
 
     private final double a95;
     private final double k;
+    private final int N;
+    private final double R;
     private final Vec3 meanDirection;
     private final List<Vec3> directions;
     private final static double p = 0.05;
@@ -41,10 +43,13 @@ public class FisherValues implements FisherParams {
         Arrays.asList("Fisher dec. (°)", "Fisher inc. (°)",
             "Fisher a95 (°)", "Fisher k", "Fisher nDirs");
 
-    private FisherValues(List<Vec3> directions, double a95, double k, Vec3 meanDirection) {
+    private FisherValues(List<Vec3> directions, double a95, double k, int N,
+            double R, Vec3 meanDirection) {
         this.directions = Collections.unmodifiableList(directions);
         this.a95 = a95;
         this.k = k;
+        this.N = N;
+        this.R = R;
         this.meanDirection = meanDirection;
     }
     
@@ -71,15 +76,22 @@ public class FisherValues implements FisherParams {
      * @return the Fisherian statistics for the supplied vectors
      */
     public static FisherValues calculate(Collection<Vec3> vectors) {
-        if (vectors.isEmpty()) return null;
-        List<Vec3> normPoints = new ArrayList<>(vectors.size());
-        double N = vectors.size();
-        for (Vec3 point: vectors) normPoints.add(point.normalize());
+        if (vectors.isEmpty()) {
+            return null;
+        }
+        
+        final List<Vec3> normPoints = new ArrayList<>(vectors.size());
+        final double N = vectors.size();
+        for (Vec3 point: vectors) {
+            normPoints.add(point.normalize());
+        }
         // R is the vector sum length
-        double R = Vec3.sum(normPoints).mag();
-        double k = (N-1)/(N-R);
-        double a95 = Math.toDegrees(acos( 1 - ((N-R)/R) * (pow(1/p,1/(N-1))-1) ));
-        return new FisherValues(normPoints, a95, k, Vec3.meanDirection(normPoints));
+        final double R = Vec3.sum(normPoints).mag();
+        final double k = (N-1)/(N-R);
+        final double a95 = Math.toDegrees(
+                acos( 1 - ((N-R)/R) * (pow(1/p,1/(N-1))-1) ));
+        return new FisherValues(normPoints, a95, k, vectors.size(),
+                R, Vec3.meanDirection(normPoints));
     }
     
     @Override
@@ -97,6 +109,16 @@ public class FisherValues implements FisherParams {
     @Override
     public double getK() {
         return k;
+    }
+    
+    @Override
+    public int getN() {
+        return N;
+    }
+    
+    @Override
+    public double getR() {
+        return R;
     }
     
     /**
@@ -183,4 +205,5 @@ public class FisherValues implements FisherParams {
     public static List<String> getEmptyFields() {
         return Collections.nCopies(HEADERS.size(), "");
     }
+
 }
