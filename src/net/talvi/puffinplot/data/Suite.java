@@ -292,27 +292,41 @@ public final class Suite {
     }
 
     /**
-     * Adds a datum to the suite. If no corresponding sample exists,
-     * one is created.
+     * Adds a datum to the suite.
      * 
-     * @param d 
+     * If no corresponding sample exists, one is created. The measurement
+     * type of the datum must be compatible with that of the suite -- that
+     * is, either they must be the same, or the suite's measurement type
+     * must be {@code UNSET}. In the latter case, the suite's measurement
+     * type will be set to that of the supplied datum.
+     * 
+     * @param d the datum to add
+     * @throws IllegalArgumentException if the measurement type of
+     * the datum does not match the measurement type of the suite
      */
     private void addDatum(Datum d) {
-        if (measType == MeasType.UNSET) measType = d.getMeasType();
+        if (measType == MeasType.UNSET) {
+            measType = d.getMeasType();
+        }
         if (d.getMeasType() != measType) {
-            throw new Error("Can't mix long core and discrete measurements.");
+            throw new IllegalArgumentException(String.format(
+                    "Can't add a %s datum to a %s suite.",
+                    d.getMeasType().getNiceName().toLowerCase(),
+                    getMeasType().getNiceName().toLowerCase()));
         }
         data.add(d);
-        if (d.getTreatType() == TreatType.UNKNOWN) hasUnknownTreatType = true;
-        String datumName = d.getIdOrDepth();
-        Sample s = samplesById.get(datumName);
-        if (s == null) {
-            s = new Sample(datumName, this);
-            samplesById.put(datumName, s);
-            samples.add(s);
+        if (d.getTreatType() == TreatType.UNKNOWN) {
+            hasUnknownTreatType = true;
+        }
+        final String datumName = d.getIdOrDepth();
+        Sample sample = samplesById.get(datumName);
+        if (sample == null) {
+            sample = new Sample(datumName, this);
+            samplesById.put(datumName, sample);
+            samples.add(sample);
         }
         d.setSuite(this);
-        s.addDatum(d);
+        sample.addDatum(d);
     }
 
     private List<File> expandDirs(List<File> files) {
