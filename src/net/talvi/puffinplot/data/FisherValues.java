@@ -41,7 +41,7 @@ public class FisherValues implements FisherParams {
     private final static double p = 0.05;
     private static final List<String> HEADERS =
         Arrays.asList("Fisher dec. (°)", "Fisher inc. (°)",
-            "Fisher a95 (°)", "Fisher k", "Fisher nDirs");
+            "Fisher a95 (°)", "Fisher k", "Fisher nDirs", "Fisher R");
 
     private FisherValues(List<Vec3> directions, double a95, double k, int N,
             double R, Vec3 meanDirection) {
@@ -142,7 +142,7 @@ public class FisherValues implements FisherParams {
     }
 
     private String fmt(double d) {
-        return String.format(Locale.ENGLISH, "%.1f", d);
+        return String.format(Locale.ENGLISH, "%.2f", d);
     }
 
     /** Returns the statistical parameters as a list of strings.
@@ -154,7 +154,8 @@ public class FisherValues implements FisherParams {
     public List<String> toStrings() {
         return Arrays.asList(fmt(getMeanDirection().getDecDeg()),
                 fmt(getMeanDirection().getIncDeg()), fmt(getA95()),
-                fmt(getK()), Integer.toString(getNDirs()));
+                fmt(getK()), Integer.toString(getNDirs()),
+                fmt(getR()));
     }
     
     /** Returns the statistical parameters as a list of strings.

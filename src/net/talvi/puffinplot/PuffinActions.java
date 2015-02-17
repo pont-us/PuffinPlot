@@ -162,8 +162,8 @@ public class PuffinActions {
                 app.errorDialog("Error saving calculation", "No file loaded.");
                             return;
             }
-            String pathname = app.getSavePath("Export site calculations", ".csv",
-                    "Comma Separated Values");
+            final String pathname = app.getSavePath("Export site calculations",
+                    ".csv", "Comma Separated Values");
 
             if (pathname != null) {
                 try {

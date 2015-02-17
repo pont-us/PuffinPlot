@@ -48,7 +48,24 @@ public interface FisherParams {
      */
     double getK();
     
+    /**
+     * Returns <i>R</i>, the total unit vector path length.
+     * For standard Fisher (1953) statistics, <i>R</i> is the length
+     * of the sum of the unit vectors corresponding to the directions
+     * being analysed. For McFadden &amp; McElhinny (1988) statistics,
+     * <i>R</i> has a similar interpretation; see the paper for details.
+     * 
+     * @return 
+     */
     double getR();
     
+    /**
+     * Returns <i>N</i>, the number of directions analysed.
+     * In the case of the McFadden &amp; McElhinny (1988), this corresponds
+     * to the number of great circles, and does <i>not</i> include any
+     * endpoints (direct observations) used in the calculation. (See the
+     * paper for details.)
+     * @return 
+     */
     int getN();
 }

@@ -54,7 +54,7 @@ public final class GreatCircles implements FisherParams {
 
     private static final List<String> HEADERS =
         Arrays.asList("GC valid","GC dec. (°)", "GC inc. (°)",
-            "GC a95 (°)", "GC k", "GC N", "GC M", "GC min points");
+            "GC a95 (°)", "GC k", "GC N", "GC M", "GC R", "GC min points");
 
     /**
      * Calculates a mean direction from the supplied great circle and
@@ -169,7 +169,7 @@ public final class GreatCircles implements FisherParams {
     }
 
     private String fmt(double d) {
-        return String.format(Locale.ENGLISH, "%.1f", d);
+        return String.format(Locale.ENGLISH, "%.2f", d);
     }
     
     private String intFmt(int d) {
@@ -184,7 +184,8 @@ public final class GreatCircles implements FisherParams {
     public List<String> toStrings() {
         return Arrays.asList(isValid() ? "Y" : "N",
                 fmt(direction.getDecDeg()), fmt(direction.getIncDeg()),
-                fmt(a95), fmt(k), intFmt(getN()), intFmt(getM()), intFmt(getMinPoints()));
+                fmt(a95), fmt(k), intFmt(getN()), intFmt(getM()), fmt(getR()),
+                intFmt(getMinPoints()));
     }
 
     /** Returns a list of empty strings equal in length to the number of parameters.
