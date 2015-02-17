@@ -234,6 +234,11 @@ public final class GreatCircles implements FisherParams {
     }
     
     @Override
+    public boolean isA95Valid() {
+        return !(Double.isNaN(a95) || Double.isInfinite(a95));
+    }
+    
+    @Override
     public double getK() {
         return k;
     }

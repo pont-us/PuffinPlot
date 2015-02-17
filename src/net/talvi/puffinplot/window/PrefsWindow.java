@@ -180,6 +180,9 @@ public class PrefsWindow extends JFrame {
         miscPanel.add(makeAlignedCheckBox(new PrefsCheckBox(
                 "Highlight current sample/site", "plots.highlightCurrentSample",
                 false)));
+        miscPanel.add(makeAlignedCheckBox(new PrefsCheckBox(
+                "Show site α95s on suite plot", "plots.showSiteA95sOnSuitePlot",
+                false)));
         miscPanel.add(makeAlignedCheckBox(new MagDevCheckBox()));
         miscPanel.add(makeLabelledPrefTextField("Demag. y-axis label",
                 "plots.demag.vAxisLabel", "Magnetization (A/m)"));

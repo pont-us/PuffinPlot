@@ -61,7 +61,7 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
         return "Suite";
     }
 
-    private void drawFisher(FisherValues fv) {
+    private void drawFisher(FisherParams fv) {
         if (fv==null) return;
         final Vec3 mean = fv.getMeanDirection();
         if (fv.isA95Valid() && fv.getA95() > 0) {
@@ -71,6 +71,14 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
                 ShapePoint.build(this, project(mean)).
                 circle().build();
         meanPoint.draw(g);
+    }
+    
+    private void drawSiteA95(FisherParams fv) {
+        if (fv==null) return;
+        if (fv.isA95Valid() && fv.getA95() > 0) {
+            g.setColor(Color.BLUE);
+            drawLineSegments(fv.getMeanDirection().makeSmallCircle(fv.getA95()));
+        }
     }
 
     private void drawMeans(SuiteCalcs.Means means) {
@@ -108,6 +116,7 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
         List<Site> sites = suite.getSites();
         final SuiteCalcs suiteCalcs = suite.getSuiteMeans();
         if (sites == null || sites.isEmpty()) {
+            // If there are no sites, we plot sample directions.
             for (Sample sample: suite.getSamples()) {
                 final Vec3 dir = sample.getDirection();
                 if (dir != null) {
@@ -124,11 +133,16 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
                 drawMeans(suiteCalcs.getDirsBySample());
             }
         } else {
+            // If there are sites, we plot them instead of the samples.
             for (Site site: sites) {
                 final FisherParams siteMean = site.getFisherParams();
                 if (siteMean != null) {
+                    if (prefs.getBoolean("plots.showSiteA95sOnSuitePlot", false)) {
+                        drawSiteA95(siteMean);
+                    }
                     final Vec3 dir = siteMean.getMeanDirection();
-                    PlotPoint p = ShapePoint.build(this, project(dir)).filled(dir.z>0).build();
+                    final PlotPoint p = ShapePoint.build(this, project(dir)).
+                            filled(dir.z>0).build();
                     g.setColor(site == selectedSample.getSite() ?
                             highlightColour : Color.BLACK);
                     p.draw(g);

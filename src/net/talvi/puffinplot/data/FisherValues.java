@@ -99,9 +99,7 @@ public class FisherValues implements FisherParams {
         return a95;
     }
     
-    /**
-     * @return true iff the a95 is a real number (not infinite or NaN)
-     */
+    @Override
     public boolean isA95Valid() {
         return !(Double.isNaN(a95) || Double.isInfinite(a95));
     }

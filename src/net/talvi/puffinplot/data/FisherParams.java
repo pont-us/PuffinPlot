@@ -40,7 +40,16 @@ public interface FisherParams {
      * @return the alpha-95 value denoting the 95% confidence interval
      */
     double getA95();
-
+    
+    // TODO: when PuffinPlot's codebase is migrated to Java 8, isA95Valid
+    // should be implemented in the interface as a default method.
+    
+    /** Reports whether the alpha-95 value represents a real number. 
+     * 
+     * @return false if the alpha-95 is NaN or infinite, otherwise true
+     */
+    boolean isA95Valid();
+    
     /** Returns the <i>k</i>-value, an estimate of the precision
      * parameter <i>κ</i>.
      * @return the <i>k</i>-value, an estimate of the precision
