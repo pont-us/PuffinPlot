@@ -61,7 +61,7 @@
 \newcommand{\quot}[1]{`#1'}
 \newcommand{\mypara}[1]{\noindent\textbf{#1}
 
-\noindent } % htlatex doesn't like \paragraph
+\noindent\ignorespaces} % htlatex doesn't like \paragraph
 
 % ======== Title
 
@@ -137,7 +137,6 @@ archive. After downloading the archive, move it to the folder where you
 would like PuffinPlot installed and extract its contents there.
 
 \begin{table}[bp]
-%{Fields for sample data export}
   \caption{\label{tbl:archive-contents} The contents of the PuffinPlot archive file.}
 \begin{tabular}{ll} \toprule
 File           & Description \\ \midrule
@@ -530,6 +529,7 @@ Fisher inc.     & Mean inclination of treatment step directions (\textdegree) \\
 Fisher a95      & \alnifi{} of mean treatment step direction (\textdegree) \\
 Fisher k        & {\em k}-value of mean treatment step direction \\
 Fisher nDirs    & number of directions used to calculate mean\\
+Fisher R        & length of sum of directions used to calculate mean\\
 \caps{ams} dec1 & declination of major axis of \caps{ams} tensor \\
 \caps{ams} inc1 & inclination of major axis of \caps{ams} tensor \\
 \caps{ams} dec2 & declination of intermediate axis of \caps{ams} tensor \\
@@ -560,6 +560,7 @@ section~\ref{sec:annotations} for details. \\ \bottomrule
   Fisher a95      & \alnifi{} of mean sample direction (\textdegree) \\
   Fisher k        & {\em k}-value of mean sample direction \\
   Fisher nDirs    & number of directions used to calculate site mean\\
+  Fisher R        & length of sum of unit direction vectors\\
   \caps{gc} valid & `Y' if the great-circle fit
   is valid, `N' otherwise. See section~\ref{sec:prefs-misc} for
   details on the validity test and how it may be customized. \\
@@ -569,6 +570,7 @@ section~\ref{sec:annotations} for details. \\ \bottomrule
   \caps{gc} k     & {\em k}-value for great-circle direction \\
   \caps{gc n}     & Number of great circles used in great-circle fit \\
   \caps{gc m}     & Number of \caps{pca} directions used in great-circle fit \\
+  \caps{gc r}     & length of sum of direction vectors in great-circle fit\\
   \caps{gc} min points & the smallest number of treatment steps used to define
     any of the great circles fitted at this site \\
   \caps{t}1min & See note below \\
@@ -1271,6 +1273,7 @@ listed below include textual elements such as legends and tables.
   \item[dec.] the declination of the site mean direction
   \item[inc.] the inclination of the site mean direction
   \item[a95] the \alnifi{} value of the site mean direction
+  \item[R] the total length of the sum of the direction unit vectors
   \item[type] the type of analysis used: `Fshr' for \cite{fisher1953sphere}
     analysis on \caps{pca} directions; `GC' for great-circle analysis
     \citep{mcfadden1988circles}. `GC' is suffixed with either `v' for valid
@@ -1322,13 +1325,15 @@ listed below include textual elements such as legends and tables.
   a \caps{csv} file.
 
 \item[Suite table] is a table showing suite-level mean direction and VGP
-  data. The parameters shown are: `Site dir', the mean direction
-  calculated from site mean directions; `Sample dir', the mean direction
-  calculated from sample mean directions; `Site VGP', the mean of the
-  VGPs of sites; and `Sample VGP', the mean of the VGPs corresponding
-  to individual sample directions. As with most PuffinPlot operations,
-  the parameters shown are calculated using only the samples and sites
-  selected at the time the calculation is done.
+  data. See the entry on \ppcmd{Site table} for explanations of the
+  Fisher parameters associated with each mean direction. The directions
+  shown are: `Site dir', the mean direction calculated from site mean
+  directions; `Sample dir', the mean direction calculated from sample
+  mean directions; `Site VGP', the mean of the VGPs of sites; and
+  `Sample VGP', the mean of the VGPs corresponding to individual sample
+  directions. As with most PuffinPlot operations, the parameters shown
+  are calculated using only the samples and sites selected at the time
+  the calculation is done.
 
 \item[Zplot key] is a legend for the Zijderveld plot, showing the
   interpretations of the filled and unfilled points and giving the units in
@@ -1613,7 +1618,7 @@ expression might be
 
 which means that a great-circle fit will be considered valid if it has an
 \alnifi\ below 3, a $k$ above five, and either at least three endpoints or
-at least five circles. The default value of this setting is\texttt{True},
+at least five circles. The default value of this setting is \texttt{True},
 which causes all great-circle fits to be considered valid.
 
 \item[Zplot \caps{pca} display] controls the manner in which \caps{pca}
@@ -1651,14 +1656,14 @@ adding short items of information which are not automatically inferred by
 PuffinPlot -- for example, \quot{number of components} or \quot{behaviour
   type}.
 
-\mypara{Adding annotation categories} Annotations categories defined by
+\mypara{Adding annotation categories}Annotations categories defined by
 selecting the \ppcmd{Edit custom flags\ldots} or \ppcmd{Edit custom
   notes\ldots} item from the \ppcmd{Edit} menu. This will show a window
 allowing you to add, rearrange, or remove the annotation categories. If
 an annotation category is removed, all annotations made within that
 category will be lost.
 
-\mypara{Using annotations} When custom flags or notes have been defined,
+\mypara{Using annotations}When custom flags or notes have been defined,
 an extra panel appears at the right-hand side of the main window. For
 each custom note category there is a text box into which text may be
 typed. For each custom flag category there is a tick box which may be
@@ -1897,11 +1902,11 @@ liberal terms:
 
 \subsection*{Other software}
 
-PuffinPlot was created with the assistance of a cornucopia of free and open
-source software; among the more significant are the Java platform and
-development kit, NetBeans, Ant, Emacs, \LaTeX\ (plus many \LaTeX\ packages),
-TeX4ht, the Gimp, and the Ubuntu operating system. I thank all who
-contributed to these projects.
+PuffinPlot was created with the assistance of a cornucopia of free and
+open source software; among the more significant tools are the Java
+language and platform, NetBeans, Ant, Emacs, \LaTeX\ (plus many
+\LaTeX\ packages), TeX4ht, the Gimp, and the Ubuntu operating system. I
+thank all who contributed to these projects.
 
 \subsection*{People}
 
