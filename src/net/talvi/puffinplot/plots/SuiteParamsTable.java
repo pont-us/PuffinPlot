@@ -36,10 +36,10 @@ public class SuiteParamsTable extends Plot {
 
     private final double us = getUnitSize();
     private final List<Double> xSpacing =
-            Arrays.asList(600*us, 400*us, 400*us, 400*us, 400*us, 400*us);
+            Arrays.asList(600*us, 400*us, 400*us, 400*us, 400*us, 400*us, 400*us);
     private final int ySpacing = (int) (120 * getUnitSize());
     private final List<String> headers = 
-            Arrays.asList(new String[] {"Param", "dec/φ", "inc/λ", "α95", "k", "R"});
+            Arrays.asList(new String[] {"Param", "dec/φ", "inc/λ", "α95", "k", "N", "R"});
     private final Preferences prefs;
     
     /** Creates a suite parameter table with the supplied parameters.
@@ -64,8 +64,13 @@ public class SuiteParamsTable extends Plot {
         return "Suite table";
     }
         
-    private static String fmt(String format, Object... args) {
-        return String.format(Locale.ENGLISH, format, args);
+    private static String fmt(double value) {
+        return String.format(Locale.ENGLISH, "%.1f", value);
+    }
+    
+            
+    private static String fmt(int value) {
+        return String.format(Locale.ENGLISH, "%d", value);
     }
 
     @Override
@@ -95,13 +100,16 @@ public class SuiteParamsTable extends Plot {
                 values.addAll(Collections.nCopies(columns, "--"));
                 values.set(0, (grouping==0 ? "Site " : "Sample ") +
                         (type==0 ? "dir" : "VGP"));
+                
                 if (means != null && means.getAll() != null &&
                         means.getAll().getMeanDirection() != null) {
-                    values.set(1, fmt("%.1f", means.getAll().getMeanDirection().getDecDeg()));
-                    values.set(2, fmt("%.1f", means.getAll().getMeanDirection().getIncDeg()));
-                    values.set(3, fmt("%.1f", means.getAll().getA95()));
-                    values.set(4, fmt("%.1f", means.getAll().getK()));
-                    values.set(5, fmt("%.1f", means.getAll().getR()));
+                    final FisherValues all = means.getAll();
+                    values.set(1, fmt(all.getMeanDirection().getDecDeg()));
+                    values.set(2, fmt(all.getMeanDirection().getIncDeg()));
+                    values.set(3, fmt(all.getA95()));
+                    values.set(4, fmt(all.getK()));
+                    values.set(5, fmt(all.getN()));
+                    values.set(6, fmt(all.getR()));
                 }
                 points.add(new TextLinePoint(this, g, yPos, null, null,
                         values, xSpacing, Color.BLACK));
