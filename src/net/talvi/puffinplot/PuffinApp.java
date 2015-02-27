@@ -431,12 +431,12 @@ public final class PuffinApp {
         }
         for (Site site: affectedSites) {
             if (site.getFisherValues() != null) {
-                site.calculateFisherStats(correction);
+                site.calculateFisherStats(getCorrection());
             }
             if (site.getGreatCircles() != null) {
                 // PCAs are also used in GC calculations, so this needs
                 // to be recalculated even if only the PCA has changed.
-                site.calculateGreatCirclesDirection(correction);
+                site.calculateGreatCirclesDirection(getCorrection());
             }
         }
     }
