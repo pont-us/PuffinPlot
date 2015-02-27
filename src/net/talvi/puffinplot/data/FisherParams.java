@@ -64,7 +64,7 @@ public interface FisherParams {
      * being analysed. For McFadden &amp; McElhinny (1988) statistics,
      * <i>R</i> has a similar interpretation; see the paper for details.
      * 
-     * @return 
+     * @return <i>R</i>, the total unit vector path length.
      */
     double getR();
     
@@ -74,7 +74,8 @@ public interface FisherParams {
      * to the number of great circles, and does <i>not</i> include any
      * endpoints (direct observations) used in the calculation. (See the
      * paper for details.)
-     * @return 
+     * 
+     * @return <i>N</i>, the number of directions analysed
      */
     int getN();
 }

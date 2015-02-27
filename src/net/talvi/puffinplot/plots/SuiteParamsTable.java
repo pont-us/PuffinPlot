@@ -36,7 +36,7 @@ public class SuiteParamsTable extends Plot {
 
     private final double us = getUnitSize();
     private final List<Double> xSpacing =
-            Arrays.asList(600*us, 400*us, 400*us, 400*us, 400*us, 400*us, 400*us);
+            Arrays.asList(600*us, 400*us, 400*us, 400*us, 400*us, 350*us, 400*us);
     private final int ySpacing = (int) (120 * getUnitSize());
     private final List<String> headers = 
             Arrays.asList(new String[] {"Param", "dec/φ", "inc/λ", "α95", "k", "N", "R"});

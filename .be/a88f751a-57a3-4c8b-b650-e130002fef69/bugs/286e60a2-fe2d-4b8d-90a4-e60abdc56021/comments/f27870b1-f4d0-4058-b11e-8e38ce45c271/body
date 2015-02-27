@@ -1,0 +1,22 @@
+A further request along these lines from Russ Burmester, 2014-12-14:
+
+RB>> And probably difficult with the existing file structure, but it
+RB>> would be handy to be able to save both anchored and free line fits
+RB>> without having to use two separate files.
+
+RB>> The aim of being able to save both free and anchored fits is so the
+RB>> fits with the same points selected and means derived from them can
+RB>> be compared. This is no problem if one is satisfied with the points
+RB>> included in the fits because the file can be cloned. However, one
+RB>> of the advantages of your program is that it is interactive and
+RB>> begs to be used to play with and learn from different fits. Instead
+RB>> of a new format to accommodate this, would it be possible to link
+RB>> two data files to synchronize them?
+
+PL> Interesting ideas -- the notion of linked data files got me
+PL> thinking, and on reflection it might not be so hard to support
+PL> multiple synchronized suites within the same file, with some quick
+PL> mechanism for switching between them. Implementation would still be
+PL> a big job but perhaps not as complex as supporting multiple fits at
+PL> the sample level.
+

@@ -20,11 +20,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.util.prefs.Preferences;
-import net.talvi.puffinplot.data.FisherValues;
 import net.talvi.puffinplot.data.Sample;
-import net.talvi.puffinplot.data.Suite;
-import net.talvi.puffinplot.data.SuiteCalcs;
-import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 
@@ -82,30 +78,5 @@ public class PlotTitle extends Plot {
             g.drawString("Site: "+sample.getSite().toString(), minX,
                 minY + 32);
         }
-        final Suite suite = sample.getSuite();
-//        if (suite.getSuiteMeans() != null) {
-//            int yPos = 48;
-//            final SuiteCalcs means = suite.getSuiteMeans();
-//            final String bySampleString = writeSuiteMeans(means.getDirsBySample());
-//            if (bySampleString != null) {
-//                g.drawString("Sample mean: " + bySampleString, minX, minY + yPos);
-//                yPos += 16;
-//            }
-//            final String bySiteString = writeSuiteMeans(means.getDirsBySite());
-//            if (bySiteString != null) {
-//                g.drawString("Site mean: " + bySiteString, minX, minY + yPos);
-//            }
-//        }
-    }
-    
-    private static String writeSuiteMeans(SuiteCalcs.Means means) {
-        if (means == null || means.getAll() == null) {
-            return null;
-        }
-        final FisherValues fv = means.getAll();
-        final Vec3 meanDir = fv.getMeanDirection();
-        return String.format("D %.2f / I %.2f / α95 %.2f / K %.2f",
-                meanDir.getDecDeg(), meanDir.getIncDeg(),
-                fv.getA95(), fv.getK());
     }
 }

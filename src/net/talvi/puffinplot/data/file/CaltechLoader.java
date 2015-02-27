@@ -124,7 +124,6 @@ public class CaltechLoader extends AbstractFileLoader {
             */
             final double coreVolOrMass = parseDoubleSafely(sampleData.substring(32));
             
-            
             /* According to the Paleomag manual, data should start here.
             * However, example files from JMG all have line 3 blank.
             * So we assume that data lines start here, but check for blank

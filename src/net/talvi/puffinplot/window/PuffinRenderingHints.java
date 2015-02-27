@@ -38,13 +38,13 @@ public final class PuffinRenderingHints extends RenderingHints {
             new PuffinRenderingHints();
 
     /**
-     * Return a clean instance of PuffinRenderingHints.
+     * Return a clean instance of this class.
      * 
      * The instance may be the same as a previously returned instance,
      * if it has not been modified. If the previously returned instance 
      * has been modified, a new one is created and returned.
      * 
-     * @return 
+     * @return a clean instance of {@code PuffinRenderingHints}
      */
     public static PuffinRenderingHints getInstance() {
         if (instance.dirty) {
@@ -127,7 +127,7 @@ public final class PuffinRenderingHints extends RenderingHints {
         /**
          * Construct a key using the indicated private key.
          * 
-         * @see RenderingHints#Key
+         * @see java.awt.RenderingHints.Key
          * 
          * @param privateKey the specified key
          */

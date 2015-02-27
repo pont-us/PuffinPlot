@@ -70,16 +70,16 @@ public class PrefsWindow extends JFrame {
         final int BOTH = GridBagConstraints.BOTH;
         setPreferredSize(new Dimension(500, 560));
         setLayout(new GridBagLayout());
-        JTabbedPane tp = new JTabbedPane();
+        final JTabbedPane tp = new JTabbedPane();
         add(tp, new GridBagConstraints(0, 0, 4, 1, 0.99, 0.99,
                 GridBagConstraints.LINE_START, BOTH,
                 insets, 0, 0));
-        JPanel loadingPanel = new JPanel(false);
+        final JPanel loadingPanel = new JPanel(false);
         loadingPanel.setLayout(new GridBagLayout());
-        JPanel squidPanel = new JPanel(new GridBagLayout());
+        final JPanel squidPanel = new JPanel(new GridBagLayout());
         squidPanel.setBorder(BorderFactory.createTitledBorder("SQUID sensor lengths"));
-        String[] labels = {"x", "y", "z"};
-        List<String> lengths = prefs.getSensorLengths().getLengths();
+        final String[] labels = {"x", "y", "z"};
+        final List<String> lengths = prefs.getSensorLengths().getLengths();
         final JLabel presetsLabel = new JLabel("Presets");
         presetsLabel.setHorizontalAlignment(JLabel.RIGHT);
         squidPanel.add(presetsLabel,
@@ -99,7 +99,7 @@ public class PrefsWindow extends JFrame {
             c.gridy = i + 1;
             c.ipadx = c.ipady = 0;
             c.anchor = GridBagConstraints.EAST;
-            JLabel label = new JLabel(labels[i]);
+            final JLabel label = new JLabel(labels[i]);
             label.setHorizontalTextPosition(SwingConstants.LEFT);
             squidPanel.add(label, c);
             c.anchor = GridBagConstraints.WEST;
@@ -157,13 +157,13 @@ public class PrefsWindow extends JFrame {
         plotsSubPanel.setLayout(new GridLayout(0, 2));
 
         for (Plot plot: PuffinApp.getInstance().getMainWindow().getGraphDisplay().getPlots()) {
-            PlotBox pb = new PlotBox(plot);
+            final PlotBox pb = new PlotBox(plot);
             plotsSubPanel.add(pb);
             plotBoxes.add(pb);
         }
         plotsPanel.add(plotsSubPanel);
         
-        JPanel miscPanel = new JPanel(false);
+        final JPanel miscPanel = new JPanel(false);
         miscPanel.setLayout(new BoxLayout(miscPanel, BoxLayout.Y_AXIS));
         
         miscPanel.add(Box.createVerticalGlue());
@@ -212,7 +212,7 @@ public class PrefsWindow extends JFrame {
         tp.addTab("Plots", null, plotsPanel, "Select which plots are shown");
         tp.addTab("Misc.", null, miscPanel, "Miscellaneous settings");
 
-        JButton closeButton = new JButton("Close");
+        final JButton closeButton = new JButton("Close");
         closeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -229,7 +229,7 @@ public class PrefsWindow extends JFrame {
             }
         });
         
-        PuffinActions actions = PuffinApp.getInstance().getActions();
+        final PuffinActions actions = PuffinApp.getInstance().getActions();
         add(makeActionButton(actions.clearPreferences, "Clear"),
                 new GridBagConstraints(
                 0, 1, 1, 1, 1, .01, GridBagConstraints.LINE_START,

@@ -34,7 +34,7 @@ public class AppleListener extends ApplicationAdapter {
 
     private static AppleListener appleListener;
     private static com.apple.eawt.Application eawtApp;
-    private PuffinApp puffinApp;
+    private final PuffinApp puffinApp;
 	
     private AppleListener(PuffinApp puffinApp) {
         this.puffinApp = puffinApp;
@@ -74,9 +74,9 @@ public class AppleListener extends ApplicationAdapter {
     // public void handleOpenApplication(ApplicationEvent event) {}
     
     /**
-     * Handles an Apple Open File action by calling {@code PuffinApp.openFiles()}
+     * Handles an Apple Open File action by calling {@code PuffinApp.openFiles}
      * @param event the event corresponding to the OpenFile action
-     * @see PuffinApp#openFiles(List files)
+     * @see PuffinApp#openFiles(List files, boolean createNewSuite)
      */
     @Override
     public void handleOpenFile(ApplicationEvent event) {
