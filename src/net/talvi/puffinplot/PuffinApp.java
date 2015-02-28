@@ -1039,8 +1039,10 @@ public final class PuffinApp {
         } else {
             final FileDialog fd = new FileDialog(getMainWindow(), title,
                     FileDialog.LOAD);
+            if (startingDir != null) {
+                fd.setDirectory(startingDir.getAbsolutePath());
+            }
             fd.setMultipleMode(true);
-            // System.setProperty("apple.awt.fileDialogForDirectories", "true");
             fd.setVisible(true);
             final File[] fileArray = fd.getFiles();
             if (fileArray.length != 0) {
