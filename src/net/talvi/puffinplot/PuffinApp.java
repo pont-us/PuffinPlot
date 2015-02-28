@@ -1019,6 +1019,13 @@ public final class PuffinApp {
         // Returns null if none set, but JFileChooser handles it appropriately.
         List<File> files = Collections.emptyList();
         final boolean useSwingChooserForOpen = !isOnOsX();
+        
+        // If we are on OS X, having this flag set would *prohibit* selection
+        // of files, so we make sure it's clear. showOpenMacFileDialog is
+        // meant to clear it after showing its dialog, but there's no harm
+        // in clearing it here too.
+        System.clearProperty("apple.awt.fileDialogForDirectories");
+        
         if (useSwingChooserForOpen) {
             final JFileChooser chooser = new JFileChooser(startingDir);
             chooser.setDialogTitle(title);
@@ -1054,12 +1061,20 @@ public final class PuffinApp {
             fd.setDirectory(lastUsedDir);
         }
         fd.setMultipleMode(true);
-        System.setProperty("apple.awt.fileDialogForDirectories", "true");
-        fd.setVisible(true);
-        final File[] fileArray = fd.getFiles();
-        if (fileArray.length != 0) {
-            lastUsedFileOpenDirs.put(title, new File(fd.getDirectory()));
-            files = Arrays.asList(fileArray);
+        try {
+            System.setProperty("apple.awt.fileDialogForDirectories", "true");
+            fd.setVisible(true);
+            final File[] fileArray = fd.getFiles();
+            if (fileArray.length != 0) {
+                lastUsedFileOpenDirs.put(title, new File(fd.getDirectory()));
+                files = Arrays.asList(fileArray);
+            }
+        } finally {
+            // Setting this property prohibits non-directory selection,
+            // and persists for all file open dialogs for the rest of the
+            // application's run, so it's important to ensure that it's cleared
+            // as soon as we're done with the open-folder dialog.
+            System.clearProperty("apple.awt.fileDialogForDirectories");
         }
         if (files != null) openFiles(files, true);
     }
