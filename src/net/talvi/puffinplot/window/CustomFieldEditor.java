@@ -54,15 +54,19 @@ public class CustomFieldEditor extends JFrame {
     private final JButton upButton;
     private final JButton downButton;
     private final CustomFields<String> fields;
+    private final PuffinApp app;
 
     /**
      * Creates a new custom field editor window.
      * 
      * @param fields the fields to edit
      * @param title the title of the window
+     * @param app the PuffinPlot instance associated with this window
      */
-    public CustomFieldEditor(CustomFields<String> fields, String title) {
+    public CustomFieldEditor(CustomFields<String> fields, String title,
+            PuffinApp app) {
         super(title);
+        this.app = app;
         this.fields = fields;
         listModel = new DefaultListModel();
         setFromFields();
@@ -108,7 +112,7 @@ public class CustomFieldEditor extends JFrame {
         contentPane.setOpaque(true); // (compulsory)
         setContentPane(contentPane);
         pack();
-        setLocationRelativeTo(PuffinApp.getInstance().getMainWindow());
+        setLocationRelativeTo(app.getMainWindow());
         setVisible(true);
     }
 
@@ -132,7 +136,7 @@ public class CustomFieldEditor extends JFrame {
             setFromFields();
             list.setSelectedIndex(index);
             list.ensureIndexIsVisible(index);
-            PuffinApp.getInstance().updateDisplay();
+            app.updateDisplay();
         }
     }
 
@@ -145,7 +149,7 @@ public class CustomFieldEditor extends JFrame {
             setFromFields();
             list.setSelectedIndex(index+1);
             list.ensureIndexIsVisible(index+1);
-            PuffinApp.getInstance().updateDisplay();
+            app.updateDisplay();
         }
     }
 
@@ -165,8 +169,8 @@ public class CustomFieldEditor extends JFrame {
                 list.setSelectedIndex(index);
                 list.ensureIndexIsVisible(index);
             }
-            PuffinApp.getInstance().updateDisplay();
-            PuffinApp.getInstance().getMainWindow().updateSampleDataPanel();
+            app.updateDisplay();
+            app.getMainWindow().updateSampleDataPanel();
         }
     }
 
@@ -192,8 +196,8 @@ public class CustomFieldEditor extends JFrame {
             fields.add(newIndex, name);
             list.setSelectedIndex(newIndex);
             list.ensureIndexIsVisible(newIndex);
-            PuffinApp.getInstance().updateDisplay();
-            PuffinApp.getInstance().getMainWindow().updateSampleDataPanel();
+            app.updateDisplay();
+            app.getMainWindow().updateSampleDataPanel();
         }
     }
 
@@ -216,7 +220,7 @@ public class CustomFieldEditor extends JFrame {
             }
             fields.set(index, newName);
             listModel.set(index, newName);
-            PuffinApp.getInstance().updateDisplay();
+            app.updateDisplay();
         }
     }
 }

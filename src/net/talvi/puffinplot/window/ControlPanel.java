@@ -49,8 +49,8 @@ public class ControlPanel extends JPanel
     VVsBox vVsBox;
     private final HprojBox hprojBox;
     private final JRadioButton emptyButton;
-    private static final PuffinApp app = PuffinApp.getInstance();
-    private static final Preferences prefs = app.getPrefs().getPrefs();
+    private final PuffinApp app;
+    private final Preferences prefs;
     
     private final Action toggleZplotAction = new AbstractAction() {
         private static final long serialVersionUID = 1L;
@@ -61,8 +61,13 @@ public class ControlPanel extends JPanel
     };
     private final JRadioButton trayButton;
     
-    /** Creates a new control panel */
-    public ControlPanel() {
+    /** Creates a new control panel
+     * 
+     * @param app The PuffinPlot instance associated with this panel
+     */
+    public ControlPanel(PuffinApp app) {
+        this.app = app;
+        prefs = app.getPrefs().getPrefs();
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         add(suiteBox = new JComboBox(new String[] {"no files loaded"}));
         add(rotationBox = new RotationBox());

@@ -65,21 +65,24 @@ public final class MainWindow extends JFrame {
 
     /**
      * Creates a new main window.
+     * 
+     * @param app The PuffinPlot instance associated with this window
      */
-    public MainWindow() {
-        app = PuffinApp.getInstance();
+    public MainWindow(PuffinApp app) {
+        this.app = app;
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
-            @Override public void windowClosing(WindowEvent e) {app.quit();}});
+            @Override public void windowClosing(WindowEvent e) {
+                MainWindow.this.app.quit();}});
         setTitle("PuffinPlot");
         setPreferredSize(new Dimension(1000,700));
-        menuBar = new MainMenuBar();
+        menuBar = new MainMenuBar(app);
         setJMenuBar(menuBar);
         
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
         // mainPanel.add(graphDisplay = new GraphDisplay(), BorderLayout.CENTER);
-        graphDisplay = new MainGraphDisplay();
+        graphDisplay = new MainGraphDisplay(app);
         scrollPane = new JScrollPane(getGraphDisplay());
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                 scrollPane, sampleDataPanel = new SampleDataPanel());
@@ -96,7 +99,7 @@ public final class MainWindow extends JFrame {
         // mainPanel.add(sampleDataPanel = new SampleDataPanel(), BorderLayout.EAST);
         Container cp = getContentPane();
         cp.setLayout(new BoxLayout(cp, BoxLayout.Y_AXIS));
-        cp.add(controlPanel = new ControlPanel());
+        cp.add(controlPanel = new ControlPanel(app));
         cp.add(mainPanel);
         setMaximumSize(scrollPane.getMaximumSize());
         pack();

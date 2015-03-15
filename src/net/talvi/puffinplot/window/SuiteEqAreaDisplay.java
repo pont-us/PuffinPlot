@@ -22,6 +22,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
+import java.util.prefs.Preferences;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.plots.Plot;
 import net.talvi.puffinplot.plots.SeparateSuiteEaPlot;
@@ -37,13 +38,15 @@ import net.talvi.puffinplot.plots.SeparateSuiteEaPlot;
 public class SuiteEqAreaDisplay extends GraphDisplay implements Printable {
     private static final long serialVersionUID = 1L;
 
-    /** Creates a new suite equal-area graph display */
-    public SuiteEqAreaDisplay() {
+    /** Creates a new suite equal-area graph display
+     * @param prefs preferences for plot
+     */
+    public SuiteEqAreaDisplay(Preferences prefs) {
         super();
         zoomTransform = AffineTransform.getScaleInstance(1.0, 1.0);
         Plot plot = new SeparateSuiteEaPlot(
                 null, null, new Rectangle2D.Double(50, 50, 600, 600),
-                PuffinApp.getInstance().getPrefs().getPrefs());
+                prefs);
         plot.setVisible(true);
         plots.put(plot.getName(), plot);
     }

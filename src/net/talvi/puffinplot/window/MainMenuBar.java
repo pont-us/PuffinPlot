@@ -45,7 +45,7 @@ public final class MainMenuBar extends JMenuBar {
             Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
     private JMenu recentFilesMenu;
     private final JCheckBoxMenuItem anchorItem;
-    private final PuffinApp app = PuffinApp.getInstance();
+    private final PuffinApp app;
     private final int[] recentFileKeycodes;
 
     private static JMenu makeMenu(String name, int mnemonic, Object... things) {
@@ -78,8 +78,11 @@ public final class MainMenuBar extends JMenuBar {
 
     /**
      * Creates a new menu bar and menu tree.
+     * 
+     * @param app the PuffinApp instance associated with this menu bar
      */
-    public MainMenuBar() {
+    public MainMenuBar(final PuffinApp app) {
+        this.app = app;
         this.recentFileKeycodes = new int[] {KeyEvent.VK_1, KeyEvent.VK_2,
             KeyEvent.VK_3, KeyEvent.VK_4, KeyEvent.VK_5, KeyEvent.VK_6,
             KeyEvent.VK_7, KeyEvent.VK_8};
@@ -94,7 +97,7 @@ public final class MainMenuBar extends JMenuBar {
                     private static final long serialVersionUID = 1L;
                     @Override
                     public boolean isSelected() {
-                        MainWindow w = app.getMainWindow();
+                        final MainWindow w = app.getMainWindow();
                         return w != null ? w.getGraphDisplay().isDragPlotMode()
                                 : false;
                     }
@@ -103,7 +106,7 @@ public final class MainMenuBar extends JMenuBar {
         movePlotsItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                GraphDisplay gd = app.getMainWindow().getGraphDisplay();
+                final GraphDisplay gd = app.getMainWindow().getGraphDisplay();
                 gd.setDragPlotMode(!gd.isDragPlotMode());
                 gd.repaint();
             }
@@ -114,7 +117,7 @@ public final class MainMenuBar extends JMenuBar {
             private static final long serialVersionUID = 1L;
                     @Override
                     public boolean isSelected() {
-                        return app.isEmptyCorrectionActive();
+                        return MainMenuBar.this.app.isEmptyCorrectionActive();
                     }
                 };
         useEmptyItem.addActionListener(new ActionListener() {
@@ -228,7 +231,7 @@ public final class MainMenuBar extends JMenuBar {
      * This allows any stateful menu items to be changed.
      */
     public void sampleChanged() {
-        Sample s = PuffinApp.getInstance().getSample();
+        Sample s = app.getSample();
         if (s != null) anchorItem.setSelected(s.isPcaAnchored());
     }
     
@@ -247,8 +250,7 @@ public final class MainMenuBar extends JMenuBar {
                 private static final long serialVersionUID = 1L;
                 @Override
                 public void actionPerformed(ActionEvent arg0) {
-                    PuffinApp.getInstance().
-                            openFiles(recent.getFilesAndReorder(index), true);
+                    app.openFiles(recent.getFilesAndReorder(index), true);
                 }
                 @Override
                 public Object getValue(String key) {

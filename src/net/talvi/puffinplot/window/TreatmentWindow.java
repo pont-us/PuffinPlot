@@ -38,6 +38,7 @@ public class TreatmentWindow extends JFrame implements ActionListener {
     private final JButton cancelButton;
     private final JButton setButton;
     private final TreatmentCombo treatmentCombo;
+    private final PuffinApp app;
     
     private static class TreatmentCombo extends JComboBox {
         
@@ -54,9 +55,13 @@ public class TreatmentWindow extends JFrame implements ActionListener {
         
     }
 
-    /** Creates a new correction window. */
-    public TreatmentWindow() {
+    /** Creates a new correction window.
+     * 
+     * @param app the PuffinPlot instance associated with this window
+     */
+    public TreatmentWindow(PuffinApp app) {
         super("Set treatment type");
+        this.app = app;
         setResizable(false);
         final Container contentPane = getContentPane();
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
@@ -108,7 +113,6 @@ public class TreatmentWindow extends JFrame implements ActionListener {
         if (event.getSource() == cancelButton)
             setVisible(false);
         if (event.getSource() == setButton) {
-            final PuffinApp app = PuffinApp.getInstance();
             final TreatType treatType = treatmentCombo.getTreatmentType();
             for (Sample sample: app.getSelectedSamples()) {
                 for (Datum datum: sample.getData()) {

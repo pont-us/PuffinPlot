@@ -19,9 +19,11 @@ package net.talvi.puffinplot.window;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
+import java.util.prefs.Preferences;
 import javax.swing.*;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.DatumField;
@@ -33,6 +35,8 @@ import net.talvi.puffinplot.data.file.FileFormat;
 
 /**
  * A window allowing the user to define a custom file format.
+ * 
+ * @see FileFormat
  * 
  * @author pont
  */
@@ -52,16 +56,18 @@ public class TabularImportWindow extends JDialog {
     private FileFormat format;
     
     /**
-     * Creates a new tabular import window. The supplied PuffinPlot 
-     * application is used mainly to obtain a preferences object,
-     * which is used to save and restore the file format.
+     * Creates a new tabular import window. The supplied preferences object
+     * is used to save and restore the file format.
      * 
-     * @param app the PuffinPlot application for which this window is to be used
+     * @param dialogOwner parent frame (owner) for this dialog
+     * @param prefs preferences for storing configuration
+     * 
+     * @see FileFormat
      */
-    public TabularImportWindow(final PuffinApp app) {
-        super(app.getMainWindow(), "Import data", true);
+    public TabularImportWindow(Frame dialogOwner, Preferences prefs) {
+        super(dialogOwner, "Import data", true);
         setPreferredSize(new Dimension(400, 500));
-        this.initialFormat = FileFormat.readFromPrefs(app.getPrefs().getPrefs());
+        this.initialFormat = FileFormat.readFromPrefs(prefs);
         final Container contentPane = getContentPane();
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
         final JPanel firstPanel = new JPanel();
@@ -141,7 +147,7 @@ public class TabularImportWindow extends JDialog {
         contentPane.add(buttonPanel);
         pack();
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(PuffinApp.getInstance().getMainWindow());
+        setLocationRelativeTo(dialogOwner);
     }
 
     /**

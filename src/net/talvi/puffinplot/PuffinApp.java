@@ -152,14 +152,14 @@ public final class PuffinApp {
         lastUsedFileOpenDirs = new IdToFileMap(prefs.getPrefs());
         actions = new PuffinActions(this);
         tableWindow = new TableWindow();
-        suiteEqAreaWindow = new SuiteEqAreaWindow();
+        suiteEqAreaWindow = new SuiteEqAreaWindow(this);
         siteEqAreaWindow = new SiteMeanWindow();
         editSampleParametersWindow = new EditSampleParametersWindow();
-        treatmentWindow = new TreatmentWindow();
-        citeWindow = new CiteWindow();
+        treatmentWindow = new TreatmentWindow(this);
+        citeWindow = new CiteWindow(this);
         // NB main window must be instantiated last, as
         // the Window menu references the other windows
-        mainWindow = new MainWindow();
+        mainWindow = new MainWindow(this);
         setApplicationIcon();
         Correction corr =
                 Correction.fromString(prefs.getPrefs().get("correction", "false false NONE false"));
@@ -168,7 +168,9 @@ public final class PuffinApp {
         // prefs window needs the graph list from MainGraphDisplay from MainWindow
         // prefs window also needs the correction.
         prefsWindow = new PrefsWindow();
-        if (MAC_OS_X) createAppleEventListener();
+        if (MAC_OS_X) {
+            createAppleEventListener();
+        }
         currentPageFormat = PrinterJob.getPrinterJob().defaultPage();
         currentPageFormat.setOrientation(PageFormat.LANDSCAPE);
         aboutBox = new AboutBox(mainWindow);
@@ -644,7 +646,8 @@ public final class PuffinApp {
             switch (fileType) {
                 case CUSTOM_TABULAR:
                     final TabularImportWindow tabularDialog =
-                            new TabularImportWindow(this);
+                            new TabularImportWindow(getMainWindow(),
+                                    getPrefs().getPrefs());
                     tabularDialog.setVisible(true);
                     format = tabularDialog.getFormat();
                     if (format == null) {
@@ -975,7 +978,7 @@ public final class PuffinApp {
         if (currentSuite == null) return;
         customFlagsWindow =
                 new CustomFieldEditor(currentSuite.getCustomFlagNames(),
-                "Edit custom flags");
+                "Edit custom flags", this);
     }
     
     /** Shows the window for editing the titles of the custom notes. */
@@ -983,7 +986,7 @@ public final class PuffinApp {
         if (currentSuite == null) return;
         customNotesWindow =
                 new CustomFieldEditor(currentSuite.getCustomNoteNames(),
-                "Edit custom notes");
+                "Edit custom notes", this);
     }
     
     /**

@@ -106,8 +106,10 @@ public class CiteWindow extends JFrame {
     
     /**
      * Creates a new CiteWindow.
+     * 
+     * @param app the PuffinPlot instance associated with this window
      */
-    public CiteWindow() {
+    public CiteWindow(final PuffinApp app) {
         setMinimumSize(new Dimension(400, 200));
         setPreferredSize(new java.awt.Dimension(600, 400));
         final JPanel contentPane = new JPanel();
@@ -119,8 +121,6 @@ public class CiteWindow extends JFrame {
         heading.setFont(heading.getFont().deriveFont(heading.getFont().getSize() + 8f));
         heading.setHorizontalAlignment(SwingConstants.CENTER);
         heading.setAlignmentX(CENTER_ALIGNMENT);
-        //heading.setBackground(Color.red);
-        //heading.setOpaque(true);
         contentPane.add(heading);
         final JLabel label1 = new JLabel(""
                 + "<html><p>If you make use of PuffinPlot in published "
@@ -157,7 +157,6 @@ public class CiteWindow extends JFrame {
         final JButton onlinePaperButton = new JButton();
         onlinePaperButton.setText("Click here to locate the PuffinPlot paper online.");
         onlinePaperButton.setAlignmentX(CENTER_ALIGNMENT);
-        final PuffinApp app = PuffinApp.getInstance();
         onlinePaperButton.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -194,8 +193,8 @@ public class CiteWindow extends JFrame {
         contentPane.add(closeButton);
         
         pack();
-        // centre on screen (must be done after pack() -- see
-        // http://stackoverflow.com/questions/3480102
+        // Centre on screen. Must be done after pack() -- see
+        // http://stackoverflow.com/questions/3480102 .
         setLocationRelativeTo(null);
     }
     

@@ -54,10 +54,11 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
         // "DepthPlot"
     };
     private final PlotParams params;
+    private final PuffinApp app;
 
-    MainGraphDisplay() {
+    MainGraphDisplay(final PuffinApp app) {
         super();
-        final PuffinApp app = PuffinApp.getInstance();
+        this.app = app;
         params = new PlotParams() {
             @Override
             public Sample getSample() {
@@ -97,7 +98,7 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
     }
 
     private void createPlots() {
-        Preferences pref = PuffinApp.getInstance().getPrefs().getPrefs();
+        final Preferences pref = app.getPrefs().getPrefs();
         try {
             for (String plotName : plotNames) {
                 plots.put(plotName,
@@ -129,8 +130,9 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
     public int print(Graphics graphics, PageFormat pf, int pageIndex)
             throws PrinterException {
         pf.setOrientation(PageFormat.LANDSCAPE);
-        if (samplesForPrinting == null)
-            samplesForPrinting = PuffinApp.getInstance().getSelectedSamples();
+        if (samplesForPrinting == null) {
+            samplesForPrinting = app.getSelectedSamples();
+        }
         if (pageIndex >= samplesForPrinting.size()) {
             samplesForPrinting = null; // we've finished printing
             return NO_SUCH_PAGE;
@@ -138,7 +140,7 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
         printPageIndex = pageIndex;
         Graphics2D g2 = (Graphics2D) graphics;
 
-        if (PuffinApp.getInstance().isOnOsX()) {
+        if (app.isOnOsX()) {
             /* Superscript don't print properly on OS X (at least not
              * on Java 7 or Java 8u25), so we set a rendering hint that
              * tells the plotting code to fall back to E notation.
@@ -164,8 +166,9 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
      *  {@code false} otherwise
      */
     public boolean printPdfPage(Graphics2D g2, int pageIndex) {
-        if (samplesForPrinting == null)
-            samplesForPrinting = PuffinApp.getInstance().getSelectedSamples();
+        if (samplesForPrinting == null) {
+            samplesForPrinting = app.getSelectedSamples();
+        }
         if (pageIndex >= samplesForPrinting.size()) {
             samplesForPrinting = null; // we've finished printing
             return true;
