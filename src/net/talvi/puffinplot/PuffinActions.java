@@ -1032,7 +1032,7 @@ public class PuffinActions {
             KeyEvent.VK_C) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            app.getCiteWindow().setVisible(true);
+            app.showCiteWindow();
         }
     };
 

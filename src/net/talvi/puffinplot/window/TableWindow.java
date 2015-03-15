@@ -41,21 +41,39 @@ public class TableWindow extends JFrame {
     private JTable table;
     private DataTableModel tableModel;
     
+    
     /**
      * Creates a new table window.
      */
-    public TableWindow() {
-        // JFrame.setDefaultLookAndFeelDecorated(true);
-        TablePanel newContentPane = new TablePanel();
+    public TableWindow(PlotParams params) {
+        TablePanel newContentPane = new TablePanel(params);
         newContentPane.setOpaque(true); //content panes must be opaque
         setContentPane(newContentPane);
         newContentPane.setVisible(true);
         pack();
     }
+        
+    private class TablePanel extends JPanel {
+        private static final long serialVersionUID = 1L;
+
+        public TablePanel(PlotParams params) {
+            super(new GridLayout(1, 0));
+            table = new JTable(tableModel = new DataTableModel(params));
+            table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+            table.setPreferredScrollableViewportSize(new Dimension(500, 70));
+            JScrollPane scrollPane = new JScrollPane(table);
+            add(scrollPane);
+        }
+    }
     
     private static class DataTableModel extends AbstractTableModel {
         private static final long serialVersionUID = 1L;
         private final List<TableModelListener> listeners = new LinkedList<>();
+        private final PlotParams params;
+        
+        public DataTableModel(PlotParams params) {
+            this.params = params;
+        }
         
         @Override
         public void addTableModelListener(TableModelListener listener) {
@@ -85,10 +103,11 @@ public class TableWindow extends JFrame {
           
         @Override
         public int getRowCount() {
-            if (PuffinApp.getInstance() != null &&
-                    PuffinApp.getInstance().getSample() != null)
-                return PuffinApp.getInstance().getSample().getData().size();
-            else return 0;
+            if (params != null && params.getSample() != null) {
+                return params.getSample().getData().size();
+            } else {
+                return 0;
+            }
         }
 
         @Override
@@ -99,24 +118,11 @@ public class TableWindow extends JFrame {
         @Override
         public Object getValueAt(int row, int col) {
             try {
-                Datum d = PuffinApp.getInstance().getSample().getData().get(row);
+                final Datum d = params.getSample().getData().get(row);
                 return d.getValue(DatumField.values()[col]);
             } catch (NullPointerException e) {
                 throw new RuntimeException("row " + row + " col " + col, e);
             }
-        }
-    }
-    
-    private class TablePanel extends JPanel {
-        private static final long serialVersionUID = 1L;
-
-        public TablePanel() {
-            super(new GridLayout(1, 0));
-            table = new JTable(tableModel = new DataTableModel());
-            table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-            table.setPreferredScrollableViewportSize(new Dimension(500, 70));
-            JScrollPane scrollPane = new JScrollPane(table);
-            add(scrollPane);
         }
     }
 

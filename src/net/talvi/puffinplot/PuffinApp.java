@@ -151,7 +151,34 @@ public final class PuffinApp {
         prefs = new PuffinPrefs(this);
         lastUsedFileOpenDirs = new IdToFileMap(prefs.getPrefs());
         actions = new PuffinActions(this);
-        tableWindow = new TableWindow();
+        
+        // TODO Fix this temporary hack -- we should have a single 
+        // easily accessible PlotParams object rather than the current mess.
+        tableWindow = new TableWindow(new PlotParams() {
+            @Override
+            public Sample getSample() {
+                return PuffinApp.this.getSample();
+            }
+            @Override
+            public Correction getCorrection() {
+                return PuffinApp.this.getCorrection();
+            }
+            @Override
+            public MeasurementAxis getVprojXaxis() {
+                return getMainWindow().getControlPanel().getVprojXaxis();
+            }
+
+            @Override
+            public MeasurementAxis getHprojXaxis() {
+                return getMainWindow().getControlPanel().getHprojXaxis();
+            }
+
+            @Override
+            public MeasurementAxis getHprojYaxis() {
+                return getMainWindow().getControlPanel().getHprojYaxis();
+            }
+        });
+        
         suiteEqAreaWindow = new SuiteEqAreaWindow(this);
         siteEqAreaWindow = new SiteMeanWindow();
         editSampleParametersWindow = new EditSampleParametersWindow();
@@ -173,7 +200,7 @@ public final class PuffinApp {
         }
         currentPageFormat = PrinterJob.getPrinterJob().defaultPage();
         currentPageFormat.setOrientation(PageFormat.LANDSCAPE);
-        aboutBox = new AboutBox(mainWindow);
+        aboutBox = new AboutBox(this);
         final MainGraphDisplay display = mainWindow.getGraphDisplay();
         final SampleClickListener scListener = new PuffinAppSampleClickListener();
         display.getPlotByClassName("SampleParamsTable").
@@ -398,8 +425,11 @@ public final class PuffinApp {
      * @return the value of the key
      */
     public String getBuildProperty(String key) {
-        if (buildProperties == null) return "unknown";
-        return buildProperties.getProperty(key, "unknown");
+        if (buildProperties == null) {
+            return "unknown (no file)";
+        } else {
+            return buildProperties.getProperty(key, "unknown (no key)");
+        }
     }
     
     /**
@@ -533,11 +563,10 @@ public final class PuffinApp {
         return mainWindow;
     }
     
-    /** Returns this PuffinApp's citation window
-     * @return this PuffinApp's citation window
+    /** Shows this PuffinApp's citation window
      */
-    public CiteWindow getCiteWindow() {
-        return citeWindow;
+    public void showCiteWindow() {
+        citeWindow.setVisible(true);
     }
  
     /**

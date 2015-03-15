@@ -20,8 +20,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Locale;
@@ -111,13 +109,13 @@ public final class MainWindow extends JFrame {
             super();
             setBorder(new EmptyBorder(12, 12, 12, 12));
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-            final PuffinApp.Version version = app.getVersion();
+            final PuffinApp.Version version = PuffinApp.getInstance().getVersion();
             final String welcome =
                     String.format(Locale.ENGLISH,
                             "Welcome to PuffinPlot, version %s. "
                                     + "This puffin hatched on %s.",
                             version.getVersionString(),
-                    version.getDateString());
+                            version.getDateString());
             add(new JLabel(welcome));
             add(new JLabel(String.format(Locale.ENGLISH,
                     "PuffinPlot is copyright %s by Pontus Lurcock.",
@@ -129,12 +127,7 @@ public final class MainWindow extends JFrame {
             JButton citeMeButton =
                     new JButton("click here to cite the PuffinPlot paper.");
             citePanel.add(citeMeButton);
-            citeMeButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent ae) {
-                    PuffinApp.getInstance().getCiteWindow().setVisible(true);
-                }
-            });
+            citeMeButton.setAction(app.getActions().openCiteWindow);
             citePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
             add(citePanel);
             add(new JLabel("PuffinPlot is distributed under the GNU General Public License."));

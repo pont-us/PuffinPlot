@@ -31,6 +31,8 @@ import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import net.talvi.puffinplot.PuffinApp;
 
 /**
@@ -145,8 +147,20 @@ public class CiteWindow extends JFrame {
                 + "PuffinPlot: A versatile, user-friendly program for "
                 + "paleomagnetic analysis, <i>Geochemistry, Geophysics, "
                 + "Geosystems</i>, 13, Q06Z45, doi:10.1029/2012GC004098."
+                + "<br><br>\nURL: "
+                + "<a href=\"http://dx.doi.org/10.1029/2012GC004098\">"
+                + "http://dx.doi.org/10.1029/2012GC004098</a>"
                 + "</html>");
         citePane.setPreferredSize(null);
+        
+        citePane.addHyperlinkListener(new HyperlinkListener() {
+            @Override
+            public void hyperlinkUpdate(HyperlinkEvent e) {
+                if (HyperlinkEvent.EventType.ACTIVATED == e.getEventType()) {
+                    app.openWebPage(e.getURL().toString());
+                }
+            }
+        });
 
         final JScrollPane scrollPane = new JScrollPane();
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);

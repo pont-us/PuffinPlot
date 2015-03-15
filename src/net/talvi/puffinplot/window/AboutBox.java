@@ -23,7 +23,6 @@
 package net.talvi.puffinplot.window;
 
 import net.talvi.puffinplot.*;
-import java.awt.Frame;
 
 /**
  * An <q>about this program</q> dialog box giving brief information
@@ -32,7 +31,9 @@ import java.awt.Frame;
  * @author  pont
  */
 public class AboutBox extends javax.swing.JDialog {
+    
     private static final long serialVersionUID = 1L;
+    private final PuffinApp app;
 
     private String gsp(String property) {
         return System.getProperty(property);
@@ -54,17 +55,17 @@ public class AboutBox extends javax.swing.JDialog {
                 + "or go to http://www.gnu.org/licenses/gpl.html "
                 + "for details.\n\n"
                 + "System information: OS %s %s (%s), Java %s (%s)";
-        //String year = PuffinApp.getInstance().getBuildProperty("build.year");
-        return String.format(fmt, PuffinApp.getInstance().getVersion().getYearRange(),
+        return String.format(fmt, app.getVersion().getYearRange(),
                 gsp("os.name"), gsp("os.version"),
                 gsp("os.arch"), gsp("java.version"), gsp("java.vendor"));
     }
     
     /** Creates new about box.
-     * @param owner the frame from which the dialog is displayed
+     * @param app the PuffinPlot instance associated with this dialog
      */
-    public AboutBox(Frame owner) {
-        super(owner, "About PuffinPlot", true);
+    public AboutBox(PuffinApp app) {
+        super(app.getMainWindow(), "About PuffinPlot", true);
+        this.app = app;
         initComponents();
     }
 
@@ -97,8 +98,8 @@ public class AboutBox extends javax.swing.JDialog {
 
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-        jTextArea1.setColumns(20);
         jTextArea1.setEditable(false);
+        jTextArea1.setColumns(20);
         jTextArea1.setLineWrap(true);
         jTextArea1.setRows(5);
         jTextArea1.setText(getContent());
@@ -109,7 +110,7 @@ public class AboutBox extends javax.swing.JDialog {
         getContentPane().add(jScrollPane1);
 
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("Version: "+PuffinApp.getInstance().getVersion().getVersionString()+". Date: "+PuffinApp.getInstance().getVersion().getDateString());
+        jLabel3.setText("Version: "+app.getVersion().getVersionString()+". Date: "+app.getVersion().getDateString());
         jLabel3.setAlignmentX(0.5F);
         jLabel3.setMaximumSize(new java.awt.Dimension(500, 30));
         jLabel3.setMinimumSize(new java.awt.Dimension(45, 30));
