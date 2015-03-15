@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.logging.Logger;
+import static java.util.Objects.requireNonNull;
 
 /**
  * <p>Datum is the fundamental data class of PuffinPlot. It represents the
@@ -532,10 +533,12 @@ public class Datum {
      * Returns the maximum treatment level within the supplied group of
      * datum objects.
      * 
-     * @param data a list of datum objects
+     * @param data a list of datum objects; must be non-null
      * @return the highest treatment level for any of the supplied datum objects
+     * @throws NullPointerException if {@code data} is null
      */
     public static double maxTreatmentLevel(List<Datum> data) {
+        requireNonNull(data, "data must be non-null");
         double max = 0;
         for (Datum d: data) {
             double level = d.getTreatmentLevel();
@@ -546,14 +549,15 @@ public class Datum {
 
     /**
      * Returns the maximum magnitude of magnetic dipole moment per unit volume
-     * within the supplied group of
-     * datum objects.
+     * within the supplied group of datum objects.
      * 
-     * @param data a list of datum objects
+     * @param data a list of datum objects; must be non-null
      * @return the highest magnitude of magnetic dipole moment per unit volume
      * for any of the supplied datum objects
+     * @throws NullPointerException if {@code data} is null
      */
     public static double maxIntensity(List<Datum> data) {
+        requireNonNull(data, "data must be non-null");
         double max = 0;
         for (Datum d: data) {
             double i = d.getIntensity();
@@ -566,10 +570,12 @@ public class Datum {
      * Returns the maximum magnetic susceptibility within the supplied group of
      * datum objects.
      * 
-     * @param data a list of datum objects
+     * @param data a list of datum objects; must be non-null
      * @return the highest magnetic susceptibility for any of the supplied datum objects
+     * @throws NullPointerException if {@code data} is null
      */
     public static double maxMagSus(List<Datum> data) {
+        requireNonNull(data, "data must be non-null");
         double max = 0;
         for (Datum d: data) {
             double level = d.getMagSus();
@@ -613,10 +619,12 @@ public class Datum {
     /**
      * Returns a String representation of a value from a specified data field.
      * 
-     * @param field the field to read
+     * @param field the field to read (non-null)
      * @return a string representation of the value contained in the field
+     * @throws NullPointerException if {@code field} is null
      */
     public String getValue(DatumField field) {
+        requireNonNull(field, "field must be non-null");
         switch (field) {
         case AF_X: return fmt(afx);
         case AF_Y: return fmt(afy);
@@ -654,7 +662,6 @@ public class Datum {
         case VIRT_SAMPLE_HADE: return fmt(getSampHade());
         case VIRT_FORM_STRIKE: return fmt(getFormStrike());
         case VIRT_MSJUMP: return fmt(getSample().getMagSusJump());
-            // TODO strike and hade
         default: throw new IllegalArgumentException("Unknown field "+field);
         }
     }
@@ -662,8 +669,8 @@ public class Datum {
     /**
      * Sets the value of a specified data field using a string.
      * 
-     * @param field the field to set the value of
-     * @param value a string representation of the value to set the field to
+     * @param field the field to set the value of (non-null)
+     * @param value a string representation of the value to set the field to (non-null)
      * @param factor conversion factor for double values
      * 
      * For double values, the field is set to the parsed value multiplied
@@ -671,8 +678,11 @@ public class Datum {
      * 
      * @throws NumberFormatException if the format of the string is 
      * not compatible with the format of the field to be set
+     * @throws NullPointerException if {@code field} or {@code value} is null
      */
     public void setValue(DatumField field, String value, double factor) {
+        requireNonNull(field, "field must be non-null");
+        requireNonNull(value, "value must be non-null");
         touch();
         try {
             doSetValue(field, value, factor);
@@ -699,6 +709,8 @@ public class Datum {
     }
     
     private void doSetValue(DatumField field, String s, double factor) {
+        assert field != null;
+        assert s != null;
         double doubleVal = 0;
         final Class type = field.getType();
         boolean boolVal = false;
@@ -747,7 +759,10 @@ public class Datum {
         }
     }
 
-    double getTreatmentStep() {
+    /**
+     * @return the value of the treatment step for this datum
+     */
+    public double getTreatmentStep() {
         switch (getTreatType()) {
             case ARM:
             case DEGAUSS_XYZ:

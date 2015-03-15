@@ -107,7 +107,8 @@ public final class PuffinApp {
     private BitSet pointSelectionClipboard = new BitSet(0);
     private Properties buildProperties;
     private static final boolean MAC_OS_X =
-            System.getProperty("os.name").toLowerCase().startsWith("mac os x");
+            System.getProperty("os.name").toLowerCase(Locale.ENGLISH).
+                    startsWith("mac os x");
     private static final int OSX_POINT_VERSION = determineOsxPointVersion();
     private SuiteCalcs multiSuiteCalcs;
     private final Version version;
