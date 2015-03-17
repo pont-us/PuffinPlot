@@ -38,7 +38,7 @@ import net.talvi.puffinplot.data.file.*;
  */
 public final class Suite {
 
-    private List<Datum> data;
+    private ArrayList<Datum> data;
     private List<Site> sites = new ArrayList<>();
     private File puffinFile;
     private final List<Sample> samples = new ArrayList<>(); // samples in order
@@ -305,6 +305,9 @@ public final class Suite {
      * the datum does not match the measurement type of the suite
      */
     private void addDatum(Datum d) {
+        assert(d != null);
+        assert(d.getMeasType() != null);
+        assert(d.getMeasType() != MeasType.UNSET);
         if (measType == MeasType.UNSET) {
             measType = d.getMeasType();
         }
@@ -457,8 +460,9 @@ public final class Suite {
         loadWarnings.clear();
         
         files = expandDirs(files);
-        final ArrayList<Datum> dataArray = new ArrayList<>();
-        data = dataArray;
+        if (isEmpty()) {
+            data = new ArrayList<>();
+        }
         List<String> puffinLines = Collections.emptyList();
         boolean sensorLengthWarning = false;
         // If fileType is PUFFINPLOT_NEW, originalFileType can
@@ -553,7 +557,7 @@ public final class Suite {
                 }
                 
                 if (dataIsOk) {
-                    dataArray.ensureCapacity(dataArray.size() + loadedData.size());
+                    data.ensureCapacity(data.size() + loadedData.size());
                     for (Datum d: loadedData) {
                         // TODO: check for matching measurement type here
                         if (!d.ignoreOnLoading()) addDatum(d);
@@ -781,6 +785,7 @@ public final class Suite {
 
     /** Returns a sample from this suite with the specified name,
      * or {@code null} if no such sample exists. 
+     * 
      * @param name a sample name
      * @return a sample from this suite with the specified name,
      * or {@code null} if no such sample exists
@@ -816,6 +821,7 @@ public final class Suite {
     /** Returns all the data points in this suite.
      * @return all the data points in this suite */
     public List<Datum> getData() {
+        assert(data != null);
         return Collections.unmodifiableList(data);
     }
 
@@ -1677,6 +1683,27 @@ public final class Suite {
         for (Datum d: data) {
             d.setMagSus(d.getMagSus() * factor);
         }
+    }
+    
+    /**
+     * 
+     * @param discreteSuite
+     * @param nameToDepth 
+     */
+    public void convertDiscreteToContinuous(Suite discreteSuite,
+            Map<String,String> nameToDepth) {
+        if (discreteSuite.getMeasType() != MeasType.DISCRETE) {
+            throw new IllegalStateException("convertDiscreteToContinuous "
+                    + "can only be called on a discrete Suite.");
+        }
+        assert(isEmpty());
+        Objects.requireNonNull(nameToDepth, "nameToDepth must be non-null");
+        final Suite newSuite = new Suite(suiteCreator);
+        for (Sample sample: discreteSuite.getSamples()) {
+            
+        }
+        data = new ArrayList<>();
+        setMeasType(MeasType.CONTINUOUS);
     }
     
 }

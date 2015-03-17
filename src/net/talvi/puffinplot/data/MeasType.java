@@ -30,9 +30,9 @@ public enum MeasType {
     /** a measurement run was recorded, but no measurement was actually made */
     NONE("None", "^na$", "no measurement type"),
     /** this value has not yet been set */
-    UNSET(),
+    UNSET("UNSET", "$a", "UNSET"), // $a should never match -- http://stackoverflow.com/a/1723225
     /** the measurement type data could not be interpreted */
-    UNKNOWN();
+    UNKNOWN("UNKNOWN", "$a", "UNKNOWN");
     
     private final String columnHeader;
     private final Pattern namePattern;
