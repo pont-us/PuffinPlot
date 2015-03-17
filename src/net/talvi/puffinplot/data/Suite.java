@@ -38,7 +38,6 @@ import net.talvi.puffinplot.data.file.*;
  */
 public final class Suite {
 
-    private ArrayList<Datum> data;
     private List<Site> sites = new ArrayList<>();
     private File puffinFile;
     private final List<Sample> samples = new ArrayList<>(); // samples in order
@@ -317,7 +316,6 @@ public final class Suite {
                     d.getMeasType().getNiceName().toLowerCase(),
                     getMeasType().getNiceName().toLowerCase()));
         }
-        data.add(d);
         if (d.getTreatType() == TreatType.UNKNOWN) {
             hasUnknownTreatType = true;
         }
@@ -390,9 +388,9 @@ public final class Suite {
      * @param creator a string identifying the program and version creating the suite
      */
     public Suite(String creator) {
-        this.suiteCreator = creator;
-        this.fileCreator = creator;
-        this.name = "[Empty suite]";
+        suiteCreator = creator;
+        fileCreator = creator;
+        name = "[Empty suite]";
         creationDate = new Date();
         modificationDate = new Date();
         // If we subsequently read a PuffinPlot file, file creator and 
@@ -460,9 +458,7 @@ public final class Suite {
         loadWarnings.clear();
         
         files = expandDirs(files);
-        if (isEmpty()) {
-            data = new ArrayList<>();
-        }
+        final ArrayList<Datum> tempDataList = new ArrayList<>();
         List<String> puffinLines = Collections.emptyList();
         boolean sensorLengthWarning = false;
         // If fileType is PUFFINPLOT_NEW, originalFileType can
@@ -557,7 +553,7 @@ public final class Suite {
                 }
                 
                 if (dataIsOk) {
-                    data.ensureCapacity(data.size() + loadedData.size());
+                    tempDataList.ensureCapacity(tempDataList.size() + loadedData.size());
                     for (Datum d: loadedData) {
                         // TODO: check for matching measurement type here
                         if (!d.ignoreOnLoading()) addDatum(d);
@@ -611,7 +607,7 @@ public final class Suite {
      * @return {@code true} iff this suite is empty
      */
     public boolean isEmpty() {
-        return data == null;
+        return samples.isEmpty();
     }
     
     /**
@@ -818,13 +814,6 @@ public final class Suite {
         return Collections.unmodifiableList(samples);
     }
 
-    /** Returns all the data points in this suite.
-     * @return all the data points in this suite */
-    public List<Datum> getData() {
-        assert(data != null);
-        return Collections.unmodifiableList(data);
-    }
-
     /** Returns the measurement type of this suite (discrete or continuous) 
      * @return the measurement type of this suite (discrete or continuous) */
     public MeasType getMeasType() {
@@ -960,8 +949,10 @@ public final class Suite {
     
     private void setMeasType(MeasType measType) {
         this.measType = measType;
-        for (Datum d: getData()) {
-            d.setMeasType(measType);
+        for (Sample sample: getSamples()) {
+            for (Datum datum: sample.getData()) {
+                datum.setMeasType(measType);
+            }
         }
     }
 
@@ -1393,9 +1384,8 @@ public final class Suite {
     public void mergeDuplicateMeasurements(Collection<Sample> samples) {
         final Set<Datum> toRemove = new HashSet<>();
         for (Sample sample: samples) {
-            toRemove.addAll(mergeDuplicateMeasurementsInSample(sample));
+            mergeDuplicateMeasurementsInSample(sample);
         }
-        data.removeAll(toRemove);
     }
     
     private class CustomFlagNames extends CustomFields<String> {
@@ -1680,8 +1670,10 @@ public final class Suite {
      */
     public void rescaleMagSus(double factor) {
         setSaved(false);
-        for (Datum d: data) {
-            d.setMagSus(d.getMagSus() * factor);
+        for (Sample sample: samples) {
+            for (Datum datum: sample.getData()) {
+                datum.setMagSus(datum.getMagSus() * factor);
+            }
         }
     }
     
@@ -1702,8 +1694,6 @@ public final class Suite {
         for (Sample sample: discreteSuite.getSamples()) {
             
         }
-        data = new ArrayList<>();
         setMeasType(MeasType.CONTINUOUS);
     }
-    
 }
