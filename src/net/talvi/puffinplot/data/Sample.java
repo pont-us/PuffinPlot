@@ -38,8 +38,8 @@ public class Sample {
     
     private final List<Datum> data;
     private Site site;
-    private final String nameOrDepth;
-    private final double depth;
+    private String nameOrDepth;
+    private double depth;
     private boolean isEmptySlot = false;
     private GreatCircle greatCircle;
     private PcaAnnotated pca;
@@ -66,18 +66,22 @@ public class Sample {
      */
     public Sample(String name, Suite suite) {
         this.nameOrDepth = name;
+        setDepth(name);
+        this.suite = suite;
+        this.data = new ArrayList<>();
+        this.customFlags = new CustomFields<>();
+        this.customNotes = new CustomFields<>();
+    }
+    
+    final public void setDepth(String newDepth) {
         double depthTmp = Double.NaN;
         try {
-            depthTmp = Double.parseDouble(name);
+            depthTmp = Double.parseDouble(newDepth);
         } catch (NumberFormatException ex) {
             // Nothing to do here: if it's not valid it's probably just
             // a discrete sample.
         }
         this.depth = depthTmp;
-        this.suite = suite;
-        this.data = new ArrayList<>();
-        this.customFlags = new CustomFields<>();
-        this.customNotes = new CustomFields<>();
     }
     
     /**
@@ -570,6 +574,13 @@ public class Sample {
      */
     public String getNameOrDepth() {
         return nameOrDepth;
+    }
+    
+    public void setNameOrDepth(String newNameOrDepth) {
+        nameOrDepth = newNameOrDepth;
+        if (getMeasType() == MeasType.CONTINUOUS) {
+            setDepth(nameOrDepth);
+        }
     }
 
     /** Returns the tray slot number for discrete samples. Not currently used.

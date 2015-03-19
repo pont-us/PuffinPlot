@@ -43,6 +43,9 @@ public class SuiteTest {
     final String FILE_TEXT = "PuffinPlot file. Version 3\n"
             + "DISCRETE_ID	DEPTH	RUN_NUMBER	TIMESTAMP	SLOT_NUMBER	MEAS_TYPE	X_MOMENT	Y_MOMENT	Z_MOMENT	MAG_SUS	VOLUME	AREA	SAMPLE_AZ	SAMPLE_DIP	FORM_AZ	FORM_DIP	MAG_DEV	TREATMENT	AF_X	AF_Y	AF_Z	TEMPERATURE	IRM_FIELD	ARM_FIELD	ARM_AXIS	PP_SELECTED	PP_ANCHOR_PCA	PP_HIDDEN	PP_ONCIRCLE	PP_INPCA\n"
             + "31X-1W-143	null	4990	11/03/20 1327	-1	DISCRETE	-1.2249E-4	1.5351428571428572E-4	-3.520428571428571E-4	NaN	7.0	4.0	0.0	0.0	0.0	0.0	0.0	NONE	0.0	0.0	0.0	NaN	NaN	NaN	NONE	false	true	false	false	false\n"
+            + "31X-1W-27.5	null	4988	11/03/20 1327	-1	DISCRETE	3.5331428571428574E-5	5.914714285714286E-4	-7.528142857142857E-4	NaN	7.0	4.0	0.0	0.0	0.0	0.0	0.0	NONE	0.0	0.0	0.0	NaN	NaN	NaN	NONE	false	true	false	false	false\n"
+            + "31X-1W-27.5	null	4989	11/03/20 1327	-1	DISCRETE	9.302285714285713E-5	2.9701428571428574E-4	-4.464E-4	NaN	7.0	4.0	0.0	0.0	0.0	0.0	0.0	DEGAUSS_XYZ	0.005	0.005	0.005	NaN	NaN	NaN	NONE	false	true	false	false	false\n"
+            + "31X-1W-27.5	null	4990	11/03/20 1327	-1	DISCRETE	8.297285714285714E-5	1.6674285714285715E-4	-3.347E-4	NaN	7.0	4.0	0.0	0.0	0.0	0.0	0.0	DEGAUSS_XYZ	0.01	0.01	0.01	NaN	NaN	NaN	NONE	false	true	false	false	false\n"
             + "\nSUITE	MEASUREMENT_TYPE	DISCRETE\n"
             + "SUITE	CREATION_DATE	2015-03-16T20:24:37.638+01:00\n"
             + "SUITE	MODIFICATION_DATE	2015-03-16T20:24:37.638+01:00\n"
@@ -93,22 +96,21 @@ public class SuiteTest {
     public void testConvertDiscreteToContinuous() {
         System.out.println("convertDiscreteToContinuous");
 
-        
         final Map<String, String> nameToDepth = new HashMap<>();
         nameToDepth.put("31X-1W-143", "3.14");
-        Suite discreteSuite = new Suite("testConvertDiscreteToContinuous");
+        nameToDepth.put("31X-1W-27.5", "5.67");
+        Suite suite = new Suite("testConvertDiscreteToContinuous");
         final File[] files = {file};
         try {
-            discreteSuite.readFiles(Arrays.asList(files));
+            suite.readFiles(Arrays.asList(files));
         } catch (IOException ex) {
             Logger.getLogger(SuiteTest.class.getName()).log(Level.SEVERE, null, ex);
             fail("Error reading file.");
         }
-        final Suite continuousSuite = new Suite("testConvertDiscreteToContinuous");
-        continuousSuite.convertDiscreteToContinuous(discreteSuite, nameToDepth);
+        suite.convertDiscreteToContinuous(nameToDepth);
         
-        assertEquals(MeasType.CONTINUOUS, continuousSuite.getMeasType());
-        final Sample sample = continuousSuite.getSampleByName("3.14");
-        assertNotNull(sample);
+        assertEquals(MeasType.CONTINUOUS, suite.getMeasType());
+        assertNotNull(suite.getSampleByName("3.14"));
+        assertNotNull(suite.getSampleByName("5.67"));
     }
 }

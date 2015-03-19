@@ -41,7 +41,7 @@ public final class Suite {
     private List<Site> sites = new ArrayList<>();
     private File puffinFile;
     private final List<Sample> samples = new ArrayList<>(); // samples in order
-    private final LinkedHashMap<String, Sample> samplesById =
+    private LinkedHashMap<String, Sample> samplesById =
             new LinkedHashMap<>(); // name or depth as appropriate
     private HashMap<Sample, Integer> indicesBySample; // maps sample to index
     private final Map<Integer, Line> dataByLine = new HashMap<>();
@@ -1679,21 +1679,21 @@ public final class Suite {
     
     /**
      * 
-     * @param discreteSuite
      * @param nameToDepth 
      */
-    public void convertDiscreteToContinuous(Suite discreteSuite,
-            Map<String,String> nameToDepth) {
-        if (discreteSuite.getMeasType() != MeasType.DISCRETE) {
+    public void convertDiscreteToContinuous(Map<String,String> nameToDepth) {
+        if (getMeasType() != MeasType.DISCRETE) {
             throw new IllegalStateException("convertDiscreteToContinuous "
                     + "can only be called on a discrete Suite.");
         }
-        assert(isEmpty());
         Objects.requireNonNull(nameToDepth, "nameToDepth must be non-null");
-        final Suite newSuite = new Suite(suiteCreator);
-        for (Sample sample: discreteSuite.getSamples()) {
-            
-        }
         setMeasType(MeasType.CONTINUOUS);
+        samplesById = new LinkedHashMap<>();
+        for (Sample sample: getSamples()) {
+            final String newSampleName = nameToDepth.get(sample.getNameOrDepth());
+            sample.setNameOrDepth(newSampleName);
+            samplesById.put(newSampleName, sample);
+        }
+        updateReverseIndex();
     }
 }
