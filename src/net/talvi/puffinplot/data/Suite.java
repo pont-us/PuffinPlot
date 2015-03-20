@@ -1677,6 +1677,15 @@ public final class Suite {
         }
     }
     
+    public void sortSamplesByDepth() {
+        Collections.sort(samples, new Comparator<Sample>() {
+            @Override
+            public int compare(Sample arg0, Sample arg1) {
+                return Double.compare(arg0.getDepth(), arg1.getDepth());
+            }
+        });
+    }
+    
     /**
      * 
      * @param nameToDepth 
@@ -1695,5 +1704,19 @@ public final class Suite {
             samplesById.put(newSampleName, sample);
         }
         updateReverseIndex();
+        sortSamplesByDepth();
+    }
+    
+    public void convertDiscreteToContinuous(File file) throws IOException {
+        final Map<String,String> nameToDepth = new HashMap<>();
+        try (BufferedReader reader =
+                   new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                final String[] parts = line.split(" *, *");
+                nameToDepth.put(parts[0], parts[1]);
+            }
+        }
+        convertDiscreteToContinuous(nameToDepth);
     }
 }

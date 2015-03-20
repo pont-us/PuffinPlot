@@ -1060,4 +1060,17 @@ public class PuffinActions {
             app.showImportLocationsDialog();
         }
     };
+        
+    /**
+     * Converts a discrete suite into a continuous one.
+     */
+    public final Action convertDiscreteToContinuous =
+            new PuffinAction("Discrete to continuous…",
+            "Converts a discrete suite into a continuous one.",
+            null, false, KeyEvent.VK_L) {
+        private static final long serialVersionUID = 1L;
+        @Override public void actionPerformed(ActionEvent e) {
+            app.showDiscreteToContinuousDialog();
+        }
+    };
 }

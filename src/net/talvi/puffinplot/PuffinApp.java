@@ -1803,4 +1803,19 @@ public final class PuffinApp {
             }
     }
     
+    public void showDiscreteToContinuousDialog() {
+        final List<File> files = openFileDialog("Select CSV file for conversion");
+        if (files.isEmpty()) return;
+        final File file = files.get(0);
+        final Suite suite = getSuite();
+        if (suite==null) return;
+        try {
+            suite.convertDiscreteToContinuous(file);
+            getMainWindow().suitesChanged();
+        } catch (IOException ex) {
+            logger.log(Level.SEVERE, null, ex);
+            errorDialog("Error opening file", ex.getLocalizedMessage());
+        }
+    }
+    
 }

@@ -580,6 +580,9 @@ public class Sample {
         nameOrDepth = newNameOrDepth;
         if (getMeasType() == MeasType.CONTINUOUS) {
             setDepth(nameOrDepth);
+            for (Datum d: getData()) {
+                d.setDepth(nameOrDepth);
+            }
         }
     }
 
