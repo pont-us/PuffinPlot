@@ -37,6 +37,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.CopyOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -1818,4 +1823,58 @@ public final class PuffinApp {
         }
     }
     
+    private void copyPuffinPlotJarFile(Path destinationDir) {
+        File jarFile = null;
+        try {
+            jarFile = new File(PuffinApp.class.getProtectionDomain().
+                    getCodeSource().getLocation().toURI().getPath());
+        } catch (URISyntaxException ex) {
+            logger.log(Level.SEVERE, null, ex);
+        }
+        if (jarFile == null) {
+            return;
+        }
+        logger.log(Level.INFO, "PuffinPlot jar file location: {0}", jarFile.getAbsolutePath());
+        Path jarPath = jarFile.toPath();
+        Path destPath = destinationDir.resolve("PuffinPlot.jar");
+        try {
+            Files.copy(jarPath, destPath, StandardCopyOption.COPY_ATTRIBUTES);
+        } catch (IOException ex) {
+            logger.log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void showCreateBundleDialog() {
+        logger.info("Starting bundle creation.");
+        
+        // choose options
+        
+        final Path zipPath = Paths.get(getSavePath("Choose bundle location", ".zip", "ZIP archive"));
+        
+        Path tempDir = null;
+        try {
+            tempDir = Files.createTempDirectory("puffinplot");
+        } catch (IOException ex) {
+            Logger.getLogger(PuffinApp.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        // copy original data files?
+        
+        // save PuffinPlot file
+        
+        // write Python script
+        
+        // copy PuffinPlot jar
+        
+        copyPuffinPlotJarFile(zipPath);
+        
+        try {
+            // zip it all up
+            Util.zipDirectory(tempDir, zipPath);
+        } catch (IOException ex) {
+            Logger.getLogger(PuffinApp.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+    }
 }

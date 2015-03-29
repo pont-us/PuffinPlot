@@ -1073,4 +1073,17 @@ public class PuffinActions {
             app.showDiscreteToContinuousDialog();
         }
     };
+    
+    /**
+     * Creates a bundle.
+     */
+    public final Action createBundle =
+            new PuffinAction("Create bundle…",
+            "Create a self-contained runnable bundle for the current analyses.",
+            null, false, null) {
+        private static final long serialVersionUID = 1L;
+        @Override public void actionPerformed(ActionEvent e) {
+            app.showCreateBundleDialog();
+        }
+    };
 }

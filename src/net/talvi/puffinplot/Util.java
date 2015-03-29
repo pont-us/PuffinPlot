@@ -19,12 +19,24 @@ package net.talvi.puffinplot;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * This class collects miscellaneous, general-purpose utility functions
@@ -267,5 +279,37 @@ public class Util {
         final double yd = (y1-y0) * 0.5 * scale;
         return new Line2D.Double(xmid-xd, ymid-yd, xmid+xd, ymid+yd);
     }
-
+    
+    public static void zipDirectory(final Path dir, Path zipFile)
+            throws IOException {
+        final byte[] buffer = new byte[1024];
+        
+        try (final FileOutputStream fileStream =
+                new FileOutputStream(zipFile.toFile());
+                final ZipOutputStream zipStream =
+                        new ZipOutputStream(fileStream)) {
+            
+            Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path path,
+                        BasicFileAttributes attrs) throws IOException {
+                    if (attrs.isRegularFile()) {
+                        final Path relPath = dir.relativize(path);
+                        final ZipEntry entry = new ZipEntry(relPath.toString());
+                        zipStream.putNextEntry(entry);
+                        final Path fullFilePath = dir.resolve(path);
+                        try (final FileInputStream inStream =
+                                new FileInputStream(fullFilePath.toFile())) {
+                            int len;
+                            while ((len = inStream.read(buffer)) > 0) {
+                                zipStream.write(buffer, 0, len);
+                            }
+                        }
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        }
+    }
+    
 }
