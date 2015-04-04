@@ -1823,7 +1823,7 @@ public final class PuffinApp {
         }
     }
     
-    private void copyPuffinPlotJarFile(Path destinationDir) {
+    private void copyPuffinPlotJarFile(Path destinationDir) throws IOException {
         File jarFile = null;
         try {
             jarFile = new File(PuffinApp.class.getProtectionDomain().
@@ -1835,46 +1835,44 @@ public final class PuffinApp {
             return;
         }
         logger.log(Level.INFO, "PuffinPlot jar file location: {0}", jarFile.getAbsolutePath());
-        Path jarPath = jarFile.toPath();
-        Path destPath = destinationDir.resolve("PuffinPlot.jar");
-        try {
-            Files.copy(jarPath, destPath, StandardCopyOption.COPY_ATTRIBUTES);
-        } catch (IOException ex) {
-            logger.log(Level.SEVERE, null, ex);
-        }
+        final Path jarPath = jarFile.toPath();
+        final Path destPath = destinationDir.resolve("PuffinPlot.jar");
+        Files.copy(jarPath, destPath, StandardCopyOption.COPY_ATTRIBUTES);
+        destPath.toFile().setExecutable(true, false);
     }
     
     public void showCreateBundleDialog() {
+        
+        if (getSuite() == null) {
+            errorDialog("No suite loaded", "PuffinPlot cannot create a bundle, "
+            +"as there is no data suite loaded.");
+            return;
+        }
+        
         logger.info("Starting bundle creation.");
         
         // choose options
         
         final Path zipPath = Paths.get(getSavePath("Choose bundle location", ".zip", "ZIP archive"));
         
-        Path tempDir = null;
         try {
-            tempDir = Files.createTempDirectory("puffinplot");
-        } catch (IOException ex) {
-            Logger.getLogger(PuffinApp.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            final Path tempDir = Files.createTempDirectory("puffinplot");
+            logger.log(Level.INFO, "Temporary directory: {0}", tempDir.toString());
         
-        // copy original data files?
-        
-        // save PuffinPlot file
-        
-        // write Python script
-        
-        // copy PuffinPlot jar
-        
-        copyPuffinPlotJarFile(zipPath);
-        
-        try {
-            // zip it all up
+            getSuite().saveAs(tempDir.resolve(Paths.get("data.ppl")).toFile());
+            
+            final Path scriptPath = tempDir.resolve(Paths.get("process-data.sh"));
+            try (FileWriter fw = new FileWriter(scriptPath.toFile())) {
+                fw.write("#!/bin/sh\n\n"
+                        + "echo \"FIXME\"\n");
+            }
+            scriptPath.toFile().setExecutable(true, false);
+            copyPuffinPlotJarFile(tempDir);
+
             Util.zipDirectory(tempDir, zipPath);
-        } catch (IOException ex) {
+        } catch (IOException | PuffinUserException ex) {
             Logger.getLogger(PuffinApp.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
         
     }
 }

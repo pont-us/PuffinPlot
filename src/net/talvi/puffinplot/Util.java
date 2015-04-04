@@ -22,13 +22,13 @@ import java.awt.geom.Rectangle2D;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.PosixFileAttributeView;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
@@ -37,6 +37,8 @@ import java.util.Locale;
 import java.util.Scanner;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 
 /**
  * This class collects miscellaneous, general-purpose utility functions
@@ -280,14 +282,48 @@ public class Util {
         return new Line2D.Double(xmid-xd, ymid-yd, xmid+xd, ymid+yd);
     }
     
+    private static int numericalPermissions(Collection<PosixFilePermission> perms) {
+        int result = 0;
+        for (PosixFilePermission pfp: perms) {
+            switch (pfp) {
+                case OWNER_READ:
+                    result |= 1<<8;
+                    break;
+                case OWNER_WRITE:
+                    result |= 1<<7;
+                    break;
+                case OWNER_EXECUTE:
+                    result |= 1<<6;
+                    break;
+                case GROUP_READ:
+                    result |= 1<<5;
+                    break;
+                case GROUP_WRITE:
+                    result |= 1<<4;
+                    break;
+                case GROUP_EXECUTE:
+                    result |= 1<<3;
+                    break;
+                case OTHERS_READ:
+                    result |= 1<<2;
+                    break;
+                case OTHERS_WRITE:
+                    result |= 1<<1;
+                    break;
+                case OTHERS_EXECUTE:
+                    result |= 1<<0;
+                    break;
+            }
+        }
+        return result;
+    }
+    
     public static void zipDirectory(final Path dir, Path zipFile)
             throws IOException {
         final byte[] buffer = new byte[1024];
         
-        try (final FileOutputStream fileStream =
-                new FileOutputStream(zipFile.toFile());
-                final ZipOutputStream zipStream =
-                        new ZipOutputStream(fileStream)) {
+        try (final ZipArchiveOutputStream zipStream =
+                new ZipArchiveOutputStream(zipFile.toFile())) {
             
             Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
                 @Override
@@ -295,8 +331,11 @@ public class Util {
                         BasicFileAttributes attrs) throws IOException {
                     if (attrs.isRegularFile()) {
                         final Path relPath = dir.relativize(path);
-                        final ZipEntry entry = new ZipEntry(relPath.toString());
-                        zipStream.putNextEntry(entry);
+                        final ZipArchiveEntry entry =
+                                new ZipArchiveEntry(relPath.toString());
+                        
+                        entry.setUnixMode(numericalPermissions(Files.getPosixFilePermissions(path)));
+                        zipStream.putArchiveEntry(entry);
                         final Path fullFilePath = dir.resolve(path);
                         try (final FileInputStream inStream =
                                 new FileInputStream(fullFilePath.toFile())) {
@@ -305,6 +344,7 @@ public class Util {
                                 zipStream.write(buffer, 0, len);
                             }
                         }
+                        zipStream.closeArchiveEntry();
                     }
                     return FileVisitResult.CONTINUE;
                 }
