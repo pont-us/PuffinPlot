@@ -20,14 +20,12 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.PosixFileAttributeView;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -35,8 +33,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 
@@ -311,7 +307,7 @@ public class Util {
                     result |= 1<<1;
                     break;
                 case OTHERS_EXECUTE:
-                    result |= 1<<0;
+                    result |= 1;
                     break;
             }
         }
@@ -321,6 +317,10 @@ public class Util {
     public static void zipDirectory(final Path dir, Path zipFile)
             throws IOException {
         final byte[] buffer = new byte[1024];
+        
+        // We use the Apache Commons compress library rather than the built-in
+        // java.util zip library, because the latter doesn't support Posix
+        // file permissions.
         
         try (final ZipArchiveOutputStream zipStream =
                 new ZipArchiveOutputStream(zipFile.toFile())) {

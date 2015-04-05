@@ -37,7 +37,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -65,6 +64,14 @@ import net.talvi.puffinplot.data.Suite.AmsCalcType;
 import net.talvi.puffinplot.data.file.FileFormat;
 import net.talvi.puffinplot.plots.SampleClickListener;
 import net.talvi.puffinplot.window.*;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.freehep.util.UserProperties;
 import org.python.core.PyException;
 import org.python.util.PythonInterpreter;
@@ -304,20 +311,39 @@ public final class PuffinApp {
     }
     
     private void processArgs(String[] args) {
-        String scriptPath = null;
-        for (int i=0; i<args.length; i++) {
-            final String arg = args[i];
-            if ("-script".equals(arg) && i<args.length-1) {
-                scriptPath = args[i+1];
+        try {
+            final Option helpOpt = new Option("help", "print this message");
+            final Option scriptOpt =
+                    OptionBuilder.withArgName("file")
+                            .hasArg()
+                            .withDescription("run specified Python script")
+                            .create("script");
+            
+            final Options options = new Options();
+            options.addOption(helpOpt);
+            options.addOption(scriptOpt);
+            
+            CommandLineParser parser = new GnuParser();
+            final CommandLine commandLine = parser.parse(options, args);
+
+            if (commandLine.hasOption("help")) {
+                final HelpFormatter formatter = new HelpFormatter();
+                formatter.printHelp("java -jar PuffinPlot.jar <options>", options);
+                return;
             }
-        }
-        if (scriptPath != null) {
-            try {
-                runPythonScript(scriptPath);
-            } catch (PyException ex) {
-                System.err.println("Error running Python script "+scriptPath);
-                ex.printStackTrace(System.err);
+            
+            if (commandLine.hasOption("script")) {
+                final String scriptPath = commandLine.getOptionValue("script");
+                try {
+                    runPythonScript(scriptPath);
+                } catch (PyException ex) {
+                    System.err.println("Error running Python script "+scriptPath);
+                    ex.printStackTrace(System.err);
+                }
             }
+            
+        } catch (ParseException ex) {
+            System.err.println("Could not parse arguments.\n" + ex.getMessage());
         }
     }
     

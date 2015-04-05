@@ -10,14 +10,22 @@ cd ../puffinplot-lib/packages
 wget http://central.maven.org/maven2/org/python/jython-installer/2.5.3/jython-installer-2.5.3.jar
 
 wget http://archive.apache.org/dist/xmlgraphics/batik/batik-1.7.zip
+# TODO: use the Maven repository to get individual jars instead:
+# http://central.maven.org/maven2/org/apache/xmlgraphics/batik-svggen/1.7/batik-svggen-1.7.jar
+# http://central.maven.org/maven2/org/apache/xmlgraphics/batik-awt-util/1.7/batik-awt-util-1.7.jar
+# http://central.maven.org/maven2/org/apache/xmlgraphics/batik-util/1.7/batik-util-1.7.jar
+# http://central.maven.org/maven2/org/apache/xmlgraphics/batik-dom/1.7/batik-dom-1.7.jar
 
 wget ftp://ftp.slac.stanford.edu/software/freehep/VectorGraphics/v2.1.1/vectorgraphics-2.1.1-bin.tar.gz
+# TODO: Get individual jars from http://java.freehep.org/maven/org.freehep/jars/
 
 wget http://central.maven.org/maven2/com/lowagie/itext/2.1.7/itext-2.1.7.jar
 
 wget https://java.net/projects/appbundler/downloads/download/appbundler-1.0.jar
 
 wget http://central.maven.org/maven2/org/apache/commons/commons-compress/1.9/commons-compress-1.9.jar
+
+wget http://central.maven.org/maven2/commons-cli/commons-cli/1.2/commons-cli-1.2.jar
 
 ### unpack the needed libraries
 
@@ -50,9 +58,10 @@ tar -zxv --strip-components=2 --transform s/-[0-9.]*jar/.jar/ \
   vectorgraphics-2.1.1/lib/freehep-xml-2.1.1.jar \
   vectorgraphics-2.1.1/lib/freehep-graphicsio-2.1.1.jar
 
-# The itext, appbundler, and commons-compress jars are not additionally
-# packaged, so we can just link them.
+# The itext, appbundler, commons-compress, and commons-cli jars are not
+# additionally packaged, so we can just link them.
 
 ln -s packages/itext-2.1.7.jar itext.jar
 ln -s packages/appbundler-1.0.jar appbundler.jar
 ln -s packages/commons-compress-1.9.jar commons-compress.jar
+ln -s packages/commons-cli-1.2.jar commons-cli.jar
