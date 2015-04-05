@@ -65,6 +65,7 @@ public class Util {
      * selected). Example inputs and outputs are shown below.</p>
      * 
      * <table>
+     * <caption>Example specifications</caption>
 <tr><td> 1 </td><td> {@code 1} </td></tr>
 <tr><td> 1,3 </td><td> {@code 101} </td></tr>
 <tr><td> 4-6 </td><td> {@code 000111} </td></tr>

@@ -69,8 +69,8 @@ public enum MeasType {
     }
 
     /** Returns a suitable column header for sample identifiers.
-     * This will be something like <q>sample name</q> for discrete
-     * measurements and <q>depth</q> for continuous measurements.
+     * This will be something like ‘sample name’ for discrete
+     * measurements and ‘depth’ for continuous measurements.
      * @return a suitable column header for sample identifiers
      */
     public String getColumnHeader() {

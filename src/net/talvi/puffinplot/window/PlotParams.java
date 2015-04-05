@@ -22,8 +22,8 @@ import net.talvi.puffinplot.data.Sample;
 
 /**
  * <p>The current parameters for a plot. This interface provides a way
- * for a plot to retrieve <q>dynamic</q> parameters affecting its
- * appearance &endash; that is, parameters which can change after
+ * for a plot to retrieve ‘dynamic’ parameters affecting its
+ * appearance – that is, parameters which can change after
  * the plot has been created. An object implementing this interface
  * is passed to a plot's constructor; the plot can then call back
  * through this interface to read the current state of the parameters.

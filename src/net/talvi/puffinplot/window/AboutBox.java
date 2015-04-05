@@ -25,7 +25,7 @@ package net.talvi.puffinplot.window;
 import net.talvi.puffinplot.*;
 
 /**
- * An <q>about this program</q> dialog box giving brief information
+ * An ‘about this program’ dialog box giving brief information
  * about PuffinPlot.
  * 
  * @author  pont

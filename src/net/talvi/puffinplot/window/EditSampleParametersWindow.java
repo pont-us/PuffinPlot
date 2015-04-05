@@ -117,7 +117,7 @@ public class EditSampleParametersWindow extends JFrame {
     
     private class EspwActionListener implements ActionListener {
         /** <p>Handle an action event. The events handled are clicks on the
-         * <q>Cancel</q> and <q>Set</q> buttons.</p>
+         * ‘Cancel’ and ‘Set’ buttons.</p>
          *
          * @param event the action event to handle
          */

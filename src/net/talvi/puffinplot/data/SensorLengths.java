@@ -34,7 +34,7 @@ import static java.lang.Double.parseDouble;
  * 
  * <p>Hard-coded, pre-defined sets of sensor lengths can be
  * selected by name, but SensorLengths can also represent any
- * <q>custom</q> set of sensor lengths.</p>
+ * ‘custom’ set of sensor lengths.</p>
  * 
  * @author pont
  */

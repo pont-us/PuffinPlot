@@ -595,7 +595,7 @@ public class Datum {
     /**
      * Returns {@code true} if this datum should be ignored (thrown away)
      * when loading a data file. Currently, this method returns true if
-     * the measurement type is {@code NONE} &endash; that is, there is
+     * the measurement type is {@code NONE} – that is, there is
      * no data within the object.
      * 
      * @return {@code true} if this datum should be ignored when loading a file

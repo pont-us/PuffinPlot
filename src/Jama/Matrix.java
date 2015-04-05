@@ -4,7 +4,6 @@ import java.text.NumberFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
-import java.text.FieldPosition;
 import java.io.PrintWriter;
 import java.io.BufferedReader;
 import java.io.StreamTokenizer;
@@ -37,7 +36,6 @@ import Jama.util.*;
 </UL>
 <DL>
 <DT><B>Example of use:</B></DT>
-<P>
 <DD>Solve a linear system A x = b and compute the residual norm, ||b - A x||.
 <P><PRE>
       double[][] vals = {{1.,2.,3},{4.,5.,6.},{7.,8.,10.}};

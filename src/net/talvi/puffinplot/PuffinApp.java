@@ -1217,7 +1217,7 @@ public final class PuffinApp {
         }
     }
     
-    /** <p>Shows an <q>open files</q> dialog box; if the user selects
+    /** <p>Shows an ‘open files’ dialog box; if the user selects
      * any files, AMS data will be imported from them. The files are 
      * expected to be in Agico ASC format, as produced by the SAFYR
      * and SUSAR programs.</p> */
@@ -1235,7 +1235,7 @@ public final class PuffinApp {
         }
     }
     
-    /** <p>Shows an <q>open file</q> dialog box; if the user select a file,
+    /** <p>Shows an ‘open file’ dialog box; if the user select a file,
      * the current preferences will be overwritten with preferences data
      * from that file. The file is expected to contain Java Preferences
      * data in XML format.</p> */
@@ -1944,7 +1944,7 @@ public final class PuffinApp {
             final Path scriptPath = tempDir.resolve(Paths.get("process-data.sh"));
             try (FileWriter fw = new FileWriter(scriptPath.toFile())) {
                 fw.write("#!/bin/sh\n\n"
-                        + "java -jar PuffinPlot.jar -process data.jar\n");
+                        + "java -jar PuffinPlot.jar -process data.ppl\n");
             }
             scriptPath.toFile().setExecutable(true, false);
             

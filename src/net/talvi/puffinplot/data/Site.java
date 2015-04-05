@@ -32,7 +32,7 @@ import java.util.logging.Logger;
  * corresponds to a group of samples from a small physical area.
  * In a discrete study, it usually corresponds to a physical field
  * site within a section. In a long core study, it usually corresponds
- * to a narrow <q>slice</q> of the core between two defined depths.</p> 
+ * to a narrow ‘slice’ of the core between two defined depths.</p> 
  * 
  * @author pont
  */

@@ -30,7 +30,7 @@ import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.Sample;
 
 /**
- * <p>A <q>data point</q> which actually consists of a line of text.</p>
+ * <p>A ‘data point’ which actually consists of a line of text.</p>
  * 
  * @author pont
  */
