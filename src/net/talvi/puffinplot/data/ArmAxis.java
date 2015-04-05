@@ -35,6 +35,7 @@ public enum ArmAxis {
      * produced are as follows:</p>
      * 
      * <table>
+     * <caption>ArmAxis values</caption>
      * <tr><th>Input</th><th>Result</th></tr>
      * <tr><td>{@code AXIAL}</td><td>{@code AXIAL}</td></tr>
      * <tr><td>{@code NONE}</td><td>{@code NONE}</td></tr>

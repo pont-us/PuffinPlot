@@ -303,25 +303,32 @@ public final class PuffinApp {
             logger.log(Level.WARNING, "Error setting look-and-feel", ex);
         }
 
-        java.awt.EventQueue.invokeLater(
-                new Runnable() { @Override public void run() { 
-                    final PuffinApp app = new PuffinApp();
-                    app.processArgs(args);
-                } });
+        processArgs(args);
+        //processArgs(new String[] {"-process", "/home/pont/test.ppl"});
     }
     
-    private void processArgs(String[] args) {
+    private static void processArgs(String[] args) {
         try {
             final Option helpOpt = new Option("help", "print this message");
+            @SuppressWarnings("static-access")
             final Option scriptOpt =
                     OptionBuilder.withArgName("file")
                             .hasArg()
                             .withDescription("run specified Python script")
                             .create("script");
+            @SuppressWarnings("static-access")
+            final Option processOpt =
+                    OptionBuilder.withArgName("file")
+                    .hasArg()
+                    .withDescription("process given ppl file and save results")
+                    .create("process");
+            final Option withAppOpt = new Option("withapp", "create a Puffin application (script mode only)");
             
             final Options options = new Options();
             options.addOption(helpOpt);
             options.addOption(scriptOpt);
+            options.addOption(withAppOpt);
+            options.addOption(processOpt);
             
             CommandLineParser parser = new GnuParser();
             final CommandLine commandLine = parser.parse(options, args);
@@ -329,17 +336,58 @@ public final class PuffinApp {
             if (commandLine.hasOption("help")) {
                 final HelpFormatter formatter = new HelpFormatter();
                 formatter.printHelp("java -jar PuffinPlot.jar <options>", options);
-                return;
             }
             
-            if (commandLine.hasOption("script")) {
+            else if (commandLine.hasOption("script")) {
                 final String scriptPath = commandLine.getOptionValue("script");
                 try {
-                    runPythonScript(scriptPath);
+                    final PythonInterpreter interp = new PythonInterpreter();
+                    if (commandLine.hasOption("with-app")) {
+                        java.awt.EventQueue.invokeLater(
+                                new Runnable() { @Override public void run() { 
+                                    final PuffinApp scriptApp = new PuffinApp(); 
+                                    interp.set("puffin_app", scriptApp);
+                                    interp.execfile(scriptPath);
+                                } });
+                    } else {
+                        interp.execfile(scriptPath);
+                    }
                 } catch (PyException ex) {
+                    // PyException is a RuntimeException, so doesn't *have*
+                    // to be caught, but it makes sense to do so.
                     System.err.println("Error running Python script "+scriptPath);
                     ex.printStackTrace(System.err);
                 }
+            }
+            
+            else if (commandLine.hasOption("process")) {
+                final String inputFileString = commandLine.getOptionValue("process");
+                final Suite suite = new Suite("PuffinPlot (process mode)");
+                try {
+                    suite.readFiles(Arrays.asList(new File[] {new File(inputFileString)}));
+                    suite.doAllCalculations(Correction.NONE);
+                    suite.calculateSuiteMeans(suite.getSamples(), suite.getSites());
+                    
+                    final String bareFilename = inputFileString.replaceFirst("[.]...$", "");
+                    
+                    suite.saveCalcsSample(new File(bareFilename + "-sample.csv"));
+                    suite.saveCalcsSite(new File(bareFilename + "-site.csv"));
+                    suite.saveCalcsSuite(new File(bareFilename + "-suite.csv"));
+                    
+                } catch (IOException | PuffinUserException ex) {
+                    System.err.println("Error processing.");
+                    Logger.getLogger(PuffinApp.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            
+            else {
+                // Start PuffinPlot in normal desktop mode.
+                java.awt.EventQueue.invokeLater(
+                                new Runnable() { @Override 
+                                public void run()
+                                {
+                                    final PuffinApp dummy = new PuffinApp(); 
+                                }});
             }
             
         } catch (ParseException ex) {
@@ -1886,13 +1934,25 @@ public final class PuffinApp {
             logger.log(Level.INFO, "Temporary directory: {0}", tempDir.toString());
         
             getSuite().saveAs(tempDir.resolve(Paths.get("data.ppl")).toFile());
+            getSuite().doAllCalculations(getCorrection());
+            getSuite().calculateSuiteMeans(getSelectedSamples(), getSelectedSites());
+            
+            getSuite().saveCalcsSample(tempDir.resolve(Paths.get("data-sample.csv")).toFile());
+            getSuite().saveCalcsSite(tempDir.resolve(Paths.get("data-site.csv")).toFile());
+            getSuite().saveCalcsSuite(tempDir.resolve(Paths.get("data-suite.csv")).toFile());
             
             final Path scriptPath = tempDir.resolve(Paths.get("process-data.sh"));
             try (FileWriter fw = new FileWriter(scriptPath.toFile())) {
                 fw.write("#!/bin/sh\n\n"
-                        + "echo \"FIXME\"\n");
+                        + "java -jar PuffinPlot.jar -process data.jar\n");
             }
             scriptPath.toFile().setExecutable(true, false);
+            
+            final Path readmePath = tempDir.resolve(Paths.get("README.TXT"));
+            try (FileWriter fw = new FileWriter(readmePath.toFile())) {
+                fw.write("TODO\n");
+            }
+            
             copyPuffinPlotJarFile(tempDir);
 
             Util.zipDirectory(tempDir, zipPath);
