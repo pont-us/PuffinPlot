@@ -125,16 +125,17 @@ works on Java 6, and version 1.01 works on Java 5.)
 \subsection{Obtaining and installing PuffinPlot}
 
 You may download the latest version of PuffinPlot from
-\url{https://code.google.com/p/puffinplot/}. PuffinPlot is distributed as a
-single zip archive file containing the program itself (in two different
-variants, as detailed below) and documentation. The documentation consists of
-this manual (in both HTML and PDF format) and a JavaDoc folder, containing
-documentation for PuffinPlot's source code. The JavaDoc is only of interest
-to users wishing to write scripts which interface directly with PuffinPlot's
-internal data structures (see section~\ref{sec:scripting}).
-Table~\ref{tbl:archive-contents} lists the contents of the PuffinPlot
-archive. After downloading the archive, move it to the folder where you
-would like PuffinPlot installed and extract its contents there.
+\url{https://bitbucket.org/pont/puffinplot/downloads}. PuffinPlot is
+distributed as a single zip archive file containing the program itself
+(in two different variants, as detailed below) and documentation. The
+documentation consists of this manual (in both HTML and PDF format) and
+a JavaDoc folder, containing documentation for PuffinPlot's source code.
+The JavaDoc is only of interest to users wishing to write scripts which
+interface directly with PuffinPlot's internal data structures (see
+section~\ref{sec:scripting}). Table~\ref{tbl:archive-contents} lists the
+contents of the PuffinPlot archive. After downloading the archive, move
+it to the folder where you would like PuffinPlot installed and extract
+its contents there.
 
 \begin{table}[bp]
   \caption{\label{tbl:archive-contents} The contents of the PuffinPlot archive file.}
@@ -2003,6 +2004,104 @@ commonly used by bibliography management software.
  DO  - 10.1029/2012GC004098
  PB  - AGU
 \end{verbatim}
+
+\section{Release notes}
+
+No release notes are available for PuffinPlot versions prior to 1.03.
+
+\subsection*{PuffinPlot 1.03 release notes}
+\label{sec-1}
+\subsubsection*{Calculations}
+\label{sec-1-1}
+\begin{itemize}
+\item Virtual geomagnetic pole calculation.
+\item Fisher-by-site calculations can be done on continuous data sets.
+\item Fisher analysis of demagnetization steps.
+\item PCA and GC fits can be cleared individually.
+\item R added to the available Fisher statistical parameters.
+\end{itemize}
+
+\subsubsection*{Data plotting}
+\label{sec-1-2}
+\begin{itemize}
+\item Horizontal projection in Zplot supports west-upward orientation.
+\item Data points can be labelled with treatment step.
+\item Equal-area plots can be labelled to avoid confusion.
+\item Site equal-area plots now distinguish PCAs, demag steps, GC poles,
+and site means.
+\item Current site and sample are highlighted in the relevant data tables
+and plots.
+\item Sample directions can be annotated with their names in the site
+equal-area plot.
+\item a95 added to site parameter table.
+\item More compact default plot layout.
+\item Treatment steps can be labelled with the treatment level.
+\item Added suite parameter table for mean directions and VGPs.
+\item Site alpha-95s can be shown in the suite equal-area plot.
+\end{itemize}
+
+\subsubsection*{Data import}
+\label{sec-1-3}
+\begin{itemize}
+\item Selectable units for custom data import.
+\item More variants of the AGICO AMS file can now be imported.
+\item Direct import of sample directions.
+\item IAPD file import.
+\item Caltech file import.
+\item Better guessing of measurement type in 2G files.
+\item Site location data import (for use with VGP calculation).
+\item More palaeomagnetic data can now be appended to an existing suite.
+\end{itemize}
+
+\subsubsection*{Data export}
+\label{sec-1-4}
+\begin{itemize}
+\item n and a95 are listed in sample parameter file.
+\item Great circle strikes and dips are included in exported data.
+\end{itemize}
+
+\subsubsection*{Bug fixes}
+\label{sec-1-5}
+\begin{itemize}
+\item Exporting FreeHEP SVG graphics no longer disables anti-aliasing.
+\item PuffinPlot no longer crashes if an incorrect 2G protocol is
+specified.
+\item PuffinPlot will not save its own file over the original data file.
+\item Cleared PCA directions no longer reappear.
+\item Fixed potential crash during suite parameter export.
+\item Measurement types now checked for consistency when opening a file.
+\end{itemize}
+
+\subsubsection*{Documentation}
+\label{sec-1-6}
+\begin{itemize}
+\item All new features are fully documented in the updated user manual
+\end{itemize}
+
+\subsubsection*{Miscellaneous new features}
+\label{sec-1-7}
+\begin{itemize}
+\item Site calculations automatically update when sample calculations
+change.
+\item Site directions cleared automatically when all their sample
+directions are cleared.
+\item Warning when closing a file or quitting with unsaved data
+\item Clearer error messages and warnings when reading corrupted files
+\item Treatment type can be set manually
+\item Site definitions can be cleared
+\item Treatment steps can be deselected by dragging a box.
+\item PuffinPlot will ask for confirmation before overwriting files.
+\item Native file open dialog is now used on Mac OS X.
+\item Added `invert sample moment' feature.
+\item `Open file' dialogs now remember the last used folder.
+\item Sample volume can be edited.
+\end{itemize}
+
+\subsubsection*{Other notes}
+\label{sec-1-8}
+\begin{itemize}
+\item PuffinPlot now requires Java 7 or higher.
+\end{itemize}
 
 % Define the heading of the bibliography to be empty, so I can put a proper
 % Section heading which will be included in the ToC.
