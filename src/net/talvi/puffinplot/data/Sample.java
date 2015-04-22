@@ -36,7 +36,7 @@ import java.util.Locale;
  */
 public class Sample {
     
-    private final List<Datum> data;
+    private List<Datum> data;
     private Site site;
     private String nameOrDepth;
     private double depth;
@@ -968,5 +968,9 @@ public class Sample {
             directions.add(d.getMoment(correction));
         }
         fisherValues = FisherValues.calculate(directions);
+    }
+    
+    public void truncateData(int items) {
+        data = data.subList(0, items);
     }
 }
