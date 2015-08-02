@@ -303,7 +303,7 @@ public final class Suite {
      * @throws IllegalArgumentException if the measurement type of
      * the datum does not match the measurement type of the suite
      */
-    private void addDatum(Datum d) {
+    public void addDatum(Datum d) {
         assert(d != null);
         assert(d.getMeasType() != null);
         assert(d.getMeasType() != MeasType.UNSET);

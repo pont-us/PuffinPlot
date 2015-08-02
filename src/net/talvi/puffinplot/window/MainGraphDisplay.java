@@ -50,8 +50,8 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
         "PlotTitle", "SiteParamsLegend",
         "AmsPlot", "TernaryPlot", "SiteEqAreaPlot", "SuiteEqAreaPlot",
         "SampleParamsTable", "SiteParamsTable", "NrmHistogram",
-        "VgpTable", "SuiteParamsTable"
-        // "DepthPlot"
+        "VgpTable", "SuiteParamsTable",
+        "DepthPlot"
     };
     private final PlotParams params;
     private final PuffinApp app;

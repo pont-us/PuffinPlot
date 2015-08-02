@@ -175,7 +175,13 @@ public class Datum {
     public String getDepth()           { return depth; }
     /** For continuous measurements, sets the depth of this measurement within the core.
      * @param v for continuous measurements, the depth of this measurement within the core */
-    public void setDepth(String v)     { touch(); depth = v; }
+    public void setDepth(String v)     {
+        touch();
+        depth = v;
+        if (sample != null) {
+            sample.setDepth(depth);
+        }
+    }
     /** Returns the magnetic susceptibility of the sample at this stage of treatment
      * @return the magnetic susceptibility of the sample at this stage of treatment */
     public double getMagSus()          { return magSus; }

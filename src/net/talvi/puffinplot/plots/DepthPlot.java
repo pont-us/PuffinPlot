@@ -62,7 +62,8 @@ public class DepthPlot extends Plot {
                 withLabel("Depth").withNumberEachTick();
         final PlotAxis xAxis = new PlotAxis(xAxisParams, this);
         
-        double minInc = 0, maxInc = 0;
+        double minInc = 0, maxInc = 0, totalInc = 0;
+        int numberOfIncs = 0;
         boolean anyData = false;
         for (Sample s: suite.getSamples()) {
             if (!s.hasData()) continue;
@@ -72,6 +73,10 @@ public class DepthPlot extends Plot {
             final double inc = s.getDirection().getIncDeg();
             if (inc < minInc) minInc = inc;
             if (inc > maxInc) maxInc = inc;
+            if (inc > 30) {
+                totalInc += inc;
+                numberOfIncs++;
+            }
         }
         if (!anyData) return;
         
@@ -104,5 +109,7 @@ public class DepthPlot extends Plot {
         downAxis.draw(g, yScale, (int)dim.getMinX(), (int)(dim.getMaxY() - downAxis.getLength()));
         xAxis.draw(g, xScale, (int)dim.getMinX(), (int)(dim.getMaxY() - downAxis.getLength()));
         drawPoints(g);
+        
+        writeString(g, String.format("%f", totalInc / numberOfIncs), (float) getDimensions().getMinX(), (float) getDimensions().getMinY());
     }
 }
