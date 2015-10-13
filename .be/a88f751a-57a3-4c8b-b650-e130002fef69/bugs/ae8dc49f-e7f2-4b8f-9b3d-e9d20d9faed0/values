@@ -12,6 +12,27 @@
 
 
 
+    "extra_strings": [
+
+
+
+
+
+
+        "BLOCKS:774c10d3-65e9-4fda-b03d-070d6a013a60"
+
+
+
+
+
+
+    ], 
+
+
+
+
+
+
     "reporter": "Pontus Lurcock <pont@talvi.net>", 
 
 
@@ -26,7 +47,7 @@
 
 
 
-    "status": "open", 
+    "status": "fixed", 
 
 
 

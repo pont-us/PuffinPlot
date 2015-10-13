@@ -937,6 +937,7 @@ public class PuffinActions {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
             app.getSuite().clearSites();
+            app.updateDisplay();
         }
     };
     
@@ -953,6 +954,7 @@ public class PuffinActions {
             final String name = JOptionPane.showInputDialog("Site name");
             if (name==null || "".equals(name)) return;
             app.getSuite().setNamedSiteForSamples(app.getSelectedSamples(), name);
+            app.updateDisplay();
         }
     };
     
@@ -972,6 +974,7 @@ public class PuffinActions {
             if (maskSpec==null || "".equals(maskSpec)) return;
             app.getSuite().setSiteNamesBySubstring(app.getSelectedSamples(),
                     Util.numberRangeStringToBitSet(maskSpec, 256));
+            app.updateDisplay();
         }
     };
     
@@ -998,6 +1001,7 @@ public class PuffinActions {
             if (Float.isNaN(thickness)) return;
             app.getSuite().setSiteNamesByDepth(app.getSelectedSamples(),
                     thickness);
+            app.updateDisplay();
         }
     };
 
