@@ -61,14 +61,14 @@ public class PcaValues {
         // We use Kirschvink's procedure but append a direction correction.
 
         List<Vec3> movedPoints = points;
-        Vec3 origin = anchored ? Vec3.ORIGIN : Vec3.mean(points);
+        final Vec3 origin = anchored ? Vec3.ORIGIN : Vec3.mean(points);
         if (!anchored) {
             // translate points to be centred on centre of mass
             movedPoints = new ArrayList<>(points.size());
             for (Vec3 p: points) movedPoints.add(p.minus(origin));
         }
 
-        Eigens eigen = Eigens.fromVectors(movedPoints, false);
+        final Eigens eigen = Eigens.fromVectors(movedPoints, false);
         Vec3 pComp = eigen.getVectors().get(0);
 
         /*
@@ -82,7 +82,7 @@ public class PcaValues {
          */
         
         // We want these in opposite directions, thus negative scalar product
-        Vec3 trend = movedPoints.get(movedPoints.size()-1).
+        final Vec3 trend = movedPoints.get(movedPoints.size()-1).
             minus(movedPoints.get(0));
         if (trend.dot(pComp) > 0) pComp = pComp.invert();
 

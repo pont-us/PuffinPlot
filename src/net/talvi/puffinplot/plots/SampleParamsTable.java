@@ -80,9 +80,15 @@ public class SampleParamsTable extends Plot {
     public void draw(Graphics2D g) {
         clearPoints();
         final Sample selectedSample = params.getSample();
-        if (selectedSample==null) return;
+        if (selectedSample==null) {
+            return;
+        }
+        
         final Site site = selectedSample.getSite();
-        if (site==null) return;
+        final List<Sample> samples =
+                site != null ?
+                site.getSamples() :
+                selectedSample.getSuite().getSamples();
         
         points.add(new TextLinePoint(this, g, 10, null, null, headers, xSpacing, Color.BLACK));
 
@@ -91,8 +97,10 @@ public class SampleParamsTable extends Plot {
                 Color.RED : Color.BLACK;
         
         float yPos = 2 * ySpacing;
-        for (Sample sample: site.getSamples()) {
-            if (yPos > getDimensions().getHeight()) break;
+        for (Sample sample: samples) {
+            if (yPos > getDimensions().getHeight()) {
+                break;
+            }
             final List<String> values = new ArrayList<>(4);
             values.addAll(Collections.nCopies(4, "--"));
             values.set(0, sample.getNameOrDepth());
