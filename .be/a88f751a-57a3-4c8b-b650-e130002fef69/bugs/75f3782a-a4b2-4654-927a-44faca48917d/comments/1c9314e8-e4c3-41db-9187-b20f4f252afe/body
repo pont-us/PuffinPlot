@@ -1,0 +1,5 @@
+Implemented as specified -- with asterisk in title for Linux and
+Windows, and the standard dot in the close icon for Macs. In addition,
+the current suite name is now displayed in the title bar (previously
+it just said "PuffinPlot").
+

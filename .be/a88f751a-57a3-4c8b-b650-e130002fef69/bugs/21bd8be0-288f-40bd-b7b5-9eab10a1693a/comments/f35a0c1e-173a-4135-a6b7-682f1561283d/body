@@ -1,0 +1,8 @@
+I'm going to close this. There's no difficulty with implementing it in
+principle: JAMA is public domain so I could even cut out the relevant
+parts and paste them into PuffinPlot's source. However the benefit would
+be negligible: JAMA is now <7.5% of Puffin's source, and even if
+I drop Batik and FreeHEP for something smaller, Jython is still huge.
+The changes would risk introducing new bugs, and the time is better
+spent on more important improvements.
+

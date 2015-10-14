@@ -67,6 +67,7 @@ public final class Suite {
     private Date modificationDate;
     private final String suiteCreator;
     private String fileCreator;
+    private final Set<SavedListener> savedListenerSet = new HashSet<>();
 
     /** Get the list of warnings produced when data was being loaded from
      * one or more files.
@@ -1266,6 +1267,9 @@ public final class Suite {
      */
     public void setSaved(boolean saved) {
         this.saved = saved;
+        for (SavedListener savedListener: savedListenerSet) {
+            savedListener.savedStateChanged(saved);
+        }
     }
 
     /**
@@ -1718,5 +1722,40 @@ public final class Suite {
             }
         }
         convertDiscreteToContinuous(nameToDepth);
+    }
+    
+    /**
+     * A listener interface for modifications to the Suite's save state.
+     * 
+     * This interface is for components that need to be notified when
+     * the Suite's save state changes (i.e. when it is modified or saved).
+     */
+    public static interface SavedListener {
+        
+        /**
+         * This method is called when the Suite's save state changes.
+         * 
+         * @param newState the new saved state of the Suite (true is saved,
+         * false is modified)
+         */
+        public void savedStateChanged(boolean newState);
+    }
+    
+    /**
+     * Add a listener for the Suite's save state
+     * 
+     * @param savedListener the new listener
+     */
+    public void addSavedListener(SavedListener savedListener) {
+        savedListenerSet.add(savedListener);
+    }
+    
+    /**
+     * Remove a listener for the Suite's save state
+     * 
+     * @param savedListener the listener to remove
+     */
+    public void removeSavedListener(SavedListener savedListener) {
+        savedListenerSet.remove(savedListener);
     }
 }

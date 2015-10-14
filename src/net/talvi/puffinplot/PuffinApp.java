@@ -779,6 +779,9 @@ public final class PuffinApp {
             final Suite suite;
             if (reallyCreateNewSuite) {
                 suite = new Suite("PuffinPlot " + version.versionString);
+                suite.addSavedListener((boolean newState) -> {
+                    updateMainWindowTitle();
+                });
             } else {
                 suite = getSuite();
             }
@@ -842,6 +845,23 @@ public final class PuffinApp {
         mainWindow.getMainMenuBar().updateRecentFiles();
         mainWindow.updateSampleDataPanel();
         updateDisplay();
+    }
+    
+    private void updateMainWindowTitle() {
+        final MainWindow window = getMainWindow();
+        if (currentSuite == null) {
+            window.setTitle("PuffinPlot: no data");
+            return;
+        }
+        window.setTitle("PuffinPlot: " + currentSuite.getName() +
+                (currentSuite.isSaved() || isOnOsX() ? "" : " *"));
+        if (isOnOsX()) {
+            // See Apple tech note TN2196
+            // https://developer.apple.com/library/mac/technotes/tn2007/tn2196.html#WINDOW_DOCUMENTMODIFIED
+            // http://nadeausoftware.com/articles/2009/01/mac_java_tip_how_control_window_decorations
+            window.getRootPane().putClientProperty("Window.documentModified",
+                    !currentSuite.isSaved());
+        }
     }
     
     /**
@@ -933,6 +953,7 @@ public final class PuffinApp {
         if (index >= 0 && index < suites.size()) {
             currentSuite = suites.get(index);
             getMainWindow().suitesChanged();
+            updateMainWindowTitle();
         }
     }
     
