@@ -72,6 +72,15 @@ public class DemagTable extends Plot {
         return "Data table";
     }
 
+    private String fmt(String format, double value) {
+        final String withHyphens = format(Locale.ENGLISH, format,
+                value);
+        return withHyphens;
+        // return withHyphens.replace('-', '\u2212');
+        // Need to ensure that minus signs work in all exported graphics
+        // before using them here.
+    }
+    
     /** Draws the table. 
      * @param g the graphics object to which to draw the table */
     @Override
@@ -100,17 +109,17 @@ public class DemagTable extends Plot {
             final String demag = useSequence ? Integer.toString(sequence)
                     : d.getFormattedTreatmentLevel();
             values.add(demag);
-            values.add(format(Locale.ENGLISH, "%.1f", p.getDecDeg()));
-            values.add(format(Locale.ENGLISH, "% .1f", p.getIncDeg()));
+            values.add(fmt("%.1f", p.getDecDeg()));
+            values.add(fmt("% .1f", p.getIncDeg()));
             /* Don't use .1g, it tickles a bug in Java (#6469160) which
             throws an ArrayFormatException (at least in Sun Java 5 & 6).
             Update: apparently fixed in Java 8 -- see
             http://bugs.java.com/view_bug.do?bug_id=6469160 . No reason to
             change the format at the moment, though.
             */
-            values.add(format(Locale.ENGLISH, "%.2e", p.mag()));
+            values.add(fmt("%.2e", p.mag()));
             values.add(Double.isNaN(d.getMagSus()) ? "-" :
-                       format(Locale.ENGLISH, "%.1e", d.getMagSus()));
+                       fmt("%.1e", d.getMagSus()));
             points.add(new TextLinePoint(this, g, yPos, d, null, values,
                     xSpacing, Color.BLACK));
             yPos += ySpacing;

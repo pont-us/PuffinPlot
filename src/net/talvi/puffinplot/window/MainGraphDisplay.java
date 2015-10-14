@@ -141,7 +141,7 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
         Graphics2D g2 = (Graphics2D) graphics;
 
         if (app.isOnOsX()) {
-            /* Superscript don't print properly on OS X (at least not
+            /* Superscripts don't print properly on OS X (at least not
              * on Java 7 or Java 8u25), so we set a rendering hint that
              * tells the plotting code to fall back to E notation.
              * See bug 698def95-724d-44fb-9088-d3d7192e98ef .

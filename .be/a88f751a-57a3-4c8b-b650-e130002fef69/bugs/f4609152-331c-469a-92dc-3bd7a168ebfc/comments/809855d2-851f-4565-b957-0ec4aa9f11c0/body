@@ -1,0 +1,7 @@
+This is not worth fixing at present. The KentParams triplets appear
+in only a few places in the code; they are implemented as immutable
+lists, so unlikely to get into funny states; and it's unlikely that
+PuffinPlot's AMS capabilities will be developed at all in the 
+foreseeable future. Making this change would risk introducing bugs,
+and produce no tangible benefits. Closing as wontfix.
+

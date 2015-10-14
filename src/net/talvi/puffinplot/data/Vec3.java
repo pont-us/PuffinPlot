@@ -254,10 +254,10 @@ public class Vec3 {
         if (avgDir.dot(onPath) > 0) {
             return spherInterpolate(v0, v1, stepSize);
         } else {
-            List<Vec3> a = spherInterpolate(v0, v1.invert(), stepSize);
-            List<Vec3> b = spherInterpolate(v1.invert(), v0.invert(), stepSize);
-            List<Vec3> c = spherInterpolate(v0.invert(), v1, stepSize);
-            List<Vec3> result = new ArrayList<>(a.size() + b.size() + c.size());
+            final List<Vec3> a = spherInterpolate(v0, v1.invert(), stepSize);
+            final List<Vec3> b = spherInterpolate(v1.invert(), v0.invert(), stepSize);
+            final List<Vec3> c = spherInterpolate(v0.invert(), v1, stepSize);
+            final List<Vec3> result = new ArrayList<>(a.size() + b.size() + c.size());
             result.addAll(a);
             result.addAll(b);
             result.addAll(c);

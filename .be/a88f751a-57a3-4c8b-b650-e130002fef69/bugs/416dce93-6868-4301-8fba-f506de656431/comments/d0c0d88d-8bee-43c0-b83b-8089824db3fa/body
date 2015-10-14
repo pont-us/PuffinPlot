@@ -1,0 +1,19 @@
+On closer inspection, it's not clear that adding a Vec3Path would make
+life much easier. The clearest benefit would be for methods which
+currently accept a list of Vec3s, where a static Vec3 method could be
+turned into a Vec3Path instance method. However, there's actually only
+one such method in Vec3: interpolateEquatorPoints! (There are other
+methods in Vec3 which take unordered Collections of Vec3s, but 
+moving them to a new class wrapping an ordered list would add an
+unnecessary restriction on the input data.) Most of the methods which
+operate on List<Vec3> input are in other classes in the data
+and plots packages, and it wouldn't make sense to combine their
+specialized functionalities into a single grab-bag class.
+
+Additionally, since this bug was opened, the Java 8 streams framework
+has become available. This makes functional-style transformations on
+Vec3 (and other) collections a lot clearer and more concise, and reduces
+the need for a list-wrapper class to hide more verbose, explicitly
+looped implementations of the same functionality.
+
+Closing as wontfix.
