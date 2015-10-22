@@ -158,28 +158,31 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
     /**
      * Writes a requested page of the current suite to a given
      * graphics context. Intended for use when exporting multi-page
-     * PDF. Uses the same model as Java printing, sans {@code PageFormat}.
+     * PDF. Uses a similar model to Java printing, sans {@code PageFormat}.
      * 
      * @param g2 graphics context
      * @param pageIndex the page to output
-     * @return {@code true} if this page is invalid (page number too high);
+     * @return {@code true} if this is the highest-numbered page in the printable range;
      *  {@code false} otherwise
      */
     public boolean printPdfPage(Graphics2D g2, int pageIndex) {
         if (samplesForPrinting == null) {
             samplesForPrinting = app.getSelectedSamples();
         }
-        if (pageIndex >= samplesForPrinting.size()) {
-            samplesForPrinting = null; // we've finished printing
-            return true;
-        }
         printPageIndex = pageIndex;
         setDoubleBuffered(false);
         g2.setPaint(Color.BLACK);
         g2.setPaintMode();
-        for (Plot plot: getVisiblePlots()) plot.draw(g2);
+        for (Plot plot: getVisiblePlots()) {
+            plot.draw(g2);
+        }
         printChildren(g2);
         setDoubleBuffered(true);
-        return false;
+        if (pageIndex == samplesForPrinting.size() - 1) {
+            samplesForPrinting = null; // we've finished printing
+            return true;
+        } else {
+            return false;
+        }
     }
 }
