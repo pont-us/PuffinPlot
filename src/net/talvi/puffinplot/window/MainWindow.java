@@ -20,8 +20,14 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -30,6 +36,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.TransferHandler;
 import javax.swing.border.EmptyBorder;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.Sample;
@@ -77,9 +84,8 @@ public final class MainWindow extends JFrame {
         menuBar = new MainMenuBar(app);
         setJMenuBar(menuBar);
         
-        JPanel mainPanel = new JPanel();
+        final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
-        // mainPanel.add(graphDisplay = new GraphDisplay(), BorderLayout.CENTER);
         graphDisplay = new MainGraphDisplay(app);
         scrollPane = new JScrollPane(getGraphDisplay());
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
@@ -88,18 +94,19 @@ public final class MainWindow extends JFrame {
         splitPane.setOneTouchExpandable(true);
         splitPaneDividerWidth = splitPane.getDividerSize();
         splitPane.setDividerSize(0);
-        // jsp.setMaximumSize(new Dimension(1000,700));
         mainPanel.add(splitPane);
         mainPanel.add(welcomeMessage = new WelcomeMessage(),
                 BorderLayout.NORTH);
         splitPane.setVisible(false);
         mainPanel.add(sampleChooser = new SampleChooser(), BorderLayout.WEST);
-        // mainPanel.add(sampleDataPanel = new SampleDataPanel(), BorderLayout.EAST);
         Container cp = getContentPane();
         cp.setLayout(new BoxLayout(cp, BoxLayout.Y_AXIS));
         cp.add(controlPanel = new ControlPanel(app));
         cp.add(mainPanel);
         setMaximumSize(scrollPane.getMaximumSize());
+        
+        setTransferHandler(handler);
+        
         pack();
         setLocationRelativeTo(null); // centre on screen
     }
@@ -208,4 +215,35 @@ public final class MainWindow extends JFrame {
     public ControlPanel getControlPanel() {
         return controlPanel;
     }
+    
+    private final TransferHandler handler = new TransferHandler() {
+        @Override
+        public boolean canImport(TransferSupport trSupp) {
+            return trSupp.isDataFlavorSupported(DataFlavor.javaFileListFlavor);
+        }
+
+        @Override
+        public boolean importData(TransferSupport trSupp) {
+            if (!canImport(trSupp)) {
+                return false;
+            }
+            
+            final Transferable transferable = trSupp.getTransferable();
+
+            try {
+                List<File> files =
+                    (List<File>)transferable.getTransferData(DataFlavor.javaFileListFlavor);
+
+                app.openFiles(files, true);
+                
+                //files.stream().forEach((_item) -> {
+                //    app.errorDialog("OMG!", files.get(0).toString());
+                //});
+            } catch (UnsupportedFlavorException | IOException e) {
+                return false;
+            }
+
+            return true;
+        }
+    };
 }
