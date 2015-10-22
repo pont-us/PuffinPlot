@@ -16,11 +16,13 @@
  */
 package net.talvi.puffinplot.window;
 
+import com.orsonpdf.PDFDocument;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -32,6 +34,9 @@ import java.awt.geom.Rectangle2D;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,8 +48,8 @@ import java.util.logging.Logger;
 import javax.swing.JPanel;
 import net.talvi.puffinplot.plots.Plot;
 import org.apache.batik.dom.GenericDOMImplementation;
-import org.freehep.graphicsio.svg.SVGGraphics2D;
 import org.freehep.util.UserProperties;
+import org.jfree.graphics2d.svg.SVGGraphics2D;
 import org.w3c.dom.DOMImplementation;
 
 /**
@@ -143,6 +148,8 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         g2.transform(zoomTransform);
         super.paint(g2); // draws background and any components
         g2.setRenderingHints(PuffinRenderingHints.getInstance());
+        //g2.setRenderingHint(org.jfree.graphics2d.svg.SVGHints.KEY_DRAW_STRING_TYPE,
+        //        org.jfree.graphics2d.svg.SVGHints.VALUE_DRAW_STRING_TYPE_STANDARD);
         g2.setPaint(Color.BLACK);
         g2.setPaintMode();
         final List<Plot> visiblePlots = getVisiblePlots();
@@ -425,15 +432,53 @@ public abstract class GraphDisplay extends JPanel implements Printable {
      * @param filename the name of the file to which to write
      * @throws java.io.IOException */
     public void saveToSvgFreehep(String filename) throws IOException {
-        final SVGGraphics2D graphics =
+        final org.freehep.graphicsio.svg.SVGGraphics2D graphics =
                 new org.freehep.graphicsio.svg.SVGGraphics2D(new File(filename),
                 this);
         final UserProperties userProps = new UserProperties();
-        userProps.setProperty(SVGGraphics2D.TEXT_AS_SHAPES, false);
+        userProps.setProperty(org.freehep.graphicsio.svg.SVGGraphics2D.TEXT_AS_SHAPES, false);
         graphics.setProperties(userProps);
         graphics.startExport();
         print(graphics);
         graphics.endExport();
         graphics.dispose();
+    }
+        
+    public void experimentalVectorGraphicsExport() throws IOException {
+        final String homeDir = System.getProperty("user.home");
+        final de.erichseifert.vectorgraphics2d.SVGGraphics2D vg2dSvgGraphics =
+                new de.erichseifert.vectorgraphics2d.SVGGraphics2D(0, 0, 2970, 2100);
+        print(vg2dSvgGraphics);
+        final String svgString = vg2dSvgGraphics.toString();
+        Files.write( Paths.get(homeDir + "/vg2d.svg"), svgString.getBytes(),
+                StandardOpenOption.CREATE);
+        
+        final de.erichseifert.vectorgraphics2d.PDFGraphics2D pdfGraphics =
+                new de.erichseifert.vectorgraphics2d.PDFGraphics2D(0, 0, 2970, 2100);
+        print(pdfGraphics);
+        final String pdfString = pdfGraphics.toString();
+        Files.write( Paths.get(homeDir + "/vg2d.pdf"), pdfString.getBytes(),
+                StandardOpenOption.CREATE);
+        
+        final de.erichseifert.vectorgraphics2d.EPSGraphics2D epsGraphics =
+                new de.erichseifert.vectorgraphics2d.EPSGraphics2D(0, 0, 2970, 2100);
+        print(epsGraphics);
+        final String epsString = epsGraphics.toString();
+        Files.write( Paths.get(homeDir + "/vg2d.eps"), epsString.getBytes(),
+                StandardOpenOption.CREATE);
+        
+        final org.jfree.graphics2d.svg.SVGGraphics2D jfreeSvgGraphics =
+                new org.jfree.graphics2d.svg.SVGGraphics2D(2970, 2100);
+        //jfreeSvgGraphics.setRenderingHint(org.jfree.graphics2d.svg.SVGHints.KEY_DRAW_STRING_TYPE,
+        //        org.jfree.graphics2d.svg.SVGHints.VALUE_DRAW_STRING_TYPE_STANDARD);
+        print(jfreeSvgGraphics);
+        Files.write(Paths.get(homeDir + "/jfree.svg"), jfreeSvgGraphics.getSVGDocument().getBytes(),
+                StandardOpenOption.CREATE);
+        
+        final com.orsonpdf.PDFDocument orsonDoc = new PDFDocument();
+        final com.orsonpdf.Page orsonPage = orsonDoc.createPage(new Rectangle(0, 0, 1000, 500));
+        final com.orsonpdf.PDFGraphics2D orsonGraphics = orsonPage.getGraphics2D();
+        print(orsonGraphics);
+        orsonDoc.writeToFile(new File(homeDir + "/orson.pdf"));
     }
 }

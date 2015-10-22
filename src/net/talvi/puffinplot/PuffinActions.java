@@ -824,6 +824,19 @@ public class PuffinActions {
         }
     };
     
+    public final Action exportVectorExperimental = new PuffinAction("Experimental vector graphics export",
+            "*** EXPERIMENTAL ***",
+            '0', false, KeyEvent.VK_X) {
+        private static final long serialVersionUID = 1L;
+        @Override public void actionPerformed(ActionEvent e) {
+                try {
+                app.getMainWindow().getGraphDisplay().experimentalVectorGraphicsExport();
+                } catch (IOException ex) {
+                    app.errorDialog("Error exporting", ex.getLocalizedMessage());
+                }
+        }
+    };
+    
     /**
      * Calculates bootstrap AMS statistics on the selected samples.
      */

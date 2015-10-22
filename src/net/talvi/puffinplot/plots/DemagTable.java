@@ -75,8 +75,8 @@ public class DemagTable extends Plot {
     private String fmt(String format, double value) {
         final String withHyphens = format(Locale.ENGLISH, format,
                 value);
-        return withHyphens;
-        // return withHyphens.replace('-', '\u2212');
+        // return withHyphens;
+        return withHyphens.replace('-', '\u2212');
         // Need to ensure that minus signs work in all exported graphics
         // before using them here.
     }
