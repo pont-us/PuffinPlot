@@ -16,3 +16,4 @@ syntax: regexp
 ^manual/.*~$
 ^.*~$
 ^build.credentials.properties$
+^.be/id-cache$
