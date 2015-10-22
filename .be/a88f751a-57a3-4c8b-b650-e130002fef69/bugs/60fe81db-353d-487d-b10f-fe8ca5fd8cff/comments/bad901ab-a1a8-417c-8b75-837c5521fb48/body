@@ -1,0 +1,4 @@
+Implemented as specified. Each Save dialog now has its own
+last-used directory stored. Note that, by design, these don't
+persist over program restarts -- I think that this is the most
+natural behaviour.

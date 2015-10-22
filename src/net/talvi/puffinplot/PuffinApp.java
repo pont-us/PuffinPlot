@@ -124,6 +124,12 @@ public final class PuffinApp {
     private static final int OSX_POINT_VERSION = determineOsxPointVersion();
     private SuiteCalcs multiSuiteCalcs;
     private final Version version;
+    
+    /* I don't use IdToFileMap for lastUsedSaveDirectories, because I think
+    it's better that the save directories *don't* persist between restarts
+    of the program. Inkscape has persistent save directories and I've found
+    it be very counterintuitive. */
+    private final Map<String,String> lastUsedSaveDirectories = new HashMap<>();
 
     static {
         final Handler logStringHandler =
@@ -1782,9 +1788,15 @@ public final class PuffinApp {
     String getSavePath(final String title, final String extension,
             final String type) {
         final boolean useSwingChooserForSave = !app.isOnOsX();
+        final String lastDirKey = title + extension + type;
+        // It's a deliberate choice not to use IdToFileMap here --
+        // see comment on lastUsedSaveDirectories declaration.
+        final String startingDir =
+                lastUsedSaveDirectories.containsKey(lastDirKey) ?
+                lastUsedSaveDirectories.get(lastDirKey) : null;
         String pathname = null;
         if (useSwingChooserForSave) {
-            JFileChooser chooser = new JFileChooser();
+            final JFileChooser chooser = new JFileChooser(startingDir);
             chooser.setDialogTitle(title);
             if (extension != null && type != null) {
                 chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
@@ -1800,19 +1812,20 @@ public final class PuffinApp {
                 }
             });}
             int choice = chooser.showSaveDialog(app.getMainWindow());
-            if (choice == JFileChooser.APPROVE_OPTION)
+            if (choice == JFileChooser.APPROVE_OPTION) {
                 pathname = chooser.getSelectedFile().getPath();
+            }
         } else {
-            FileDialog fd = new FileDialog(app.getMainWindow(), title,
+            final FileDialog fd = new FileDialog(app.getMainWindow(), title,
                     FileDialog.SAVE);
+            if (startingDir != null) {
+                fd.setDirectory(startingDir);
+            }
             if (extension != null) {
-            fd.setFilenameFilter(new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    return name.toLowerCase().endsWith(extension) ||
-                            (new File(dir, name)).isDirectory();
-                }
-            });}
+                fd.setFilenameFilter((File dir, String name) ->
+                        name.toLowerCase().endsWith(extension) ||
+                                (new File(dir, name)).isDirectory());
+            }
             fd.setVisible(true);
             if (fd.getFile() == null) { // "cancel" selected
                 pathname = null;
@@ -1825,6 +1838,7 @@ public final class PuffinApp {
             pathname += extension;
         if (pathname != null) {
             final File file = new File(pathname);
+            lastUsedSaveDirectories.put(lastDirKey, file.getParent());
             if (file.exists()) {
                 if (file.isDirectory()) {
                     app.errorDialog("File exists",
