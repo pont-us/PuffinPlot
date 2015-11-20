@@ -1,0 +1,8 @@
+This would be pretty easy to implement -- just fetch a baked-in
+URL which gives the latest released version. Said URL should 
+probably give a URL where latest version can be downloaded, in 
+cae I have to switch hosts again. One problem is what to use
+as a long-term host for the "latest version" URL. Perhaps a
+PURL or similar? Then again, if the URL's not present we just 
+skip the version check, so it's not a huge disaster if it has
+to move.

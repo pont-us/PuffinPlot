@@ -26,6 +26,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class represents a sample on which measurements have been made.
@@ -55,6 +57,7 @@ public class Sample {
     private double magDev = Double.NaN;
     private FisherValues fisherValues;
     private Vec3 importedDirection = null;
+    private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
 
     /**
      * Creates a new sample. For discrete samples, the supplied name can
@@ -805,7 +808,8 @@ public class Sample {
      * @param string a string specifying some of the sample's fields
      */
     public void fromString(String string) {
-        String[] parts = string.split("\t", -1); // don't discard trailing empty strings
+        final String[] parts =
+                string.split("\t", -1); // don't discard trailing empty strings
         if (null != parts[0]) switch (parts[0]) {
             case "CUSTOM_FLAGS":
                 final List<Boolean> flags = new ArrayList<>(parts.length-1);
@@ -827,6 +831,10 @@ public class Sample {
                 final double dec = Double.parseDouble(parts[1]);
                 final double inc = Double.parseDouble(parts[2]);
                 importedDirection = Vec3.fromPolarDegrees(1., inc, dec);
+                break;
+            default:
+                logger.log(Level.WARNING, "Sample field {0} not recognized.",
+                        parts[0]);
                 break;
         }
     }
@@ -941,6 +949,9 @@ public class Sample {
             case FORM_DIP: setFormDip(parseDouble(value)); break;
             case VIRT_FORM_STRIKE: setFormStrike(parseDouble(value)); break;
             case MAG_DEV: setMagDev(parseDouble(value)); break;
+            default:
+                logger.log(Level.WARNING, "Unhandled Datum field: {0}", field.name());
+                break;
         }
         for (Datum d: getData()) {
             d.setValue(field, value, 1);

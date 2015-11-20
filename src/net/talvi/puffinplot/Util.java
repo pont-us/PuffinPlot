@@ -195,22 +195,26 @@ public class Util {
     }
 
     private static class Outcode {
-        private int bitField = 0;
+        private final int bitField;
+        
         public Outcode(Point2D p, Rectangle2D r) {
             this(p.getX(), p.getY(), r);
         }
+        
         public Outcode(double x, double y, Rectangle2D r) {
             bitField = (y > r.getMaxY() ? 8 : 0) |
                (y < r.getMinY() ? 4 : 0) |
                (x > r.getMaxX() ? 2 : 0) |
                (x < r.getMinX() ? 1 : 0);
         }
-        public boolean top() { return (bitField & 8) > 0; }
-        public boolean bottom() { return (bitField & 4) > 0; }
-        public boolean right() { return (bitField & 2) > 0; }
-        public boolean left() { return (bitField & 1) > 0; }
+        
+        public boolean top() { return (bitField & 8) != 0; }
+        public boolean bottom() { return (bitField & 4) != 0; }
+        public boolean right() { return (bitField & 2) != 0; }
+        public boolean left() { return (bitField & 1) != 0; }
         public boolean inside() { return bitField == 0; }
         public boolean outside() { return bitField != 0; }
+        
         @Override
         public boolean equals(Object o) {
             if (o instanceof Outcode) {
@@ -227,6 +231,7 @@ public class Util {
             hash = 47 * hash + this.bitField;
             return hash;
         }
+        
         public boolean sameSide(Outcode oc) {
             return (bitField & oc.bitField) != 0;
         }

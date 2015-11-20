@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
@@ -66,7 +67,7 @@ public enum FileType {
      * @throws IOException if an I/O error occurred
      */
 	static public FileType guess(File file) throws IOException {
-		String name = file.getName().toLowerCase();
+		final String name = file.getName().toLowerCase(Locale.ENGLISH);
 		if (name.endsWith(".dat")) return TWOGEE;
                 else if (name.endsWith(".iapd")) return IAPD;
 		else if (name.endsWith(".txt")) return ZPLOT;
@@ -76,8 +77,8 @@ public enum FileType {
                     FileType result = PUFFINPLOT_OLD;
                     try {
                          reader = new BufferedReader(new FileReader(file));
-                         String line = reader.readLine();
-                         if (line.startsWith("PuffinPlot file."))
+                         final String line = reader.readLine();
+                         if (line != null && line.startsWith("PuffinPlot file."))
                              result = PUFFINPLOT_NEW;
                     } finally {
                         try { if (reader != null) reader.close(); }

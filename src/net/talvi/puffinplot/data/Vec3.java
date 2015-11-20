@@ -202,10 +202,10 @@ public class Vec3 {
          * a dot product of two normalized vectors which is >1. This
          * then produces a NaN for the arc cosine, which in turn can
          * cause Graphics2D.draw(Path2D) to hang if it propagates into
-         * a Path2D. (Perhaps related to http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4587651 ,
+         * a Path2D. (Perhaps related to
+         * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4587651 ,
          * but that one reports a crash rather than a hang.) In any case we need
          * to do the check below to guard against this very rare case.
-         * 
          */
         if (dotProduct > 1) dotProduct = 1;
         if (dotProduct < -1) dotProduct = -1;
@@ -229,7 +229,7 @@ public class Vec3 {
             result.add(thisVec);
             prevVec = thisVec;
         }
-                result.add(v1n);
+        result.add(v1n);
         return result;
     }
 
