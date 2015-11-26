@@ -721,6 +721,23 @@ public final class PuffinApp {
         getMainWindow().suitesChanged();
     }
 
+    /** Creates a new, empty suite and adds it to the suite list.
+     * 
+     * Mainly intended for use by scripts, so not currently
+     * accessible via the GUI.
+     */
+    public void createNewSuite(String name) {
+        final Suite suite = new Suite("PuffinPlot " + version.versionString);
+        suite.addSavedListener((boolean newState) -> {
+            updateMainWindowTitle();
+        });
+        suites.add(suite);
+        currentSuite = suites.get(suites.size()-1);
+        mainWindow.getMainMenuBar().updateRecentFiles();
+        mainWindow.updateSampleDataPanel();
+        updateDisplay();
+    }
+    
     /** Reads data into the current suite, or a new suite,
      * from the specified files.
      * 

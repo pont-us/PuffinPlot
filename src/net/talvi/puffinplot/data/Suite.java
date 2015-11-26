@@ -61,7 +61,7 @@ public final class Suite {
     private List<KentParams> hextParams = null;
     private boolean saved = true;
     private Date creationDate;
-    private FileType originalFileType;
+    private FileType originalFileType = FileType.UNKNOWN;
     private static final DateFormat iso8601format =
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
     private Date modificationDate;
@@ -160,6 +160,10 @@ public final class Suite {
      */
     public static List<FisherValues> doReversalTest(List<Suite> suites) {
         List<Vec3> normal = new ArrayList<>(), reversed = new ArrayList<>();
+        
+        // Good candidate for streamification:
+        // see http://stackoverflow.com/a/30110890
+        
         for (Suite suite: suites) {
             for (Sample sample: suite.getSamples()) {
                 final Vec3 vector = sample.getDirection();
@@ -895,7 +899,9 @@ public final class Suite {
         }
         result.add("CREATION_DATE\t" + iso8601format.format(creationDate));
         result.add("MODIFICATION_DATE\t" + iso8601format.format(modificationDate));
-        result.add("ORIGINAL_FILE_TYPE\t" + originalFileType.name());
+        if (originalFileType != null) {
+            result.add("ORIGINAL_FILE_TYPE\t" + originalFileType.name());
+        }
         result.add("ORIGINAL_CREATOR_PROGRAM\t" + fileCreator);
         result.add("SAVED_BY_PROGRAM\t" + suiteCreator);
         return result;
