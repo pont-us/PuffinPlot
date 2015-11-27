@@ -1043,7 +1043,7 @@ public class PuffinActions {
     /**
      * Performs an RPI calculation.
      */
-    public final Action calculateRpi = new PuffinAction("Calculate RPI",
+    public final Action calculateRpi = new PuffinAction("Calculate RPI…",
             "Calculate relative palaeomagnetic intensity",
             null, false, KeyEvent.VK_R) {
         private static final long serialVersionUID = 1L;

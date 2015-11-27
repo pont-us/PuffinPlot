@@ -27,6 +27,8 @@ wget http://central.maven.org/maven2/org/apache/commons/commons-compress/1.9/com
 
 wget http://central.maven.org/maven2/commons-cli/commons-cli/1.2/commons-cli-1.2.jar
 
+wget http://central.maven.org/maven2/org/apache/commons/commons-math3/3.5/commons-math3-3.5.jar
+
 ### unpack the needed libraries
 
 cd ..
@@ -58,10 +60,11 @@ tar -zxv --strip-components=2 --transform s/-[0-9.]*jar/.jar/ \
   vectorgraphics-2.1.1/lib/freehep-xml-2.1.1.jar \
   vectorgraphics-2.1.1/lib/freehep-graphicsio-2.1.1.jar
 
-# The itext, appbundler, commons-compress, and commons-cli jars are not
-# additionally packaged, so we can just link them.
+# The itext, appbundler, commons-compress, commons-cli, and commons-math
+# jars are not additionally packaged, so we can just link them.
 
 ln -s packages/itext-2.1.7.jar itext.jar
 ln -s packages/appbundler-1.0.jar appbundler.jar
 ln -s packages/commons-compress-1.9.jar commons-compress.jar
 ln -s packages/commons-cli-1.2.jar commons-cli.jar
+ln -s packages/commons-math3-3.5.jar commons-math.jar

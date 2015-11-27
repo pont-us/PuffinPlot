@@ -353,6 +353,16 @@ public class Sample {
         return null;
     }
     
+    /**
+     * Returns a list of the treatment levels in this sample.
+     * 
+     * @return a list of the treatment levels in this sample
+     */
+    public double[] getTreatmentLevels() {
+        return data.stream().mapToDouble(d -> d.getTreatmentLevel()).
+                sorted().distinct().toArray();
+    }
+    
     /** Adds a data point to this sample.
      * @param datum a data point to add to this sample
      */
