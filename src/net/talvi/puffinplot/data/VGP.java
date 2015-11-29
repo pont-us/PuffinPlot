@@ -42,7 +42,7 @@ public class VGP {
     private final Location location;
     
     private static final List<String> HEADERS =
-        Arrays.asList("VGP lat (°)", "VGP long (°)", "VGP dp (°)", "VGP dm (°)");
+        Arrays.asList("VGP lat (deg)", "VGP long (deg)", "VGP dp (deg)", "VGP dm (deg)");
     
     private VGP(Location location, double dp, double dm) {
         this.location = location;

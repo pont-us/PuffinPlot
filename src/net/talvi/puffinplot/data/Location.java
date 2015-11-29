@@ -32,7 +32,7 @@ public class Location {
     private final double longitude;
     
     private static final List<String> HEADERS =
-            Arrays.asList("Lat (°)", "Long (°)");
+            Arrays.asList("Lat (deg)", "Long (deg)");
 
     
     /**

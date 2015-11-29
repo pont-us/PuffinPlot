@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * This class represents a sample on which measurements have been made.
@@ -777,13 +778,10 @@ public class Sample {
      * @return a string representation of the requested fields for
      *         each {@link Datum} in this sample
      */
-    public List<String> exportFields(List<DatumField> fields) {
-        final List<Datum> ds = getData();
-        final List<String> result = new ArrayList<>(ds.size());
-        for (Datum d: ds) {
-            result.add(d.exportFieldValues(fields, "\t"));
-        }
-        return result;
+    public List<String> exportFields(List<DatumField> fields) {       
+        return getData().stream().
+                map(d -> d.exportFieldValues(fields, "\t")).
+                collect(Collectors.toList());
     }
 
     /**

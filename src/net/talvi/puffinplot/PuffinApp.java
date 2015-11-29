@@ -1949,7 +1949,7 @@ public final class PuffinApp {
             
             fw.write("Depth");            
             for (double level: treatmentLevels) {
-                fw.write(String.format(Locale.ENGLISH, ", %g", level));
+                fw.write(String.format(Locale.ENGLISH, ",%g", level));
             }
             fw.write(", mean ratio, slope, r, r-squared\n");
             
@@ -1975,11 +1975,11 @@ public final class PuffinApp {
                             final double nrmInt = nrmStep.getIntensity();
                             final double armInt = armStep.getIntensity();
                             fw.write(String.format(Locale.ENGLISH,
-                                    ", %g", nrmInt/armInt));
+                                    ",%g", nrmInt/armInt));
                             nrmInts.add(nrmInt);
                             armInts.add(armInt);
                         } else {
-                            fw.write(", ");
+                            fw.write(",");
                         }
                     }
                     double totalRatio = 0;
@@ -1989,7 +1989,7 @@ public final class PuffinApp {
                         totalRatio += nrmInts.get(i) / armInts.get(i);
                         regression.addData(armInts.get(i), nrmInts.get(i));
                     }
-                    fw.write(String.format(Locale.ENGLISH, ",%g, %g, %g, %g",
+                    fw.write(String.format(Locale.ENGLISH, ",%g,%g,%g,%g",
                             totalRatio/nPairs,
                             regression.getSlope(),
                             regression.getR(),

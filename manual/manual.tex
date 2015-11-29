@@ -499,35 +499,35 @@ Suite                & Suite name \\
 Sample               & Sample name (only present in discrete files)\\
 Depth                & Depth in core (only present in long core files)\\
 \caps{nrm} intensity (A/m) & \caps{Nrm} intensity in A/m \\
-\caps{ms} jump temp. (\textdegree C) & For thermal demagnetization, the
+\caps{ms} jump temp. (degC) & For thermal demagnetization, the
 temperature step at which the first jump in magnetic susceptibility occurs.
 A jump is defined as a susceptibility of at least 2.5 times the previous value.
 \\
 Steps                  & Number of treatment steps for this sample\\
-\caps{pca} dec. (\textdegree)     & Declination of \caps{pca} direction (\textdegree)\\
-\caps{pca} inc. (\textdegree)     & Inclination of \caps{pca} direction (\textdegree)\\
+\caps{pca} dec. (deg)     & Declination of \caps{pca} direction (\textdegree)\\
+\caps{pca} inc. (deg)     & Inclination of \caps{pca} direction (\textdegree)\\
 \caps{pca} \caps{mad}1 &  The Maximum Angle of Deviation
 for the planar \caps{pca} fit; the smaller the value, the more coplanar the points. See section~\ref{sec:plot-types} for more details.\\
 \caps{pca} \caps{mad}3 & The Maximum Angle of Deviation
 for the linear \caps{pca} fit; the smaller the value, the more collinear the points. See section~\ref{sec:plot-types} for more details.\\
 \caps{pca} anchored    & `Y' if the \caps{pca} fit was anchored; `N' if not \\
 \caps{pca} equation    & The Cartesian equation of the \caps{pca} best-fit line \\
-\caps{pca} start (\textdegree C or mT)      & Field (in mT) or temperature 
+\caps{pca} start (degC or mT)      & Field (in mT) or temperature 
 (in \textdegree C) of first demagnetization step used for \caps{pca} analysis\\
-\caps{pca} end (\textdegree C or mT)        & Field (in mT) or temperature 
+\caps{pca} end (degC or mT)        & Field (in mT) or temperature 
 (in \textdegree C) of last demagnetization step used for \caps{pca} analysis \\
 \caps{pca} contiguous       & `Y' if
 all steps between the first and last were selected for \caps{pca};
 `N' if any were omitted \\
-\caps{GC} dec (\textdegree) & the declination of the pole to the fitted great circle, if any \\
-\caps{GC} inc (\textdegree) & the inclination of the pole to the fitted great circle, if any \\
-\caps{GC} strike (\textdegree) & the strike of the plane of the fitted great circle, if any \\
-\caps{GC} dip (\textdegree) & the dip of the plane of the fitted great circle, if any \\
+\caps{GC} dec (deg) & the declination of the pole to the fitted great circle, if any \\
+\caps{GC} inc (deg) & the inclination of the pole to the fitted great circle, if any \\
+\caps{GC} strike (deg) & the strike of the plane of the fitted great circle, if any \\
+\caps{GC} dip (deg) & the dip of the plane of the fitted great circle, if any \\
 \caps{GC} \caps{mad}1 & the \caps{mad}1 value for the great circle fit,
 indicating goodness of fit (smaller is better). See section~\ref{sec:plot-types} for more details. \\
 \caps{GC} npoints & the number of points used for the great-circle fit \\
 \caps{mdf} half-intensity (A/m)  & half of the \caps{nrm} (in A/m) \\
-\caps{mdf} demagnetization (\textdegree C or mT) & the demagnetization treatment level
+\caps{mdf} demagnetization (degC or mT) & the demagnetization treatment level
 at which the \caps{nrm} was reduced to half (in \textdegree C or mT) \\
 \caps{mdf} midpoint reached & `Y' if magnetization
 intensity reached half the \caps{nrm} intensity during demagnetization;
@@ -572,9 +572,9 @@ section~\ref{sec:annotations} for details. \\ \bottomrule
   \caps{gc} valid & `Y' if the great-circle fit
   is valid, `N' otherwise. See section~\ref{sec:prefs-misc} for
   details on the validity test and how it may be customized. \\
-  \caps{gc} dec. (°) & Declination of great-circle direction (\textdegree) \\
-  \caps{gc} inc. (°) & Inclination of great-circle direction (\textdegree) \\
-  \caps{gc} a95 (°) & \alnifi{} for great-circle direction (\textdegree) \\
+  \caps{gc} dec. (deg) & Declination of great-circle direction (\textdegree) \\
+  \caps{gc} inc. (deg) & Inclination of great-circle direction (\textdegree) \\
+  \caps{gc} a95 (deg) & \alnifi{} for great-circle direction (\textdegree) \\
   \caps{gc} k     & {\em k}-value for great-circle direction \\
   \caps{gc n}     & Number of great circles used in great-circle fit \\
   \caps{gc m}     & Number of \caps{pca} directions used in great-circle fit \\
@@ -585,12 +585,12 @@ section~\ref{sec:annotations} for details. \\ \bottomrule
   \caps{t}1max & See note below \\
   \caps{t}2min & See note below \\
   \caps{t}2max & See note below \\
-  Lat (°) & Site latitude \\
-  Long (°) &  Site longitude \\
-  VGP lat (°) & VGP latitude \\
-  VGP long (°) & VGP longitude \\
-  VGP dp (°) & \emph{dp}, the first semi-axis of the \caps{vgp} confidence ellipse \\
-  VGP dm (°) & \emph{dm}, the second semi-axis of the \caps{vgp} confidence ellipse\\ \bottomrule
+  Lat (deg) & Site latitude \\
+  Long (deg) &  Site longitude \\
+  VGP lat (deg) & VGP latitude \\
+  VGP long (deg) & VGP longitude \\
+  VGP dp (deg) & \emph{dp}, the first semi-axis of the \caps{vgp} confidence ellipse \\
+  VGP dm (deg) & \emph{dm}, the second semi-axis of the \caps{vgp} confidence ellipse\\ \bottomrule
 \end{tabular}
 
 \smallskip

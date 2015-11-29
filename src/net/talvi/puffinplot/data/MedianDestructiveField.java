@@ -49,7 +49,7 @@ public class MedianDestructiveField {
     private final boolean halfIntReached;
     private static final List<String> HEADERS =
         Arrays.asList("MDF half-intensity (A/m)",
-            "MDF demagnetization (°C or T)", "MDF midpoint reached");
+            "MDF demagnetization (degC or T)", "MDF midpoint reached");
 
     private MedianDestructiveField(double demagLevel, double intensity,
             boolean halfIntReached) {

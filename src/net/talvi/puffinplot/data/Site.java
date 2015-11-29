@@ -203,8 +203,8 @@ public class Site {
      * for the great-circle analyses
      */
     public static List<String> getGreatCircleLimitHeader() {
-        return Arrays.asList(new String[] {"GC D1min (°C or mT)",
-            "GC D1max (°C or mT)","GC D2min (°C or mT)","GC D2max (°C or mT)"});
+        return Arrays.asList(new String[] {"GC D1min (degC or mT)",
+            "GC D1max (degC or mT)","GC D2min (degC or mT)","GC D2max (degC or mT)"});
     }
 
     /** Returns information on the treatment steps used for the 

@@ -681,7 +681,7 @@ public final class Suite {
             writer = new CsvWriter(new FileWriter(file));
             writer.writeCsv("Suite", measType.getColumnHeader(),
                     "NRM intensity (A/m)",
-                    "MS jump temp. (°C)",
+                    "MS jump temp. (degC)",
                     "Steps",
                     PcaAnnotated.getHeaders(),
                     GreatCircle.getHeaders(),

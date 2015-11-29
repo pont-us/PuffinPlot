@@ -40,8 +40,8 @@ public class FisherValues implements FisherParams {
     private final List<Vec3> directions;
     private final static double p = 0.05;
     private static final List<String> HEADERS =
-        Arrays.asList("Fisher dec. (°)", "Fisher inc. (°)",
-            "Fisher a95 (°)", "Fisher k", "Fisher nDirs", "Fisher R");
+        Arrays.asList("Fisher dec. (deg)", "Fisher inc. (deg)",
+            "Fisher a95 (deg)", "Fisher k", "Fisher nDirs", "Fisher R");
 
     private FisherValues(List<Vec3> directions, double a95, double k, int N,
             double R, Vec3 meanDirection) {

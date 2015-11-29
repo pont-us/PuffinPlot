@@ -36,7 +36,7 @@ public class PcaValues {
     private final boolean anchored;
     private final int nPoints;
     private static final List<String> HEADERS =
-        Arrays.asList("PCA dec. (°)", "PCA inc. (°)", "PCA MAD1", "PCA MAD3",
+        Arrays.asList("PCA dec. (deg)", "PCA inc. (deg)", "PCA MAD1", "PCA MAD3",
                 "PCA anchored", "PCA equation", "PCA npoints");
     
     private PcaValues(Vec3 direction, double mad1, double mad3,
