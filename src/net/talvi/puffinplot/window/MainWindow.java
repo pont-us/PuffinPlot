@@ -17,7 +17,6 @@
 package net.talvi.puffinplot.window;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.datatransfer.DataFlavor;
@@ -28,16 +27,12 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Locale;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.TransferHandler;
-import javax.swing.border.EmptyBorder;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.Sample;
 
@@ -95,7 +90,7 @@ public final class MainWindow extends JFrame {
         splitPaneDividerWidth = splitPane.getDividerSize();
         splitPane.setDividerSize(0);
         mainPanel.add(splitPane);
-        mainPanel.add(welcomeMessage = new WelcomeMessage(),
+        mainPanel.add(welcomeMessage = WelcomeMessage.getInstance(app),
                 BorderLayout.NORTH);
         splitPane.setVisible(false);
         mainPanel.add(sampleChooser = new SampleChooser(), BorderLayout.WEST);
@@ -111,37 +106,6 @@ public final class MainWindow extends JFrame {
         setLocationRelativeTo(null); // centre on screen
     }
     
-    private class WelcomeMessage extends JPanel {
-        public WelcomeMessage() {
-            super();
-            setBorder(new EmptyBorder(12, 12, 12, 12));
-            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-            final PuffinApp.Version version = PuffinApp.getInstance().getVersion();
-            final String welcome =
-                    String.format(Locale.ENGLISH,
-                            "Welcome to PuffinPlot, version %s. "
-                                    + "This puffin hatched on %s.",
-                            version.getVersionString(),
-                            version.getDateString());
-            add(new JLabel(welcome));
-            add(new JLabel(String.format(Locale.ENGLISH,
-                    "PuffinPlot is copyright %s by Pontus Lurcock.",
-                    version.getYearRange())));
-            final JPanel citePanel = new JPanel();
-            citePanel.setBorder(new EmptyBorder(12, 0, 12, 12));
-            citePanel.setLayout(new BoxLayout(citePanel, BoxLayout.X_AXIS));
-            citePanel.add(new JLabel("If you use PuffinPlot in a published work, please "));
-            JButton citeMeButton =
-                    new JButton("click here to cite the PuffinPlot paper.");
-            citePanel.add(citeMeButton);
-            citeMeButton.setAction(app.getActions().openCiteWindow);
-            citePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-            add(citePanel);
-            add(new JLabel("PuffinPlot is distributed under the GNU General Public License."));
-            add(new JLabel("Select ‘About PuffinPlot’ from the Help menu for details."));
-            
-        }
-    }
 
     /**
      * Returns this window's sample chooser.
@@ -236,9 +200,6 @@ public final class MainWindow extends JFrame {
 
                 app.openFiles(files, true);
                 
-                //files.stream().forEach((_item) -> {
-                //    app.errorDialog("OMG!", files.get(0).toString());
-                //});
             } catch (UnsupportedFlavorException | IOException e) {
                 return false;
             }
