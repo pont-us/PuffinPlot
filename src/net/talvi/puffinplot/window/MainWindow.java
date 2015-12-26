@@ -62,41 +62,51 @@ public final class MainWindow extends JFrame {
     private final JSplitPane splitPane;
     private final int splitPaneDividerWidth;
     private final PuffinApp app;
+    private final JPanel mainPanel;
 
     /**
      * Creates a new main window.
      * 
      * @param app The PuffinPlot instance associated with this window
      */
-    public MainWindow(PuffinApp app) {
+    private MainWindow(PuffinApp app) {
         this.app = app;
+        menuBar = new MainMenuBar(app);
+        graphDisplay = new MainGraphDisplay(app);
+        scrollPane = new JScrollPane(getGraphDisplay());
+        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+                scrollPane, sampleDataPanel = new SampleDataPanel());
+        splitPaneDividerWidth = splitPane.getDividerSize();
+        mainPanel = new JPanel();
+        controlPanel = new ControlPanel(app);
+        welcomeMessage = WelcomeMessage.getInstance(app);
+        sampleChooser = new SampleChooser();
+    }
+    
+    private void addComponents() {
+    
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override public void windowClosing(WindowEvent e) {
                 MainWindow.this.app.quit();}});
         setTitle("PuffinPlot");
-        setPreferredSize(new Dimension(1000,700));
-        menuBar = new MainMenuBar(app);
+        setPreferredSize(new Dimension(1000, 700));
         setJMenuBar(menuBar);
         
-        final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
-        graphDisplay = new MainGraphDisplay(app);
-        scrollPane = new JScrollPane(getGraphDisplay());
-        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-                scrollPane, sampleDataPanel = new SampleDataPanel());
+                mainPanel.add(welcomeMessage,
+                BorderLayout.NORTH);
+        mainPanel.add(sampleChooser, BorderLayout.WEST);
+        
         splitPane.setResizeWeight(1.0);
         splitPane.setOneTouchExpandable(true);
-        splitPaneDividerWidth = splitPane.getDividerSize();
         splitPane.setDividerSize(0);
         mainPanel.add(splitPane);
-        mainPanel.add(welcomeMessage = WelcomeMessage.getInstance(app),
-                BorderLayout.NORTH);
         splitPane.setVisible(false);
-        mainPanel.add(sampleChooser = new SampleChooser(), BorderLayout.WEST);
-        Container cp = getContentPane();
+        
+        final Container cp = getContentPane();
         cp.setLayout(new BoxLayout(cp, BoxLayout.Y_AXIS));
-        cp.add(controlPanel = new ControlPanel(app));
+        cp.add(controlPanel);
         cp.add(mainPanel);
         setMaximumSize(scrollPane.getMaximumSize());
         
@@ -106,6 +116,18 @@ public final class MainWindow extends JFrame {
         setLocationRelativeTo(null); // centre on screen
     }
     
+    /**
+     * Creates and returns a new main window object.
+     * The constructor is private.
+     * 
+     * @param app the PuffinApp instance to associate with the window
+     * @return a new main window object
+     */
+    public static MainWindow getInstance(PuffinApp app) {
+        final MainWindow mw = new MainWindow(app);
+        mw.addComponents();
+        return mw;
+    }
 
     /**
      * Returns this window's sample chooser.

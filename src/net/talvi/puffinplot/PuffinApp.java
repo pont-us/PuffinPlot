@@ -207,7 +207,7 @@ public final class PuffinApp {
         citeWindow = new CiteWindow(this);
         // NB main window must be instantiated last, as
         // the Window menu references the other windows
-        mainWindow = new MainWindow(this);
+        mainWindow = MainWindow.getInstance(this);
         setApplicationIcon();
         Correction corr =
                 Correction.fromString(prefs.getPrefs().get("correction", "false false NONE false"));
