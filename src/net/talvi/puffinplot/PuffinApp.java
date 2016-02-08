@@ -1899,6 +1899,7 @@ public final class PuffinApp {
             errorDialog("Not enough suites for RPI", "An RPI calculation "
                     + "requires two open suites: one for NRM, and one for"
                     + "ARM.");
+            return;
         }
         
         final JComboBox<Suite> nrmSuiteCombo =
