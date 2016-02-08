@@ -19,6 +19,7 @@ package net.talvi.puffinplot.window;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -29,6 +30,7 @@ import java.io.IOException;
 import java.util.List;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -63,6 +65,8 @@ public final class MainWindow extends JFrame {
     private final int splitPaneDividerWidth;
     private final PuffinApp app;
     private final JPanel mainPanel;
+    private final JPanel statusBar;
+    private final JLabel statusLabel;
 
     /**
      * Creates a new main window.
@@ -81,6 +85,8 @@ public final class MainWindow extends JFrame {
         controlPanel = new ControlPanel(app);
         welcomeMessage = WelcomeMessage.getInstance(app);
         sampleChooser = new SampleChooser();
+        statusBar = new JPanel();
+        statusLabel = new JLabel("Status bar");        
     }
     
     private void addComponents() {
@@ -93,10 +99,14 @@ public final class MainWindow extends JFrame {
         setPreferredSize(new Dimension(1000, 700));
         setJMenuBar(menuBar);
         
+        statusBar.setLayout(new FlowLayout(FlowLayout.LEADING));
+        statusBar.add(statusLabel);
+        
         mainPanel.setLayout(new BorderLayout());
                 mainPanel.add(welcomeMessage,
                 BorderLayout.NORTH);
         mainPanel.add(sampleChooser, BorderLayout.WEST);
+        mainPanel.add(statusBar, BorderLayout.SOUTH);
         
         splitPane.setResizeWeight(1.0);
         splitPane.setOneTouchExpandable(true);

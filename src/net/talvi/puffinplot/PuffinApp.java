@@ -1074,7 +1074,7 @@ public final class PuffinApp {
     }
 
     /** Returns the data table window. 
-     * @return the data tabe window */
+     * @return the data table window */
     public TableWindow getTableWindow() {
         return tableWindow;
     }
