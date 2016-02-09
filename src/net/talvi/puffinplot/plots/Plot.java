@@ -544,6 +544,23 @@ public abstract class Plot
             }
         }
     }
+    
+    /**
+     * Returns the datum associated with the point at the given position,
+     * or null if no such datum exists.
+     * 
+     * @param position a position
+     * @return the datum whose point is at the position, if any -- otherwise null
+     */
+    public Datum getDatumForPosition(java.awt.geom.Point2D position) {
+        for (PlotPoint p: points) {
+            final Datum d = p.getDatum();
+            if (d != null && !d.isHidden() && p.getShape().contains(position)) {
+                return d;
+            }
+        }
+        return null;
+    }
 
     /** Sets selection state for data points in a rectangle.
      * Only visible points (i.e. those for which {@code isHidden()} is 

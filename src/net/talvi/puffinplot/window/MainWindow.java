@@ -36,6 +36,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.TransferHandler;
 import net.talvi.puffinplot.PuffinApp;
+import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.Sample;
 
 /**
@@ -121,6 +122,13 @@ public final class MainWindow extends JFrame {
         setMaximumSize(scrollPane.getMaximumSize());
         
         setTransferHandler(handler);
+        
+        graphDisplay.addCurrentDatumListener(new CurrentDatumListener() {
+            @Override
+            public void datumChanged(Datum d) {
+                statusLabel.setText(d == null ? "---" : ">" + d.getAfZ());
+            }
+        });
         
         pack();
         setLocationRelativeTo(null); // centre on screen

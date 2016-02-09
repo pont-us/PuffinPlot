@@ -36,11 +36,14 @@ import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
+import net.talvi.puffinplot.PuffinApp;
+import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.plots.Plot;
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.freehep.graphicsio.svg.SVGGraphics2D;
@@ -73,6 +76,8 @@ public abstract class GraphDisplay extends JPanel implements Printable {
             AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .2f);
     private static final AlphaComposite STRONG_COMPOSITE =
             AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .8f);
+    private final List<CurrentDatumListener> currentDatumListeners = 
+            new LinkedList<>();
          
     GraphDisplay() {
         setPreferredSize(new Dimension(1200, 800));
@@ -168,7 +173,7 @@ public abstract class GraphDisplay extends JPanel implements Printable {
                 g2.setComposite(STRONG_COMPOSITE);
                 g2.draw(r);
             } else {
-                for (Plot plot : visiblePlots) plot.draw(g2);
+                for (Plot plot: visiblePlots) plot.draw(g2);
             }
         } else {
             for (Plot plot : visiblePlots) {
@@ -251,6 +256,7 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         private static final int LEFT=1, TOP=2, RIGHT=4, BOTTOM=8, ALLSIDES=15;
         private int sides;
         private Point2D currentDragPoint;
+        private Datum previousDatum;
         private int currentButton;
         
         /** Handles a mouse click event.
@@ -357,11 +363,31 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         }
 
         @Override
-        public void mouseEntered(MouseEvent e) {}
+        public void mouseEntered(MouseEvent e) {
+        }
         @Override
-        public void mouseExited(MouseEvent e) {}
+        public void mouseExited(MouseEvent e) {
+        }
         @Override
-        public void mouseMoved(MouseEvent e) {}
+        public void mouseMoved(MouseEvent e) {
+            final Point2D currentMovePoint = e.getPoint();
+            Datum currentDatum = null;
+            for (Plot plot: getPlots()) {
+                if (!plot.isVisible()) continue;
+                final Datum d = plot.getDatumForPosition(currentMovePoint);
+                if (d != null) {
+                    currentDatum = d;
+                    break;
+                }
+            }
+            if (currentDatum == previousDatum) {
+                return;
+            }
+            for (CurrentDatumListener listener: currentDatumListeners) {
+                listener.datumChanged(currentDatum);
+            }
+            previousDatum = currentDatum;
+        }
 
         /**
          * Returns the currently depressed mouse button.
@@ -435,5 +461,13 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         print(graphics);
         graphics.endExport();
         graphics.dispose();
+    }
+    
+    public void addCurrentDatumListener(CurrentDatumListener listener) {
+        currentDatumListeners.add(listener);
+    }
+    
+    public void removeCurrentDatumListener(CurrentDatumListener listener) {
+        currentDatumListeners.remove(listener);
     }
 }
