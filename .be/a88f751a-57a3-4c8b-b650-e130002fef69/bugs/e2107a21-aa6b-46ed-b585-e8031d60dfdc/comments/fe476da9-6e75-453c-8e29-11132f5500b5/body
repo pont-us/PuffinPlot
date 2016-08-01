@@ -1,0 +1,12 @@
+It is possible to save the effective sensor lengths as part of the
+2G output format, with the column headings "X responce", "Y responce",
+and "Z responce" (sic). This doesn't seem to be commonly done, but
+if these fields are available it could remove the need to manually
+enter sensor lengths in the Preferences dialog.
+
+One problem with these values: they are only written to two decimal
+places in the DAT file, whereas in the 2G software they are stored
+to (at least) four decimal places. So sensor lengths read from the
+file will be slightly less accurate. However, the difference would
+be fairly small (<0.2% for a sensor length of 5cm) so it probably
+won't make much difference in practice.
