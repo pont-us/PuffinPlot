@@ -61,7 +61,7 @@ public class IapdLoader extends AbstractFileLoader {
             reader = new LineNumberReader(new FileReader(file));
             readFile();
         } catch (IOException e) {
-            messages.add("Error reading " + file.getName());
+            messages.add("Error reading \"" + file.getName() + "\"");
             messages.add(e.getMessage());
         }
     }
@@ -115,19 +115,22 @@ public class IapdLoader extends AbstractFileLoader {
         String sampleName = "Unknown";
         if (header.length > 0) {
             if (header[0].isEmpty()) {
-                addMessage("No sample name in %s", file.getName());
+                addMessage("No sample name in \"%s\"", file.getName());
             } else {
                 sampleName = header[0];
             }
         } else {
             // Should never happen, since split should always return
             // a non-empty array, but best to cover it just in case.
-            addMessage("No header data in %s", file.getName());
+            addMessage("No header data in \"%s\"", file.getName());
         }
         
-        final ParsedDoubles headerValues = ParsedDoubles.parse(header, new double[] {0, 0, 90, 0, 0, 10}, 1);
+        final ParsedDoubles headerValues = 
+                ParsedDoubles.parse(header,
+                        new double[] {0, 0, 90, 0, 0, 10}, 1);
+        
         if (!headerValues.success) {
-            addMessage("Malformed header in %s", file.getName());
+            addMessage("Malformed header in \"%s\"", file.getName());
         }
         
         String line;

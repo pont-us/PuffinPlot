@@ -19,6 +19,7 @@ package net.talvi.puffinplot.data;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Represents a set of custom fields for sample annotation. The field list
@@ -123,6 +124,11 @@ public class CustomFields<T> {
             first = false;
         }
         return sb.toString();
+    }
+    
+    public List<String> toStrings() {
+        return values.stream().map(x -> x.toString()).
+                collect(Collectors.toList());
     }
 
     /** Returns the number of values in this list.

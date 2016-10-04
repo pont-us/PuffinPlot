@@ -687,7 +687,9 @@ public final class Suite {
                     GreatCircle.getHeaders(),
                     MedianDestructiveField.getHeaders(),
                     FisherValues.getHeaders(),
-                    Tensor.getHeaders());
+                    Tensor.getHeaders(),
+                    customFlagNames.toStrings(),
+                    customNoteNames.toStrings());
             for (Sample sample: samples) {
                 final PcaAnnotated pca = sample.getPcaAnnotated();
                 final MedianDestructiveField mdf = sample.getMdf();
@@ -702,7 +704,9 @@ public final class Suite {
                         circle == null ? GreatCircle.getEmptyFields() : circle.toStrings(),
                         mdf == null ? MedianDestructiveField.getEmptyFields() : mdf.toStrings(),
                         fisher == null ? FisherValues.getEmptyFields() : fisher.toStrings(),
-                        ams == null ? Tensor.getEmptyFields() : ams.toStrings());
+                        ams == null ? Tensor.getEmptyFields() : ams.toStrings(),
+                        sample.getCustomFlags().toStrings(),
+                        sample.getCustomNotes().toStrings());
             }
         } catch (IOException ex) {
             throw new PuffinUserException(ex);
