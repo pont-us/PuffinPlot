@@ -113,17 +113,6 @@ the external libraries as well as the PuffinPlot code itself.
 * `build-manual` creates PDF and HTML manuals from the LaTeX sources.
 * `macbundle` creates a Mac OS X application from a PuffinPlot jar.
 
-It is possible for large uploads to exceed Ant's available memory. At the
-time of writing, this is not a problem, but if it becomes a problem
-the solution is to increase the memory allocation pool size using
-the ANT_OPTS environment variable, thus:
-
-```
-ANT_OPTS=-Xmx512m
-```
-
-(or some other suitably large value).
-
 ## Bug tracking
 
 PuffinPlot uses the Bugs Everywhere bug-tracking system; the bug
