@@ -54,6 +54,28 @@ public class CsvWriter {
         this(writer, ",");
     }
 
+    
+    /**
+     * Turns an object into a CSV-friendly string. If the object's string
+     * representation contains any instances of the separator character,
+     * the whole string will be wrapped in quotation marks. If the string
+     * representation contains quotation marks already, these will be 
+     * doubled up, which is the usual way of escaping them in a CSV file.
+     * 
+     * @param o an object
+     * @return a CSV-friendly representation of the supplied object
+     */
+    private String makeCsvString(Object o) {
+        String s = o.toString();
+        if (s.contains(separator)) {
+            if (s.contains(("\""))) {
+                s = s.replace("\"", "\"\"");
+            }
+            s = "\"" + s + "\"";
+        }
+        return s;
+    }
+    
     /**
      * Writes a line to the writer provided to the constructor. The line
      * consists of strings representations of each of the provided objects,
@@ -68,11 +90,11 @@ public class CsvWriter {
             if (o instanceof List) {
                 List list = (List) o;
                 for (Object p : list) {
-                    sb.append(p);
+                    sb.append(makeCsvString(p));
                     sb.append(separator);
                 }
             } else {
-                sb.append(o);
+                sb.append(makeCsvString(o));
                 sb.append(separator);
             }
         }
