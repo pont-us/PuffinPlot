@@ -411,8 +411,8 @@ public final class Suite {
      * defaults for all the arguments except for the list of
      * file names. The filetype is set to PUFFINPLOT_NEW.
      * 
-     * @param files
-     * @throws IOException
+     * @param files files to read
+     * @throws IOException if an exception occurs during file reading
      */
     public void readFiles(List<File> files) throws IOException {
         readFiles(files, SensorLengths.fromPresetName("1:1:1"),
@@ -1700,16 +1700,33 @@ public final class Suite {
         });
     }
     
+    public class MissingSampleNameException extends Exception
+    {
+      public MissingSampleNameException(String message) {
+          super(message);
+      }
+    }
+    
     /**
+     * Converts this suite from a discrete suite to a continuous suite
+     * using a supplied mapping from sample names to depths.
      * 
-     * @param nameToDepth 
+     * @param nameToDepth a map containing a depth string for each sample name
+     * 
+     * @throws MissingSampleNameException if the map does not contain
+     * all the sample names in this suite as keys
      */
-    public void convertDiscreteToContinuous(Map<String,String> nameToDepth) {
+    public void convertDiscreteToContinuous(Map<String,String> nameToDepth)
+            throws MissingSampleNameException {
         if (getMeasType() != MeasType.DISCRETE) {
             throw new IllegalStateException("convertDiscreteToContinuous "
                     + "can only be called on a discrete Suite.");
         }
         Objects.requireNonNull(nameToDepth, "nameToDepth must be non-null");
+        if (!getSamples().stream().allMatch(
+                s -> nameToDepth.containsKey(s.getNameOrDepth()))) {
+            throw new MissingSampleNameException("Missing sample name key(s) in nameToDepth");
+        }
         setMeasType(MeasType.CONTINUOUS);
         samplesById = new LinkedHashMap<>();
         for (Sample sample: getSamples()) {
@@ -1721,7 +1738,8 @@ public final class Suite {
         sortSamplesByDepth();
     }
     
-    public void convertDiscreteToContinuous(File file) throws IOException {
+    public void convertDiscreteToContinuous(File file)
+            throws IOException, MissingSampleNameException {
         final Map<String,String> nameToDepth = new HashMap<>();
         try (BufferedReader reader =
                    new BufferedReader(new FileReader(file))) {

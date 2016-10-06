@@ -624,7 +624,8 @@ public class Sample {
      * than the supplied run number. Intended to be used in applying
      * tray corrections. Not currently used.
      *
-     * @param maxRunNumber
+     * @param maxRunNumber the run number against which to compare
+     *   run numbers associated with this sample 
      * @return the Datum in this sample which has the highest
      * run number smaller than the supplied run number, or null if
      * this sample contains no such Datum.

@@ -449,7 +449,9 @@ public abstract class GraphDisplay extends JPanel implements Printable {
     
     /** Writes the contents of this display to an SVG file using the FreeHEP library.
      * @param filename the name of the file to which to write
-     * @throws java.io.IOException */
+     * @throws java.io.IOException if there is an error while writing the file
+     *
+     */
     public void saveToSvgFreehep(String filename) throws IOException {
         final SVGGraphics2D graphics =
                 new org.freehep.graphicsio.svg.SVGGraphics2D(new File(filename),

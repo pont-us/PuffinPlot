@@ -1,3 +1,43 @@
+PuffinPlot 1.4 release notes
+============================
+
+The release numbering scheme changed with the 1.4 release: 1.4 is
+the immediate successor of 1.03.
+
+Data manipulation
+-----------------
+
+-   "Discrete to continuous" feature implemented, allowing conversion
+	of discrete suites to continuous suites using a supplementary
+	CSV file containing a sample-to-depth map.
+
+Calculations
+------------
+
+-   RPI
+
+User interface
+--------------
+
+-   Files can now be opened by dragging them to the main window.
+-   Current suite name and "unsaved" indicator added to the title bar.
+-   When saving files, PuffinPlot now defaults to the last-used
+	folder.
+-   Status bar added to main window.
+
+Bug fixes
+---------
+
+-   Custom flags and notes are now included in exported sample data.
+-   PDF export no longer produces an extra page.
+-   Display is now updated automatically when sites are edited.
+
+Miscellaneous
+-------------
+
+-   Degree signs in exported data replaced with "deg", to accommodate
+	software that has trouble with non-ASCII character sets.
+
 PuffinPlot 1.03 release notes
 =============================
 

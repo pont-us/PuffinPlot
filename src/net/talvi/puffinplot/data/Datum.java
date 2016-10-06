@@ -694,7 +694,7 @@ public class Datum {
             doSetValue(field, value, factor);
         } catch (NumberFormatException e1) {
             logger.warning(String.format(Locale.ENGLISH,
-                    "Invalid value %s for field %s; using default %s",
+                    "Invalid value ‘%s’ for field ‘%s’; using default ‘%s’",
                     value, field.toString(), field.getDefaultValue()));
             try {
                 /* NB default value is already in correct units, so we

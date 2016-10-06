@@ -2024,6 +2024,9 @@ public final class PuffinApp {
         } catch (IOException ex) {
             logger.log(Level.SEVERE, null, ex);
             errorDialog("Error opening file", ex.getLocalizedMessage());
+        } catch (Suite.MissingSampleNameException ex) {
+            errorDialog("Error converting suite", "The CSV file does not "
+                    + "contain all the sample names for the suite.");
         }
     }
     

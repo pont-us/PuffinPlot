@@ -240,7 +240,7 @@ public class Vec3 {
      * @param v0 a vector
      * @param v1 a vector
      * @param onPath arc direction indicator
-     * @param stepSize
+     * @param stepSize size of interpolation step in radians
      * @return a list of points defining a great-circle arc between {@code v0}
      * and {@code v1}, passing as close as possible to {@code onPath}
      * 

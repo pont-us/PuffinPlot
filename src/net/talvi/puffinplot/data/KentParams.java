@@ -89,7 +89,7 @@ public class KentParams {
      * <p>In the above, dec and inc refer to declination and inclination
      * respectively; all angles are given in degrees.</p>
      * 
-     * @param line 
+     * @param line a string representation of the Kent parameters
      */
     public KentParams(String line) {
         Scanner sc = new Scanner(line);

@@ -21,13 +21,13 @@ import Jama.util.*;
    Methods for reading and printing matrices are also included.  All the
    operations in this version of the Matrix Class involve real matrices.
    Complex matrices may be handled in a future version.
-<P>
+</P><P>
    Five fundamental matrix decompositions, which consist of pairs or triples
    of matrices, permutation vectors, and the like, produce results in five
    decomposition classes.  These decompositions are accessed by the Matrix
    class to compute solutions of simultaneous linear equations, determinants,
    inverses and other matrix functions.  The five decompositions are:
-<P><UL>
+</P><UL>
    <LI>Cholesky Decomposition of symmetric, positive definite matrices.
    <LI>LU Decomposition of rectangular matrices.
    <LI>QR Decomposition of rectangular matrices.
@@ -37,7 +37,7 @@ import Jama.util.*;
 <DL>
 <DT><B>Example of use:</B></DT>
 <DD>Solve a linear system A x = b and compute the residual norm, ||b - A x||.
-<P><PRE>
+<PRE>
       double[][] vals = {{1.,2.,3},{4.,5.,6.},{7.,8.,10.}};
       Matrix A = new Matrix(vals);
       Matrix b = Matrix.random(3,1);
@@ -155,6 +155,7 @@ public class Matrix implements Cloneable, java.io.Serializable {
 
    /** Construct a matrix from a copy of a 2-D array.
    @param A    Two-dimensional array of doubles.
+   @return     a matrix constructed from a copy of the input array
    @exception  IllegalArgumentException All rows must have the same length
    */
 
@@ -176,6 +177,7 @@ public class Matrix implements Cloneable, java.io.Serializable {
    }
 
    /** Make a deep copy of a matrix
+     * @return a deep copy of this matrix
    */
 
    public Matrix copy () {
@@ -266,7 +268,7 @@ public class Matrix implements Cloneable, java.io.Serializable {
    @param i    Row index.
    @param j    Column index.
    @return     A(i,j)
-   @exception  ArrayIndexOutOfBoundsException
+   @exception  ArrayIndexOutOfBoundsException if an array index is out of bounds
    */
 
    public double get (int i, int j) {
@@ -369,7 +371,7 @@ public class Matrix implements Cloneable, java.io.Serializable {
    @param i    Row index.
    @param j    Column index.
    @param s    A(i,j).
-   @exception  ArrayIndexOutOfBoundsException
+   @exception  ArrayIndexOutOfBoundsException if an array index is out of bounds
    */
 
    public void set (int i, int j, double s) {
@@ -978,6 +980,8 @@ public class Matrix implements Cloneable, java.io.Serializable {
      * whitespace, all the elements for each row appear on a single line,
      * the last row is followed by a blank line.
    @param input the input stream.
+     * @return the matrix which was read from the stream
+     * @throws java.io.IOException if there was an error reading
    */
 
    public static Matrix read (BufferedReader input) throws java.io.IOException {

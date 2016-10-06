@@ -39,8 +39,8 @@ public class DatumComparator implements Comparator<Datum> {
      * Creates a comparator which will compare magnetic moments along
      * the specified axis after applying the specified correction.
      * 
-     * @param axis
-     * @param corr 
+     * @param axis measurement axis along which to compare moments
+     * @param corr correction to apply before comparison
      */
     public DatumComparator(MeasurementAxis axis, Correction corr) {
         this.axis = axis;

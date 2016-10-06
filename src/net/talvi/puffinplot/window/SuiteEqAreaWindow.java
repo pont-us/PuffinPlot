@@ -34,6 +34,8 @@ public class SuiteEqAreaWindow extends JFrame {
 
     /**
      * Creates a new suite equal-area window.
+     * 
+     * @param app the application instance for which to create the window
      */
     public SuiteEqAreaWindow(PuffinApp app) {
         setPreferredSize(new Dimension(600, 600));

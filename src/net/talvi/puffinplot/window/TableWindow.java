@@ -16,7 +16,6 @@
  */
 package net.talvi.puffinplot.window;
 
-import net.talvi.puffinplot.*;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.LinkedList;
@@ -44,6 +43,8 @@ public class TableWindow extends JFrame {
     
     /**
      * Creates a new table window.
+     * 
+     * @param params plot parameters (to control the currently displayed data)
      */
     public TableWindow(PlotParams params) {
         TablePanel newContentPane = new TablePanel(params);
