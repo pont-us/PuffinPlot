@@ -1008,12 +1008,24 @@ public class PuffinActions {
     /**
      * Runs a Python script using the Jython interpreter.
      */
-    public final Action runScript = new PuffinAction("Run Python script…",
+    public final Action runPythonScript = new PuffinAction("Run Python script…",
             "Use a program written in Python to perform functions in PuffinPlot.",
             null, false, KeyEvent.VK_Y) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
             app.showRunPythonScriptDialog();
+        }
+    };
+
+    /**
+     * Runs a Python script using the Jython interpreter.
+     */
+    public final Action runJavascriptScript = new PuffinAction("Run Javascript script…",
+            "Use a program written in Javascript to perform functions in PuffinPlot.",
+            null, false, KeyEvent.VK_J) {
+        private static final long serialVersionUID = 1L;
+        @Override public void actionPerformed(ActionEvent e) {
+            app.showRunJavascriptScriptDialog();
         }
     };
 

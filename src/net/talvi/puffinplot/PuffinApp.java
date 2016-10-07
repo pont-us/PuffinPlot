@@ -52,6 +52,11 @@ import java.util.logging.SimpleFormatter;
 import java.util.logging.StreamHandler;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+import javax.script.Bindings;
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.SimpleBindings;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -1607,6 +1612,39 @@ public final class PuffinApp {
             JOptionPane.showMessageDialog
                     (getMainWindow(), ex.toString(),
                     "Error running Python script",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    public void runJavascriptScript(String scriptPath) throws Exception {
+            ScriptEngineManager sem = new ScriptEngineManager();
+    System.out.println("> " + sem.getEngineFactories());
+    ScriptEngine se = sem.getEngineByName("nashorn");
+    Bindings bindings = new SimpleBindings();
+    bindings.put("puffin_app", this);
+    se.setBindings(bindings, ScriptContext.GLOBAL_SCOPE);
+    try {
+        Reader reader = new FileReader(scriptPath);
+        se.eval(reader);
+    } catch (Exception ex) {
+      System.out.println(ex.getMessage());
+    }
+    }
+    
+    /**
+     * Opens a file selection dialog and runs the Javascript script
+     * (if any) which the user selects from that dialog. 
+     */
+    public void showRunJavascriptScriptDialog() {
+        final List<File> files = openFileDialog("Select Javascript script");
+        if (files.isEmpty()) return;
+        final File file = files.get(0);
+        try {
+            runJavascriptScript(file.getAbsolutePath());
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog
+                    (getMainWindow(), ex.toString(),
+                    "Error running Javascript script",
                     JOptionPane.ERROR_MESSAGE);
         }
     }

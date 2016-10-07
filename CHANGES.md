@@ -32,9 +32,10 @@ Bug fixes
 -   PDF export no longer produces an extra page.
 -   Display is now updated automatically when sites are edited.
 
-Miscellaneous
--------------
+Other notes
+-----------
 
+-   PuffinPlot now required Java 8 or higher.
 -   Degree signs in exported data replaced with "deg", to accommodate
 	software that has trouble with non-ASCII character sets.
 
