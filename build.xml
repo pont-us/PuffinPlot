@@ -134,7 +134,7 @@
                 <include name="figures/*.png" />
                 <include name="figures/*.jpeg" />
             </zipfileset>
-            <zipfileset dir="${basedir}/example-data" prefix="Example-data"/>
+            <zipfileset dir="${basedir}/examples" prefix="Examples"/>
             <zipfileset dir="${basedir}/manual" includes="release-readme.txt" fullpath="README"/>
             <zipfileset dir="${basedir}" includes="LICENCE" fullpath="LICENCE"/>
         </zip>
