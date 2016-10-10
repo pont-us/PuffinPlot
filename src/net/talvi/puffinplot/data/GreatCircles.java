@@ -25,6 +25,12 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
+import javax.script.Bindings;
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import javax.script.SimpleBindings;
 
 /**
  * This class represents a set of great circles and a set of directions.
@@ -52,7 +58,14 @@ public final class GreatCircles implements FisherParams {
     private static final List<String> HEADERS =
         Arrays.asList("GC valid","GC dec. (deg)", "GC inc. (deg)",
             "GC a95 (deg)", "GC k", "GC N", "GC M", "GC R", "GC min points");
+    
+    private static final ScriptEngine SCRIPT_ENGINE;
 
+    static {
+        ScriptEngineManager sem = new ScriptEngineManager();
+        SCRIPT_ENGINE = sem.getEngineByMimeType("application/javascript");
+    }
+    
     /**
      * Calculates a mean direction from the supplied great circle and
      * directions.
@@ -203,28 +216,32 @@ public final class GreatCircles implements FisherParams {
      * @return {@code true} if this great-circle fit is valid
      */
     public boolean isValid() {
-        assert(false);
         final String validityCondition =
-                prefs.get("data.greatcircles.validityExpr", "True");
-        // Avoid firing up a Python interpreter for the most common cases.
+                prefs.get("data.greatcircles.validityExpr", "true");
+        // Avoid firing up an interpreter for the most common cases.
         switch(validityCondition) {
-            case "True":
+            case "true":
                 return true;
-            case "False":
+            case "false":
                 return false;
         }
-//        interp.set("a95", a95);
-//        interp.set("k", k);
-//        interp.set("N", getN());
-//        interp.set("M", getM());
-//        try {
-//            PyObject result = interp.eval(validityCondition);
-//            return result.__nonzero__();
-//        } catch (PyException ex) {
-//            logger.log(Level.WARNING, ex.toString());
-//            return false;
-//        }
-return false;
+        final Bindings bindings = new SimpleBindings();
+        bindings.put("a95", a95);
+        bindings.put("k", k);
+        bindings.put("N", getN());
+        bindings.put("M", getM());
+        SCRIPT_ENGINE.setBindings(bindings, ScriptContext.GLOBAL_SCOPE);
+        try {
+            final Object result = SCRIPT_ENGINE.eval(validityCondition);
+            if (result.getClass() == Boolean.class) {
+                return (Boolean) result;
+            } else {
+                return false;
+            }
+        } catch (ScriptException ex) {
+            logger.log(Level.WARNING, ex.toString());
+            return false;
+        }
     }
 
     @Override

@@ -1624,7 +1624,7 @@ names. The plot types are detailed in section~\ref{sec:plot-types}.
   \end{itemize}
 
   The validity test takes the form of a logical expression in the syntax of
-  the Python programming language, involving the following variables:
+  the JavaScript programming language, involving the following variables:
 
 \begin{description}
   \item[M] the number of stable endpoints (\caps{pca} directions) used in the fit
@@ -1633,17 +1633,21 @@ names. The plot types are detailed in section~\ref{sec:plot-types}.
   \item[k] the $k$-value (estimate for $\kappa$)
 \end{description}
 
-The most useful components for contructing vailidity expressions are the
-comparison operators \texttt{<}, \texttt{<=}, \texttt{>=}, \texttt{>}, the
-logical operators \texttt{and} and \texttt{or}, and parentheses. A typical
-expression might be
+The most useful components for constructing validity expressions are the
+comparison operators \texttt{<}, \texttt{<=}, \texttt{>=}, \texttt{>},
+the logical operators \texttt{\&\&} and \texttt{||} (corresponding to
+`and' and `or' respectively), and parentheses. A typical expression
+might be
 
-\centerline{\texttt{a95<3 and k>5 and (M>=3 or N>=5)}}
+\centerline{\texttt{a95<3 \&\& k>5 \&\& (M>=3 || N>=5)}}
 
 which means that a great-circle fit will be considered valid if it has an
 \alnifi\ below 3, a $k$ above five, and either at least three endpoints or
-at least five circles. The default value of this setting is \texttt{True},
-which causes all great-circle fits to be considered valid.
+at least five circles. The default value of this setting is \texttt{true},
+which causes all great-circle fits to be considered valid. If there is
+an error in the expression (i.e. if it isn't a valid JavaScript expression,
+or if it doesn't produce a true/false value), it will be evaluated as
+false.
 
 \item[Zplot \caps{pca} display] controls the manner in which \caps{pca}
   directions are shown on the Zijderveld plot (see

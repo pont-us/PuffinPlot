@@ -1562,9 +1562,12 @@ public final class PuffinApp {
      * Runs a specified Python script
      * 
      * @param scriptPath the path to the script
-     * @throws PyException if a Python error occurred while running the script
      * @throws java.io.IOException if an IO error occurred while running the script
+     * @throws java.lang.NoSuchMethodException x
+     * @throws java.lang.InstantiationException x
+     * @throws java.lang.IllegalAccessException x
      * @throws java.lang.ClassNotFoundException if the Jython class could not be found
+     * @throws java.lang.reflect.InvocationTargetException x
      */
     public void runPythonScript(String scriptPath) throws 
             IOException, ClassNotFoundException, NoSuchMethodException,

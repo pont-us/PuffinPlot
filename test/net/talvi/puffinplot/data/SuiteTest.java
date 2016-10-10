@@ -107,7 +107,12 @@ public class SuiteTest {
             Logger.getLogger(SuiteTest.class.getName()).log(Level.SEVERE, null, ex);
             fail("Error reading file.");
         }
-        suite.convertDiscreteToContinuous(nameToDepth);
+        try {
+            suite.convertDiscreteToContinuous(nameToDepth);
+        } catch (Suite.MissingSampleNameException ex) {
+            Logger.getLogger(SuiteTest.class.getName()).log(Level.SEVERE, null, ex);
+            fail();
+        }
         
         assertEquals(MeasType.CONTINUOUS, suite.getMeasType());
         assertNotNull(suite.getSampleByName("3.14"));
