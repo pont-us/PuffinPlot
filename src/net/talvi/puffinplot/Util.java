@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
@@ -192,6 +193,38 @@ public class Util {
             // do nothing
         }
         return result;
+    }
+
+    /**
+     * Return a directory where PuffinPlot can store files for "internal"
+     * use. The directory is created if necessary. On *nix systems, a 
+     * dot-prefixed directory in the user's home directory is used. On
+     * Windows, a subdirectory of the LOCALAPPDATA directory is used.
+     * 
+     * @return Path to a directory for application data
+     * @throws IOException if there was an error creating or finding the directory
+     */
+    public static Path getAppDataDirectory() throws IOException {
+        final String parentDir;
+        final String childDir;
+        final String windowsAppDir = System.getenv("LOCALAPPDATA");
+        if (windowsAppDir != null) {
+            // LOCALAPPDATA is non-null, so we're on a Windows system.
+            parentDir = windowsAppDir;
+            childDir = "PuffinPlot";
+        } else {
+            // LOCALAPPDATA is null. Assume we're on a *nix system and
+            // can create a dot-directory in the user's home directory.
+            parentDir = System.getProperty("user.home");
+            childDir = ".puffinplot";
+        }
+        final Path parentPath = Paths.get(parentDir);
+        final Path childPath = Paths.get(childDir);
+        final Path appDataPath = parentPath.resolve(childPath);
+        if (!Files.isDirectory(appDataPath)) {
+            Files.createDirectory(appDataPath);
+        }
+        return appDataPath;
     }
 
     private static class Outcode {

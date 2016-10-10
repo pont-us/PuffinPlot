@@ -25,9 +25,6 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
-import org.python.core.PyException;
-import org.python.core.PyObject;
-import org.python.util.PythonInterpreter;
 
 /**
  * This class represents a set of great circles and a set of directions.
@@ -46,7 +43,7 @@ public final class GreatCircles implements FisherParams {
     private final double k;
     private final double R;
     private final int minPoints;
-    private final PythonInterpreter interp = new PythonInterpreter();
+//    private final PythonInterpreter interp = new PythonInterpreter();
     private final Preferences prefs = Preferences.userNodeForPackage(net.talvi.puffinplot.PuffinPrefs.class);
 
     private static final double MAX_ITERATIONS = 1000;
@@ -206,6 +203,7 @@ public final class GreatCircles implements FisherParams {
      * @return {@code true} if this great-circle fit is valid
      */
     public boolean isValid() {
+        assert(false);
         final String validityCondition =
                 prefs.get("data.greatcircles.validityExpr", "True");
         // Avoid firing up a Python interpreter for the most common cases.
@@ -215,17 +213,18 @@ public final class GreatCircles implements FisherParams {
             case "False":
                 return false;
         }
-        interp.set("a95", a95);
-        interp.set("k", k);
-        interp.set("N", getN());
-        interp.set("M", getM());
-        try {
-            PyObject result = interp.eval(validityCondition);
-            return result.__nonzero__();
-        } catch (PyException ex) {
-            logger.log(Level.WARNING, ex.toString());
-            return false;
-        }
+//        interp.set("a95", a95);
+//        interp.set("k", k);
+//        interp.set("N", getN());
+//        interp.set("M", getM());
+//        try {
+//            PyObject result = interp.eval(validityCondition);
+//            return result.__nonzero__();
+//        } catch (PyException ex) {
+//            logger.log(Level.WARNING, ex.toString());
+//            return false;
+//        }
+return false;
     }
 
     @Override

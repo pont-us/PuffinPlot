@@ -7,8 +7,6 @@ cd ../puffinplot-lib/packages
 
 ### download packages
 
-wget http://central.maven.org/maven2/org/python/jython-installer/2.5.3/jython-installer-2.5.3.jar
-
 wget http://archive.apache.org/dist/xmlgraphics/batik/batik-1.7.zip
 # TODO: use the Maven repository to get individual jars instead:
 # http://central.maven.org/maven2/org/apache/xmlgraphics/batik-svggen/1.7/batik-svggen-1.7.jar
@@ -32,10 +30,6 @@ wget http://central.maven.org/maven2/org/apache/commons/commons-math3/3.5/common
 ### unpack the needed libraries
 
 cd ..
-
-# Pull the "bare" jython jar out of the installer package --
-# the extra libraries aren't necessary.
-jar xf packages/jython-installer-2.5.3.jar jython.jar
 
 # Batik dependencies:
 # batik-svggen batik-awt-util batik-util batik-dom

@@ -34,9 +34,11 @@ import java.awt.print.PrinterJob;
 import java.io.*;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -56,6 +58,7 @@ import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -81,8 +84,6 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.freehep.util.UserProperties;
-import org.python.core.PyException;
-import org.python.util.PythonInterpreter;
 
 /**
  * This class constitutes the main PuffinPlot application.
@@ -129,8 +130,10 @@ public final class PuffinApp {
     private static final boolean MAC_OS_X =
             System.getProperty("os.name").toLowerCase(Locale.ENGLISH).
                     startsWith("mac os x");
-    private static final int OSX_POINT_VERSION = determineOsxPointVersion();
     private SuiteCalcs multiSuiteCalcs;
+    private Object jythonInterpreterInstance = null;
+    private Method jythonExecfileMethod = null;
+    private Method jythonSetMethod = null;
     private final Version version;
     
     /* I don't use IdToFileMap for lastUsedSaveDirectories, because I think
@@ -354,19 +357,20 @@ public final class PuffinApp {
             
             else if (commandLine.hasOption("script")) {
                 final String scriptPath = commandLine.getOptionValue("script");
+                // TODO re-enable with new Jython system
                 try {
-                    final PythonInterpreter interp = new PythonInterpreter();
+//                    final PythonInterpreter interp = new PythonInterpreter();
                     if (commandLine.hasOption("with-app")) {
                         java.awt.EventQueue.invokeLater(
                                 new Runnable() { @Override public void run() { 
                                     final PuffinApp scriptApp = new PuffinApp(); 
-                                    interp.set("puffin_app", scriptApp);
-                                    interp.execfile(scriptPath);
+//                                    interp.set("puffin_app", scriptApp);
+//                                    interp.execfile(scriptPath);
                                 } });
                     } else {
-                        interp.execfile(scriptPath);
+//                        interp.execfile(scriptPath);
                     }
-                } catch (PyException ex) {
+                } catch (Exception ex) {
                     // PyException is a RuntimeException, so doesn't *have*
                     // to be caught, but it makes sense to do so.
                     System.err.println("Error running Python script "+scriptPath);
@@ -416,36 +420,6 @@ public final class PuffinApp {
      */
     public boolean isOnOsX() {
         return PuffinApp.MAC_OS_X;
-    }
-    
-    private static int determineOsxPointVersion() {
-        final boolean osx =
-                System.getProperty("os.name").toLowerCase().startsWith("mac os x");
-        if (!osx) return -1;
-        final String osVersion = System.getProperty("os.version");
-        final String[] parts = osVersion.split("\\.");
-        if (!parts[0].equals("10")) return -1;
-        if (parts.length < 2) return -1;
-        try {
-            int pointVersion = Integer.parseInt(parts[1]);
-            return pointVersion;
-        } catch (NumberFormatException e) {
-            return -1;
-        }
-    }
-    
-    /**
-     * If this PuffinApp is running on Mac OS X, this method returns the
-     * point version (minor version) of the operating system. Thus, for 
-     * example, it would return 5 if the PuffinApp is running on Mac OS X
-     * version 10.5 or any sub-version thereof (10.5.1, 10.5.2, etc.).
-     * If PuffinApp is not running on Mac OS X, or if the version cannot
-     * be determined, this method returns −1.
-     * 
-     * @return the OS X minor version number, or −1 if it cannot be determined
-     */
-    public int getOsxPointVersion() {
-        return PuffinApp.OSX_POINT_VERSION;
     }
     
     /**
@@ -1588,12 +1562,43 @@ public final class PuffinApp {
      * Runs a specified Python script
      * 
      * @param scriptPath the path to the script
-     * @throws PyException if an error occurred while running the script
+     * @throws PyException if a Python error occurred while running the script
+     * @throws java.io.IOException if an IO error occurred while running the script
+     * @throws java.lang.ClassNotFoundException if the Jython class could not be found
      */
-    public void runPythonScript(String scriptPath) throws PyException {
-        PythonInterpreter interp = new PythonInterpreter();
-        interp.set("puffin_app", this);
-        interp.execfile(scriptPath);
+    public void runPythonScript(String scriptPath) throws 
+            IOException, ClassNotFoundException, NoSuchMethodException,
+            InstantiationException, IllegalAccessException,
+            IllegalArgumentException, InvocationTargetException {
+        
+        final Path appDirPath = Util.getAppDataDirectory();
+        final Path jythonPath = appDirPath.resolve("jython-standalone-2.7.0.jar");
+        final String urlString = "http://central.maven.org/maven2/"
+                + "org/python/jython-standalone/2.7.0/"
+                + "jython-standalone-2.7.0.jar";
+        
+        // Files.copy can block indefinitely, so this should be in a separate thread.
+        // Also need a progress dialog or at least a "please wait" here.
+        if (!Files.exists(jythonPath)) {
+            final URI uri = URI.create(urlString);
+            try (InputStream in = uri.toURL().openStream()) {
+                Files.copy(in, jythonPath);
+            }
+        }
+        
+        if (jythonInterpreterInstance == null) {
+            final URL url = jythonPath.toUri().toURL();
+            final URLClassLoader child = new URLClassLoader (new URL[] {url},
+                    PuffinApp.class.getClassLoader());
+            final Class classToLoad = Class.forName("org.python.util.PythonInterpreter",
+				       true, child);
+            jythonExecfileMethod = classToLoad.getDeclaredMethod("execfile", String.class);
+            jythonSetMethod = classToLoad.getDeclaredMethod("set", String.class, Object.class);
+            jythonInterpreterInstance = classToLoad.newInstance();
+        }
+        
+        jythonSetMethod.invoke(jythonInterpreterInstance, "puffin_app", this);
+        jythonExecfileMethod.invoke(jythonInterpreterInstance, scriptPath);
         updateDisplay();
         getMainWindow().suitesChanged();
     }
@@ -1608,14 +1613,17 @@ public final class PuffinApp {
         final File file = files.get(0);
         try {
             runPythonScript(file.getAbsolutePath());
-        } catch (PyException ex) {
+        } catch (IOException | ClassNotFoundException |
+                NoSuchMethodException | InstantiationException |
+                IllegalAccessException | IllegalArgumentException |
+                InvocationTargetException ex) {
             JOptionPane.showMessageDialog
                     (getMainWindow(), ex.toString(),
                     "Error running Python script",
                     JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     public void runJavascriptScript(String scriptPath) throws Exception {
             ScriptEngineManager sem = new ScriptEngineManager();
     System.out.println("> " + sem.getEngineFactories());
@@ -1626,7 +1634,7 @@ public final class PuffinApp {
     try {
         Reader reader = new FileReader(scriptPath);
         se.eval(reader);
-    } catch (Exception ex) {
+    } catch (FileNotFoundException | ScriptException ex) {
       System.out.println(ex.getMessage());
     }
     }
