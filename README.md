@@ -21,6 +21,9 @@ PuffinPlot uses the following external Java libraries, or parts of them:
 * batik http://xmlgraphics.apache.org/batik/
 * FreeHEP http://java.freehep.org/
 * appbundler https://java.net/projects/appbundler
+* commons-cli https://commons.apache.org/proper/commons-cli/
+* commons-compress http://commons.apache.org/proper/commons-compress/
+* commons-math http://commons.apache.org/proper/commons-math/
 
 These libraries are not included in the PuffinPlot repository itself.
 The NetBeans project and build script look for the required jar files
@@ -34,6 +37,9 @@ directory should contain the following jar files:
 | batik-dom.jar               | 1.7                      |
 | batik-svggen.jar            | 1.7                      |
 | batik-util.jar              | 1.7                      |
+| commons-cli.jar             | 1.2                      |
+| commons-compress.jar        | 1.9                      |
+| commons-math3.jar           | 3.5                      |
 | freehep-export.jar          | 2.1.1                    |
 | freehep-graphics2d.jar      | 2.1.1                    |
 | freehep-graphicsio.jar      | 2.1.1                    |

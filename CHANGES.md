@@ -4,6 +4,9 @@ PuffinPlot 1.4 release notes
 The release numbering scheme changed with the 1.4 release: 1.4 is
 the immediate successor of 1.03.
 
+TO DO: document bundle stuff
+
+
 Data manipulation
 -----------------
 
