@@ -46,6 +46,7 @@ import java.nio.file.StandardCopyOption;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -576,42 +577,33 @@ public final class PuffinApp {
      * Clear PCA calculations for selected samples.
      * 
      * Any affected site data will also be recalculated.
-     * 
      */
     public void clearSelectedSamplePcas() {
-        for (Sample s: getSelectedSamples()) {
-            s.clearPca();
-        }
+        forEachSelectedSample(s -> s.clearPca());
         recalculateAffectedSites(getSelectedSamples());
-        app.updateDisplay();
+        updateDisplay();
     }
     
     /**
      * Clear great circle fits for selected samples.
      * 
      * Any affected site data will also be recalculated.
-     * 
      */
     public void clearSelectedSampleGcs() {
-        for (Sample s: getSelectedSamples()) {
-            s.clearGreatCircle();
-        }
+        forEachSelectedSample(s -> s.clearGreatCircle());
         recalculateAffectedSites(getSelectedSamples());
-        app.updateDisplay();
+        updateDisplay();
     }
     
     /**
      * Clear selected points and stored calculations for selected samples.
      * 
      * Any affected site data will also be recalculated.
-     * 
      */
     public void clearSelectedSampleCalculations() {
-        for (Sample s: getSelectedSamples()) {
-            s.clearCalculations();
-        }
+        forEachSelectedSample(s -> s.clearCalculations());
         recalculateAffectedSites(getSelectedSamples());
-        app.updateDisplay();
+        updateDisplay();
     }
     
     /** Returns the preferences for this PuffinApp.
@@ -967,7 +959,7 @@ public final class PuffinApp {
      * @return the current Sample
      */
     public Sample getSample() {
-        Suite suite = getSuite();
+        final Suite suite = getSuite();
         if (suite==null) return null;
         return suite.getCurrentSample();
     }
@@ -980,12 +972,17 @@ public final class PuffinApp {
         if (result==null) return Collections.emptyList();
         return result;
     }
+    
+    private void forEachSelectedSample(Consumer<Sample> func) {
+        final List<Sample> samples = getSelectedSamples();
+        samples.stream().forEach((s) -> { func.accept(s); });
+    }
 
     /** Returns the site for which data is currently being displayed.
      * @return the current site
      */
     public Site getCurrentSite() {
-        Sample sample = getSample();
+        final Sample sample = getSample();
         if (sample==null) return null;
         return sample.getSite();
     }
@@ -1010,8 +1007,8 @@ public final class PuffinApp {
      * one selected sample */
     public List<Sample> getAllSamplesInSelectedSites() {
         final List<Sample> samples = new ArrayList<>();
-        for (Site s: PuffinApp.getInstance().getSelectedSites()) {
-            samples.addAll(s.getSamples());
+        for (Site site: getSelectedSites()) {
+            samples.addAll(site.getSamples());
         }
         return samples;
     }
@@ -1041,7 +1038,7 @@ public final class PuffinApp {
 
     /** Opens the page setup dialog box. */
     public void showPageSetupDialog() {
-        PrinterJob job = PrinterJob.getPrinterJob();
+        final PrinterJob job = PrinterJob.getPrinterJob();
         currentPageFormat = job.pageDialog(currentPageFormat);
     }
 
@@ -1313,9 +1310,8 @@ public final class PuffinApp {
      */
     public void pastePointSelection() {
         if (pointSelectionClipboard==null) return;
-        for (Sample sample: getSelectedSamples()) {
-            sample.setSelectionBitSet(pointSelectionClipboard);
-        }
+        forEachSelectedSample(s ->
+                s.setSelectionBitSet(pointSelectionClipboard));
         updateDisplay();
     }
     
@@ -1340,9 +1336,7 @@ public final class PuffinApp {
                 "Flip samples", JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.WARNING_MESSAGE);
         if (choice == JOptionPane.OK_OPTION) {
-            for (Sample sample: getSelectedSamples()) {
-                sample.flip(axis);
-            }
+            forEachSelectedSample(s -> s.flip(axis));
         }
         updateDisplay();
     }
@@ -1362,9 +1356,7 @@ public final class PuffinApp {
                 "Invert samples", JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.WARNING_MESSAGE);
         if (choice == JOptionPane.OK_OPTION) {
-            for (Sample sample: getSelectedSamples()) {
-                sample.invertMoments();
-            }
+            forEachSelectedSample(s -> s.invertMoments());
         }
         updateDisplay();
     }

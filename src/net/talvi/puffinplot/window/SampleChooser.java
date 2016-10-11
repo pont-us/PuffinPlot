@@ -82,8 +82,8 @@ public class SampleChooser extends JPanel {
      * @return all the currently selected samples
      */
     public List<Sample> getSelectedSamples() {
-        List<Sample> samples;
-        Suite suite = PuffinApp.getInstance().getSuite();
+        final List<Sample> samples;
+        final Suite suite = PuffinApp.getInstance().getSuite();
         if (suite == null) return Collections.emptyList();
         switch (suite.getMeasType()) {
         case DISCRETE:
@@ -154,7 +154,7 @@ public class SampleChooser extends JPanel {
      * Puffin application's current suite.
      */
     public void updateSuite() {
-        Suite suite = PuffinApp.getInstance().getSuite();
+        final Suite suite = PuffinApp.getInstance().getSuite();
         if (suite == null) {
             setVisibility(false, false);
             return;
