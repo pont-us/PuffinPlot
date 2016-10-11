@@ -16,6 +16,18 @@ Calculations
 
 -   RPI
 
+Scripting
+---------
+
+-   The Jython package is no longer bundled as part of PuffinPlot,
+    dramatically reducing the download size. PuffinPlot still retains
+	Python support: Jython is downloaded and installed automatically
+	if and when it is required.
+-   PuffinPlot now supports scripting in JavaScript as well as Python.
+-   The user-defined great circle validity check now uses Javascript
+	rather than Python. In practice, this only means a slight change
+	in syntax.
+
 User interface
 --------------
 
@@ -35,7 +47,7 @@ Bug fixes
 Other notes
 -----------
 
--   PuffinPlot now required Java 8 or higher.
+-   PuffinPlot now requires Java 8 or higher.
 -   Degree signs in exported data replaced with "deg", to accommodate
 	software that has trouble with non-ASCII character sets.
 

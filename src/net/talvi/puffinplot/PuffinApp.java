@@ -131,9 +131,7 @@ public final class PuffinApp {
             System.getProperty("os.name").toLowerCase(Locale.ENGLISH).
                     startsWith("mac os x");
     private SuiteCalcs multiSuiteCalcs;
-    private Object jythonInterpreterInstance = null;
-    private Method jythonExecfileMethod = null;
-    private Method jythonSetMethod = null;
+    private ScriptEngine pythonEngine = null;
     private final Version version;
     
     /* I don't use IdToFileMap for lastUsedSaveDirectories, because I think
@@ -931,8 +929,9 @@ public final class PuffinApp {
         } catch (ClassNotFoundException | NoSuchMethodException |
                 SecurityException | IllegalAccessException | 
                 IllegalArgumentException | InvocationTargetException e) {
-            errorDialog("EAWT error", "Error while loading the OSXAdapter:");
-            e.printStackTrace();
+            errorDialog("EAWT error", "Error while loading the OSXAdapter: " +
+                    e.getLocalizedMessage());
+            logger.log(Level.SEVERE, e.getLocalizedMessage());
         }
     }
     
@@ -1563,16 +1562,9 @@ public final class PuffinApp {
      * 
      * @param scriptPath the path to the script
      * @throws java.io.IOException if an IO error occurred while running the script
-     * @throws java.lang.NoSuchMethodException x
-     * @throws java.lang.InstantiationException x
-     * @throws java.lang.IllegalAccessException x
-     * @throws java.lang.ClassNotFoundException if the Jython class could not be found
-     * @throws java.lang.reflect.InvocationTargetException x
+     * @throws javax.script.ScriptException if a scripting error occurred
      */
-    public void runPythonScript(String scriptPath) throws 
-            IOException, ClassNotFoundException, NoSuchMethodException,
-            InstantiationException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException {
+    public void runPythonScript(String scriptPath) throws IOException, ScriptException  {
         
         final Path appDirPath = Util.getAppDataDirectory();
         final Path jythonPath = appDirPath.resolve("jython-standalone-2.7.0.jar");
@@ -1589,19 +1581,18 @@ public final class PuffinApp {
             }
         }
         
-        if (jythonInterpreterInstance == null) {
+        if (pythonEngine == null) {
             final URL url = jythonPath.toUri().toURL();
             final URLClassLoader child = new URLClassLoader (new URL[] {url},
                     PuffinApp.class.getClassLoader());
-            final Class classToLoad = Class.forName("org.python.util.PythonInterpreter",
-				       true, child);
-            jythonExecfileMethod = classToLoad.getDeclaredMethod("execfile", String.class);
-            jythonSetMethod = classToLoad.getDeclaredMethod("set", String.class, Object.class);
-            jythonInterpreterInstance = classToLoad.newInstance();
+            final ScriptEngineManager sem = new ScriptEngineManager(child);
+            pythonEngine = sem.getEngineByName("python");
         }
         
-        jythonSetMethod.invoke(jythonInterpreterInstance, "puffin_app", this);
-        jythonExecfileMethod.invoke(jythonInterpreterInstance, scriptPath);
+        pythonEngine.put("puffin_app", this);
+        final Reader r = new FileReader(scriptPath);
+        pythonEngine.eval(r);
+
         updateDisplay();
         getMainWindow().suitesChanged();
     }
@@ -1616,10 +1607,7 @@ public final class PuffinApp {
         final File file = files.get(0);
         try {
             runPythonScript(file.getAbsolutePath());
-        } catch (IOException | ClassNotFoundException |
-                NoSuchMethodException | InstantiationException |
-                IllegalAccessException | IllegalArgumentException |
-                InvocationTargetException ex) {
+        } catch (IOException | ScriptException ex) {
             JOptionPane.showMessageDialog
                     (getMainWindow(), ex.toString(),
                     "Error running Python script",
@@ -1629,11 +1617,8 @@ public final class PuffinApp {
 
     public void runJavascriptScript(String scriptPath) throws Exception {
             ScriptEngineManager sem = new ScriptEngineManager();
-    System.out.println("> " + sem.getEngineFactories());
-    ScriptEngine se = sem.getEngineByName("nashorn");
-    Bindings bindings = new SimpleBindings();
-    bindings.put("puffin_app", this);
-    se.setBindings(bindings, ScriptContext.GLOBAL_SCOPE);
+    final ScriptEngine se = sem.getEngineByMimeType("application/javascript");
+    se.put("puffin_app", this);
     try {
         Reader reader = new FileReader(scriptPath);
         se.eval(reader);
