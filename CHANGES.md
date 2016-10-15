@@ -40,6 +40,12 @@ User interface
 	folder.
 -   Status bar added to main window.
 
+Data export
+-----------
+
+-   Degree signs in exported data replaced with "deg", to accommodate
+	software that has trouble with non-ASCII character sets.
+
 Bug fixes
 ---------
 
@@ -51,8 +57,6 @@ Other notes
 -----------
 
 -   PuffinPlot now requires Java 8 or higher.
--   Degree signs in exported data replaced with "deg", to accommodate
-	software that has trouble with non-ASCII character sets.
 
 PuffinPlot 1.03 release notes
 =============================

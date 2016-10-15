@@ -34,7 +34,6 @@ import java.awt.print.PrinterJob;
 import java.io.*;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -55,12 +54,9 @@ import java.util.logging.SimpleFormatter;
 import java.util.logging.StreamHandler;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
-import javax.script.Bindings;
-import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-import javax.script.SimpleBindings;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -138,7 +134,7 @@ public final class PuffinApp {
     /* I don't use IdToFileMap for lastUsedSaveDirectories, because I think
     it's better that the save directories *don't* persist between restarts
     of the program. Inkscape has persistent save directories and I've found
-    it be very counterintuitive. */
+    it to be very counterintuitive. */
     private final Map<String,String> lastUsedSaveDirectories = new HashMap<>();
 
     static {
@@ -1485,6 +1481,9 @@ public final class PuffinApp {
         //getMainWindow().getGraphDisplay().print(graphics2d);
         graphics2d.endExport();
         graphics2d.closeStream();
+    }
+    
+    public void exportGraphics() {
         
     }
     
@@ -1833,7 +1832,7 @@ public final class PuffinApp {
     
     String getSavePath(final String title, final String extension,
             final String type) {
-        final boolean useSwingChooserForSave = !app.isOnOsX();
+        final boolean useSwingChooserForSave = !isOnOsX();
         final String lastDirKey = title + extension + type;
         // It's a deliberate choice not to use IdToFileMap here --
         // see comment on lastUsedSaveDirectories declaration.

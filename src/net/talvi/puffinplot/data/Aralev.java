@@ -141,22 +141,23 @@ public final class Aralev {
             final double v8 = 0.1787654e-1;
             final double v9 = -0.420059e-2;
 
-            double t;
-            double b0;
-            double b1;
-            double bi0e, bi1e, bi1i0;
+            final double bi0e, bi1e, bi1i0;
 
             if (abs(x) < 3.75) {
-                t = (x / 3.75) * (x / 3.75);
-                b0 = p1 + t * (p2 + t * (p3 + t * (p4 + t * (p5 + t * (p6 + t * p7)))));
-                b1 = x * (u1 + t * (u2 + t * (u3 + t * (u4 + t * (u5 + t * (u6 + t * u7))))));
+                final double t = (x / 3.75) * (x / 3.75);
+                final double b0 = p1 + t * (p2 + t * (p3 + t *
+                        (p4 + t * (p5 + t * (p6 + t * p7)))));
+                final double b1 = x * (u1 + t * (u2 + t * (u3 + t *
+                        (u4 + t * (u5 + t * (u6 + t * u7))))));
                 bi0e = b0 / exp(abs(x));
                 bi1e = b1 / exp(abs(x));
                 bi1i0 = b1 / b0;
             } else {
-                t = 3.75 / abs(x);
-                b0 = q1 + t * (q2 + t * (q3 + t * (q4 + t * (q5 + t * (q6 + t * (q7 + t * (q8 + t * q9)))))));
-                b1 = v1 + t * (v2 + t * (v3 + t * (v4 + t * (v5 + t * (v6 + t * (v7 + t * (v8 + t * v9)))))));
+                final double t = 3.75 / abs(x);
+                final double b0 = q1 + t * (q2 + t * (q3 + t * (q4 + t * 
+                        (q5 + t * (q6 + t * (q7 + t * (q8 + t * q9)))))));
+                double b1 = v1 + t * (v2 + t * (v3 + t * (v4 + t *
+                        (v5 + t * (v6 + t * (v7 + t * (v8 + t * v9)))))));
                 if (x < 0) {
                     b1 = -b1;
                 }
@@ -227,7 +228,6 @@ public final class Aralev {
         double s=0, c=0;
         for (int i = 0; i < n; i++) {
             final double x = ak * sin(the * DR) * sin(th[i] * DR);
-            final Bessel bessel = Bessel.calculate(x);
             s += sin(th[i] * DR) * Bessel.calculate(x).bi1i0;
             c += cos(th[i] * DR);
         }
@@ -314,23 +314,12 @@ public final class Aralev {
     }
 
     public static Aralev calculate(double[] xinc) {
-        final int n = xinc.length;
-        int ie1, ie2, ie3;
-        int ierr;
-        double[] th = new double[n];
-        // th.addAll(Collections.nCopies(n, new Double(0)));
-
-        double x, rt, rk, rt1, rk1, co, dk, dt;
-        double the1, the2, the3, the4, akap1, akap2, akap3, akap4;
-        double xl, xl1, xl2, xl3, xl4;
-
         /* Set constants */
-        final double t63max = 105.070062145;
-        /* 63 % of a sphere. */
-        final double a95max = 154.158067237;
-        /* 95 % of a sphere. */
-        ierr = 1;
+        final double t63max = 105.070062145; /* 63 % of a sphere. */
+        final double a95max = 154.158067237; /* 95 % of a sphere. */
+        int ierr = 1;
 
+        final int n = xinc.length;
         /* Check for illegal use */
         if (n == 1) {
             System.out.println("ERROR: Only one or none observed inclination in ARALEV");
@@ -359,6 +348,7 @@ public final class Aralev {
         }
 
         /* Inclinations to co-inclinations */
+        double[] th = new double[n];
         for (int i = 0; i < n; i++) {
             th[i] = 90 - xinc[i];
         }
@@ -372,30 +362,30 @@ public final class Aralev {
         }
         c = c / n;
 
-        rt = s / n;
-        x = (s2 - s * s / n) * DR * DR;
-        rk = 1e10;
+        double rt = s / n;
+        double x = (s2 - s * s / n) * DR * DR;
+        double rk = 1e10;
         if (x / (n - 1) > 1e-10) {
             rk = (n - 1) / x;
         }
-        rt1 = rt;
-        rk1 = rk;
+        double rt1 = rt;
+        double rk1 = rk;
 
         /* Iterate in the interior to find solution to (theta, kappa) */
         /* Start iteration at arithmetic mean (theta, kappa) */
         rt = rt1;
         rk = rk1;
-        ie1 = 0;
+        int ie1 = 0;
 
-        the1 = rt;
-        akap1 = rk;
+        double the1 = rt;
+        double akap1 = rk;
 
         boolean conv = false;
         for (int j = 0; j < 10000; j++) {
             rt = AL1(th, rt, rk);
             rk = AL2(th, rt, rk);
-            dt = abs(rt - the1);
-            dk = abs((rk - akap1) / rk);
+            final double dt = abs(rt - the1);
+            final double dk = abs((rk - akap1) / rk);
             the1 = rt;
             akap1 = rk;
             if (j > 10 && dt < 1e-6 && dk < 1e-6) {
@@ -409,7 +399,7 @@ public final class Aralev {
 
         the1 = rt;
         akap1 = rk;
-        xl1 = Xlik(th, rt, rk);
+        double xl1 = Xlik(th, rt, rk);
 
         /* Find the maximum on the edge (theta = 0) */
         rt = 0;
@@ -418,9 +408,9 @@ public final class Aralev {
         if (x > 1e-10) {
             rk = 1 / x;
         }
-        ie2 = 0;
+        int ie2 = 0;
 
-        akap2 = rk;
+        double akap2 = rk;
 
         conv = false;
         for (int j = 0; j < 10000; j++) {
@@ -430,7 +420,7 @@ public final class Aralev {
             } else {
                 rk = 1e10;
             }
-            dk = abs((rk - akap2) / rk);
+            final double dk = abs((rk - akap2) / rk);
             akap2 = rk;
             if (j > 4 && dk < 1e-6) {
                 conv = true;
@@ -440,9 +430,9 @@ public final class Aralev {
         if (!conv) {
             ie2 = 1;
         }
-        the2 = 0;
+        double the2 = 0;
         akap2 = rk;
-        xl2 = Xlik(th, rt, rk);
+        final double xl2 = Xlik(th, rt, rk);
 
         /* Find the maximum on the edge (theta = 180) */
         rt = 180;
@@ -451,9 +441,9 @@ public final class Aralev {
         if (x > 1e-10) {
             rk = 1 / x;
         }
-        ie3 = 0;
+        int ie3 = 0;
 
-        akap3 = rk;
+        double akap3 = rk;
         conv = false;
         for (int j = 0; j < 10000; j++) {
             x = coth(rk) + c;
@@ -462,7 +452,7 @@ public final class Aralev {
             } else {
                 rk = 1e10;
             }
-            dk = abs((rk - akap3) / rk);
+            final double dk = abs((rk - akap3) / rk);
             akap3 = rk;
             if (j > 4 && dk < 1e-6) {
                 conv = true;
@@ -472,16 +462,16 @@ public final class Aralev {
         if (!conv) {
             ie3 = 1;
         }
-        the3 = 180;
+        double the3 = 180;
         akap3 = rk;
-        xl3 = Xlik(th, rt, rk);
+        final double xl3 = Xlik(th, rt, rk);
 
         /* Find the maximum on the edge (kappa = 0) */
         rt = 90;
         rk = 0;
-        the4 = rt;
-        akap4 = rk;
-        xl4 = Xlik(th, rt, rk);
+        double the4 = rt;
+        double akap4 = rk;
+        final double xl4 = Xlik(th, rt, rk);
 
         int ierr_tmp;
 
@@ -526,7 +516,7 @@ public final class Aralev {
             rt = the1 + 0.01 * cos(22.5 * x * DR);
             rk = akap1 * (1 + 0.001 * sin(22.5 * x * DR));
             if (rt >= 0 && rt <= 180) {
-                xl = Xlik(th, rt, rk);
+                final double xl = Xlik(th, rt, rk);
                 if (xl > xl1) {
                     ierr_tmp = ierr_tmp + 2;
                     System.out.println("WARNING: Robustness problem in ARALEV");
@@ -535,9 +525,9 @@ public final class Aralev {
         }
 
         /* Estimation of angular standard deviation */
-        /* c	Theta-63 calculated from (kappa), same method as Kono (1980) */
+        /* Theta-63 calculated from (kappa), same method as Kono (1980) */
 
-        co = 0; // will be set below anyway but keeps the compiler happy
+        double co = 0; // will be set below anyway but keeps the compiler happy
         if (akap1 >= 20) {
             co = 1 + log(1 - 0.63) / akap1;
         }
@@ -575,7 +565,6 @@ public final class Aralev {
             a95_tmp = a95max;
         }
 
-        // int ierr, double ainc, double ak, double t63, double a95)
         return new Aralev(ierr_tmp, ainc_tmp, ak_tmp, t63_tmp, a95_tmp);
     }
 
