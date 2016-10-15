@@ -77,15 +77,16 @@ public class AralevTest {
      */
     @Test
     public void testARALEV() {
+        
+        // TODO: test "bad" inputs (zero-length arrays etc.)
+        
         System.out.println("ARALEV");
         
         for (int i=0; i<inputs.length; i++) {
-        final double[] testData = {};
             final List<Double> testDataList = DoubleStream.of(inputs[i]).mapToObj(Double::valueOf).
                     collect(Collectors.toList());
 
-            final Aralev result = Aralev.calculate(testDataList);
-            // 20   8.565   1.78807      61.967  36.253  0
+            final Aralev result = Aralev.calculate(inputs[i]);
             
             final double[] correct = outputs[i];
             assertEquals(correct[0], result.getAinc(), delta(correct[0], 4));
