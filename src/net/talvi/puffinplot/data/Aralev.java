@@ -19,6 +19,13 @@ package net.talvi.puffinplot.data;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import static java.lang.Math.abs;
+import static java.lang.Math.sin;
+import static java.lang.Math.cos;
+import static java.lang.Math.log;
+import static java.lang.Math.pow;
+import static java.lang.Math.exp;
+import static java.lang.Math.sqrt;
 
 /**
  * Calculate Arason-Levi Maximum Likelihood Estimates (MLE) for Inclination-only
@@ -44,6 +51,8 @@ public final class Aralev {
     private final double ainc, ak, t63, a95;
     private final int ierr;
 
+    private final static double dr = 0.0174532925199433; // Degrees to radians (pi/180)
+    
     private Aralev(int ierr, double ainc, double ak, double t63, double a95) {
         this.ierr = ierr;
         this.ainc = ainc;
@@ -140,22 +149,22 @@ public final class Aralev {
             double b1;
             double bi0e, bi1e, bi1i0;
 
-            if (Math.abs(x) < 3.75) {
+            if (abs(x) < 3.75) {
                 t = (x / 3.75) * (x / 3.75);
                 b0 = p1 + t * (p2 + t * (p3 + t * (p4 + t * (p5 + t * (p6 + t * p7)))));
                 b1 = x * (u1 + t * (u2 + t * (u3 + t * (u4 + t * (u5 + t * (u6 + t * u7))))));
-                bi0e = b0 / Math.exp(Math.abs(x));
-                bi1e = b1 / Math.exp(Math.abs(x));
+                bi0e = b0 / exp(abs(x));
+                bi1e = b1 / exp(abs(x));
                 bi1i0 = b1 / b0;
             } else {
-                t = 3.75 / Math.abs(x);
+                t = 3.75 / abs(x);
                 b0 = q1 + t * (q2 + t * (q3 + t * (q4 + t * (q5 + t * (q6 + t * (q7 + t * (q8 + t * q9)))))));
                 b1 = v1 + t * (v2 + t * (v3 + t * (v4 + t * (v5 + t * (v6 + t * (v7 + t * (v8 + t * v9)))))));
                 if (x < 0) {
                     b1 = -b1;
                 }
-                bi0e = b0 / Math.sqrt(Math.abs(x));
-                bi1e = b1 / Math.sqrt(Math.abs(x));
+                bi0e = b0 / sqrt(abs(x));
+                bi1e = b1 / sqrt(abs(x));
                 bi1i0 = b1 / b0;
             }
 
@@ -178,12 +187,12 @@ public final class Aralev {
             return result;
         }
 
-        final double t = Math.abs(x);
+        final double t = abs(x);
         if (t < 0.001) {
-            result = 1 / t + t / 3 - Math.pow(t, 3) / 45 + Math.pow(t, 5) * 2 / 945;
+            result = 1 / t + t / 3 - pow(t, 3) / 45 + pow(t, 5) * 2 / 945;
         } else if (t <= 15) {
-            final double ep = Math.exp(t);
-            final double em = Math.exp(-t);
+            final double ep = exp(t);
+            final double em = exp(-t);
             result = (ep + em) / (ep - em);
         } else {
             result = 1;
@@ -201,19 +210,17 @@ public final class Aralev {
 
         double s, c, x, bi0e, bi1e, bi1i0;
 
-        final double dr = 0.0174532925199433; // Degrees to radians (pi/180)
-
         s = 0;
         c = 0;
 
         for (int i = 0; i < n; i++) {
-            x = ak * Math.sin(the * dr) * Math.sin(th.get(i) * dr);
+            x = ak * sin(the * dr) * sin(th.get(i) * dr);
             final Bessel bessel = Bessel.calculate(x);
             bi0e = bessel.bi0e;
             bi1e = bessel.bi1e;
             bi1i0 = bessel.bi1i0;
-            s = s + Math.sin(th.get(i) * dr) * bi1i0;
-            c = c + Math.cos(th.get(i) * dr);
+            s = s + sin(th.get(i) * dr) * bi1i0;
+            c = c + cos(th.get(i) * dr);
         }
 
         double al1 = Math.atan2(s, c) / dr;
@@ -232,22 +239,20 @@ public final class Aralev {
         final int n = th.size();
         double s, c, x, bi0e, bi1e, bi1i0;
 
-        final double dr = 0.0174532925199433; // Degrees to radians (pi/180)
-
         s = 0;
         c = 0;
         for (int i = 0; i < n; i++) {
-            x = ak * Math.sin(the * dr) * Math.sin(th.get(i) * dr);
+            x = ak * sin(the * dr) * sin(th.get(i) * dr);
             final Bessel bessel = Bessel.calculate(x);
             bi0e = bessel.bi0e;
             bi1e = bessel.bi1e;
             bi1i0 = bessel.bi1i0;
-            s = s + Math.sin(th.get(i) * dr) * bi1i0;
-            c = c + Math.cos(th.get(i) * dr);
+            s = s + sin(th.get(i) * dr) * bi1i0;
+            c = c + cos(th.get(i) * dr);
         }
 
         double al2;
-        x = n * coth(ak) - Math.cos(the * dr) * c - Math.sin(the * dr) * s;
+        x = n * coth(ak) - cos(the * dr) * c - sin(the * dr) * s;
         al2 = 1e10;
         if (x / n > 1e-10) {
             al2 = n / x;
@@ -266,9 +271,6 @@ public final class Aralev {
         double a1, a2, a3, q;
         double x, bi0e, bi1e, bi1i0;
 
-        final double dr = 0.0174532925199433;
-        /* ! Degrees to radians (pi/180) */
-
         double XLIK;
 
         /* Illegal use */
@@ -285,23 +287,23 @@ public final class Aralev {
         a1 = 0;
         if (ak >= 0 && ak < 0.01) {
             q = -ak * (1 - ak * (2 / 3 - ak * (1 / 3 - ak * (2 / 15 - ak * (8 / 45)))));
-            a1 = n * (-Math.log(2) - Math.log(1 + q) - ak);
+            a1 = n * (-log(2) - log(1 + q) - ak);
         } else if (ak >= 0.01 && ak <= 15) {
-            a1 = n * (Math.log(ak) - Math.log(1 - Math.exp(-2 * ak)) - ak);
+            a1 = n * (log(ak) - log(1 - exp(-2 * ak)) - ak);
         } else {
-            a1 = n * (Math.log(ak) - ak);
+            a1 = n * (log(ak) - ak);
         }
 
         /* A2(k,t,ti) = Sum(k cos t cos ti) + Sum(ln(BessIo(k sin t sin ti))) */
         a2 = 0;
 
         for (int i = 0; i < n; i++) {
-            x = ak * Math.sin(the * dr) * Math.sin(th.get(i) * dr);
+            x = ak * sin(the * dr) * sin(th.get(i) * dr);
             final Bessel besselOutput = Bessel.calculate(x);
             bi0e = besselOutput.bi0e;
             bi1e = besselOutput.bi1e;
             bi1i0 = besselOutput.bi1i0;
-            a2 = a2 + ak * Math.cos((th.get(i) - the) * dr) + Math.log(bi0e);
+            a2 = a2 + ak * cos((th.get(i) - the) * dr) + log(bi0e);
         }
 
         /* A3(ti) = Sum( ln(sin(ti)) ) */
@@ -315,7 +317,7 @@ public final class Aralev {
             if (x > 179.999999) {
                 x = 179.999999;
             }
-            a3 = a3 + Math.log(Math.sin(x * dr));
+            a3 = a3 + log(sin(x * dr));
         }
 
         /* The log-likelihood function */
@@ -331,13 +333,12 @@ public final class Aralev {
 
     private static Mean ArithmeticMean(List<Double> th) {
         final int n = th.size();
-        final double dr = 0.0174532925199433;
 
         double s = 0;
         double s2 = 0;
         for (int i = 0; i < n; i++) {
             s = s + th.get(i);
-            s2 = s2 + Math.pow(th.get(i), 2);
+            s2 = s2 + pow(th.get(i), 2);
         }
         Mean output = new Mean();
         output.rt = s / n;
@@ -353,17 +354,14 @@ public final class Aralev {
         List<Double> th = new ArrayList<>(n);
         th.addAll(Collections.nCopies(n, new Double(0)));
 
-        double dr, t63max, a95max;
         double s, s2, c, x, rt, rk, rt1, rk1, co, dk, dt;
         double the1, the2, the3, the4, akap1, akap2, akap3, akap4;
         double xl, xl1, xl2, xl3, xl4;
 
         /* Set constants */
-        dr = 0.0174532925199433;
-        /* Degrees to radians (pi/180) */
-        t63max = 105.070062145;
+        final double t63max = 105.070062145;
         /* 63 % of a sphere. */
-        a95max = 154.158067237;
+        final double a95max = 154.158067237;
         /* 95 % of a sphere. */
         ierr = 1;
 
@@ -406,7 +404,7 @@ public final class Aralev {
         for (int i = 0; i < n; i++) {
             s = s + th.get(i);
             s2 = s2 + th.get(i) * th.get(i);
-            c = c + Math.cos(th.get(i) * dr);
+            c = c + cos(th.get(i) * dr);
         }
         c = c / n;
 
@@ -432,8 +430,8 @@ public final class Aralev {
         for (int j = 0; j < 10000; j++) {
             rt = AL1(th, rt, rk);
             rk = AL2(th, rt, rk);
-            dt = Math.abs(rt - the1);
-            dk = Math.abs((rk - akap1) / rk);
+            dt = abs(rt - the1);
+            dk = abs((rk - akap1) / rk);
             the1 = rt;
             akap1 = rk;
             if (j > 10 && dt < 1e-6 && dk < 1e-6) {
@@ -468,7 +466,7 @@ public final class Aralev {
             } else {
                 rk = 1e10;
             }
-            dk = Math.abs((rk - akap2) / rk);
+            dk = abs((rk - akap2) / rk);
             akap2 = rk;
             if (j > 4 && dk < 1e-6) {
                 conv = true;
@@ -500,7 +498,7 @@ public final class Aralev {
             } else {
                 rk = 1e10;
             }
-            dk = Math.abs((rk - akap3) / rk);
+            dk = abs((rk - akap3) / rk);
             akap3 = rk;
             if (j > 4 && dk < 1e-6) {
                 conv = true;
@@ -561,8 +559,8 @@ public final class Aralev {
 
         /* Test robustness of solution theta +/- 0.01° and kappa +/- 0.1% */
         for (x = 0; x < 16; x++) {
-            rt = the1 + 0.01 * Math.cos(22.5 * x * dr);
-            rk = akap1 * (1 + 0.001 * Math.sin(22.5 * x * dr));
+            rt = the1 + 0.01 * cos(22.5 * x * dr);
+            rk = akap1 * (1 + 0.001 * sin(22.5 * x * dr));
             if (rt >= 0 && rt <= 180) {
                 xl = Xlik(th, rt, rk);
                 if (xl > xl1) {
@@ -573,13 +571,14 @@ public final class Aralev {
         }
 
         /* Estimation of angular standard deviation */
- /* c	Theta-63 calculated from (kappa), same method as Kono (1980) */
+        /* c	Theta-63 calculated from (kappa), same method as Kono (1980) */
+
         co = 0; // will be set below anyway but keeps the compiler happy
         if (akap1 >= 20) {
-            co = 1 + Math.log(1 - 0.63) / akap1;
+            co = 1 + log(1 - 0.63) / akap1;
         }
         if (akap1 > 0.1 && akap1 < 20) {
-            co = 1 + Math.log(1 - 0.63 * (1 - Math.exp(-2 * akap1))) / akap1;
+            co = 1 + log(1 - 0.63 * (1 - exp(-2 * akap1))) / akap1;
         }
         if (akap1 <= 0.1) {
             co = -0.26 + 0.4662 * akap1;
@@ -590,23 +589,23 @@ public final class Aralev {
             t63_tmp = 180;
         }
 
-        if (Math.abs(co) < 1) {
-            t63_tmp = 90 - Math.atan(co / Math.sqrt(1 - co * co)) / dr;
+        if (abs(co) < 1) {
+            t63_tmp = 90 - Math.atan(co / sqrt(1 - co * co)) / dr;
         }
         if (t63_tmp > t63max) {
             t63_tmp = t63max;
         }
 
         /* Estimation of 95% (circular) symmetric confidence limit of the mean */
- /* Alpha-95 calculated from (N, kappa), same method as Kono (1980) */
-        co = 1. - (n - 1.) * (Math.pow(20., 1. / (n - 1.)) - 1.) / (n * (akap1 - 1.) + 1.);
+        /* Alpha-95 calculated from (N, kappa), same method as Kono (1980) */
+        co = 1. - (n - 1.) * (pow(20., 1. / (n - 1.)) - 1.) / (n * (akap1 - 1.) + 1.);
 
         double a95_tmp = 0;
         if (co < 0) {
             a95_tmp = 180;
         }
-        if (Math.abs(co) < 1) {
-            a95_tmp = 90 - Math.atan(co / Math.sqrt(1. - co * co)) / dr;
+        if (abs(co) < 1) {
+            a95_tmp = 90 - Math.atan(co / sqrt(1. - co * co)) / dr;
         }
         if (a95_tmp > a95max) {
             a95_tmp = a95max;
@@ -639,18 +638,6 @@ public final class Aralev {
         //('result7').setAttribute('value', Pal.FormatNumber(aralevOutput.a95));
         //('result8').setAttribute('value', aralevOutput.ierr);
         return aralevOutput;
-    }
-
-    public static String tryit() {
-
-        List<Double> input = new ArrayList<>();
-        input.add(1.);
-        input.add(2.);
-        input.add(3.);
-
-        // ierr, ainc, ak, t63, a95;
-        Aralev a = calculate(input);
-        return String.format("ierr %d   ainc %.3f   ak %.3f   t63 %.3f   a95 %.3f", a.getIerr(), a.getAinc(), a.getAk(), a.getT63(), a.getA95());
     }
 
 }
