@@ -1,27 +1,48 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
-import os, time
+# Create LaTeX commands giving the current version string and date
+# as determined from the Mercurial repository.
 
-tag = os.popen('hg id -t').read().strip()
-revid = os.popen('hg id -i').read().strip()
-hgdate = os.popen(r"hg log -l1 -r. --template '{date|hgdate}\n'").read().strip()
+import datetime
+from subprocess import check_output
 
-modified = revid.endswith('+')
-revid = revid.replace('+','')
+def make_version_string():
+    tag = check_output(["hg", "id", "-t"]).decode("utf-8").strip()
+    revid = check_output(["hg", "id", "-i"]).decode("utf-8").strip()
 
-version_string = 'Unknown'
-if (tag.startswith('version_')):
-    version_string = tag[8:]
-else:
-    version_string = revid
-if modified:
-    version_string += ' (modified)'
+    modified = revid.endswith("+")
+    revid = revid.replace("+", "")
 
-seconds_since_epoch = int(hgdate.split()[0])
-time_object = time.gmtime(seconds_since_epoch)
-date_string = time.strftime('%d %B %Y', time_object)
+    version_string = "Unknown"
 
-outfile = open('hg-cmds.tex', 'w')
-outfile.write('\\def\\HgVersion{%s}\n' % version_string)
-outfile.write('\\def\\HgDate{%s}\n' % date_string)
-outfile.close()
+    if (tag.startswith("version_")):
+        version_string = tag[8:]
+    else:
+        version_string = revid
+
+    if modified:
+        version_string += " (modified)"
+
+    return version_string
+    
+def make_date_string():
+    args = ["hg", "log", "-l1", "-r.", "--template", r"{date|hgdate}\n"]
+    hgdate = check_output(args).decode("utf-8").strip()
+    seconds_since_epoch = int(hgdate.split()[0])
+    datetime_object = datetime.datetime.fromtimestamp(seconds_since_epoch)
+
+    # We use dt.day rather than strftime-esque formatting for the day.
+    # This is to avoid a leading zero for single-digit days, which can't
+    # be done in a cross-platform way using strftime. See
+    # http://stackoverflow.com/q/904928/6947739 for details.
+    return '{dt.day} {dt:%B} {dt.year}'.format(dt=datetime_object)
+
+def main():
+    version_string = make_version_string()
+    date_string = make_date_string()
+    with open("hg-cmds.tex", "w") as outfile:
+        outfile.write("\\def\\HgVersion{%s}\n" % version_string)
+        outfile.write("\\def\\HgDate{%s}\n" % date_string)
+
+if __name__ == "__main__":
+    main()
