@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 import java.util.prefs.Preferences;
+import java.util.stream.Collectors;
 
 
 /**
@@ -88,7 +89,7 @@ public class RecentFileList {
      * @return the list of file-set names from this recent files list
      */
     public String[] getFilesetNames() {
-        String[] result = new String[fileSets.size()];
+        final String[] result = new String[fileSets.size()];
         int i=0;
         for (FileSet fileSet: fileSets) {
             result[i] = Integer.toString(i+1) + " " + fileSet.getName();
@@ -96,7 +97,20 @@ public class RecentFileList {
         }
         return result;
     }
-
+    
+    /**
+     * Gets a list containing a long name for each fileset, intended for
+     * use in the tooltips of the recent files menu. The long name is 
+     * the full pathname of the file (or the first file if there are multiple
+     * files in the set), with the leftmost part truncated if necessary to
+     * stay within a reasonable length.
+     * 
+     * @return the list of long names for this recent files list
+     */
+    public List<String> getFilesetLongNames()
+    {
+        return fileSets.stream().map(x -> x.getLongName()).collect(Collectors.toList());
+    }
     /**
      * Returns a specified file-set and moves it to the top of the list.
      * This method is intended to be called when a user selects a recently
@@ -264,11 +278,21 @@ public class RecentFileList {
         public String getName() {
             return name;
         }
+        
+        public String getLongName() {
+            final int MAX_LENGTH = 40;
+            final String fullPath = files.get(0).getAbsolutePath() +
+                    (files.size() > 1 ? ", …" : "");
+            final int firstChar = fullPath.length() - MAX_LENGTH;
+            final String path = (firstChar > 0) ?
+                    "…"+fullPath.substring(firstChar) : fullPath;
+            return path;
+        }
 
         @Override
         public boolean equals(Object o) {
             if (!(o instanceof FileSet)) return false;
-            FileSet f = (FileSet) o;
+            final FileSet f = (FileSet) o;
             return (files.equals(f.files));
         }
 

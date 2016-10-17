@@ -1036,7 +1036,7 @@ public class PuffinActions {
             "Visit the PuffinPlot website", null, false, KeyEvent.VK_W) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            app.openWebPage("http://code.google.com/p/puffinplot/");
+            app.openWebPage("https://puffinplot.bitbucket.io/");
         }
     };
     

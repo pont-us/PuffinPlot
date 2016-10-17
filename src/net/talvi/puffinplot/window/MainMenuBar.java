@@ -20,6 +20,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -243,6 +244,7 @@ public final class MainMenuBar extends JMenuBar {
         recentFilesMenu.removeAll();
         final RecentFileList recent = app.getRecentFiles();
         final String[] recentFileNames = recent.getFilesetNames();
+        final List<String> toolTips = recent.getFilesetLongNames();
         if (recentFileNames.length == 0)
             recentFilesMenu.add(noRecentFiles);
         for (int i=0; i<recentFileNames.length; i++) {
@@ -260,6 +262,7 @@ public final class MainMenuBar extends JMenuBar {
                         super.getValue(key);
                 }
             });
+            item.setToolTipText(toolTips.get(i));
             item.setMnemonic(recentFileKeycodes[i]);
         }
     }
