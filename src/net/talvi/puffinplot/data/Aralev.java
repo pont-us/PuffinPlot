@@ -37,7 +37,7 @@ import static java.lang.Math.sqrt;
  *
  * Reference:
  *
- * Arason,. & Levi, S., 2010. Maximum likelihood solution for inclination-only
+ * Arason, Þ. &amp; Levi, S., 2010. Maximum likelihood solution for inclination-only
  * data in paleomagnetism. Geophysical Journal International, 182(2),
  * pp.753–771.
  *

@@ -52,6 +52,9 @@ Bug fixes
 -   Custom flags and notes are now included in exported sample data.
 -   PDF export no longer produces an extra page.
 -   Display is now updated automatically when sites are edited.
+-   Formatting of PCA equations in exported CSV files is now
+	locale-independent, so will always use "." rather than ","
+	as the decimal separator.
 
 Other notes
 -----------

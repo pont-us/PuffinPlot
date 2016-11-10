@@ -808,7 +808,8 @@ public class Vec3 {
         } else {
             vec = this;
         }
-        String result = String.format(format, vec.x, vec.y, vec.z);
+        String result = String.format(Locale.ENGLISH,
+                format, vec.x, vec.y, vec.z);
         if (scale) {
             result += String.format(Locale.ENGLISH, "e%d", oom);
         }
