@@ -316,7 +316,6 @@ public final class PuffinApp {
         }
 
         processArgs(args);
-        //processArgs(new String[] {"-process", "/home/pont/test.ppl"});
     }
     
     private static void processArgs(String[] args) {
@@ -326,7 +325,7 @@ public final class PuffinApp {
             final Option scriptOpt =
                     OptionBuilder.withArgName("file")
                             .hasArg()
-                            .withDescription("run specified Python script")
+                            .withDescription("run specified script")
                             .create("script");
             @SuppressWarnings("static-access")
             final Option processOpt =
@@ -1563,8 +1562,12 @@ public final class PuffinApp {
                 + "org/python/jython-standalone/2.7.0/"
                 + "jython-standalone-2.7.0.jar";
         
-        // Files.copy can block indefinitely, so this should be in a separate thread.
-        // Also need a progress dialog or at least a "please wait" here.
+        // Download the jython interpreter to a local cache directory, if it
+        // isn't cached already.
+        // TODO: Files.copy can block indefinitely, so this should be in a separate thread.
+        // Also need a progress dialog or at least a "please wait" here, but
+        // this will need some careful consideration if runPythonScript needs
+        // to be callable headless (e.g. directly from PP command-line invocation).
         if (!Files.exists(jythonPath)) {
             final URI uri = URI.create(urlString);
             try (InputStream in = uri.toURL().openStream()) {

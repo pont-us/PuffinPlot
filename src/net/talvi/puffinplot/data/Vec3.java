@@ -148,7 +148,7 @@ public class Vec3 {
     }
 
     /**
-     * Given a list of points, return a a list of lists containing the same points
+     * Given a list of points, return a list of lists containing the same points
      * plus possible extras. Each sublist of the returned list is guaranteed
      * only to contain points in one hemisphere. Where the original list
      * crosses the equator, an extra point is interpolated exactly on the
@@ -159,7 +159,7 @@ public class Vec3 {
      * {@code vs}; none of the sub-lists crosses the equator
      */
     public static List<List<Vec3>> interpolateEquatorPoints(List<Vec3> vs) {
-        List<List<Vec3>> result = new ArrayList<>();
+        final List<List<Vec3>> result = new ArrayList<>();
         List<Vec3> currentSegment = new ArrayList<>();
         Vec3 prev = null;
         for (Vec3 v: vs) {
@@ -169,7 +169,7 @@ public class Vec3 {
                 if (prev.sameHemisphere(v)) {
                     currentSegment.add(v);
                 } else {
-                    Vec3 between = Vec3.equatorPoint(prev, v);
+                    final Vec3 between = Vec3.equatorPoint(prev, v);
                     currentSegment.add(between);
                     result.add(currentSegment);
                     currentSegment = new ArrayList<>();
@@ -194,8 +194,8 @@ public class Vec3 {
     public static List<Vec3> spherInterpolate(Vec3 v0, Vec3 v1, double stepSize) {
         assert(v0.isWellFormed());
         assert(v1.isWellFormed());
-        Vec3 v0n = v0.normalize();
-        Vec3 v1n = v1.normalize();
+        final Vec3 v0n = v0.normalize();
+        final Vec3 v1n = v1.normalize();
         double dotProduct = v0n.dot(v1n);
         /* Floating-point rounding errors can produce "normalized" vectors
          * with a length slightly greater than 1, and in very unlucky cases
@@ -209,18 +209,18 @@ public class Vec3 {
          */
         if (dotProduct > 1) dotProduct = 1;
         if (dotProduct < -1) dotProduct = -1;
-        double omega = Math.acos(dotProduct);
+        final double omega = Math.acos(dotProduct);
         // TODO fix this for equator-crossing case?
         if (omega < stepSize) return Arrays.asList(new Vec3[] {v0n, v1n});
-        int steps = (int) (omega / stepSize) + 1;
+        final int steps = (int) (omega / stepSize) + 1;
         final List<Vec3> result = new ArrayList<>(steps+1);
         Vec3 prevVec = null;
 
         for (int i=0; i<steps; i++) {
             final double t = (double) i / (double) (steps-1);
-            double scale0 = (sin((1.0-t)*omega)) / sin(omega);
-            double scale1 = sin(t*omega) / sin(omega);
-            Vec3 thisVec = v0n.times(scale0).plus(v1n.times(scale1));
+            final double scale0 = (sin((1.0-t)*omega)) / sin(omega);
+            final double scale1 = sin(t*omega) / sin(omega);
+            final Vec3 thisVec = v0n.times(scale0).plus(v1n.times(scale1));
             //There's now a separate routine for interpolating equator points.
             //if (i>0 && !thisVec.sameHemisphere(prevVec)) {
             // result.add(equatorPoint(prevVec, thisVec));
@@ -271,9 +271,9 @@ public class Vec3 {
      */
     public Vec3 rotY(double angle) {
         final double[][] m =
-         {{cos(angle), 0, sin(angle)},
-          {0, 1, 0},
-          { -sin(angle), 0, cos(angle)}};
+         {{  cos(angle),  0, sin(angle) },
+          {           0,  1,          0 },
+          { -sin(angle),  0, cos(angle) }};
         return transform(m);
     }
     
@@ -283,9 +283,9 @@ public class Vec3 {
      */
     public Vec3 rotZ(double angle) {
         final double[][] m =
-         {{ cos(angle), -sin(angle), 0 },
-         { sin(angle),  cos(angle), 0 },
-         { 0      ,  0      , 1 }};
+         {{ cos(angle), -sin(angle),  0 },
+         {  sin(angle),  cos(angle),  0 },
+         {           0,           0,  1 }};
         return transform(m);
     }
 
@@ -494,7 +494,7 @@ public class Vec3 {
 
     /** Multiplies the components of this vector individually
      * by the corresponding components of another vector.
-     * Note that this is neither the dot nor cross product, and
+     * Note that this is neither the dot product nor the cross product, and
      * is seldom used.
      * @param v a vector
      * @return a vector with the elements {@code (this.x*v.x,
@@ -563,7 +563,7 @@ public class Vec3 {
      */
     public double angleTo(Vec3 v) {
         // Uses a cross product to get a signed angle.
-        Vec3 cross = cross(v);
+        final Vec3 cross = cross(v);
         double sign = cross.z;
         if (sign == 0) sign = cross.y;
         if (sign == 0) sign = cross.x;
@@ -729,7 +729,7 @@ public class Vec3 {
      * @return a list of vectors defining a small circle around this vector's direction
      */
     public List<Vec3> makeSmallCircle(double radiusDegrees) {
-        List<Vec3> result = new ArrayList<>();
+        final List<Vec3> result = new ArrayList<>();
         for (double dec = 0; dec < 360; dec += 5) {
             final Vec3 v1 = Vec3.fromPolarDegrees(1, 90 - radiusDegrees, dec);
             final Vec3 v2 = v1.rotY(Math.PI / 2 - getIncRad());
