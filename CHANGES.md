@@ -40,6 +40,12 @@ User interface
 	folder.
 -   Status bar added to main window.
 
+Graphing and data display
+-------------------------
+
+-   Per-sample Fisher statistics are now shown in the sample parameters
+	legend.
+
 Data export
 -----------
 

@@ -1252,7 +1252,7 @@ public final class PuffinApp {
         }
     }
     
-    /** <p>Shows an ‘open file’ dialog box; if the user select a file,
+    /** <p>Shows an ‘open file’ dialog box; if the user selects a file,
      * the current preferences will be overwritten with preferences data
      * from that file. The file is expected to contain Java Preferences
      * data in XML format.</p> */

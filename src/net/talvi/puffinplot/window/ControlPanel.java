@@ -48,7 +48,6 @@ public class ControlPanel extends JPanel
     private final RotationBox rotationBox;
     VVsBox vVsBox;
     private final HprojBox hprojBox;
-    private final JRadioButton emptyButton;
     private final PuffinApp app;
     private final Preferences prefs;
     
@@ -59,8 +58,7 @@ public class ControlPanel extends JPanel
             vVsBox.toggle();
         }
     };
-    private final JRadioButton trayButton;
-    
+
     /** Creates a new control panel
      * 
      * @param app The PuffinPlot instance associated with this panel
@@ -71,7 +69,6 @@ public class ControlPanel extends JPanel
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         add(suiteBox = new JComboBox(new String[] {"no files loaded"}));
         add(rotationBox = new RotationBox());
-        trayButton = emptyButton = null;
         add(vVsBox = new VVsBox());
         add(hprojBox = new HprojBox());
         add(new JToolBar.Separator());
@@ -280,10 +277,11 @@ public class ControlPanel extends JPanel
     @Override
     public void itemStateChanged(ItemEvent e) {
         final Object s = e.getSource();
-        if (s == rotationBox || s == trayButton || s == emptyButton ||
-                s == vVsBox || s == hprojBox) {
-            app.setCorrection(getCorrection());
-            app.redoCalculations();
+        if (s == rotationBox || s == vVsBox || s == hprojBox) {
+            if (s == rotationBox) {
+                app.setCorrection(getCorrection());
+                app.redoCalculations();
+            }
             app.getMainWindow().repaint();
         }
     }

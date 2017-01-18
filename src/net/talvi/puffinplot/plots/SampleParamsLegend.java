@@ -18,11 +18,13 @@ package net.talvi.puffinplot.plots;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.prefs.Preferences;
+import net.talvi.puffinplot.data.FisherParams;
 import net.talvi.puffinplot.data.GreatCircle;
 import net.talvi.puffinplot.data.PcaValues;
 import net.talvi.puffinplot.data.Sample;
@@ -30,18 +32,21 @@ import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 
 /**
- * A textual display of a set of PCA and great circle parameters
- * for a single sample.
+ * A textual display of a set of parameters for a single sample.
+ * 
+ * This legend displays sample directions and associated data from 
+ * PCA calculations, great circle fits, and Fisher statistics on individual 
+ * treatment steps.
  * 
  * @author pont
  */
 public class SampleParamsLegend extends Plot {
 
-    /** Creates a new PCA table with the supplied parameters.
+    /** Creates a new sample parameter legend with the supplied parameters.
      * 
-     * @param parent the graph display containing the table
-     * @param params the parameters of the table
-     * @param prefs the preferences containing the table configuration
+     * @param parent the graph display containing the legend
+     * @param params the parameters of the legend
+     * @param prefs the preferences containing the legend configuration
      */
     public SampleParamsLegend(GraphDisplay parent, PlotParams params, Preferences prefs) {
         super(parent, params, prefs);
@@ -62,43 +67,53 @@ public class SampleParamsLegend extends Plot {
         return 12;
     }
     
+    private static String fmt(String format, Object... arguments) {
+        return String.format(Locale.ENGLISH, format, arguments);
+    }
+    
     @Override
     public void draw(Graphics2D g) {
-        Sample sample = params.getSample();
+        final Sample sample = params.getSample();
         if (sample==null) return;
- 
-        final PcaValues pca = sample.getPcaValues();
-        final GreatCircle gc = sample.getGreatCircle();
+       
+        final List<String> strings = new ArrayList<>(10);
         
-        List<String> strings = new ArrayList<>(10);
-                
+        final GreatCircle gc = sample.getGreatCircle();
         if (gc != null) {
             strings.addAll(Arrays.asList(
-                String.format(Locale.ENGLISH,
-                        "GC  dec %.2f / inc %.2f", gc.getPole().getDecDeg(),
-                        gc.getPole().getIncDeg()),
-                String.format(Locale.ENGLISH,
-                        "GC  MAD1 %.2f", gc.getMad1())));
+                fmt("GC  dec %.2f / inc %.2f",
+                    gc.getPole().getDecDeg(), gc.getPole().getIncDeg()),
+                fmt("GC  MAD1 %.2f", gc.getMad1())));
         }
         
+        final PcaValues pca = sample.getPcaValues();
         if (pca != null) {
             strings.addAll(Arrays.asList(
-                String.format(Locale.ENGLISH,
-                        "PCA  dec %.2f / inc %.2f",
-                        pca.getDirection().getDecDeg(),
-                        pca.getDirection().getIncDeg()),
-                String.format(Locale.ENGLISH,
-                        "PCA  MAD1 %.2f / MAD3 %.2f",
+                fmt("PCA  dec %.2f / inc %.2f",
+                    pca.getDirection().getDecDeg(),
+                    pca.getDirection().getIncDeg()),
+                fmt("PCA  MAD1 %.2f / MAD3 %.2f",
                     pca.getMad1(), pca.getMad3()),
                 pca.getEquation()));
         }
         
+        final FisherParams fisher = sample.getFisherValues();
+        if (fisher != null) {
+            strings.addAll(Arrays.asList(
+                    fmt("Fisher dec %.2f / inc %.2f",
+                        fisher.getMeanDirection().getDecDeg(),
+                        fisher.getMeanDirection().getIncDeg()),
+                    fmt("Fisher α95 %.2f / k %.2f",
+                        fisher.getA95(), fisher.getK())));
+        }
+        
         if (!strings.isEmpty()) {
             g.setColor(Color.BLACK);
+            final Rectangle2D dims = getDimensions();
             for (int i=0; i<strings.size(); i++) {
               writeString(g, strings.get(i),
-                      (int) getDimensions().getMinX(),
-                      (int) (getDimensions().getMinY() + (i+1) * getFontSize() * 1.2));
+                      (int) dims.getMinX(),
+                      (int) (dims.getMinY() + (i+1) * getFontSize() * 1.2));
             }
         }
     }
