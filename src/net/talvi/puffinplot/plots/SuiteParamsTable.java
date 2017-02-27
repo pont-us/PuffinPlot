@@ -36,7 +36,7 @@ public class SuiteParamsTable extends Plot {
 
     private final double us = getUnitSize();
     private final List<Double> xSpacing =
-            Arrays.asList(600*us, 400*us, 400*us, 400*us, 400*us, 350*us, 400*us);
+            Arrays.asList(600*us, 400*us, 400*us, 400*us, 400*us, 350*us, 550*us);
     private final int ySpacing = (int) (120 * getUnitSize());
     private final List<String> headers = 
             Arrays.asList(new String[] {"Param", "dec/φ", "inc/λ", "α95", "k", "N", "R"});
@@ -68,6 +68,11 @@ public class SuiteParamsTable extends Plot {
         return String.format(Locale.ENGLISH, "%.1f", value);
     }
     
+    private static String fmt(double value, int dp) {
+        final String formatString =
+                String.format(Locale.ENGLISH, "%%.%df", dp);
+        return String.format(Locale.ENGLISH, formatString, value);
+    }
             
     private static String fmt(int value) {
         return String.format(Locale.ENGLISH, "%d", value);
@@ -109,7 +114,7 @@ public class SuiteParamsTable extends Plot {
                     values.set(3, fmt(all.getA95()));
                     values.set(4, fmt(all.getK()));
                     values.set(5, fmt(all.getN()));
-                    values.set(6, fmt(all.getR()));
+                    values.set(6, fmt(all.getR(), 4));
                 }
                 points.add(new TextLinePoint(this, g, yPos, null, null,
                         values, xSpacing, Color.BLACK));

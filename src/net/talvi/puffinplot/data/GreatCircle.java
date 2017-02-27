@@ -127,7 +127,7 @@ public final class GreatCircle {
     }
     
     private String fmt(double d) {
-        return String.format(Locale.ENGLISH, "%.1f", d);
+        return String.format(Locale.ENGLISH, "%.4f", d);
     }
     
     /** Returns the statistical parameters as a list of strings.

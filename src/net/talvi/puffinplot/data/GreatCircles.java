@@ -179,7 +179,7 @@ public final class GreatCircles implements FisherParams {
     }
 
     private String fmt(double d) {
-        return String.format(Locale.ENGLISH, "%.2f", d);
+        return String.format(Locale.ENGLISH, "%.4f", d);
     }
     
     private String intFmt(int d) {

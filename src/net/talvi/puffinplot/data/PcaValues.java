@@ -138,7 +138,7 @@ public class PcaValues {
     }
     
     private String fmt(double d) {
-        return String.format(Locale.ENGLISH, "%.2f", d);
+        return String.format(Locale.ENGLISH, "%.4f", d);
     }
 
     /** Returns the headers describing the parameters as a list of strings.

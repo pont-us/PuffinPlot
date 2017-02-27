@@ -45,12 +45,15 @@ Graphing and data display
 
 -   Per-sample Fisher statistics are now shown in the sample parameters
 	legend.
+-   R parameter now shown to 4 decimal places in site and suite parameter
+    tables.
 
 Data export
 -----------
 
 -   Degree signs in exported data replaced with "deg", to accommodate
 	software that has trouble with non-ASCII character sets.
+-   Precision of exported parameters increased to four decimal places.
 
 Bug fixes
 ---------

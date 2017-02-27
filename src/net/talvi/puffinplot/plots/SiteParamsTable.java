@@ -41,7 +41,7 @@ public class SiteParamsTable extends Plot {
     private final double us = getUnitSize();
     private final List<Double> xSpacing =
             Arrays.asList(500*us, 250*us, 270*us, 250*us, 400*us, 400*us,
-            400*us, 400*us, 400*us);
+            400*us, 500*us, 350*us);
     private final int ySpacing = (int) (120 * getUnitSize());
     private final List<String> headers = 
             Arrays.asList(new String[] {"Site", "n", "PCA", "GC", "dec.",
@@ -104,7 +104,7 @@ public class SiteParamsTable extends Plot {
                 values.set(4, fmt("%.1f", direction.getDecDeg()));
                 values.set(5, fmt("%.1f", direction.getIncDeg()));
                 values.set(6, fmt("%.1f", gcs.getA95()));
-                values.set(7, fmt("%.2f", gcs.getR()));
+                values.set(7, fmt("%.4f", gcs.getR()));
                 values.set(8, "GC:" + (gcs.isValid() ? "v" : "i"));
             } else if (site.getFisherValues() != null) {
                 final FisherValues fvs = site.getFisherValues();
@@ -114,7 +114,7 @@ public class SiteParamsTable extends Plot {
                 values.set(4, fmt("%.1f", direction.getDecDeg()));
                 values.set(5, fmt("%.1f", direction.getIncDeg()));
                 values.set(6, fmt("%.1f", fvs.getA95()));
-                values.set(7, fmt("%.2f", fvs.getR()));
+                values.set(7, fmt("%.4f", fvs.getR()));
                 values.set(8, "Fshr");
             } 
             
