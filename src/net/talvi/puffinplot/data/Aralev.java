@@ -289,6 +289,7 @@ public final class Aralev {
     }
 
     private final static class Mean {
+        // TODO Either expose this class or remove it -- at present it isn't used!
 
         public final double rt, rk;
     
@@ -576,20 +577,7 @@ public final class Aralev {
             th[i] = 90 - inc[i];
         }
 
-        Mean mean = Mean.calculate(th);
-
-        //('result1').setAttribute('value', th.length);
-        //('result2').setAttribute('value', Pal.FormatNumber(90 - mean.rt));
-        //('result3').setAttribute('value', Pal.FormatNumber(mean.rk));
-        Aralev aralevOutput = calculate(inc);
-
-        //('result9').setAttribute('value', th.length);
-        //('result4').setAttribute('value', Pal.FormatNumber(aralevOutput.ainc));
-        //('result5').setAttribute('value', Pal.FormatNumber(aralevOutput.ak));
-        //('result6').setAttribute('value', Pal.FormatNumber(aralevOutput.t63));
-        //('result7').setAttribute('value', Pal.FormatNumber(aralevOutput.a95));
-        //('result8').setAttribute('value', aralevOutput.ierr);
+        final Aralev aralevOutput = calculate(inc);
         return aralevOutput;
     }
-
 }

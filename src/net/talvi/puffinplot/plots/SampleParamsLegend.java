@@ -48,7 +48,8 @@ public class SampleParamsLegend extends Plot {
      * @param params the parameters of the legend
      * @param prefs the preferences containing the legend configuration
      */
-    public SampleParamsLegend(GraphDisplay parent, PlotParams params, Preferences prefs) {
+    public SampleParamsLegend(GraphDisplay parent, PlotParams params,
+            Preferences prefs) {
         super(parent, params, prefs);
     }
 

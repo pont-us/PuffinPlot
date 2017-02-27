@@ -66,6 +66,9 @@ public class CsvWriter {
      * @return a CSV-friendly representation of the supplied object
      */
     private String makeCsvString(Object o) {
+        if (o == null) {
+            return "null";
+        }
         String s = o.toString();
         if (s.contains(separator)) {
             if (s.contains(("\""))) {
