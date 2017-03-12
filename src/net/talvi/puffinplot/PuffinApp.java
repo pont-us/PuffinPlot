@@ -31,7 +31,13 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
@@ -44,7 +50,15 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Properties;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -98,8 +112,8 @@ public final class PuffinApp {
 
     private static PuffinApp app;
     private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
-    private static final ByteArrayOutputStream logStream =
-            new ByteArrayOutputStream();
+    private static final java.io.ByteArrayOutputStream logStream =
+            new java.io.ByteArrayOutputStream();
     private static final MemoryHandler logMemoryHandler;
 
     private final PuffinActions actions;
@@ -122,7 +136,7 @@ public final class PuffinApp {
     private boolean emptyCorrectionActive;
     private Correction correction;
     private final IdToFileMap lastUsedFileOpenDirs;
-    private BitSet pointSelectionClipboard = new BitSet(0);
+    private java.util.BitSet pointSelectionClipboard = new java.util.BitSet(0);
     private Properties buildProperties;
     private static final boolean MAC_OS_X =
             System.getProperty("os.name").toLowerCase(Locale.ENGLISH).
@@ -135,7 +149,8 @@ public final class PuffinApp {
     it's better that the save directories *don't* persist between restarts
     of the program. Inkscape has persistent save directories and I've found
     it to be very counterintuitive. */
-    private final Map<String,String> lastUsedSaveDirectories = new HashMap<>();
+    private final java.util.Map<String,String> lastUsedSaveDirectories =
+            new java.util.HashMap<>();
 
     static {
         final Handler logStringHandler =
@@ -245,7 +260,8 @@ public final class PuffinApp {
             boolean quit = unhandledErrorDialog();
             File f = new File(System.getProperty("user.home"), ERROR_FILE);
             try {
-                final PrintWriter w = new PrintWriter(new FileWriter(f));
+                final java.io.PrintWriter w =
+                        new java.io.PrintWriter(new FileWriter(f));
                 w.println("PuffinPlot error file");
                 w.println("Build date: " + getInstance().
                         getBuildProperty("build.date"));
@@ -517,7 +533,7 @@ public final class PuffinApp {
      * @param samples samples which have changed
      */
     private void recalculateAffectedSites(Collection<Sample> samples) {
-        final Set<Site> affectedSites = new HashSet<>();
+        final Set<Site> affectedSites = new java.util.HashSet<>();
         for (Sample sample: samples) {
             if (sample.getSite() != null) {
                 affectedSites.add(sample.getSite());
@@ -740,7 +756,8 @@ public final class PuffinApp {
             }
 
             FileFormat format = null;
-            Map<Object,Object> importOptions = new HashMap<>();
+            java.util.Map<Object,Object> importOptions =
+                    new java.util.HashMap<>();
             switch (fileType) {
                 case CUSTOM_TABULAR:
                     final TabularImportWindow tabularDialog =
@@ -986,7 +1003,7 @@ public final class PuffinApp {
      * @return all the sites which contain any of the currently selected samples */
     public List<Site> getSelectedSites() {
         final List<Sample> samples = getSelectedSamples();
-        final Set<Site> siteSet = new LinkedHashSet<>();
+        final Set<Site> siteSet = new java.util.LinkedHashSet<>();
         for (Sample sample: samples) {
             // re-insertion doesn't affect iteration order
             final Site site = sample.getSite();
@@ -1424,7 +1441,7 @@ public final class PuffinApp {
         // See p. 483 of the itext book for more details.
         com.lowagie.text.pdf.PdfWriter writer =
                 com.lowagie.text.pdf.PdfWriter.getInstance(document,
-                new FileOutputStream(pdfFile));
+                new java.io.FileOutputStream(pdfFile));
         FontMapper mapper = new DefaultFontMapper();
         document.open();
         PdfContentByte content = writer.getDirectContent();
