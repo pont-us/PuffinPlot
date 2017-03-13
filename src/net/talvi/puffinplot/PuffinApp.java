@@ -47,6 +47,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -1583,6 +1585,8 @@ public final class PuffinApp {
         final String urlString = "http://central.maven.org/maven2/"
                 + "org/python/jython-standalone/2.7.0/"
                 + "jython-standalone-2.7.0.jar";
+//        final String urlString = "http://localhost:8001/jython-standalone-2.7.0.jar";
+        
         
         // Download the jython interpreter to a local cache directory, if it
         // isn't cached already.
@@ -1622,6 +1626,7 @@ public final class PuffinApp {
                     PuffinApp.class.getClassLoader());
             final ScriptEngineManager sem = new ScriptEngineManager(child);
             pythonEngine = sem.getEngineByName("python");
+            assert(pythonEngine != null);
         }
         
         pythonEngine.put("puffin_app", this);
@@ -1660,31 +1665,49 @@ public final class PuffinApp {
         }
         
         @Override
-        protected Void doInBackground() throws Exception {
+        protected Void doInBackground() {
             setProgress(0);
             BufferedInputStream inStream = null;
             FileOutputStream outStream = null;
             final int totalSize = getFileSize();
             try {
-                inStream = new BufferedInputStream(url.openStream());
+                ReadableByteChannel rbc = Channels.newChannel(url.openStream());
                 outStream = new FileOutputStream(outputPath.toFile());
                 
                 final byte data[] = new byte[1024];
-                int count;
-                int totalTransferred = 0;
+                long count;
+                long totalTransferred = 0;
                 logger.log(Level.INFO, "Starting Jython download. Size {0}", totalSize);
-                while ((count = inStream.read(data, 0, 32*1024)) != -1) {
-                    logger.fine(String.format("Jython download: %d", totalTransferred));
-                    outStream.write(data, 0, count);
+                while (true) {  
+                    logger.info(String.format("Jython download: %d", totalTransferred));
+                    count = outStream.getChannel().transferFrom(rbc, totalTransferred, 256*1024);
                     totalTransferred += count;
                     setProgress(Math.min(100, (int) (100*totalTransferred/totalSize)));
+                    if (totalTransferred == totalSize) {
+                        logger.info(String.format("%d == %d", totalTransferred, totalSize));
+                        break;
+                    }
                 }
+                logger.info(String.format("Jython download complete: %d / %d", totalTransferred, totalSize));
+            } catch (IOException ex) {
+                logger.log(Level.SEVERE, null, ex);
+                // TODO Do seomthing about RuntimeExceptions in this method -- 
+                // by default they are swallowed silently in a SwingWorker!
+                // See https://baptiste-wicht.com/posts/2010/09/a-better-swingworker.html
             } finally {
                 if (inStream != null) {
-                    inStream.close();
+                    try {
+                        inStream.close();
+                    } catch (IOException ex) {
+                        logger.log(Level.SEVERE, null, ex);
+                    }
                 }
                 if (outStream != null) {
-                    outStream.close();
+                    try {
+                        outStream.close();
+                    } catch (IOException ex) {
+                        logger.log(Level.SEVERE, null, ex);
+                    }
                 }
             }
             setProgress(100);
