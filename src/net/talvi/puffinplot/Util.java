@@ -19,8 +19,10 @@ package net.talvi.puffinplot;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,6 +30,8 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
@@ -391,4 +395,22 @@ public class Util {
         }
     }
     
+    public static String calculateSHA1(File file) throws IOException, NoSuchAlgorithmException {
+        MessageDigest digest;
+        try (InputStream inputStream = new FileInputStream(file)) {
+            final byte[] buffer = new byte[1024];
+            digest = MessageDigest.getInstance("SHA-1");
+            int numRead;
+            do {
+                numRead = inputStream.read(buffer);
+                if (numRead > 0) {
+                    digest.update(buffer, 0, numRead);
+                }
+            } while (numRead != -1);
+        }
+        // printHexBinary seems to return upper case in practice, but I can't
+        // find this officially guaranteed anywhere, so safest to ensure it
+        // with a toUpperCase().
+        return javax.xml.bind.DatatypeConverter.printHexBinary(digest.digest()).toUpperCase();
+    }
 }

@@ -49,23 +49,6 @@ public class ProgressDialog extends JDialog
     private final JPanel innerPanel;
     private final SwingWorker<Void, Void> worker;
 
-    public class Worker extends SwingWorker<Void, Void> {
-
-        @Override
-        public Void doInBackground() {
-            setProgress(0);
-            for (int i=0; i<100; i += 7) {
-                try {
-                    Thread.sleep(300);
-                } catch (InterruptedException ignore) {}
-
-                setProgress(i);
-            }
-            setProgress(100);
-            return null;
-        }
-    }
-
     private ProgressDialog(String title, Frame owner, SwingWorker<Void, Void> worker) {
         super(owner, title, true);
 

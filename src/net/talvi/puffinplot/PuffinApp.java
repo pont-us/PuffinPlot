@@ -53,6 +53,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -1582,42 +1583,56 @@ public final class PuffinApp {
         
         final Path appDirPath = Util.getAppDataDirectory();
         final Path jythonPath = appDirPath.resolve("jython-standalone-2.7.0.jar");
+        final File jythonFile = jythonPath.toFile();
         final String urlString = "http://central.maven.org/maven2/"
                 + "org/python/jython-standalone/2.7.0/"
                 + "jython-standalone-2.7.0.jar";
 //        final String urlString = "http://localhost:8001/jython-standalone-2.7.0.jar";
         
-        
         // Download the jython interpreter to a local cache directory, if it
         // isn't cached already.
-        // TODO: Files.copy can block indefinitely, so this should be in a separate thread.
-        // Also need a progress dialog or at least a "please wait" here, but
-        // this will need some careful consideration if runPythonScript needs
-        // to be callable headless (e.g. directly from PP command-line invocation).
+          
+        if (jythonFile.exists()) {
+            // Check that the jar has the expected size. If not, delete and
+            // redownload. We don't check the checksum here -- doing it on 
+            // every run would be slow -- but verifying the size is a very
+            // cheap operation.
+            // 37021723 is the known size of the required Jython jar.
+            if (jythonFile.length() != 37021723) {
+                jythonFile.delete();
+            }
+        }
         
-//        Runnable downloader = new Runnable()  {
-//            private IOException exception = null;
-//            public void run() {
-//            final URI uri = URI.create(urlString);
-//            try (InputStream in = uri.toURL().openStream()) {
-//                Files.copy(in, jythonPath);
-//            } catch (IOException ex) {
-//                Logger.getLogger(PuffinApp.class.getName()).log(Level.SEVERE, null, ex);
-//                exception = ex;
-//              }
-//            }
-//        };
+        if (!jythonFile.exists()) {
             
-        if (!Files.exists(jythonPath)) {
-//            final Thread downloaderThread = new Thread(downloader);
-//            JOptionPane.showMessageDialog
-//                (getMainWindow(), "Downloading Jython...", "Puffinplot", JOptionPane.INFORMATION_MESSAGE);
-//            downloaderThread.start();
+            // TODO get user confirmation to continue with download here.
             
-            final DownloadWorker worker = new DownloadWorker(new URL(urlString), jythonPath);
-            final ProgressDialog pd = ProgressDialog.getInstance("Downloading Jython",
-                getMainWindow(), worker);            
-
+            final DownloadWorker worker =
+                    new DownloadWorker(new URL(urlString), jythonPath);
+            ProgressDialog.getInstance("Downloading Jython",
+                    getMainWindow(), worker);
+            // The progress dialog is modal, so this will block until the
+            // download is complete or cancelled.
+            if (worker.isCancelled()) {
+                jythonPath.toFile().delete();
+                errorDialog("Download cancelled", "The Jython download was "
+                        + "cancelled, so the script will not be run.");
+                return;
+            }
+            // Verify the SHA-1 checksum.
+            try {
+                final String desiredSha1Sum = "CDFB38BC6F8343BCF1D6ACCC2E1147E8E7B63B75";
+                final String actualSha1Sum = Util.calculateSHA1(jythonPath.toFile());
+                if (!desiredSha1Sum.equals(actualSha1Sum)) {
+                    jythonPath.toFile().delete();
+                    errorDialog("Download failed",
+                            "There was a problem with the downloaded Jython file.\n"
+                            + "Please try again.");
+                    return;
+                }
+            } catch (NoSuchAlgorithmException ex) {
+                Logger.getLogger(PuffinApp.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         
         if (pythonEngine == null) {
@@ -1637,83 +1652,6 @@ public final class PuffinApp {
         getMainWindow().suitesChanged();
     }
     
-    
-    private class DownloadWorker extends SwingWorker<Void, Void> {
-
-        private final URL url;
-        private final Path outputPath;
-        
-        public DownloadWorker(URL url, Path outputPath) {
-            this.url = url;
-            this.outputPath = outputPath;
-        }
-        
-        private int getFileSize() {
-             HttpURLConnection conn = null;
-             try {
-                 conn = (HttpURLConnection) url.openConnection();
-                 conn.setRequestMethod("HEAD");
-                 conn.getInputStream();
-                 return conn.getContentLength();
-             } catch (IOException e) {
-                 return -1;
-             } finally {
-                 if (conn != null) {
-                     conn.disconnect();
-                 }
-             }
-        }
-        
-        @Override
-        protected Void doInBackground() {
-            setProgress(0);
-            BufferedInputStream inStream = null;
-            FileOutputStream outStream = null;
-            final int totalSize = getFileSize();
-            try {
-                ReadableByteChannel rbc = Channels.newChannel(url.openStream());
-                outStream = new FileOutputStream(outputPath.toFile());
-                
-                final byte data[] = new byte[1024];
-                long count;
-                long totalTransferred = 0;
-                logger.log(Level.INFO, "Starting Jython download. Size {0}", totalSize);
-                while (true) {  
-                    logger.info(String.format("Jython download: %d", totalTransferred));
-                    count = outStream.getChannel().transferFrom(rbc, totalTransferred, 256*1024);
-                    totalTransferred += count;
-                    setProgress(Math.min(100, (int) (100*totalTransferred/totalSize)));
-                    if (totalTransferred == totalSize) {
-                        logger.info(String.format("%d == %d", totalTransferred, totalSize));
-                        break;
-                    }
-                }
-                logger.info(String.format("Jython download complete: %d / %d", totalTransferred, totalSize));
-            } catch (IOException ex) {
-                logger.log(Level.SEVERE, null, ex);
-                // TODO Do seomthing about RuntimeExceptions in this method -- 
-                // by default they are swallowed silently in a SwingWorker!
-                // See https://baptiste-wicht.com/posts/2010/09/a-better-swingworker.html
-            } finally {
-                if (inStream != null) {
-                    try {
-                        inStream.close();
-                    } catch (IOException ex) {
-                        logger.log(Level.SEVERE, null, ex);
-                    }
-                }
-                if (outStream != null) {
-                    try {
-                        outStream.close();
-                    } catch (IOException ex) {
-                        logger.log(Level.SEVERE, null, ex);
-                    }
-                }
-            }
-            setProgress(100);
-            return null;
-        }
-    }
     
     /**
      * Opens a file selection dialog and runs the Python script
