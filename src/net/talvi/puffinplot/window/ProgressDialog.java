@@ -21,6 +21,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
@@ -29,7 +30,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JFrame;
+import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
@@ -39,14 +40,14 @@ import static javax.swing.SwingWorker.StateValue;
  *
  * @author pont
  */
-public class ProgressDialog extends JFrame
+public class ProgressDialog extends JDialog
         implements ActionListener, PropertyChangeListener {
 
     private final JProgressBar progressBar;
     private final JButton cancelButton;
     private final JPanel outerPanel;
     private final JPanel innerPanel;
-    private final Worker worker;
+    private final SwingWorker<Void, Void> worker;
 
     public class Worker extends SwingWorker<Void, Void> {
 
@@ -65,8 +66,8 @@ public class ProgressDialog extends JFrame
         }
     }
 
-    private ProgressDialog(String title) {
-        super(title);
+    private ProgressDialog(String title, Frame owner, SwingWorker<Void, Void> worker) {
+        super(owner, title, true);
 
         progressBar = new JProgressBar(0, 100);
         progressBar.setValue(0);
@@ -88,7 +89,7 @@ public class ProgressDialog extends JFrame
         outerPanel.setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
         outerPanel.setOpaque(true);
 
-        worker = new Worker();
+        this.worker = worker;
     }
     
     private void setup(Component parent) {
@@ -123,8 +124,9 @@ public class ProgressDialog extends JFrame
         }
     }
 
-    public static ProgressDialog getInstance(String title, Component parent) {
-        final ProgressDialog progressDialog = new ProgressDialog(title);
+    public static ProgressDialog getInstance(String title, Frame parent,
+            SwingWorker<Void, Void> worker) {
+        final ProgressDialog progressDialog = new ProgressDialog(title, parent, worker);
         progressDialog.setup(parent);
         
         return progressDialog;

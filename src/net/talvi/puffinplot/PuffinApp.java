@@ -31,8 +31,10 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -40,6 +42,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.InvocationTargetException;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -77,6 +80,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -349,7 +353,8 @@ public final class PuffinApp {
                     .hasArg()
                     .withDescription("process given ppl file and save results")
                     .create("process");
-            final Option withAppOpt = new Option("withapp", "create a Puffin application (script mode only)");
+            final Option withAppOpt = new Option("withapp",
+                    "create a Puffin application (script mode only)");
             
             final Options options = new Options();
             options.addOption(helpOpt);
@@ -357,7 +362,7 @@ public final class PuffinApp {
             options.addOption(withAppOpt);
             options.addOption(processOpt);
             
-            CommandLineParser parser = new GnuParser();
+            final CommandLineParser parser = new GnuParser();
             final CommandLine commandLine = parser.parse(options, args);
 
             if (commandLine.hasOption("help")) {
@@ -1585,11 +1590,30 @@ public final class PuffinApp {
         // Also need a progress dialog or at least a "please wait" here, but
         // this will need some careful consideration if runPythonScript needs
         // to be callable headless (e.g. directly from PP command-line invocation).
+        
+//        Runnable downloader = new Runnable()  {
+//            private IOException exception = null;
+//            public void run() {
+//            final URI uri = URI.create(urlString);
+//            try (InputStream in = uri.toURL().openStream()) {
+//                Files.copy(in, jythonPath);
+//            } catch (IOException ex) {
+//                Logger.getLogger(PuffinApp.class.getName()).log(Level.SEVERE, null, ex);
+//                exception = ex;
+//              }
+//            }
+//        };
+            
         if (!Files.exists(jythonPath)) {
-            final URI uri = URI.create(urlString);
-            try (InputStream in = uri.toURL().openStream()) {
-                Files.copy(in, jythonPath);
-            }
+//            final Thread downloaderThread = new Thread(downloader);
+//            JOptionPane.showMessageDialog
+//                (getMainWindow(), "Downloading Jython...", "Puffinplot", JOptionPane.INFORMATION_MESSAGE);
+//            downloaderThread.start();
+            
+            final DownloadWorker worker = new DownloadWorker(new URL(urlString), jythonPath);
+            final ProgressDialog pd = ProgressDialog.getInstance("Downloading Jython",
+                getMainWindow(), worker);            
+
         }
         
         if (pythonEngine == null) {
@@ -1606,6 +1630,66 @@ public final class PuffinApp {
 
         updateDisplay();
         getMainWindow().suitesChanged();
+    }
+    
+    
+    private class DownloadWorker extends SwingWorker<Void, Void> {
+
+        private final URL url;
+        private final Path outputPath;
+        
+        public DownloadWorker(URL url, Path outputPath) {
+            this.url = url;
+            this.outputPath = outputPath;
+        }
+        
+        private int getFileSize() {
+             HttpURLConnection conn = null;
+             try {
+                 conn = (HttpURLConnection) url.openConnection();
+                 conn.setRequestMethod("HEAD");
+                 conn.getInputStream();
+                 return conn.getContentLength();
+             } catch (IOException e) {
+                 return -1;
+             } finally {
+                 if (conn != null) {
+                     conn.disconnect();
+                 }
+             }
+        }
+        
+        @Override
+        protected Void doInBackground() throws Exception {
+            setProgress(0);
+            BufferedInputStream inStream = null;
+            FileOutputStream outStream = null;
+            final int totalSize = getFileSize();
+            try {
+                inStream = new BufferedInputStream(url.openStream());
+                outStream = new FileOutputStream(outputPath.toFile());
+                
+                final byte data[] = new byte[1024];
+                int count;
+                int totalTransferred = 0;
+                logger.log(Level.INFO, "Starting Jython download. Size {0}", totalSize);
+                while ((count = inStream.read(data, 0, 32*1024)) != -1) {
+                    logger.fine(String.format("Jython download: %d", totalTransferred));
+                    outStream.write(data, 0, count);
+                    totalTransferred += count;
+                    setProgress(Math.min(100, (int) (100*totalTransferred/totalSize)));
+                }
+            } finally {
+                if (inStream != null) {
+                    inStream.close();
+                }
+                if (outStream != null) {
+                    outStream.close();
+                }
+            }
+            setProgress(100);
+            return null;
+        }
     }
     
     /**
@@ -1627,15 +1711,15 @@ public final class PuffinApp {
     }
 
     public void runJavascriptScript(String scriptPath) throws Exception {
-            ScriptEngineManager sem = new ScriptEngineManager();
-    final ScriptEngine se = sem.getEngineByMimeType("application/javascript");
-    se.put("puffin_app", this);
-    try {
-        Reader reader = new FileReader(scriptPath);
-        se.eval(reader);
-    } catch (FileNotFoundException | ScriptException ex) {
-      System.out.println(ex.getMessage());
-    }
+        ScriptEngineManager sem = new ScriptEngineManager();
+        final ScriptEngine se = sem.getEngineByMimeType("application/javascript");
+        se.put("puffin_app", this);
+        try {
+            Reader reader = new FileReader(scriptPath);
+            se.eval(reader);
+        } catch (FileNotFoundException | ScriptException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
     
     /**
