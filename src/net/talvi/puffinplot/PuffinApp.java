@@ -83,7 +83,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
-import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -1573,43 +1572,62 @@ public final class PuffinApp {
     }
     
     /**
-     * Runs a specified Python script
+     * Runs a specified Python script, first downloading Jython if required.
+     * 
+     * This method attempts to run a specified Python script. First it
+     * checks if the Jython jar is already cached locally in PuffinPlot's
+     * application data folder. If not, it prompts the user for confirmation
+     * and downloads and caches it from a hardcoded URL. If the download is
+     * successful, or if Jython is already available, the script will then
+     * be run, with the variable "puffin_app" set to this PuffinApp.
      * 
      * @param scriptPath the path to the script
      * @throws java.io.IOException if an IO error occurred while running the script
      * @throws javax.script.ScriptException if a scripting error occurred
      */
-    public void runPythonScript(String scriptPath) throws IOException, ScriptException  {
+    public void runPythonScriptInGui(String scriptPath) throws IOException, ScriptException  {
         
         final Path appDirPath = Util.getAppDataDirectory();
         final Path jythonPath = appDirPath.resolve("jython-standalone-2.7.0.jar");
         final File jythonFile = jythonPath.toFile();
-        final String urlString = "http://central.maven.org/maven2/"
-                + "org/python/jython-standalone/2.7.0/"
-                + "jython-standalone-2.7.0.jar";
-//        final String urlString = "http://localhost:8001/jython-standalone-2.7.0.jar";
+//        final String urlString = "http://central.maven.org/maven2/"
+//                + "org/python/jython-standalone/2.7.0/"
+//                + "jython-standalone-2.7.0.jar";
+        final String urlString = "http://localhost:8001/jython-standalone-2.7.0.jar";
         
-        // Download the jython interpreter to a local cache directory, if it
-        // isn't cached already.
-          
-        if (jythonFile.exists()) {
-            // Check that the jar has the expected size. If not, delete and
-            // redownload. We don't check the checksum here -- doing it on 
-            // every run would be slow -- but verifying the size is a very
-            // cheap operation.
-            // 37021723 is the known size of the required Jython jar.
-            if (jythonFile.length() != 37021723) {
+        // If we have a cached Jython JAR, check that it has the expected size.
+        // If not, delete and redownload. We don't check the checksum here as
+        // doing it on every run would be slow,  but verifying the size is a
+        // very cheap operation.
+        if (jythonFile.exists() && jythonFile.length() != 37021723) {
                 jythonFile.delete();
-            }
         }
         
+        // Download Jython JAR if we don't already have it cached locally.
         if (!jythonFile.exists()) {
-            
-            // TODO get user confirmation to continue with download here.
+                        
+            final Object[] buttons = {"Download Jython", "Cancel"};
+            final int choice = JOptionPane.showOptionDialog(getMainWindow(),
+                    "<html><body><p style='width: 400px;'>"
+                            + "To run Python scripts, PuffinPlot first needs to download "
+                            + "the Jython package from the Internet. "
+                            + "Jython will be saved on this computer for "
+                            + "future use. The size of the download is "
+                            + "around 37 MB. Do you wish to proceed with this "
+                            + "download now?</p>",
+                    "Jython download required",
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.INFORMATION_MESSAGE,
+                    null,     // no custom icon
+                    buttons,
+                    buttons[0]); // default option
+            if (choice==1) { // "Cancel" chosen
+                return;
+            }
             
             final DownloadWorker worker =
                     new DownloadWorker(new URL(urlString), jythonPath);
-            ProgressDialog.getInstance("Downloading Jython",
+            ProgressDialog.showDialog("Downloading Jython",
                     getMainWindow(), worker);
             // The progress dialog is modal, so this will block until the
             // download is complete or cancelled.
@@ -1619,15 +1637,27 @@ public final class PuffinApp {
                         + "cancelled, so the script will not be run.");
                 return;
             }
+            
             // Verify the SHA-1 checksum.
             try {
                 final String desiredSha1Sum = "CDFB38BC6F8343BCF1D6ACCC2E1147E8E7B63B75";
                 final String actualSha1Sum = Util.calculateSHA1(jythonPath.toFile());
                 if (!desiredSha1Sum.equals(actualSha1Sum)) {
                     jythonPath.toFile().delete();
-                    errorDialog("Download failed",
-                            "There was a problem with the downloaded Jython file.\n"
-                            + "Please try again.");
+                    if (worker.getException() != null) {
+                        errorDialog("Error during download",
+                                "<html><p style='width: 400px';>"
+                                        + "An error occured during the download. (Error description: ‘"
+                                        + worker.getException().getLocalizedMessage()
+                                        + "’) Please try again. If the error persists, "
+                                        + "please report it to puffinplot@gmail.com.");
+                    } else {
+                        // No exception occurred, but the file is corrupted.
+                        errorDialog("Download failed",
+                                "<html><p style='width: 400px';>"
+                                        + "There was a problem with the downloaded Jython file.\n"
+                                        + "Please try again.");
+                    }
                     return;
                 }
             } catch (NoSuchAlgorithmException ex) {
@@ -1652,7 +1682,6 @@ public final class PuffinApp {
         getMainWindow().suitesChanged();
     }
     
-    
     /**
      * Opens a file selection dialog and runs the Python script
      * (if any) which the user selects from that dialog. 
@@ -1662,7 +1691,7 @@ public final class PuffinApp {
         if (files.isEmpty()) return;
         final File file = files.get(0);
         try {
-            runPythonScript(file.getAbsolutePath());
+            runPythonScriptInGui(file.getAbsolutePath());
         } catch (IOException | ScriptException ex) {
             JOptionPane.showMessageDialog
                     (getMainWindow(), ex.toString(),

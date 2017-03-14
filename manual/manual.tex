@@ -1790,9 +1790,11 @@ programming and scripting, and familiar to a large number of scientists, this
 should provide a convenient route for anyone wishing to integrate PuffinPlot
 with other data processing steps. Using Jython, PuffinPlot can be controlled
 either from a pre-written script, or interactively from a command shell which
-accepts and executes commands one at a time from the user. PuffinPlot also
-includes a built-in Jython interpreter, allowing it to run Python scripts
-with no additional software.
+accepts and executes commands one at a time from the user. Jython scripts
+can also be run from within PuffinPlot itself, making it easy to perform
+scripted operations on currently open data suites. Jython is not distributed
+with PuffinPlot, but PuffinPlot will automatically download and install it the
+first time it is required.
 
 Scripting allows you to extend the functionality of PuffinPlot without
 modifying the main program -- for example, to perform extra processing on

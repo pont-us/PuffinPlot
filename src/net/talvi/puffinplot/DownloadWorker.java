@@ -16,7 +16,7 @@
  */
 package net.talvi.puffinplot;
 
-import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -29,16 +29,24 @@ import java.util.logging.Logger;
 import javax.swing.SwingWorker;
 
 /**
- * A worker to download a file in the background. Written to
- * download the Jython jar.
+ * A SwingWorker which downloads a file from a specified URL and
+ * saves it to a specified path.
  */
-class DownloadWorker extends SwingWorker<Void, Void> {
+public class DownloadWorker extends SwingWorker<Void, Void> {
 
     private final URL url;
     private final Path outputPath;
     private final static Logger logger =
             Logger.getLogger(IdToFileMap.class.getName());
+    private IOException exception = null;
 
+    /**
+     * Create a worker which will download a a file from a given URL
+     * to a given path.
+     * 
+     * @param url the URL from which to download the file
+     * @param outputPath the path to which to save the file
+     */
     public DownloadWorker(URL url, Path outputPath) {
         this.url = url;
         this.outputPath = outputPath;
@@ -63,49 +71,58 @@ class DownloadWorker extends SwingWorker<Void, Void> {
     @Override
     protected Void doInBackground() {
         setProgress(0);
-        BufferedInputStream inStream = null;
-        FileOutputStream outStream = null;
         final int totalSize = getFileSize();
-        try {
-            ReadableByteChannel rbc = Channels.newChannel(url.openStream());
-            outStream = new FileOutputStream(outputPath.toFile());
-            final byte[] data = new byte[1024];
+        final File outputFile = outputPath.toFile();
+        try (FileOutputStream outStream = new FileOutputStream(outputFile);
+                ReadableByteChannel rbc = Channels.newChannel(url.openStream())) {
+           
             long count;
             long totalTransferred = 0;
-            logger.log(Level.INFO, "Starting Jython download. Size {0}", totalSize);
+            logger.log(Level.INFO, "Starting download. Size {0}", totalSize);
             while (true) {
-                logger.fine(String.format("Jython download: %d", totalTransferred));
-                count = outStream.getChannel().transferFrom(rbc, totalTransferred, 256 * 1024);
+                if (isCancelled()) {
+                    logger.log(Level.INFO, "Download cancelled, aborting.");
+                    // The try-with-resources construct will close the
+                    // stream and byte channel automatically when we return.
+                    return null;
+                }
+                logger.fine(String.format("Download: %d", totalTransferred));
+                count = outStream.getChannel().
+                        transferFrom(rbc, totalTransferred, 256 * 1024);
                 totalTransferred += count;
-                setProgress(Math.min(100, (int) (100 * totalTransferred / totalSize)));
+                setProgress(Math.min(100,
+                        (int) (100 * totalTransferred / totalSize)));
                 if (totalTransferred == totalSize) {
-                    logger.info(String.format("%d == %d", totalTransferred, totalSize));
+                    logger.info(String.format("Download: %d == %d",
+                            totalTransferred, totalSize));
                     break;
                 }
             }
-            logger.info(String.format("Jython download complete: %d / %d", totalTransferred, totalSize));
+            logger.info(String.format("Download complete: %d / %d",
+                    totalTransferred, totalSize));
         } catch (IOException ex) {
-            logger.log(Level.SEVERE, null, ex);
-            // TODO Do seomthing about RuntimeExceptions in this method --
+            exception = ex;
+            if (isCancelled()) {
+                logger.log(Level.INFO,
+                        "Download was cancelled and exception was thrown.");
+            }
+            logger.log(Level.SEVERE, "I/O Exception during download", ex);
+            
+            // TODO Do something about RuntimeExceptions in this method --
             // by default they are swallowed silently in a SwingWorker!
             // See https://baptiste-wicht.com/posts/2010/09/a-better-swingworker.html
-        } finally {
-            if (inStream != null) {
-                try {
-                    inStream.close();
-                } catch (IOException ex) {
-                    logger.log(Level.SEVERE, null, ex);
-                }
-            }
-            if (outStream != null) {
-                try {
-                    outStream.close();
-                } catch (IOException ex) {
-                    logger.log(Level.SEVERE, null, ex);
-                }
-            }
         }
         setProgress(100);
         return null;
+    }
+
+    /**
+     * If an exception was thrown during the download process, this method will
+     * return it.
+     * 
+     * @return the exception which was thrown, or null if none was thrown
+     */
+    public IOException getException() {
+        return exception;
     }
 }

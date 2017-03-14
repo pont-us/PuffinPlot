@@ -19,7 +19,6 @@ package net.talvi.puffinplot.window;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -37,6 +36,9 @@ import javax.swing.SwingWorker;
 import static javax.swing.SwingWorker.StateValue;
 
 /**
+ * A dialog which shows progress for a supplied SwingWorker task. The
+ * constructor is private so the class cannot be instantiated directly, but a
+ * static method is provided to create an instance and show it.
  *
  * @author pont
  */
@@ -85,13 +87,12 @@ public class ProgressDialog extends JDialog
         setContentPane(outerPanel);
         pack();
         setLocationRelativeTo(parent);
-        setVisible(true);
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));        
-    }
+   }
 
     @Override
     public void actionPerformed(ActionEvent evt) {
         worker.cancel(true);
+        setVisible(false);
     }
 
     @Override
@@ -107,11 +108,22 @@ public class ProgressDialog extends JDialog
         }
     }
 
-    public static ProgressDialog getInstance(String title, Frame parent,
+    /**
+     * Create and show a progress dialog for a supplied SwingWorker.
+     * 
+     * The progress dialog will be displayed modally (i.e. blocking
+     * user interaction while it is open), and this call will block
+     * until the task has finished running.
+     * 
+     * @param title Title for the dialog
+     * @param parent Parent window for the dialog
+     * @param worker task whose progress the dialog should monitor
+     */
+    public static void showDialog(String title, Frame parent,
             SwingWorker<Void, Void> worker) {
         final ProgressDialog progressDialog = new ProgressDialog(title, parent, worker);
         progressDialog.setup(parent);
-        
-        return progressDialog;
+        progressDialog.setVisible(true);
+        // This will block until the dialog closes.
     }
 }
