@@ -337,98 +337,134 @@ public final class PuffinApp {
             logger.log(Level.WARNING, "Error setting look-and-feel", ex);
         }
 
-        processArgs(args);
+        parseCliArguments(args);
     }
     
-    private static void processArgs(String[] args) {
+    @SuppressWarnings("static-access")
+    private static Options createOptions() {
+        final Option helpOpt = new Option("help", "print this message");
+        final Option scriptOpt = OptionBuilder.withArgName("file")
+                .hasArg().withDescription("run specified script")
+                .create("script");
+        final Option scriptLangOpt = OptionBuilder.withArgName("language")
+                .hasArg()
+                .withDescription("language for script (javascript or python)")
+                .create("scriptlanguage");
+        final Option installJythonOpt = OptionBuilder
+                .withDescription("download and install Jython")
+                .create("installjython");
+        final Option processOpt = OptionBuilder.withArgName("file")
+                .hasArg()
+                .withDescription("process given ppl file and save results")
+                .create("process");
+        final Option withAppOpt = new Option("withapp",
+                "create a Puffin application (script mode only)");
+        final Options options = new Options();
+        options.addOption(helpOpt);
+        options.addOption(scriptOpt);
+        options.addOption(scriptLangOpt);
+        options.addOption(installJythonOpt);
+        options.addOption(withAppOpt);
+        options.addOption(processOpt);
+        return options;
+    }
+    
+    private static void parseCliArguments(String[] args) {
+        final Options options = createOptions();
+        final CommandLineParser parser = new GnuParser();
         try {
-            final Option helpOpt = new Option("help", "print this message");
-            @SuppressWarnings("static-access")
-            final Option scriptOpt =
-                    OptionBuilder.withArgName("file")
-                            .hasArg()
-                            .withDescription("run specified script")
-                            .create("script");
-            @SuppressWarnings("static-access")
-            final Option processOpt =
-                    OptionBuilder.withArgName("file")
-                    .hasArg()
-                    .withDescription("process given ppl file and save results")
-                    .create("process");
-            final Option withAppOpt = new Option("withapp",
-                    "create a Puffin application (script mode only)");
-            
-            final Options options = new Options();
-            options.addOption(helpOpt);
-            options.addOption(scriptOpt);
-            options.addOption(withAppOpt);
-            options.addOption(processOpt);
-            
-            final CommandLineParser parser = new GnuParser();
             final CommandLine commandLine = parser.parse(options, args);
-
-            if (commandLine.hasOption("help")) {
-                final HelpFormatter formatter = new HelpFormatter();
-                formatter.printHelp("java -jar PuffinPlot.jar <options>", options);
-            }
-            
-            else if (commandLine.hasOption("script")) {
-                final String scriptPath = commandLine.getOptionValue("script");
-                // TODO re-enable with new Jython system
-                try {
-//                    final PythonInterpreter interp = new PythonInterpreter();
-                    if (commandLine.hasOption("with-app")) {
-                        java.awt.EventQueue.invokeLater(
-                                new Runnable() { @Override public void run() { 
-                                    final PuffinApp scriptApp = new PuffinApp(); 
-//                                    interp.set("puffin_app", scriptApp);
-//                                    interp.execfile(scriptPath);
-                                } });
-                    } else {
-//                        interp.execfile(scriptPath);
-                    }
-                } catch (Exception ex) {
-                    // PyException is a RuntimeException, so doesn't *have*
-                    // to be caught, but it makes sense to do so.
-                    System.err.println("Error running Python script "+scriptPath);
-                    ex.printStackTrace(System.err);
-                }
-            }
-            
-            else if (commandLine.hasOption("process")) {
-                final String inputFileString = commandLine.getOptionValue("process");
-                final Suite suite = new Suite("PuffinPlot (process mode)");
-                try {
-                    suite.readFiles(Arrays.asList(new File[] {new File(inputFileString)}));
-                    suite.doAllCalculations(Correction.NONE);
-                    suite.calculateSuiteMeans(suite.getSamples(), suite.getSites());
-                    
-                    final String bareFilename = inputFileString.replaceFirst("[.]...$", "");
-                    
-                    suite.saveCalcsSample(new File(bareFilename + "-sample.csv"));
-                    suite.saveCalcsSite(new File(bareFilename + "-site.csv"));
-                    suite.saveCalcsSuite(new File(bareFilename + "-suite.csv"));
-                    
-                } catch (IOException | PuffinUserException ex) {
-                    System.err.println("Error processing.");
-                    Logger.getLogger(PuffinApp.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-            
-            else {
-                // Start PuffinPlot in normal desktop mode.
-                java.awt.EventQueue.invokeLater(
-                                new Runnable() { @Override 
-                                public void run()
-                                {
-                                    final PuffinApp dummy = new PuffinApp(); 
-                                }});
-            }
-            
+            processCliArguments(commandLine, options);
         } catch (ParseException ex) {
             System.err.println("Could not parse arguments.\n" + ex.getMessage());
+            System.exit(1);
         }
     }
+    
+    private static void processCliArguments(CommandLine commandLine, Options options) {
+        if (commandLine.hasOption("help")) {
+            final HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp("java -jar PuffinPlot.jar <options>", options);
+        }
+        
+        else if (commandLine.hasOption("script")) {
+            final String scriptPath = commandLine.getOptionValue("script");
+            try {
+                final URL url = JythonJarManager.getPath().toUri().toURL();
+                final URLClassLoader child = new URLClassLoader (new URL[] {url},
+                        PuffinApp.class.getClassLoader());
+                final ScriptEngineManager sem = new ScriptEngineManager(child);
+                final ScriptEngine engine = sem.getEngineByName("python");
+
+                if (commandLine.hasOption("withapp")) {
+                    java.awt.EventQueue.invokeLater(
+                            new Runnable() { @Override public void run() {
+                                Reader r = null;
+                                try {
+                                    final PuffinApp scriptApp = new PuffinApp();
+                                    engine.put("puffin_app", scriptApp);
+                                    r = new FileReader(scriptPath);
+                                    engine.eval(r);
+                                } catch (FileNotFoundException ex) {
+                                    Logger.getLogger(PuffinApp.class.getName()).log(Level.SEVERE, null, ex);
+                                } catch (ScriptException ex) {
+                                    Logger.getLogger(PuffinApp.class.getName()).log(Level.SEVERE, null, ex);
+                                } finally {
+                                    try {
+                                        r.close();
+                                    } catch (IOException ex) {
+                                        Logger.getLogger(PuffinApp.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+                                }
+                            } });
+                } else {
+                    Reader r = new FileReader(scriptPath);
+                    engine.eval(r);
+                }
+            } catch (Exception ex) {
+                // PyException is a RuntimeException, so doesn't *have*
+                // to be caught, but it makes sense to do so.
+                System.err.println("Error running Python script "+scriptPath);
+                ex.printStackTrace(System.err);
+            }
+        }
+        
+        else if (commandLine.hasOption("process")) {
+            final String inputFileString = commandLine.getOptionValue("process");
+            final Suite suite = new Suite("PuffinPlot (process mode)");
+            try {
+                suite.readFiles(Arrays.asList(new File[] {new File(inputFileString)}));
+                suite.doAllCalculations(Correction.NONE);
+                suite.calculateSuiteMeans(suite.getSamples(), suite.getSites());
+                
+                final String bareFilename = inputFileString.replaceFirst("[.]...$", "");
+                
+                suite.saveCalcsSample(new File(bareFilename + "-sample.csv"));
+                suite.saveCalcsSite(new File(bareFilename + "-site.csv"));
+                suite.saveCalcsSuite(new File(bareFilename + "-suite.csv"));
+                
+            } catch (IOException | PuffinUserException ex) {
+                System.err.println("Error processing.");
+                Logger.getLogger(PuffinApp.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        else if (commandLine.hasOption("")) {
+            
+        }
+        
+        else {
+            // Start PuffinPlot in normal desktop mode.
+            java.awt.EventQueue.invokeLater(
+                    new Runnable() { @Override
+                    public void run()
+                    {
+                        final PuffinApp dummy = new PuffinApp();
+                    }});
+        }
+
+    }
+
     
     /**
      * Reports whether this PuffinApp is running on Mac OS X.
@@ -1586,25 +1622,11 @@ public final class PuffinApp {
      * @throws javax.script.ScriptException if a scripting error occurred
      */
     public void runPythonScriptInGui(String scriptPath) throws IOException, ScriptException  {
-        
-        final Path appDirPath = Util.getAppDataDirectory();
-        final Path jythonPath = appDirPath.resolve("jython-standalone-2.7.0.jar");
-        final File jythonFile = jythonPath.toFile();
-//        final String urlString = "http://central.maven.org/maven2/"
-//                + "org/python/jython-standalone/2.7.0/"
-//                + "jython-standalone-2.7.0.jar";
-        final String urlString = "http://localhost:8001/jython-standalone-2.7.0.jar";
-        
-        // If we have a cached Jython JAR, check that it has the expected size.
-        // If not, delete and redownload. We don't check the checksum here as
+        // Check whether there's a cached Jython JAR with the expected size.
+        // If not, delete and redownload. We don't calculate the SHA-1 here as
         // doing it on every run would be slow,  but verifying the size is a
         // very cheap operation.
-        if (jythonFile.exists() && jythonFile.length() != 37021723) {
-                jythonFile.delete();
-        }
-        
-        // Download Jython JAR if we don't already have it cached locally.
-        if (!jythonFile.exists()) {
+        if (!JythonJarManager.checkInstalled(true)) {
                         
             final Object[] buttons = {"Download Jython", "Cancel"};
             final int choice = JOptionPane.showOptionDialog(getMainWindow(),
@@ -1625,14 +1647,15 @@ public final class PuffinApp {
                 return;
             }
             
-            final DownloadWorker worker =
-                    new DownloadWorker(new URL(urlString), jythonPath);
+            final DownloadWorker worker = new DownloadWorker(
+                    new URL(JythonJarManager.SOURCE_URL_STRING),
+                    JythonJarManager.getPath());
             ProgressDialog.showDialog("Downloading Jython",
                     getMainWindow(), worker);
             // The progress dialog is modal, so this will block until the
             // download is complete or cancelled.
             if (worker.isCancelled()) {
-                jythonPath.toFile().delete();
+                JythonJarManager.delete();
                 errorDialog("Download cancelled", "The Jython download was "
                         + "cancelled, so the script will not be run.");
                 return;
@@ -1640,10 +1663,7 @@ public final class PuffinApp {
             
             // Verify the SHA-1 checksum.
             try {
-                final String desiredSha1Sum = "CDFB38BC6F8343BCF1D6ACCC2E1147E8E7B63B75";
-                final String actualSha1Sum = Util.calculateSHA1(jythonPath.toFile());
-                if (!desiredSha1Sum.equals(actualSha1Sum)) {
-                    jythonPath.toFile().delete();
+                if (!JythonJarManager.checkSha1Digest(true)) {
                     if (worker.getException() != null) {
                         errorDialog("Error during download",
                                 "<html><p style='width: 400px';>"
@@ -1666,7 +1686,7 @@ public final class PuffinApp {
         }
         
         if (pythonEngine == null) {
-            final URL url = jythonPath.toUri().toURL();
+            final URL url = JythonJarManager.getPath().toUri().toURL();
             final URLClassLoader child = new URLClassLoader (new URL[] {url},
                     PuffinApp.class.getClassLoader());
             final ScriptEngineManager sem = new ScriptEngineManager(child);

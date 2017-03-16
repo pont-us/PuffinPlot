@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -395,22 +396,53 @@ public class Util {
         }
     }
     
-    public static String calculateSHA1(File file) throws IOException, NoSuchAlgorithmException {
-        MessageDigest digest;
+    /**
+     * Calculate the SHA-1 digest of a file and return it as an
+     * upper-case hexadecimal string.
+     * 
+     * @param file the file for which to calculate the digest
+     * @return the SHA-1 digest
+     * @throws IOException if there is an error reading the file
+     * @throws NoSuchAlgorithmException if the SHA-1 algorithm is not available
+     */
+    public static String calculateSHA1(File file)
+            throws IOException, NoSuchAlgorithmException {
+        final MessageDigest digest;
         try (InputStream inputStream = new FileInputStream(file)) {
             final byte[] buffer = new byte[1024];
             digest = MessageDigest.getInstance("SHA-1");
-            int numRead;
+            int count;
             do {
-                numRead = inputStream.read(buffer);
-                if (numRead > 0) {
-                    digest.update(buffer, 0, numRead);
+                count = inputStream.read(buffer);
+                if (count > 0) {
+                    digest.update(buffer, 0, count);
                 }
-            } while (numRead != -1);
+            } while (count != -1);
         }
         // printHexBinary seems to return upper case in practice, but I can't
         // find this officially guaranteed anywhere, so safest to ensure it
         // with a toUpperCase().
-        return javax.xml.bind.DatatypeConverter.printHexBinary(digest.digest()).toUpperCase();
+        return javax.xml.bind.DatatypeConverter.
+                printHexBinary(digest.digest()).toUpperCase();
+    }
+    
+    /**
+     * 
+     * @param url
+     * @param outputPath 
+     */
+    public static void downloadUrlToFile(String url, Path outputPath) throws IOException {
+
+        // NOTE: Files.copy can block indefinitely. Should this be in a new thread?
+       
+        
+        // Use REPLACE_EXISTING?
+        
+               // if (!Files.exists(jythonPath)) {
+            final URI uri = URI.create(url);
+            try (InputStream in = uri.toURL().openStream()) {
+                Files.copy(in, outputPath);
+            }
+        //}
     }
 }
