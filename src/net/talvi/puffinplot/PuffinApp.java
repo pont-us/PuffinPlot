@@ -389,43 +389,53 @@ public final class PuffinApp {
         
         else if (commandLine.hasOption("script")) {
             final String scriptPath = commandLine.getOptionValue("script");
-            try {
-                final URL url = JythonJarManager.getPath().toUri().toURL();
-                final URLClassLoader child = new URLClassLoader (new URL[] {url},
-                        PuffinApp.class.getClassLoader());
-                final ScriptEngineManager sem = new ScriptEngineManager(child);
-                final ScriptEngine engine = sem.getEngineByName("python");
-
-                if (commandLine.hasOption("withapp")) {
-                    java.awt.EventQueue.invokeLater(
-                            new Runnable() { @Override public void run() {
-                                Reader r = null;
-                                try {
-                                    final PuffinApp scriptApp = new PuffinApp();
-                                    engine.put("puffin_app", scriptApp);
-                                    r = new FileReader(scriptPath);
-                                    engine.eval(r);
-                                } catch (FileNotFoundException ex) {
-                                    Logger.getLogger(PuffinApp.class.getName()).log(Level.SEVERE, null, ex);
-                                } catch (ScriptException ex) {
-                                    Logger.getLogger(PuffinApp.class.getName()).log(Level.SEVERE, null, ex);
-                                } finally {
-                                    try {
-                                        r.close();
-                                    } catch (IOException ex) {
-                                        Logger.getLogger(PuffinApp.class.getName()).log(Level.SEVERE, null, ex);
-                                    }
-                                }
-                            } });
-                } else {
-                    Reader r = new FileReader(scriptPath);
-                    engine.eval(r);
+            final String scriptLanguage =
+                    commandLine.hasOption("scriptlanguage") ?
+                    commandLine.getOptionValue("scriptlanguage") : "python";
+                ScriptEngine engineTemp = null;
+                try {
+                switch (scriptLanguage) {
+                    case "javascript":
+                        final ScriptEngineManager sem = new ScriptEngineManager();
+                        engineTemp = sem.getEngineByMimeType("application/javascript");
+                        break;
+                    case "python":
+                        if (!JythonJarManager.checkInstalled(true)) {
+                            System.err.println("Cannot run python script: Jython is not installed.\n"
+                                    + "Please install using the -installjython option.");
+                            System.exit(1);
+                        }
+                        engineTemp = createPythonScriptEngine();
+                        
+                        break;
+                    default:
+                        System.out.println("Unknown scripting language "+
+                                commandLine.getOptionValue("scriptlanguage"));
+                        System.exit(1);
                 }
-            } catch (Exception ex) {
+                
+                final ScriptEngine engine = engineTemp;
+                if (commandLine.hasOption("withapp")) {
+                    java.awt.EventQueue.invokeLater(() -> {
+                        final PuffinApp scriptApp = new PuffinApp();
+                        engine.put("puffin_app", scriptApp);
+                        try (Reader reader = new FileReader(scriptPath)) {
+                            engine.eval(reader);
+                        } catch (ScriptException | IOException ex) {
+                            logger.log(Level.SEVERE, null, ex);
+                            // TODO make sure this makes it to stderr
+                        }
+                    });
+                } else {
+                    final Reader reader = new FileReader(scriptPath);
+                    engine.eval(reader);
+                }
+            } catch (IOException | ScriptException | RuntimeException ex) {
                 // PyException is a RuntimeException, so doesn't *have*
                 // to be caught, but it makes sense to do so.
                 System.err.println("Error running Python script "+scriptPath);
                 ex.printStackTrace(System.err);
+                System.exit(1);
             }
         }
         
@@ -449,18 +459,24 @@ public final class PuffinApp {
             }
         }
         
-        else if (commandLine.hasOption("")) {
+        else if (commandLine.hasOption("installjython")) {
+            System.out.println("Downloading and installing Jython...");
+            try {
+                JythonJarManager.download();
+                System.out.println("Installed.");
+            } catch (IOException ex) {
+                System.err.println("Error installing Jython:");
+                ex.printStackTrace(System.err);
+                System.exit(1);
+            }
             
         }
         
         else {
             // Start PuffinPlot in normal desktop mode.
-            java.awt.EventQueue.invokeLater(
-                    new Runnable() { @Override
-                    public void run()
-                    {
-                        final PuffinApp dummy = new PuffinApp();
-                    }});
+            java.awt.EventQueue.invokeLater(() -> {
+                final PuffinApp dummy = new PuffinApp();
+            });
         }
 
     }
@@ -1627,7 +1643,7 @@ public final class PuffinApp {
         // doing it on every run would be slow,  but verifying the size is a
         // very cheap operation.
         if (!JythonJarManager.checkInstalled(true)) {
-                        
+
             final Object[] buttons = {"Download Jython", "Cancel"};
             final int choice = JOptionPane.showOptionDialog(getMainWindow(),
                     "<html><body><p style='width: 400px;'>"
@@ -1686,20 +1702,26 @@ public final class PuffinApp {
         }
         
         if (pythonEngine == null) {
-            final URL url = JythonJarManager.getPath().toUri().toURL();
-            final URLClassLoader child = new URLClassLoader (new URL[] {url},
-                    PuffinApp.class.getClassLoader());
-            final ScriptEngineManager sem = new ScriptEngineManager(child);
-            pythonEngine = sem.getEngineByName("python");
+            pythonEngine = createPythonScriptEngine();
             assert(pythonEngine != null);
         }
         
         pythonEngine.put("puffin_app", this);
-        final Reader r = new FileReader(scriptPath);
-        pythonEngine.eval(r);
+        
+        try (Reader reader = new FileReader(scriptPath)) {
+            pythonEngine.eval(reader);
+        }
 
         updateDisplay();
         getMainWindow().suitesChanged();
+    }
+    
+    private static ScriptEngine createPythonScriptEngine() throws IOException {
+        final URL url = JythonJarManager.getPath().toUri().toURL();
+        final URLClassLoader child = new URLClassLoader (new URL[] {url},
+                PuffinApp.class.getClassLoader());
+        final ScriptEngineManager sem = new ScriptEngineManager(child);
+        return sem.getEngineByName("python");
     }
     
     /**
@@ -1721,7 +1743,7 @@ public final class PuffinApp {
     }
 
     public void runJavascriptScript(String scriptPath) throws Exception {
-        ScriptEngineManager sem = new ScriptEngineManager();
+        final ScriptEngineManager sem = new ScriptEngineManager();
         final ScriptEngine se = sem.getEngineByMimeType("application/javascript");
         se.put("puffin_app", this);
         try {

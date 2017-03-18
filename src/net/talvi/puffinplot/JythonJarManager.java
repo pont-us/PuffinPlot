@@ -19,9 +19,10 @@ package net.talvi.puffinplot;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.security.NoSuchAlgorithmException;
 
 /**
@@ -81,10 +82,9 @@ public class JythonJarManager {
     
     public static void download() throws IOException {
         // NB: Files.copy can block indefinitely.
-
-        final URI uri = URI.create(SOURCE_URL_STRING);
-        try (InputStream in = uri.toURL().openStream()) {
-            Files.copy(in, getPath());
+        final URL url = new URL(SOURCE_URL_STRING);
+        try (InputStream in = url.openStream()) {
+            Files.copy(in, getPath(), StandardCopyOption.REPLACE_EXISTING);
         }
     }
 
