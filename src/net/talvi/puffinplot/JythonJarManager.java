@@ -26,25 +26,50 @@ import java.nio.file.StandardCopyOption;
 import java.security.NoSuchAlgorithmException;
 
 /**
+ * A collection of static methods for managing the Jython jar.
+ *
+ * PuffinPlot can make use of Jython, but for reasons of size Jython is not
+ * included in the build. To use Jython in PuffinPlot, the Jython jar must be
+ * downloaded and installed locally. This class provides some static utility
+ * methods to check for a local Jython jar, verify its integrity, download it
+ * from a known URL, or delete it from the local cache.
  *
  * @author pont
  */
 public class JythonJarManager {
-    
+
     private static final long CORRECT_SIZE = 37021723;
-    private static final String CORRECT_SHA1 =
-            "CDFB38BC6F8343BCF1D6ACCC2E1147E8E7B63B75";
-    public static final String SOURCE_URL_STRING =
-            //"http://central.maven.org/maven2/"
-            //    + "org/python/jython-standalone/2.7.0/"
-            //    + "jython-standalone-2.7.0.jar";
-            "http://localhost:8001/jython-standalone-2.7.0.jar";
-    
+    private static final String CORRECT_SHA1
+            = "CDFB38BC6F8343BCF1D6ACCC2E1147E8E7B63B75";
+    public static final String SOURCE_URL_STRING
+            = "http://central.maven.org/maven2/"
+            + "org/python/jython-standalone/2.7.0/"
+            + "jython-standalone-2.7.0.jar";
+    //"http://localhost:8001/jython-standalone-2.7.0.jar";
+
+    /**
+     * Returns the local path for the Jython jar file with the application data
+     * directory. The method does <b>not</b> guarantee that the jar is currently
+     * present at this location.
+     *
+     * @return the local path to the jython jar file
+     * @throws IOException if there was an error determining the path
+     */
     public static Path getPath() throws IOException {
         return Util.getAppDataDirectory().
                 resolve("jython-standalone-2.7.0.jar");
     }
-    
+
+    /**
+     * Calculates the SHA-1 digest of the Jython jar file and verified it
+     * against a hard-coded reference value.
+     *
+     * @param deleteIfIncorrect If this parameter is true, and if the SHA-1
+     * digest is not correct, the jar file will be deleted
+     * @return true iff the Jython jar file has the correct SHA-1 digest
+     * @throws IOException if there was an error reading the jar file
+     * @throws NoSuchAlgorithmException if the SHA-1 algorithm was not available
+     */
     public static boolean checkSha1Digest(boolean deleteIfIncorrect)
             throws IOException, NoSuchAlgorithmException {
         final String actualSha1 = Util.calculateSHA1(getPath().toFile());
@@ -57,29 +82,49 @@ public class JythonJarManager {
             return false;
         }
     }
-    
+
+    /**
+     * Checks whether the Jython jar file is installed locally and
+     * has the correct size. The size is checked against a known,
+     * hard-coded value. This method does <b>not</b> check the SHA-1 
+     * digest.
+     * 
+     * @param deleteIfWrongSize if true, and if the jar file
+     * does not have the correct size, it will be deleted.
+     * @return true iff the Jython jar file is locally installed
+     * and has the correct size
+     * @throws IOException if there was an error checking or deleting
+     * the jar file
+     */
     public static boolean checkInstalled(boolean deleteIfWrongSize)
             throws IOException {
         final File jythonFile = getPath().toFile();
-        
+
         if (!jythonFile.exists()) {
             // no jar installed
             return false;
-        } else {
-            if (jythonFile.length() != CORRECT_SIZE) {
-                // jar installed, but wrong size
-                if (deleteIfWrongSize) {
-                    jythonFile.delete();
-                }
-                return false;
-            } else {
-                // jar installed and correct size
-                // (NB: we don't checksum it.)
-                return true;
+        } else if (jythonFile.length() != CORRECT_SIZE) {
+            // jar installed, but wrong size
+            if (deleteIfWrongSize) {
+                jythonFile.delete();
             }
+            return false;
+        } else {
+            // jar installed and correct size
+            // (NB: we don't checksum it.)
+            return true;
         }
     }
-    
+
+    /**
+     * Downloads the Jython jar from a hard-coded URL and saves it in
+     * the application data directory.
+     * 
+     * This method may block indefinitely.
+     * 
+     * @throws IOException if there is an error reading from the URL
+     * or writing to the file
+     */
     public static void download() throws IOException {
         // NB: Files.copy can block indefinitely.
         final URL url = new URL(SOURCE_URL_STRING);
@@ -88,6 +133,11 @@ public class JythonJarManager {
         }
     }
 
+    /**
+     * Deletes the locally cached copy of the Jython jar, if it exists.
+     * 
+     * @throws IOException if there was an error deleting the file
+     */
     static void delete() throws IOException {
         getPath().toFile().delete();
     }

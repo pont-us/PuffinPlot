@@ -1775,26 +1775,70 @@ example, you find that another program has trouble reading the SVG file
 produced using the Batik option, you may find that if FreeHEP option 
 produces better results.
 
+\subsection{\label{sec:command-line}Running PuffinPlot from the command line}
+
+In addition to its graphical user interface, PuffinPlot has a simple
+command line interface, allowing some operations to be performed from
+a text-based console or automated script. In summary, PuffinPlot's
+available command-line arguments are:
+
+\begin{verbatim}
+usage: java -jar PuffinPlot.jar <options>
+ -help                        print this message
+ -installjython               download and install Jython
+ -process <file>              process given ppl file and save results
+ -script <file>               run specified script
+ -scriptlanguage <language>   language for script (javascript or python)
+ -withapp                     create a Puffin application (script mode
+                              only)
+\end{verbatim}
+
+\begin{description}
+
+\item[-help] prints a summary of the available command-line arguments,
+as seen above
+\item[-installjython] downloads the Jython package and installs it
+locally, allowing PuffinPlot to run scripts written in Python
+\item[-process <file>] specifies a PuffinPlot (.ppl) file. The file is
+  opened in PuffinPlot and all standard sample, site, and suite
+  calculations are performed on the data. The results are automatically
+  saved as CSV files into the folder containing the original PuffinPlot
+  file.
+\item[-script <file>] runs the specified Python or JavaScript script.
+  See Section~\ref{sec:scripting} for more details.
+\item[-scriptlanguage] can only be used in conjuction with `-script',
+  and specifies the language in which the script was written. 
+  Allowed values are `python' and `javascript'. The default value
+  is `python'.
+\item[-withapp] can only be used in conjuction with `-script'.
+  If this argument is provided, a \ppcmd{PuffinPlot} object will be
+  created and assigned to a variable named \ppcmd{puffin\_app}.
+
+\end{description}
+
+
 \subsection{\label{sec:scripting}Scripting}
 
-PuffinPlot's graphical desktop interface is intended to be the primary way to
-interact with the program. However, it is often useful to be able to control
-a program using a scripting language, in order to extend its capabilities,
-integrate it conveniently with other programs, or process large amounts of
-data without manual intervention. The Java platform upon which PuffinPlot is
-built supports a number of scripting languages which can easily interface
-with PuffinPlot. Perhaps most usefully, an implementation of the Python
-programming language -- named Jython \citep{juneau2009jython} -- has been
-developed for the Java platform. Since Python is widely used in scientific
-programming and scripting, and familiar to a large number of scientists, this
-should provide a convenient route for anyone wishing to integrate PuffinPlot
-with other data processing steps. Using Jython, PuffinPlot can be controlled
-either from a pre-written script, or interactively from a command shell which
-accepts and executes commands one at a time from the user. Jython scripts
-can also be run from within PuffinPlot itself, making it easy to perform
-scripted operations on currently open data suites. Jython is not distributed
-with PuffinPlot, but PuffinPlot will automatically download and install it the
-first time it is required.
+PuffinPlot's graphical desktop interface is intended to be the primary
+way to interact with the program. However, it is often useful to be able
+to control a program using a scripting language, in order to extend its
+capabilities, integrate it conveniently with other programs, or process
+large amounts of data without manual intervention. The Java platform
+upon which PuffinPlot is built supports a number of scripting languages
+which can easily interface with PuffinPlot. Perhaps most usefully, an
+implementation of the Python programming language -- named Jython
+\citep{juneau2009jython} -- has been developed for the Java platform.
+Since Python is widely used in scientific programming and scripting, and
+familiar to a large number of scientists, this provides a convenient
+route for anyone wishing to integrate PuffinPlot with other data
+processing steps. Using Jython, PuffinPlot can be controlled either from
+a pre-written script, or interactively from a command shell which
+accepts and executes commands one at a time from the user. Jython
+scripts can also be run from within PuffinPlot itself, making it easy to
+perform scripted operations on currently open data suites. Jython is not
+distributed with PuffinPlot, but PuffinPlot will automatically download
+and install it the first time it is required. In addition to Python,
+PuffinPlot directly supports scripting in JavaScript.
 
 Scripting allows you to extend the functionality of PuffinPlot without
 modifying the main program -- for example, to perform extra processing on
@@ -1805,32 +1849,36 @@ There are three basic ways to control PuffinPlot with scripting:
 
 \begin{enumerate}
 
-\item Save a Python script as a file, and use \ppcmd{Run Python script\ldots}
-  from the \ppcmd{File} menu to run it. This will give your script access to
-  any data which has already been loaded into PuffinPlot.
+\item Save a script as a file, and use \ppcmd{Run Python script\ldots}
+  or \ppcmd{Run JavaScript script\ldots} from the \ppcmd{File} menu to
+  run it. This will give your script access to any data which has
+  already been loaded into PuffinPlot.
 
-\item Save a Python script as a file and run PuffinPlot from the command
-  line, specifying the name of the script as a parameter using the following
-  syntax: \ppcmd{java -jar PuffinPlot.jar -script MyScriptName.py}, where
-  \ppcmd{MyScriptName.py} is the filename of the script you wish to run.
-  In this case, the script will be run as soon as PuffinPlot starts.
+\item Save a script as a file and run PuffinPlot from the command line,
+  specifying the name of the script as a parameter using the following
+  syntax: \ppcmd{java -jar PuffinPlot.jar -script MyScriptName.py},
+  where \ppcmd{MyScriptName.py} is the filename of the script you wish
+  to run. In this case, the script will be run as soon as PuffinPlot
+  starts. A JavaScript script can be run in a similar way by specifying
+  the language using another command-line argument: \ppcmd{java -jar
+    PuffinPlot.jar -script MyScriptName.js -scriptlanguage javascript},
 
-\item Use a scripting language interpreter separate from PuffinPlot. In this
-  case, you must download and install the language yourself. This approach
-  lets you use any language available for the Java platform, not just Jython.
-  Additionally, many languages (including Jython) provide an interactive
-  console, allowing you to control PuffinPlot by typing commands one at a
-  time, rather than executing a whole pre-written file.
+\item Use a scripting language interpreter separate from PuffinPlot. In
+  this case, you must download and install the language yourself. This
+  approach lets you use any language available for the Java platform,
+  not just Python or JavaScript. Additionally, many languages (including
+  Jython) provide an interactive console, allowing you to control
+  PuffinPlot by typing commands one at a time, rather than executing a
+  whole pre-written file.
 
 \end{enumerate}
 
-For the first two techniques -- when the script is run by PuffinPlot itself
--- a variable called \ppcmd{puffin\_app} is created, which represents the
-currently running instance of PuffinPlot. This variable can be used, for
-example, to gain access to any data already loaded into PuffinPlot. If an
-external scripting language interpreter is used, the script must start the
-PuffinPlot application before doing anything else; this is demonstrated in
-the examples below.
+For the first two techniques -- when the script is run by PuffinPlot
+itself -- a variable called \ppcmd{puffin\_app} is created, which
+represents the currently running instance of PuffinPlot. (When running a
+script directly from the command line, the \ppcmd{-withapp} argument
+must be specified to create this variable.) This variable can be used,
+for example, to gain access to any data already loaded into PuffinPlot.
 
 Figure~\ref{fig:script-example-1} shows a simple script demonstrating the use
 of PuffinPlot from within an external Jython interpreter (although it can
