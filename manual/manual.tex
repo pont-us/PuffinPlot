@@ -1948,7 +1948,7 @@ suite.saveCalcsSample(output_file)
 
 suite = puffin_app.getSuite()          # find the current suite
 
-for sample in puffin_app.getSamples(): # For every sample in the suite,
+for sample in suite.getSamples(): # For every sample in the suite,
     for datum in sample.getData():     # and for every datum in the sample,
         if not datum.hasMagSus():      # if it doesn't have a mag. sus. value,
             datum.setMagSus(0)         # set the mag. sus. to 0.
