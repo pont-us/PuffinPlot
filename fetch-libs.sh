@@ -2,8 +2,8 @@
 
 ### create directories
 
-mkdir -p ../puffinplot-lib/packages
-cd ../puffinplot-lib/packages
+mkdir -p lib/packages
+cd lib/packages
 
 ### download packages
 

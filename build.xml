@@ -2,10 +2,34 @@
 <!-- You may freely edit this file. See commented blocks below for -->
 <!-- some examples of how to customize the build. -->
 <!-- (If you delete it and reopen the project it will be recreated.) -->
-<project name="PuffinPlot" default="default" basedir=".">
+<project name="PuffinPlot" default="default" basedir="."  xmlns:ivy="antlib:org.apache.ivy.ant">
     <description>Builds, tests, and runs the project PuffinPlot.</description>
     <import file="nbproject/build-impl.xml"/>
     <property file="release.properties"/>
+
+    <property name="lib.dir" value="lib" />
+    <property name="ivy.install.version" value="2.4.0" />
+    <property name="ivy.jar.dir" value="${lib.dir}" />
+    <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
+        
+    <target name="download-ivy" unless="skip.download">
+    	<mkdir dir="${ivy.jar.dir}"/>
+		<echo message="installing ivy..."/>
+    	<get src="https://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
+    		 dest="${ivy.jar.file}" usetimestamp="true"/>
+    </target>
+    
+    <target name="install-ivy" depends="download-ivy" description="--> install ivy">
+        <path id="ivy.lib.path">
+            <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
+        </path>
+        <taskdef resource="org/apache/ivy/ant/antlib.xml"
+                 uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
+    </target>
+    
+    <target name="-pre-compile" depends="install-ivy" description="--> retreive dependencies with ivy">
+        <ivy:retrieve type="jar"/>
+    </target>    
     
     <target name="-pre-jar">
         <exec executable="hg" outputproperty="build.hg.revid">
