@@ -11,17 +11,6 @@
     <property name="ivy.install.version" value="2.4.0" />
     <property name="ivy.jar.dir" value="${lib.dir}" />
     <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
-    
-    <!-- By default, the build process is dependent on NetBeans because
-    it requires the CopyLibs task. To allow building with plain Ant,
-    we keep a copy of the jar for this task in the PuffinPlot repo
-    and set its path here. (Otherwise it would be set to a path in
-    the NetBeans install by ~/.netbeans/<version>/build.properties
-    via the untracked file
-    org-netbeans-modules-java-j2seproject-copylibstask.jar , making the
-    build fail on a clean checkout.   
-    -->
-    <property name="libs.CopyLibs.classpath" value="libs/copylibstask.jar" />
         
     <target name="download-ivy" unless="skip.download">
     	<mkdir dir="${ivy.jar.dir}"/>
@@ -50,6 +39,9 @@
         <taskdef name="appbundler"
                  classname="com.oracle.appbundler.AppBundlerTask"   
                  classpath="lib/appbundler-1.0ea.jar" />
+                            
+    <!-- property name="libs.CopyLibs.classpath" value="libs/copylibstask.jar" / -->
+
     </target>    
     
     <target name="-pre-jar">
@@ -78,10 +70,24 @@
             <entry key="build.hg.tag" value="${build.hg.tag}"/>
             <entry key="build.hg.date" value="${build.hg.date}"/>
         </propertyfile>
+        
     </target>
     
     <target name="package-for-store" depends="jar"
         description="Creates a composite JAR file containing all dependencies.">
+        
+        <!-- By default, this target is dependent on NetBeans
+        because it requires the CopyLibs task, defined in
+        org-netbeans-modules-java-j2seproject-copylibstask.jar. To
+        allow building with plain Ant, we keep a copy of the jar for
+        this task in the PuffinPlot repo and set its path
+        in nbproject/project.properties (where it should also override
+        the default NetBeans setting).
+        Otherwise it would be set to a path in the NetBeans install
+        by ~/.netbeans/<version>/build.properties via the untracked
+        file nbproject/private/private.properties , making the build
+        fail on a clean checkout. -->
+        
         <!-- Change the value of this property to be the name of your JAR,
              minus the .jar extension. It should not have spaces.
              <property name="store.jar.name" value="MyJarName"/>
