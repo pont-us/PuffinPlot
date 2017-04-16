@@ -13,7 +13,10 @@ but NetBeans is not necessary to build PuffinPlot: the build is
 controlled by an Ant project file (build.xml), which can be used without
 NetBeans provided that Apache Ant (http://ant.apache.org/) is installed.
 
-### Required Java libraries
+### Dependencies: Java libraries
+
+The PuffinPlot build process uses the Ivy dependency manager to
+automatically fetch dependencies from the Internet if required.
 
 PuffinPlot uses the following external Java libraries, or parts of them:
 
@@ -25,45 +28,13 @@ PuffinPlot uses the following external Java libraries, or parts of them:
 * commons-compress http://commons.apache.org/proper/commons-compress/
 * commons-math http://commons.apache.org/proper/commons-math/
 
-These libraries are not included in the PuffinPlot repository itself.
-The NetBeans project and build script look for the required jar files
-in a directory called `puffinplot-lib`, which should be in the parent
-directory of the PuffinPlot directory itself. The `puffinplot-lib`
-directory should contain the following jar files:
-
-| Filename                    | Version                  |
-| --------------------------- | ------------------------ |
-| batik-awt-util.jar          | 1.7                      |
-| batik-dom.jar               | 1.7                      |
-| batik-svggen.jar            | 1.7                      |
-| batik-util.jar              | 1.7                      |
-| commons-cli.jar             | 1.2                      |
-| commons-compress.jar        | 1.9                      |
-| commons-math3.jar           | 3.5                      |
-| freehep-export.jar          | 2.1.1                    |
-| freehep-graphics2d.jar      | 2.1.1                    |
-| freehep-graphicsio.jar      | 2.1.1                    |
-| freehep-graphicsio-pdf.jar  | 2.1.1                    |
-| freehep-graphicsio-svg.jar  | 2.1.1                    |
-| freehep-io.jar              | 2.0.2                    |
-| freehep-swing.jar           | 2.0.3                    |
-| freehep-util.jar            | 2.0.2                    |
-| freehep-xml.jar             | 2.1.1                    |
-| itext.jar                   | 2.1.7                    |
-| appbundler.jar              | 1.0                      |
-
-The script `fetch-libs.sh` in the PuffinPlot directory will
-automatically create the `puffinplot-lib` directory, download the
-required software packages, and extract the jar files. (Download
-locations correct as of 2014-10-16.)
-
 appbundler is not used by PuffinPlot itself, but it used during the
 build process to create a Mac application bundle containing PuffinPlot.
 Note that there is more than one library called ‘appbundler’;
 PuffinPlot uses the one provided by Oracle.
 
-Jython can be dynamically loaded and used by PuffinPlot at runtime,
-but is not a build dependency.
+Jython can be dynamically downloaded, installed, and used by PuffinPlot
+at runtime, but is not a build dependency.
 
 ### TeX dependencies
 
@@ -109,7 +80,7 @@ sudo apt-get install tex4ht texlive-fonts-extra texlive-fonts-recommended texliv
 
 ## Building with Ant
 
-Ant build targets:
+Main Ant build targets:
 
 * `create-release` creates a zip file suitable for distribution.
 It contains the PuffinPlot jar, a Mac application folder, the

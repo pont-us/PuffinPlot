@@ -18,5 +18,6 @@
         <dependency org="org.freehep" name="freehep-xml" rev="2.1.10"/>
         <dependency org="org.freehep" name="freehep-graphicsio" rev="2.4"/>
         <dependency org="com.lowagie" name="itext" rev="2.1.7"/>
+        <dependency org="com.oracle" name="appbundler" rev="1.0ea"/>
     </dependencies>
 </ivy-module>

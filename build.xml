@@ -27,8 +27,12 @@
                  uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
     </target>
     
-    <target name="-pre-compile" depends="install-ivy" description="--> retreive dependencies with ivy">
+    <target name="-pre-init" depends="install-ivy" description="--> retreive dependencies with ivy">
         <ivy:retrieve type="jar"/>
+        <!-- appbundler jar now retrieved so we can safely do the taskdef -->
+        <taskdef name="appbundler"
+                 classname="com.oracle.appbundler.AppBundlerTask"   
+                 classpath="lib/appbundler-1.0ea.jar" />
     </target>    
     
     <target name="-pre-jar">
@@ -91,10 +95,6 @@
         <delete file="${store.dir}/temp_final.jar"/>
     </target>
     
-    <taskdef name="appbundler"
-             classname="com.oracle.appbundler.AppBundlerTask"   
-             classpath="../puffinplot-lib/appbundler.jar" />
-
     <!-- macbundle notes:
     Setting the correct name in the application menu title and relevant
     menu items is harder than it seems. The official technique (name
@@ -134,7 +134,7 @@
         <exec dir="${basedir}/manual" executable="${basedir}/manual/make-all.sh" />
     </target>
     
-    <target name="create-release" depends="javadoc,build-manual,macbundle"
+    <target name="create-release" depends="build-manual,macbundle,javadoc"
       description="Creates an archive of binaries and documentation for release">
         <property file="release.properties" />
         <fail unless="release.version" message="No version number."/>

@@ -69,6 +69,8 @@ Other notes
 -----------
 
 -   PuffinPlot now requires Java 8 or higher.
+-   The build process now uses the Ivy dependency manager to download
+	required libraries automatically.
 
 PuffinPlot 1.03 release notes
 =============================
