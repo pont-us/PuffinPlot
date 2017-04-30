@@ -724,10 +724,12 @@ public class Sample {
     public void setAmsFromTensor(double k11, double k22, double k33,
             double k12, double k23, double k13) {
         touch();
-        Matrix scm = new Matrix(Vec3.getSampleCorrectionMatrix(toRadians(getSampAz() + getMagDev()),
-               toRadians(getSampDip())));
-        Matrix fcm = new Matrix(Vec3.getFormationCorrectionMatrix(toRadians(getFormAz() + getMagDev()),
-               toRadians(getFormDip())));
+        final Matrix scm = new Matrix(Vec3.getSampleCorrectionMatrix(
+                toRadians(getSampAz() + getMagDev()),
+                toRadians(getSampDip())));
+        final Matrix fcm = new Matrix(Vec3.getFormationCorrectionMatrix(
+                toRadians(getFormAz() + getMagDev()),
+                toRadians(getFormDip())));
         ams = new Tensor(k11, k22, k33, k12, k23, k13, scm, fcm);
     }
 
@@ -744,10 +746,9 @@ public class Sample {
     public void setAmsDirections(double i1, double d1, double i2, double d2,
             double i3, double d3) {
         touch();
-        // ams = Tensor.fromDirections(i1, d1, i2, d2, i3, d3);
-        Vec3 k1 = correctFully(Vec3.fromPolarDegrees(1., i1, d1));
-        Vec3 k2 = correctFully(Vec3.fromPolarDegrees(1., i2, d2));
-        Vec3 k3 = correctFully(Vec3.fromPolarDegrees(1., i3, d3));
+        final Vec3 k1 = correctFully(Vec3.fromPolarDegrees(1., i1, d1));
+        final Vec3 k2 = correctFully(Vec3.fromPolarDegrees(1., i2, d2));
+        final Vec3 k3 = correctFully(Vec3.fromPolarDegrees(1., i3, d3));
         ams = Tensor.fromDirections(k1, k2, k3);
         System.out.println(ams.toTensorComponentString());
     }

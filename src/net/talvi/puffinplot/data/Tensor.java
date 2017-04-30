@@ -31,8 +31,8 @@ import java.util.Locale;
  */
 public class Tensor {
 
-    private double k11, k22, k33, k12, k23, k13;
-    private List<Vec3> amsAxes;
+    private final double k11, k22, k33, k12, k23, k13;
+    private final List<Vec3> amsAxes;
     private static final List<String> HEADERS =
             Arrays.asList("AMS dec1", "AMS inc1", "AMS dec2", "AMS inc2",
             "AMS dec3", "AMS inc3");
@@ -55,9 +55,9 @@ public class Tensor {
         this.k12 = k12;
         this.k23 = k23;
         this.k13 = k13;
-        double[] elts = {k11, k12, k13, k12, k22, k23, k13, k23, k33};
-        Matrix ams = new Matrix(elts, 3);
-        Eigens amsEigens = new Eigens(ams);
+        final double[] elts = {k11, k12, k13, k12, k22, k23, k13, k23, k33};
+        final Matrix ams = new Matrix(elts, 3);
+        final Eigens amsEigens = new Eigens(ams);
         // For the present, we just keep the directions
         amsAxes = amsEigens.getVectors();
     }
@@ -80,13 +80,11 @@ public class Tensor {
      */
     public Tensor(double k11, double k22, double k33,
             double k12, double k23, double k13, Matrix correct1, Matrix correct2) {
-        double[] elts = {k11, k12, k13, k12, k22, k23, k13, k23, k33};
-        // correct2 = new Matrix(Vec3.getFormationCorrectionMatrix(0, Math.PI/2.));
-        Matrix ams1 = new Matrix(elts, 3);
-        Matrix ams2 = correct1.times(ams1).times(correct1.transpose());
-        Matrix ams3 = correct2.times(ams2).times(correct2.transpose());
-        //ams3 = ams2;
-        Eigens amsEigens = new Eigens(ams3);
+        final double[] elts = {k11, k12, k13, k12, k22, k23, k13, k23, k33};
+        final Matrix ams1 = new Matrix(elts, 3);
+        final Matrix ams2 = correct1.times(ams1).times(correct1.transpose());
+        final Matrix ams3 = correct2.times(ams2).times(correct2.transpose());
+        final Eigens amsEigens = new Eigens(ams3);
         double[][] k = ams3.getArray();
         this.k11 = k[0][0];
         this.k12 = k[0][1];
@@ -102,9 +100,9 @@ public class Tensor {
      */
     public Tensor(List<Vec3> axes) {
         // TODO test this properly
-        Vec3 v1 = axes.get(0);
-        Vec3 v2 = axes.get(1);
-        Vec3 v3 = axes.get(2);
+        final Vec3 v1 = axes.get(0);
+        final Vec3 v2 = axes.get(1);
+        final Vec3 v3 = axes.get(2);
         k11 = v1.x;
         k12 = v1.y;
         k13 = v1.z;
@@ -118,7 +116,7 @@ public class Tensor {
      * The order is k11, k22, k33, k12, k23, k13.
      * @return a string giving the components of the tensor, separated by spaces */
     public String toTensorComponentString() {
-        String fmt = "%.5f %.5f %.5f %.5f %.5f %.5f";
+        final String fmt = "%.5f %.5f %.5f %.5f %.5f %.5f";
         return String.format(Locale.ENGLISH, fmt, k11, k22, k33, k12, k23, k13);
     }
 
@@ -129,7 +127,7 @@ public class Tensor {
      * @return a tensor with the specified axes
      */
     public static Tensor fromDirections(Vec3 k1, Vec3 k2, Vec3 k3) {
-        List<Vec3> axes = new ArrayList<Vec3>(3);
+        final List<Vec3> axes = new ArrayList<>(3);
         axes.add(k1);
         axes.add(k2);
         axes.add(k3);
@@ -138,9 +136,9 @@ public class Tensor {
     
     private static Tensor fromDirections(double i1, double d1, double i2,
             double d2, double i3, double d3) {
-        Vec3 v1 = Vec3.fromPolarDegrees(1, i1, d1);
-        Vec3 v2 = Vec3.fromPolarDegrees(1, i2, d2);
-        Vec3 v3 = Vec3.fromPolarDegrees(1, i3, d3);
+        final Vec3 v1 = Vec3.fromPolarDegrees(1, i1, d1);
+        final Vec3 v2 = Vec3.fromPolarDegrees(1, i2, d2);
+        final Vec3 v3 = Vec3.fromPolarDegrees(1, i3, d3);
         return Tensor.fromDirections(v1, v2, v3);
     }
 
