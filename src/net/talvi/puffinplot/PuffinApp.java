@@ -31,10 +31,8 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -42,13 +40,10 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.InvocationTargetException;
-import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -100,7 +95,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
-import org.freehep.util.UserProperties;
+import org.freehep.graphicsbase.util.UserProperties;
 
 /**
  * This class constitutes the main PuffinPlot application.
@@ -1527,18 +1522,19 @@ public final class PuffinApp {
     public void exportPdfFreehep(File pdfFile) throws IOException {
         final MainGraphDisplay display = getMainWindow().getGraphDisplay();
         final Dimension size = display.getMaximumSize();
-        //OutputStream outStream = new FileOutputStream(pdfFile);
-        //org.freehep.graphicsio.pdf.PDFWriter pdfWriter =
-        //        new org.freehep.graphicsio.pdf.PDFWriter(outStream);
-        UserProperties props=(UserProperties)org.freehep.graphicsio.pdf.PDFGraphics2D.getDefaultProperties();
-        props.setProperty(org.freehep.graphicsio.pdf.PDFGraphics2D.TEXT_AS_SHAPES, false);
-        props.setProperty(org.freehep.graphicsio.pdf.PDFGraphics2D.COMPRESS, true);
-        props.setProperty(org.freehep.graphicsio.pdf.PDFGraphics2D.ORIENTATION, org.freehep.graphicsio.PageConstants.LANDSCAPE);
-        org.freehep.graphicsio.pdf.PDFGraphics2D.setDefaultProperties(props);
+
+        final UserProperties userProps = (UserProperties)
+                org.freehep.graphicsio.pdf.PDFGraphics2D.getDefaultProperties();
+        userProps.setProperty(org.freehep.graphicsio.pdf.PDFGraphics2D.TEXT_AS_SHAPES, false);
+        userProps.setProperty(org.freehep.graphicsio.pdf.PDFGraphics2D.COMPRESS, true);
+        userProps.setProperty(org.freehep.graphicsio.pdf.PDFGraphics2D.ORIENTATION,
+                org.freehep.graphicsio.PageConstants.LANDSCAPE);
+        
+        org.freehep.graphicsio.pdf.PDFGraphics2D.setDefaultProperties(userProps);
         org.freehep.graphicsio.pdf.PDFGraphics2D graphics2d =
                 new org.freehep.graphicsio.pdf.PDFGraphics2D(pdfFile, size);
-        Properties p = new Properties();
-        p.setProperty("PageSize","A4");
+        final Properties p = new Properties();
+        p.setProperty("PageSize", "A4");
         graphics2d.setProperties(p);
         graphics2d.setMultiPage(true);
         graphics2d.startExport();
@@ -1553,9 +1549,11 @@ public final class PuffinApp {
             graphics2d.closePage();
         } while (!finished);
         
-        //getMainWindow().getGraphDisplay().print(graphics2d);
         graphics2d.endExport();
-        graphics2d.closeStream();
+        // Don't call graphics2d.closeStream() here: 
+        // endExport already calls it, and trying to re-close it
+        // will throw an exception. See
+        // http://java.freehep.org/vectorgraphics/xref/org/freehep/graphicsio/AbstractVectorGraphicsIO.html#261
     }
     
     public void exportGraphics() {

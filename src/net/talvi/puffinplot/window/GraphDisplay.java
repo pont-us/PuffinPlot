@@ -42,7 +42,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
-import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.plots.Plot;
 import org.apache.batik.dom.GenericDOMImplementation;
