@@ -64,6 +64,32 @@ public class Vec3Test {
             }
         }
     }
-
-
+    
+    private void testOneEquatorPoint(double x0, double y0, double z0,
+            double x1, double y1, double z1,
+            double x2, double y2, double z2) {
+        final Vec3 v0 = new Vec3(x0, y0, z0);
+        final Vec3 v1 = new Vec3(x1, y1, z1);
+        final Vec3 expected = new Vec3(x2, y2, z2);
+        final Vec3 veq1 = Vec3.equatorPoint(v0, v1);
+        final Vec3 veq2 = Vec3.equatorPoint(v1, v0);
+        assertTrue(expected.equals(veq1, 1e-10));
+        assertTrue(expected.equals(veq2, 1e-10));
+    }
+    
+    @Test
+    public void testEquatorPoint() {
+        System.out.println("equatorPoint");
+        
+        // A couple of simple tests
+        testOneEquatorPoint(0, 1, 1, 0, 1, -1, 0, 1, 0);
+        testOneEquatorPoint(1, 0, 1, 1, 0, -1, 1, 0, 0);
+        
+        // Unequal length vectors
+        testOneEquatorPoint(0, 2, 5, 0, 1, -1, 0, 1, 0);
+        
+        // Point on equator
+        testOneEquatorPoint(1, 0, 0, 1, 0, 1, 1, 0, 0);
+        testOneEquatorPoint(11, 12, 13, 0, 1, 0, 0, 1, 0);
+    }
 }

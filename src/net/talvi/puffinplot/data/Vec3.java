@@ -122,7 +122,9 @@ public class Vec3 {
 
     /**
      * Returns the unit vector on the intersection of the equator (z=0 line)
-     * and the great circle between the supplied points.
+     * and the great circle between the supplied points. The supplied 
+     * vectors must be well-formed and in opposite hemispheres.
+     * 
      * @param v0 a vector specifying a direction
      * @param v1 a vector specifying a direction
      * @return a unit vector {@code v} for which {@code v.z==0}, which lies
@@ -130,9 +132,29 @@ public class Vec3 {
      * {@code v0} and {@code v1}
      */
     public static Vec3 equatorPoint(Vec3 v0, Vec3 v1) {
+        if (!v0.isWellFormed()) {
+            throw new IllegalArgumentException("v0 is not well-formed.");
+        }
+        if (!v1.isWellFormed()) {
+            throw new IllegalArgumentException("v1 is not well-formed.");
+        }
+        if ((v0.z>0 && v1.z>0) || (v0.z<0 && v1.z<0)) {
+            throw new IllegalArgumentException("Vectors must be in opposite hemispheres.");
+        }
+        if (v0.z == 0) {
+            return v0;
+        }
+        if (v1.z == 0) {
+            return v1;
+        }
+        
+        // We're now guaranteed that v0 and v1 are non-horizontal and
+        // in opposite hemispheres.
+        
         final Vec3 v = v0.times(signum(v0.z) / v0.z).
                 plus(v1.times(signum(v1.z) / v1.z)).
                 normalize();
+        
         assert(v.isWellFormed());
         return v;
     }
@@ -144,6 +166,7 @@ public class Vec3 {
      * hemisphere as this one.
      */
     public boolean sameHemisphere(Vec3 v) {
+        assert(v.isWellFormed());
         return signum(z) == signum(v.z);
     }
 
@@ -163,6 +186,7 @@ public class Vec3 {
         List<Vec3> currentSegment = new ArrayList<>();
         Vec3 prev = null;
         for (Vec3 v: vs) {
+            assert(v.isWellFormed());
             if (prev == null) {
                 currentSegment.add(v);
             } else {
@@ -830,5 +854,61 @@ public class Vec3 {
     public boolean isWellFormed() {
         return (!Double.isNaN(x)) && (!Double.isNaN(y)) && (!Double.isNaN(z))
                 && (!Double.isInfinite(x)) && (!Double.isInfinite(y)) && (!Double.isInfinite(z));
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof Vec3)) {
+            return false;
+        }
+        final Vec3 v = (Vec3) o;
+        return (x == v.x && y == v.y && x == v.z);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + (int) (Double.doubleToLongBits(this.x) ^ (Double.doubleToLongBits(this.x) >>> 32));
+        hash = 79 * hash + (int) (Double.doubleToLongBits(this.y) ^ (Double.doubleToLongBits(this.y) >>> 32));
+        hash = 79 * hash + (int) (Double.doubleToLongBits(this.z) ^ (Double.doubleToLongBits(this.z) >>> 32));
+        return hash;
+    }
+    
+    /**
+     * Returns the distance between two vectors.
+     * 
+     * @param v the vector with which to compare this one
+     * @return the distance between this vector and {@code v}
+     */
+    public double distance(Vec3 v) {
+        return abs(this.minus(v).mag());
+    }
+    
+    /**
+     * Compares vectors for equality to a specified precision.
+     * 
+     * Compares this vector with another one, returning {@code true}
+     * if they are sufficiently close. "Sufficiently close" is defined
+     * by a supplied precision parameter: for the method to return
+     * {@code true}, the distance between the vectors must be less
+     * than {@code precision * max(m1, m2)} where {@code m1} and
+     * {@code m2} are the lengths of the two vectors.
+     * 
+     * @param v the vector with which to compare this one
+     * @param precision the precision parameter for the comparison
+     * @return {@code true} iff the vectors are equal to within the
+     * specified precision
+     */
+    public boolean equals(Vec3 v, double precision) {
+        final double mag0 = mag();
+        final double mag1 = v.mag();
+        if (mag0==0 && mag1==0) {
+            return true;
+        }
+        final double delta = Double.max(mag0, mag1) * precision;
+        return (distance(v) < delta);
     }
 }
