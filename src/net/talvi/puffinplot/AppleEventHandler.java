@@ -28,45 +28,48 @@ import com.apple.eawt.QuitHandler;
 import com.apple.eawt.QuitResponse;
 
 /**
- * AppleEventHandler handles the user actions About, Open, Preferences, and
- Quit on Mac OS X systems, passing them on to the appropriate methods
- of a PuffinApp instance specified on initialization.
- * 
+ * AppleEventHandler handles the user actions About, Open, Preferences, and Quit
+ * on Mac OS X systems, passing them on to the appropriate methods of a
+ * PuffinApp instance specified on initialization.
+ *
  * @author pont
  */
-
 public class AppleEventHandler implements
         PreferencesHandler, OpenFilesHandler, AboutHandler, QuitHandler {
 
     private static AppleEventHandler appleListener;
     private static com.apple.eawt.Application eawtApp;
     private final PuffinApp puffinApp;
-	
+
     private AppleEventHandler(PuffinApp puffinApp) {
         this.puffinApp = puffinApp;
     }
-	
+
     /**
-     * Instantiates a new AppleEventHandler, which will send events to 
- the supplied PuffinApp instance. When the user initiates
- an About, Open, Preferences, or Quit action, the AppleEventHandler
- will call the corresponding method of the PuffinApp.
-     * 
-     * @param puffinApp the PuffinApp instance to control using
-     * Apple events
+     * Instantiates a new AppleEventHandler, which will send events to the
+     * supplied PuffinApp instance. When the user initiates an About, Open,
+     * Preferences, or Quit action, the AppleEventHandler will call the
+     * corresponding method of the PuffinApp.
+     *
+     * @param puffinApp the PuffinApp instance to control using Apple events
      */
     public static void initialize(PuffinApp puffinApp) {
-        if (eawtApp == null) eawtApp = new com.apple.eawt.Application();
-        if (appleListener == null) appleListener = new AppleEventHandler(puffinApp);
+        if (eawtApp == null) {
+            eawtApp = new com.apple.eawt.Application();
+        }
+        if (appleListener == null) {
+            appleListener = new AppleEventHandler(puffinApp);
+        }
         eawtApp.setPreferencesHandler(appleListener);
         eawtApp.setEnabledPreferencesMenu(true);
         eawtApp.setOpenFileHandler(appleListener);
         eawtApp.setAboutHandler(appleListener);
         eawtApp.setQuitHandler(appleListener);
     }
-	
+
     /**
      * Handles an Apple About action by calling {@code PuffinApp.about()}
+     *
      * @param event the event corresponding to the About action
      * @see PuffinApp#about()
      */
@@ -80,9 +83,10 @@ public class AppleEventHandler implements
                     "handleAbout can't find the PuffinApp.");
         }
     }
-	
+
     /**
      * Handles an Apple Open File action by calling {@code PuffinApp.openFiles}
+     *
      * @param event the event corresponding to the OpenFile action
      * @see PuffinApp#openFiles(List files, boolean createNewSuite)
      */
@@ -99,6 +103,7 @@ public class AppleEventHandler implements
     /**
      * Handles an Apple Preferences action by calling
      * {@code PuffinApp.preferences()}
+     *
      * @param event the event corresponding to the Preferences action
      * @see PuffinApp#showPreferences()
      */
@@ -114,6 +119,7 @@ public class AppleEventHandler implements
 
     /**
      * Handles an Apple Quit action by calling {@code PuffinApp.quit()}
+     *
      * @param event the event corresponding to the Quit action
      * @param response object to receive our response to the request
      * @see PuffinApp#quit()

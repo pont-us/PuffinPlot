@@ -236,7 +236,7 @@ public final class PuffinApp {
         // prefs window also needs the correction.
         prefsWindow = new PrefsWindow();
         if (MAC_OS_X) {
-            createAppleEventListener();
+            createAppleEventHandler();
         }
         currentPageFormat = PrinterJob.getPrinterJob().defaultPage();
         currentPageFormat.setOrientation(PageFormat.LANDSCAPE);
@@ -974,12 +974,12 @@ public final class PuffinApp {
     }
 
     @SuppressWarnings("unchecked")
-    private void createAppleEventListener() {
+    private void createAppleEventHandler() {
         try {
-            final Class appleListener = ClassLoader.getSystemClassLoader()
-                    .loadClass("net.talvi.puffinplot.AppleListener");
-            appleListener.getDeclaredMethod("initialize", PuffinApp.class)
-                    .invoke(appleListener, this);
+            final Class appleEventHandler = ClassLoader.getSystemClassLoader()
+                    .loadClass("net.talvi.puffinplot.AppleEventHandler");
+            appleEventHandler.getDeclaredMethod("initialize", PuffinApp.class)
+                    .invoke(appleEventHandler, this);
         } catch (NoClassDefFoundError e) {
             // We couldn't find the ApplicationAdapter class.
             errorDialog("EAWT error", "Apple EAWT not supported: Application" +
