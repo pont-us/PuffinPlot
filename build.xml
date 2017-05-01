@@ -77,6 +77,8 @@
         description="Creates a composite JAR file containing all dependencies.">
         
         <!-- By default, this target is dependent on NetBeans
+        (dependency chain: jar <- -do-jar <- -do-jar-with-libraries <- 
+        -do-jar-copylibs)
         because it requires the CopyLibs task, defined in
         org-netbeans-modules-java-j2seproject-copylibstask.jar. To
         allow building with plain Ant, we keep a copy of the jar for
