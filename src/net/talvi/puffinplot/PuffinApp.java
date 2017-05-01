@@ -1550,9 +1550,8 @@ public final class PuffinApp {
         } while (!finished);
         
         graphics2d.endExport();
-        // Don't call graphics2d.closeStream() here: 
-        // endExport already calls it, and trying to re-close it
-        // will throw an exception. See
+        // Don't call graphics2d.closeStream() here: endExport already 
+        // calls it, and trying to re-close it will throw an exception. See
         // http://java.freehep.org/vectorgraphics/xref/org/freehep/graphicsio/AbstractVectorGraphicsIO.html#261
     }
     

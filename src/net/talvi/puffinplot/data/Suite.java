@@ -1276,9 +1276,11 @@ public final class Suite {
      * @param saved the saved state to set
      */
     public void setSaved(boolean saved) {
-        this.saved = saved;
-        for (SavedListener savedListener: savedListenerSet) {
-            savedListener.savedStateChanged(saved);
+        if (this.saved != saved) {
+            this.saved = saved;
+            for (SavedListener savedListener: savedListenerSet) {
+                savedListener.savedStateChanged(saved);
+            }
         }
     }
 

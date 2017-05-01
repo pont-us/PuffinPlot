@@ -161,7 +161,7 @@ public class Datum {
     /** Returns the sample of which this measurement was made.
      * @return the sample on which this measurement was made */
     public Sample getSample()          { return sample; }
-    /** Sets the sampe on which this measurement was made.
+    /** Sets the sample on which this measurement was made.
      * @param v the sample on which this measurement was made */
     public void setSample(Sample v)    { touch(); sample = v; }
     /** Reports whether this datum should be hidden on plots.
