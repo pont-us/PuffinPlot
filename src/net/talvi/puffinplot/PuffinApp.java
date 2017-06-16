@@ -112,10 +112,10 @@ import org.freehep.graphicsbase.util.UserProperties;
 public final class PuffinApp {
 
     private static PuffinApp app;
-    private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
-    private static final java.io.ByteArrayOutputStream logStream =
+    private static final Logger LOGGER = Logger.getLogger("net.talvi.puffinplot");
+    private static final java.io.ByteArrayOutputStream LOG_STREAM =
             new java.io.ByteArrayOutputStream();
-    private static final MemoryHandler logMemoryHandler;
+    private static final MemoryHandler LOG_MEMORY_HANDLER;
 
     private final PuffinActions actions;
     private final List<Suite> suites = new ArrayList<>();
@@ -155,11 +155,11 @@ public final class PuffinApp {
 
     static {
         final Handler logStringHandler =
-            new StreamHandler(logStream, new SimpleFormatter());
+            new StreamHandler(LOG_STREAM, new SimpleFormatter());
         logStringHandler.setLevel(Level.ALL);
-        logger.addHandler(logMemoryHandler =
+        LOGGER.addHandler(LOG_MEMORY_HANDLER =
                 new MemoryHandler(logStringHandler, 100, Level.OFF));
-        logMemoryHandler.setLevel(Level.ALL);
+        LOG_MEMORY_HANDLER.setLevel(Level.ALL);
     }
 
     private class PuffinAppSampleClickListener implements SampleClickListener {
@@ -180,7 +180,7 @@ public final class PuffinApp {
      * will cause the main PuffinPlot window to be opened immediately.
      */
     public PuffinApp() {
-        logger.info("Instantiating PuffinApp.");
+        LOGGER.info("Instantiating PuffinApp.");
         // have to set app here (not in main) since we need it during initialization
         PuffinApp.app = this;
         // com.apple.macos.useScreenMenuBar deprecated since 1.4, I think
@@ -251,7 +251,7 @@ public final class PuffinApp {
                 addSampleClickListener(scListener);
         mainWindow.getMainMenuBar().updateRecentFiles();
         mainWindow.setVisible(true);
-        logger.info("PuffinApp instantiation complete.");
+        LOGGER.info("PuffinApp instantiation complete.");
     }
 
     private static class ExceptionHandler implements UncaughtExceptionHandler {
@@ -279,10 +279,10 @@ public final class PuffinApp {
                 w.println("Locale: " + Locale.getDefault().toString());
                 exception.printStackTrace(w);
                 w.println("\nLog messages: \n");
-                logMemoryHandler.push();
-                logMemoryHandler.flush();
-                logStream.flush();
-                w.append(logStream.toString());
+                LOG_MEMORY_HANDLER.push();
+                LOG_MEMORY_HANDLER.flush();
+                LOG_STREAM.flush();
+                w.append(LOG_STREAM.toString());
                 w.close();
             } catch (IOException ex) {
                 exception.printStackTrace();
@@ -299,8 +299,8 @@ public final class PuffinApp {
      * @param args command-line arguments for the application
      */
     public static void main(final String[] args) {
-        logger.setLevel(Level.ALL);
-        logger.fine("Entering main method.");
+        LOGGER.setLevel(Level.ALL);
+        LOGGER.fine("Entering main method.");
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
         
         final Preferences prefs =
@@ -329,7 +329,7 @@ public final class PuffinApp {
             }
         } catch (ClassNotFoundException | InstantiationException |
                  IllegalAccessException | UnsupportedLookAndFeelException ex) {
-            logger.log(Level.WARNING, "Error setting look-and-feel", ex);
+            LOGGER.log(Level.WARNING, "Error setting look-and-feel", ex);
         }
 
         parseCliArguments(args);
@@ -417,7 +417,7 @@ public final class PuffinApp {
                         try (Reader reader = new FileReader(scriptPath)) {
                             engine.eval(reader);
                         } catch (ScriptException | IOException ex) {
-                            logger.log(Level.SEVERE, null, ex);
+                            LOGGER.log(Level.SEVERE, null, ex);
                             // TODO make sure this makes it to stderr
                         }
                     });
@@ -535,7 +535,7 @@ public final class PuffinApp {
             buildProperties = new Properties();
             buildProperties.load(propStream);
         } catch (IOException ex) {
-            logger.log(Level.WARNING, "Failed to get build date", ex);
+            LOGGER.log(Level.WARNING, "Failed to get build date", ex);
             /* The only effect of this on the user is a lack of build date
              * in the about box, so we can get away with just logging it.
              */
@@ -543,7 +543,7 @@ public final class PuffinApp {
             if (propStream != null)
                 try {propStream.close();} catch (IOException e) {}
         }
-        logger.log(Level.INFO, "Build date: {0}", getBuildProperty("build.date"));
+        LOGGER.log(Level.INFO, "Build date: {0}", getBuildProperty("build.date"));
     }
     
     /**
@@ -976,20 +976,21 @@ public final class PuffinApp {
     @SuppressWarnings("unchecked")
     private void createAppleEventHandler() {
         try {
-            final Class appleEventHandler = ClassLoader.getSystemClassLoader()
-                    .loadClass("net.talvi.puffinplot.AppleEventHandler");
-            appleEventHandler.getDeclaredMethod("initialize", PuffinApp.class)
-                    .invoke(appleEventHandler, this);
+            final Class appleEventHandler =
+                    ClassLoader.getSystemClassLoader().
+                    loadClass("net.talvi.puffinplot.AppleEventHandler");
+            appleEventHandler.
+                    getDeclaredMethod("initialize", PuffinApp.class).
+                    invoke(appleEventHandler, this);
         } catch (NoClassDefFoundError e) {
-            // We couldn't find the ApplicationAdapter class.
             errorDialog("EAWT error", "Apple EAWT not supported: Application" +
                     " Menu handling disabled\n(" + e + ")");
         } catch (ClassNotFoundException | NoSuchMethodException |
                 SecurityException | IllegalAccessException | 
                 IllegalArgumentException | InvocationTargetException e) {
-            errorDialog("EAWT error", "Error while loading the OSXAdapter: " +
+            errorDialog("EAWT error", "Error creating AppleEventHandler: " +
                     e.getLocalizedMessage());
-            logger.log(Level.SEVERE, e.getLocalizedMessage());
+            LOGGER.log(Level.SEVERE, e.getLocalizedMessage());
         }
     }
     
@@ -1318,7 +1319,7 @@ public final class PuffinApp {
             getSuite().importAmsFromAsc(files, false);
             getMainWindow().suitesChanged();
         } catch (IOException ex) {
-            logger.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
             errorDialog("Error importing AMS", ex.getLocalizedMessage());
         }
     }
@@ -1354,7 +1355,7 @@ public final class PuffinApp {
             updateDisplay();
             prefsWindow = new PrefsWindow();
         } catch (BackingStoreException ex) {
-            logger.log(Level.WARNING, "Error clearing preferences", ex);
+            LOGGER.log(Level.WARNING, "Error clearing preferences", ex);
             errorDialog("Error clearing preferences", ex.getLocalizedMessage());
         }
     }
@@ -1610,7 +1611,7 @@ public final class PuffinApp {
                 } finally {
                     if (writer != null) {
                         try { writer.close(); }
-                        catch (IOException e) { logger.warning(e.getLocalizedMessage()); }
+                        catch (IOException e) { LOGGER.warning(e.getLocalizedMessage()); }
                     }
                 }
             } catch (PuffinUserException ex) {
@@ -1778,7 +1779,7 @@ public final class PuffinApp {
         try {
             suite.importLocations(file);
         } catch (IOException ex) {
-            logger.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
             errorDialog("Error importing locations", ex.getLocalizedMessage());
         }
     }
@@ -2158,13 +2159,13 @@ public final class PuffinApp {
             }
             
         } catch (IOException e) {
-            logger.log(Level.WARNING,
+            LOGGER.log(Level.WARNING,
                     "calculateRpi: exception writing file.", e);
         } finally {
             try {
                 if (fw != null) fw.close();
             } catch (IOException e2) {
-                logger.log(Level.WARNING,
+                LOGGER.log(Level.WARNING,
                         "calculateRpi: exception closing file.", e2);
             }
         }
@@ -2180,7 +2181,7 @@ public final class PuffinApp {
             suite.convertDiscreteToContinuous(file);
             getMainWindow().suitesChanged();
         } catch (IOException ex) {
-            logger.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
             errorDialog("Error opening file", ex.getLocalizedMessage());
         } catch (Suite.MissingSampleNameException ex) {
             errorDialog("Error converting suite", "The CSV file does not "
@@ -2194,12 +2195,12 @@ public final class PuffinApp {
             jarFile = new File(PuffinApp.class.getProtectionDomain().
                     getCodeSource().getLocation().toURI().getPath());
         } catch (URISyntaxException ex) {
-            logger.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
         if (jarFile == null) {
             return;
         }
-        logger.log(Level.INFO, "PuffinPlot jar file location: {0}", jarFile.getAbsolutePath());
+        LOGGER.log(Level.INFO, "PuffinPlot jar file location: {0}", jarFile.getAbsolutePath());
         final Path jarPath = jarFile.toPath();
         final Path destPath = destinationDir.resolve("PuffinPlot.jar");
         Files.copy(jarPath, destPath, StandardCopyOption.COPY_ATTRIBUTES);
@@ -2214,7 +2215,7 @@ public final class PuffinApp {
             return;
         }
         
-        logger.info("Starting bundle creation.");
+        LOGGER.info("Starting bundle creation.");
         
         // choose options
         
@@ -2222,7 +2223,7 @@ public final class PuffinApp {
         
         try {
             final Path tempDir = Files.createTempDirectory("puffinplot");
-            logger.log(Level.INFO, "Temporary directory: {0}", tempDir.toString());
+            LOGGER.log(Level.INFO, "Temporary directory: {0}", tempDir.toString());
         
             getSuite().saveAs(tempDir.resolve(Paths.get("data.ppl")).toFile());
             getSuite().doAllCalculations(getCorrection());
