@@ -272,6 +272,31 @@ public class Sample {
         }
     }
     
+    /** Selects all data points within a certain treatment level range.
+     * 
+     * ‘Treatment level’ refers to AF field strength, temperature,
+     * etc. Note that this is distinct from the treatment <i>step</i>,
+     * which is just a non-negative integer used to index successive
+     * treatment rounds.
+     * 
+     * Negative and positive infinities can be passed as arguments, with
+     * the expected behaviour. Passing NaN as an argument will not throw
+     * an exception or produce additional side effects, but the resulting
+     * datum selection behaviour is undefined (i.e. any points might be
+     * selected).
+     * 
+     * @param min minimum treatment intensity
+     * @param max maximum treatment intensity
+     * 
+     * @see Datum.getTreatmentLevel();
+     */
+    public void selectByTreatmentLevelRange(double min, double max) {
+        for (Datum d: getData()) {
+            final double level = d.getTreatmentLevel();
+            d.setSelected(min <= level && level <= max);
+        }
+    }
+    
     /** Reports whether this sample contains any data. 
      * @return {@code true} if this sample contains any data */
     public boolean hasData() {
