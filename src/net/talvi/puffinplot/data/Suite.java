@@ -27,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import net.talvi.puffinplot.PuffinUserException;
 import net.talvi.puffinplot.data.file.*;
 
@@ -1693,6 +1694,7 @@ public final class Suite {
         }
     }
     
+    /** Sorts this suite's samples in ascending order of depth    */
     public void sortSamplesByDepth() {
         Collections.sort(samples, new Comparator<Sample>() {
             @Override
@@ -1700,6 +1702,26 @@ public final class Suite {
                 return Double.compare(arg0.getDepth(), arg1.getDepth());
             }
         });
+        updateReverseIndex();
+    }
+    
+    /**
+     * Retains the samples between the specified depths in the suite,
+     * and removes all samples outside this range.
+     * 
+     * @param minDepth Minimum depth of samples to retain
+     * @param maxDepth Maximum depth of samples to retain
+     */
+    public void removeSamplesOutsideDepthRange(
+            double minDepth, double maxDepth) {
+        final Set<Sample> samplesToRemove = samples.stream().
+                filter(s -> s.getDepth()< minDepth || s.getDepth() > maxDepth).
+                collect(Collectors.toSet());
+        samples.removeAll(samplesToRemove);
+        samplesToRemove.forEach((s) -> {
+            samplesById.remove(s.getNameOrDepth());
+        });
+        updateReverseIndex();
     }
     
     public class MissingSampleNameException extends Exception
