@@ -19,7 +19,7 @@ package net.talvi.puffinplot.data;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
-import net.talvi.puffinplot.data.ArasonLevi.Mean;
+import net.talvi.puffinplot.data.ArasonLevi.ArithMean;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -74,7 +74,7 @@ public class ArasonLeviTest {
     }
     
     /**
-     * Tests calculate method of class ArasonLevi.
+     * Tests calculate method of class ArasonLevi and ArasonLevi.ArithMean.
      */
     @Test
     public void testCalculate() {
@@ -84,19 +84,20 @@ public class ArasonLeviTest {
         System.out.println("ARALEV");
         
         for (int i=0; i<inputs.length; i++) {
-            final List<Double> testDataList = DoubleStream.of(inputs[i]).mapToObj(Double::valueOf).
+            final List<Double> testDataList = DoubleStream.of(inputs[i]).
+                    mapToObj(Double::valueOf).
                     collect(Collectors.toList());
 
-            final ArasonLevi result = ArasonLevi.calculate(inputs[i]);
-            final Mean mean = ArasonLevi.Mean.calculate(inputs[i]);
+            final ArasonLevi result = ArasonLevi.calculate(testDataList);
+            final ArithMean mean = ArasonLevi.ArithMean.calculate(testDataList);
             
             final double[] correct = outputs[i];
-            assertEquals(correct[0], result.getMlMeanInc(), delta(correct[0], 4));
-            assertEquals(correct[1], result.getMlKappa(), delta(correct[1], 6));
-            assertEquals(correct[2], result.getMlT63(), 0.001);
-            assertEquals(correct[3], result.getMlA95(), 0.001);
-            assertEquals(correct[6], mean.getMeanInclination(), 0.001);
-            assertEquals(correct[7], mean.getInverseVariance(), delta(correct[7], 3));
+            assertEquals(correct[0], result.getMeanInc(), delta(correct[0], 4));
+            assertEquals(correct[1], result.getKappa(), delta(correct[1], 6));
+            assertEquals(correct[2], result.getT63(), 0.001);
+            assertEquals(correct[3], result.getA95(), 0.001);
+            assertEquals(correct[6], mean.getInc(), 0.001);
+            assertEquals(correct[7], mean.getKappa(), delta(correct[7], 3));
             
             // The reference data is generated from the original Fortran
             // implementation of the Arason-Levi algorithm, which interpolates

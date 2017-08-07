@@ -23,29 +23,21 @@ import static java.lang.Math.log;
 import static java.lang.Math.pow;
 import static java.lang.Math.exp;
 import static java.lang.Math.sqrt;
+import java.util.Collection;
 import org.apache.commons.math3.distribution.TDistribution;
 
 // TODO:
-//
-// - Merge "Mean" fields into main class and calculate them along with AL
 // - Replace println("ERROR: ...") with exceptions
 // - Replace println("WARNING: ...") with something more useful :)
-// - rename EvaluateInput -> calculate and calculate -> calculateAralev
-// - Add Student T-test estimates for arithmetic mean from Fortran code???
-// - Add unit tests for arithmetic mean calculation
-// - Make sure documentation and comments are complete
-//   (add anything useful from the Fortran code)
 
 /**
  * Calculate and store Arason-Levi Maximum Likelihood Estimates (MLE) for
  * inclination-only data.
  *
  * Based on: http://brunnur.vedur.is/pub/arason/paleomag/pal.js (JavaScript
- * implementation by Ari Þórðarson)
- *
- * Results checked against:
+ * implementation by Ari Þórðarson) and 
  * http://brunnur.vedur.is/pub/arason/paleomag/aralev.txt (Fortran version by
- * Þórður Arason)
+ * Þórður Arason). Results checked against the Fortran version.
  *
  * Reference:
  *
@@ -57,7 +49,7 @@ import org.apache.commons.math3.distribution.TDistribution;
  */
 public final class ArasonLevi {
 
-    private final double mlMeanInc, mlKappa, mlT63, mlA95;
+    private final double meanInc, kappa, t63, a95;
     private final int errorCode;
 
     private static final double DR = 0.0174532925199433;
@@ -65,52 +57,87 @@ public final class ArasonLevi {
     
     private ArasonLevi(int ierr, double ainc, double ak, double t63, double a95) {
         this.errorCode = ierr;
-        this.mlMeanInc = ainc;
-        this.mlKappa = ak;
-        this.mlT63 = t63;
-        this.mlA95 = a95;
+        this.meanInc = ainc;
+        this.kappa = ak;
+        this.t63 = t63;
+        this.a95 = a95;
     }
 
     /**
-     * @return the Arason-Levi maximum-likelihood estimate for the mean
+     * @return a maximum-likelihood estimate for the mean
      * inclination
      */
-    public double getMlMeanInc() {
-        return mlMeanInc;
+    public double getMeanInc() {
+        return meanInc;
     }
 
     /**
-     * @return the Arason-Levi maximum-likelihood estimate for the precision
+     * @return a maximum-likelihood estimate for the precision
      * parameter κ
      */
-    public double getMlKappa() {
-        return mlKappa;
+    public double getKappa() {
+        return kappa;
     }
 
     /**
-     * @return the Arason-Levi maximum-likelihood estimate for the angular
+     * @return a maximum-likelihood estimate for the angular
      * standard deviation (θ63).
      */
-    public double getMlT63() {
-        return mlT63;
+    public double getT63() {
+        return t63;
     }
 
     /**
-     * @return the the Arason-Levi maximum-likelihood estimate for the 95%
+     * @return a maximum-likelihood estimate for the 95%
      * confidence limit (α95).
      */
-    public double getMlA95() {
-        return mlA95;
+    public double getA95() {
+        return a95;
     }
 
-
     /**
-     * @return the errorCode
+     * Error codes:
+     * 
+     * * 0: no problem
+     * 1: convergence problem of selected solution
+     * 2: failed robustness check
+     * 3: convergence and robustness problems
+     * 
+     * @return an error code
      */
     public int getErrorCode() {
         return errorCode;
     }
 
+    /**
+     * Evaluation of the Hyperbolic Bessel functions
+     * I0(x), I1(x) and their ratio I1(x)/I0(x).  These functions are
+     * sometimes also called the modified Bessel functions of order zero
+     * and one.  Since both the functions I0(x) and I1(x) increase
+     * exponentially as x increases and become numerically unstable,
+     * the output is given as I0(x)/exp(|x|), etc.
+     * The ratio I1(x)/I0(x) increases smoothly from 0 to 1 as x
+     * increases from zero.
+     * 
+     * x	input	                Range: -Inf  <  x     < +Inf
+     * bi0e	output	I0(x)/exp(|x|)  Range:  0    <  bi0e  <= 1
+     * bi1e	output	I1(x)/exp(|x|)  Range: -0.22 <  bi1e  <  0.22 
+     * bi1i0	output	I1(x)/I0(x)     Range: -1    <  bi1i0 <  1
+     *
+     * Using the approximations of:
+     * Press et al. (1989), Numerical recipes, The art of scientific 
+     * computing (Fortran version), Cambridge Univ. Press, Cambridge, 702 pp.
+     * Abramowitz and Stegun (1972, eq. 9.8.1-4), Handbook of Mathematical
+     * Functions with Formulas, Graphs, and Mathematical Tables, Dover, 
+     * New York.
+     *
+     * The accuracy of these approximations are:
+     *   abs[ exp(x)*bi0e - I0(x) ]           < 1.6E-7   (for x<3.75)
+     *   abs[ exp(x)*bi1e - I1(x) ]           < 0.3E-7   (for x<3.75)
+     *   abs[ sqrt(x)*(bi0e - I0(x)/exp(x)) ] < 1.9E-7   (for x>=3.75)
+     *   abs[ sqrt(x)*(bi1e - I1(x)/exp(x)) ] < 2.2E-7   (for x>=3.75)
+
+     */
     private static final class Bessel {
 
         public final double bi0e, bi1e, bi1i0;
@@ -192,7 +219,17 @@ public final class ArasonLevi {
      * Hyperbolic cotangent calculation using a Taylor expansion for very small
      * input values to avoid rounding errors.
      *
-     * @param x a number
+     * The function is similar to 1/x close to zero, and practically
+     * identical to 1 for x>3.  For the value x=0 the function returns 
+     * the value zero, although it should return +/-Inf.
+     * We have the relation  coth(-x) = - coth(x)
+     *
+     * The accuracy of these calculations are:
+     *   abs[ error ] < 1.E-13   (for 0.0001<x<0.01)
+     *   Exact formula           (for 0.01 <= x <= 15)
+     *   abs[ error ] < 2.E-13   (for 15<x)
+     * 
+     * @param x a number. Range: -Inf  <  x     < +Inf, can not be 0
      * @return the hyperbolic tangent of x, or 0 if x is 0
      */
     private static double coth(double x) {
@@ -260,7 +297,7 @@ public final class ArasonLevi {
      */
     private static double aralevIteration2(double[] th, double the, double ak) {
         final int n = th.length;
-        double s=0, c=0;
+        double s = 0, c = 0;
         for (int i = 0; i < n; i++) {
             final double x = ak * sin(the * DR) * sin(th[i] * DR);
             s += sin(th[i] * DR) * Bessel.calculate(x).bi1i0;
@@ -282,21 +319,21 @@ public final class ArasonLevi {
     /**
      * Evaluation of the Log-Likelihood function for inclination-only data. The
      * evaluation of the function is split into three parts,
-     *
-     *   XLIK = A1 + A2 + A3
-     *   A1 = N ln(k) - N ln(sinh k) - N ln(2)
-     *   A2 = Sum[ k cos t cos ti + ln(BessIo(k sin t sin ti)) ]
-     *   A3 = Sum[ ln(sin(ti)) ]
-     *   where k = mlKappa, t = the, ti = th(i),
-     *   Sum[ ] is the sum over all data i from 1 to n, and
-     *   BessIo is the Hyperbolic Bessel function I0(x)
+     * 
+     * XLIK = A1 + A2 + A3
+     * A1 = N ln(k) - N ln(sinh k) - N ln(2)
+     * A2 = Sum[ k cos t cos ti + ln(BessIo(k sin t sin ti)) ]
+     * A3 = Sum[ ln(sin(ti)) ]
+     * where k = kappa, t = the, ti = th(i),
+     * Sum[ ] is the sum over all data i from 1 to n, and
+     * BessIo is the Hyperbolic Bessel function I0(x)
      *
      * @param th Vector of co-inclination data (in degrees). Range: 0-180
      * degrees
      * @param the Theta-value where the function is to be evaluated. Range:
      * 0-180 degrees
      * @param ak Kappa-value where the function is to be evaluated.
-     * Range: 0 <= mlKappa
+     * Range: 0 <= kappa
      * @return Value of the log-likelihood function
      */
   private static double Xlik(double[] th, double the, double ak) {
@@ -343,84 +380,18 @@ public final class ArasonLevi {
         return a1 + a2 + a3;
     }
 
-    public final static class Mean {
-
-        public final double meanInclination, inverseVariance;
-        private final double t63;
-        private final double a95;
-    
-        private Mean(double meanInclination, double inverseVariance,
-                double t63, double a95) {
-            this.meanInclination = meanInclination;
-            this.inverseVariance = inverseVariance;
-            this.t63 = t63;
-            this.a95 = a95;
-        }
-
-        
-        /**
-         * @return the arithmetic mean
-         */
-        public double getMeanInclination() {
-            return meanInclination;
-        }
-        
-        /**
-         * @return the inverse variance associated with the arithmetic mean
-         */
-        public double getInverseVariance() {
-            return inverseVariance;
-        }
-        
-        /**
-         * @return the t63
-         */
-        public double getT63() {
-            return t63;
-        }
-
-        /**
-         * @return the a95
-         */
-        public double getA95() {
-            return a95;
-        }
-        
-        
-        public static Mean calculate(double[] inc) {
-            final double[] th = new double[inc.length];
-            
-            for (int i = 0; i < inc.length; i++) {
-                th[i] = 90 - inc[i];
-            }
-            final int n = th.length;
-
-            double s = 0;
-            double s2 = 0;
-            for (int i = 0; i < n; i++) {
-                s += th[i];
-                s2 += pow(th[i], 2);
-            }
-            
-            double sd = 0;
-            double ak = -1;
-            if (n > 1) {
-                sd = Math.sqrt( (s2 -s*s/n)/(n - 1.) );
-                ak = (n - 1.) / ((s2 -s*s/n)*DR*DR);
-            }
-            
-            final TDistribution tdist = new TDistribution(n-1);
-            
-            return  new Mean(90 - s / n,
-                    ak,
-                    tdist.inverseCumulativeProbability((1. + 0.63) / 2.) * sd,
-                    tdist.inverseCumulativeProbability((1. + 0.95) / 2.) * sd / Math.sqrt(n));
-        }
-        
-
-    }
-
-    public static ArasonLevi calculate(double[] xinc) {
+    /**
+     * Calculate Arason-Levi parameters for a collection of inclinations.
+     * 
+     * Inclinations must be in the range [-90, 90], and there must be
+     * at least 2 inclinations in the supplied collection.
+     * 
+     * @param inclinations in degrees
+     * @return Arason-Levi parameters
+     */
+    public static ArasonLevi calculate(Collection<Double> inclinations) {
+        final double[] xinc =
+                    inclinations.stream().mapToDouble(x->x).toArray();
         /* Set constants */
         final double t63max = 105.070062145; /* 63 % of a sphere. */
         final double a95max = 154.158067237; /* 95 % of a sphere. */
@@ -671,8 +642,94 @@ public final class ArasonLevi {
             a95_tmp = a95max;
         }
 
-        final Mean mean = Mean.calculate(xinc);
-        
         return new ArasonLevi(ierr_tmp, ainc_tmp, ak_tmp, t63_tmp, a95_tmp);
     }
+
+    /**
+     * Calculate and store mean inclination estimates based on a simple
+     * arithmetic mean. Implemented as a static nested class of
+     * ArasonLevi because it is mainly intended for comparison with
+     * Arason-Levi estimates.
+     */
+    public final static class ArithMean {
+
+        public final double inc, kappa;
+        private final double t63;
+        private final double a95;
+    
+        private ArithMean(double inc, double inverseVariance,
+                double t63, double a95) {
+            this.inc = inc;
+            this.kappa = inverseVariance;
+            this.t63 = t63;
+            this.a95 = a95;
+        }
+        
+        /**
+         * @return the arithmetic mean inclination
+         */
+        public double getInc() {
+            return inc;
+        }
+        
+        /**
+         * The inverse variance is returned as an estimate of κ. 
+         * 
+         * @return an estimate of κ, the precision parameter
+         */
+        public double getKappa() {
+            return kappa;
+        }
+        
+        /**
+         * @return an angular standard deviation (θ63) estimate
+         * based on Student's t-values
+         */
+        public double getT63() {
+            return t63;
+        }
+
+        /**
+         * @return an 95% confidence limit (α95) estimate
+         * based on Student's t-values
+         */
+        public double getA95() {
+            return a95;
+        }
+        
+        public static ArithMean calculate(Collection<Double> inclinations) {
+            final double[] inc =
+                    inclinations.stream().mapToDouble(x->x).toArray();
+            final int n = inc.length;
+
+            final double[] th = new double[n];
+            
+            for (int i = 0; i < inc.length; i++) {
+                th[i] = 90 - inc[i];
+            }
+
+            double s = 0;
+            double s2 = 0;
+            for (int i = 0; i < n; i++) {
+                s += th[i];
+                s2 += pow(th[i], 2);
+            }
+            
+            double sd = 0;
+            double ak = -1;
+            if (n > 1) {
+                sd = Math.sqrt( (s2 -s*s/n)/(n - 1.) );
+                ak = (n - 1.) / ((s2 -s*s/n)*DR*DR);
+            }
+            
+            final TDistribution tdist = new TDistribution(n-1);
+            
+            return new ArithMean(90 - s / n,
+                    ak,
+                    tdist.inverseCumulativeProbability((1. + 0.63) / 2.) * sd,
+                    tdist.inverseCumulativeProbability((1. + 0.95) / 2.) * sd /
+                            Math.sqrt(n));
+        }
+    }
 }
+
