@@ -436,8 +436,7 @@ public final class Suite {
      * @param usePolarMoment for 2G files only: use polar (dec/inc/int)
      * data fields instead of Cartesian ones (X/Y/Z) to determine magnetic moment
      * @param fileType type of the specified files
-     * @param format explicitly specified file format (null to automatically
-     * guess between 2G, PuffinPlot, Caltech, and Zplot).
+     * @param format explicitly specified custom tabular file format
      * @param importOptions extra options passed to file importers
      * @throws IOException if an I/O error occurred while reading the files 
      */

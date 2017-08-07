@@ -47,10 +47,11 @@ import static net.talvi.puffinplot.data.file.TwoGeeHelper.*;
 
 public class TwoGeeLoader extends AbstractFileLoader {
 
-    private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
+    private static final Logger LOGGER =
+            Logger.getLogger("net.talvi.puffinplot");
     private Vec3 sensorLengths = new Vec3(1, 1, 1);
     private Map<String,Integer> fields;
-    private static final Pattern emptyLine = Pattern.compile("^\\s*$");
+    private static final Pattern EMPTY_LINE = Pattern.compile("^\\s*$");
     private static final int MAX_WARNINGS = 10;
     private final File file;
     private LineNumberReader reader;
@@ -103,7 +104,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
     }
 
     private void readFile() throws IOException {
-        logger.log(Level.INFO,
+        LOGGER.log(Level.INFO,
                 "Reading 2G file {0}.", file.toString());
         String fileName = file.getName();
         String fieldsLine = reader.readLine();
@@ -267,7 +268,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
         notUsed.removeAll(requestedFields);
         Set<String> notInFile = new HashSet<>(requestedFields);
         notInFile.removeAll(fileFieldSet);
-        logger.info(String.format(Locale.ENGLISH,
+        LOGGER.info(String.format(Locale.ENGLISH,
                 "Field headers in file %s\n" +
                 "Not found in file: %s\nIn file but ignored: %s", file,
                 Arrays.toString(notInFile.toArray()),
@@ -287,7 +288,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
             return null;
             //throw new IllegalArgumentException("null line in readDatum");
         }
-        if (emptyLine.matcher(line).matches()) return null;
+        if (EMPTY_LINE.matcher(line).matches()) return null;
         try {
             d = lineToDatum(line, lineNumber);
         } catch (IllegalArgumentException e) {
@@ -382,8 +383,10 @@ public class TwoGeeLoader extends AbstractFileLoader {
     }
     
     private Datum lineToDatum(String line, int lineNumber) {
-        FieldReader r = new FieldReader(line);
-        Datum d = new Datum();
+        final FieldReader r = new FieldReader(line);
+        
+        // This Datum will be initialized with a default volume and area.
+        final Datum d = new Datum();
         
         final MeasType measType;
         if (fieldExists("Meas. type")) {
@@ -396,8 +399,11 @@ public class TwoGeeLoader extends AbstractFileLoader {
             measType = MeasType.DISCRETE;
         }
         
+        // Default values for area and volume are hard-coded in the Datum
+        // class, and will be used here if nothing is specified in the file.
         d.setArea(r.getDouble("Area", d.getArea()));
         d.setVolume(r.getDouble("Volume", d.getVolume()));
+        
         final Vec3 momentGaussCm3 = readMagnetizationVector(r);
         if (momentGaussCm3 != null) {
             // we have a raw magnetic moment in gauss * cm^3 (a.k.a. emu).
@@ -411,7 +417,8 @@ public class TwoGeeLoader extends AbstractFileLoader {
                     // sensor length and cross-sectional core area
                     magnetizationGauss = momentGaussCm3;
                 } else {
-                    magnetizationGauss = momentGaussCm3.divideBy(sensorLengths.times(d.getArea()));
+                    magnetizationGauss = momentGaussCm3.
+                            divideBy(sensorLengths.times(d.getArea()));
                 }
                 break;
             case DISCRETE:

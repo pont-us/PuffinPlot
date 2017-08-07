@@ -1019,4 +1019,5 @@ public class Sample {
     public void truncateData(int items) {
         data = data.subList(0, items);
     }
+    
 }
