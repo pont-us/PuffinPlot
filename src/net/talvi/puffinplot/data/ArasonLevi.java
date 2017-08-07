@@ -23,10 +23,22 @@ import static java.lang.Math.log;
 import static java.lang.Math.pow;
 import static java.lang.Math.exp;
 import static java.lang.Math.sqrt;
+import org.apache.commons.math3.distribution.TDistribution;
+
+// TODO:
+//
+// - Merge "Mean" fields into main class and calculate them along with AL
+// - Replace println("ERROR: ...") with exceptions
+// - Replace println("WARNING: ...") with something more useful :)
+// - rename EvaluateInput -> calculate and calculate -> calculateAralev
+// - Add Student T-test estimates for arithmetic mean from Fortran code???
+// - Add unit tests for arithmetic mean calculation
+// - Make sure documentation and comments are complete
+//   (add anything useful from the Fortran code)
 
 /**
- * Calculate Arason-Levi Maximum Likelihood Estimates (MLE) for Inclination-only
- * Data.
+ * Calculate and store Arason-Levi Maximum Likelihood Estimates (MLE) for
+ * inclination-only data.
  *
  * Based on: http://brunnur.vedur.is/pub/arason/paleomag/pal.js (JavaScript
  * implementation by Ari Þórðarson)
@@ -37,60 +49,66 @@ import static java.lang.Math.sqrt;
  *
  * Reference:
  *
- * Arason, Þ. &amp; Levi, S., 2010. Maximum likelihood solution for inclination-only
- * data in paleomagnetism. Geophysical Journal International, 182(2),
- * pp.753–771.
+ * Arason, Þ. &amp; Levi, S., 2010. Maximum likelihood solution for
+ * inclination-only data in paleomagnetism. Geophysical Journal
+ * International, 182(2), pp.753–771.
  *
  * @author pont
  */
-public final class Aralev {
+public final class ArasonLevi {
 
-    private final double ainc, ak, t63, a95;
-    private final int ierr;
+    private final double mlMeanInc, mlKappa, mlT63, mlA95;
+    private final int errorCode;
 
-    private static final double DR = 0.0174532925199433; // Degrees to radians (pi/180)
+    private static final double DR = 0.0174532925199433;
+    // Degrees to radians (pi/180)
     
-    private Aralev(int ierr, double ainc, double ak, double t63, double a95) {
-        this.ierr = ierr;
-        this.ainc = ainc;
-        this.ak = ak;
-        this.t63 = t63;
-        this.a95 = a95;
+    private ArasonLevi(int ierr, double ainc, double ak, double t63, double a95) {
+        this.errorCode = ierr;
+        this.mlMeanInc = ainc;
+        this.mlKappa = ak;
+        this.mlT63 = t63;
+        this.mlA95 = a95;
     }
 
     /**
-     * @return the ainc
+     * @return the Arason-Levi maximum-likelihood estimate for the mean
+     * inclination
      */
-    public double getAinc() {
-        return ainc;
+    public double getMlMeanInc() {
+        return mlMeanInc;
     }
 
     /**
-     * @return the ak
+     * @return the Arason-Levi maximum-likelihood estimate for the precision
+     * parameter κ
      */
-    public double getAk() {
-        return ak;
+    public double getMlKappa() {
+        return mlKappa;
     }
 
     /**
-     * @return the t63
+     * @return the Arason-Levi maximum-likelihood estimate for the angular
+     * standard deviation (θ63).
      */
-    public double getT63() {
-        return t63;
+    public double getMlT63() {
+        return mlT63;
     }
 
     /**
-     * @return the a95
+     * @return the the Arason-Levi maximum-likelihood estimate for the 95%
+     * confidence limit (α95).
      */
-    public double getA95() {
-        return a95;
+    public double getMlA95() {
+        return mlA95;
     }
 
+
     /**
-     * @return the ierr
+     * @return the errorCode
      */
-    public int getIerr() {
-        return ierr;
+    public int getErrorCode() {
+        return errorCode;
     }
 
     private static final class Bessel {
@@ -203,7 +221,16 @@ public final class Aralev {
         return result;
     }
 
-    private static double AL1(double[] th, double the, double ak) {
+    /**
+     * 
+     * The Arason-Levi MLE Iteration Formula 1.
+     * 
+     * @param th vector of co-inclination data (in degrees)
+     * @param the current estimate of co-inclination (Theta) (in degrees)
+     * @param ak current estimate of precision parameter (Kappa)
+     * @return new (better) estimate of Theta
+     */
+    private static double aralevIteration1(double[] th, double the, double ak) {
         double s=0, c=0;
         for (int i = 0; i < th.length; i++) {
             final double x = ak * sin(the * DR) * sin(th[i] * DR);
@@ -223,7 +250,15 @@ public final class Aralev {
         return al1;
     }
 
-    private static double AL2(double[] th, double the, double ak) {
+    /**
+     * The Arason-Levi MLE Iteration Formula 2.
+     * 
+     * @param th Vector of co-inclination data (in degrees)
+     * @param the Current estimate of co-inclination (Theta) (in degrees)
+     * @param ak Current estimate of precision parameter (Kappa)
+     * @return New (better) estimate of Kappa
+     */
+    private static double aralevIteration2(double[] th, double the, double ak) {
         final int n = th.length;
         double s=0, c=0;
         for (int i = 0; i < n; i++) {
@@ -244,10 +279,30 @@ public final class Aralev {
         return al2;
     }
 
+    /**
+     * Evaluation of the Log-Likelihood function for inclination-only data. The
+     * evaluation of the function is split into three parts,
+     *
+     *   XLIK = A1 + A2 + A3
+     *   A1 = N ln(k) - N ln(sinh k) - N ln(2)
+     *   A2 = Sum[ k cos t cos ti + ln(BessIo(k sin t sin ti)) ]
+     *   A3 = Sum[ ln(sin(ti)) ]
+     *   where k = mlKappa, t = the, ti = th(i),
+     *   Sum[ ] is the sum over all data i from 1 to n, and
+     *   BessIo is the Hyperbolic Bessel function I0(x)
+     *
+     * @param th Vector of co-inclination data (in degrees). Range: 0-180
+     * degrees
+     * @param the Theta-value where the function is to be evaluated. Range:
+     * 0-180 degrees
+     * @param ak Kappa-value where the function is to be evaluated.
+     * Range: 0 <= mlKappa
+     * @return Value of the log-likelihood function
+     */
   private static double Xlik(double[] th, double the, double ak) {
         final int n = th.length;
 
-        /* Illegal use */
+        /* Check for illegal use */
         if (n < 1 || ak < 0) {
             return -1e10;
         }
@@ -255,7 +310,7 @@ public final class Aralev {
         /* A1(k) = N ln(k) - N ln(sinh k) - N ln(2) */
         double a1;
         if (ak >= 0 && ak < 0.01) {
-            double q = -ak * (1 - ak * (2 / 3 - ak * (1 / 3 - ak * (2 / 15 - ak * (8 / 45)))));
+            double q = -ak * (1 - ak * (2/3 - ak * (1/3 - ak * (2/15 - ak * (8/45)))));
             a1 = n * (-log(2) - log(1 + q) - ak);
         } else if (ak >= 0.01 && ak <= 15) {
             a1 = n * (log(ak) - log(1 - exp(-2 * ak)) - ak);
@@ -288,33 +343,84 @@ public final class Aralev {
         return a1 + a2 + a3;
     }
 
-    private final static class Mean {
-        // TODO Either expose this class or remove it -- at present it isn't used!
+    public final static class Mean {
 
-        public final double rt, rk;
+        public final double meanInclination, inverseVariance;
+        private final double t63;
+        private final double a95;
     
-        private Mean(double rt, double rk) {
-            this.rt = rt;
-            this.rk = rk;
+        private Mean(double meanInclination, double inverseVariance,
+                double t63, double a95) {
+            this.meanInclination = meanInclination;
+            this.inverseVariance = inverseVariance;
+            this.t63 = t63;
+            this.a95 = a95;
         }
 
-        public static Mean calculate(double[] th) {
+        
+        /**
+         * @return the arithmetic mean
+         */
+        public double getMeanInclination() {
+            return meanInclination;
+        }
+        
+        /**
+         * @return the inverse variance associated with the arithmetic mean
+         */
+        public double getInverseVariance() {
+            return inverseVariance;
+        }
+        
+        /**
+         * @return the t63
+         */
+        public double getT63() {
+            return t63;
+        }
+
+        /**
+         * @return the a95
+         */
+        public double getA95() {
+            return a95;
+        }
+        
+        
+        public static Mean calculate(double[] inc) {
+            final double[] th = new double[inc.length];
+            
+            for (int i = 0; i < inc.length; i++) {
+                th[i] = 90 - inc[i];
+            }
             final int n = th.length;
 
             double s = 0;
             double s2 = 0;
             for (int i = 0; i < n; i++) {
-                s = s + th[i];
-                s2 = s2 + pow(th[i], 2);
+                s += th[i];
+                s2 += pow(th[i], 2);
             }
-            Mean output = new Mean(s / n,
-                    (n - 1) / ((s2 - s * s / n) * DR * DR));
-
-            return output;
+            
+            double sd = 0;
+            double ak = -1;
+            if (n > 1) {
+                sd = Math.sqrt( (s2 -s*s/n)/(n - 1.) );
+                ak = (n - 1.) / ((s2 -s*s/n)*DR*DR);
+            }
+            
+            final TDistribution tdist = new TDistribution(n-1);
+            
+            return  new Mean(90 - s / n,
+                    ak,
+                    tdist.inverseCumulativeProbability((1. + 0.63) / 2.) * sd,
+                    tdist.inverseCumulativeProbability((1. + 0.95) / 2.) * sd / Math.sqrt(n));
         }
+        
+
     }
 
-    public static Aralev calculate(double[] xinc) {
+    public static ArasonLevi calculate(double[] xinc) {
         /* Set constants */
         final double t63max = 105.070062145; /* 63 % of a sphere. */
         final double a95max = 154.158067237; /* 95 % of a sphere. */
@@ -324,14 +430,14 @@ public final class Aralev {
         /* Check for illegal use */
         if (n == 1) {
             System.out.println("ERROR: Only one or none observed inclination in ARALEV");
-            return new Aralev(ierr, xinc[0], -1, t63max, a95max);
+            return new ArasonLevi(ierr, xinc[0], -1, t63max, a95max);
         }
 
         /* Check if incl are out of range */
         for (int i = 0; i < n; i++) {
             if (!(xinc[i] >= -90 && xinc[i] <= 90)) {
                 System.out.println("ERROR: Inclination data out of range [-90, +90] in ARALEV");
-                return new Aralev(ierr, -98, -1, -1, -1);
+                return new ArasonLevi(ierr, -98, -1, -1, -1);
             }
         }
 
@@ -344,8 +450,8 @@ public final class Aralev {
         }
 
         if (same) {
-            System.out.println(" WARNING: All incl identical in ARALEV");
-            return new Aralev(0, xinc[1], 1e10, 0, 0);
+            System.out.println("WARNING: All incl identical in ARALEV");
+            return new ArasonLevi(0, xinc[1], 1e10, 0, 0);
         }
 
         /* Inclinations to co-inclinations */
@@ -357,9 +463,9 @@ public final class Aralev {
         /* Calculate arithmetic mean to use as first guess */
         double s=0, s2=0, c=0;
         for (int i = 0; i < n; i++) {
-            s = s + th[i];
-            s2 = s2 + th[i] * th[i];
-            c = c + cos(th[i] * DR);
+            s += th[i];
+            s2 += th[i] * th[i];
+            c += cos(th[i] * DR);
         }
         c = c / n;
 
@@ -383,8 +489,8 @@ public final class Aralev {
 
         boolean conv = false;
         for (int j = 0; j < 10000; j++) {
-            rt = AL1(th, rt, rk);
-            rk = AL2(th, rt, rk);
+            rt = aralevIteration1(th, rt, rk);
+            rk = aralevIteration2(th, rt, rk);
             final double dt = abs(rt - the1);
             final double dk = abs((rk - akap1) / rk);
             the1 = rt;
@@ -463,15 +569,15 @@ public final class Aralev {
         if (!conv) {
             ie3 = 1;
         }
-        double the3 = 180;
+        final double the3 = 180;
         akap3 = rk;
         final double xl3 = Xlik(th, rt, rk);
 
         /* Find the maximum on the edge (kappa = 0) */
         rt = 90;
         rk = 0;
-        double the4 = rt;
-        double akap4 = rk;
+        final double the4 = rt;
+        final double akap4 = rk;
         final double xl4 = Xlik(th, rt, rk);
 
         int ierr_tmp;
@@ -506,8 +612,8 @@ public final class Aralev {
             isol = 4;
             ierr_tmp = 0;
         }
-        double ainc_tmp = 90 - the1;
-        double ak_tmp = akap1;
+        final double ainc_tmp = 90 - the1;
+        final double ak_tmp = akap1;
         if (ierr_tmp != 0) {
             System.out.println("WARNING: Convergence problems in ARALEV");
         }
@@ -543,7 +649,6 @@ public final class Aralev {
         if (co < 0) {
             t63_tmp = 180;
         }
-
         if (abs(co) < 1) {
             t63_tmp = 90 - Math.atan(co / sqrt(1 - co * co)) / DR;
         }
@@ -566,18 +671,8 @@ public final class Aralev {
             a95_tmp = a95max;
         }
 
-        return new Aralev(ierr_tmp, ainc_tmp, ak_tmp, t63_tmp, a95_tmp);
-    }
-
-    public static Aralev EvaluateInput(double[] inc) {
-
-        final double[] th = new double[inc.length];
-
-        for (int i = 0; i < inc.length; i++) {
-            th[i] = 90 - inc[i];
-        }
-
-        final Aralev aralevOutput = calculate(inc);
-        return aralevOutput;
+        final Mean mean = Mean.calculate(xinc);
+        
+        return new ArasonLevi(ierr_tmp, ainc_tmp, ak_tmp, t63_tmp, a95_tmp);
     }
 }

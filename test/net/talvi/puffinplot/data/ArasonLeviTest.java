@@ -19,6 +19,7 @@ package net.talvi.puffinplot.data;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
+import net.talvi.puffinplot.data.ArasonLevi.Mean;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -30,9 +31,9 @@ import static org.junit.Assert.*;
  *
  * @author pont
  */
-public class AralevTest {
+public class ArasonLeviTest {
     
-    public AralevTest() {
+    public ArasonLeviTest() {
     }
     
     @BeforeClass
@@ -51,17 +52,17 @@ public class AralevTest {
     public void tearDown() {
     }
 
-    private static double[][] inputs = {
+    private static final double[][] inputs = {
         {39, 28, 43, 33, 7, -25, 2, -16, 10, 15, 39, -3, -84, -72, 14, -5, -41, 47, -16, 43},
         {86, 86.5, 86.1, 87, 87.5, 87.2, 86.7, 86.7, 87.2, 87.1, 89, 89.9},
         {-86, -86.5, -86.1, -87, -87.5, -87.2, -86.7, -86.7, -87.2, -87.1, -89, -89.9}
     };
     
-    private static double[][] outputs = {
-        // ainc    ak     t63    a95    ierr
-        {  8.565, 1.78808, 61.967, 36.253, 0},
-        { 87.495, 2602.30,  1.584,   .851, 0},
-        {-87.495, 2602.30,  1.584,   .851, 0}
+    private static final double[][] outputs = {
+        // ainc    ak     t63    a95    ierr  n   arithmean invvar studt63 studa95
+        {  8.565, 1.78808, 61.967, 36.253, 0, 20,   2.900, 2.36982, 35.929, 17.419},
+        { 87.495, 2602.30,  1.584,   .851, 0, 12,  87.242, 2528.55,  1.123, 0.724},
+        {-87.495, 2602.30,  1.584,   .851, 0, 12, -87.242, 2528.55,  1.123, 0.724}
     };
     
     // We want to check to a set number of significant figures.
@@ -73,10 +74,10 @@ public class AralevTest {
     }
     
     /**
-     * Test of calculate method, of class Aralev.
+     * Tests calculate method of class ArasonLevi.
      */
     @Test
-    public void testARALEV() {
+    public void testCalculate() {
         
         // TODO: test "bad" inputs (zero-length arrays etc.)
         
@@ -86,14 +87,28 @@ public class AralevTest {
             final List<Double> testDataList = DoubleStream.of(inputs[i]).mapToObj(Double::valueOf).
                     collect(Collectors.toList());
 
-            final Aralev result = Aralev.calculate(inputs[i]);
+            final ArasonLevi result = ArasonLevi.calculate(inputs[i]);
+            final Mean mean = ArasonLevi.Mean.calculate(inputs[i]);
             
             final double[] correct = outputs[i];
-            assertEquals(correct[0], result.getAinc(), delta(correct[0], 4));
-            assertEquals(correct[1], result.getAk(), delta(correct[1], 6));
-            assertEquals(correct[2], result.getT63(), 0.001);
-            assertEquals(correct[3], result.getA95(), 0.001);
-            assertEquals((int) correct[4], result.getIerr());
+            assertEquals(correct[0], result.getMlMeanInc(), delta(correct[0], 4));
+            assertEquals(correct[1], result.getMlKappa(), delta(correct[1], 6));
+            assertEquals(correct[2], result.getMlT63(), 0.001);
+            assertEquals(correct[3], result.getMlA95(), 0.001);
+            assertEquals(correct[6], mean.getMeanInclination(), 0.001);
+            assertEquals(correct[7], mean.getInverseVariance(), delta(correct[7], 3));
+            
+            // The reference data is generated from the original Fortran
+            // implementation of the Arason-Levi algorithm, which interpolates
+            // a look-up table to get the θ63 and α95 estimates. This can 
+            // produce some fairly inaccurate θ63 values, which is why we
+            // only check this value to 1 s.f. (Fortunately the table has a 
+            // column of values for p=0.95, so reference α95 values are more
+            // accurate and we can use 3 s.f. there.)
+            assertEquals(correct[8], mean.getT63(), delta(correct[8], 1));
+            
+            assertEquals(correct[9], mean.getA95(), delta(correct[9], 3));
+            assertEquals((int) correct[4], result.getErrorCode());
         }
     }
 }
