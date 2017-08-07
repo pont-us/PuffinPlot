@@ -24,11 +24,8 @@ import static java.lang.Math.pow;
 import static java.lang.Math.exp;
 import static java.lang.Math.sqrt;
 import java.util.Collection;
+import java.util.logging.Logger;
 import org.apache.commons.math3.distribution.TDistribution;
-
-// TODO:
-// - Replace println("ERROR: ...") with exceptions
-// - Replace println("WARNING: ...") with something more useful :)
 
 /**
  * Calculate and store Arason-Levi Maximum Likelihood Estimates (MLE) for
@@ -49,6 +46,9 @@ import org.apache.commons.math3.distribution.TDistribution;
  */
 public final class ArasonLevi {
 
+    private static final Logger LOGGER =
+            Logger.getLogger("net.talvi.puffinplot");
+    
     private final double meanInc, kappa, t63, a95;
     private final int errorCode;
 
@@ -384,7 +384,7 @@ public final class ArasonLevi {
      * Calculate Arason-Levi parameters for a collection of inclinations.
      * 
      * Inclinations must be in the range [-90, 90], and there must be
-     * at least 2 inclinations in the supplied collection.
+     * at least one inclination in the supplied collection.
      * 
      * @param inclinations in degrees
      * @return Arason-Levi parameters
@@ -399,16 +399,22 @@ public final class ArasonLevi {
 
         final int n = xinc.length;
         /* Check for illegal use */
+
+        if (n == 0) {
+            throw new IllegalArgumentException("No inclinations supplied.");
+        }
+        
         if (n == 1) {
-            System.out.println("ERROR: Only one or none observed inclination in ARALEV");
+            LOGGER.warning("Only one inclination supplied.");
             return new ArasonLevi(ierr, xinc[0], -1, t63max, a95max);
         }
 
         /* Check if incl are out of range */
         for (int i = 0; i < n; i++) {
             if (!(xinc[i] >= -90 && xinc[i] <= 90)) {
-                System.out.println("ERROR: Inclination data out of range [-90, +90] in ARALEV");
-                return new ArasonLevi(ierr, -98, -1, -1, -1);
+                throw new IllegalArgumentException("Inclination data out of "
+                        + "range [-90, +90]");
+                // return new ArasonLevi(ierr, -98, -1, -1, -1);
             }
         }
 
@@ -421,7 +427,7 @@ public final class ArasonLevi {
         }
 
         if (same) {
-            System.out.println("WARNING: All incl identical in ARALEV");
+            LOGGER.warning("All incl identical in ARALEV");
             return new ArasonLevi(0, xinc[1], 1e10, 0, 0);
         }
 
@@ -586,7 +592,7 @@ public final class ArasonLevi {
         final double ainc_tmp = 90 - the1;
         final double ak_tmp = akap1;
         if (ierr_tmp != 0) {
-            System.out.println("WARNING: Convergence problems in ARALEV");
+            LOGGER.warning("Convergence problems in ARALEV");
         }
 
         /* Test robustness of solution theta +/- 0.01° and kappa +/- 0.1% */
@@ -597,7 +603,7 @@ public final class ArasonLevi {
                 final double xl = Xlik(th, rt, rk);
                 if (xl > xl1) {
                     ierr_tmp = ierr_tmp + 2;
-                    System.out.println("WARNING: Robustness problem in ARALEV");
+                    LOGGER.warning("Robustness problem in ARALEV");
                 }
             }
         }
