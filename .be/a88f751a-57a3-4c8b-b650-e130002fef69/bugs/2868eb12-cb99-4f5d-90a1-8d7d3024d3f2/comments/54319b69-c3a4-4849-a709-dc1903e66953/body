@@ -1,0 +1,3 @@
+The calculation code is now fully implemented and tested, but only
+usable through the API. GUI support is needed for carrying out the
+calculation, and for viewing and saving the results.
