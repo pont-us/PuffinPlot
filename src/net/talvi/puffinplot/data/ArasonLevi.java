@@ -50,19 +50,28 @@ public final class ArasonLevi {
             Logger.getLogger("net.talvi.puffinplot");
     
     private final double meanInc, kappa, t63, a95;
-    private final int errorCode;
+    private final int errorCode, n;
 
     private static final double DR = 0.0174532925199433;
     // Degrees to radians (pi/180)
     
-    private ArasonLevi(int ierr, double ainc, double ak, double t63, double a95) {
+    private ArasonLevi(int ierr, int n,
+            double ainc, double ak, double t63, double a95) {
         this.errorCode = ierr;
         this.meanInc = ainc;
         this.kappa = ak;
         this.t63 = t63;
         this.a95 = a95;
+        this.n = n;
     }
 
+    /**
+     * @return the number of inclination samples
+     */
+    public int getN() {
+        return n;
+    }
+    
     /**
      * @return a maximum-likelihood estimate for the mean
      * inclination
@@ -396,9 +405,9 @@ public final class ArasonLevi {
         final double t63max = 105.070062145; /* 63 % of a sphere. */
         final double a95max = 154.158067237; /* 95 % of a sphere. */
         int ierr = 1;
-
         final int n = xinc.length;
-        /* Check for illegal use */
+        
+        /* Special cases for illegal and unusual parameters */
 
         if (n == 0) {
             throw new IllegalArgumentException("No inclinations supplied.");
@@ -406,32 +415,30 @@ public final class ArasonLevi {
         
         if (n == 1) {
             LOGGER.warning("Only one inclination supplied.");
-            return new ArasonLevi(ierr, xinc[0], -1, t63max, a95max);
+            return new ArasonLevi(ierr, n, xinc[0], -1, t63max, a95max);
         }
 
-        /* Check if incl are out of range */
+        /* Check if inclinations are out of range */
         for (int i = 0; i < n; i++) {
             if (!(xinc[i] >= -90 && xinc[i] <= 90)) {
                 throw new IllegalArgumentException("Inclination data out of "
                         + "range [-90, +90]");
-                // return new ArasonLevi(ierr, -98, -1, -1, -1);
             }
         }
 
-        /* Check if all incl are identical */
+        /* Check if all inclinations are identical */
         boolean same = true;
         for (int i = 1; i < n; i++) {
             if (xinc[i] != xinc[0]) {
                 same = false;
             }
         }
-
         if (same) {
-            LOGGER.warning("All incl identical in ARALEV");
-            return new ArasonLevi(0, xinc[1], 1e10, 0, 0);
+            LOGGER.warning("All inclinations are identical.");
+            return new ArasonLevi(0, n, xinc[1], 1e10, 0, 0);
         }
 
-        /* Inclinations to co-inclinations */
+        /* Convert inclinations to co-inclinations */
         double[] th = new double[n];
         for (int i = 0; i < n; i++) {
             th[i] = 90 - xinc[i];
@@ -648,7 +655,7 @@ public final class ArasonLevi {
             a95_tmp = a95max;
         }
 
-        return new ArasonLevi(ierr_tmp, ainc_tmp, ak_tmp, t63_tmp, a95_tmp);
+        return new ArasonLevi(ierr_tmp, n, ainc_tmp, ak_tmp, t63_tmp, a95_tmp);
     }
 
     /**
@@ -659,22 +666,30 @@ public final class ArasonLevi {
      */
     public final static class ArithMean {
 
-        public final double inc, kappa;
-        private final double t63;
-        private final double a95;
+        public final double inc, kappa, t63, a95;
+        private final int n;
     
-        private ArithMean(double inc, double inverseVariance,
+        private ArithMean(int n, double inc, double kappa,
                 double t63, double a95) {
             this.inc = inc;
-            this.kappa = inverseVariance;
+            this.kappa = kappa;
             this.t63 = t63;
             this.a95 = a95;
+            this.n = n;
+        }
+        
+        
+        /**
+         * @return the number of inclination samples
+         */
+        public int getN() {
+            return n;
         }
         
         /**
          * @return the arithmetic mean inclination
          */
-        public double getInc() {
+        public double getMeanInc() {
             return inc;
         }
         
@@ -708,6 +723,20 @@ public final class ArasonLevi {
                     inclinations.stream().mapToDouble(x->x).toArray();
             final int n = inc.length;
 
+            if (n == 0) {
+                throw new IllegalArgumentException("No inclinations supplied.");
+            }
+            
+            // TODO: Check for out-of-range inclinations and identical
+            // inclinations, as is done in ArasonLevi.calculate.
+            
+            final double t63max = 105.070062145; /* 63 % of a sphere. */
+            final double a95max = 154.158067237; /* 95 % of a sphere. */
+            if (n == 1) {
+                LOGGER.warning("Only one inclination supplied.");
+                return new ArithMean(n, inc[0], -1, t63max, a95max);
+            }
+            
             final double[] th = new double[n];
             
             for (int i = 0; i < inc.length; i++) {
@@ -730,12 +759,12 @@ public final class ArasonLevi {
             
             final TDistribution tdist = new TDistribution(n-1);
             
-            return new ArithMean(90 - s / n,
-                    ak,
+            return new ArithMean(n, 90 - s / n, ak,
                     tdist.inverseCumulativeProbability((1. + 0.63) / 2.) * sd,
                     tdist.inverseCumulativeProbability((1. + 0.95) / 2.) * sd /
                             Math.sqrt(n));
         }
+
     }
 }
 

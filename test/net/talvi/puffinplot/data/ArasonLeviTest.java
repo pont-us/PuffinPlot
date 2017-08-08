@@ -16,6 +16,8 @@
  */
 package net.talvi.puffinplot.data;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
@@ -26,28 +28,30 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Rule;
+import org.junit.rules.ExpectedException;
 
 /**
  *
  * @author pont
  */
 public class ArasonLeviTest {
-    
+
     public ArasonLeviTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -57,14 +61,14 @@ public class ArasonLeviTest {
         {86, 86.5, 86.1, 87, 87.5, 87.2, 86.7, 86.7, 87.2, 87.1, 89, 89.9},
         {-86, -86.5, -86.1, -87, -87.5, -87.2, -86.7, -86.7, -87.2, -87.1, -89, -89.9}
     };
-    
+
     private static final double[][] outputs = {
         // ainc    ak     t63    a95    ierr  n   arithmean invvar studt63 studa95
-        {  8.565, 1.78808, 61.967, 36.253, 0, 20,   2.900, 2.36982, 35.929, 17.419},
-        { 87.495, 2602.30,  1.584,   .851, 0, 12,  87.242, 2528.55,  1.123, 0.724},
-        {-87.495, 2602.30,  1.584,   .851, 0, 12, -87.242, 2528.55,  1.123, 0.724}
+        {8.565, 1.78808, 61.967, 36.253, 0, 20, 2.900, 2.36982, 35.929, 17.419},
+        {87.495, 2602.30, 1.584, .851, 0, 12, 87.242, 2528.55, 1.123, 0.724},
+        {-87.495, 2602.30, 1.584, .851, 0, 12, -87.242, 2528.55, 1.123, 0.724}
     };
-    
+
     // We want to check to a set number of significant figures.
     // We convert this to decimal places for JUnit.
     private static double delta(double expected, int sigfigs) {
@@ -72,44 +76,73 @@ public class ArasonLeviTest {
         final int dp = sigfigs - oom;
         return Math.pow(10, -dp);
     }
-    
+
     /**
      * Tests calculate method of class ArasonLevi and ArasonLevi.ArithMean.
      */
     @Test
     public void testCalculate() {
-        
-        // TODO: test "bad" inputs (zero-length arrays etc.)
-        
+
         System.out.println("ARALEV");
-        
-        for (int i=0; i<inputs.length; i++) {
-            final List<Double> testDataList = DoubleStream.of(inputs[i]).
+
+        for (int i = 0; i < inputs.length; i++) {
+            final List<Double> inputData = DoubleStream.of(inputs[i]).
                     mapToObj(Double::valueOf).
                     collect(Collectors.toList());
 
-            final ArasonLevi result = ArasonLevi.calculate(testDataList);
-            final ArithMean mean = ArasonLevi.ArithMean.calculate(testDataList);
-            
+            final ArasonLevi result = ArasonLevi.calculate(inputData);
+            final ArithMean mean = ArasonLevi.ArithMean.calculate(inputData);
+
             final double[] correct = outputs[i];
+            assertEquals(inputData.size(), result.getN());
             assertEquals(correct[0], result.getMeanInc(), delta(correct[0], 4));
             assertEquals(correct[1], result.getKappa(), delta(correct[1], 6));
             assertEquals(correct[2], result.getT63(), 0.001);
             assertEquals(correct[3], result.getA95(), 0.001);
-            assertEquals(correct[6], mean.getInc(), 0.001);
+            assertEquals(inputData.size(), mean.getN());
+            assertEquals(correct[6], mean.getMeanInc(), 0.001);
             assertEquals(correct[7], mean.getKappa(), delta(correct[7], 3));
-            
-            // The reference data is generated from the original Fortran
-            // implementation of the Arason-Levi algorithm, which interpolates
-            // a look-up table to get the θ63 and α95 estimates. This can 
-            // produce some fairly inaccurate θ63 values, which is why we
-            // only check this value to 1 s.f. (Fortunately the table has a 
-            // column of values for p=0.95, so reference α95 values are more
-            // accurate and we can use 3 s.f. there.)
+            /*
+             * The reference data is generated from the original Fortran
+             * implementation of the Arason-Levi algorithm, which also includes
+             * code for arithmetic mean calculation with t-value-based θ63 and
+             * α95 estimates. The Fortran code interpolates a look-up table to
+             * get these estimates. This can produce some fairly inaccurate θ63
+             * values compared with the Java Commons Math implemented used by
+             * PuffinPlot, which is why we only check this value to 1 s.f.
+             * (Fortunately the table has a column of values for p=0.95, so
+             * reference α95 values are more accurate and we can use 3 s.f.
+             * there.)
+             */
             assertEquals(correct[8], mean.getT63(), delta(correct[8], 1));
-            
             assertEquals(correct[9], mean.getA95(), delta(correct[9], 3));
             assertEquals((int) correct[4], result.getErrorCode());
         }
     }
+    
+    @Rule
+    public final ExpectedException exception = ExpectedException.none();
+    
+    @Test
+    public void testEmptyInputException() {
+        exception.expect(IllegalArgumentException.class);
+        ArasonLevi.calculate(Collections.emptyList());
+    }
+    
+    @Test
+    public void testInclinationTooLargeException() {
+        exception.expect(IllegalArgumentException.class);
+        ArasonLevi.calculate(Arrays.asList(1., -2., 3., 91., 4., -5., 6.));
+    }
+
+    @Test
+    public void testInclinationTooSmallException() {
+        exception.expect(IllegalArgumentException.class);
+        ArasonLevi.calculate(Arrays.asList(1., -2., 3., -91., 4., -5., 6.));
+    }
+    
+    
+    // TODO: test more "abnormal" inputs: single value, all values identical.
+    // TODO: Test illegal and abnormal inputs for ArasonLevi.ArithMean
+
 }
