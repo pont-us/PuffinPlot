@@ -2098,77 +2098,8 @@ public final class PuffinApp {
         if (destinationPath == null) {
             return;
         }
-        
-        final double[] treatmentLevels = nrmSuite.getSamples().get(0).getTreatmentLevels();
-        
-        final File outFile = new File(destinationPath);
-        FileWriter fw = null;
-        
-        try {
-            fw = new FileWriter(outFile);
-            
-            fw.write("Depth");            
-            for (double level: treatmentLevels) {
-                fw.write(String.format(Locale.ENGLISH, ",%g", level));
-            }
-            fw.write(", mean ratio, slope, r, r-squared\n");
-            
-            for (Sample nrmSample: nrmSuite.getSamples()) {
-                final String depth = nrmSample.getData().get(0).getDepth();
-                final Sample armSample = armSuite.getSampleByName(depth);
-                if (armSample != null) {
-                    
-                    fw.write(depth);
-                    final List<Double> nrmInts = new ArrayList<>(treatmentLevels.length);
-                    final List<Double> armInts = new ArrayList<>(treatmentLevels.length);
-                    for (double demagStep: treatmentLevels) {
-                        final Datum nrmStep = nrmSample.getDatumByTreatmentLevel(demagStep);
-                        // We have to treat the first ARM step as a special case,
-                        // since its treatment level will correspond to the ARM AF
-                        // field but we're actually interested in its AF demag
-                        // step, which is 0. We assume that this will just be the first
-                        // datum and fetch it by index.
-                        final Datum armStep = demagStep == 0 ?
-                                armSample.getDatum(0) :
-                                armSample.getDatumByTreatmentLevel(demagStep);
-                        if (nrmStep != null && armStep != null) {
-                            final double nrmInt = nrmStep.getIntensity();
-                            final double armInt = armStep.getIntensity();
-                            fw.write(String.format(Locale.ENGLISH,
-                                    ",%g", nrmInt/armInt));
-                            nrmInts.add(nrmInt);
-                            armInts.add(armInt);
-                        } else {
-                            fw.write(",");
-                        }
-                    }
-                    double totalRatio = 0;
-                    final SimpleRegression regression = new SimpleRegression();
-                    final int nPairs = nrmInts.size();
-                    for (int i=0; i<nPairs; i++) {
-                        totalRatio += nrmInts.get(i) / armInts.get(i);
-                        regression.addData(armInts.get(i), nrmInts.get(i));
-                    }
-                    fw.write(String.format(Locale.ENGLISH, ",%g,%g,%g,%g",
-                            totalRatio/nPairs,
-                            regression.getSlope(),
-                            regression.getR(),
-                            regression.getRSquare()));
-                    fw.write("\n");
-                }
-            }
-            
-        } catch (IOException e) {
-            LOGGER.log(Level.WARNING,
-                    "calculateRpi: exception writing file.", e);
-        } finally {
-            try {
-                if (fw != null) fw.close();
-            } catch (IOException e2) {
-                LOGGER.log(Level.WARNING,
-                        "calculateRpi: exception closing file.", e2);
-            }
-        }
+        final RpiDataset rpis = RpiDataset.calculateWithArm(nrmSuite, armSuite, destinationPath);
+        rpis.writeToFile(destinationPath);
     }
     
     public void showDiscreteToContinuousDialog() {
