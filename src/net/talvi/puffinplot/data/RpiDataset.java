@@ -29,6 +29,10 @@ import org.apache.commons.math3.stat.regression.SimpleRegression;
 /**
  * A collection of RPI estimates.
  * 
+ * Instances of this class contain a list of the treatment levels used 
+ * for the RPI calculation, and a list of RpiDatum instances, each containing
+ * the RPI estimates for a single sample.
+ * 
  * @author pont
  */
 public class RpiDataset {
@@ -58,6 +62,75 @@ public class RpiDataset {
             this.r = r;
             this.rSquared = rSquared;
         }
+
+        /**
+         * @return the nrmSample
+         */
+        public Sample getNrmSample() {
+            return nrmSample;
+        }
+
+        /**
+         * @return the armSample
+         */
+        public Sample getArmSample() {
+            return armSample;
+        }
+
+        /**
+         * @return the intensities
+         */
+        public List<Double> getIntensities() {
+            return intensities;
+        }
+
+        /**
+         * @return the meanRatio
+         */
+        public double getMeanRatio() {
+            return meanRatio;
+        }
+
+        /**
+         * @return the slope
+         */
+        public double getSlope() {
+            return slope;
+        }
+
+        /**
+         * @return the r
+         */
+        public double getR() {
+            return r;
+        }
+
+        /**
+         * @return the rSquared
+         */
+        public double getrSquared() {
+            return rSquared;
+        }
+        
+        public String toCommaSeparatedString() {
+            final StringBuilder builder = new StringBuilder();
+            builder.append(getNrmSample().getData().get(0).getDepth());
+            
+            for (double intensity: getIntensities()) {
+                if (intensity != -1) {
+                    builder.append(String.format(Locale.ENGLISH,
+                            ",%g", intensity));
+                } else {
+                    builder.append(",");
+                }
+            }
+            builder.append(String.format(Locale.ENGLISH, ",%g,%g,%g,%g",
+                    getMeanRatio(), getSlope(), getR(),
+                    getrSquared()));
+            builder.append("\n");
+            
+            return builder.toString();
+        }
     }
     
     private RpiDataset(double[] treatmentLevels, List<RpiDatum> rpis) {
@@ -78,27 +151,8 @@ public class RpiDataset {
             fw.write(", mean ratio, slope, r, r-squared\n");
             
             for (RpiDatum rpi: rpis) {
-                fw.write(rpi.nrmSample.getData().get(0).getDepth());
-                
-                for (double intensity: rpi.intensities) {
-                    if (intensity != -1) {
-                    fw.write(String.format(Locale.ENGLISH,
-                            ",%g", intensity));
-                    } else {
-                        fw.write(",");
-                    }
-                }
-                fw.write(String.format(Locale.ENGLISH, ",%g,%g,%g,%g",
-                        rpi.meanRatio,
-                        rpi.slope,
-                        rpi.r,
-                        rpi.rSquared));
-                fw.write("\n");
-                
+                fw.write(rpi.toCommaSeparatedString());
             }
-            
-            
-            
         } catch (IOException e) {
             LOGGER.log(Level.WARNING,
                     "calculateRpi: exception writing file.", e);
@@ -112,22 +166,25 @@ public class RpiDataset {
         }
     }
     
-    public static RpiDataset calculateWithArm(Suite nrmSuite, Suite armSuite,
-            String outputPath) {
+    public static RpiDataset calculateWithArm(Suite nrmSuite, Suite armSuite) {
         final double[] treatmentLevels =
                 nrmSuite.getSamples().get(0).getTreatmentLevels();
 
-        List<RpiDatum> rpis = new ArrayList<>(); // TODO pick a sensible size
+        List<RpiDatum> rpis = new ArrayList<>(nrmSuite.getNumSamples());
         for (Sample nrmSample: nrmSuite.getSamples()) {
             final String depth = nrmSample.getData().get(0).getDepth();
             final Sample armSample = armSuite.getSampleByName(depth);
             if (armSample != null) {
-           
-                final List<Double> nrmInts = new ArrayList<>(treatmentLevels.length);
-                final List<Double> armInts = new ArrayList<>(treatmentLevels.length);
-                final List<Double> ints = new ArrayList<>(treatmentLevels.length);
+                final List<Double> nrmInts =
+                        new ArrayList<>(treatmentLevels.length);
+                final List<Double> armInts =
+                        new ArrayList<>(treatmentLevels.length);
+                final List<Double> ratios =
+                        new ArrayList<>(treatmentLevels.length);
+                
                 for (double demagStep: treatmentLevels) {
-                    final Datum nrmStep = nrmSample.getDatumByTreatmentLevel(demagStep);
+                    final Datum nrmStep =
+                            nrmSample.getDatumByTreatmentLevel(demagStep);
                     // We have to treat the first ARM step as a special case,
                     // since its treatment level will correspond to the ARM AF
                     // field but we're actually interested in its AF demag
@@ -139,14 +196,11 @@ public class RpiDataset {
                     if (nrmStep != null && armStep != null) {
                         final double nrmInt = nrmStep.getIntensity();
                         final double armInt = armStep.getIntensity();
-                        ints.add(nrmInt/armInt);
-                        //fw.write(String.format(Locale.ENGLISH,
-                        //        ",%g", nrmInt/armInt));
+                        ratios.add(nrmInt/armInt);
                         nrmInts.add(nrmInt);
                         armInts.add(armInt);
                     } else {
-                        ints.add(-1.);
-                        // fw.write(",");
+                        ratios.add(-1.); // code for "leave blank"
                     }
                 }
                 double totalRatio = 0;
@@ -156,21 +210,13 @@ public class RpiDataset {
                     totalRatio += nrmInts.get(i) / armInts.get(i);
                     regression.addData(armInts.get(i), nrmInts.get(i));
                 }
-                rpis.add(new RpiDatum(ints, nrmSample, armSample, totalRatio/nPairs,
-                regression.getSlope(),
+                rpis.add(new RpiDatum(ratios, nrmSample, armSample,
+                        totalRatio/nPairs,
+                        regression.getSlope(),
                         regression.getR(),
                         regression.getRSquare()));
-//                fw.write(String.format(Locale.ENGLISH, ",%g,%g,%g,%g",
-//                        totalRatio/nPairs,
-//                        regression.getSlope(),
-//                        regression.getR(),
-//                        regression.getRSquare()));
-//                fw.write("\n");
             }
         }
-        
-        
         return new RpiDataset(treatmentLevels, rpis);
     }
-    
 }

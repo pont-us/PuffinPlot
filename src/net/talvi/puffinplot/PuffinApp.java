@@ -2098,7 +2098,7 @@ public final class PuffinApp {
         if (destinationPath == null) {
             return;
         }
-        final RpiDataset rpis = RpiDataset.calculateWithArm(nrmSuite, armSuite, destinationPath);
+        final RpiDataset rpis = RpiDataset.calculateWithArm(nrmSuite, armSuite);
         rpis.writeToFile(destinationPath);
     }
     
