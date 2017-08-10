@@ -20,8 +20,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
@@ -169,7 +173,20 @@ public class RpiDataset {
     public static RpiDataset calculateWithArm(Suite nrmSuite, Suite armSuite) {
         final double[] treatmentLevels =
                 nrmSuite.getSamples().get(0).getTreatmentLevels();
-
+        
+        /* We have to get steps by treatment type as well as level, to avoid
+         * accidentally retrieving the initial ARM-application step when looking
+         * for a demag step with the same AF level. We need both the DEGAUSS_Z
+         * and DEGAUSS_XYZ types here, since both are routinely used for
+         * ARM demagnetization.
+         * 
+         * With Java 9, the ugly initialization below will be replaceable with
+         * a simple Set.of(TreatType.DEGAUSS_XYZ, TreatType.DEGAUSS_Z).
+         */
+        final Set<TreatType> demagTreatTypes =
+                Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+                        TreatType.DEGAUSS_XYZ, TreatType.DEGAUSS_Z)));
+        
         List<RpiDatum> rpis = new ArrayList<>(nrmSuite.getNumSamples());
         for (Sample nrmSample: nrmSuite.getSamples()) {
             final String depth = nrmSample.getData().get(0).getDepth();
@@ -185,14 +202,17 @@ public class RpiDataset {
                 for (double demagStep: treatmentLevels) {
                     final Datum nrmStep =
                             nrmSample.getDatumByTreatmentLevel(demagStep);
+
                     // We have to treat the first ARM step as a special case,
                     // since its treatment level will correspond to the ARM AF
                     // field but we're actually interested in its AF demag
                     // step, which is 0. We assume that this will just be the first
-                    // datum and fetch it by index.
-                    final Datum armStep = demagStep == 0 ?
+                    // datum and fetch it by index. 
+                            
+                            final Datum armStep = demagStep == 0 ?
                             armSample.getDatum(0) :
-                            armSample.getDatumByTreatmentLevel(demagStep);
+                            armSample.getDatumByTreatmentTypeAndLevel(
+                                    demagTreatTypes, demagStep);
                     if (nrmStep != null && armStep != null) {
                         final double nrmInt = nrmStep.getIntensity();
                         final double armInt = armStep.getIntensity();

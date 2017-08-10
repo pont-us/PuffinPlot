@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -359,11 +360,11 @@ public class Sample {
     }
     
     /**
-     * Returns a Datum from the Sample with the specified treatment level.
+     * Returns the first Datum in this Sample with the given treatment level.
      * 
      * If the Sample contains more than one Datum at the given level, only
-     * the first is returned. If there is not matching Datum, {@code null}
-     * is returned. Any treatment levels differing by less that 1e-6 are
+     * the first is returned. If there is no matching Datum, {@code null}
+     * is returned. Any treatment levels differing by less than 1e-6 are
      * considered equal.
      * 
      * @param level a treatment level
@@ -378,6 +379,33 @@ public class Sample {
         }
         return null;
     }
+    
+    /**
+     * Returns a Datum specified by treatment level and type.
+     * 
+     * If the Sample contains more than one Datum with the given level and type,
+     * only the first is returned. If there is no matching Datum, {@code null}
+     * is returned. Any treatment levels differing by less than 1e-6 are
+     * considered equal.
+     * 
+     * This method is mainly intended for use with ARM demagnetization data,
+     * which can contain a mixture of "degauss" and "ARM" treatment types.
+     * 
+     * @param type a treatment type
+     * @param level a treatment level
+     * @return the first datum in the sample with the given treatment level
+     */
+    public Datum getDatumByTreatmentTypeAndLevel(Set<TreatType> types, double level) {
+        final double threshold = 1e-6;
+        for (Datum d: data) {
+                if (abs(d.getTreatmentLevel() - level) < threshold
+                    && types.contains(d.getTreatType())) {
+                    return d;
+                }
+        }
+        return null;
+    }
+    
     
     /**
      * Returns a list of the treatment levels in this sample.
