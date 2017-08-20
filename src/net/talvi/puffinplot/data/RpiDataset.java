@@ -28,6 +28,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 
 /**
@@ -42,7 +43,7 @@ import org.apache.commons.math3.stat.regression.SimpleRegression;
 public class RpiDataset {
     
     private static final Logger LOGGER = Logger.getLogger("net.talvi.puffinplot");
-    private final double[] treatmentLevels;
+    private final List<Double> treatmentLevels;
     private final List<RpiDatum> rpis;
     
     public static class RpiDatum {
@@ -137,7 +138,7 @@ public class RpiDataset {
         }
     }
     
-    private RpiDataset(double[] treatmentLevels, List<RpiDatum> rpis) {
+    private RpiDataset(List<Double> treatmentLevels, List<RpiDatum> rpis) {
         this.treatmentLevels = treatmentLevels;
         this.rpis = rpis;
     }
@@ -149,12 +150,12 @@ public class RpiDataset {
             fw = new FileWriter(outFile);
             
             fw.write("Depth");
-            for (double level: treatmentLevels) {
+            for (double level: getTreatmentLevels()) {
                 fw.write(String.format(Locale.ENGLISH, ",%g", level));
             }
             fw.write(", mean ratio, slope, r, r-squared\n");
             
-            for (RpiDatum rpi: rpis) {
+            for (RpiDatum rpi: getRpis()) {
                 fw.write(rpi.toCommaSeparatedString());
             }
         } catch (IOException e) {
@@ -170,9 +171,15 @@ public class RpiDataset {
         }
     }
     
-    public static RpiDataset calculateWithArm(Suite nrmSuite, Suite armSuite) {
-        final double[] treatmentLevels =
+    public static RpiDataset calculateWithArm(Suite nrmSuite, Suite armSuite,
+            double minLevel, double maxLevel) {
+        final double[] allTreatmentLevels =
                 nrmSuite.getSamples().get(0).getTreatmentLevels();
+        
+        List<Double> treatmentLevels = Arrays.stream(allTreatmentLevels).boxed().
+                filter(x -> x >= minLevel-1e-10 && x <= maxLevel+1e-10).
+                collect(Collectors.toList());
+        final int nLevels = treatmentLevels.size();
         
         /* We have to get steps by treatment type as well as level, to avoid
          * accidentally retrieving the initial ARM-application step when looking
@@ -192,12 +199,9 @@ public class RpiDataset {
             final String depth = nrmSample.getData().get(0).getDepth();
             final Sample armSample = armSuite.getSampleByName(depth);
             if (armSample != null) {
-                final List<Double> nrmInts =
-                        new ArrayList<>(treatmentLevels.length);
-                final List<Double> armInts =
-                        new ArrayList<>(treatmentLevels.length);
-                final List<Double> ratios =
-                        new ArrayList<>(treatmentLevels.length);
+                final List<Double> nrmInts = new ArrayList<>(nLevels);
+                final List<Double> armInts = new ArrayList<>(nLevels);
+                final List<Double> ratios = new ArrayList<>(nLevels);
                 
                 for (double demagStep: treatmentLevels) {
                     final Datum nrmStep =
@@ -209,7 +213,7 @@ public class RpiDataset {
                     // step, which is 0. We assume that this will just be the first
                     // datum and fetch it by index. 
                             
-                            final Datum armStep = demagStep == 0 ?
+                    final Datum armStep = demagStep == 0 ?
                             armSample.getDatum(0) :
                             armSample.getDatumByTreatmentTypeAndLevel(
                                     demagTreatTypes, demagStep);
@@ -238,5 +242,19 @@ public class RpiDataset {
             }
         }
         return new RpiDataset(treatmentLevels, rpis);
+    }
+
+    /**
+     * @return the treatmentLevels
+     */
+    public List<Double> getTreatmentLevels() {
+        return treatmentLevels;
+    }
+
+    /**
+     * @return the rpis
+     */
+    public List<RpiDatum> getRpis() {
+        return rpis;
     }
 }
