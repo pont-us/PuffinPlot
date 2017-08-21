@@ -510,6 +510,9 @@ public final class Suite {
             case IAPD:
                 loader = new IapdLoader(file, importOptions);
                 break;
+            case UCDAVIS:
+                loader = new UcDavisLoader(file, importOptions);
+                break;
             case CUSTOM_TABULAR:
                 loader = new TabularFileLoader(file, format);
                 break;

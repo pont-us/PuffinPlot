@@ -107,7 +107,6 @@ public class IapdLoaderTest {
             fail("Error writing data to temporary file.");
         }
         
-        
         options = new HashMap<>();
         options.put(TreatType.class, TreatType.DEGAUSS_XYZ);
         options.put(MeasType.class, MeasType.DISCRETE);

@@ -43,6 +43,8 @@ public enum FileType {
     CALTECH("Caltech (.sam)", 's'),
     /** DAT, [Super-]IAPD[2000] (Torsvik et al.) */
     IAPD("IAPD", 'i'),
+    /** Ancient UC Davis 2G format */
+    UCDAVIS("UC Davis (old)", 'a'),
     /** Sample-level directional data */
     DIRECTIONS("Sample directions", 'd'),
     /** Custom tabular, defined by a FileFormat */

@@ -54,7 +54,7 @@ public class IapdLoader extends AbstractFileLoader {
      * @param importOptions import options for reading the data
      */
     public IapdLoader(File file, Map<Object,Object> importOptions) {
-                this.file = file;
+        this.file = file;
         data = new LinkedList<>();
         this.importOptions = importOptions;
         try {
@@ -111,7 +111,7 @@ public class IapdLoader extends AbstractFileLoader {
             addMessage("%s is empty", file.getName());
             return;
         }
-        String[] header = headerLine.trim().split(" +");
+        final String[] header = headerLine.trim().split(" +");
         String sampleName = "Unknown";
         if (header.length > 0) {
             if (header[0].isEmpty()) {
