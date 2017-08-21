@@ -38,42 +38,69 @@ import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.Vec3;
 
 /**
+ * Loader for the old UC Davis format. This format has only one line per
+ * position (depth). The (x,y,z) and (d,i,i) values for each successive
+ * treatment level are concatenated along this single line. The mapping between
+ * column index and parameter/level is defined in the header line.
  *
  * @author pont
  */
 public class UcDavisLoader extends AbstractFileLoader {
-    
+
     private LineNumberReader reader;
     private final File file;
     private final Map<Object, Object> importOptions;
 
     private void readFile() throws IOException {
-        
+
         final String headerLine = reader.readLine();
         if (headerLine == null) {
             addMessage("%s is empty", file.getName());
             return;
         }
 
+        /**
+         * First we loop through the fields in the header line and populate two
+         * structures for subsequent use: a sorted set of treatment levels, and
+         * a hash table mapping (parameter, level) pairs to column indices.
+         */
         final SortedSet<Integer> levels = new TreeSet();
         final Map<ColumnDef, Integer> fieldMap = new HashMap<>();
         final String[] headers = headerLine.trim().split("\t");
-        for (int i=1; i<headers.length; i++) {
+        for (int i = 1; i < headers.length; i++) {
             final String header = headers[i];
             final ColumnDef cd = ColumnDef.fromHeader(header);
             levels.add(cd.treatmentLevel);
             fieldMap.put(cd, i);
         }
-        
+
         String line;
         while ((line = reader.readLine()) != null) {
-            if ("".equals(line.trim())) continue;
+            if ("".equals(line.trim())) {
+                continue; // skip blank lines
+            }
             final String[] partStrings = line.split("\t");
             final List<Double> parts = Stream.of(partStrings).
-                    map(Double::valueOf).
-                    collect(Collectors.toList());
-            for (Integer level: levels) {
+                    map(Double::valueOf).collect(Collectors.toList());
+
+            /**
+             * Loop through the treatment levels defined in the header line,
+             * using the field map to locate the column for each parameter/level
+             * pair.
+             */
+            for (Integer level : levels) {
                 final Datum d = new Datum();
+
+                /**
+                 * The file contains both Cartesian and polar data, for each
+                 * depth/level pair, but they don't represent the same vector!
+                 * There's no documentation on this file format, so it's not
+                 * clear why this is. In newer 2G files, the polar data tends to
+                 * have more corrections applied (e.g. for effective sensor
+                 * length), so for now I'm ignoring the Cartesian values and
+                 * initializing the datum using the polar vector.
+                 *
+                 */
                 d.setMoment(Vec3.fromPolarDegrees(
                         parts.get(fieldMap.get(new ColumnDef(level,
                                 DatumField.VIRT_MAGNETIZATION))),
@@ -92,30 +119,58 @@ public class UcDavisLoader extends AbstractFileLoader {
             }
         }
     }
-    
+
+    /**
+     * Each column in a UC Davis file is associated with a (hopefully) unique
+     * tuplet of parameter (e.g. X magnitude, declination) and treatment level.
+     * The tuplets are defined in the header line. This class is a container for
+     * those two values, and is used as a key for a hash table which maps a
+     * (parameter, level) tuplet to a column index.
+     *
+     */
     private static class ColumnDef {
+
         public final Integer treatmentLevel;
         public final DatumField parameter;
-        private final static Pattern HEADER_PATTERN =
-                Pattern.compile("([^(]+)[(](\\d+)[)]");
-        
+        private final static Pattern HEADER_PATTERN
+                = Pattern.compile("([^(]+)[(](\\d+)[)]");
+
         private ColumnDef(Integer treatmentLevel, DatumField parameter) {
-            this.treatmentLevel = treatmentLevel;  
+            this.treatmentLevel = treatmentLevel;
             this.parameter = parameter;
         }
-        
+
+        /**
+         * Determine a parameter from a header field specifier.
+         *
+         * @param s parameter specifier from the UC Davis file
+         * @return the parameter type specified by the string
+         */
         private static DatumField stringToField(String s) {
             switch (s) {
-                case "X": return DatumField.X_MOMENT;
-                case "Y": return DatumField.Y_MOMENT;
-                case "Z": return DatumField.Z_MOMENT;
-                case "D": return DatumField.VIRT_DECLINATION;
-                case "I": return DatumField.VIRT_INCLINATION;
-                case "J": return DatumField.VIRT_MAGNETIZATION;
-                default: return null;
+                case "X":
+                    return DatumField.X_MOMENT;
+                case "Y":
+                    return DatumField.Y_MOMENT;
+                case "Z":
+                    return DatumField.Z_MOMENT;
+                case "D":
+                    return DatumField.VIRT_DECLINATION;
+                case "I":
+                    return DatumField.VIRT_INCLINATION;
+                case "J":
+                    return DatumField.VIRT_MAGNETIZATION;
+                default:
+                    return null;
             }
         }
-        
+
+        /**
+         * Create a column definition from a header field string.
+         *
+         * @param header specifier string from the header line
+         * @return column definition specified by the given string
+         */
         public static ColumnDef fromHeader(String header) {
             final Matcher matcher = HEADER_PATTERN.matcher(header);
             matcher.matches();
@@ -123,7 +178,14 @@ public class UcDavisLoader extends AbstractFileLoader {
             return new ColumnDef(Integer.parseInt(matcher.group(2)),
                     field);
         }
-        
+
+        /**
+         * It's vital to override the hashCode function so that identical column
+         * definitions have identical hash codes. We can then retrieve values
+         * from the field map using newly constructed ColumnDef instances.
+         *
+         * @return
+         */
         @Override
         public int hashCode() {
             return Objects.hash(treatmentLevel, parameter);
@@ -150,9 +212,15 @@ public class UcDavisLoader extends AbstractFileLoader {
             return true;
         }
     }
-    
-    public UcDavisLoader(File file, Map<Object,Object> importOptions) {
-        
+
+    /**
+     * Create a loader for the old UC Davis file format.
+     *
+     * @param file file to load
+     * @param importOptions import options (currently ignored)
+     */
+    public UcDavisLoader(File file, Map<Object, Object> importOptions) {
+
         data = new LinkedList<>();
         this.importOptions = importOptions;
         this.file = file;
@@ -163,7 +231,6 @@ public class UcDavisLoader extends AbstractFileLoader {
             messages.add("Error reading \"" + file.getName() + "\"");
             messages.add(e.getMessage());
         }
-        
 
     }
 }
