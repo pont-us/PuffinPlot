@@ -171,6 +171,34 @@ public class RpiDataset {
         }
     }
     
+    
+    /**
+     * Currently a bit of a hack, shoehorning MS-calculated data into
+     * an RpiDatum designed for ARM-calculated data. RpiDatum needs to
+     * be redesigned to handle MS RPIs nicely.
+     * 
+     * @param nrmSuite
+     * @param msSuite
+     * @return 
+     */
+    public static RpiDataset calculateWithMagSus(Suite nrmSuite, Suite msSuite) {
+        List<RpiDatum> rpis = new ArrayList<>(nrmSuite.getNumSamples());
+        for (Sample nrmSample: nrmSuite.getSamples()) {
+            final double nrm = nrmSample.getNrm();
+            final String depth = nrmSample.getData().get(0).getDepth();
+            final Sample msSample = msSuite.getSampleByName(depth);
+            final double ms = msSample.getData().get(0).getMagSus();
+            final double rpi = nrm/ms;
+            rpis.add(new RpiDatum(Collections.singletonList(rpi),
+                        nrmSample, msSample,
+                        rpi,
+                        rpi,
+                        0,
+                        0));
+        }
+        return new RpiDataset(Collections.singletonList(Double.valueOf(0)), rpis);
+    }
+    
     public static RpiDataset calculateWithArm(Suite nrmSuite, Suite armSuite,
             double minLevel, double maxLevel) {
         final double[] allTreatmentLevels =
