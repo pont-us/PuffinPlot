@@ -242,8 +242,10 @@ public abstract class EqAreaPlot extends Plot {
 
     /**
      * Projects the direction of a three-dimensional vector into plot co-ordinates.
+     * The supplied vector must be well-formed (i.e. its components must
+     * be finite numbers rather than NaN or infinite values).
      * 
-     * @param v a vector
+     * @param v a well-formed vector
      * @return the projection of the supplied vector onto this plot
      */
     protected Point2D.Double project(Vec3 v) {
@@ -255,6 +257,7 @@ public abstract class EqAreaPlot extends Plot {
          * to take account of AWT Y-coordinates running top-to-bottom rather
          * than bottom-to-top (let x''' = x'' = y, y''' = -y'' = -x).
          */
+        assert(v.isWellFormed());
         final double h2 = v.x * v.x + v.y * v.y;
         final double L = (h2 > 0) ? sqrt(1 - abs(v.z)) / sqrt(h2) : 0;
         final double x = xo + radius * v.y * L;

@@ -133,16 +133,19 @@ public class TwoGeeLoader extends AbstractFileLoader {
                 /* The only way we can tie a mag. sus. value to a
                 * treatment step is by assuming it comes after
                 * the associated magnetic moment measurement.
-                * If the first line is mag. sus., we throw it away
-                * since we don't know the treatment step.
+                * If the first line is MS only, or if the previous
+                * datum is also MS only, then there's no moment measurement
+                * to attach it to, and it gets its own datum.
                 */
                 if (data.size()>0) {
-                    Datum dPrev = data.get(data.size() - 1);
+                    final Datum dPrev = data.get(data.size() - 1);
                     if (!dPrev.isMagSusOnly()) {
                         dPrev.setMagSus(d.getMagSus());
                     } else {
                         data.add(d);
                     }
+                } else {
+                    data.add(d);
                 }
             } else {
                 Datum tray, normal, yflip;

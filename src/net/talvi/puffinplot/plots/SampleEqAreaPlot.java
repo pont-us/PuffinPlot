@@ -67,20 +67,29 @@ public class SampleEqAreaPlot extends EqAreaPlot {
         updatePlotDimensions(g);
         clearPoints();
         final Sample sample = params.getSample();
-        if (sample == null) return;
+        if (sample == null) {
+            return;
+        }
         
         drawAxes();
         boolean first = true;
         Vec3 prev = null;
         final List<Datum> visibleData = sample.getVisibleData();
+        boolean hasWellFormedData = false;
         for (Datum d: visibleData) {
             final Vec3 p = d.getMoment(params.getCorrection()).normalize();
-            addPoint(d, project(p), p.z>0, first, false);
-            if (!first) {
-                drawGreatCircleSegment(prev, p);
+            if (p.isWellFormed()) {
+                hasWellFormedData = true;
+                addPoint(d, project(p), p.z>0, first, false);
+                if (!first) {
+                    drawGreatCircleSegment(prev, p);
+                }
+                prev = p;
+                first = false;
             }
-            prev = p;
-            first = false;
+        }
+        if (!hasWellFormedData) {
+            return;
         }
         final GreatCircle gc = sample.getGreatCircle();
         if (gc != null) {
