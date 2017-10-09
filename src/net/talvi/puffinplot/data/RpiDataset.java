@@ -69,14 +69,14 @@ public class RpiDataset {
         }
 
         /**
-         * @return the nrmSample
+         * @return the sample giving the NRM intensity
          */
         public Sample getNrmSample() {
             return nrmSample;
         }
 
         /**
-         * @return the armSample
+         * @return the sample used for ARM intensity normalization
          */
         public Sample getArmSample() {
             return armSample;
@@ -90,28 +90,29 @@ public class RpiDataset {
         }
 
         /**
-         * @return the meanRatio
+         * @return the mean of the NRM/ARM intensity ratios
          */
         public double getMeanRatio() {
             return meanRatio;
         }
 
         /**
-         * @return the slope
+         * @return the slope of the linear regression
          */
         public double getSlope() {
             return slope;
         }
+        
 
         /**
-         * @return the r
+         * @return the r-value for the linear regression
          */
         public double getR() {
             return r;
         }
 
         /**
-         * @return the rSquared
+         * @return the r-squared value for the linear regression
          */
         public double getrSquared() {
             return rSquared;
@@ -129,9 +130,9 @@ public class RpiDataset {
                     builder.append(",");
                 }
             }
-            builder.append(String.format(Locale.ENGLISH, ",%g,%g,%g,%g",
+            builder.append(String.format(Locale.ENGLISH, ",%g,%g,%g,%g,%g",
                     getMeanRatio(), getSlope(), getR(),
-                    getrSquared()));
+                    getrSquared(), armSample.getDatum(0).getIntensity()));
             builder.append("\n");
             
             return builder.toString();
@@ -153,7 +154,7 @@ public class RpiDataset {
             for (double level: getTreatmentLevels()) {
                 fw.write(String.format(Locale.ENGLISH, ",%g", level));
             }
-            fw.write(", mean ratio, slope, r, r-squared\n");
+            fw.write(", mean ratio, slope, r, r-squared, ARM\n");
             
             for (RpiDatum rpi: getRpis()) {
                 fw.write(rpi.toCommaSeparatedString());
@@ -222,7 +223,7 @@ public class RpiDataset {
                 Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
                         TreatType.DEGAUSS_XYZ, TreatType.DEGAUSS_Z)));
         
-        List<RpiDatum> rpis = new ArrayList<>(nrmSuite.getNumSamples());
+        final List<RpiDatum> rpis = new ArrayList<>(nrmSuite.getNumSamples());
         for (Sample nrmSample: nrmSuite.getSamples()) {
             final String depth = nrmSample.getData().get(0).getDepth();
             final Sample armSample = armSuite.getSampleByName(depth);
@@ -238,8 +239,8 @@ public class RpiDataset {
                     // We have to treat the first ARM step as a special case,
                     // since its treatment level will correspond to the ARM AF
                     // field but we're actually interested in its AF demag
-                    // step, which is 0. We assume that this will just be the first
-                    // datum and fetch it by index. 
+                    // step, which is 0. We assume that this will just be the
+                    // first datum and fetch it by index. 
                             
                     final Datum armStep = demagStep == 0 ?
                             armSample.getDatum(0) :
@@ -273,14 +274,14 @@ public class RpiDataset {
     }
 
     /**
-     * @return the treatmentLevels
+     * @return the treatment levels
      */
     public List<Double> getTreatmentLevels() {
         return treatmentLevels;
     }
 
     /**
-     * @return the rpis
+     * @return the RPIs
      */
     public List<RpiDatum> getRpis() {
         return rpis;

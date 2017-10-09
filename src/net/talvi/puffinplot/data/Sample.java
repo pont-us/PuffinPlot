@@ -236,9 +236,12 @@ public class Sample {
     }
     
     /** Sets all the selected data points within this sample to be hidden,
-     * so they will not be shown on plots.
+     * so they will not be shown on plots. The points are deselected as
+     * well as being hidden (so after a call to the function no points 
+     * there will be no selected points).
+     * 
      * @see Datum#isHidden() */
-    public void hideSelectedPoints() {
+    public void hideAndDeselectSelectedPoints() {
         touch();
         for (Datum d: getData()) {
             if (d.isSelected()) {
@@ -249,6 +252,7 @@ public class Sample {
     }
     
     /** Selects all the data points within this sample.
+     * 
      * @see Datum#setSelected(boolean) */
     public void selectAll() {
         touch();

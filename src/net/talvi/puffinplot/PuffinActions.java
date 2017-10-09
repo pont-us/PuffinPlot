@@ -586,8 +586,10 @@ public class PuffinActions {
             "Hide the selected treatment steps", 'G', false, KeyEvent.VK_H) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-           for (Sample s: app.getSelectedSamples())  s.hideSelectedPoints();
-            app.updateDisplay();
+            app.getSelectedSamples().forEach((s) -> {
+                s.hideAndDeselectSelectedPoints();
+            });
+           app.updateDisplay();
         }
     };
 

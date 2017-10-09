@@ -238,7 +238,7 @@ public final class ArasonLevi {
      *   Exact formula           (for 0.01 <= x <= 15)
      *   abs[ error ] < 2.E-13   (for 15<x)
      * 
-     * @param x a number. Range: -Inf  <  x     < +Inf, can not be 0
+     * @param x a number. Range: -Inf  <  x < +Inf, can not be 0
      * @return the hyperbolic tangent of x, or 0 if x is 0
      */
     private static double coth(double x) {
@@ -268,7 +268,6 @@ public final class ArasonLevi {
     }
 
     /**
-     * 
      * The Arason-Levi MLE Iteration Formula 1.
      * 
      * @param th vector of co-inclination data (in degrees)
