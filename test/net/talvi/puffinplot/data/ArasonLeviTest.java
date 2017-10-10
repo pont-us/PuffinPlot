@@ -16,11 +16,15 @@
  */
 package net.talvi.puffinplot.data;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
+import java.util.stream.Stream;
 import net.talvi.puffinplot.data.ArasonLevi.ArithMean;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -59,14 +63,16 @@ public class ArasonLeviTest {
     private static final double[][] inputs = {
         {39, 28, 43, 33, 7, -25, 2, -16, 10, 15, 39, -3, -84, -72, 14, -5, -41, 47, -16, 43},
         {86, 86.5, 86.1, 87, 87.5, 87.2, 86.7, 86.7, 87.2, 87.1, 89, 89.9},
-        {-86, -86.5, -86.1, -87, -87.5, -87.2, -86.7, -86.7, -87.2, -87.1, -89, -89.9}
+        {-86, -86.5, -86.1, -87, -87.5, -87.2, -86.7, -86.7, -87.2, -87.1, -89, -89.9},
+        {40.0, 41.0, 42.0, 43.0, 44.0, 45.0, 46.0, -1.0}
     };
 
     private static final double[][] outputs = {
         // ainc    ak     t63    a95    ierr  n   arithmean invvar studt63 studa95
         {8.565, 1.78808, 61.967, 36.253, 0, 20, 2.900, 2.36982, 35.929, 17.419},
         {87.495, 2602.30, 1.584, .851, 0, 12, 87.242, 2528.55, 1.123, 0.724},
-        {-87.495, 2602.30, 1.584, .851, 0, 12, -87.242, 2528.55, 1.123, 0.724}
+        {-87.495, 2602.30, 1.584, .851, 0, 12, -87.242, 2528.55, 1.123, 0.724},
+        {39.530, 15.0558, 20.939, 14.751, 0, 8, 37.500, 13.3447, 15.936, 13.115}
     };
 
     // We want to check to a set number of significant figures.
@@ -141,8 +147,59 @@ public class ArasonLeviTest {
         ArasonLevi.calculate(Arrays.asList(1., -2., 3., -91., 4., -5., 6.));
     }
     
+    private void checkBesselFieldsEqual(Object expected, Object actual) throws
+            IllegalArgumentException, IllegalAccessException,
+            NoSuchFieldException {
+        final String[] fieldNames = {"bi0e", "bi1e", "bi1i0"};
+        for (String fieldName: fieldNames) {
+            double expValue = expected.getClass().
+                    getDeclaredField(fieldName).
+                    getDouble(expected);
+            final double actValue = actual.getClass().
+                    getDeclaredField(fieldName).
+                    getDouble(actual);
+            if (!"bi0e".equals(fieldName)) {
+                expValue = -expValue;
+            }
+            assertEquals(expValue, actValue, 0.000001);
+        }
+    }
+    
+    /**
+     * Tests the implementation of the modified Bessel function in 
+     * ArasonLevi. The class is already tested as part of calculate.
+     * This extra test method exists to test it for negative inputs,
+     * which isn't possible via calculate. Since Bessel is a private
+     * class, it's instantiated via reflection.
+     * 
+     * @throws SecurityException
+     * @throws NoSuchMethodException
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
+     * @throws InvocationTargetException
+     * @throws NoSuchFieldException 
+     */
+    @Test
+    public void testBessel() throws SecurityException, NoSuchMethodException,
+            IllegalAccessException, IllegalArgumentException,
+            InvocationTargetException, NoSuchFieldException {
+        final Class<?>[] innerClassArray = ArasonLevi.class.getDeclaredClasses();
+        final Stream<Class> innerClassStream = Arrays.stream(innerClassArray);
+        final Class besselClass = innerClassStream.
+                filter(x -> "net.talvi.puffinplot.data.ArasonLevi$Bessel".
+                        equals(x.getName())).
+                findFirst().get();
+        final Method calculate = 
+                besselClass.getDeclaredMethod("calculate", double.class);
+        final double[] values = {0, 1, 2, 3, 4, 5};
+        for (double x: values) {
+            final Object pos = calculate.invoke(null, 10);
+            final Object neg = calculate.invoke(null, -10);
+            checkBesselFieldsEqual(pos, neg);
+        }
+    }
+    
     
     // TODO: test more "abnormal" inputs: single value, all values identical.
     // TODO: Test illegal and abnormal inputs for ArasonLevi.ArithMean
-
 }
