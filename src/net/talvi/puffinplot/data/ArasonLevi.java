@@ -107,7 +107,7 @@ public final class ArasonLevi {
     /**
      * Error codes:
      * 
-     * * 0: no problem
+     * 0: no problem
      * 1: convergence problem of selected solution
      * 2: failed robustness check
      * 3: convergence and robustness problems
@@ -413,6 +413,12 @@ public final class ArasonLevi {
         }
         
         if (n == 1) {
+            /* It's not entirely clear what the correct (per the original
+             * code) error code is here. The Fortrtan returns 1 (error),
+             * the JavaScript returns 0. Here I go with the Fortran, since
+             * the JavaScript also creates an "ERROR" alert, suggesting
+             * that its return code of 0 (no error) is wrong. 
+             */
             LOGGER.warning("Only one inclination supplied.");
             return new ArasonLevi(ierr, n, xinc[0], -1, t63max, a95max);
         }

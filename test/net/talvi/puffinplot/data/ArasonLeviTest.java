@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
@@ -64,7 +65,12 @@ public class ArasonLeviTest {
         {39, 28, 43, 33, 7, -25, 2, -16, 10, 15, 39, -3, -84, -72, 14, -5, -41, 47, -16, 43},
         {86, 86.5, 86.1, 87, 87.5, 87.2, 86.7, 86.7, 87.2, 87.1, 89, 89.9},
         {-86, -86.5, -86.1, -87, -87.5, -87.2, -86.7, -86.7, -87.2, -87.1, -89, -89.9},
-        {40.0, 41.0, 42.0, 43.0, 44.0, 45.0, 46.0, -1.0}
+        {40.0, 41.0, 42.0, 43.0, 44.0, 45.0, 46.0, -1.0},
+        {1.0},
+        {56.72, -71.16, 38.46, 82.34, -79.92, 6.70, 83.26, -44.58, 22.96, 62.48},
+        {41.46, -13.07, 23.30, -85.24, -55.97, -82.16, -11.73, 30.60, -26.05, 74.17},
+        {-41.73, -13.53, -77.12, 64.31, 30.28, 54.24, -64.10, 11.15, -35.95, 68.74}
+        
     };
 
     private static final double[][] outputs = {
@@ -72,7 +78,13 @@ public class ArasonLeviTest {
         {8.565, 1.78808, 61.967, 36.253, 0, 20, 2.900, 2.36982, 35.929, 17.419},
         {87.495, 2602.30, 1.584, .851, 0, 12, 87.242, 2528.55, 1.123, 0.724},
         {-87.495, 2602.30, 1.584, .851, 0, 12, -87.242, 2528.55, 1.123, 0.724},
-        {39.530, 15.0558, 20.939, 14.751, 0, 8, 37.500, 13.3447, 15.936, 13.115}
+        {39.530, 15.0558, 20.939, 14.751, 0, 8, 37.500, 13.3447, 15.936, 13.115},
+        {1.0, -1.0, 105.070, 154.158, 1, 1, 1.0, -1.0, 0, 0},
+        {90.0, 0.681026, 85.898, 0.000, 0, 10, 15.726, 0.872842, 61.184, 43.868},
+        {-90.00000000 , 0.349559  ,    95.173 ,  0.000, 0 ,10 ,-10.469 ,  1.14787    ,  53.353 , 38.253},
+        { 0.0 ,  0.0   ,  105.070,   0.0, 0 ,10 , -0.371 ,  1.13131   ,   53.742  ,38.532}
+        
+        
     };
 
     // We want to check to a set number of significant figures.
@@ -130,9 +142,15 @@ public class ArasonLeviTest {
     public final ExpectedException exception = ExpectedException.none();
     
     @Test
-    public void testEmptyInputException() {
+    public void testArasonLeviEmptyInputException() {
         exception.expect(IllegalArgumentException.class);
         ArasonLevi.calculate(Collections.emptyList());
+    }
+    
+    @Test
+    public void testArithMeanEmptyInputException() {
+        exception.expect(IllegalArgumentException.class);
+        ArithMean.calculate(Collections.emptyList());
     }
     
     @Test
@@ -147,30 +165,41 @@ public class ArasonLeviTest {
         ArasonLevi.calculate(Arrays.asList(1., -2., 3., -91., 4., -5., 6.));
     }
     
-    private void checkBesselFieldsEqual(Object expected, Object actual) throws
-            IllegalArgumentException, IllegalAccessException,
-            NoSuchFieldException {
-        final String[] fieldNames = {"bi0e", "bi1e", "bi1i0"};
-        for (String fieldName: fieldNames) {
-            double expValue = expected.getClass().
-                    getDeclaredField(fieldName).
-                    getDouble(expected);
-            final double actValue = actual.getClass().
-                    getDeclaredField(fieldName).
-                    getDouble(actual);
-            if (!"bi0e".equals(fieldName)) {
-                expValue = -expValue;
-            }
-            assertEquals(expValue, actValue, 0.000001);
-        }
+    @Test
+    public void testArasonLeviIdenticalInclinations() {
+        final double inc = 12;
+        final ArasonLevi al = ArasonLevi.calculate(Arrays.asList(inc, inc, inc, inc, inc));
+        assertEquals(0, al.getErrorCode());
+        assertEquals(5, al.getN());
+        assertEquals(inc, al.getMeanInc(), 0.00001);
+        assertEquals(1e10, al.getKappa(), 1);
+        assertEquals(0, al.getT63(), 0.00001);
+        assertEquals(0, al.getA95(), 0.00001);
     }
+
+//    @Test
+//    public void findGoodInputs() {
+//        Random rnd = new Random(11);
+//        for (int i=0; i<1000; i++) {
+//            final DoubleStream ds = rnd.doubles(-90, 90);
+//            final List<Double> values =
+//                    ds.limit(10).boxed().collect(Collectors.toList());
+//            final ArasonLevi al = ArasonLevi.calculate(values);
+//        }
+//    }
     
     /**
      * Tests the implementation of the modified Bessel function in 
      * ArasonLevi. The class is already tested as part of calculate.
      * This extra test method exists to test it for negative inputs,
-     * which isn't possible via calculate. Since Bessel is a private
-     * class, it's instantiated via reflection.
+     * which isn't possible via calculate. All the functions that Bessel
+     * calculates are either even or odd, so the values for negative
+     * inputs are simply checked against the corresponding positive
+     * inputs -- obviously thoroughly insufficient on its own, but
+     * OK in conjunction with the full test of the
+     * ArasonLevi.calculate method.
+     * 
+     * Since Bessel is a private class, it's instantiated via reflection.
      * 
      * @throws SecurityException
      * @throws NoSuchMethodException
@@ -198,6 +227,25 @@ public class ArasonLeviTest {
             checkBesselFieldsEqual(pos, neg);
         }
     }
+    
+    private void checkBesselFieldsEqual(Object expected, Object actual) throws
+            IllegalArgumentException, IllegalAccessException,
+            NoSuchFieldException {
+        final String[] fieldNames = {"bi0e", "bi1e", "bi1i0"};
+        for (String fieldName: fieldNames) {
+            double expValue = expected.getClass().
+                    getDeclaredField(fieldName).
+                    getDouble(expected);
+            final double actValue = actual.getClass().
+                    getDeclaredField(fieldName).
+                    getDouble(actual);
+            if (!"bi0e".equals(fieldName)) {
+                expValue = -expValue;
+            }
+            assertEquals(expValue, actValue, 0.000001);
+        }
+    }
+    
     
     
     // TODO: test more "abnormal" inputs: single value, all values identical.
