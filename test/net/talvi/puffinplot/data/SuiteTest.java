@@ -31,6 +31,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Rule;
+import org.junit.rules.ExpectedException;
 
 /**
  *
@@ -117,5 +119,21 @@ public class SuiteTest {
         assertEquals(MeasType.CONTINUOUS, suite.getMeasType());
         assertNotNull(suite.getSampleByName("3.14"));
         assertNotNull(suite.getSampleByName("5.67"));
+    }
+    
+    @Test
+    public void testAmsCalcType() {
+        assertSame(Suite.AmsCalcType.HEXT,
+                Suite.AmsCalcType.valueOf("HEXT"));
+        assertSame(Suite.AmsCalcType.BOOT,
+                Suite.AmsCalcType.valueOf("BOOT"));
+        assertSame(Suite.AmsCalcType.PARA_BOOT,
+                Suite.AmsCalcType.valueOf("PARA_BOOT"));
+    }
+    
+    @Test
+    public void testMissingSampleNameException() {
+        final Suite suite = new Suite("SuiteTest");
+        suite.new MissingSampleNameException("test");
     }
 }

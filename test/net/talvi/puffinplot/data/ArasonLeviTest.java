@@ -177,17 +177,6 @@ public class ArasonLeviTest {
         assertEquals(0, al.getA95(), 0.00001);
     }
 
-//    @Test
-//    public void findGoodInputs() {
-//        Random rnd = new Random(11);
-//        for (int i=0; i<1000; i++) {
-//            final DoubleStream ds = rnd.doubles(-90, 90);
-//            final List<Double> values =
-//                    ds.limit(10).boxed().collect(Collectors.toList());
-//            final ArasonLevi al = ArasonLevi.calculate(values);
-//        }
-//    }
-    
     /**
      * Tests the implementation of the modified Bessel function in 
      * ArasonLevi. The class is already tested as part of calculate.
