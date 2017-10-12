@@ -106,6 +106,8 @@ public class Vec3 {
      * Rotates the vector by 180 degrees about the specified axis.
      * Since x is up in magnetometer co-ordinates, specifying the x axis 
      * corrects the data for a specimen placed in the magnetometer back-to-front.
+     * If an axis other than X, Y, or Z is specified, the original vector
+     * is returned.
      * 
      * @param axis the axis about which to rotate
      * @return a new vector equal to this vector rotated 180&deg; about the
