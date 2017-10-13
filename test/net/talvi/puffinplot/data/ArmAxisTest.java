@@ -23,54 +23,54 @@ public class ArmAxisTest {
 
     @RunWith(value=Parameterized.class)
     public static class ParameterizedTests {
-    
-    private final String name;
-    private final ArmAxis value;
-	
-    /**
-     * Creates data to test the class.
-     * 
-     * @return an array of testing data
-     */
-    @Parameters
-    public static Collection data() {
-        return Arrays.asList( new Object[][] {
-        		{"AXIAL", ArmAxis.AXIAL},
-                        {"NA", ArmAxis.NONE},
-        		{"NONE", ArmAxis.NONE}});
-    }
-	
-    /**
-     * Creates a new instance of ArmAxisTest.
-     * 
-     * @param name the name of the ARM axis
-     * @param value the ArmAxis object corresponding to the name
-     */
-    public ParameterizedTests(String name, ArmAxis value) {
-    	this.name = name;
-    	this.value = value;
-    }
-
-	
-    /**
-     * Tests the {@link ArmAxis#fromString(java.lang.String)} method with an
-     * unknown axis name.
-     */
-    @Test
-    public void unknownStringTest() {
-        assertEquals(ArmAxis.fromString("NONEXISTENT"), ArmAxis.UNKNOWN);
-        assertEquals(ArmAxis.fromString("utter gibberish"), ArmAxis.UNKNOWN);
-    }
-    
-    /**
-     * Tests the {@link ArmAxis#fromString(java.lang.String)} method.
-     */
-    @Test
-    public void testGetByString() {
-        if (ArmAxis.fromString(name) != value) {
-            fail(name + " not initialized.");
+        
+        private final String name;
+        private final ArmAxis value;
+        
+        /**
+         * Creates data to test the class.
+         *
+         * @return an array of testing data
+         */
+        @Parameters
+        public static Collection data() {
+            return Arrays.asList( new Object[][] {
+                {"AXIAL", ArmAxis.AXIAL},
+                {"NA", ArmAxis.NONE},
+                {"NONE", ArmAxis.NONE}});
         }
-    }
+        
+        /**
+         * Creates a new instance of ArmAxisTest.
+         *
+         * @param name the name of the ARM axis
+         * @param value the ArmAxis object corresponding to the name
+         */
+        public ParameterizedTests(String name, ArmAxis value) {
+            this.name = name;
+            this.value = value;
+        }
+        
+        
+        /**
+         * Tests the {@link ArmAxis#fromString(java.lang.String)} method with an
+         * unknown axis name.
+         */
+        @Test
+        public void unknownStringTest() {
+            assertEquals(ArmAxis.fromString("NONEXISTENT"), ArmAxis.UNKNOWN);
+            assertEquals(ArmAxis.fromString("utter gibberish"), ArmAxis.UNKNOWN);
+        }
+        
+        /**
+         * Tests the {@link ArmAxis#fromString(java.lang.String)} method.
+         */
+        @Test
+        public void testGetByString() {
+            if (ArmAxis.fromString(name) != value) {
+                fail(name + " not initialized.");
+            }
+        }
     }
     
     /* Inner class for non-parameterized tests to stop them getting run

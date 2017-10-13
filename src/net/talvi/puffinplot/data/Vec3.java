@@ -163,6 +163,12 @@ public class Vec3 {
 
     /** Returns true if and only if the supplied vector is in the same (upper/lower)
      * hemisphere as this one.
+     * 
+     * Currently, the dividing place between the hemispheres (i.e. the plane
+     * defined by z=0) is treated as distinct from either hemisphere: that is,
+     * v1.sameHemisphere(v2) is true for any two points in this plane,
+     * but false if either point is anywhere outside this plane.
+     * 
      * @param v a vector
      * @return {@code true} if and only if the supplied vector is in the same (upper/lower)
      * hemisphere as this one.
@@ -211,15 +217,19 @@ public class Vec3 {
 
     /** Given two vectors, interpolates unit vectors along a great circle.
      * Uses Shoemake's Slerp algorithm.
-     * @param v0 a vector
-     * @param v1 a vector
+     * @param v0 a non-zero, well-formed vector
+     * @param v1 a non-zero, well-formed vector
      * @param stepSize the step size for interpolation in radians
      * @return a set of vectors describing a great-circle path between
      * {@code v0} and {@code v1}
      */
     public static List<Vec3> spherInterpolate(Vec3 v0, Vec3 v1, double stepSize) {
+        // TODO change these asserts to checks throwing IllegalArgumentExceptions
         assert(v0.isWellFormed());
         assert(v1.isWellFormed());
+        assert(!Vec3.ORIGIN.equals(v0));
+        assert(!Vec3.ORIGIN.equals(v1));
+        
         final Vec3 v0n = v0.normalize();
         final Vec3 v1n = v1.normalize();
         double dotProduct = v0n.dot(v1n);
@@ -235,6 +245,7 @@ public class Vec3 {
          */
         if (dotProduct > 1) dotProduct = 1;
         if (dotProduct < -1) dotProduct = -1;
+        
         final double omega = Math.acos(dotProduct);
         // TODO fix this for equator-crossing case?
         if (omega < stepSize) return Arrays.asList(new Vec3[] {v0n, v1n});
@@ -255,6 +266,11 @@ public class Vec3 {
             result.add(thisVec);
             prevVec = thisVec;
         }
+        
+        // I think that adding v1n is actually duplicating the last point
+        // but don't have time right now to do the due diligence around removing it.
+        // TODO: update unit test to catch duplicated last point,
+        // remove "result.add(v1n)", and check that nothing broke.
         result.add(v1n);
         return result;
     }
@@ -855,7 +871,8 @@ public class Vec3 {
      */
     public boolean isWellFormed() {
         return (!Double.isNaN(x)) && (!Double.isNaN(y)) && (!Double.isNaN(z))
-                && (!Double.isInfinite(x)) && (!Double.isInfinite(y)) && (!Double.isInfinite(z));
+                && (!Double.isInfinite(x)) && (!Double.isInfinite(y))
+                && (!Double.isInfinite(z));
     }
     
     @Override

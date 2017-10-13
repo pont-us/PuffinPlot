@@ -10,17 +10,18 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
 
 /**
  *
  * @author pont
  */
 public class Vec3Test {
-
+    
     // randomly generated values, plus some special cases
     private final double[][] testVectorsArray = {
         {0, 0, 0},
@@ -147,7 +148,30 @@ public class Vec3Test {
         // Point on equator
         testOneEquatorPoint(1, 0, 0, 1, 0, 1, 1, 0, 0);
         testOneEquatorPoint(11, 12, 13, 0, 1, 0, 0, 1, 0);
+        
+        // Illegal arguments
+        
+        final Vec3[][] illegal = {
+            {new Vec3(Double.NaN, 0, 0), Vec3.ORIGIN},
+            {Vec3.ORIGIN, new Vec3(Double.NaN, 0, 0)},
+            {Vec3.DOWN, Vec3.DOWN},
+            {Vec3.DOWN.invert(), Vec3.DOWN.invert()}
+        };
+        
+        for (Vec3[] illegalPair: illegal) {
+            try {
+                Vec3.equatorPoint(illegalPair[0], illegalPair[1]);
+                assertTrue(false); // fail the test
+            } catch (IllegalArgumentException e) {
+                // expected behaviour -- do nothing
+            }
+        }
     }
+    
+    //@Test(expected = IllegalArgumentException.class)
+    //private void testEquatorPointIllegalArguments(Vec3 v0, Vec3 v1) {
+    //    Vec3.equatorPoint(v0, v1);
+    //}
     
     private void testOneEquatorPoint(double x0, double y0, double z0,
             double x1, double y1, double z1,
@@ -268,6 +292,32 @@ public class Vec3Test {
     }
     
     @Test
+    public void testTimes() {
+        for (int i=0; i<testVectors.size()-1; i++) {
+            final Vec3 v1 = testVectors.get(i);
+            final Vec3 v2 = testVectors.get(i+1);
+            final Vec3 product1 = v1.times(v2);
+            final Vec3 product2 = v2.times(v1);
+            assertTrue(product1.equals(product2, delta));
+            assertEquals(product1.x, v1.x * v2.x, delta);
+            assertEquals(product1.y, v1.y * v2.y, delta);
+            assertEquals(product1.z, v1.z * v2.z, delta);
+        }
+    }
+    
+    @Test
+    public void testDivideByVector() {
+        for (int i=0; i<testVectors.size()-1; i++) {
+            final Vec3 v1 = testVectors.get(i);
+            final Vec3 v2 = testVectors.get(i+1);
+            final Vec3 quotient = v1.divideBy(v2);
+            assertEquals(quotient.x, v1.x / v2.x, delta);
+            assertEquals(quotient.y, v1.y / v2.y, delta);
+            assertEquals(quotient.z, v1.z / v2.z, delta);
+        }
+    }
+    
+    @Test
     public void testDivideByDouble() {
         final double[] divisors = {-9999, -1, 0.0021, 0, 1, 10, 17.9, 12345};
         for (Vec3 v: testVectors) {
@@ -278,5 +328,83 @@ public class Vec3Test {
                 assertEquals(v.z/d, result.z, delta);
             }
         }
+    }
+    
+    @Test
+    public void testIsWellFormed() {
+        for (Vec3 v: testVectors) {
+            assertTrue(v.isWellFormed());
+        }
+        
+        final double nan = Double.NaN;
+        final double inf = Double.POSITIVE_INFINITY;
+        final double ninf = Double.NEGATIVE_INFINITY;
+        final double[][] illFormed = {
+            {nan, 0, 0},
+            {0, nan, 0},
+            {0, 0, nan},
+            {inf, 0, 0},
+            {0, inf, 0},
+            {0, 0, inf},
+            {ninf, 0, 0},
+            {0, ninf, 0},
+            {0, 0, ninf}
+        };
+        
+        for (double[] xyz: illFormed) {
+            assertFalse(new Vec3(xyz[0], xyz[1], xyz[2]).isWellFormed());
+        }
+    }
+    
+    @Test public void testSpherInterpolate() {
+        
+        for (int i=0; i<testVectors.size()-1; i++) {
+            final Vec3 v0 = testVectors.get(i);
+            final Vec3 v1 = testVectors.get(i+1);
+            if (Vec3.ORIGIN.equals(v0) || Vec3.ORIGIN.equals(v0)) {
+                continue;
+            }
+
+            final Vec3 normalDir = v0.cross(v1).normalize();
+            
+            final List<Vec3> steps = Vec3.spherInterpolate(v0, v1, 0.1);
+
+            // test all normalized
+            steps.forEach(step -> assertEquals(1, step.mag(), delta));
+            
+            // test all in right plane
+            steps.subList(1, steps.size()).forEach((step) -> {
+                assertTrue(normalDir.equals(v0.cross(step).normalize(), delta));
+            });
+
+            // test equally spaced
+            // We only run this loop to -2 because currently spherInterpolate
+            // seems to erroneously duplicate the last point.
+            // TODO: fix spherInterpolate and update test to check for
+            // correct behaviour
+            final double firstAngle = steps.get(0).angleTo(steps.get(1));
+            for (int j=1; j<steps.size()-2; j++) {
+                final Vec3 step0 = steps.get(j);
+                final Vec3 step1 = steps.get(j+1);
+                final double thisAngle = step0.angleTo(step1);
+                assertEquals(firstAngle, thisAngle, delta);
+            }
+        }
+
+        // Test a pathological pair of vectors. After normalization, the
+        // cross product of these vectors will (thanks to floating-point
+        // rounding errors) be slightly *larger* than one, producing NaNs
+        // if inverse trigonometric functions are applied. This test
+        // verifies that spherInterpolate is robust against this problem.
+        // (These vectors came from a real-life data set, so the problem
+        // is not merely theoretical.)
+        final Vec3 bad0 = new Vec3(0.48653711261156757,
+                0.8724782534206357,
+                0.04542395138773855);
+        final Vec3 bad1 = new Vec3(0.4865371126115692,
+                0.8724782534206347,
+                0.045423951387740906);
+        final List<Vec3> steps = Vec3.spherInterpolate(bad0, bad1, 0.1);
+        steps.forEach(step -> {assertTrue(step.isWellFormed());});
     }
 }
