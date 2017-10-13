@@ -7,7 +7,10 @@ package net.talvi.puffinplot.data;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -18,27 +21,64 @@ import org.junit.Before;
  */
 public class Vec3Test {
 
-    private Collection<Vec3> testVectors;
-    
+    // randomly generated values, plus some special cases
+    private final double[][] testVectorsArray = {
+        {0, 0, 0},
+        {1, 0, 0},
+        {0, 1, 0},
+        {0, 0, 1},
+        {0, 1, 1},
+        {1, 0, 1},
+        {1, 1, 0},
+        {1, 1, 1},
+        {-1, 0, 0},
+        {0, -1, 0},
+        {0, 0, -1},
+        {0, -1, -1},
+        {-1, 0, -1},
+        {-1, -1, 0},
+        {-1, -1, -1},
+        {0, -1, 1},
+        {-1, 0, 1},
+        {-1, 1, 0},
+        {0, 1, -1},
+        {1, 0, -1},
+        {1, -1, 0},
+        {-1, 1, 1},
+        {1, -1, 1},
+        {1, 1, -1},
+        {1, -1, -1},
+        {-1, 1, -1},
+        {-1, -1, 1},        
+        {-6.39, -4.29, +2.23},
+        {+8.78, -7.91, +4.59},
+        {+7.75, +0.17, +3.22},
+        {-5.73, -0.52, +1.68},
+        {+7.36, +0.52, -1.20},
+        {+8.97, +6.52, -3.06},
+        {-3.19, -0.56, -2.23},
+        {-0.26, -0.85, -9.94},
+        {+9.35, +3.79, -3.01},
+        {-8.68, +8.25, +4.42},
+        {-8.44, -8.17, +4.52},
+        {+6.22, -9.45, +6.54},
+        {-5.41, -3.25, -4.33},
+        {+5.19, +5.72, -6.99},
+        {-0.26, +3.62, +8.44},
+        {-0.36, +8.71, -3.06},
+        {+0.29, -8.48, +7.40},
+        {-2.57, -6.26, -8.75},
+        {+9.25, -7.69, +5.27},
+        {+8.57, -8.47, -6.72},
+    };
+    private List<Vec3> testVectors;
+    private final double delta = 1e-6;
+        
     @Before
     public void setUp() {
-        // randomly generated values
-        final double[][] values = {
-            {2.06, 7.14, 9.49},
-            {8.63, 8.92, 4.26},
-            {3.55, 1.64, 4.90},
-            {2.69, 2.70, 0.26},
-            {3.96, 3.37, 3.32},
-            {2.63, 4.28, 3.03},
-            {1.32, 2.74, 8.08},
-            {0.91, 1.13, 9.99},
-            {1.63, 4.19, 2.77},
-            {7.58, 9.84, 1.45},
-        };
-        
         testVectors = new ArrayList<>(10);
         
-        for (double[] xyz: values) {
+        for (double[] xyz: testVectorsArray) {
             testVectors.add(new Vec3(xyz[0], xyz[1], xyz[2]));
         }
     }
@@ -170,6 +210,73 @@ public class Vec3Test {
             // Test that rotating about an "invalid" axis returns the
             // original vector.
             assertTrue(vec3.equals(vec3.rot180(MeasurementAxis.H), delta));
+        }
+    }
+    
+    @Test
+    public void testInvert() {
+
+        for (Vec3 vec3: testVectors) {
+            final Vec3 inverted = vec3.invert();
+            // Test that the sum of a vector and its inversion is zero
+            assertTrue(Vec3.ORIGIN.equals(vec3.plus(inverted), delta));
+            
+            // Test that the magnitude remains the same
+            assertEquals(vec3.mag(), inverted.mag(), delta);
+            
+            // Test individual components inverted
+            assertEquals(-vec3.x, inverted.x, delta);
+            assertEquals(-vec3.y, inverted.y, delta);
+            assertEquals(-vec3.z, inverted.z, delta);
+        }
+    }
+    
+    @Test
+    public void testSum() {
+        final double[] total = {0, 0, 0};
+        
+        for (double[] xyz: testVectorsArray) {
+            for (int i=0; i<3; i++) {
+                total[i] += xyz[i];
+            }
+        }
+        
+        final Vec3 sum = Vec3.sum(testVectors);
+        
+        assertEquals(total[0], sum.x, delta);
+        assertEquals(total[1], sum.y, delta);
+        assertEquals(total[2], sum.z, delta);
+        
+        Collection<Vec3> invertedVectors = testVectors.stream().
+                map(x -> x.invert()).collect(Collectors.toList());
+        
+        assertTrue(sum.invert().equals(Vec3.sum(invertedVectors), delta));
+    }
+    
+    @Test
+    public void testPlus() {
+        for (int i=0; i<testVectors.size()-1; i++) {
+            final Vec3 v1 = testVectors.get(i);
+            final Vec3 v2 = testVectors.get(i+1);
+            final Vec3 sum1 = v1.plus(v2);
+            final Vec3 sum2 = v2.plus(v1);
+            assertTrue(sum1.equals(sum2, delta));
+            assertEquals(sum1.x, v1.x + v2.x, delta);
+            assertEquals(sum1.y, v1.y + v2.y, delta);
+            assertEquals(sum1.z, v1.z + v2.z, delta);
+        }
+    }
+    
+    @Test
+    public void testDivideByDouble() {
+        final double[] divisors = {-9999, -1, 0.0021, 0, 1, 10, 17.9, 12345};
+        for (Vec3 v: testVectors) {
+            for (double d: divisors) {
+                final Vec3 result = v.divideBy(d);
+                assertEquals(v.x/d, result.x, delta);
+                assertEquals(v.y/d, result.y, delta);
+                assertEquals(v.z/d, result.z, delta);
+            }
         }
     }
 }
