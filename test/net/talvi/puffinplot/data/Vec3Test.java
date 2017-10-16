@@ -2,13 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package net.talvi.puffinplot.data;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -21,9 +21,9 @@ import org.junit.runner.RunWith;
  * @author pont
  */
 public class Vec3Test {
-    
+
     // randomly generated values, plus some special cases
-    private final double[][] testVectorsArray = {
+    private static final double[][] testVectorsArray = {
         {0, 0, 0},
         {1, 0, 0},
         {0, 1, 0},
@@ -50,7 +50,7 @@ public class Vec3Test {
         {1, 1, -1},
         {1, -1, -1},
         {-1, 1, -1},
-        {-1, -1, 1},        
+        {-1, -1, 1},
         {-6.39, -4.29, +2.23},
         {+8.78, -7.91, +4.59},
         {+7.75, +0.17, +3.22},
@@ -70,34 +70,36 @@ public class Vec3Test {
         {+0.29, -8.48, +7.40},
         {-2.57, -6.26, -8.75},
         {+9.25, -7.69, +5.27},
-        {+8.57, -8.47, -6.72},
-    };
+        {+8.57, -8.47, -6.72},};
     private List<Vec3> testVectors;
     private final double delta = 1e-6;
-        
+
     @Before
     public void setUp() {
-        testVectors = new ArrayList<>(10);
-        
-        for (double[] xyz: testVectorsArray) {
-            testVectors.add(new Vec3(xyz[0], xyz[1], xyz[2]));
+        testVectors = Vec3Test.createTestVectors();
+    }
+
+    private static List<Vec3> createTestVectors() {
+        final List<Vec3> result = new ArrayList<>(10);
+        for (double[] xyz : testVectorsArray) {
+            result.add(new Vec3(xyz[0], xyz[1], xyz[2]));
         }
+        return result;
     }
     
     /**
-     *  Tests the {@link Vec3#addDecRad(double)} method.
+     * Tests the {@link Vec3#addDecRad(double)} method.
      */
     @Test
     public void testAddDecRad() {
-        System.out.println("addDecRad");
         final double mag = 1.9;
         final double tolerance = 0.0001;
         double[] angles = {-279, -201, -140, -50, -10, 0, 10, 40, 70, 100, 190, 359};
-        for (double dec: angles) {
-            for (double inc: angles) {
+        for (double dec : angles) {
+            for (double inc : angles) {
                 Vec3 original = Vec3.fromPolarDegrees(mag, inc, dec);
-                for (double offset: angles) {
-                    Vec3 expected = Vec3.fromPolarDegrees(mag, inc, dec+offset);
+                for (double offset : angles) {
+                    Vec3 expected = Vec3.fromPolarDegrees(mag, inc, dec + offset);
                     Vec3 result = original.addDecRad(Math.toRadians(offset));
                     assertEquals(expected.x, result.x, tolerance);
                     assertEquals(expected.y, result.y, tolerance);
@@ -106,23 +108,22 @@ public class Vec3Test {
             }
         }
     }
-    
+
     /**
-     *  Tests the {@link Vec3#addIncRad(double)} method.
+     * Tests the {@link Vec3#addIncRad(double)} method.
      */
     @Test
     public void testAddIncRad() {
-        System.out.println("addIncRad");
         final double mag = 1.0;
         final double tolerance = 0.0001;
         double[] decs = {-279, -201, -140, -50, -10, 0, 10, 40, 70, 100, 190, 359};
         double[] incs = {-80, -40, -10, 5, 20, 50, 80};
         double[] offsets = {-80, -50, -10, 5, 10, 40, 60, 85};
-        for (double dec: decs) {
-            for (double inc: incs) {
+        for (double dec : decs) {
+            for (double inc : incs) {
                 Vec3 original = Vec3.fromPolarDegrees(mag, inc, dec);
-                for (double offset: offsets) {
-                    Vec3 expected = Vec3.fromPolarDegrees(mag, inc+offset, dec);
+                for (double offset : offsets) {
+                    Vec3 expected = Vec3.fromPolarDegrees(mag, inc + offset, dec);
                     Vec3 result = original.addIncRad(Math.toRadians(offset));
                     String msg = String.format(Locale.ENGLISH,
                             "D %g I %g + %g", dec, inc, offset);
@@ -133,32 +134,29 @@ public class Vec3Test {
             }
         }
     }
-    
+
     @Test
     public void testEquatorPoint() {
-        System.out.println("equatorPoint");
-        
         // A couple of simple tests
         testOneEquatorPoint(0, 1, 1, 0, 1, -1, 0, 1, 0);
         testOneEquatorPoint(1, 0, 1, 1, 0, -1, 1, 0, 0);
-        
+
         // Unequal length vectors
         testOneEquatorPoint(0, 2, 5, 0, 1, -1, 0, 1, 0);
-        
+
         // Point on equator
         testOneEquatorPoint(1, 0, 0, 1, 0, 1, 1, 0, 0);
         testOneEquatorPoint(11, 12, 13, 0, 1, 0, 0, 1, 0);
-        
+
         // Illegal arguments
-        
         final Vec3[][] illegal = {
             {new Vec3(Double.NaN, 0, 0), Vec3.ORIGIN},
             {Vec3.ORIGIN, new Vec3(Double.NaN, 0, 0)},
             {Vec3.DOWN, Vec3.DOWN},
             {Vec3.DOWN.invert(), Vec3.DOWN.invert()}
         };
-        
-        for (Vec3[] illegalPair: illegal) {
+
+        for (Vec3[] illegalPair : illegal) {
             try {
                 Vec3.equatorPoint(illegalPair[0], illegalPair[1]);
                 assertTrue(false); // fail the test
@@ -167,12 +165,7 @@ public class Vec3Test {
             }
         }
     }
-    
-    //@Test(expected = IllegalArgumentException.class)
-    //private void testEquatorPointIllegalArguments(Vec3 v0, Vec3 v1) {
-    //    Vec3.equatorPoint(v0, v1);
-    //}
-    
+
     private void testOneEquatorPoint(double x0, double y0, double z0,
             double x1, double y1, double z1,
             double x2, double y2, double z2) {
@@ -184,38 +177,37 @@ public class Vec3Test {
         assertTrue(expected.equals(veq1, 1e-10));
         assertTrue(expected.equals(veq2, 1e-10));
     }
-    
+
     @Test
     public void testRot180() {
-        System.out.println("rot180");
         final double delta = 1e-6;
         MeasurementAxis[] axes = {
             MeasurementAxis.X,
             MeasurementAxis.Y,
             MeasurementAxis.Z
         };
-        
-        for (Vec3 vec3: testVectors) {
+
+        for (Vec3 vec3 : testVectors) {
             // Test that double rotation about same axis
             // produces original vector
-            for (MeasurementAxis axis: axes) {
+            for (MeasurementAxis axis : axes) {
                 assertTrue(vec3.equals(vec3.rot180(axis).rot180(axis), delta));
             }
-            
+
             // Test that rotating about all three axes produces
             // original vector
             assertTrue(vec3.equals(vec3.rot180(axes[0]).rot180(axes[1]).
                     rot180(axes[2]), delta));
-        
+
             // Test that rotating about two axes is equivalent to
             // a rotation about the third axis
-            for (int i=0; i<3; i++) {
+            for (int i = 0; i < 3; i++) {
                 final Vec3 twoRots = vec3.rot180(axes[i]).
-                        rot180(axes[(i+1)%3]);
-                final Vec3 oneRot = vec3.rot180(axes[(i+2)%3]);
+                        rot180(axes[(i + 1) % 3]);
+                final Vec3 oneRot = vec3.rot180(axes[(i + 2) % 3]);
                 assertTrue(twoRots.equals(oneRot, delta));
             }
-            
+
             // Test that a rotation about an axis inverts the other
             // two axes, but leaves this one unchanged
             final Vec3 xrot = vec3.rot180(MeasurementAxis.X);
@@ -230,58 +222,58 @@ public class Vec3Test {
             assertEquals(vec3.x, -zrot.x, delta);
             assertEquals(vec3.y, -zrot.y, delta);
             assertEquals(vec3.z, zrot.z, delta);
-            
+
             // Test that rotating about an "invalid" axis returns the
             // original vector.
             assertTrue(vec3.equals(vec3.rot180(MeasurementAxis.H), delta));
         }
     }
-    
+
     @Test
     public void testInvert() {
 
-        for (Vec3 vec3: testVectors) {
+        for (Vec3 vec3 : testVectors) {
             final Vec3 inverted = vec3.invert();
             // Test that the sum of a vector and its inversion is zero
             assertTrue(Vec3.ORIGIN.equals(vec3.plus(inverted), delta));
-            
+
             // Test that the magnitude remains the same
             assertEquals(vec3.mag(), inverted.mag(), delta);
-            
+
             // Test individual components inverted
             assertEquals(-vec3.x, inverted.x, delta);
             assertEquals(-vec3.y, inverted.y, delta);
             assertEquals(-vec3.z, inverted.z, delta);
         }
     }
-    
+
     @Test
     public void testSum() {
         final double[] total = {0, 0, 0};
-        
-        for (double[] xyz: testVectorsArray) {
-            for (int i=0; i<3; i++) {
+
+        for (double[] xyz : testVectorsArray) {
+            for (int i = 0; i < 3; i++) {
                 total[i] += xyz[i];
             }
         }
-        
+
         final Vec3 sum = Vec3.sum(testVectors);
-        
+
         assertEquals(total[0], sum.x, delta);
         assertEquals(total[1], sum.y, delta);
         assertEquals(total[2], sum.z, delta);
-        
+
         Collection<Vec3> invertedVectors = testVectors.stream().
                 map(x -> x.invert()).collect(Collectors.toList());
-        
+
         assertTrue(sum.invert().equals(Vec3.sum(invertedVectors), delta));
     }
-    
+
     @Test
     public void testPlus() {
-        for (int i=0; i<testVectors.size()-1; i++) {
+        for (int i = 0; i < testVectors.size() - 1; i++) {
             final Vec3 v1 = testVectors.get(i);
-            final Vec3 v2 = testVectors.get(i+1);
+            final Vec3 v2 = testVectors.get(i + 1);
             final Vec3 sum1 = v1.plus(v2);
             final Vec3 sum2 = v2.plus(v1);
             assertTrue(sum1.equals(sum2, delta));
@@ -290,12 +282,12 @@ public class Vec3Test {
             assertEquals(sum1.z, v1.z + v2.z, delta);
         }
     }
-    
+
     @Test
     public void testTimes() {
-        for (int i=0; i<testVectors.size()-1; i++) {
+        for (int i = 0; i < testVectors.size() - 1; i++) {
             final Vec3 v1 = testVectors.get(i);
-            final Vec3 v2 = testVectors.get(i+1);
+            final Vec3 v2 = testVectors.get(i + 1);
             final Vec3 product1 = v1.times(v2);
             final Vec3 product2 = v2.times(v1);
             assertTrue(product1.equals(product2, delta));
@@ -304,38 +296,38 @@ public class Vec3Test {
             assertEquals(product1.z, v1.z * v2.z, delta);
         }
     }
-    
+
     @Test
     public void testDivideByVector() {
-        for (int i=0; i<testVectors.size()-1; i++) {
+        for (int i = 0; i < testVectors.size() - 1; i++) {
             final Vec3 v1 = testVectors.get(i);
-            final Vec3 v2 = testVectors.get(i+1);
+            final Vec3 v2 = testVectors.get(i + 1);
             final Vec3 quotient = v1.divideBy(v2);
             assertEquals(quotient.x, v1.x / v2.x, delta);
             assertEquals(quotient.y, v1.y / v2.y, delta);
             assertEquals(quotient.z, v1.z / v2.z, delta);
         }
     }
-    
+
     @Test
     public void testDivideByDouble() {
         final double[] divisors = {-9999, -1, 0.0021, 0, 1, 10, 17.9, 12345};
-        for (Vec3 v: testVectors) {
-            for (double d: divisors) {
+        for (Vec3 v : testVectors) {
+            for (double d : divisors) {
                 final Vec3 result = v.divideBy(d);
-                assertEquals(v.x/d, result.x, delta);
-                assertEquals(v.y/d, result.y, delta);
-                assertEquals(v.z/d, result.z, delta);
+                assertEquals(v.x / d, result.x, delta);
+                assertEquals(v.y / d, result.y, delta);
+                assertEquals(v.z / d, result.z, delta);
             }
         }
     }
-    
+
     @Test
     public void testIsWellFormed() {
-        for (Vec3 v: testVectors) {
+        for (Vec3 v : testVectors) {
             assertTrue(v.isWellFormed());
         }
-        
+
         final double nan = Double.NaN;
         final double inf = Double.POSITIVE_INFINITY;
         final double ninf = Double.NEGATIVE_INFINITY;
@@ -350,54 +342,57 @@ public class Vec3Test {
             {0, ninf, 0},
             {0, 0, ninf}
         };
-        
-        for (double[] xyz: illFormed) {
+
+        for (double[] xyz : illFormed) {
             assertFalse(new Vec3(xyz[0], xyz[1], xyz[2]).isWellFormed());
         }
     }
-    
-    @Test public void testSpherInterpolate() {
-        
-        for (int i=0; i<testVectors.size()-1; i++) {
+
+    @Test
+    public void testSpherInterpolate() {
+
+        for (int i = 0; i < testVectors.size() - 1; i++) {
             final Vec3 v0 = testVectors.get(i);
-            final Vec3 v1 = testVectors.get(i+1);
+            final Vec3 v1 = testVectors.get(i + 1);
             if (Vec3.ORIGIN.equals(v0) || Vec3.ORIGIN.equals(v0)) {
+                // a zero vector is invalid input
                 continue;
             }
 
             final Vec3 normalDir = v0.cross(v1).normalize();
-            
+
             final List<Vec3> steps = Vec3.spherInterpolate(v0, v1, 0.1);
 
-            // test all normalized
+            // Test that steps are all normalized.
             steps.forEach(step -> assertEquals(1, step.mag(), delta));
-            
-            // test all in right plane
+
+            // Test that steps are all in the right plane.
             steps.subList(1, steps.size()).forEach((step) -> {
                 assertTrue(normalDir.equals(v0.cross(step).normalize(), delta));
             });
 
-            // test equally spaced
-            // We only run this loop to -2 because currently spherInterpolate
-            // seems to erroneously duplicate the last point.
-            // TODO: fix spherInterpolate and update test to check for
-            // correct behaviour
+            // Test that steps are equally spaced.
+            // We only run this loop to size-2 because currently
+            // spherInterpolate seems to erroneously duplicate the last point.
+            // TODO: update test to check for correct behaviour and 
+            // fix spherInterpolate.
             final double firstAngle = steps.get(0).angleTo(steps.get(1));
-            for (int j=1; j<steps.size()-2; j++) {
+            for (int j = 1; j < steps.size() - 2; j++) {
                 final Vec3 step0 = steps.get(j);
-                final Vec3 step1 = steps.get(j+1);
+                final Vec3 step1 = steps.get(j + 1);
                 final double thisAngle = step0.angleTo(step1);
                 assertEquals(firstAngle, thisAngle, delta);
             }
         }
 
-        // Test a pathological pair of vectors. After normalization, the
-        // cross product of these vectors will (thanks to floating-point
-        // rounding errors) be slightly *larger* than one, producing NaNs
-        // if inverse trigonometric functions are applied. This test
-        // verifies that spherInterpolate is robust against this problem.
-        // (These vectors came from a real-life data set, so the problem
-        // is not merely theoretical.)
+        /*
+         * Test a pathological pair of vectors. After normalization, the cross
+         * product of these vectors will (thanks to floating-point rounding
+         * errors) be slightly *larger* than one, producing NaNs if asin or acos
+         * is applied. This test verifies that spherInterpolate is robust
+         * against this problem. (These vectors came from a real-life data set,
+         * so the problem is not merely theoretical.)
+         */
         final Vec3 bad0 = new Vec3(0.48653711261156757,
                 0.8724782534206357,
                 0.04542395138773855);
@@ -405,6 +400,66 @@ public class Vec3Test {
                 0.8724782534206347,
                 0.045423951387740906);
         final List<Vec3> steps = Vec3.spherInterpolate(bad0, bad1, 0.1);
-        steps.forEach(step -> {assertTrue(step.isWellFormed());});
+        steps.forEach(step -> {
+            assertTrue(step.isWellFormed());
+        });
+    }
+    
+    @Test
+    public void testEqualsAndHashCode() {
+        final List<Vec3> otherTestVectors = Vec3Test.createTestVectors();
+        
+        final Object notAVec3 = new Object();
+        
+        for (int i=0; i<testVectors.size(); i++) {
+            final Vec3 a = testVectors.get(i);
+            final Vec3 b = otherTestVectors.get(i);
+            assertNotEquals(a, notAVec3);
+            assertEquals(a, a);
+            assertEquals(b, b);
+            assertEquals(a, b);
+            assertEquals(b, a);
+            assertEquals(a.hashCode(), b.hashCode());
+        }
+    }
+    
+    @Test
+    public void testToString() {
+        testVectors.forEach((vec3) -> {
+            final String expected = String.format(Locale.ENGLISH,
+                    "%.2f %.2f %.2f", vec3.x, vec3.y, vec3.z);
+            assertEquals(expected, vec3.toString());
+        });
+    }
+    
+    @Test
+    public void testGetComponent() {
+        testVectors.forEach((vec3) -> {
+            assertEquals(vec3.x, vec3.getComponent(MeasurementAxis.X), delta);
+            assertEquals(vec3.y, vec3.getComponent(MeasurementAxis.Y), delta);
+            assertEquals(vec3.z, vec3.getComponent(MeasurementAxis.Z), delta);
+            assertEquals(-vec3.x, vec3.getComponent(MeasurementAxis.MINUSX), delta);
+            assertEquals(-vec3.y, vec3.getComponent(MeasurementAxis.MINUSY), delta);
+            assertEquals(-vec3.z, vec3.getComponent(MeasurementAxis.MINUSZ), delta);
+            assertEquals(Math.sqrt(vec3.x*vec3.x+vec3.y*vec3.y),
+                    vec3.getComponent(MeasurementAxis.H), delta);
+
+            /* Test that every value of MeasurementAxis is covered.
+             * At time of writing the explicit cases listed above cover all
+             * values, but if new values are added to MeasurementAxis in
+             * the future, this will ensure that Vec3 handles them.
+             */
+            for (MeasurementAxis axis: MeasurementAxis.values()) {
+                vec3.getComponent(axis);
+            }
+        });
+        /* At present, we're not testing the default case, because it's
+         * unreachable with the code as compiled (but can't be removed
+         * because the compiler requires it). Testing would be possible
+         * using PowerMock for bytecode manipulation (see
+         * https://stackoverflow.com/a/7233572/6947739 ) but I'm reluctant
+         * to add PowerMock and Mockito to PuffinPlot's dependencies
+         * just for this.
+         */ 
     }
 }

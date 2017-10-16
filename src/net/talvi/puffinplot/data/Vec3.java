@@ -503,6 +503,10 @@ public class Vec3 {
             case MINUSY: return -y;
             case MINUSZ: return -z;
             case H: return sqrt(x*x+y*y);
+            /* We don't expect that the default case will ever be reached,
+             * but it's required to keep the compiler happy and may be
+             * useful if MeasurementAxis is later expanded.
+             */
             default: throw new IllegalArgumentException("invalid axis "+component);
         }
     }
@@ -884,7 +888,7 @@ public class Vec3 {
             return false;
         }
         final Vec3 v = (Vec3) o;
-        return (x == v.x && y == v.y && x == v.z);
+        return (x == v.x && y == v.y && z == v.z);
     }
 
     @Override
