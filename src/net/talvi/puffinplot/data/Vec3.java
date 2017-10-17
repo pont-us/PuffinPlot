@@ -267,8 +267,7 @@ public class Vec3 {
             prevVec = thisVec;
         }
         
-        // I think that adding v1n is actually duplicating the last point
-        // but don't have time right now to do the due diligence around removing it.
+        // I think that adding v1n is actually duplicating the last point.
         // TODO: update unit test to catch duplicated last point,
         // remove "result.add(v1n)", and check that nothing broke.
         result.add(v1n);
@@ -400,43 +399,6 @@ public class Vec3 {
         return transform(Vec3.getFormationCorrectionMatrix(az, dip));
     }
 
-    /*
-     * Rotates a given vector by the same rotation which would
-     * bring this vector vertical. In other words, performs a
-     * tilt correction on the supplied vector, with this vector
-     * defining the normal of the tilted plane. Assumes that this
-     * is a unit vector.
-     *
-     * @param v vector to rotate
-     * @return rotated vector
-     */
-    private Vec3 correctTilt(Vec3 v) {
-        final double d = sqrt(x*x + y*y);
-        return v.correctPlane(d, y/d, z, x/d);
-    }
-
-    /** Returns a matrix to correct a vector for a given formation orientation.
-     * @param az the formation dip azimuth in radians
-     * @param dip the formation dip angle in radians
-     * @return a matrix to transform vectors from geographic co-ordinates to
-     * tectonic co-ordinates
-     */
-    public static double[][] getFormationCorrectionMatrix(double az, double dip) {
-        return getPlaneCorrectionMatrix(sin(dip), sin(az), cos(dip), cos(az));
-    }
-
-    private static double[][] getPlaneCorrectionMatrix(double sd, double sa, double cd, double ca) {
-        final double[][] matrix =
-            {{ ca*cd*ca+sa*sa,  cd*sa*ca-sa*ca, sd*ca},
-            {  sa*cd*ca-ca*sa,  cd*sa*sa+ca*ca, sd*sa},
-            { -ca*sd,          -sa*sd,          cd}};
-        return matrix;
-    }
-
-    private Vec3 correctPlane(double sd, double sa, double cd, double ca) {
-        return transform(Vec3.getPlaneCorrectionMatrix(sd, sa, cd, ca));
-    }
-    
     /**
      * Returns a list of equally spaced points around a great circle
      * having this vector as its pole. Assumes that this is a unit
@@ -454,6 +416,62 @@ public class Vec3 {
         }
         if (closed) points.add(points.get(0));
         return points;
+    }
+    
+    /*
+     * Rotates the supplied vector by the same rotation which would
+     * rotate the DOWN vector to align with this vector (i.e. the
+     * enclosing vector of the method). This is a private helper method
+     * for greatCirclePoints, so has not been extensively tested with
+     * arbitrary data.
+     *
+     * @param v vector to rotate
+     * @return rotated vector
+     */
+    private Vec3 correctTilt(Vec3 v) {
+        assert(v.isWellFormed());
+        final double d = sqrt(x*x + y*y);
+        Vec3 result;
+        if (d==0) {
+            // Vector is purely vertical
+            if (z<0) {
+                // This vector is already pointing down: no rotation needed.
+                result = v;
+            } else {
+                // This vector is pointing up. There are an infinite number
+                // of 180-degree rotations which would point it down.
+                // We arbitrarily pick a rotation around the x axis.
+                result = v.rot180(MeasurementAxis.X);
+            }
+        } else {
+            result = v.correctPlane(d, y/d, z, x/d);
+        }
+        assert(result.isWellFormed());
+        return result;
+    }
+    
+    private Vec3 correctPlane(double sd, double sa, double cd, double ca) {
+        return transform(Vec3.getPlaneCorrectionMatrix(sd, sa, cd, ca));
+    }
+
+    /** Returns a matrix to correct a vector for a given formation orientation.
+     * @param az the formation dip azimuth in radians
+     * @param dip the formation dip angle in radians
+     * @return a matrix to transform vectors from geographic co-ordinates to
+     * tectonic co-ordinates
+     */
+    public static double[][] getFormationCorrectionMatrix(double az,
+            double dip) {
+        return getPlaneCorrectionMatrix(sin(dip), sin(az), cos(dip), cos(az));
+    }
+
+    private static double[][] getPlaneCorrectionMatrix(double sd, double sa,
+            double cd, double ca) {
+        final double[][] matrix =
+            {{ ca*cd*ca+sa*sa,  cd*sa*ca-sa*ca, sd*ca},
+            {  sa*cd*ca-ca*sa,  cd*sa*sa+ca*ca, sd*sa},
+            { -ca*sd,          -sa*sd,          cd}};
+        return matrix;
     }
 
     /** Multiplies this vector by a supplied matrix. 
@@ -603,17 +621,24 @@ public class Vec3 {
             {z * x, z * y, z * z}});
     }
 
-    /** Returns the angle between this vector and another vector. 
+    /** Returns the signed angle between this vector and another vector. 
      * @param v a vector
      * @return the angle between this vector and {@code v}
      */
     public double angleTo(Vec3 v) {
+        // TODO enforce unit vector or normalize explicitly
         // Uses a cross product to get a signed angle.
         final Vec3 cross = cross(v);
         double sign = cross.z;
         if (sign == 0) sign = cross.y;
         if (sign == 0) sign = cross.x;
-        return asin(cross.mag()) * signum(sign);
+        double magnitude = cross.mag();
+        if (magnitude > 1) {
+            // Rounding errors can sometimes produce values slightly above
+            // 1, which would lead to a NaN from the asin.
+            magnitude = 1;
+        }
+        return asin(magnitude) * signum(sign);
     }
 
     /** Creates a vector from a polar specification in degrees.

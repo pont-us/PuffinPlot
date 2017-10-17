@@ -72,11 +72,16 @@ public class Vec3Test {
         {+9.25, -7.69, +5.27},
         {+8.57, -8.47, -6.72},};
     private List<Vec3> testVectors;
+    private List<Vec3> testUnitVectors;
     private final double delta = 1e-6;
 
     @Before
     public void setUp() {
         testVectors = Vec3Test.createTestVectors();
+        testUnitVectors = testVectors.stream().
+                filter(v -> !v.equals(Vec3.ORIGIN)).
+                map(v -> v.normalize()).
+                collect(Collectors.toList());
     }
 
     private static List<Vec3> createTestVectors() {
@@ -462,4 +467,54 @@ public class Vec3Test {
          * just for this.
          */ 
     }
+    
+    @Test
+    public void testGreatCirclePoints() {
+        for (Vec3 normal: testUnitVectors) {
+            final int[] pointCounts = {1, 2, 5, 10, 50};
+            for (int pointCount: pointCounts) {
+                final List<Vec3> openCircle =
+                        normal.greatCirclePoints(pointCount, false);
+                assertEquals(pointCount, openCircle.size());
+                testOneCircle(normal, Math.PI/2, openCircle);
+                
+                final List<Vec3> closedCircle =
+                        normal.greatCirclePoints(pointCount, true);
+                assertEquals(pointCount+1, closedCircle.size());
+                testOneCircle(normal, Math.PI/2, closedCircle);
+                assertTrue(closedCircle.get(0).equals(
+                        closedCircle.get(pointCount), delta));
+            }
+        }
+    }
+    
+
+    @Test
+    public void testMakeSmallCircle() {
+        for (Vec3 v: testUnitVectors) {
+            final double[] radii = {0, 0.1, 1, 2, 5, 10, 45, 89, 90};
+            for (double radius: radii) {
+                testOneCircle(v, Math.toRadians(radius),
+                        v.makeSmallCircle(radius));
+            }
+        }
+    }
+    
+    private void testOneCircle(Vec3 centre, double radius, List<Vec3> points) {
+        // Every point should be normal to the defining vector.
+        for (Vec3 point: points) {
+            assertEquals(radius, Math.abs(centre.angleTo(point)), delta);
+        }
+        
+        // Points should be spaced at equal angles.
+        if (points.size() > 1) {
+            final double angle = Math.abs(points.get(0).angleTo(points.get(1)));
+            for (int i=1; i<points.size()-1; i++) {
+                assertEquals(angle,
+                        Math.abs(points.get(i).angleTo(points.get(i+1))),
+                        delta);
+            }
+        }
+    }
+    
 }
