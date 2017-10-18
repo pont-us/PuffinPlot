@@ -6,8 +6,10 @@ package net.talvi.puffinplot.data;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import org.junit.Test;
@@ -152,6 +154,10 @@ public class Vec3Test {
         // Point on equator
         testOneEquatorPoint(1, 0, 0, 1, 0, 1, 1, 0, 0);
         testOneEquatorPoint(11, 12, 13, 0, 1, 0, 0, 1, 0);
+        
+        testEquatorPointOpposite();
+        testEquatorPointVertical();
+        
 
         // Illegal arguments
         final Vec3[][] illegal = {
@@ -181,6 +187,19 @@ public class Vec3Test {
         final Vec3 veq2 = Vec3.equatorPoint(v1, v0);
         assertTrue(expected.equals(veq1, 1e-10));
         assertTrue(expected.equals(veq2, 1e-10));
+    }
+    
+    private void testEquatorPointOpposite() {
+        final Vec3 v0 = new Vec3(1, 1, 1);
+        final Vec3 v1 = v0.invert();
+        final Vec3 opposite = Vec3.equatorPoint(v0, v1);
+        assertTrue(areCoplanar(v0, v1, opposite));
+        assertEquals(0, opposite.z, delta);
+    }
+    
+    private void testEquatorPointVertical() {
+        final Vec3 result = Vec3.equatorPoint(Vec3.DOWN, Vec3.DOWN.invert());
+        assertEquals(0, result.z, delta);
     }
 
     @Test
@@ -517,4 +536,59 @@ public class Vec3Test {
         }
     }
     
+    @Test
+    public void testInterpolateEquatorPoints() {
+        final Random rnd = new Random(23);
+        for (int i=0; i<20; i++) {
+            final int nPoints = rnd.nextInt(20);
+            Collections.shuffle(testUnitVectors, rnd);
+            final List<Vec3> input = testUnitVectors.subList(0, 10);
+            testInterpolateEquatorPoints(input);
+        }
+    }
+    
+    private void testInterpolateEquatorPoints(List<Vec3> input) {
+        final List<List<Vec3>> sublists = Vec3.interpolateEquatorPoints(input);
+        final List<Vec3> concatenated = new ArrayList<Vec3>(input.size());
+        for (int i=0; i<sublists.size(); i++) {
+            final List<Vec3> sublistWhole = new ArrayList(sublists.get(i));
+            assertTrue(sublistWhole.size()>1);
+            List<Vec3> sublistPart = sublistWhole;
+            if (i > 0) {
+                // not the first sublist: remove the first point,
+                // then make sure it's on the equator and between its
+                // neighbours
+                final Vec3 firstPoint = sublistPart.remove(0);
+                assertEquals(0, firstPoint.z, delta);
+                final List<Vec3> previousList = sublists.get(i-1);
+                assertTrue(areCoplanar(previousList.get(previousList.size()-2),
+                        firstPoint, sublistPart.get(0)));
+            }
+            if (i < sublists.size() - 1) {
+                // not the last sublist: remove the last point,
+                // then make sure it's on the equator and between its
+                // neighbours
+                final Vec3 lastPoint =
+                        sublistPart.remove(sublistPart.size() - 1);
+                assertEquals(0, lastPoint.z, delta);
+                final List<Vec3> nextList = sublists.get(i+1);
+                assertTrue(areCoplanar(sublistPart.get(sublistPart.size()-1),
+                        lastPoint, nextList.get(1)));
+            }
+
+            final long nHemispheres =
+                    sublistPart.stream().map(v -> Math.signum(v.z)).
+                            distinct().count();
+            assertEquals(1, nHemispheres);
+            concatenated.addAll(sublistPart);
+        }
+        assertEquals(input, concatenated);
+    }
+    
+    private boolean areCoplanar(Vec3 v0, Vec3 v1, Vec3 v2) {
+        final Vec3 cross = v0.cross(v1);
+        final double dot = cross.dot(v2);
+        return (Math.abs(dot) < delta);
+    }
+
 }

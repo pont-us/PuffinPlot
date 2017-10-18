@@ -148,8 +148,8 @@ public class CiteWindow extends JFrame {
                 + "paleomagnetic analysis, <i>Geochemistry, Geophysics, "
                 + "Geosystems</i>, 13, Q06Z45, doi:10.1029/2012GC004098."
                 + "<br><br>\nURL: "
-                + "<a href=\"http://dx.doi.org/10.1029/2012GC004098\">"
-                + "http://dx.doi.org/10.1029/2012GC004098</a>"
+                + "<a href=\"http://doi.org/10.1029/2012GC004098\">"
+                + "http://doi.org/10.1029/2012GC004098</a>"
                 + "</html>");
         citePane.setPreferredSize(null);
         
@@ -174,7 +174,7 @@ public class CiteWindow extends JFrame {
         onlinePaperButton.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                app.openWebPage("http://dx.doi.org/10.1029/2012GC004098");
+                app.openWebPage("http://doi.org/10.1029/2012GC004098");
             }});
         contentPane.add(onlinePaperButton);
         
@@ -220,7 +220,7 @@ public class CiteWindow extends JFrame {
             addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                StringSelection sel = new StringSelection(data);
+                final StringSelection sel = new StringSelection(data);
                 clipboard.setContents(sel, sel);
             }
         });

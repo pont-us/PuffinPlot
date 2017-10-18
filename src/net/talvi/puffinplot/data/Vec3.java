@@ -150,8 +150,23 @@ public class Vec3 {
             return v1;
         }
         
-        // We're now guaranteed that v0 and v1 are non-horizontal and
-        // in opposite hemispheres.
+        // We're now guaranteed that v0 and v1 are well-formed, non-horizontal,
+        // and in opposite hemispheres.
+        
+        // Special case: v0 and v1 both vertical
+        if (v0.x==0 && v0.y==0 && v1.x==0 && v1.y==0) {
+            // Any point on z=0 is a valid solution, so we have to
+            // make an arbitrary choice -- (1, 0, 0) is probably the most
+            // obvious.
+            return new Vec3(1, 0, 0);
+        }
+        
+        // Special case: v0 and v1 diametrically opposite
+        if (v0.plus(v1).equals(Vec3.ORIGIN)) {
+            // Two possible solutions, so we must choose one arbitrarily.
+            // We return the one on v0's side.
+            return new Vec3(v0.x, v0.y, 0).normalize();
+        }
         
         final Vec3 v = v0.times(signum(v0.z) / v0.z).
                 plus(v1.times(signum(v1.z) / v1.z)).
@@ -190,6 +205,7 @@ public class Vec3 {
      * {@code vs}; none of the sub-lists crosses the equator
      */
     public static List<List<Vec3>> interpolateEquatorPoints(List<Vec3> vs) {
+        // TODO require unit vectors, or normalize input?
         final List<List<Vec3>> result = new ArrayList<>();
         List<Vec3> currentSegment = new ArrayList<>();
         Vec3 prev = null;
