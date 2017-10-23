@@ -512,9 +512,23 @@ public class Vec3 {
      */
     public Vec3 nearestOnCircle(Vec3 v) {
         final double tau = this.dot(v);
-        final double rho = sqrt(1 - tau * tau);
-        return new Vec3(v.x - tau * x, v.y - tau * y, v.z - tau * z).
-                divideBy(rho);
+        if (abs(tau) >= 1) {
+            // v is on the pole to the circle, so all circle points are
+            // equally near. Pick one arbitrarily.
+            // One of these two must be non-parallel to this vector!
+            if (abs(this.dot(NORTH)) < 1) {
+                return nearestOnCircle(NORTH);
+            } else {
+                return nearestOnCircle(EAST);
+            }
+        } else {
+            final double rho = sqrt(1 - tau * tau);
+            assert(!Double.isNaN(rho));
+            assert(rho != 0);
+            return new Vec3(v.x - tau * x, v.y - tau * y, v.z - tau * z).
+                    divideBy(rho);
+            
+        }
     }
 
     /** Normalizes this vector. 
@@ -727,15 +741,15 @@ public class Vec3 {
         return toDegrees(getDecRad());
     }
     
-    /** Returns the strike of the plane normal this vector
-     * @return the strike of the plane normal this vector, in degrees */
+    /** Returns the strike of the plane normal to this vector
+     * @return the strike of the plane normal to this vector, in degrees */
     public double getStrikeDeg() {
         double decDeg = getDecDeg();
         // Ensure we have the declination of the *upward* vector 
         if (getIncDeg() > 0) decDeg += 180;
         double strike = decDeg - 90;
         while (strike < 0) { strike += 360; }
-        while (strike > 360) { strike -= 360; }
+        while (strike >= 360) { strike -= 360; }
         return strike;
     }
 

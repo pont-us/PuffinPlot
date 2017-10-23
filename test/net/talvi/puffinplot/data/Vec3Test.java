@@ -4,6 +4,7 @@
  */
 package net.talvi.puffinplot.data;
 
+import static java.lang.Math.toRadians;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -583,6 +584,39 @@ public class Vec3Test {
             concatenated.addAll(sublistPart);
         }
         assertEquals(input, concatenated);
+    }
+    
+    @Test
+    public void testNearestOnCircle() {
+        for (Vec3 circle: testUnitVectors) {
+            for (Vec3 point: testUnitVectors) {
+                final Vec3 result = circle.nearestOnCircle(point);
+                assertEquals(0, circle.dot(result), delta);
+                assertTrue(areCoplanar(circle, point, result));
+            }
+        }
+    }
+    
+    @Test
+    public void testGetStrikeDeg() {
+        final Random rnd = new Random(17);
+        for (int i=0; i<20; i++) {
+            double strike = rnd.nextDouble() * 360;
+            double dip = rnd.nextDouble() * 90;
+            if (rnd.nextInt(2) == 0) {
+                /*
+                 * 
+                 */
+                dip += 180;
+            }
+            /* Create a normal vector for a plane with the chosen dip
+             * at a 0-degree strike. */
+            final Vec3 unrotatedNormal = Vec3.fromPolarDegrees(1, dip-90, 90);
+            assertEquals(0, unrotatedNormal.getStrikeDeg(), delta);
+            /* Rotate it to match the chosen strike.         */
+            final Vec3 rotatedNormal = unrotatedNormal.rotZ(toRadians(strike));
+            assertEquals(strike, rotatedNormal.getStrikeDeg(), delta);
+        }
     }
     
     private boolean areCoplanar(Vec3 v0, Vec3 v1, Vec3 v2) {
