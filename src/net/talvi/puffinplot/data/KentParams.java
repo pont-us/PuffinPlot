@@ -109,7 +109,6 @@ public class KentParams {
         zetaDir = Vec3.fromPolarDegrees(1., inc, dec);
     }
 
-
     private static List<String> execute(String[] args) throws IOException {
         Process process = Runtime.getRuntime().exec(args);
         InputStream inputStream = process.getInputStream();

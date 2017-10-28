@@ -604,8 +604,9 @@ public class Vec3Test {
             double strike = rnd.nextDouble() * 360;
             double dip = rnd.nextDouble() * 90;
             if (rnd.nextInt(2) == 0) {
-                /*
-                 * 
+                /* Randomly flip the vector by 180 degrees. getStrikeDeg
+                 * should always take the upward-pointing direction,
+                 * even if the vector's pointing down.
                  */
                 dip += 180;
             }
@@ -619,10 +620,171 @@ public class Vec3Test {
         }
     }
     
+    @Test
+    public void testToCustomString() {
+        // test prefix, postfix, and separators
+        assertEquals("BEFORE 0.00 BETWEEN 0.00 BETWEEN 0.00 AFTER",
+                Vec3.ORIGIN.toCustomString("BEFORE ", " AFTER", " BETWEEN ",
+                        2, false));
+        
+        /* Test scale. The scale is chosen based on the total
+         * magnitude of the vector, which is why (5.5e7, 5.5e7, 5.5e7)
+         * comes out as "<55.0 55.0 55.0>e6" (since sqrt(5.5^2 * 3) < 10)
+         * but (6e7, 6e7, 6e7) comes out as "<6.0 6.0 6.0>e7"
+         * (since sqrt(6^2 * 3) > 10).
+         */ 
+        assertEquals("<9.9 9.9 9.9>e6",
+                new Vec3(9.9e6, 9.9e6, 9.9e6).
+                        toCustomString("<", ">", " ", 1, true));
+        assertEquals("<10.000 10.000 10.000>e6",
+                new Vec3(1e7, 1e7, 1e7).toCustomString("<", ">", " ", 3, true));
+        assertEquals("<11.0 11.0 11.0>e6",
+                new Vec3(1.1e7, 1.1e7, 1.1e7).
+                        toCustomString("<", ">", " ", 1, true));
+        assertEquals("<55.0 55.0 55.0>e6",
+                new Vec3(5.5e7, 5.5e7, 5.5e7).
+                        toCustomString("<", ">", " ", 1, true));
+        assertEquals("<6.0 6.0 6.0>e7",
+                new Vec3(6e7, 6e7, 6e7).
+                        toCustomString("<", ">", " ", 1, true));
+        assertEquals("[1.200, 3.400, 5.600]e-5",
+                new Vec3(1.2e-5, 3.4e-5, 5.6e-5).
+                        toCustomString("[", "]", ", ", 3, true));
+        
+        // test decimal places
+        final Vec3 dpTest =
+                new Vec3(11.2222222222, 11.2222222222, 11.2222222222);
+        for (int dp=0; dp<10; dp++) {
+            final String s = dpTest.toCustomString("", "", " ", dp, false);
+            final long numberOf2s = s.chars().filter((x) -> x == '2').count();
+            assertEquals(3*dp, numberOf2s);
+        }
+    }
+    
+    @Test
+    public void testMakeEllipse() {
+        // The only parameters used are etaMag, zetaMag, inc, dec, etaDec, and etaInc
+        // Data from Campbell Island
+        final String[] paramStrings = {
+            "0.33546 0.00026    46.7     5.7    10.5   315.0    14.1    12.6   163.0    74.1",
+            "0.33274 0.00018   297.0    73.5    10.2    48.2     6.4    32.4   139.9    15.0",
+            "0.33180 0.00024   138.3    15.4    12.0    47.6     2.4    46.9   311.6    67.7",
+            "0.33449 0.00012    77.5     4.5    11.2   167.8     2.7    27.0   274.5    80.7",
+            "0.33319 0.00011   333.0    72.5    10.9   233.4     3.4    16.6   142.3    17.2",
+            "0.33232 0.00010   168.9    16.9     7.2    75.4    11.8    16.0   312.4    68.9",
+            "0.33423 0.00010   134.7     3.5    17.2    44.7     1.9    38.6   303.7    80.1",
+            "0.33322 0.00010   235.4    71.9    12.2   138.0     2.5    23.6    47.2    17.9",
+            "0.33255 0.00010    43.6    17.8     9.5   133.9     0.8    25.7   226.1    70.5"
+        };
+        
+        for (String paramString: paramStrings) {
+            final KentParams kp = new KentParams(paramString);
+            final List<Vec3> ellipse = Vec3.makeEllipse(kp);
+            testOneEllipse(kp, ellipse);
+        }
+    }
+
+    private void testOneEllipse(KentParams kp, final List<Vec3> ellipse) {
+        final Vec3 expectedMean = Vec3.fromPolarDegrees(1,
+                kp.getMean().getIncDeg(), kp.getMean().getDecDeg());
+        final Vec3 actualMean = Vec3.meanDirection(ellipse);
+        // We don't expect extreme accuracy for the mean, since the points
+        // are fairly spaced out. 
+        assertTrue(expectedMean.equals(actualMean, 1e-2));
+        
+        // Check that angular distances from edge to centre all in range, and
+        // that they inflect exactly four times.
+        double prevAngleToCentre = -1;
+        int prevDirectionOfRadiusChange = 0; // increasing or decreasing
+        int nInflections = 0; // number of changes between increase/decrease
+        
+        // Determine major and minor axes. According to /Essentials of
+        // Paleomagnetism/, zeta should be the major axis, but in practice
+        // bootams.py and s_hext.py sometimes return an ellipse with
+        // zeta < eta, so we need to check for this.
+        double minorAxisAngle, majorAxisAngle;
+        Vec3 minorAxisDir, majorAxisDir;
+        if (kp.getEtaMag() > kp.getZetaMag()) {
+            minorAxisAngle = kp.getZetaMag();
+            minorAxisDir = kp.getZetaDir();
+            majorAxisAngle = kp.getEtaMag();
+            majorAxisDir = kp.getEtaDir();
+        } else {
+            minorAxisAngle = kp.getEtaMag();
+            minorAxisDir = kp.getEtaDir();
+            majorAxisAngle = kp.getZetaMag();
+            majorAxisDir = kp.getZetaDir();            
+        }
+        double minAngle = 1e10; // minimum angular distance to centre
+        double maxAngle = -1; // maximum angular distance to centre
+        Vec3 minAngleVector = null; // vector which gives minAngle
+        Vec3 maxAngleVector = null; // vector which gives maxAngle
+        for (Vec3 v: ellipse) {
+            final double angle = Math.abs(actualMean.angleTo(v));
+            // We allow a 0.01-radian margin of error.
+            assertTrue(angle > minorAxisAngle - 0.01);
+            assertTrue(angle < majorAxisAngle + 0.01);
+            if (prevAngleToCentre > -1) {
+                int direction = angle > prevAngleToCentre ? 1 : -1;
+                if (direction != prevDirectionOfRadiusChange) {
+                    nInflections++;
+                }
+                prevDirectionOfRadiusChange = direction;
+            }
+            prevAngleToCentre = angle;
+            
+            if (angle < minAngle) {
+                minAngle = angle;
+                minAngleVector = v;
+            }
+            if (angle > maxAngle) {
+                maxAngle = angle;
+                maxAngleVector = v;
+            }
+        }
+        // Check that the ellipse is ellipse-shaped
+        assertEquals(nInflections, 4);
+        
+        // Check that the major and minor axes point in the right directions
+        assertTrue(areRoughlyCoplanar(actualMean, kp.getZetaDir(),
+                maxAngleVector, 0.01));
+        assertTrue(areRoughlyCoplanar(actualMean, kp.getEtaDir(),
+                minAngleVector, 0.01));
+        
+        // Smoothness: check that angle between adjacent ellipse segments is
+        // not too large.
+        Vec3 prevDiff = null;
+        for (int i=0; i<ellipse.size()-1; i++) {
+            final Vec3 diff = ellipse.get(i+1).minus(ellipse.get(i)).normalize();
+            if (prevDiff != null) {
+                final double angle = diff.angleTo(prevDiff);
+                assertTrue(Math.abs(angle) < 0.25);
+            }
+            prevDiff = diff;
+        }
+    }
+    
+
+    @Test
+    public void testSpherInterpDir() {
+        // check coplanar
+        // check requested spacing
+        // check start and end points
+        
+        // check direction. Can easily measure angle of closest approach,
+        // but how to know it's the minimum? How about also running
+        // spherInterpDir on the inverse vector then comparing the
+        // two closest approaches? That should do it.
+    }
+    
     private boolean areCoplanar(Vec3 v0, Vec3 v1, Vec3 v2) {
+        return areRoughlyCoplanar(v0, v1, v2, delta);
+    }
+
+    private boolean areRoughlyCoplanar(Vec3 v0, Vec3 v1, Vec3 v2, double limit) {
         final Vec3 cross = v0.cross(v1);
         final double dot = cross.dot(v2);
-        return (Math.abs(dot) < delta);
+        return (Math.abs(dot) < limit);
     }
 
 }
