@@ -32,6 +32,7 @@ import static java.lang.Math.toRadians;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -233,6 +234,7 @@ public class Vec3 {
 
     /** Given two vectors, interpolates unit vectors along a great circle.
      * Uses Shoemake's Slerp algorithm.
+     * 
      * @param v0 a non-zero, well-formed vector
      * @param v1 a non-zero, well-formed vector
      * @param stepSize the step size for interpolation in radians
@@ -248,6 +250,7 @@ public class Vec3 {
         
         final Vec3 v0n = v0.normalize();
         final Vec3 v1n = v1.normalize();
+
         double dotProduct = v0n.dot(v1n);
         /* Floating-point rounding errors can produce "normalized" vectors
          * with a length slightly greater than 1, and in very unlucky cases
@@ -258,29 +261,43 @@ public class Vec3 {
          * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4587651 ,
          * but that one reports a crash rather than a hang.) In any case we need
          * to do the check below to guard against this very rare case.
+         * These cases correspond to parallel or antiparallel vectors,
+         * which need to be treated specially in any case.
          */
-        if (dotProduct > 1) dotProduct = 1;
-        if (dotProduct < -1) dotProduct = -1;
+        if (dotProduct >= 1) {
+            // Parallel vectors: we're done.
+            return Collections.singletonList(v0n);
+        }
+        if (dotProduct <= -1) {
+            // Antiparallel vectors: we need to pick an arbitrary direction.
+            if (Math.abs(v0.dot(Vec3.NORTH)) < 0.99) {
+                // If vectors aren't parallel to north, interpolate through
+                // north.
+                return concatenateWithoutCentre(
+                        spherInterpolate(v0, Vec3.NORTH, stepSize),
+                        spherInterpolate(Vec3.NORTH, v1, stepSize));
+            } else {
+                // If vectors *are* parallel to north, it's safe to interpolate
+                // through east.
+                return concatenateWithoutCentre(
+                        spherInterpolate(v0, Vec3.EAST, stepSize),
+                        spherInterpolate(Vec3.EAST, v1, stepSize));
+            }
+        }
         
         final double omega = Math.acos(dotProduct);
         // TODO fix this for equator-crossing case?
         if (omega < stepSize) return Arrays.asList(new Vec3[] {v0n, v1n});
         final int steps = (int) (omega / stepSize) + 1;
         final List<Vec3> result = new ArrayList<>(steps+1);
-        Vec3 prevVec = null;
 
         for (int i=0; i<steps; i++) {
             final double t = (double) i / (double) (steps-1);
             final double scale0 = (sin((1.0-t)*omega)) / sin(omega);
             final double scale1 = sin(t*omega) / sin(omega);
             final Vec3 thisVec = v0n.times(scale0).plus(v1n.times(scale1));
-            //There's now a separate routine for interpolating equator points.
-            //if (i>0 && !thisVec.sameHemisphere(prevVec)) {
-            // result.add(equatorPoint(prevVec, thisVec));
-            //}
             assert(thisVec.isWellFormed());
             result.add(thisVec);
-            prevVec = thisVec;
         }
         
         // I think that adding v1n is actually duplicating the last point.
@@ -289,15 +306,29 @@ public class Vec3 {
         result.add(v1n);
         return result;
     }
+    
+    private final static List<Vec3> concatenateWithoutCentre(List<Vec3> list0,
+            List<Vec3> list1) {
+        final List<Vec3> combined =
+                new ArrayList<Vec3>(list0.size() + list1.size() - 1);
+        combined.addAll(list0);
+        combined.addAll(list1.subList(1, list1.size()));
+        return combined;
+    }
 
     /**
      * Interpolates a great-circle path in a chosen direction between two
      * specified vectors. Of the two possible arcs, the result will be the 
      * arc which passes closer to {@code onPath}.
+     * 
+     * The supplied step size is only used as a guideline; the actual
+     * step size may at certain positions drop to 0 (i.e. a point is
+     * repeated) or increase to as much as 1.8*stepSize.
+     * 
      * @param v0 a vector
      * @param v1 a vector
      * @param onPath arc direction indicator
-     * @param stepSize size of interpolation step in radians
+     * @param stepSize approximate size of interpolation step in radians
      * @return a list of points defining a great-circle arc between {@code v0}
      * and {@code v1}, passing as close as possible to {@code onPath}
      * 
@@ -307,6 +338,23 @@ public class Vec3 {
         assert(v0.isWellFormed());
         assert(v1.isWellFormed());
         assert(onPath.isWellFormed());
+        if (v0.equals(v1)) {
+            // If start and end are equal, we're done.
+            return Collections.singletonList(v0);
+        }
+        if (v0.equals(v1.invert())) {
+            // Start and end are opposite: we can pass straight through
+            // the "onPath" point.
+            if (v0.equals(onPath) || v1.equals(onPath)) {
+                // Any hemicircle will do.
+                return spherInterpolate(v0, v1, stepSize);
+            } else {
+                // Split into two sub-arcs with onPath as the split point.
+                return concatenateWithoutCentre(
+                        spherInterpolate(v0, onPath, stepSize),
+                        spherInterpolate(onPath, v1, stepSize));
+            }
+        }
         final Vec3 avgDir = v0.plus(v1).normalize();
         if (avgDir.dot(onPath) > 0) {
             return spherInterpolate(v0, v1, stepSize);

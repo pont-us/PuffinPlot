@@ -4,15 +4,19 @@
  */
 package net.talvi.puffinplot.data;
 
+import static java.lang.Math.atan2;
+import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Random;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;
+import org.freehep.graphics2d.font.MACLatin;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -767,14 +771,86 @@ public class Vec3Test {
 
     @Test
     public void testSpherInterpDir() {
-        // check coplanar
-        // check requested spacing
-        // check start and end points
+        for (Vec3 from: testUnitVectors) {
+            for (Vec3 to: testUnitVectors) {
+                for (Vec3 direction: testUnitVectors) {
+                    final double step = 0.05;
+                    final List<Vec3> arc =
+                            Vec3.spherInterpDir(from, to, direction, step);
+                    testOneSpherInterpDir(from, to, direction, step, arc);
+                }
+            }
+        }
+    }
+    
+    private void testOneSpherInterpDir(Vec3 from, Vec3 to, Vec3 direction,
+            double step, List<Vec3> arc) {
+        if (from.equals(to)) {
+            assertTrue(from.equals(arc.get(0)));
+            return;
+        }
+        assertTrue(from.equals(arc.get(0), delta));
+        assertTrue(to.equals(arc.get(arc.size()-1), delta));
+        assertTrue(areCoplanar(arc, 0.02));
         
-        // check direction. Can easily measure angle of closest approach,
-        // but how to know it's the minimum? How about also running
-        // spherInterpDir on the inverse vector then comparing the
-        // two closest approaches? That should do it.
+        // check requested spacing
+        if (from.angleTo(to) >= step) {
+            int repeated = 0;
+            for (int i=1; i<arc.size()-1; i++) {
+                final double angle = Math.abs(arc.get(i-1).angleTo(arc.get(i)));
+                if (angle < delta) {
+                    repeated++;
+                } else {
+                    /* We put a very loose constraint on the spacing.
+                     * The arc may be cobbled together from sub-arcs,
+                     * each of which may have to fiddle the step value
+                     * if it doesn't divide the sub-arc length exactly.
+                     * We're just sanity checking here.
+                     */
+                    assertEquals(step, angle, step*0.9);
+                }
+            }
+            assertTrue(repeated==0 || repeated==4);
+        }
+        
+        // Check that the direction is correct.
+        final double largestDot = largestDotProduct(direction, arc);
+        final double largestInverseDot =
+                largestDotProduct(direction.invert(), arc);
+                
+        assertTrue(largestDot + delta >= largestInverseDot);
+    }
+    
+    private double largestDotProduct(Vec3 reference, List<Vec3> vectors) {
+        double max = -1;
+        for (int i=0; i<vectors.size(); i++) {
+            final Vec3 v = vectors.get(i);
+            final double dot = reference.dot(v);
+            if (dot > max) {
+                max = dot;
+            }
+
+        }
+        return max;
+    }
+    
+    @Test
+    public void testGetDipDeg() {
+        for (Vec3 v: testVectors) {
+            double incRad = atan2(v.z, sqrt(v.x*v.x + v.y*v.y));
+            if (incRad > 0) {
+                incRad = -incRad;
+            }
+            final double dipRad = incRad + Math.PI / 2;
+            final double dipDeg = Math.toDegrees(dipRad);
+            assertEquals(dipDeg, v.getDipDeg(), delta);
+        }
+    }
+    
+    private boolean areCoplanar(List<Vec3> vectors, double limit) {
+        final Vec3 normal = vectors.get(0).cross(vectors.get(1));
+        return vectors.stream().mapToDouble(v -> Math.abs(v.dot(normal))).
+                allMatch(x -> x < limit);
     }
     
     private boolean areCoplanar(Vec3 v0, Vec3 v1, Vec3 v2) {
