@@ -847,6 +847,41 @@ public class Vec3Test {
         }
     }
     
+    @Test
+    public void testCorrectForm() {
+        final double[] azimuths =
+            {0, 0.1, 1, 2, 5, 10, 15, 19, 45, 90,
+                135, 137, 180, 181, 269, 270, 359};
+        final double[] dips = {0, 0.1, 1, 2, 5, 10, 45, 49, 90};
+        for (double azimuth: azimuths) {
+            for (double dip: dips) {
+                for (Vec3 v: testVectors) {
+                    testCorrectFormInversion(azimuth, dip, v);
+                    testCorrectFormVsManual(azimuth, dip, v);
+                }
+            }
+        }
+    }
+    
+    private void testCorrectFormInversion(double azimuth, double dip, Vec3 v) {
+        final Vec3 tilted = v.correctForm(toRadians(azimuth),
+                toRadians(dip));
+        final Vec3 detilted = tilted.
+                correctForm(toRadians((180 + azimuth) % 360),
+                        toRadians(dip));
+        assertTrue(v.equals(detilted, delta));
+    }
+    
+    private void testCorrectFormVsManual(double azimuth, double dip, Vec3 v) {
+        final double azRad = toRadians(azimuth);
+        final double dipRad = toRadians(dip);
+        final Vec3 expected = v.rotZ(-azRad).rotY(dipRad).rotZ(azRad);
+        final Vec3 actual = v.correctForm(azRad, dipRad);
+        if (!expected.equals(actual, delta)) {
+            assertTrue(expected.equals(actual, delta));
+        }
+    }
+    
     private boolean areCoplanar(List<Vec3> vectors, double limit) {
         final Vec3 normal = vectors.get(0).cross(vectors.get(1));
         return vectors.stream().mapToDouble(v -> Math.abs(v.dot(normal))).
