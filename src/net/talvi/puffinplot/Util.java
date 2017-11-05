@@ -213,9 +213,16 @@ public class Util {
         final String parentDir;
         final String childDir;
         final String windowsAppDir = System.getenv("LOCALAPPDATA");
+        /* Another possibility would be "APPDATA" or "AppData", but that
+         * would return the directory for the roaming profile rather
+         * than (as here) the local profile. The local profile seems most
+         * appropriate, but either should work in practice.
+         * http://stackoverflow.com/questions/11113974/ has more detail.
+         */
         if (windowsAppDir != null) {
             // LOCALAPPDATA is non-null, so we're on a Windows system.
             parentDir = windowsAppDir;
+            // This directory is shared, so we create our own subdirectory.
             childDir = "PuffinPlot";
         } else {
             // LOCALAPPDATA is null. Assume we're on a *nix system and

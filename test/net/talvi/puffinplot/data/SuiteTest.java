@@ -16,14 +16,18 @@
  */
 package net.talvi.puffinplot.data;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.talvi.puffinplot.PuffinUserException;
 import net.talvi.puffinplot.data.file.IapdLoaderTest;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -31,8 +35,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.Rule;
-import org.junit.rules.ExpectedException;
 
 /**
  *
@@ -41,6 +43,7 @@ import org.junit.rules.ExpectedException;
 public class SuiteTest {
     
     private File file;
+    private Suite suite;
     
     final String FILE_TEXT = "PuffinPlot file. Version 3\n"
             + "DISCRETE_ID	DEPTH	RUN_NUMBER	TIMESTAMP	SLOT_NUMBER	MEAS_TYPE	X_MOMENT	Y_MOMENT	Z_MOMENT	MAG_SUS	VOLUME	AREA	SAMPLE_AZ	SAMPLE_DIP	FORM_AZ	FORM_DIP	MAG_DEV	TREATMENT	AF_X	AF_Y	AF_Z	TEMPERATURE	IRM_FIELD	ARM_FIELD	ARM_AXIS	PP_SELECTED	PP_ANCHOR_PCA	PP_HIDDEN	PP_ONCIRCLE	PP_INPCA\n"
@@ -85,19 +88,36 @@ public class SuiteTest {
             Logger.getLogger(IapdLoaderTest.class.getName()).log(Level.SEVERE, null, ex);
             fail("Error writing data to temporary file.");
         }
+        createSuite();
+    }
+    
+    private void createSuite() {
+        suite = new Suite("SuiteTest");
+        for (int depth=0; depth<10; depth++) {
+            String depthString = String.format("%d", depth);
+            Sample sample = new Sample(depthString, suite);
+            for (int demag=0; demag<100; demag += 10) {
+                final Datum d = new Datum((depth+1.)*(100.-demag), 0, 0);
+                d.setDepth(depthString);
+                d.setSuite(suite);
+                d.setMeasType(MeasType.CONTINUOUS);
+                d.setAfX(demag);
+                d.setAfY(demag);
+                d.setAfZ(demag);
+                d.setTreatType(TreatType.DEGAUSS_XYZ);
+                d.setSample(sample);
+                sample.addDatum(d);
+                suite.addDatum(d);
+            }
+        }
     }
     
     @After
     public void tearDown() {
     }
 
-    /**
-     * Test of convertDiscreteToContinuous method, of class Suite.
-     */
     @Test
     public void testConvertDiscreteToContinuous() {
-        System.out.println("convertDiscreteToContinuous");
-
         final Map<String, String> nameToDepth = new HashMap<>();
         nameToDepth.put("31X-1W-143", "3.14");
         nameToDepth.put("31X-1W-27.5", "5.67");
@@ -135,5 +155,45 @@ public class SuiteTest {
     public void testMissingSampleNameException() {
         final Suite suite = new Suite("SuiteTest");
         suite.new MissingSampleNameException("test");
+    }
+    
+    @Test
+    public void testSaveCalcsSample() {
+        try {
+            for (Sample sample: suite.getSamples()) {
+                sample.getData().stream().forEach(d -> d.setSelected(true));
+                sample.useSelectionForPca();
+                sample.useSelectionForCircleFit();
+                sample.doPca(Correction.NONE);
+                sample.fitGreatCircle(Correction.NONE);
+                sample.calculateMdf();
+            }
+            final File csvFile = File.createTempFile("puffinplot-test-", ".ppl");
+            suite.saveCalcsSample(csvFile);
+            suite.saveCalcsSample(new File("/home/pont/test.csv"));
+            List<String> lines = Files.readAllLines(csvFile.toPath());
+            // Check that header line is correct
+            assertEquals("Suite,Depth,NRM intensity (A/m),"+
+                    "MS jump temp. (degC),Steps,PCA dec. (deg),"+
+                    "PCA inc. (deg),PCA MAD1,PCA MAD3,PCA anchored,"+
+                    "PCA equation,PCA npoints,PCA start (degC or mT),"+
+                    "PCA end (degC or mT),PCA contiguous,GC dec (deg),"+
+                    "GC inc (deg),GC strike (deg),GC dip (deg),GC MAD1,"+
+                    "GC npoints,MDF half-intensity (A/m),"+
+                    "MDF demagnetization (degC or T),MDF midpoint reached,"+
+                    "Fisher dec. (deg),Fisher inc. (deg),Fisher a95 (deg),"+
+                    "Fisher k,Fisher nDirs,Fisher R,AMS dec1,AMS inc1,"+
+                    "AMS dec2,AMS inc2,AMS dec3,AMS inc3",
+                    lines.get(0));
+            assertEquals(suite.getSamples().size()+1, lines.size());
+            // Check that lines have right number of fields
+            for (String line: lines) {
+                assertEquals(35, line.chars().filter(c -> c == ',').count());
+            }
+            
+        } catch (PuffinUserException | IOException ex) {
+            Logger.getLogger(SuiteTest.class.getName()).log(Level.SEVERE, null, ex);
+            fail();
+        }
     }
 }

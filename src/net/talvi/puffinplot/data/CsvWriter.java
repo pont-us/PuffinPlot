@@ -89,10 +89,10 @@ public class CsvWriter {
      */
     public void writeCsv(Object... objects) throws IOException {
         StringBuilder sb = new StringBuilder();
-        for (Object o : objects) {
+        for (Object o: objects) {
             if (o instanceof List) {
                 List list = (List) o;
-                for (Object p : list) {
+                for (Object p: list) {
                     sb.append(makeCsvString(p));
                     sb.append(separator);
                 }
