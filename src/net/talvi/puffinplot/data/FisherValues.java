@@ -38,7 +38,6 @@ public class FisherValues implements FisherParams {
     private final double R;
     private final Vec3 meanDirection;
     private final List<Vec3> directions;
-    private final static double p = 0.05;
     private static final List<String> HEADERS =
         Arrays.asList("Fisher dec. (deg)", "Fisher inc. (deg)",
             "Fisher a95 (deg)", "Fisher k", "Fisher nDirs", "Fisher R");
@@ -77,6 +76,8 @@ public class FisherValues implements FisherParams {
      */
     public static FisherValues calculate(Collection<Vec3> vectors) {
         if (vectors.isEmpty()) {
+            // TODO Would probably be better to return a null *object*
+            // rather than a null reference here.
             return null;
         }
         
@@ -85,11 +86,21 @@ public class FisherValues implements FisherParams {
         for (Vec3 point: vectors) {
             normPoints.add(point.normalize());
         }
-        // R is the vector sum length
-        final double R = Vec3.sum(normPoints).mag();
+        final double p = 0.05; // significance level, so 0.05 for 95%
+        final double R = Vec3.sum(normPoints).mag(); // vector sum length
+        // TODO Handle N=R case -- should probably give k = +infinity,
+        // a95 = 0 (but existing calculation should already produce a95=0).
         final double k = (N-1)/(N-R);
-        final double a95 = Math.toDegrees(
-                acos( 1 - ((N-R)/R) * (pow(1/p,1/(N-1))-1) ));
+        final double cosOfA95 = 1 - ((N-R)/R) * (pow(1/p,1/(N-1))-1);
+        
+        /* cosOfA95 is *not* guaranteed to be in the range of cos,
+         * so it's possible to get a NaN here. It would of course be
+         * possible to trap this case and return (e.g.) 180, but NaN
+         * seems like the clearest way to indicate "no valid a95 for
+         * this data set".
+         */
+        final double a95 = Math.toDegrees(acos(cosOfA95));
+
         return new FisherValues(normPoints, a95, k, vectors.size(),
                 R, Vec3.meanDirection(normPoints));
     }
@@ -133,7 +144,10 @@ public class FisherValues implements FisherParams {
         return meanDirection;
     }
     
-    /** Returns the directions of the vectors on which these statistics were calculated. 
+    /** Returns a list of unit vectors representing
+     * the directions of the vectors on which these statistics were
+     * calculated. 
+     * 
      * @return the directions of the vectors on which these statistics were calculated */
     public List<Vec3> getDirections() {
         return directions;

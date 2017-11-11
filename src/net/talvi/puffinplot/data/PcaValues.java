@@ -92,7 +92,7 @@ public class PcaValues {
 
     /** Returns the maximum angle of planar deviation.
      * This is defined by Kirschvink (1980) p. 703.
-     * @return the maximum angle of planar deviation
+     * @return the maximum angle of planar deviation in degrees
      */
     public double getMad1() {
         return mad1;
@@ -100,7 +100,7 @@ public class PcaValues {
 
     /** Returns the maximum angle of linear deviation.
      * This is defined by Kirschvink (1980) p. 703.
-     * @return the maximum angle of linear deviation
+     * @return the maximum angle of linear deviation in degrees
      */
     public double getMad3() {
         return mad3;
