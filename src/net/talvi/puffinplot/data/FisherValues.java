@@ -148,7 +148,8 @@ public class FisherValues implements FisherParams {
      * the directions of the vectors on which these statistics were
      * calculated. 
      * 
-     * @return the directions of the vectors on which these statistics were calculated */
+     * @return the directions of the vectors on which these statistics
+     * were calculated */
     public List<Vec3> getDirections() {
         return directions;
     }
@@ -176,7 +177,7 @@ public class FisherValues implements FisherParams {
      * It returns the same result as the corresponding instance method
      * for any non-null input, but (unlike the instance method)
      * also works for a {@code null} {@code FisherValues}.
-     * @param fisherValues the fisher parameters to return as strings
+     * @param fisherValues the Fisher parameters to return as strings
      * @return the statistical parameters as a list of strings,
      * or a list of empty strings if {@code fisherValues} was {@code null}
      * @see #toStrings() 

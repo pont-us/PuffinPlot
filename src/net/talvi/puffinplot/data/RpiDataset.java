@@ -130,9 +130,21 @@ public class RpiDataset {
                     builder.append(",");
                 }
             }
+            
+            /* TODO Fix this quick hack -- normalizer type should be explicitly
+             * represented in the class and set on instantiation,
+             * not guessed from the value of normalizerIntensity.
+             */
+            
+            final Datum normalizerDatum = armSample.getDatum(0);
+            final double normalizerIntensity = normalizerDatum.getIntensity();
+            final double normalizerMagSus = normalizerDatum.getMagSus();
+            
             builder.append(String.format(Locale.ENGLISH, ",%g,%g,%g,%g,%g",
                     getMeanRatio(), getSlope(), getR(),
-                    getrSquared(), armSample.getDatum(0).getIntensity()));
+                    getrSquared(),
+                    normalizerIntensity == 0 ? normalizerMagSus : normalizerIntensity
+                    ));
             builder.append("\n");
             
             return builder.toString();
@@ -188,6 +200,10 @@ public class RpiDataset {
             final double nrm = nrmSample.getNrm();
             final String depth = nrmSample.getData().get(0).getDepth();
             final Sample msSample = msSuite.getSampleByName(depth);
+            if (msSample == null) {
+                throw new IllegalArgumentException("No MS sample for depth " +
+                                                   depth);
+            }
             final double ms = msSample.getData().get(0).getMagSus();
             final double rpi = nrm/ms;
             rpis.add(new RpiDatum(Collections.singletonList(rpi),

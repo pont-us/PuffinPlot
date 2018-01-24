@@ -24,6 +24,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -203,6 +206,8 @@ public class SuiteTest {
      */
     @Test
     public void testLoadAndSaveSuite() {
+        final DateFormat iso8601format =
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
         final Suite suite = new Suite("testLoadAndSaveSuite");
         loadFileDataIntoSuite(puffinFile1, suite);
         final File savedFile = saveSuiteToTempFile(suite);
@@ -216,13 +221,25 @@ public class SuiteTest {
                 BufferedReader br = new BufferedReader(reader)) {
             for (String expectedLine: FILE_TEXT.split("\n")) {
                 final String actualLine = br.readLine();
-                if (!expectedLine.contains("SAVED_BY_PROGRAM")) {
+                if (expectedLine.contains("SAVED_BY_PROGRAM")) {
+                    // this isn't expected to match
+                } else if (expectedLine.contains("CREATION_DATE") ||
+                        expectedLine.contains("MODIFICATION_DATE")) {
+                    // The actual datestamp should match, but the string
+                    // representation may differ since it's expressed in
+                    // local time with a timezone suffix.
+                    assertEquals(iso8601format.parse(expectedLine.split("\t")[2]),
+                            iso8601format.parse(actualLine.split("\t")[2]));
+                } else {
                     assertEquals(expectedLine, actualLine);
                 }
             }
         } catch (IOException ex) {
             Logger.getLogger(SuiteTest.class.getName()).log(Level.SEVERE, null, ex);
             fail("Exception loading suite");
+        } catch (ParseException ex) {
+            Logger.getLogger(SuiteTest.class.getName()).log(Level.SEVERE, null, ex);
+            fail("Exception parsing date");
         }
     }
     
