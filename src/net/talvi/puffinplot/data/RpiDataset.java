@@ -103,7 +103,6 @@ public class RpiDataset {
             return slope;
         }
         
-
         /**
          * @return the r-value for the linear regression
          */

@@ -41,7 +41,8 @@ import java.util.logging.Logger;
  */
 public class Correction {
 
-    private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
+    private static final Logger logger =
+            Logger.getLogger("net.talvi.puffinplot");
     private final boolean tray;
     private final boolean empty;
     private Rotation rotation;
@@ -134,28 +135,43 @@ public class Correction {
     /** Returns {@code true} if this correction includes a rotation for sample
      * orientation. This is the case if the rotation is {@code SAMPLE}
      * or {@code FORMATION}.
-     * @return {@code true} if this correction includes a rotation for sample orientation
+     * 
+     * @return {@code true} if this correction includes
+     * a rotation for sample orientation
      */
     public boolean includesSample() {
-        return (getRotation() == Rotation.SAMPLE || getRotation() == Rotation.FORMATION);
+        return (getRotation() == Rotation.SAMPLE ||
+                getRotation() == Rotation.FORMATION);
     }
 
-    /** Returns {@code true} if this correction includes a rotation for formation
+    /**
+     * Returns {@code true} if this correction includes a rotation for formation
      * orientation. This is the case if the rotation is {@code FORMATION}.
-     * @return {@code true} if this correction includes a rotation for formation orientation
+     *
+     * @return {@code true} if this correction includes a rotation for formation
+     * orientation
      */
     public boolean includesFormation() {
         return (getRotation() == Rotation.FORMATION);
     }
 
-    /** Returns {@code true} if this correction includes a correction for tray remanence.
-     * @return {@code true} if this correction includes a correction for tray remanence */
+    /**
+     * Returns {@code true} if this correction includes a correction for tray
+     * remanence.
+     *
+     * @return {@code true} if this correction includes a correction for tray
+     * remanence
+     */
     public boolean includesTray() {
         return tray;
     }
 
-    /** Returns {@code true} if this correction includes an empty-slot correction.
-     * @return {@code true} if this correction includes an empty-slot correction */
+    /**
+     * Returns {@code true} if this correction includes an empty-slot
+     * correction.
+     *
+     * @return {@code true} if this correction includes an empty-slot correction
+     */
     public boolean includesEmpty() {
         return empty;
     }
@@ -196,10 +212,12 @@ public class Correction {
                     scanner.nextBoolean());
         } catch (InputMismatchException e) {
             correction = NONE;
-            logger.info("Malformed correction string in preferences: defaulting to no correction.");
+            logger.info("Malformed correction string in preferences: "
+                    + "defaulting to no correction.");
         } catch (NoSuchElementException e) {
             correction = NONE;
-            logger.info("Malformed correction string in preferences: defaulting to no correction.");
+            logger.info("Malformed correction string in preferences: "
+                    + "defaulting to no correction.");
         } 
         return correction;
     }
