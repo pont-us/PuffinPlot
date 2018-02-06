@@ -1,5 +1,5 @@
 /* This file is part of PuffinPlot, a program for palaeomagnetic
- * data plotting and analysis. Copyright 2012 Pontus Lurcock.
+ * data plotting and analysis. Copyright 2012-2018 Pontus Lurcock.
  *
  * PuffinPlot is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,8 +79,6 @@ public class IdToFileMapTest {
      */
     @Test
     public void testPutAndGet() {
-        System.out.println("put and get");
-        
         for (int i=0; i<nDirs; i++) {
             idToFileMap.put(identifiers[i], dirs.get(i));
         }
@@ -97,8 +95,6 @@ public class IdToFileMapTest {
      */
     @Test
     public void testPutAndGetString() throws IOException {
-        System.out.println("put and getString");
-        
         for (int i=0; i<nDirs; i++) {
             idToFileMap.put(identifiers[i], dirs.get(i));
         }
@@ -114,7 +110,6 @@ public class IdToFileMapTest {
      */
     @Test
     public void testNonexistent() {
-        System.out.println("non-existent key");
         assertNull(idToFileMap.get(nonExistentKey));;
         assertNull(idToFileMap.getString(nonExistentKey));
     }

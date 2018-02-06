@@ -25,12 +25,8 @@ import static org.junit.Assert.*;
  */
 public class LocationTest {
     
-    /**
-     * Test of toVec3 method, of class Location.
-     */
     @Test
     public void testToVec3() {
-        System.out.println("toVec3");
         final Vec3 v = new Vec3(1.2, 2.3, 3.4).normalize();
         Location instance = Location.fromVec3(v);
         Vec3 expResult = v;

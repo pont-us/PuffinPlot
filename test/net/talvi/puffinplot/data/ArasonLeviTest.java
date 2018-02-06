@@ -100,9 +100,6 @@ public class ArasonLeviTest {
      */
     @Test
     public void testCalculate() {
-
-        System.out.println("ARALEV");
-
         for (int i = 0; i < inputs.length; i++) {
             final List<Double> inputData = DoubleStream.of(inputs[i]).
                     mapToObj(Double::valueOf).

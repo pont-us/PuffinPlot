@@ -682,6 +682,7 @@ public class Vec3 {
 
     /** Returns the inverse of this vector. This is produced by
      * negating each component.
+     * 
      * @return the inverse of this vector
      */
     public Vec3 invert() {
@@ -699,9 +700,10 @@ public class Vec3 {
             {z * x, z * y, z * z}});
     }
 
-    /** Returns the signed angle between this vector and another vector. 
+    /** Returns the signed angle between this vector and another vector.
+     * 
      * @param v a vector
-     * @return the angle between this vector and {@code v}
+     * @return the angle between this vector and {@code v}, in radians
      */
     public double angleTo(Vec3 v) {
         // TODO enforce unit vector or normalize explicitly
@@ -720,6 +722,7 @@ public class Vec3 {
     }
 
     /** Creates a vector from a polar specification in degrees.
+     * 
      * @param mag magnitude for the new vector
      * @param inc inclination for the new vector, in degrees
      * @param dec declination for the new vector, in degrees

@@ -25,12 +25,8 @@ public class UtilTest {
         return result;
     }
     
-    /**
-     * Test of numberRangeStringToBitSet method, of class Util.
-     */
     @Test
     public void testNumberRangeStringToBitSet() {
-        System.out.println("numberRangeStringToBitSet");
         final String[] inputsAndResults = {
             "1", "1",
             "1,3", "101",
@@ -129,7 +125,6 @@ public class UtilTest {
      */
     @Test
     public void testClipLineToRectangle() {
-        System.out.println("clipLineToRectangle");
         
         double[][] rects = {
             {1, 3, 2, 2},
@@ -165,8 +160,6 @@ public class UtilTest {
                 new Rectangle2D.Double(3, 3, 3, 3)));
         final Line2D clipped0 = Util.clipLineToRectangle(line0,
                 new Rectangle2D.Double(0, 0, 4, 4));
-        System.out.println(clipped0 + "");
         assertTrue(linesEqual(line0, clipped0));
-        
     }
 }

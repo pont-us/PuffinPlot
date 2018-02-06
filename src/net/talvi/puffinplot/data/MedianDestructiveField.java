@@ -66,7 +66,8 @@ public class MedianDestructiveField {
 
     /**
      * Calculate and create a median destructive field (or temperature)
-     * value for the supplied data. 
+     * value for the supplied data. If there are fewer than two treatment
+     * steps in the supplied list, {@code null} will be returned.
      * 
      * @param data a list of data representing successive demagnetization
      * steps for a single sample
@@ -91,7 +92,8 @@ public class MedianDestructiveField {
         final double demagLevel = interpolate(dPrev.getTreatmentLevel(),
                 d.getTreatmentLevel(), d.getIntensity(),
                 dPrev.getIntensity(), halfIntensity);
-        return new MedianDestructiveField(demagLevel, halfIntensity, halfIntReached);
+        return new MedianDestructiveField(demagLevel, halfIntensity,
+                halfIntReached);
     }
 
     /** Returns the treatment level at which the intensity of the sample's
@@ -124,8 +126,10 @@ public class MedianDestructiveField {
         return HEADERS;
     }
 
-    /** Returns a list of empty strings equal in length to the number of parameters.
-     * @return  a list of empty strings equal in length to the number of parameters
+    /** Returns a list of empty strings equal in length to the
+     * number of parameters.
+     * @return  a list of empty strings equal in length to the number
+     * of parameters
      */
     public static List<String> getEmptyFields() {
         return Collections.nCopies(HEADERS.size(), "");
@@ -137,7 +141,8 @@ public class MedianDestructiveField {
      * @return the parameters as a list of strings
      */
     public List<String> toStrings() {
-        return Arrays.asList(String.format(Locale.ENGLISH, "%.3g", getIntensity()),
+        return Arrays.asList(
+                String.format(Locale.ENGLISH, "%.3g", getIntensity()),
                 String.format(Locale.ENGLISH, "%.3g", getDemagLevel()),
                 isHalfIntReached() ? "Y" : "N");
     }

@@ -16,12 +16,6 @@
  */
 package net.talvi.puffinplot.data;
 
-import java.util.BitSet;
-import java.util.List;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -31,32 +25,8 @@ import static org.junit.Assert.*;
  */
 public class SampleTest {
     
-    public SampleTest() {
-    }
-    
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
-
-    /**
-     * Test of selectByTreatmentLevelRange method, of class Sample.
-     */
     @Test
     public void testSelectByTreatmentLevelRange() {
-        System.out.println("selectByTreatmentLevelRange");
-        
         final Sample s = new Sample("Test sample", null);
         
         for (int i=0; i<10; i++) {

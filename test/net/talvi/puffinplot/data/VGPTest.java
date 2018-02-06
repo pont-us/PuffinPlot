@@ -28,12 +28,8 @@ import static org.junit.Assert.*;
  */
 public class VGPTest {
 
-    /**
-     * Test of calculate method, of class VGP.
-     */
     @Test
     public void testCalculate() {
-        System.out.println("calculate");
         Vec3 direction = Vec3.fromPolarDegrees(1, 45, 25);
         double a95 = 5.0;
         final Location loc = Location.fromDegrees(30, 250);
@@ -44,5 +40,4 @@ public class VGPTest {
         assertEquals(4.0, vgp.getDp(), delta);
         assertEquals(6.3, vgp.getDm(), delta);
     }
-
 }

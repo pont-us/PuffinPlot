@@ -56,7 +56,7 @@ public final class GreatCircle {
         for (Vec3 p: pointsUnscaled) {
             this.points.add(p.normalize());
         }
-        Eigens eigens = Eigens.fromVectors(points, true);
+        final Eigens eigens = Eigens.fromVectors(points, true);
         this.pole = eigens.getVectors().get(2).normalize();
         mad1 = eigens.getMad1();
         
