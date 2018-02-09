@@ -1,5 +1,5 @@
 /* This file is part of PuffinPlot, a program for palaeomagnetic
- * data plotting and analysis. Copyright 2012-2015 Pontus Lurcock.
+ * data plotting and analysis. Copyright 2012-2018 Pontus Lurcock.
  *
  * PuffinPlot is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,20 +89,6 @@ public class Eigens {
                     : vector.oTensor());
         }
         return new Eigens(orientationTensor);
-    }
-
-    /** Returns a matrix of the eigenvectors.
-     * @return a matrix of the eigenvectors
-     */
-    public Matrix toMatrix() {
-        final Vec3 v1 = getVectors().get(0);
-        final Vec3 v2 = getVectors().get(1);
-        final Vec3 v3 = getVectors().get(2);
-        final double[] elts = {
-            v1.x, v1.y, v1.z,
-            v2.x, v2.y, v2.z,
-            v3.x, v3.y, v3.z };
-        return new Matrix(elts, 3);
     }
 
     private static int[] order(double[] x) {
