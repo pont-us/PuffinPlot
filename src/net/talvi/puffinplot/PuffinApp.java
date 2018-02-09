@@ -476,7 +476,6 @@ public final class PuffinApp {
 
     }
 
-    
     /**
      * Reports whether this PuffinApp is running on Mac OS X.
      * 
