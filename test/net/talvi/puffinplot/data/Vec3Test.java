@@ -4,6 +4,7 @@
  */
 package net.talvi.puffinplot.data;
 
+import Jama.Matrix;
 import static java.lang.Math.atan2;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
@@ -860,6 +861,34 @@ public class Vec3Test {
                     testCorrectFormVsManual(azimuth, dip, v);
                 }
             }
+        }
+    }
+
+    @Test
+    public void testOTensor() {
+        final Random rnd = new Random(99);
+        for (int test=0; test<10; test++) {
+            final Vec3 v = new Vec3(rnd.nextDouble()*100-50,
+                    rnd.nextDouble()*100-50,
+                    rnd.nextDouble()*100-50);
+            final Matrix tensor = v.oTensor();
+            for (int i=0; i<3; i++) {
+                for (int j=0; j<3; j++) {
+                    assertEquals(
+                            getVectorComponent(v, i) * getVectorComponent(v, j),
+                            tensor.get(i, j),
+                            1e-6);
+                }
+            }
+        }
+    }
+    
+    private static double getVectorComponent(Vec3 v, int i) {
+        switch (i) {
+            case 0: return v.x;
+            case 1: return v.y;
+            case 2: return v.z;
+            default: throw new IllegalArgumentException();
         }
     }
     

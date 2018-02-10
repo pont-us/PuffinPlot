@@ -1,5 +1,5 @@
 /* This file is part of PuffinPlot, a program for palaeomagnetic
- * data plotting and analysis. Copyright 2012-2015 Pontus Lurcock.
+ * data plotting and analysis. Copyright 2012-2018 Pontus Lurcock.
  *
  * PuffinPlot is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,14 +132,6 @@ public class Tensor {
         axes.add(k2);
         axes.add(k3);
         return new Tensor(axes);
-    }
-    
-    private static Tensor fromDirections(double i1, double d1, double i2,
-            double d2, double i3, double d3) {
-        final Vec3 v1 = Vec3.fromPolarDegrees(1, i1, d1);
-        final Vec3 v2 = Vec3.fromPolarDegrees(1, i2, d2);
-        final Vec3 v3 = Vec3.fromPolarDegrees(1, i3, d3);
-        return Tensor.fromDirections(v1, v2, v3);
     }
 
     /** Returns one of the tensor's three principal axes as a vector. 
