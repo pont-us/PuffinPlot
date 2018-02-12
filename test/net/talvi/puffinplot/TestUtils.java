@@ -36,4 +36,8 @@ public class TestUtils {
         return string.chars().allMatch((int c) -> c >= 20 && c < 127);
     }
     
+    public static boolean equalOrOpposite(Vec3 v0, Vec3 v1, double delta) {
+        return v0.equals(v1, delta) || v0.invert().equals(v1, delta);
+    }
+    
 }
