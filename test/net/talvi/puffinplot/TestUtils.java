@@ -1,0 +1,39 @@
+/* This file is part of PuffinPlot, a program for palaeomagnetic
+ * data plotting and analysis. Copyright 2012-2018 Pontus Lurcock.
+ *
+ * PuffinPlot is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PuffinPlot is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with PuffinPlot. If not, see <http://www.gnu.org/licenses/>.
+ */
+package net.talvi.puffinplot;
+
+import java.util.Random;
+import net.talvi.puffinplot.data.Vec3;
+
+/**
+ * Utility methods used by unit tests.
+ * 
+ * @author pont
+ */
+public class TestUtils {
+    
+    public static Vec3 randomVector(Random rnd, double max) {
+        return new Vec3(rnd.nextDouble()*2*max-max,
+                        rnd.nextDouble()*2*max-max,
+                        rnd.nextDouble()*2*max-max);
+    }
+
+    public static boolean isPrintableAscii(String string) {
+        return string.chars().allMatch((int c) -> c >= 20 && c < 127);
+    }
+    
+}

@@ -21,6 +21,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import net.talvi.puffinplot.TestUtils;
+import net.talvi.puffinplot.Util;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -194,7 +196,7 @@ public class FisherValuesTest {
         final String headers = String.join(",", FisherValues.getHeaders());
         
         assertEquals(expected, headers);
-        assertTrue(isPrintableAscii(headers));
+        assertTrue(TestUtils.isPrintableAscii(headers));
     }
 
     /**
@@ -207,10 +209,6 @@ public class FisherValuesTest {
         final List<String> headers = FisherValues.getHeaders();
         assertEquals(headers.size(), emptyFields.size());
         assertTrue(emptyFields.stream().allMatch(field -> "".equals(field)));
-    }
-    
-    private static boolean isPrintableAscii(String string) {
-        return string.chars().allMatch(c -> c >= 20 && c < 0x7F);
     }
     
     private static FisherValues createFisherValues() {

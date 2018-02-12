@@ -239,9 +239,6 @@ public class Util {
         return appDataPath;
     }
 
-    public static boolean isPrintableAscii(String string) {
-        return string.chars().allMatch((int c) -> c >= 20 && c < 127);
-    }
 
     private static class Outcode {
         private final int bitField;

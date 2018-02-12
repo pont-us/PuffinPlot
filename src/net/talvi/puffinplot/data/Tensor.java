@@ -37,31 +37,6 @@ public class Tensor {
             Arrays.asList("AMS dec1", "AMS inc1", "AMS dec2", "AMS inc2",
             "AMS dec3", "AMS inc3");
 
-    /** Creates a tensor with the specified components. Since the
-     * tensor is symmetric, only six components need to be defined.
-     * 
-     * @param k11 (1,1) component
-     * @param k22 (2,2) component
-     * @param k33 (3,3) component
-     * @param k12 (1,2) and (2,1) component
-     * @param k23 (2,3) and (3,2) component
-     * @param k13 (1,3) and (3,1) component
-     */
-    public Tensor(double k11, double k22, double k33,
-            double k12, double k23, double k13) {
-        this.k11 = k11;
-        this.k22 = k22;
-        this.k33 = k33;
-        this.k12 = k12;
-        this.k23 = k23;
-        this.k13 = k13;
-        final double[] elts = {k11, k12, k13, k12, k22, k23, k13, k23, k33};
-        final Matrix ams = new Matrix(elts, 3);
-        final Eigens amsEigens = new Eigens(ams);
-        // For the present, we just keep the directions
-        amsAxes = amsEigens.getVectors();
-    }
-
     /** Creates a tensor with the specified components and
      * transformed using the specified matrices. The tensor
      * is constructed by first making a tensor with the
@@ -79,7 +54,8 @@ public class Tensor {
      * @param correct2 second correction matrix
      */
     public Tensor(double k11, double k22, double k33,
-            double k12, double k23, double k13, Matrix correct1, Matrix correct2) {
+            double k12, double k23, double k13,
+            Matrix correct1, Matrix correct2) {
         final double[] elts = {k11, k12, k13, k12, k22, k23, k13, k23, k33};
         final Matrix ams1 = new Matrix(elts, 3);
         final Matrix ams2 = correct1.times(ams1).times(correct1.transpose());
@@ -98,7 +74,7 @@ public class Tensor {
     /** Creates a tensor with the specified principal axes.
      * @param axes the principal axes of the tensor
      */
-    public Tensor(List<Vec3> axes) {
+    private Tensor(List<Vec3> axes) {
         // TODO test this properly
         final Vec3 v1 = axes.get(0);
         final Vec3 v2 = axes.get(1);

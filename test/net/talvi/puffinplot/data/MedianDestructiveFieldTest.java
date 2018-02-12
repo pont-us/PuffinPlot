@@ -19,6 +19,7 @@ package net.talvi.puffinplot.data;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import net.talvi.puffinplot.TestUtils;
 import net.talvi.puffinplot.Util;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -46,7 +47,7 @@ public class MedianDestructiveFieldTest {
         final String actual = String.join(",",
                 MedianDestructiveField.getHeaders());
         assertEquals(expected, actual);
-        assertTrue(Util.isPrintableAscii(actual));
+        assertTrue(TestUtils.isPrintableAscii(actual));
     }
 
     @Test
