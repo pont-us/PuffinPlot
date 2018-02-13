@@ -16,8 +16,11 @@
  */
 package net.talvi.puffinplot.data;
 
+import Jama.Matrix;
+import java.util.Random;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static java.lang.Math.toDegrees;
 
 /**
  *
@@ -56,5 +59,32 @@ public class SampleTest {
         // Result is undefined so we don't test it, but we're making sure
         // that calling with NaNs doesn't produce an exception.
     }
-   
+    
+    @Test
+    public void testSetAmsFromTensor() {
+        final Random rnd = new Random(13);
+        for (int test=0; test<10; test++) {
+            final Sample sample = new Sample("test", null);
+            final double sampAz = rnd.nextDouble()*2*Math.PI;
+            final double sampDip = rnd.nextDouble()*2*Math.PI-Math.PI;
+            final double formAz = rnd.nextDouble()*2*Math.PI;
+            final double formDip = rnd.nextDouble()*2*Math.PI-Math.PI;
+            final Datum d = new Datum();
+            d.setSampAz(toDegrees(sampAz));
+            d.setSampDip(toDegrees(sampDip));
+            d.setFormAz(toDegrees(formAz));
+            d.setFormDip(toDegrees(formDip));
+            sample.addDatum(d);
+            sample.setAmsFromTensor(1, 2, 3, 4, 5, 6);
+            final Tensor actual = sample.getAms();
+            final Tensor expected = new Tensor(1, 2, 3, 4, 5, 6,
+                    new Matrix(Vec3.getSampleCorrectionMatrix(sampAz, sampDip)),
+                    new Matrix(Vec3.getFormationCorrectionMatrix(
+                            formAz, formDip)));
+            for (int axisIndex=0; axisIndex<3; axisIndex++) {
+                assertTrue(expected.getAxis(axisIndex).equals(
+                        actual.getAxis(axisIndex), 1e-6));
+            }
+        }
+    }
 }
