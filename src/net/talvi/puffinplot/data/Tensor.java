@@ -43,6 +43,8 @@ public class Tensor {
      * specified components, then sequentially transforming it
      * by the two specified matrices. Since the
      * tensor is symmetric, only six components need to be defined.
+     * All the components, and the elements of the matrices, must be
+     * finite values.
      * 
      * @param k11 (1,1) component
      * @param k22 (2,2) component
@@ -57,6 +59,18 @@ public class Tensor {
             double k12, double k23, double k13,
             Matrix correct1, Matrix correct2) {
         final double[] elts = {k11, k12, k13, k12, k22, k23, k13, k23, k33};
+        if (!Arrays.stream(elts).allMatch(x -> Double.isFinite(x))) {
+            throw new IllegalArgumentException("Components must be finite.");
+        }
+        if (!Arrays.stream(correct1.getColumnPackedCopy()).
+                allMatch(x -> Double.isFinite(x))) {
+            throw new IllegalArgumentException("correct1 must be finite.");
+        }
+        if (!Arrays.stream(correct2.getColumnPackedCopy()).
+                allMatch(x -> Double.isFinite(x))) {
+            throw new IllegalArgumentException("correct2 must be finite.");
+        }
+        
         final Matrix ams1 = new Matrix(elts, 3);
         final Matrix ams2 = correct1.times(ams1).times(correct1.transpose());
         final Matrix ams3 = correct2.times(ams2).times(correct2.transpose());
