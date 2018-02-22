@@ -71,8 +71,7 @@ public class PcaValuesTest {
         }
         
         /* The expected output was generated from PmagPy's pca.py
-         * script using identical input data. Currently we don't
-         * 
+         * script using identical input data.
          */
         final double[][] expectedValues = {
             //ldec   linc   mad3   pdec   pinc   mad1

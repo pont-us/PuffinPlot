@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 import net.talvi.puffinplot.TestUtils;
-import net.talvi.puffinplot.Util;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

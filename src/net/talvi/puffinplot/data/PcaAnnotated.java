@@ -67,9 +67,9 @@ public class PcaAnnotated {
      * @return results of principal component analysis
      */
     public static PcaAnnotated calculate(Sample sample, Correction correction) {
-        List<Datum> rawData = sample.getVisibleData();
-        List<Vec3> points = new ArrayList<>(rawData.size());
-        List<Datum> data = new ArrayList<>(rawData.size());
+        final List<Datum> rawData = sample.getVisibleData();
+        final List<Vec3> points = new ArrayList<>(rawData.size());
+        final List<Datum> data = new ArrayList<>(rawData.size());
         
         int runEndsSeen = 0;
         boolean thisIsPca = false, lastWasPca = false;
@@ -83,10 +83,15 @@ public class PcaAnnotated {
             }
             lastWasPca = thisIsPca;
         }
-        if (thisIsPca) runEndsSeen++;
-        boolean contiguous = (runEndsSeen <= 1);
-        if (points.size() < 2) return null;
-        PcaValues pca = PcaValues.calculate(points, sample.isPcaAnchored());
+        if (thisIsPca) {
+            runEndsSeen++;
+        }
+        final boolean contiguous = (runEndsSeen <= 1);
+        if (points.size() < 2) {
+            return null;
+        }
+        final PcaValues pca =
+                PcaValues.calculate(points, sample.isPcaAnchored());
         
         return new PcaAnnotated(pca,
                 data.get(0).getTreatmentLevel(),
@@ -106,7 +111,7 @@ public class PcaAnnotated {
      * @return the parameters as a list of strings
      */
     public List<String> toStrings() {
-        ArrayList<String> result = new ArrayList<>();
+        final ArrayList<String> result = new ArrayList<>();
         result.addAll(pcaValues.toStrings());
         result.add(Double.toString(demagStart));
         result.add(Double.toString(demagEnd));

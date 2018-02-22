@@ -77,7 +77,7 @@ public class Sample {
         this.customFlags = new CustomFields<>();
         this.customNotes = new CustomFields<>();
     }
-    
+
     final public void setDepth(String newDepth) {
         double depthTmp = Double.NaN;
         try {
