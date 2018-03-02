@@ -27,7 +27,12 @@ public enum FieldUnit {
     /** tesla (T) */
     TESLA(1),
     /** millitesla (mT) */
-    MILLITESLA(0.001);
+    MILLITESLA(0.001),
+    /** gauss (G) */
+    GAUSS(1e-4),
+    /** kilogauss (kG) */
+    KILOGAUSS(0.1)
+    ;
     
     private final double factor;
 

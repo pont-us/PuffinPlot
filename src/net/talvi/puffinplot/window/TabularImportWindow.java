@@ -25,7 +25,6 @@ import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.prefs.Preferences;
 import javax.swing.*;
-import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.DatumField;
 import net.talvi.puffinplot.data.FieldUnit;
 import net.talvi.puffinplot.data.MeasType;
@@ -92,8 +91,9 @@ public class TabularImportWindow extends JDialog {
                 initialFormat.getMomentUnit());
         firstPanel.add(momentUnitChooser);
         fieldUnitChooser = new EnumChooser<>("Unit for AF field",
-                new String[] {"millitesla", "tesla"},
-                new FieldUnit[] {FieldUnit.MILLITESLA, FieldUnit.TESLA},
+                new String[] {"millitesla", "tesla", "gauss", "kilogauss"},
+                new FieldUnit[] {FieldUnit.MILLITESLA, FieldUnit.TESLA,
+                    FieldUnit.GAUSS, FieldUnit.KILOGAUSS},
                 initialFormat.getFieldUnit());
         firstPanel.add(fieldUnitChooser);
         firstPanel.add(separatorChooser = new StringChooser("Column separator",
