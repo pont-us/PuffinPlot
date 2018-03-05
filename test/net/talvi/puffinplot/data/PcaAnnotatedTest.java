@@ -40,37 +40,56 @@ public class PcaAnnotatedTest {
      */
     @Test
     public void testCalculateAndGetPcaValuesAndToStrings() {
+        for (boolean insertUnusedValues: new boolean[] {false, true}) {
+            final Sample sample = constructSample(insertUnusedValues);    
+            final PcaValues pcaValues = PcaAnnotated.
+                    calculate(sample, Correction.NONE).getPcaValues();
+            assertEquals(235.9, pcaValues.getDirection().getDecDeg(), 0.1);
+            assertEquals(-18.0, pcaValues.getDirection().getIncDeg(), 0.1);
+            assertEquals(36.2, pcaValues.getMad3(), 0.1);
+            
+            final String actual = String.join("|",
+                    PcaAnnotated.calculate(sample,Correction.NONE).toStrings());
+            assertEquals("235.9101|-17.9915|32.0069|36.2362|N|"
+                    + "(19.60 -2.00 25.00)e0 + (-0.53 -0.79 -0.31)t|5|0.0|40.0|"
+                    + (insertUnusedValues ? "N" : "Y"),
+                    actual);            
+        }
         
+    }
+    
+    private Sample constructSample(boolean insertUnusedValues) {
         final Random rnd = new Random(23);
-        final List<Vec3> vectors = new ArrayList<>(5);
+        final List<Vec3> vectors = new ArrayList<>(7);
         for (int i=0; i<5; i++) {
             vectors.add(new Vec3(rnd.nextInt(100)-50,
                     rnd.nextInt(100)-50, rnd.nextInt(100)-50));
         }
-        
-        
         final Sample sample = new Sample("test", null);
         for (int i=0; i<vectors.size(); i++) {
             final Vec3 v = vectors.get(i);
-            final Datum d = new Datum(v);
-            d.setInPca(true);
-            d.setPcaAnchored(false);
-            d.setTreatType(TreatType.DEGAUSS_Z);
-            d.setAfZ(i*10);
-            sample.addDatum(d);
+            sample.addDatum(constructDatum(v, i*10, true));
+            if (insertUnusedValues && i==2) {
+                sample.addDatum(constructDatum(v, i*10, false));
+                sample.addDatum(constructDatum(v, i*10, false));
+            }
         }
-        
-        final PcaValues pcaValues = PcaAnnotated.
-                calculate(sample, Correction.NONE).getPcaValues();
-        assertEquals(235.9, pcaValues.getDirection().getDecDeg(), 0.1);
-        assertEquals(-18.0, pcaValues.getDirection().getIncDeg(), 0.1);
-        assertEquals(36.2, pcaValues.getMad3(), 0.1);
+        return sample;
+    }
 
-        final String actual = String.join("|",
-                PcaAnnotated.calculate(sample,Correction.NONE).toStrings());
-        assertEquals("235.9101|-17.9915|32.0069|36.2362|N|"
-                + "(19.60 -2.00 25.00)e0 + (-0.53 -0.79 -0.31)t|5|0.0|40.0|Y",
-                actual);
+    private Datum constructDatum(final Vec3 v, double afz, boolean inPca) {
+        final Datum datum = new Datum(v);
+        datum.setInPca(inPca);
+        datum.setPcaAnchored(false);
+        datum.setTreatType(TreatType.DEGAUSS_Z);
+        datum.setAfZ(afz);
+        return datum;
+    }
+    
+    @Test
+    public void testCalculateWithEmptySample() {
+        assertNull(PcaAnnotated.calculate(new Sample("test", null),
+                Correction.NONE));
     }
 
     @Test
