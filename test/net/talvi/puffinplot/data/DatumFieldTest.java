@@ -177,8 +177,8 @@ public class DatumFieldTest {
     }
 
     @Test
-    public void testGetRealFieldHeadings() {
-        final Set<String> actual = DatumField.getRealFieldHeadings().stream().
+    public void testGetRealFieldStrings() {
+        final Set<String> actual = DatumField.getRealFieldStrings().stream().
                 collect(Collectors.toSet());
         final Set<String> expected = DatumField.getRealFields().stream().
                 map(f -> f.toString()).collect(Collectors.toSet());

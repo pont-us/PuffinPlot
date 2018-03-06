@@ -248,10 +248,13 @@ public enum DatumField {
         return realFields;
     }
 
-    /** Returns an unmodifiable list of the headings of the real fields.
+    /** Returns an unmodifiable list of the string representations of
+     * the real fields.
      * A real field corresponds to an explicitly stored data value.
-     * @return an unmodifiable list of the headings of the real fields */
-    public static List<String> getRealFieldHeadings() {
+     * 
+     * @return an unmodifiable list of the string representations of the
+     * real fields */
+    public static List<String> getRealFieldStrings() {
         return realFieldHeadings;
     }
 

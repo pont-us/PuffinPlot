@@ -232,7 +232,7 @@ public final class Suite {
      */
     public void saveAs(File file)
             throws PuffinUserException {
-        List<String> fields = DatumField.getRealFieldHeadings();
+        List<String> fields = DatumField.getRealFieldStrings();
 
         FileWriter fileWriter = null;
         CsvWriter csvWriter = null;
