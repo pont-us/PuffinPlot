@@ -56,6 +56,30 @@ public class TensorTest {
         }
     }
     
+    @Test(expected = IllegalArgumentException.class)
+    public void testNonFiniteComponents() {
+        final Matrix identity = Matrix.identity(3, 3);
+        new Tensor(1, 2, 3, 4, 5, Double.NaN, identity, identity);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testNonFiniteCorrection1() {
+        final Matrix identity = Matrix.identity(3, 3);
+        final Matrix nonFinite = new Matrix(new double[] {
+            1, 0, 0, 0, 1, 0, 0, 0, Double.POSITIVE_INFINITY
+        }, 3);
+        new Tensor(1, 2, 3, 4, 5, 6, nonFinite, identity);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testNonFiniteCorrection2() {
+        final Matrix identity = Matrix.identity(3, 3);
+        final Matrix nonFinite = new Matrix(new double[] {
+            1, 0, 0, 0, Double.NEGATIVE_INFINITY, 0, 0, 0, 1
+        }, 3);
+        new Tensor(1, 2, 3, 4, 5, 6, identity, nonFinite);
+    }
+    
     @Test
     public void testAxisCorrections() {
         final Random rnd = new Random(82);
