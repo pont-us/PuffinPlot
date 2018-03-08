@@ -16,6 +16,8 @@
  */
 package net.talvi.puffinplot.data;
 
+import java.util.Arrays;
+import java.util.List;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -26,11 +28,55 @@ import static org.junit.Assert.*;
 public class LocationTest {
     
     @Test
-    public void testToVec3() {
+    public void testToAndFromVec3() {
         final Vec3 v = new Vec3(1.2, 2.3, 3.4).normalize();
         Location instance = Location.fromVec3(v);
         Vec3 expResult = v;
         Vec3 result = instance.toVec3();
         assertTrue(expResult.minus(result).mag() < 0.001);
+    }
+    
+    @Test
+    public void testUnitConversions() {
+        final double latDeg = 23;
+        final double longDeg = 42;
+        final double latRad = Math.toRadians(latDeg);
+        final double longRad = Math.toRadians(longDeg);
+        final Location locFromDeg = Location.fromDegrees(latDeg, longDeg);
+        assertEquals(latDeg, locFromDeg.getLatDeg(), 1e-6);
+        assertEquals(longDeg, locFromDeg.getLongDeg(), 1e-6);
+        assertEquals(latDeg, locFromDeg.getLatDeg(), 1e-6);
+        assertEquals(longDeg, locFromDeg.getLongDeg(), 1e-6);
+        final Location locFromRad = Location.fromRadians(latRad, longRad);
+        assertEquals(latDeg, locFromRad.getLatDeg(), 1e-6);
+        assertEquals(longDeg, locFromRad.getLongDeg(), 1e-6);
+        assertEquals(latRad, locFromRad.getLatRad(), 1e-6);        
+        assertEquals(longRad, locFromRad.getLongRad(), 1e-6);
+    }
+    
+    @Test
+    public void testGetHeaders() {
+        final List<String> expected = Arrays.asList(new String[] {
+            "Lat (deg)", "Long (deg)"
+        });
+        assertEquals(expected, Location.getHeaders());
+    }
+    
+    @Test
+    public void testGetEmptyFields() {
+        assertEquals(Location.getHeaders().size(),
+                Location.getEmptyFields().size());
+        assertTrue(Location.getEmptyFields().stream().
+                allMatch(field -> "".equals(field)));
+    }
+
+    @Test
+    public void testToStrings() {
+        final double latDeg = -12.3;
+        final double longDeg = 45.6;
+        final Location location = Location.fromDegrees(latDeg, longDeg);
+        final List<String> actual = location.toStrings();
+        assertEquals(latDeg, Double.parseDouble(actual.get(0)), 1e-6);
+        assertEquals(longDeg, Double.parseDouble(actual.get(1)), 1e-6);
     }
 }
