@@ -220,7 +220,8 @@ public class RpiDataset {
         final double[] allTreatmentLevels =
                 nrmSuite.getSamples().get(0).getTreatmentLevels();
         
-        List<Double> treatmentLevels = Arrays.stream(allTreatmentLevels).boxed().
+        final List<Double> treatmentLevels =
+                Arrays.stream(allTreatmentLevels).boxed().
                 filter(x -> x >= minLevel-1e-10 && x <= maxLevel+1e-10).
                 collect(Collectors.toList());
         final int nLevels = treatmentLevels.size();

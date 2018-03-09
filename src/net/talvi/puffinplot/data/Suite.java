@@ -337,7 +337,7 @@ public final class Suite {
     }
 
     private List<File> expandDirs(List<File> files) {
-        List<File> result = new ArrayList<>();
+        final List<File> result = new ArrayList<>();
         for (File file: files) {
             if (file.isDirectory())
                 result.addAll(expandDirs(Arrays.asList(file.listFiles())));
