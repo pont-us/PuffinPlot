@@ -33,124 +33,22 @@ import org.apache.commons.math3.stat.regression.SimpleRegression;
 
 /**
  * A collection of RPI estimates.
- * 
- * Instances of this class contain a list of the treatment levels used 
- * for the RPI calculation, and a list of RpiDatum instances, each containing
+ *
+ * Instances of this class contain a list of the treatment levels used for the
+ * RPI calculation, and a list of SampleRpiEstimate instances, each containing
  * the RPI estimates for a single sample.
- * 
+ *
  * @author pont
  */
-public class RpiDataset {
+public class SuiteRpiEstimate {
     
-    private static final Logger LOGGER = Logger.getLogger("net.talvi.puffinplot");
+    private static final Logger LOGGER =
+            Logger.getLogger("net.talvi.puffinplot");
     private final List<Double> treatmentLevels;
-    private final List<RpiDatum> rpis;
-    
-    public static class RpiDatum {
+    private final List<SampleRpiEstimate> rpis;
         
-        private final Sample nrmSample;
-        private final Sample armSample;
-        private final List<Double> intensities;
-        private final double meanRatio;
-        private final double slope;
-        private final double r;
-        private final double rSquared;
-        
-        private RpiDatum(List<Double> intensities,
-                Sample nrmSample, Sample armSample,
-                double meanRatio, double slope, double r, double rSquared) {
-            this.nrmSample = nrmSample;
-            this.armSample = armSample;
-            this.intensities = intensities;
-            this.meanRatio = meanRatio;
-            this.slope = slope;
-            this.r = r;
-            this.rSquared = rSquared;
-        }
-
-        /**
-         * @return the sample giving the NRM intensity
-         */
-        public Sample getNrmSample() {
-            return nrmSample;
-        }
-
-        /**
-         * @return the sample used for ARM intensity normalization
-         */
-        public Sample getArmSample() {
-            return armSample;
-        }
-
-        /**
-         * @return the intensities
-         */
-        public List<Double> getIntensities() {
-            return intensities;
-        }
-
-        /**
-         * @return the mean of the NRM/ARM intensity ratios
-         */
-        public double getMeanRatio() {
-            return meanRatio;
-        }
-
-        /**
-         * @return the slope of the linear regression
-         */
-        public double getSlope() {
-            return slope;
-        }
-        
-        /**
-         * @return the r-value for the linear regression
-         */
-        public double getR() {
-            return r;
-        }
-
-        /**
-         * @return the r-squared value for the linear regression
-         */
-        public double getrSquared() {
-            return rSquared;
-        }
-        
-        public String toCommaSeparatedString() {
-            final StringBuilder builder = new StringBuilder();
-            builder.append(getNrmSample().getData().get(0).getDepth());
-            
-            for (double intensity: getIntensities()) {
-                if (intensity != -1) {
-                    builder.append(String.format(Locale.ENGLISH,
-                            ",%g", intensity));
-                } else {
-                    builder.append(",");
-                }
-            }
-            
-            /* TODO Fix this quick hack -- normalizer type should be explicitly
-             * represented in the class and set on instantiation,
-             * not guessed from the value of normalizerIntensity.
-             */
-            
-            final Datum normalizerDatum = armSample.getDatum(0);
-            final double normalizerIntensity = normalizerDatum.getIntensity();
-            final double normalizerMagSus = normalizerDatum.getMagSus();
-            
-            builder.append(String.format(Locale.ENGLISH, ",%g,%g,%g,%g,%g",
-                    getMeanRatio(), getSlope(), getR(),
-                    getrSquared(),
-                    normalizerIntensity == 0 ? normalizerMagSus : normalizerIntensity
-                    ));
-            builder.append("\n");
-            
-            return builder.toString();
-        }
-    }
-    
-    private RpiDataset(List<Double> treatmentLevels, List<RpiDatum> rpis) {
+    private SuiteRpiEstimate(List<Double> treatmentLevels,
+            List<SampleRpiEstimate> rpis) {
         this.treatmentLevels = treatmentLevels;
         this.rpis = rpis;
     }
@@ -164,7 +62,7 @@ public class RpiDataset {
             }
             writer.write(", mean ratio, slope, r, r-squared, ARM\n");
             
-            for (RpiDatum rpi: getRpis()) {
+            for (SampleRpiEstimate rpi: getRpis()) {
                 writer.write(rpi.toCommaSeparatedString());
             }
         } catch (IOException e) {
@@ -174,16 +72,16 @@ public class RpiDataset {
     }
     
     /**
-     * Currently a bit of a hack, shoehorning MS-calculated data into
-     * an RpiDatum designed for ARM-calculated data. RpiDatum needs to
-     * be redesigned to handle MS RPIs nicely.
-     * 
+     * Currently a bit of a hack, shoehorning MS-calculated data into an
+     * SampleRpiEstimate designed for ARM-calculated data. SampleRpiEstimate
+     * needs to be redesigned to handle MS RPIs nicely.
+     *
      * @param nrmSuite
      * @param msSuite
      * @return 
      */
-    public static RpiDataset calculateWithMagSus(Suite nrmSuite, Suite msSuite) {
-        List<RpiDatum> rpis = new ArrayList<>(nrmSuite.getNumSamples());
+    public static SuiteRpiEstimate calculateWithMagSus(Suite nrmSuite, Suite msSuite) {
+        List<SampleRpiEstimate> rpis = new ArrayList<>(nrmSuite.getNumSamples());
         for (Sample nrmSample: nrmSuite.getSamples()) {
             final double nrm = nrmSample.getNrm();
             final String depth = nrmSample.getData().get(0).getDepth();
@@ -194,17 +92,17 @@ public class RpiDataset {
             }
             final double ms = msSample.getData().get(0).getMagSus();
             final double rpi = nrm/ms;
-            rpis.add(new RpiDatum(Collections.singletonList(rpi),
+            rpis.add(new SampleRpiEstimate(Collections.singletonList(rpi),
                         nrmSample, msSample,
                         rpi,
                         rpi,
                         0,
                         0));
         }
-        return new RpiDataset(Collections.singletonList(Double.valueOf(0)), rpis);
+        return new SuiteRpiEstimate(Collections.singletonList(Double.valueOf(0)), rpis);
     }
     
-    public static RpiDataset calculateWithArm(Suite nrmSuite, Suite armSuite,
+    public static SuiteRpiEstimate calculateWithArm(Suite nrmSuite, Suite armSuite,
             double minLevel, double maxLevel) {
         final double[] allTreatmentLevels =
                 nrmSuite.getSamples().get(0).getTreatmentLevels();
@@ -228,7 +126,7 @@ public class RpiDataset {
                 Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
                         TreatType.DEGAUSS_XYZ, TreatType.DEGAUSS_Z)));
         
-        final List<RpiDatum> rpis = new ArrayList<>(nrmSuite.getNumSamples());
+        final List<SampleRpiEstimate> rpis = new ArrayList<>(nrmSuite.getNumSamples());
         for (Sample nrmSample: nrmSuite.getSamples()) {
             final String depth = nrmSample.getData().get(0).getDepth();
             final Sample armSample = armSuite.getSampleByName(depth);
@@ -268,14 +166,14 @@ public class RpiDataset {
                     totalRatio += nrmInts.get(i) / armInts.get(i);
                     regression.addData(armInts.get(i), nrmInts.get(i));
                 }
-                rpis.add(new RpiDatum(ratios, nrmSample, armSample,
+                rpis.add(new SampleRpiEstimate(ratios, nrmSample, armSample,
                         totalRatio/nPairs,
                         regression.getSlope(),
                         regression.getR(),
                         regression.getRSquare()));
             }
         }
-        return new RpiDataset(treatmentLevels, rpis);
+        return new SuiteRpiEstimate(treatmentLevels, rpis);
     }
 
     /**
@@ -288,7 +186,7 @@ public class RpiDataset {
     /**
      * @return the RPIs
      */
-    public List<RpiDatum> getRpis() {
+    public List<SampleRpiEstimate> getRpis() {
         return rpis;
     }
 }

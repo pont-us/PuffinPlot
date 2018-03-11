@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.Test;
@@ -30,7 +29,7 @@ import static org.junit.Assert.*;
  *
  * @author pont
  */
-public class RpiDatasetTest {
+public class SuiteRpiEstimateTest {
     
     @Test
     public void testCalculateWithMagSus() {
@@ -38,7 +37,8 @@ public class RpiDatasetTest {
         nrmSuite.addDatum(makeDatum(0.005, TreatType.NONE, 0, 0));
         final Suite msSuite = new Suite("test");
         msSuite.addDatum(makeDatum(0, TreatType.NONE, 0, 10));
-        final RpiDataset result = RpiDataset.calculateWithMagSus(nrmSuite, msSuite);
+        final SuiteRpiEstimate result =
+                SuiteRpiEstimate.calculateWithMagSus(nrmSuite, msSuite);
         assertEquals(0.0005, result.getRpis().get(0).getSlope(), 1e-8);
         assertEquals(0.0005, result.getRpis().get(0).getMeanRatio(), 1e-8);
         assertEquals(1, result.getTreatmentLevels().size());
@@ -65,8 +65,8 @@ public class RpiDatasetTest {
         armSuite.addDatum(makeDatum(0.1, TreatType.ARM, 0.1, 0));
         armSuite.addDatum(makeDatum(0.08, TreatType.DEGAUSS_XYZ, 0.02, 0));
         
-        final RpiDataset result =
-                RpiDataset.calculateWithArm(nrmSuite, armSuite, 0, 1);
+        final SuiteRpiEstimate result =
+                SuiteRpiEstimate.calculateWithArm(nrmSuite, armSuite, 0, 1);
         assertEquals(0.05, result.getRpis().get(0).getIntensities().get(0),
                 1e-8);
         assertEquals(0.04, result.getRpis().get(0).getIntensities().get(1),
@@ -100,7 +100,7 @@ public class RpiDatasetTest {
         return datum;
     }
     
-    private static void checkWrittenFile(String expected, RpiDataset rpis) {
+    private static void checkWrittenFile(String expected, SuiteRpiEstimate rpis) {
         try {
             final Path tempDir = Files.createTempDirectory("puffintest");
             final Path tempFile = tempDir.resolve(Paths.get("rpifile"));
@@ -108,7 +108,7 @@ public class RpiDatasetTest {
             final String actual = new String(Files.readAllBytes(tempFile));
             assertEquals(expected, actual);
         } catch (IOException ex) {
-            Logger.getLogger(RpiDatasetTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SuiteRpiEstimateTest.class.getName()).log(Level.SEVERE, null, ex);
             fail();
         }
         
