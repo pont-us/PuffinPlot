@@ -157,32 +157,21 @@ public class RpiDataset {
     
     public void writeToFile(String path) {
         final File outFile = new File(path);
-        FileWriter fw = null;
-        try {
-            fw = new FileWriter(outFile);
-            
-            fw.write("Depth");
+        try (FileWriter writer = new FileWriter(outFile)) {
+            writer.write("Depth");
             for (double level: getTreatmentLevels()) {
-                fw.write(String.format(Locale.ENGLISH, ",%g", level));
+                writer.write(String.format(Locale.ENGLISH, ",%g", level));
             }
-            fw.write(", mean ratio, slope, r, r-squared, ARM\n");
+            writer.write(", mean ratio, slope, r, r-squared, ARM\n");
             
             for (RpiDatum rpi: getRpis()) {
-                fw.write(rpi.toCommaSeparatedString());
+                writer.write(rpi.toCommaSeparatedString());
             }
         } catch (IOException e) {
             LOGGER.log(Level.WARNING,
                     "calculateRpi: exception writing file.", e);
-        } finally {
-            try {
-                if (fw != null) fw.close();
-            } catch (IOException e2) {
-                LOGGER.log(Level.WARNING,
-                        "calculateRpi: exception closing file.", e2);
-            }
         }
     }
-    
     
     /**
      * Currently a bit of a hack, shoehorning MS-calculated data into
