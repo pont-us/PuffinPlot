@@ -13,16 +13,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.Random;
-import java.util.function.IntFunction;
 import java.util.stream.Collectors;
-import org.freehep.graphics2d.font.MACLatin;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.runner.RunWith;
 
 /**
  *
@@ -435,6 +430,51 @@ public class Vec3Test {
         });
     }
     
+    @Test (expected = NullPointerException.class)
+    public void testSpherInterpolateNullFirstVector() {
+        Vec3.spherInterpolate(null, Vec3.EAST, 0.1);
+    }
+    
+    @Test (expected = NullPointerException.class)
+    public void testSpherInterpolateNullSecondVector() {
+        Vec3.spherInterpolate(Vec3.EAST, null, 0.1);
+    }
+    
+    @Test (expected = IllegalArgumentException.class)
+    public void testSpherInterpolateNonFiniteFirstVector() {
+        Vec3.spherInterpolate(new Vec3(1, 0, Double.NaN), Vec3.EAST, 0.1);
+    }
+    
+    @Test (expected = IllegalArgumentException.class)
+    public void testSpherInterpolateNonFiniteSecondVector() {
+        Vec3.spherInterpolate(Vec3.EAST, new Vec3(1, 0, Double.NaN), 0.1);
+    }
+    
+    @Test (expected = IllegalArgumentException.class)
+    public void testSpherInterpolateZeroFirstVector() {
+        Vec3.spherInterpolate(Vec3.ORIGIN, Vec3.EAST, 0.1);
+    }
+    
+    @Test (expected = IllegalArgumentException.class)
+    public void testSpherInterpolateZeroSecondVector() {
+        Vec3.spherInterpolate(Vec3.EAST, Vec3.ORIGIN, 0.1);
+    }
+    
+    @Test (expected = IllegalArgumentException.class)
+    public void testSpherInterpolateStepSizeNonFinite() {
+        Vec3.spherInterpolate(Vec3.EAST, Vec3.NORTH, Double.NEGATIVE_INFINITY);
+    }
+    
+    @Test (expected = IllegalArgumentException.class)
+    public void testSpherInterpolateStepSizeTooSmall() {
+        Vec3.spherInterpolate(Vec3.EAST, Vec3.NORTH, -100);
+    }
+    
+    @Test (expected = IllegalArgumentException.class)
+    public void testSpherInterpolateStepSizeTooLarge() {
+        Vec3.spherInterpolate(Vec3.EAST, Vec3.NORTH, 100);
+    }
+    
     @Test
     public void testEqualsAndHashCode() {
         final List<Vec3> otherTestVectors = Vec3Test.createTestVectors();
@@ -450,6 +490,22 @@ public class Vec3Test {
             assertEquals(a, b);
             assertEquals(b, a);
             assertEquals(a.hashCode(), b.hashCode());
+        }
+    }
+    
+    @Test
+    public void testEqualsWithPrecision() {
+        final double precision = 1e-20;
+        for (int i=0; i<testVectors.size(); i++) {
+            for (int j=0; j<testVectors.size(); j++) {
+                final Vec3 v0 = testVectors.get(i);
+                final Vec3 v1 = testVectors.get(j);
+                if (i==j) {
+                    assertTrue(v0.equals(v1, precision));
+                } else {
+                    assertFalse(v0.equals(v1, precision));
+                }
+            }
         }
     }
     
@@ -822,6 +878,21 @@ public class Vec3Test {
         assertTrue(largestDot + delta >= largestInverseDot);
     }
     
+    @Test (expected = IllegalArgumentException.class)
+    public void testSpherInterpDirStepSizeNonFinite() {
+        Vec3.spherInterpDir(Vec3.EAST, Vec3.NORTH, Vec3.DOWN, Double.NEGATIVE_INFINITY);
+    }
+    
+    @Test (expected = IllegalArgumentException.class)
+    public void testSpherInterpDirStepSizeTooSmall() {
+        Vec3.spherInterpDir(Vec3.EAST, Vec3.NORTH, Vec3.DOWN, -100);
+    }
+    
+    @Test (expected = IllegalArgumentException.class)
+    public void testSpherInterpDirStepSizeTooLarge() {
+        Vec3.spherInterpDir(Vec3.EAST, Vec3.NORTH, Vec3.DOWN, 100);
+    }
+    
     private double largestDotProduct(Vec3 reference, List<Vec3> vectors) {
         double max = -1;
         for (int i=0; i<vectors.size(); i++) {
@@ -882,7 +953,7 @@ public class Vec3Test {
             }
         }
     }
-    
+
     private static double getVectorComponent(Vec3 v, int i) {
         switch (i) {
             case 0: return v.x;

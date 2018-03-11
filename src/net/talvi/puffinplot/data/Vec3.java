@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * An immutable three-dimensional Cartesian vector. The class contains
@@ -185,12 +186,14 @@ public class Vec3 {
      * v1.sameHemisphere(v2) is true for any two points in this plane,
      * but false if either point is anywhere outside this plane.
      * 
-     * @param v a vector
+     * @param v a non-null, finite vector
      * @return {@code true} if and only if the supplied vector is in the same (upper/lower)
      * hemisphere as this one.
+     * @throws IllegalArgumentException if {@code v} is not finite
+     * @throws NullPointerException if {@code v} is null
      */
     public boolean sameHemisphere(Vec3 v) {
-        assert(v.isWellFormed());
+        requireNonNullAndFinite(v, "v");
         return signum(z) == signum(v.z);
     }
 
@@ -232,21 +235,30 @@ public class Vec3 {
         return result;
     }
 
-    /** Given two vectors, interpolates unit vectors along a great circle.
-     * Uses Shoemake's Slerp algorithm.
-     * 
-     * @param v0 a non-zero, well-formed vector
-     * @param v1 a non-zero, well-formed vector
-     * @param stepSize the step size for interpolation in radians
+    /**
+     * Given two vectors, interpolates unit vectors along a great-circle path
+     * between them. The input vectors do not have to be unit vectors, but only
+     * their directions are considered. Interpolation is performed using
+     * Shoemake's Slerp algorithm.
+     *
+     * @param v0 a non-null, non-zero, finite vector
+     * @param v1 a non-null, non-zero, finite vector
+     * @param stepSize the step size for interpolation in radians, in the range
+     * (0, 2*PI)
      * @return a set of vectors describing a great-circle path between
      * {@code v0} and {@code v1}
+     * @throws NullPointerException if either of the input vectors is null
+     * @throws IllegalArgumentException if any of the arguments are outside the
+     * specified ranges
      */
     public static List<Vec3> spherInterpolate(Vec3 v0, Vec3 v1, double stepSize) {
-        // TODO change these asserts to checks throwing IllegalArgumentExceptions
-        assert(v0.isWellFormed());
-        assert(v1.isWellFormed());
-        assert(!Vec3.ORIGIN.equals(v0));
-        assert(!Vec3.ORIGIN.equals(v1));
+        requireNonNullFiniteAndNonZero(v0, "v0");
+        requireNonNullFiniteAndNonZero(v1, "v1");
+        if (!Double.isFinite(stepSize) || stepSize <= 0 || stepSize >= 2*PI) {
+            throw new IllegalArgumentException(String.format(
+                    "stepSize must be between 0 and 2*PI, but %g was passed",
+                    stepSize));
+        }
         
         final Vec3 v0n = v0.normalize();
         final Vec3 v1n = v1.normalize();
@@ -307,7 +319,22 @@ public class Vec3 {
         return result;
     }
     
-    private final static List<Vec3> concatenateWithoutCentre(List<Vec3> list0,
+    private static void requireNonNullFiniteAndNonZero(Vec3 v, String name) {
+        requireNonNullAndFinite(v, name);
+        if (v.equals(ORIGIN)) {
+            throw new IllegalArgumentException(String.format(
+                    "%s must be non-zero", name));
+        }    }
+
+    private static void requireNonNullAndFinite(Vec3 v, String name) {
+        Objects.requireNonNull(v, name+" must be non-null");
+        if (!v.isWellFormed()) {
+            throw new IllegalArgumentException(String.format(
+                    "%s = %s is not finite", name, v.toString()));
+        }
+    }
+    
+    private static List<Vec3> concatenateWithoutCentre(List<Vec3> list0,
             List<Vec3> list1) {
         final List<Vec3> combined =
                 new ArrayList<Vec3>(list0.size() + list1.size() - 1);
@@ -325,19 +352,29 @@ public class Vec3 {
      * step size may at certain positions drop to 0 (i.e. a point is
      * repeated) or increase to as much as 1.8*stepSize.
      * 
-     * @param v0 a vector
-     * @param v1 a vector
-     * @param onPath arc direction indicator
-     * @param stepSize approximate size of interpolation step in radians
+     * @param v0 a non-null, non-zero, finite vector giving the first
+     *           end-point of the arc
+     * @param v1 a non-null, non-zero, finite vector giving the second
+     *           end-point of the arc
+     * @param onPath a non-null, non-zero, finite vector indicating the
+     *               direction of the arc
+     * @param stepSize approximate size of interpolation step in radians,
+     *                 in the range (0, 2*PI)
      * @return a list of points defining a great-circle arc between {@code v0}
      * and {@code v1}, passing as close as possible to {@code onPath}
      * 
      */
     public static List<Vec3> spherInterpDir(Vec3 v0, Vec3 v1, Vec3 onPath,
             double stepSize) {
-        assert(v0.isWellFormed());
-        assert(v1.isWellFormed());
-        assert(onPath.isWellFormed());
+        requireNonNullFiniteAndNonZero(v0, "v0");
+        requireNonNullFiniteAndNonZero(v1, "v1");
+        requireNonNullFiniteAndNonZero(onPath, "onPath");
+        if (!Double.isFinite(stepSize) || stepSize <= 0 || stepSize >= 2*PI) {
+            throw new IllegalArgumentException(String.format(
+                    "stepSize must be between 0 and 2*PI, but %g was passed",
+                    stepSize));
+        }
+        
         if (v0.equals(v1)) {
             // If start and end are equal, we're done.
             return Collections.singletonList(v0);
