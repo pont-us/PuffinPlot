@@ -35,20 +35,20 @@ import org.apache.commons.math3.stat.regression.SimpleRegression;
  * A collection of RPI estimates.
  *
  * Instances of this class contain a list of the treatment levels used for the
- * RPI calculation, and a list of SampleRpiEstimate instances, each containing
- * the RPI estimates for a single sample.
+ RPI calculation, and a list of ArmSampleRpiEstimate instances, each containing
+ the RPI estimates for a single sample.
  *
  * @author pont
  */
-public class SuiteRpiEstimate {
+public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
     
     private static final Logger LOGGER =
             Logger.getLogger("net.talvi.puffinplot");
     private final List<Double> treatmentLevels;
-    private final List<SampleRpiEstimate> rpis;
+    private final List<EstimateType> rpis;
         
     private SuiteRpiEstimate(List<Double> treatmentLevels,
-            List<SampleRpiEstimate> rpis) {
+            List<EstimateType> rpis) {
         this.treatmentLevels = treatmentLevels;
         this.rpis = rpis;
     }
@@ -57,10 +57,15 @@ public class SuiteRpiEstimate {
         final File outFile = new File(path);
         try (FileWriter writer = new FileWriter(outFile)) {
             writer.write("Depth");
-            for (double level: getTreatmentLevels()) {
-                writer.write(String.format(Locale.ENGLISH, ",%g", level));
+            if (getRpis().get(0) instanceof ArmSampleRpiEstimate) {
+                for (double level: getTreatmentLevels()) {
+                    writer.write(String.format(Locale.ENGLISH, ",%g", level));
+                }
             }
-            writer.write(", mean ratio, slope, r, r-squared, ARM\n");
+            writer.write(", ");
+            writer.write(getRpis().get(0).getCommaSeparatedHeader() +
+                    "\n");
+            // writer.write(", mean ratio, slope, r, r-squared, ARM\n");
             
             for (SampleRpiEstimate rpi: getRpis()) {
                 writer.write(rpi.toCommaSeparatedString());
@@ -72,16 +77,13 @@ public class SuiteRpiEstimate {
     }
     
     /**
-     * Currently a bit of a hack, shoehorning MS-calculated data into an
-     * SampleRpiEstimate designed for ARM-calculated data. SampleRpiEstimate
-     * needs to be redesigned to handle MS RPIs nicely.
-     *
      * @param nrmSuite
      * @param msSuite
      * @return 
      */
-    public static SuiteRpiEstimate calculateWithMagSus(Suite nrmSuite, Suite msSuite) {
-        List<SampleRpiEstimate> rpis = new ArrayList<>(nrmSuite.getNumSamples());
+    public static SuiteRpiEstimate<MagSusSampleRpiEstimate>
+        calculateWithMagSus(Suite nrmSuite, Suite msSuite) {
+        List<MagSusSampleRpiEstimate> rpis = new ArrayList<>(nrmSuite.getNumSamples());
         for (Sample nrmSample: nrmSuite.getSamples()) {
             final double nrm = nrmSample.getNrm();
             final String depth = nrmSample.getData().get(0).getDepth();
@@ -92,14 +94,12 @@ public class SuiteRpiEstimate {
             }
             final double ms = msSample.getData().get(0).getMagSus();
             final double rpi = nrm/ms;
-            rpis.add(new SampleRpiEstimate(Collections.singletonList(rpi),
+            rpis.add(new MagSusSampleRpiEstimate(
                         nrmSample, msSample,
-                        rpi,
-                        rpi,
-                        0,
-                        0));
+                        rpi));
         }
-        return new SuiteRpiEstimate(Collections.singletonList(Double.valueOf(0)), rpis);
+        return new SuiteRpiEstimate<MagSusSampleRpiEstimate>(
+                Collections.singletonList(Double.valueOf(0)), rpis);
     }
     
     public static SuiteRpiEstimate calculateWithArm(Suite nrmSuite, Suite armSuite,
@@ -166,7 +166,7 @@ public class SuiteRpiEstimate {
                     totalRatio += nrmInts.get(i) / armInts.get(i);
                     regression.addData(armInts.get(i), nrmInts.get(i));
                 }
-                rpis.add(new SampleRpiEstimate(ratios, nrmSample, armSample,
+                rpis.add(new ArmSampleRpiEstimate(ratios, nrmSample, armSample,
                         totalRatio/nPairs,
                         regression.getSlope(),
                         regression.getR(),
@@ -186,7 +186,7 @@ public class SuiteRpiEstimate {
     /**
      * @return the RPIs
      */
-    public List<SampleRpiEstimate> getRpis() {
+    public List<EstimateType> getRpis() {
         return rpis;
     }
 }

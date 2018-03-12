@@ -1,5 +1,5 @@
 /* This file is part of PuffinPlot, a program for palaeomagnetic
- * data plotting and analysis. Copyright 2012 Pontus Lurcock.
+ * data plotting and analysis. Copyright 2012-2018 Pontus Lurcock.
  *
  * PuffinPlot is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,15 +37,14 @@ public class SuiteRpiEstimateTest {
         nrmSuite.addDatum(makeDatum(0.005, TreatType.NONE, 0, 0));
         final Suite msSuite = new Suite("test");
         msSuite.addDatum(makeDatum(0, TreatType.NONE, 0, 10));
-        final SuiteRpiEstimate result =
+        final SuiteRpiEstimate<MagSusSampleRpiEstimate> result =
                 SuiteRpiEstimate.calculateWithMagSus(nrmSuite, msSuite);
-        assertEquals(0.0005, result.getRpis().get(0).getSlope(), 1e-8);
-        assertEquals(0.0005, result.getRpis().get(0).getMeanRatio(), 1e-8);
+        assertEquals(0.0005, result.getRpis().get(0).getRatio(), 1e-8);
         assertEquals(1, result.getTreatmentLevels().size());
         assertEquals(0, result.getTreatmentLevels().get(0), 1e-8);
         checkWrittenFile(
-                "Depth,0.00000, mean ratio, slope, r, r-squared, ARM\n" +
-                "0,0.000500000,0.000500000,0.000500000,0.00000,0.00000,10.0000\n",
+                "Depth, ratio, MS\n" +
+                "0,0.000500000,10.0000\n",
                 result);
     }
 
@@ -65,7 +64,7 @@ public class SuiteRpiEstimateTest {
         armSuite.addDatum(makeDatum(0.1, TreatType.ARM, 0.1, 0));
         armSuite.addDatum(makeDatum(0.08, TreatType.DEGAUSS_XYZ, 0.02, 0));
         
-        final SuiteRpiEstimate result =
+        final SuiteRpiEstimate<ArmSampleRpiEstimate> result =
                 SuiteRpiEstimate.calculateWithArm(nrmSuite, armSuite, 0, 1);
         assertEquals(0.05, result.getRpis().get(0).getIntensities().get(0),
                 1e-8);
