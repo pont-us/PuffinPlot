@@ -40,10 +40,9 @@ public class SuiteRpiEstimateTest {
         final SuiteRpiEstimate<MagSusSampleRpiEstimate> result =
                 SuiteRpiEstimate.calculateWithMagSus(nrmSuite, msSuite);
         assertEquals(0.0005, result.getRpis().get(0).getRatio(), 1e-8);
-        assertEquals(1, result.getTreatmentLevels().size());
-        assertEquals(0, result.getTreatmentLevels().get(0), 1e-8);
+        assertTrue(result.getTreatmentLevels().isEmpty());
         checkWrittenFile(
-                "Depth, ratio, MS\n" +
+                "Depth,ratio,MS\n" +
                 "0,0.000500000,10.0000\n",
                 result);
     }
@@ -79,7 +78,7 @@ public class SuiteRpiEstimateTest {
         assertEquals(1.00, result.getRpis().get(0).getR(), 1e-8);
         assertEquals(1.00, result.getRpis().get(0).getrSquared(), 1e-8);
         checkWrittenFile(
-                "Depth,0.00000,0.0200000, mean ratio, slope, r, r-squared, ARM\n" +
+                "Depth,0.00000,0.0200000,mean ratio,slope,r,r-squared,ARM\n" +
                 "0,0.0500000,0.0400000,0.0450000,0.0900000,1.00000,1.00000,0.100000\n"
                 , result);
 

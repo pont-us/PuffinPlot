@@ -1,5 +1,5 @@
 /* This file is part of PuffinPlot, a program for palaeomagnetic
- * data plotting and analysis. Copyright 2012-2017 Pontus Lurcock.
+ * data plotting and analysis. Copyright 2012-2018 Pontus Lurcock.
  *
  * PuffinPlot is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,10 +35,10 @@ import org.apache.commons.math3.stat.regression.SimpleRegression;
  * A collection of RPI estimates.
  *
  * Instances of this class contain a list of the treatment levels used for the
- RPI calculation, and a list of ArmSampleRpiEstimate instances, each containing
- the RPI estimates for a single sample.
+ * RPI calculation (if applicable), and a list of SampleRpiEstimate instances,
+ * each containing the RPI estimate(s) for a single sample.
  *
- * @author pont
+ * @param <EstimateType>
  */
 public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
     
@@ -56,16 +56,12 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
     public void writeToFile(String path) {
         final File outFile = new File(path);
         try (FileWriter writer = new FileWriter(outFile)) {
-            writer.write("Depth");
-            if (getRpis().get(0) instanceof ArmSampleRpiEstimate) {
-                for (double level: getTreatmentLevels()) {
-                    writer.write(String.format(Locale.ENGLISH, ",%g", level));
-                }
+            writer.write("Depth,");
+            for (double level: getTreatmentLevels()) {
+                writer.write(String.format(Locale.ENGLISH, "%g,", level));
             }
-            writer.write(", ");
             writer.write(getRpis().get(0).getCommaSeparatedHeader() +
                     "\n");
-            // writer.write(", mean ratio, slope, r, r-squared, ARM\n");
             
             for (SampleRpiEstimate rpi: getRpis()) {
                 writer.write(rpi.toCommaSeparatedString());
@@ -83,7 +79,8 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
      */
     public static SuiteRpiEstimate<MagSusSampleRpiEstimate>
         calculateWithMagSus(Suite nrmSuite, Suite msSuite) {
-        List<MagSusSampleRpiEstimate> rpis = new ArrayList<>(nrmSuite.getNumSamples());
+        List<MagSusSampleRpiEstimate> rpis =
+                new ArrayList<>(nrmSuite.getNumSamples());
         for (Sample nrmSample: nrmSuite.getSamples()) {
             final double nrm = nrmSample.getNrm();
             final String depth = nrmSample.getData().get(0).getDepth();
@@ -98,12 +95,12 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
                         nrmSample, msSample,
                         rpi));
         }
-        return new SuiteRpiEstimate<MagSusSampleRpiEstimate>(
-                Collections.singletonList(Double.valueOf(0)), rpis);
+        return new SuiteRpiEstimate<>(Collections.emptyList(), rpis);
     }
     
-    public static SuiteRpiEstimate calculateWithArm(Suite nrmSuite, Suite armSuite,
-            double minLevel, double maxLevel) {
+    public static SuiteRpiEstimate<ArmSampleRpiEstimate>
+        calculateWithArm(Suite nrmSuite,
+            Suite armSuite, double minLevel, double maxLevel) {
         final double[] allTreatmentLevels =
                 nrmSuite.getSamples().get(0).getTreatmentLevels();
         
@@ -126,7 +123,8 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
                 Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
                         TreatType.DEGAUSS_XYZ, TreatType.DEGAUSS_Z)));
         
-        final List<SampleRpiEstimate> rpis = new ArrayList<>(nrmSuite.getNumSamples());
+        final List<ArmSampleRpiEstimate> rpis =
+                new ArrayList<>(nrmSuite.getNumSamples());
         for (Sample nrmSample: nrmSuite.getSamples()) {
             final String depth = nrmSample.getData().get(0).getDepth();
             final Sample armSample = armSuite.getSampleByName(depth);
@@ -173,7 +171,7 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
                         regression.getRSquare()));
             }
         }
-        return new SuiteRpiEstimate(treatmentLevels, rpis);
+        return new SuiteRpiEstimate<>(treatmentLevels, rpis);
     }
 
     /**

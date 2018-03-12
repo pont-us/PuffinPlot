@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- *
- * @author pont
+ * An estimate of relative palaeointensity for a single sample,
+ * normalized by magnetic susceptibility.
  */
 public class MagSusSampleRpiEstimate implements SampleRpiEstimate {
     
@@ -72,7 +72,7 @@ public class MagSusSampleRpiEstimate implements SampleRpiEstimate {
 
     @Override
     public String getCommaSeparatedHeader() {
-        return "ratio, MS";
+        return "ratio,MS";
     }
     
 }

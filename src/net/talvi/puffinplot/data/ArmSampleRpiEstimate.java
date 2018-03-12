@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- *
- * @author pont
+ * An estimate of relative palaeointensity for a single sample, normalized
+ * by ARM.
  */
 public class ArmSampleRpiEstimate implements SampleRpiEstimate {
     
@@ -105,24 +105,16 @@ public class ArmSampleRpiEstimate implements SampleRpiEstimate {
                 builder.append(",");
             }
         }
-        /* TODO Fix this quick hack -- normalizer type should be explicitly
-         * represented in the class and set on instantiation,
-         * not guessed from the value of normalizerIntensity.
-         */
-        final Datum normalizerDatum = normalizer.getDatum(0);
-        final double normalizerIntensity = normalizerDatum.getIntensity();
-        final double normalizerMagSus = normalizerDatum.getMagSus();
         builder.append(String.format(Locale.ENGLISH, ",%g,%g,%g,%g,%g",
                 getMeanRatio(), getSlope(), getR(), getrSquared(),
-                normalizerIntensity == 0 ? normalizerMagSus :
-                        normalizerIntensity));
+                normalizer.getDatum(0).getIntensity()));
         builder.append("\n");
         return builder.toString();
     }
 
     @Override
     public String getCommaSeparatedHeader() {
-        return "mean ratio, slope, r, r-squared, ARM";
+        return "mean ratio,slope,r,r-squared,ARM";
     }
     
 }

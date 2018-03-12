@@ -17,10 +17,10 @@
 package net.talvi.puffinplot.data;
 
 /**
- *
- * @author pont
+ *  An estimate of relative palaeointensity for a single sample.
+ * 
  */
-interface SampleRpiEstimate {
+public interface SampleRpiEstimate {
     
     String toCommaSeparatedString();
 
