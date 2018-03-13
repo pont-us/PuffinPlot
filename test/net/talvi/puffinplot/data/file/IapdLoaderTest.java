@@ -79,7 +79,6 @@ public class IapdLoaderTest {
         {200,   1121.1160,   158.2,59.5,  0.2,   206.2,  43.4},
         {500,   725.0541,    153.7,52.7,  0.2,   205.3,  36.2}};
     
-    private IapdLoader loader;
     private Map<Object, Object> options;
     private File file;
     private Suite suite;
