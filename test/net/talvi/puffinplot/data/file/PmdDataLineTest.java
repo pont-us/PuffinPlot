@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
 public class PmdDataLineTest {
     
     @Test
-    public void PmdDataLineTest() {
+    public void testRead() {
         assertEquals(new PmdDataLine(TreatType.DEGAUSS_XYZ, 40, new double[] {
             4.76E-06, -6.15E-06, -3.90E-06,
             7.91E-01, 241.1, -39.4, 241.1, -39.4,  0.0}, "1"),
@@ -67,6 +67,50 @@ public class PmdDataLineTest {
                         + "1.55E-03 252.7  11.2 252.7  11.2  0.0 JR5-2"));
     }
     
-    // TODO: add tests for invalid line formats
-    // TODO: test hash code and equals
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidLineFormat() {
+        PmdDataLine.read("This string doesn't match the required format.");
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidNumberFormat() {
+        PmdDataLine.read("100M  1.75E-09 -5.21E-09  5.Q6E-09  "
+                        + "1.55E-03 252.7  11.2 252.7  11.2  0.0 JR5-2");
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidTreatmentString() {
+        PmdDataLine.read("BEER  1.75E-09 -5.21E-09  5.26E-09  "
+                        + "1.55E-03 252.7  11.2 252.7  11.2  0.0 JR5-2");
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidTreatmentType() {
+        PmdDataLine.read("Q100  1.75E-09 -5.21E-09  5.26E-09  "
+                        + "1.55E-03 252.7  11.2 252.7  11.2  0.0 JR5-2");
+    }
+    
+    @Test
+    public void testEqualsAndHash() {
+        final PmdDataLine pdl0 =
+                new PmdDataLine(TreatType.DEGAUSS_XYZ, 90, new double[] {
+            2.53E-09, -5.26E-09,  6.20E-09,
+            1.70E-03, 257.4,   8.5, 257.4,   8.5,  0.0}, "JR5-2");
+        final PmdDataLine pdl1 =
+                new PmdDataLine(TreatType.DEGAUSS_XYZ, 90, new double[] {
+            2.53E-09, -5.26E-09,  6.20E-09,
+            1.70E-03, 257.4,   8.5, 257.4,   8.5,  0.0}, "JR5-2");
+        final PmdDataLine pdl2 =
+                new PmdDataLine(TreatType.DEGAUSS_XYZ, 40, new double[] {
+            4.76E-06, -6.15E-06, -3.90E-06,
+            7.91E-01, 241.1, -39.4, 241.1, -39.4,  0.0}, "1");
+        assertEquals(pdl0, pdl0);
+        assertEquals(pdl0, pdl1);
+        assertEquals(pdl1, pdl0);
+        assertNotEquals(pdl0, pdl2);
+        assertNotEquals(pdl2, pdl0);
+        assertEquals(pdl0.hashCode(), pdl1.hashCode());
+        assertNotEquals(pdl0, null);
+        assertNotEquals(pdl0, this);
+    }
 }
