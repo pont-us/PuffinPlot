@@ -44,10 +44,11 @@ class PmdLoader extends AbstractFileLoader {
     
     public PmdLoader(InputStream inputStream,
             Map<Object, Object> importOptions) {
-        /* Some PMD files are in pure ASCII. All the non-ASCII ones I've
-         * encountered use codepage 437, so we fortunately don't need to
-         * deduce the encoding here: we can just use Cp437 to cover both
-         * possibilities.
+        /*
+         * Some PMD files are in pure ASCII. All the non-ASCII ones I've
+         * encountered use codepage 437 (a superset of ASCII), so we fortunately
+         * don't need to deduce the encoding here: we can just use Cp437 to
+         * cover both possibilities.
          */
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
                 inputStream, "Cp437"))) {

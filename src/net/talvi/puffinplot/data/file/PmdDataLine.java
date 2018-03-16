@@ -1,5 +1,5 @@
 /* This file is part of PuffinPlot, a program for palaeomagnetic
- * data plotting and analysis. Copyright 2012 Pontus Lurcock.
+ * data plotting and analysis. Copyright 2012-2018 Pontus Lurcock.
  *
  * PuffinPlot is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
  */
 package net.talvi.puffinplot.data.file;
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.talvi.puffinplot.data.TreatType;
@@ -38,6 +39,13 @@ class PmdDataLine {
     public final TreatType treatmentType;
     public final int treatmentLevel;
     public final Vec3 magnetization;
+    public final double magnetizationMagnitude;
+    public final double sampleCorrectedDeclination;
+    public final double sampleCorrectedInclination;
+    public final double formationCorrectedDeclination;
+    public final double formationCorrectedInclination;
+    public final double alpha95;
+    public final String comment;
     
     private static class PmdTreatment {
         private static final Pattern REGEX_1 =
@@ -54,6 +62,9 @@ class PmdDataLine {
         }
         
         public static PmdTreatment parse(String s) {
+            if ("NRM ".equals(s)) {
+                return new PmdTreatment(TreatType.NONE, 0);
+            }
             final Matcher matcher1 = REGEX_1.matcher(s);
             if (matcher1.matches()) {
                 final String typeCode = matcher1.group(1);
@@ -65,6 +76,7 @@ class PmdDataLine {
                         break;
                     case "T":
                         type = TreatType.THERMAL;
+                        break;
                     default:
                         throw new IllegalArgumentException();
                 }
@@ -81,11 +93,17 @@ class PmdDataLine {
     }
     
     public PmdDataLine(TreatType treatmentType, int treatmentLevel,
-            Vec3 magnetization) {
+            double[] d, String comment) {
         this.treatmentType = treatmentType;
         this.treatmentLevel = treatmentLevel;
-        this.magnetization = magnetization;
-        
+        this.magnetization = new Vec3(d[0], d[1], d[2]);
+        this.magnetizationMagnitude = d[3];
+        this.sampleCorrectedDeclination = d[4];
+        this.sampleCorrectedInclination = d[5];
+        this.formationCorrectedDeclination = d[6];
+        this.formationCorrectedInclination = d[7];
+        this.alpha95 = d[8];
+        this.comment = comment;
     }
     
     public static PmdDataLine read(String line) {
@@ -93,12 +111,51 @@ class PmdDataLine {
         if (!matcher.matches()) {
             throw new IllegalArgumentException();
         }
+        final double[] d = new double[9];
+        for (int i=0; i<9; i++) {
+            d[i] = Double.parseDouble(matcher.group(i+2));
+        }
         final PmdTreatment treatment = PmdTreatment.parse(matcher.group(1));
-        return new PmdDataLine(treatment.type, treatment.level,
-                new Vec3(Double.parseDouble(matcher.group(2)),
-                        Double.parseDouble(matcher.group(3)),
-                        Double.parseDouble(matcher.group(4))
-        ));
+        return new PmdDataLine(treatment.type, treatment.level, d,
+                matcher.group(11));
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (o == null) {
+            return false;
+        }
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof PmdDataLine)) {
+            return false;
+        }
+        final PmdDataLine pdl = (PmdDataLine) o;
+        return treatmentType == pdl.treatmentType &&
+                treatmentLevel == pdl.treatmentLevel &&
+                magnetization.equals(pdl.magnetization) &&
+                magnetizationMagnitude == pdl.magnetizationMagnitude &&
+                sampleCorrectedDeclination == pdl.sampleCorrectedDeclination &&
+                sampleCorrectedInclination == pdl.sampleCorrectedInclination &&
+                formationCorrectedDeclination == pdl.formationCorrectedDeclination &&
+                alpha95 == pdl.alpha95 &&
+                comment.equals(pdl.comment);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 83 * hash + Objects.hashCode(this.treatmentType);
+        hash = 83 * hash + this.treatmentLevel;
+        hash = 83 * hash + Objects.hashCode(this.magnetization);
+        hash = 83 * hash + (int) (Double.doubleToLongBits(this.magnetizationMagnitude) ^ (Double.doubleToLongBits(this.magnetizationMagnitude) >>> 32));
+        hash = 83 * hash + (int) (Double.doubleToLongBits(this.sampleCorrectedDeclination) ^ (Double.doubleToLongBits(this.sampleCorrectedDeclination) >>> 32));
+        hash = 83 * hash + (int) (Double.doubleToLongBits(this.sampleCorrectedInclination) ^ (Double.doubleToLongBits(this.sampleCorrectedInclination) >>> 32));
+        hash = 83 * hash + (int) (Double.doubleToLongBits(this.formationCorrectedDeclination) ^ (Double.doubleToLongBits(this.formationCorrectedDeclination) >>> 32));
+        hash = 83 * hash + (int) (Double.doubleToLongBits(this.alpha95) ^ (Double.doubleToLongBits(this.alpha95) >>> 32));
+        hash = 83 * hash + Objects.hashCode(this.comment);
+        return hash;
     }
     
 }
