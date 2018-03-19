@@ -30,7 +30,7 @@ public class PmdHeaderLineTest {
                 PmdHeaderLine.read("     26a  a=355.0   b= 77.0   s=  0.0   "
                         + "d=  0.0   v=11.0E-6m3   05-27-1994 09:08"));
         assertEquals(new PmdHeaderLine("CO-17E", 296.0, 57.0, 90.0, 0.0, 5.0e-6),
-                PmdHeaderLine.read("CO-17E    α=296.0   β= 57.0   s= 90.0   "
+                PmdHeaderLine.read("CO-17E    α=296.0   ß= 57.0   s= 90.0   "
                         + "d=  0.0   v= 5.0E-6m3  12-12-2017 14:01"));
         assertEquals(new PmdHeaderLine("42-297", 312.0, 51.0, 48.0, 81.0, 11.0e-6),
                 PmdHeaderLine.read("42-297    a=312.0   b= 51.0   s= 48.0   "

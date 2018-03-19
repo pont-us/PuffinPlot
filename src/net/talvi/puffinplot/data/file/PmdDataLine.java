@@ -38,8 +38,8 @@ class PmdDataLine {
     private static final Pattern LINE_REGEX = Pattern.compile(LINE_REGEX_STRING);
     public final TreatType treatmentType;
     public final int treatmentLevel;
-    public final Vec3 magnetization;
-    public final double magnetizationMagnitude;
+    public final Vec3 moment;
+    public final double magnetization;
     public final double sampleCorrectedDeclination;
     public final double sampleCorrectedInclination;
     public final double formationCorrectedDeclination;
@@ -96,8 +96,8 @@ class PmdDataLine {
             double[] d, String comment) {
         this.treatmentType = treatmentType;
         this.treatmentLevel = treatmentLevel;
-        this.magnetization = new Vec3(d[0], d[1], d[2]);
-        this.magnetizationMagnitude = d[3];
+        this.moment = new Vec3(d[0], d[1], d[2]);
+        this.magnetization = d[3];
         this.sampleCorrectedDeclination = d[4];
         this.sampleCorrectedInclination = d[5];
         this.formationCorrectedDeclination = d[6];
@@ -134,8 +134,8 @@ class PmdDataLine {
         final PmdDataLine pdl = (PmdDataLine) o;
         return treatmentType == pdl.treatmentType &&
                 treatmentLevel == pdl.treatmentLevel &&
-                magnetization.equals(pdl.magnetization) &&
-                magnetizationMagnitude == pdl.magnetizationMagnitude &&
+                moment.equals(pdl.moment) &&
+                magnetization == pdl.magnetization &&
                 sampleCorrectedDeclination == pdl.sampleCorrectedDeclination &&
                 sampleCorrectedInclination == pdl.sampleCorrectedInclination &&
                 formationCorrectedDeclination == pdl.formationCorrectedDeclination &&
@@ -148,8 +148,8 @@ class PmdDataLine {
         int hash = 7;
         hash = 83 * hash + Objects.hashCode(this.treatmentType);
         hash = 83 * hash + this.treatmentLevel;
-        hash = 83 * hash + Objects.hashCode(this.magnetization);
-        hash = 83 * hash + (int) (Double.doubleToLongBits(this.magnetizationMagnitude) ^ (Double.doubleToLongBits(this.magnetizationMagnitude) >>> 32));
+        hash = 83 * hash + Objects.hashCode(this.moment);
+        hash = 83 * hash + (int) (Double.doubleToLongBits(this.magnetization) ^ (Double.doubleToLongBits(this.magnetization) >>> 32));
         hash = 83 * hash + (int) (Double.doubleToLongBits(this.sampleCorrectedDeclination) ^ (Double.doubleToLongBits(this.sampleCorrectedDeclination) >>> 32));
         hash = 83 * hash + (int) (Double.doubleToLongBits(this.sampleCorrectedInclination) ^ (Double.doubleToLongBits(this.sampleCorrectedInclination) >>> 32));
         hash = 83 * hash + (int) (Double.doubleToLongBits(this.formationCorrectedDeclination) ^ (Double.doubleToLongBits(this.formationCorrectedDeclination) >>> 32));

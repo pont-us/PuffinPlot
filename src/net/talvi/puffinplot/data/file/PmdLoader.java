@@ -26,6 +26,11 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import net.talvi.puffinplot.data.Datum;
+import static java.lang.Math.toRadians;
+import net.talvi.puffinplot.data.Correction;
+import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.Vec3;
 
 /**
  *
@@ -74,7 +79,53 @@ class PmdLoader extends AbstractFileLoader {
             return;
         }
         for (String line: lines.subList(3, lines.size())) {
-            // TODO
+            if (line.length() == 1 && line.codePointAt(0) == 26) {
+                /*
+                 * Some PMD files have a final line consisting only
+                 * of a 0x1A (^Z) character.
+                 */
+                break;
+            }
+            final PmdDataLine dataLine = PmdDataLine.read(line);
+            final Datum d = new Datum(dataLine.moment.divideBy(headerLine.volume));
+            d.setSampAz(headerLine.sampleAzimuth);
+            d.setSampDip(90 - headerLine.sampleHade);
+            d.setFormAz((headerLine.formationStrike + 90) % 360);
+            d.setFormDip(headerLine.formationDip);
+            d.setTreatType(dataLine.treatmentType);
+            switch (d.getTreatType()) {
+                case DEGAUSS_XYZ:
+                    d.setAfX(dataLine.treatmentLevel/1000.);
+                    d.setAfY(dataLine.treatmentLevel/1000.);
+                    d.setAfZ(dataLine.treatmentLevel/1000.);
+                    break;
+                case THERMAL:
+                    d.setTemp(dataLine.treatmentLevel);
+                    break;
+            }
+            final Vec3 sampleCorrected = dataLine.moment.correctSample(
+                    toRadians(headerLine.sampleAzimuth),
+                    toRadians(90 - headerLine.sampleHade));
+            final Vec3 formationCorrected = sampleCorrected.correctForm(
+                    toRadians(headerLine.formationStrike + 90),
+                    toRadians(headerLine.formationDip));
+            checkConsistency(sampleCorrected.getDecDeg(),
+                    dataLine.sampleCorrectedDeclination, 0.3);
+            checkConsistency(sampleCorrected.getIncDeg(),
+                    dataLine.sampleCorrectedInclination, 0.3);
+            checkConsistency(formationCorrected.getDecDeg(),
+                    dataLine.formationCorrectedDeclination, 0.3);
+            checkConsistency(formationCorrected.getIncDeg(),
+                    dataLine.formationCorrectedInclination, 0.3);
+            checkConsistency(d.getIntensity(), dataLine.magnetization, 
+                    Math.max(d.getIntensity(), dataLine.magnetization)/100);
+            addDatum(d);
+        }
+    }
+    
+    private void checkConsistency(double expected, double actual, double tolerance) {
+        if (Math.abs(expected - actual) > tolerance) {
+            throw new IllegalArgumentException(String.format("Inconsistent data (calculated %g, found %g)", expected, actual));
         }
     }
     

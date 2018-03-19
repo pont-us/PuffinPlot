@@ -28,7 +28,7 @@ class PmdHeaderLine {
     private final static String NUMBER_REGEX =
             "([0-9 ][0-9 ][0-9 ][.][0-9])   ";
     private final static String REGEX = String.format(
-            "(.........) [aα]=%s[bβ]=%ss=%sd=%s" +
+            "(.........) [aα]=%s[bß]=%ss=%sd=%s" +
             "v=(.......)m3   ?(\\d\\d)[-/](\\d\\d)[-/](\\d\\d\\d\\d) "+
             "(\\d\\d):(\\d\\d)",
             NUMBER_REGEX, NUMBER_REGEX, NUMBER_REGEX, NUMBER_REGEX);
@@ -48,20 +48,20 @@ class PmdHeaderLine {
     }
 
     public final String name;
-    private final double azimuth; // azimuth of specimen x direction
-    private final double hade; // hade of specimen x direction
-    private final double strike; // strike
-    private final double dip; // dip
-    private final double v; // volume
+    public final double sampleAzimuth; // sampleAzimuth of specimen x direction
+    public final double sampleHade; // sampleHade of specimen x direction
+    public final double formationStrike; // formationStrike
+    public final double formationDip; // formationDip
+    public final double volume; // volume
 
     public PmdHeaderLine(String name, double a, double b, double s,
             double d, double v) {
         this.name = name;
-        this.azimuth = a;
-        this.hade = b;
-        this.strike = s;
-        this.dip = d;
-        this.v = v;
+        this.sampleAzimuth = a;
+        this.sampleHade = b;
+        this.formationStrike = s;
+        this.formationDip = d;
+        this.volume = v;
     }
     
     @Override
@@ -74,22 +74,22 @@ class PmdHeaderLine {
         }
         final PmdHeaderLine otherLine = (PmdHeaderLine) other;
         return name.equals(otherLine.name) &&
-                azimuth == otherLine.azimuth &&
-                hade == otherLine.hade &&
-                strike == otherLine.strike &&
-                dip == otherLine.dip &&
-                v == otherLine.v;
+                sampleAzimuth == otherLine.sampleAzimuth &&
+                sampleHade == otherLine.sampleHade &&
+                formationStrike == otherLine.formationStrike &&
+                formationDip == otherLine.formationDip &&
+                volume == otherLine.volume;
     }
 
     @Override
     public int hashCode() {
         int hash = 3;
         hash = 47 * hash + Objects.hashCode(this.name);
-        hash = 47 * hash + (int) (Double.doubleToLongBits(this.azimuth) ^ (Double.doubleToLongBits(this.azimuth) >>> 32));
-        hash = 47 * hash + (int) (Double.doubleToLongBits(this.hade) ^ (Double.doubleToLongBits(this.hade) >>> 32));
-        hash = 47 * hash + (int) (Double.doubleToLongBits(this.strike) ^ (Double.doubleToLongBits(this.strike) >>> 32));
-        hash = 47 * hash + (int) (Double.doubleToLongBits(this.dip) ^ (Double.doubleToLongBits(this.dip) >>> 32));
-        hash = 47 * hash + (int) (Double.doubleToLongBits(this.v) ^ (Double.doubleToLongBits(this.v) >>> 32));
+        hash = 47 * hash + (int) (Double.doubleToLongBits(this.sampleAzimuth) ^ (Double.doubleToLongBits(this.sampleAzimuth) >>> 32));
+        hash = 47 * hash + (int) (Double.doubleToLongBits(this.sampleHade) ^ (Double.doubleToLongBits(this.sampleHade) >>> 32));
+        hash = 47 * hash + (int) (Double.doubleToLongBits(this.formationStrike) ^ (Double.doubleToLongBits(this.formationStrike) >>> 32));
+        hash = 47 * hash + (int) (Double.doubleToLongBits(this.formationDip) ^ (Double.doubleToLongBits(this.formationDip) >>> 32));
+        hash = 47 * hash + (int) (Double.doubleToLongBits(this.volume) ^ (Double.doubleToLongBits(this.volume) >>> 32));
         return hash;
     }
 
