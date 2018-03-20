@@ -94,7 +94,6 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.freehep.graphicsbase.util.UserProperties;
 
 /**

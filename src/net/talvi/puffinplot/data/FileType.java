@@ -49,6 +49,8 @@ public enum FileType {
     DIRECTIONS("Sample directions", 'd'),
     /** Custom tabular, defined by a FileFormat */
     CUSTOM_TABULAR("Custom format", 'c'),
+    /** Textual PMD format originated by R. Enkin */
+    PMD_ENKIN("PMD (Enkin)", 'm'),
     /** Unknown file format */
     UNKNOWN("Unknown", 'u');
 

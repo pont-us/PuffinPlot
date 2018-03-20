@@ -516,6 +516,9 @@ public final class Suite {
             case CUSTOM_TABULAR:
                 loader = new TabularFileLoader(file, format);
                 break;
+            case PMD_ENKIN:
+                loader = PmdLoader.readFile(file, importOptions);
+                break;
             case DIRECTIONS:
                 readDirectionalData(files);
                 return;

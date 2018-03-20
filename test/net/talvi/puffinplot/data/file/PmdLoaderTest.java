@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import net.talvi.puffinplot.data.Datum;
+import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.data.file.testdata.TestFileLocator;
@@ -106,12 +107,13 @@ public class PmdLoaderTest {
         final InputStream stream =
                 TestFileLocator.class.getResourceAsStream(filenameAndData[0]);
         final PmdLoader pmdLoader =
-                new PmdLoader(stream, Collections.emptyMap());
+                new PmdLoader(stream, Collections.emptyMap(), filenameAndData[0]);
         final List<Datum> loadedData = pmdLoader.getData();
-        checkData(numericalData, loadedData);
+        checkData(numericalData, filenameAndData, loadedData);
     }
     
-    private void checkData(double[][] expected, List<Datum> actual) {
+    private void checkData(double[][] expected, String[] expectedStrings,
+            List<Datum> actual) {
         assertEquals(expected.length-1, actual.size());
         for (int i=0; i<actual.size(); i++) {
             final double[] expVals = expected[i+1];
@@ -123,6 +125,8 @@ public class PmdLoaderTest {
             assertEquals((expected[0][2] + 90) % 360, d.getFormAz(), 1e-10);
             assertEquals(expected[0][3], d.getFormDip(), 1e-10);
             assertEquals(TREATMENT_TYPES[(int) expVals[0]], d.getTreatType());
+            assertEquals(MeasType.DISCRETE, d.getMeasType());
+            assertEquals(expectedStrings[1], d.getIdOrDepth());
             switch (d.getTreatType()) {
                 case DEGAUSS_XYZ:
                     assertEquals(expVals[1], d.getAfX()*1000, 1e-10);
