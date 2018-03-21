@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -88,9 +89,9 @@ public class PmdLoader extends AbstractFileLoader {
             final List<String> lines =
                     reader.lines().collect(Collectors.toList());
             processLines(lines);
-        } catch (IOException ex) {
+        } catch (IOException | UncheckedIOException ex) {
             addMessage("Error reading file %s", fileIdentifier);
-            Logger.getLogger(PmdLoader.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(PmdLoader.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }

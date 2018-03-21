@@ -48,6 +48,13 @@ Graphing and data display
 -   R parameter now shown to 4 decimal places in site and suite parameter
     tables.
 
+Data import
+-----------
+
+-   PuffinPlot can now import the text-based PMD format developed by
+	R. Enkin and supported by several palaeomagnetic programs including
+	PMGSC, Paleomac, and Remasoft.
+
 Data export
 -----------
 

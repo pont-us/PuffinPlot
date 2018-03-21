@@ -16,15 +16,23 @@
  */
 package net.talvi.puffinplot.data.file;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.data.file.testdata.TestFileLocator;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import org.junit.Test;
 
 /**
@@ -136,5 +144,62 @@ public class PmdLoaderTest {
                     break;
             }
         }
+    }
+    
+    @Test
+    public void testNonExistentFile() {
+        /*
+         * The filename is a UUID in the root directory, which makes it
+         * fairly certain that it doesn't exist.
+         */
+        final PmdLoader pmdLoader = PmdLoader.readFile(
+                new File("/12233e64-2cf3-11e8-9643-2316aaca3cc2"),
+                Collections.emptyMap());
+        assertEquals(0, pmdLoader.getData().size());
+        assertTrue(pmdLoader.getMessages().size() > 0);
+    }
+    
+    @Test
+    public void testClosedStream() {
+        final InputStream stream = TestFileLocator.class.
+                getResourceAsStream(FILENAMES_AND_DATA[0][0]);
+        try {
+            stream.close();
+        } catch (IOException ex) {
+            Logger.getLogger(PmdLoaderTest.class.getName()).log(Level.SEVERE, null, ex);
+            fail();
+        }
+        final PmdLoader pmdLoader =
+                new PmdLoader(stream, Collections.emptyMap(), FILENAMES_AND_DATA[0][0]);
+        assertTrue(pmdLoader.getMessages().size() > 0);
+    }
+    
+    @Test
+    public void testUnknownHeaderFormat() {
+        final InputStream inputStream = new ByteArrayInputStream(
+                ("\nss0208c   a= 49.4   b= 52.5   s=  0.0   "
+                        + "d=  0.0   v=11.0E-6m3  06/18/2003 12:00\n"
+                        + "Malformed header line here\n").
+                        getBytes(StandardCharsets.US_ASCII));
+        final PmdLoader pmdLoader =
+                new PmdLoader(inputStream, Collections.emptyMap(), "test");
+        assertTrue(pmdLoader.getMessages().size() > 0);
+        assertEquals(0, pmdLoader.getData().size());
+    }
+    
+    @Test
+    public void testInconsistentData() {
+        final String fileContents = "11-02\n" +
+                "     26a  a=355.0   b= 77.0   s=  0.0   d=  0.0   v=11.0E-6m3   05-27-1994 09:08\n" +
+                "STEP  Xc (Am2)  Yc (Am2)  Zc (Am2)  MAG(A/m)   GDEC  GINC  SDEC  SINC a95 \n" +
+                "NRM   2.45E-05 -3.13E-05 -2.01E-05  4.05E+00 240.8 -39.6 240.8 -59.6  0.0 1\n";
+        final InputStream inputStream = new ByteArrayInputStream(
+                fileContents.getBytes(StandardCharsets.US_ASCII));
+        final PmdLoader pmdLoader =
+                new PmdLoader(inputStream, Collections.emptyMap(), "test");
+        assertTrue(pmdLoader.getMessages().size() > 0);
+        assertTrue(pmdLoader.getMessages().get(0).toLowerCase().
+                contains("inconsistent"));
+        assertEquals(1, pmdLoader.getData().size());
     }
 }

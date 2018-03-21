@@ -20,7 +20,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -63,13 +62,10 @@ public class FiletypeDialog extends JDialog {
                 final JButton button = new JButton(ft.getNiceName());
                 button.setAlignmentX(Component.CENTER_ALIGNMENT);
                 button.setMnemonic(getExtendedKeyCodeForChar(ft.getShortcut()));
-                button.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        fileType = ft;
-                        setVisible(false);
-                        dispose();
-                    }
+                button.addActionListener((ActionEvent e) -> {
+                    fileType = ft;
+                    setVisible(false);
+                    dispose();
                 });
                 cp.add(button);
                 cp.add(Box.createRigidArea((new Dimension(0, 8))));
@@ -78,14 +74,11 @@ public class FiletypeDialog extends JDialog {
         
         cp.add(Box.createRigidArea((new Dimension(0, 16))));
         final JButton cancelButton = new JButton("Cancel");
-        cancelButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        fileType = null;
-                        setVisible(false);
-                        dispose();
-                    }
-                });
+        cancelButton.addActionListener((ActionEvent e) -> {
+            fileType = null;
+            setVisible(false);
+            dispose();
+        });
         cancelButton.setAlignmentX(CENTER_ALIGNMENT);
         cancelButton.setMnemonic(KeyEvent.VK_ESCAPE);
         cp.add(cancelButton);

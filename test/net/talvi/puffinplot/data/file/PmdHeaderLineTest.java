@@ -40,4 +40,28 @@ public class PmdHeaderLineTest {
                         + "d=  0.0   v=11.0E-6m3  06/17/2003 12:00"));
     }
     
+    @Test
+    public void testMalformedLine() {
+        assertNull(PmdHeaderLine.read(
+                "This is not a correctly formed header line."));
+    }
+    
+    @Test
+    public void testEqualsAndHashCode() {
+        final PmdHeaderLine same0 =
+                new PmdHeaderLine("ss0208c", 49.4, 52.5, 0.0, 0.0, 11e-6);
+        final PmdHeaderLine same1 =
+                new PmdHeaderLine("ss0208c", 49.4, 52.5, 0.0, 0.0, 11e-6);
+        final PmdHeaderLine different =
+                new PmdHeaderLine("ss0208c", 49.4, 52.5, 0.0, 0.0, 11.1e-6);        
+        
+        assertEquals(same0, same0);
+        assertEquals(same0, same1);
+        assertEquals(same1, same0);
+        assertNotEquals(same0, different);
+        assertNotEquals(same0, this);
+        assertNotEquals(same0, null);
+        assertEquals(same0.hashCode(), same1.hashCode());
+    }
+    
 }
