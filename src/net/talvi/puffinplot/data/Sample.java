@@ -293,7 +293,7 @@ public class Sample {
      * @param min minimum treatment intensity
      * @param max maximum treatment intensity
      * 
-     * @see Datum.getTreatmentLevel();
+     * @see Datum#getTreatmentLevel()
      */
     public void selectByTreatmentLevelRange(double min, double max) {
         for (Datum d: getData()) {
@@ -395,7 +395,7 @@ public class Sample {
      * This method is mainly intended for use with ARM demagnetization data,
      * which can contain a mixture of "degauss" and "ARM" treatment types.
      * 
-     * @param type a treatment type
+     * @param types a set of treatment type
      * @param level a treatment level
      * @return the first datum in the sample with the given treatment level
      */

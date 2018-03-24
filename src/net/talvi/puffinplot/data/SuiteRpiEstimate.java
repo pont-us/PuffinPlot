@@ -73,9 +73,11 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
     }
     
     /**
-     * @param nrmSuite
-     * @param msSuite
-     * @return 
+     * Estimate RPI by normalizing NRM to MS.
+     * 
+     * @param nrmSuite suite containing NRM data
+     * @param msSuite suite containing magnetic susceptibility normalizer data
+     * @return a collection of RPI estimates
      */
     public static SuiteRpiEstimate<MagSusSampleRpiEstimate>
         calculateWithMagSus(Suite nrmSuite, Suite msSuite) {
@@ -98,6 +100,16 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
         return new SuiteRpiEstimate<>(Collections.emptyList(), rpis);
     }
     
+    /**
+     * Estimate RPI by normalizing a stepwise demagnetized NRM to a stepwise
+     * demagnetized ARM.
+     * 
+     * @param nrmSuite suite containing NRM data
+     * @param armSuite suite containing ARM normalizer data
+     * @param minLevel lowest AF treatment level to consider
+     * @param maxLevel highest AF treatment level to consider
+     * @return a collection of RPI estimates
+     */
     public static SuiteRpiEstimate<ArmSampleRpiEstimate>
         calculateWithArm(Suite nrmSuite,
             Suite armSuite, double minLevel, double maxLevel) {
