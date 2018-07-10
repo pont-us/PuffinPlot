@@ -32,7 +32,7 @@ class PmdDataLine {
     private static final String NUM_REGEX_2 = "([ 0-9][ 0-9][ 0-9][.][0-9])";
     private static final String NUM_REGEX_3 = "([-0-9 ][-0-9 ][-0-9 ][.][0-9])";
     private static final String LINE_REGEX_STRING = String.format(
-            "^(....) %s %s %s %s %s %s %s %s ([ 0-9]\\d[.]\\d) (.*)$",
+            "^(.....)%s %s %s %s %s %s %s %s ([ 0-9]\\d[.]\\d) (.*)$",
             NUM_REGEX_1, NUM_REGEX_1, NUM_REGEX_1, NUM_REGEX_1,
             NUM_REGEX_2, NUM_REGEX_3, NUM_REGEX_2, NUM_REGEX_3);
     private static final Pattern LINE_REGEX = Pattern.compile(LINE_REGEX_STRING);
@@ -48,10 +48,22 @@ class PmdDataLine {
     public final String comment;
     
     private static class PmdTreatment {
+        /* Format 1: treatment type before number */
         private static final Pattern REGEX_1 =
-                Pattern.compile("([HMT])(\\d\\d\\d)");
+                Pattern.compile("([HMT])(\\d\\d\\d) ");
+        
+        /* Format 2: treatment type after number */
         private static final Pattern REGEX_2 =
-                Pattern.compile("(\\d{1,3})M(T ?)?");
+                Pattern.compile("(\\d{1,3})M(T ?)? ");
+        
+        /* Format 3: thermal treatment with "°C" suffix.
+         * I've only seen this format in PMD files exported by Remasoft 3.
+         * The regular expression also allows "░" for the degree symbol,
+         * since this is produced if an ISO-8859-1 file is read using the
+         * CP437 encoding. See comment in PmdLoader class for more details.
+         */
+        private static final Pattern REGEX_3 =
+                Pattern.compile("(\\d{1,3})[░°]C {0,2}");
 
         public final TreatType type;
         public final int level;
@@ -62,7 +74,7 @@ class PmdDataLine {
         }
         
         public static PmdTreatment parse(String s) {
-            if ("NRM ".equals(s)) {
+            if ("NRM  ".equals(s)) {
                 return new PmdTreatment(TreatType.NONE, 0);
             }
             final Matcher matcher1 = REGEX_1.matcher(s);
@@ -87,6 +99,11 @@ class PmdDataLine {
             if (matcher2.matches()) {
                 return new PmdTreatment(TreatType.DEGAUSS_XYZ,
                         Integer.parseInt(matcher2.group(1)));
+            }
+            final Matcher matcher3 = REGEX_3.matcher(s);
+            if (matcher3.matches()) {
+                return new PmdTreatment(TreatType.THERMAL,
+                        Integer.parseInt(matcher3.group(1)));                
             }
             throw new IllegalArgumentException();
         }

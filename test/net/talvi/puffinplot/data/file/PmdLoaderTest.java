@@ -47,7 +47,8 @@ public class PmdLoaderTest {
         {"CO-17E.PMD", "CO-17E"},
         {"IPG_AF.PMD", "26a"},
         {"IPG_Thermal.PMD", "42-297"},
-        {"ss0202a.pmd", "ss0202a"}
+        {"ss0202a.pmd", "ss0202a"},
+        {"BC0101A1.pmd", "BC0101A1"}
     };
     private final static double[][][] NUMERICAL_DATA = {
         {{296.0, 57.0, 90.0,  0.0, 5.0E-6}, // CO-17E.PMD
@@ -100,7 +101,24 @@ public class PmdLoaderTest {
             {1, 30, -8.78E-06, -3.91E-06, +1.43E-05},
             {1, 45, -7.67E-06, -3.42E-06, +1.27E-05},
             {1, 80, -5.77E-06, -2.58E-06, +9.61E-06},
-            {1, 190, -2.96E-06, -1.28E-06, +4.98E-06}}
+            {1, 190, -2.96E-06, -1.28E-06, +4.98E-06}},
+        {{287.0, -88.0, 0.0, 0.0, 11.0E-6},
+            {0,   0, 8.80E-09, -1.60E-07, -5.06E-08},
+            {2, 100, 9.90E-09, -1.55E-07, -4.95E-08},
+            {2, 150, 1.10E-08, -1.52E-07, -4.95E-08},
+            {2, 200, 1.21E-08, -1.51E-07, -4.84E-08},
+            {2, 250, 1.32E-08, -1.46E-07, -4.84E-08},
+            {2, 300, 1.21E-08, -1.39E-07, -4.29E-08},
+            {2, 350, 1.21E-08, -1.30E-07, -3.96E-08},
+            {2, 400, 1.21E-08, -1.21E-07, -3.41E-08},
+            {2, 425, 9.90E-09, -1.14E-07, -3.08E-08},
+            {2, 450, 7.92E-09, -8.70E-08, -2.77E-08},
+            {2, 475, 5.94E-09, -7.61E-08, -2.42E-08},
+            {2, 500,-1.10E-10, -1.18E-08,  1.00E-08},
+            {2, 520, 4.29E-09,  6.93E-09, -2.55E-08},
+            {2, 540, 5.21E-08,  1.09E-07, -1.14E-08},
+            {2, 560,-2.31E-08, -2.23E-08, -4.70E-08},
+            {2, 580, 7.15E-09,  6.60E-09,  5.65E-08}},
     };
     
     @Test
@@ -117,6 +135,9 @@ public class PmdLoaderTest {
         final PmdLoader pmdLoader =
                 new PmdLoader(stream, Collections.emptyMap(), filenameAndData[0]);
         final List<Datum> loadedData = pmdLoader.getData();
+        if (!pmdLoader.messages.isEmpty()){
+            System.out.println(pmdLoader.messages);
+        }
         checkData(numericalData, filenameAndData, loadedData);
     }
     

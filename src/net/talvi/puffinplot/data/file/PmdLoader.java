@@ -45,10 +45,12 @@ public class PmdLoader extends AbstractFileLoader {
                 " PAL  Xc (Am2)  Yc (Am2)  Zc (Am2)  MAG(A/m)   Dg    Ig    Ds    Is   a95 ",
                 "STEP  Xc [Am2]  Yc [Am2]  Zc [Am2]  MAG[A/m]   Dg    Ig    Ds    Is  a95 ",
                 "STEP  Xc (Am2)  Yc (Am2)  Zc (Am2)  MAG(A/m)   GDEC  GINC  SDEC  SINC a95 ",
-                "STEP  Xc [Am²]  Yc [Am²]  Zc [Am²]  MAG[A/m]   Dg    Ig    Ds    Is  a95 "
+                "STEP  Xc [Am²]  Yc [Am²]  Zc [Am²]  MAG[A/m]   Dg    Ig    Ds    Is  a95 ",
+                "STEP  Xc (Am2)  Yc (Am2)  Zc (Am2)  MAG(A/m)   Dg    Ig    Ds    Is   a95 "
             });
 
     private final String fileIdentifier;
+    private String firstLineComment = "";
     
     public static PmdLoader readFile(File file, Map<Object, Object> importOptions) {
         try {
@@ -76,10 +78,16 @@ public class PmdLoader extends AbstractFileLoader {
         this.fileIdentifier = (fileIdentifier == null) ?
                 "UNKNOWN" : fileIdentifier;
         /*
-         * Some PMD files are in pure ASCII. All the non-ASCII ones I've
-         * encountered use codepage 437 (a superset of ASCII), so we fortunately
-         * don't need to deduce the encoding here: we can just use Cp437 to
-         * cover both possibilities.
+         * Some PMD files are in pure ASCII. Most of the non-ASCII ones I've
+         * encountered use codepage 437, which is a superset of ASCII). For
+         * both these cases, CP437 is a suitable encoding. Unfortunately,
+         * PMD files exported from Remasoft 3 can contain a degree symbol °
+         * (0xB0) in ISO-8859-1 encoding, which maps to the "light shade"
+         * block character ░ (Unicode 2591) in CP437 encoding. Here I
+         * hardcode CP437 nevertheless, and deal with the possibility
+         * of having ° mapped to ░ in the PmdDataLine class. An alternative
+         * approach would be to use heuristics to guess the character set,
+         * but the current method seems more straightforward and robust.
          */
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
                 inputStream, "Cp437"))) {
@@ -101,13 +109,18 @@ public class PmdLoader extends AbstractFileLoader {
     }
 
     private void processLines(List<String> lines) {
-        // Line 0 contains an optional comment, which we ignore.
+        // Line 0 contains an optional comment.
+        firstLineComment = lines.get(0);
         // Line 1 is the first of two header lines.
         final PmdHeaderLine headerLine = PmdHeaderLine.read(lines.get(1));
+        if (headerLine == null) {
+            addMessage("Line 2: unknown format for first header line");
+            return;
+        }
         // Line 2 is the second of two header lines, and consists purely of
         // column headings. We check it against a list of known formats.
         if (!VALID_HEADERS.contains(lines.get(2))) {
-            addMessage("Line 3: unknown header format");
+            addMessage("Line 3: unknown format for second header line");
             return;
         }
         for (int lineIndex=3; lineIndex < lines.size(); lineIndex++) {
@@ -161,7 +174,12 @@ public class PmdLoader extends AbstractFileLoader {
     
     private void checkConsistency(String location, double expected,
             double actual, double tolerance) {
-        if (Math.abs(expected - actual) > tolerance) {
+        /* PMD files converted from JR6 files by Remasoft 3 don't always
+         * include all the polar data, so identify these by their
+         * first-line comment and skip the consistency checks for them.
+         */
+        if (!"JR6 file".equals(firstLineComment) &&
+                Math.abs(expected - actual) > tolerance) {
             addMessage("Inconsistent data (%s): calculated %g, found %g",
                     location, expected, actual);
         }

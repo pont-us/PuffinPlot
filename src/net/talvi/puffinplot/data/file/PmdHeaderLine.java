@@ -26,11 +26,11 @@ import java.util.regex.Pattern;
 class PmdHeaderLine {
 
     private final static String NUMBER_REGEX =
-            "([0-9 ][0-9 ][0-9 ][.][0-9])   ";
+            "([0-9 -][0-9 -][0-9 ][.][0-9])   ";
     private final static String REGEX = String.format(
             "(.........) [aα]=%s[bß]=%ss=%sd=%s" +
-            "v=(.......)m3   ?(\\d\\d)[-/](\\d\\d)[-/](\\d\\d\\d\\d) "+
-            "(\\d\\d):(\\d\\d)",
+            "v=(.......)m3(   ?(\\d\\d)[-/](\\d\\d)[-/](\\d\\d\\d\\d) "+
+            "(\\d\\d):(\\d\\d))?",
             NUMBER_REGEX, NUMBER_REGEX, NUMBER_REGEX, NUMBER_REGEX);
     
     static PmdHeaderLine read(String input) {
