@@ -17,6 +17,9 @@
 package net.talvi.puffinplot.data.file;
 
 import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.Vec3;
+import static net.talvi.puffinplot.data.file.OrientationParameters.AzimuthParameter;
+import static net.talvi.puffinplot.data.file.OrientationParameters.DipParameter;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -31,12 +34,24 @@ public class Jr6DataLineTest {
         
         final String string =
                 "BC0101A1  NRM       0.08 -1.45 -0.46  -2"
-                + " 107  88   0   0   0   0 12  0 12  0   1";
+                + " 107  88  11  12  13  14 12  0 12  0   1";
         
         final Jr6DataLine line = Jr6DataLine.read(string);
         assertEquals("BC0101A1", line.getName());
         assertEquals(TreatType.NONE, line.getTreatmentType());
-        
+        assertEquals(0, line.getTreatmentLevel());
+        final Vec3 expectedMagnetizaion = new Vec3(
+          0.08e-2, -1.45e-2, -0.46e-2);
+        assertTrue(expectedMagnetizaion.equals(line.getMagnetization(), 1e-10));
+        assertEquals(107, line.getAzimuth());
+        assertEquals(88, line.getDip());
+        assertEquals(11, line.getFoliationAzimuth());
+        assertEquals(12, line.getFoliationDip());
+        assertEquals(13, line.getLineationTrend());
+        assertEquals(14, line.getLineationPlunge());
+        assertEquals(new OrientationParameters(AzimuthParameter.A12,
+                DipParameter.D0, AzimuthParameter.A12, DipParameter.D0),
+                line.getOrientationParameters());
     }
     
 }

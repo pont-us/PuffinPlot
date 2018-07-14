@@ -16,9 +16,12 @@
  */
 package net.talvi.puffinplot.data.file;
 
+import java.util.function.IntFunction;
+import java.util.function.IntSupplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.Vec3;
 
 /**
  *
@@ -26,9 +29,6 @@ import net.talvi.puffinplot.data.TreatType;
  */
 class Jr6DataLine {
 
-    private final String name;
-    private TreatType treatmentType;
-    
     private final static String regexXyz = "([-0-9. ]{6})";
     private final static String regex4digits = "([-0-9. ]{4})";
     private final static String fullRegexString =
@@ -39,11 +39,36 @@ class Jr6DataLine {
             regex4digits;
     private final static Pattern regexPattern = Pattern.compile(fullRegexString);
 
+    private final String name;
+    private final TreatType treatmentType;
+    private final int treatmentLevel;
+    private final Vec3 magnetization;
+    private final int azimuth;
+    private final int dip;
+    private final int foliationAzimuth;
+    private final int foliationDip;
+    private final int lineationTrend;
+    private final int lineationPlunge;
+    private final OrientationParameters orientationParameters;
+
     private Jr6DataLine(String string) {
         final Matcher matcher = regexPattern.matcher(string);
         final boolean matches = matcher.matches();
         name = matcher.group(1).trim();
         treatmentType = readTreatmentType(matcher.group(2));
+        treatmentLevel = readTreatmentLevel(matcher.group(2));
+        magnetization = readMagnetization(matcher);
+        final IntFunction<Integer> readInt =
+                (index) -> Integer.parseInt(matcher.group(index).trim());
+        azimuth = readInt.apply(7);
+        dip = readInt.apply(8);
+        foliationAzimuth = readInt.apply(9);
+        foliationDip = readInt.apply(10);
+        lineationTrend = readInt.apply(11);
+        lineationPlunge = readInt.apply(12);
+        orientationParameters = OrientationParameters.read(
+                matcher.group(13), matcher.group(14),
+                matcher.group(15), matcher.group(16));
     }
     
     private static TreatType readTreatmentType(String treatmentField) {
@@ -62,6 +87,28 @@ class Jr6DataLine {
         }
     }
     
+    private static int readTreatmentLevel(String treatmentField) {
+        if ("NRM".equals(treatmentField.trim())) {
+            return 0;
+        }
+        final String numericPart = treatmentField.trim().substring(1);
+        return Integer.parseInt(numericPart);
+    }
+    
+    private static Vec3 readMagnetization(Matcher matcher) {
+        final double scale = Math.pow(10,
+                Integer.parseInt(matcher.group(6).trim()));
+        return new Vec3(
+                groupAsDouble(matcher, 3, scale),
+                groupAsDouble(matcher, 4, scale),
+                groupAsDouble(matcher, 5, scale));
+    }
+    
+    private static double groupAsDouble(Matcher matcher, int index,
+            double scale) {
+        return Double.parseDouble(matcher.group(index).trim()) * scale;
+    }
+    
     static Jr6DataLine read(String string) {
         return new Jr6DataLine(string);
     }
@@ -73,5 +120,41 @@ class Jr6DataLine {
     public TreatType getTreatmentType() {
         return treatmentType;
     }
-    
+
+    public int getTreatmentLevel() {
+        return treatmentLevel;
+    }
+
+    public Vec3 getMagnetization() {
+        return magnetization;
+    }
+
+    public int getAzimuth() {
+        return azimuth;
+    }
+
+    public int getDip() {
+        return dip;
+    }
+
+    public int getFoliationAzimuth() {
+        return foliationAzimuth;
+    }
+
+    public int getFoliationDip() {
+        return foliationDip;
+    }
+
+    public int getLineationTrend() {
+        return lineationTrend;
+    }
+
+    public int getLineationPlunge() {
+        return lineationPlunge;
+    }
+
+    public OrientationParameters getOrientationParameters() {
+        return orientationParameters;
+    }
+
 }
