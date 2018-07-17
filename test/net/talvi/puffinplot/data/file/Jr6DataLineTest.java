@@ -23,10 +23,6 @@ import static net.talvi.puffinplot.data.file.OrientationParameters.DipParameter;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- *
- * @author pont
- */
 public class Jr6DataLineTest {
     
     @Test
@@ -40,9 +36,8 @@ public class Jr6DataLineTest {
         assertEquals("BC0101A1", line.getName());
         assertEquals(TreatType.NONE, line.getTreatmentType());
         assertEquals(0, line.getTreatmentLevel());
-        final Vec3 expectedMagnetizaion = new Vec3(
-          0.08e-2, -1.45e-2, -0.46e-2);
-        assertTrue(expectedMagnetizaion.equals(line.getMagnetization(), 1e-10));
+        assertTrue(new Vec3(0.08e-2, -1.45e-2, -0.46e-2).equals(
+                line.getMagnetization(), 1e-10));
         assertEquals(107, line.getAzimuth());
         assertEquals(88, line.getDip());
         assertEquals(11, line.getFoliationAzimuth());
