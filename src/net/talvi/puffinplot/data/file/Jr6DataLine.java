@@ -53,6 +53,9 @@ class Jr6DataLine {
     private Jr6DataLine(String string) {
         final Matcher matcher = regexPattern.matcher(string);
         final boolean matches = matcher.matches();
+        if (!matches) {
+            throw new IllegalArgumentException("Malformed JR6 line");
+        }
         name = matcher.group(1).trim();
         treatmentType = readTreatmentType(matcher.group(2));
         treatmentLevel = readTreatmentLevel(matcher.group(2));
@@ -108,7 +111,7 @@ class Jr6DataLine {
         return Double.parseDouble(matcher.group(index).trim()) * scale;
     }
     
-    static Jr6DataLine read(String string) {
+    public static Jr6DataLine read(String string) {
         return new Jr6DataLine(string);
     }
 

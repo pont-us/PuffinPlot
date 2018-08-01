@@ -26,18 +26,12 @@ import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import net.talvi.puffinplot.data.Datum;
 import static java.lang.Math.toRadians;
 import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.Vec3;
 
-/**
- *
- * @author pont
- */
 public class PmdLoader extends AbstractFileLoader {
     
     private static final List<String> VALID_HEADERS =
