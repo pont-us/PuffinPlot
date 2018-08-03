@@ -24,6 +24,7 @@ import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import net.talvi.puffinplot.data.Datum;
+import net.talvi.puffinplot.data.MeasType;
 
 class Jr6Loader extends AbstractFileLoader {
 
@@ -48,7 +49,16 @@ class Jr6Loader extends AbstractFileLoader {
     }
 
     private Datum makeDatum(Jr6DataLine dataLine) {
-        final Datum d = new Datum(dataLine.getMagnetization());
+
+        final VectorAndOrientations vectorAndOrientations = dataLine.
+                getOrientationParameters().standardize(dataLine.getVectorAndOrientations());
+        final Datum d = new Datum(vectorAndOrientations.vector);
+        d.setSampAz(vectorAndOrientations.sampleAzimuth);
+        d.setSampDip(vectorAndOrientations.sampleDip);
+        d.setFormAz(vectorAndOrientations.formationAzimuth);
+        d.setFormDip(vectorAndOrientations.formationDip);
+        d.setMeasType(MeasType.DISCRETE);
+        d.setDiscreteId(dataLine.getName());
         return d;
     }
 

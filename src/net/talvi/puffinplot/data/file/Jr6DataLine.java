@@ -158,5 +158,9 @@ class Jr6DataLine {
     public OrientationParameters getOrientationParameters() {
         return orientationParameters;
     }
+    
+    public VectorAndOrientations getVectorAndOrientations() {
+        return new VectorAndOrientations(magnetization, azimuth, dip, foliationAzimuth, foliationDip);
+    }
 
 }
