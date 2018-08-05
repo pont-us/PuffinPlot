@@ -51,7 +51,7 @@ class Jr6Loader extends AbstractFileLoader {
     private Datum makeDatum(Jr6DataLine dataLine) {
 
         final VectorAndOrientations vectorAndOrientations = dataLine.
-                getOrientationParameters().standardize(dataLine.getVectorAndOrientations());
+                getOrientationParameters().convertToPuffinPlotConvention(dataLine.getVectorAndOrientations());
         final Datum d = new Datum(vectorAndOrientations.vector);
         d.setSampAz(vectorAndOrientations.sampleAzimuth);
         d.setSampDip(vectorAndOrientations.sampleDip);

@@ -102,7 +102,7 @@ public class OrientationParametersTest {
                     (int) params[0], (int) params[1],
                     (int) params[2], (int) params[3]);
             final VectorAndOrientations standardized =
-                    op.standardize(new VectorAndOrientations(v, 107, 88, 66, 44));
+                    op.convertToPuffinPlotConvention(new VectorAndOrientations(v, 107, 88, 66, 44));
             final Vec3 sampleCorrected = standardized.vector.correctSample(
                     toRadians(standardized.sampleAzimuth),
                     toRadians(standardized.sampleDip));
