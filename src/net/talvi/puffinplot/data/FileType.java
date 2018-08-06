@@ -51,6 +51,8 @@ public enum FileType {
     CUSTOM_TABULAR("Custom format", 'c'),
     /** Textual PMD format originated by R. Enkin */
     PMD_ENKIN("PMD (Enkin)", 'm'),
+    /** JR6 format used by AGICO software */
+    JR6("JR6", 'j'),
     /** Unknown file format */
     UNKNOWN("Unknown", 'u');
 

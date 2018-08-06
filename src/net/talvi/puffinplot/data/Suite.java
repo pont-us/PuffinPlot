@@ -519,6 +519,9 @@ public final class Suite {
             case PMD_ENKIN:
                 loader = PmdLoader.readFile(file, importOptions);
                 break;
+            case JR6:
+                loader = Jr6Loader.readFile(file, importOptions);
+                break;
             case DIRECTIONS:
                 readDirectionalData(files);
                 return;

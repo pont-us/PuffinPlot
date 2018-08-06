@@ -17,16 +17,19 @@
 package net.talvi.puffinplot.data.file;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.MeasType;
 
-class Jr6Loader extends AbstractFileLoader {
+public class Jr6Loader extends AbstractFileLoader {
 
     public Jr6Loader(InputStream inputStream, String fileIdentifier) {
                 try (BufferedReader reader = new BufferedReader(
@@ -38,6 +41,22 @@ class Jr6Loader extends AbstractFileLoader {
             processLines(lines);
         } catch (IOException | UncheckedIOException ex) {
             addMessage("Error reading file %s", fileIdentifier);
+        }
+    }
+    
+    private Jr6Loader() {
+    }
+
+    public static Jr6Loader readFile(File file,
+            Map<Object, Object> importOptions) {
+        try {
+            final FileInputStream fis = new FileInputStream(file);
+            return new Jr6Loader(fis, file.getName());
+        } catch (IOException ex) {
+            final Jr6Loader loader = new Jr6Loader();
+            loader.messages.add("Error reading \"" + file.getName() + "\"");
+            loader.messages.add(ex.getMessage());
+            return loader;
         }
     }
 
@@ -66,10 +85,10 @@ class Jr6Loader extends AbstractFileLoader {
                 break;
             case DEGAUSS_XYZ:
             case ARM:
-                d.setAfX(dataLine.getTreatmentLevel());
-                d.setAfY(dataLine.getTreatmentLevel());
+                d.setAfX(dataLine.getTreatmentLevel() / 1000.);
+                d.setAfY(dataLine.getTreatmentLevel() / 1000.);
             case DEGAUSS_Z:
-                d.setAfZ(dataLine.getTreatmentLevel());
+                d.setAfZ(dataLine.getTreatmentLevel() / 1000.);
                 break;
         }
         return d;

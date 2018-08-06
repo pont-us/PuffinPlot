@@ -685,7 +685,11 @@ public class Jr6LoaderTest {
             final Datum actualDatum, double rotation) {
         assertEquals(treatmentTypes[(int) expectedValues[0]],
                 actualDatum.getTreatType());
-        assertEquals(expectedValues[1],
+        
+        final double expectedTreatmentLevel =
+                treatmentTypes[(int) expectedValues[0]].involvesAf() ?
+                expectedValues[1] / 1000 : expectedValues[1];
+        assertEquals(expectedTreatmentLevel,
                 actualDatum.getTreatmentLevel(), 1e-10);
         /*
          * See JavaDoc for specimenRotation for an explanation of the rotZ
