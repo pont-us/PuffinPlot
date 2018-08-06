@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.MeasType;
-import net.talvi.puffinplot.data.TreatType;
 
 class Jr6Loader extends AbstractFileLoader {
 
@@ -61,8 +60,17 @@ class Jr6Loader extends AbstractFileLoader {
         d.setMeasType(MeasType.DISCRETE);
         d.setDiscreteId(dataLine.getName());
         d.setTreatType(dataLine.getTreatmentType());
-        if (dataLine.getTreatmentType() == TreatType.THERMAL) {
-            d.setTemp(dataLine.getTreatmentLevel());
+        switch (dataLine.getTreatmentType()) {
+            case THERMAL:
+                d.setTemp(dataLine.getTreatmentLevel());
+                break;
+            case DEGAUSS_XYZ:
+            case ARM:
+                d.setAfX(dataLine.getTreatmentLevel());
+                d.setAfY(dataLine.getTreatmentLevel());
+            case DEGAUSS_Z:
+                d.setAfZ(dataLine.getTreatmentLevel());
+                break;
         }
         return d;
     }

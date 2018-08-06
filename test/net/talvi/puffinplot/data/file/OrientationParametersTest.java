@@ -102,13 +102,31 @@ public class OrientationParametersTest {
                     (int) params[0], (int) params[1],
                     (int) params[2], (int) params[3]);
             final VectorAndOrientations standardized =
-                    op.convertToPuffinPlotConvention(new VectorAndOrientations(v, 107, 88, 66, 44));
+                    op.convertToPuffinPlotConvention(
+                            new VectorAndOrientations(v, 107, 88, 66, 44));
             final Vec3 sampleCorrected = standardized.vector.correctSample(
                     toRadians(standardized.sampleAzimuth),
                     toRadians(standardized.sampleDip));
             final Vec3 formationCorrected = sampleCorrected.correctForm(
                     toRadians(standardized.formationAzimuth),
                     toRadians(standardized.formationDip));
+            
+            /*
+             * We don't check the direction in the specimen co-ordinate
+             * system, because Remasoft can't generate expected values
+             * for this. Ideally we'd have a reference value for the
+             * direction of the input vector after conversion from the
+             * original orientation parameters to PuffinPlot's orientation
+             * parameters. In practice this is hard to do since Remasoft
+             * can't explicitly perform this conversion. However, checking
+             * the sample and formation corrected directions implicitly checks
+             * the original direction. (In principle there might be an
+             * error with the sample correction which precisely cancels
+             * out an error with the orientation parameter conversion, but
+             * this seems vanishingly unlikely.)
+             * 
+             */
+            
             assertEquals(params[4], sampleCorrected.getDecDeg(), 0.1);
             assertEquals(params[5], sampleCorrected.getIncDeg(), 0.1);
             assertEquals(params[6], formationCorrected.getDecDeg(), 0.1);
