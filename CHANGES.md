@@ -54,6 +54,8 @@ Data import
 -   PuffinPlot can now import the text-based PMD format developed by
 	R. Enkin and supported by several palaeomagnetic programs including
 	PMGSC, Paleomac, and Remasoft.
+-   PuffinPlot can now import the JR6 format developed by AGICO and
+	supported by programs including REMA6W, Remasoft, and Paleomac.
 
 Data export
 -----------
