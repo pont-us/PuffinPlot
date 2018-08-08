@@ -144,6 +144,16 @@ public class OrientationParametersTest {
         assertEquals(expected, actual);
     } 
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testUnknownAzimuthParameter() {
+        OrientationParameters.AzimuthParameter.read(1);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testUnknownDipParameter() {
+        OrientationParameters.DipParameter.read(45);
+    }
+    
     @Test
     public void testEqualsAndHashCode() {
         final OrientationParameters same0 =

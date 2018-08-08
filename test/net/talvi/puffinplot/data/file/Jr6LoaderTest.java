@@ -16,8 +16,17 @@
  */
 package net.talvi.puffinplot.data.file;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.PipedInputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.MeasType;
@@ -27,6 +36,8 @@ import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.file.testdata.TestFileLocator;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Rule;
+import org.junit.rules.TemporaryFolder;
 
 public class Jr6LoaderTest {
     
@@ -717,6 +728,49 @@ public class Jr6LoaderTest {
             assertEquals(expectedValues[8],
                     actualDatum.getMoment(formationCorrection).getIncDeg(),
                     0.1);
+        }
+    }
+    
+    @Test
+    public void testNonExistentFile() {
+        /*
+         * The filename is a UUID in the root directory, which makes it
+         * fairly certain that it doesn't exist.
+         */
+        final Jr6Loader jr6Loader = Jr6Loader.readFile(
+                new File("/12233e64-2cf3-11e8-9643-2316aaca3cc2"),
+                Collections.emptyMap());
+        assertEquals(0, jr6Loader.getData().size());
+        assertTrue(jr6Loader.getMessages().size() > 0);
+    }
+    
+    @Test
+    public void testExceptionOnReadingStream() {
+         /* We pass an unconnected PipedInputStream to guarantee that an
+          * IOException will be thrown when the constructor tries to read
+          * from it.
+          */ 
+        final Jr6Loader jr6Loader = new Jr6Loader(new PipedInputStream(), "test");
+        assertEquals(0, jr6Loader.getData().size());
+        assertTrue(jr6Loader.getMessages().size() > 0);        
+    }
+    
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    
+    @Test
+    public void testReadFile() {
+        try {
+            final File output = temporaryFolder.newFile("test.jr6");
+            final FileWriter fileWriter = new FileWriter(output);
+            fileWriter.write("Re01      NRM       8.07-22.02 22.21  -4 156  "
+                    + "78   0   0   0   0  6  0  6  0   1\n");
+            fileWriter.close();
+            Jr6Loader.readFile(output, Collections.emptyMap());
+        } catch (IOException ex) {
+            Logger.getLogger(Jr6LoaderTest.class.getName()).
+                    log(Level.SEVERE, null, ex);
+            fail("IO Exception");
         }
     }
     

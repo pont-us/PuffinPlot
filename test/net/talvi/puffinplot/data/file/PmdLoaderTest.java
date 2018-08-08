@@ -18,6 +18,7 @@ package net.talvi.puffinplot.data.file;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -33,7 +34,9 @@ import net.talvi.puffinplot.data.file.testdata.TestFileLocator;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * Test loading of text-based PMD (Enkin) format files.
@@ -223,4 +226,27 @@ public class PmdLoaderTest {
                 contains("inconsistent"));
         assertEquals(1, pmdLoader.getData().size());
     }
+    
+        
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    
+    @Test
+    public void testReadFile() {
+        try {
+            final File pmdFile = temporaryFolder.newFile("test.pmd");
+            final FileWriter fileWriter = new FileWriter(pmdFile);
+            fileWriter.write("JR6 file\n" +
+                    "BC0101A1  a=287.0   b=-88.0   s=  0.0   d=  0.0   v=11.0E-6m3\n" +
+                    "STEP  Xc (Am2)  Yc (Am2)  Zc (Am2)  MAG(A/m)   Dg    Ig    Ds    Is   a95 \n" +
+                    "NRM   8.80E-09 -1.60E-07 -5.06E-08  1.52E-02 214.7   2.4   0.0   0.0  1.0 ");
+            fileWriter.close();
+            PmdLoader.readFile(pmdFile, Collections.emptyMap());
+        } catch (IOException ex) {
+            Logger.getLogger(Jr6LoaderTest.class.getName()).
+                    log(Level.SEVERE, null, ex);
+            fail("IO Exception");
+        }
+    }
+    
 }
