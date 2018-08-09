@@ -1,5 +1,5 @@
 /* This file is part of PuffinPlot, a program for palaeomagnetic
- * data plotting and analysis. Copyright 2012 Pontus Lurcock.
+ * data plotting and analysis. Copyright 2012-2018 Pontus Lurcock.
  *
  * PuffinPlot is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,21 +26,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.FileType;
-import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.Suite;
-import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.Vec3;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- *
- * @author pont
- */
 public class UcDavisLoaderTest {
 
     private UcDavisLoader loader;
@@ -84,17 +75,9 @@ public class UcDavisLoaderTest {
     public UcDavisLoaderTest() {
     }
     
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
     @Before
     public void setUp() {
-                // Create an empty temporary file.
+        // Create an empty temporary file.
         file = null;
         try {
             file = File.createTempFile("puffinplot-test-", ".DAT");
@@ -115,10 +98,6 @@ public class UcDavisLoaderTest {
         options = new HashMap<>();
         
         suite = new Suite(getClass().getSimpleName());
-    }
-    
-    @After
-    public void tearDown() {
     }
 
     @Test

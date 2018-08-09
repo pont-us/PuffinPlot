@@ -1,5 +1,5 @@
 /* This file is part of PuffinPlot, a program for palaeomagnetic
- * data plotting and analysis. Copyright 2012-2015 Pontus Lurcock.
+ * data plotting and analysis. Copyright 2012-2018 Pontus Lurcock.
  *
  * PuffinPlot is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,12 @@ import javax.script.SimpleBindings;
  * It calculates a best-fitting mean direction from these data using
  * the method of McFadden and McElhinny (1988).
  * 
+ * References:
+ * 
+ * McFadden, P. L. & McElhinny, M. W., 1988. The combined analysis of
+ * remagnetization circles and direct observations in palaeomagnetism. Earth
+ * and Planetary Science Letters, 87, pp. 161–172.
+ * * 
  * @author pont
  */
 public final class GreatCircles implements FisherParams {
@@ -49,8 +55,8 @@ public final class GreatCircles implements FisherParams {
     private final double k;
     private final double R;
     private final int minPoints;
-//    private final PythonInterpreter interp = new PythonInterpreter();
-    private final Preferences prefs = Preferences.userNodeForPackage(net.talvi.puffinplot.PuffinPrefs.class);
+    private final Preferences prefs = Preferences.userNodeForPackage(
+            net.talvi.puffinplot.PuffinPrefs.class);
 
     private static final double MAX_ITERATIONS = 1000;
     private static final double STABLE_LIMIT = Math.PI / 1800; // 0.1 degree
@@ -68,7 +74,8 @@ public final class GreatCircles implements FisherParams {
     
     /**
      * Calculates a mean direction from the supplied great circle and
-     * directions.
+     * directions. At least one endpoint OR at least two great circles
+     * are required.
      * 
      * @param endpoints a set of directions (probably from linear PCA fits)
      * @param circles a set of great circles
@@ -79,7 +86,10 @@ public final class GreatCircles implements FisherParams {
         if (circles == null) circles = Collections.emptyList();
         circles = Collections.unmodifiableList(new ArrayList<>(circles));
         this.circles = circles;
-        assert(endpoints.size() > 0 || circles.size() > 1);
+        if (!(endpoints.size() > 0 || circles.size() > 1)) {
+            throw new IllegalArgumentException("At least one endpoint "
+                    + "or two great circles required.");
+        }
         int minPointsTmp = getCircles().isEmpty() ? 0 : Integer.MAX_VALUE;
         for (GreatCircle gc: getCircles()) {
             final int numPoints = gc.getPoints().size();
