@@ -68,6 +68,9 @@ public final class GreatCircles implements FisherParams {
      * to be passed explicitly to isValid and toStrings and (2) it can be
      * cached the first time it's calculated, so the interpreter only needs
      * to be run once.
+     * 
+     * It would also be worth considering turning the constructors into
+     * static factory methods.
      */
     private final Preferences prefs = Preferences.userNodeForPackage(
             net.talvi.puffinplot.PuffinPrefs.class);
@@ -95,27 +98,25 @@ public final class GreatCircles implements FisherParams {
      * @param circles a set of great circles
      */
     public GreatCircles(List<Vec3> endpoints, List<GreatCircle> circles) {
-        if (endpoints == null) endpoints = Collections.emptyList();
+        if (endpoints == null) {
+            endpoints = Collections.emptyList();
+        }
         this.endpoints = endpoints;
-        if (circles == null) circles = Collections.emptyList();
+        if (circles == null) {
+            circles = Collections.emptyList();
+        }
         circles = Collections.unmodifiableList(new ArrayList<>(circles));
         this.circles = circles;
         if (!(endpoints.size() > 0 || circles.size() > 1)) {
             throw new IllegalArgumentException("At least one endpoint "
                     + "or two great circles required.");
         }
-        int minPointsTmp = getCircles().isEmpty() ? 0 : Integer.MAX_VALUE;
-        for (GreatCircle gc: getCircles()) {
-            final int numPoints = gc.getPoints().size();
-            if (numPoints < minPointsTmp) {
-                minPointsTmp = numPoints; 
-            }
-        }
-        minPoints = minPointsTmp;
-        boolean goodFirstGuess = (endpoints.size() > 0);
+        minPoints = calculateMinPoints();
+        final boolean goodFirstGuess = (endpoints.size() > 0);
         List<Vec3> D;
-        if (goodFirstGuess) D = endpoints;
-        else {
+        if (goodFirstGuess) {
+            D = endpoints;
+        } else {
             // can't use SingletonList since it's immutable,
             // and we want to remove this guess after the first 
             // iteration
@@ -124,23 +125,26 @@ public final class GreatCircles implements FisherParams {
             // Let's use the resultant direction of the last moments
             // in the great circle paths.
             Vec3 guess = Vec3.ORIGIN;
-            for (GreatCircle c: circles) guess = guess.plus(c.lastPoint().minus(c.getPoints().get(0)));
+            for (GreatCircle c: circles) {
+                guess = guess.plus(c.lastPoint().minus(c.getPoints().get(0)));
+            }
             D.add(guess.normalize()); // todo: better guess
         }
-        List<Vec3> G = new ArrayList<>(circles.size());
+        final List<Vec3> G = new ArrayList<>(circles.size());
         G.addAll(Collections.nCopies(circles.size(), Vec3.ORIGIN));
         boolean converged = false;
         int iter;
         for (iter = 0; iter < MAX_ITERATIONS && !converged; iter++) {
             if (iter > 0) converged = true;
             for (int i = 0; i < G.size(); i++) {
-                Vec3 gOld = G.get(i);
+                final Vec3 gOld = G.get(i);
                 G.set(i, Vec3.ORIGIN);
-                Vec3 guess = Vec3.sum(D).plus(Vec3.sum(G)).normalize();
-                Vec3 gNew = circles.get(i).nearestOnCircle(guess);
+                final Vec3 guess = Vec3.sum(D).plus(Vec3.sum(G)).normalize();
+                final Vec3 gNew = circles.get(i).nearestOnCircle(guess);
                 G.set(i, gNew);
-                if (iter > 0 && acos(gNew.dot(gOld)) > STABLE_LIMIT)
+                if (iter > 0 && acos(gNew.dot(gOld)) > STABLE_LIMIT) {
                     converged = false;
+                }
             }
             if (iter == 0 && !goodFirstGuess) {
                 D.remove(0);
@@ -152,6 +156,17 @@ public final class GreatCircles implements FisherParams {
         direction = Vec3.sum(D).plus(Vec3.sum(G)).normalize();
         a95 = alpha(0.95);
         logger.log(Level.INFO, "a95 {0}", a95);
+    }
+
+    private int calculateMinPoints() {
+        int minPointsTmp = getCircles().isEmpty() ? 0 : Integer.MAX_VALUE;
+        for (GreatCircle gc: getCircles()) {
+            final int numPoints = gc.getPoints().size();
+            if (numPoints < minPointsTmp) {
+                minPointsTmp = numPoints;
+            }
+        }
+        return minPointsTmp;
     }
 
     /** Returns the number of stable endpoints used in the calculation.
