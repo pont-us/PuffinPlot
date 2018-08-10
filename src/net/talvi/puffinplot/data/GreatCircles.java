@@ -47,7 +47,8 @@ import javax.script.SimpleBindings;
  */
 public final class GreatCircles implements FisherParams {
 
-    private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
+    private static final Logger logger =
+            Logger.getLogger("net.talvi.puffinplot");
     private final List<GreatCircle> circles;
     private final List<Vec3> endpoints;
     private final Vec3 direction;
@@ -175,14 +176,18 @@ public final class GreatCircles implements FisherParams {
         return Math.toDegrees(Math.acos(v));
     }
 
-    /** Returns the great circles which were originally supplied to the constructor.
-     * @return the great circles which were originally supplied to the constructor */
+    /** Returns the great circles which were originally supplied to the
+     * constructor.
+     * @return the great circles which were originally supplied to the
+     * constructor */
     public final List<GreatCircle> getCircles() {
         return Collections.unmodifiableList(circles);
     }
 
-    /** Returns the best-fit mean direction for the supplied circles and directions. 
-     * @return the best-fit mean direction for the supplied circles and directions */
+    /** Returns the best-fit mean direction for the supplied circles and
+     * directions. 
+     * @return the best-fit mean direction for the supplied circles and
+     * directions */
     @Override
     public Vec3 getMeanDirection() {
         return direction;
@@ -208,8 +213,10 @@ public final class GreatCircles implements FisherParams {
                 intFmt(getMinPoints()));
     }
 
-    /** Returns a list of empty strings equal in length to the number of parameters.
-     * @return  a list of empty strings equal in length to the number of parameters
+    /** Returns a list of empty strings equal in length to the number of
+     * parameters.
+     * @return  a list of empty strings equal in length to the number of
+     * parameters
      */
     public static List<String> getEmptyFields() {
         return Collections.nCopies(HEADERS.size(), "");
