@@ -163,4 +163,44 @@ public class GreatCircleTest {
         assertTrue(TestUtils.isPrintableAscii(actual));
     }
    
+    /**
+     * Test construction of a great circle directly by just supplying
+     * its pole.
+     */
+    @Test
+    public void testPoleConstructor() {
+        final GreatCircle gc = new GreatCircle(Vec3.NORTH);
+        assertEquals(Vec3.NORTH, gc.getPole());
+    }
+    
+    /**
+     * Test that trying to get the last point of a great circle with no
+     * points throws an UnsupportedOperationException.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testLastPointWithNoPoints() {
+        final GreatCircle gc = new GreatCircle(Vec3.NORTH);
+        gc.lastPoint();
+    }
+    
+    /**
+     * Test that calling angleFromLast on a great circle with no points
+     * throw an UnsupportedOperationException.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testAngleFromLastWithNoPoints() {
+        final GreatCircle gc = new GreatCircle(Vec3.NORTH);
+        gc.angleFromLast(Vec3.EAST);
+    }
+    
+    /**
+     * Test that calling getMad1 on a great circle with no points
+     * throw an UnsupportedOperationException.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testMad1WithNoPoints() {
+        final GreatCircle gc = new GreatCircle(Vec3.NORTH);
+        gc.getMad1();
+    }
+
 }

@@ -1,5 +1,5 @@
 /* This file is part of PuffinPlot, a program for palaeomagnetic
- * data plotting and analysis. Copyright 2012-2015 Pontus Lurcock.
+ * data plotting and analysis. Copyright 2012-2018 Pontus Lurcock.
  *
  * PuffinPlot is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +25,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * This class represents a list of unit vectors and a best-fit great-circle
- * path through them. The constructor calculates the best-fit circle from
- * a supplied set of vectors.
+ * This class represents a great circle, created either directly by
+ * specifying a pole direction or indirectly by giving a list of
+ * vectors. If a list of vectors is given, the constructor calculates the
+ * best-fit circle.
+ * 
  */
 public final class GreatCircle {
 
@@ -80,7 +82,24 @@ public final class GreatCircle {
         }
     }
 
-    /** Returns the normalized points to which the great circle was fitted.
+    /**
+     * Create a great circle with the given pole. This produces a great
+     * circle with no associated points; methods which require points
+     * to return a meaningful result will throw an UnsupportedOperationException
+     * if called on a great circle instantiated using this constructor.
+     * 
+     * @param pole pole direction for the great circle
+     */
+    public GreatCircle(Vec3 pole) {
+        this.pole = pole;
+        points = Collections.emptyList();
+        mad1 = Double.NaN;
+        pointTrend = Double.NaN;
+    }
+
+    /** Returns the normalized points to which the great circle was fitted,
+     * if any. If there are none, an empty list will be returned.
+     * 
      * @return the normalized points to which the great circle was fitted */
     public List<Vec3> getPoints() {
         return points;
@@ -103,10 +122,20 @@ public final class GreatCircle {
         return pole.nearestOnCircle(point);
     }
 
-    /** Returns the normalized final point used in the great-circle fit.
+    /** Returns the normalized final point used in the great-circle fit,
+     * if any. If the great circle was instantiated from a pole rather
+     * than a set of points, there is no final point to return, and
+     * this method will throw a {@code UnsupportedOperationException}.
+     * 
      * @return the normalized final point used in the great-circle fit
+     * @throws UnsupportedOperationException if this great circle
+     *    has no points
      */
     public Vec3 lastPoint() {
+        if (points.isEmpty()) {
+            throw new UnsupportedOperationException(
+                    "This great circle has no points.");
+        }
         return points.get(points.size()-1);
     }
 
@@ -117,11 +146,20 @@ public final class GreatCircle {
      * original points were provided. A positive value indicates that
      * the supplied direction is beyond the final great-circle point.
      * 
+     * If the great circle has no points, this method will throw an
+     * UnsupportedOperationException.
+     * 
      * @param v a direction
      * @return the angle between the supplied direction and the last point
      * on the great-circle fit
+     * @throws UnsupportedOperationException if this great circle has
+     * no points
      */
     public double angleFromLast(Vec3 v) {
+        /* We don't need to check and throw UnsupportOperationException
+         * explicitly here: lastPoint() will throw it if there are
+         * no points.
+         */
         return nearestOnCircle(lastPoint()).angleTo(v)
                 * pointTrend;
     }
@@ -157,11 +195,19 @@ public final class GreatCircle {
 
     /**
      * Returns the MAD1 (planar maximum angular deviation) value for
-     * the great-circle fit.
+     * the great-circle fit. If this great circle was not created by
+     * fitting points, this method will throw an UnsupportedOperationException.
      * 
-     * @return the MAD1 value for the great-circle fit.
+     * @return the MAD1 value for the great-circle fit, if any
+     * @throws UnsupportedOperationException if no fit was performed to
+     * produce this great circle
      */
     public double getMad1() {
+        if (Double.isNaN(mad1)) {
+            throw new UnsupportedOperationException("This great circle "
+                    + "was not created by a fitting procedure; there is"
+                    + "no MAD1 value.");
+        }
         return mad1;
     }
 }
