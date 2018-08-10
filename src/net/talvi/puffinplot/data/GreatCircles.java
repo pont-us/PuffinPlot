@@ -56,6 +56,19 @@ public final class GreatCircles implements FisherParams {
     private final double k;
     private final double R;
     private final int minPoints;
+    
+    /* TODO: remove all Preferences stuff from this class. It's only used
+     * for the validity condition, which can easily be passed to the
+     * constructor. As it is, the class can't be unit tested fully without
+     * mocking Preferences.userNodeForPackage (tricky since it's static),
+     * and usage of the class outside the PuffinPlot application gets
+     * ugly. It's effectively a global variable -- but worse, since it's 
+     * persistent. Best is probably to pass the condition to the constructor
+     * and store it in a final field, which means that (1) it doesn't need
+     * to be passed explicitly to isValid and toStrings and (2) it can be
+     * cached the first time it's calculated, so the interpreter only needs
+     * to be run once.
+     */
     private final Preferences prefs = Preferences.userNodeForPackage(
             net.talvi.puffinplot.PuffinPrefs.class);
 
@@ -229,12 +242,24 @@ public final class GreatCircles implements FisherParams {
         return HEADERS;
     }
     
-    /** Returns {@code true} if this great-circle fit is valid. 
+    /** Returns {@code true} if this great-circle fit is valid according
+     * to the condition specified in the preferences.
+     * 
      * @return {@code true} if this great-circle fit is valid
      */
     public boolean isValid() {
         final String validityCondition =
                 prefs.get("data.greatcircles.validityExpr", "true");
+        return isValid(validityCondition);
+    }
+    
+    /** Returns {@code true} if this great-circle fit is valid according
+     * to the supplied condition.
+     * 
+     * @return {@code true} if this great-circle fit is valid
+     */
+
+    public boolean isValid(String validityCondition) {
         // Avoid firing up an interpreter for the most common cases.
         switch(validityCondition) {
             case "true":
