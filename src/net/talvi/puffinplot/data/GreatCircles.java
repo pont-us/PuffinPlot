@@ -113,22 +113,16 @@ public final class GreatCircles implements FisherParams {
         }
         minPoints = calculateMinPoints();
         final boolean goodFirstGuess = (endpoints.size() > 0);
-        List<Vec3> D;
+        final List<Vec3> D;
         if (goodFirstGuess) {
             D = endpoints;
         } else {
-            // can't use SingletonList since it's immutable,
-            // and we want to remove this guess after the first 
-            // iteration
+            /* 
+             * We can't use a SingletonList for D since it's immutable,
+             * and we want to remove this guess after the first iteration.
+             */ 
             D = new ArrayList<>(1);
-            // We need to provide a starting point for the iteration.
-            // Let's use the resultant direction of the last moments
-            // in the great circle paths.
-            Vec3 guess = Vec3.ORIGIN;
-            for (GreatCircle c: circles) {
-                guess = guess.plus(c.lastPoint().minus(c.getPoints().get(0)));
-            }
-            D.add(guess.normalize()); // todo: better guess
+            D.add(pickStartingPointForIteration());
         }
         final List<Vec3> G = new ArrayList<>(circles.size());
         G.addAll(Collections.nCopies(circles.size(), Vec3.ORIGIN));
@@ -156,6 +150,29 @@ public final class GreatCircles implements FisherParams {
         direction = Vec3.sum(D).plus(Vec3.sum(G)).normalize();
         a95 = alpha(0.95);
         logger.log(Level.INFO, "a95 {0}", a95);
+    }
+
+    private Vec3 pickStartingPointForIteration() {
+        /* 
+         * If the great circles have the point data to which they were fitted,
+         * use the resultant direction of the last moments in the paths.
+         */
+        Vec3 guess = Vec3.ORIGIN;
+        boolean anyPointsFound = false;
+        for (GreatCircle c : circles) {
+            if (!c.getPoints().isEmpty()) {
+                guess = guess.plus(c.lastPoint().minus(c.getPoints().get(0)));
+                anyPointsFound = true;
+            }
+        }
+        if (!anyPointsFound) {
+            /* 
+             * None of the great circles had any point data: pick an
+             * arbitrary direction. 
+             */
+            guess = Vec3.NORTH;
+        }
+        return guess.normalize();
     }
 
     private int calculateMinPoints() {

@@ -20,17 +20,34 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 import net.talvi.puffinplot.TestUtils;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static java.lang.Math.PI;
 
 /**
  *
  * @author pont
  */
 public class GreatCirclesTest {
+    
+    private final double[][] mcfaddenCircles = {
+        // Eigenvector (pole)  Constraint 1  Constraint 2
+        //   p      q       r      D      I      D      I
+        {0.263, 0.664, -0.700, 180.0, -20.6, 260.0, -45.0}, // KB31A1
+        {0.794, 0.335, -0.507, 141.0, -38.7, 200.0, -59.5}, // KB31A4
+        {0.692, 0.358, -0.627, 134.7, -20.3, 196.6, -50.7}, // KB31B1
+        {0.593, 0.663, -0.457, 148.0, -18.4, 210.0, -61.6}, // KB31C2
+        {0.637, 0.476, -0.606, 190.0, -49.5, 270.0, -38.1}, // KB31D1
+        {0.628, 0.524, -0.576, 157.0, -32.9, 215.0, -54.7}  // KB31D2
+    };
+    
+    private final double[][] mcfaddenEndpoints = {
+        //   D      I
+        {146.6, -52.6}, // KB31A3
+        {195.5, -57.9}  // KB31B3
+    };
     
     /**
      * Test that we get an IllegalArgumentException when supplying no
@@ -137,9 +154,11 @@ public class GreatCirclesTest {
     }
     
     /**
-     * Test results of a three-circle intersection with no endpoints. This is
-     * purely a characterization test: the expected data is generated from
-     * GreatCircles itself.
+     * Test results of a three-circle intersection with no endpoints. This is a
+     * characterization test: the expected results were generated from
+     * GreatCircles itself. The code that generated the expected results also
+     * passes the non-constrained tests based on the McFadden & McElhinny (1988)
+     * example data, providing indirect verification of this test's reliability.
      */
     @Test
     public void testThreeCircles() {
@@ -154,8 +173,6 @@ public class GreatCirclesTest {
         }
         final GreatCircles gcs = new GreatCircles(null,
                 circles);
-        System.out.println("> "+gcs.getMeanDirection().getDecDeg()+" "+
-                gcs.getMeanDirection().getIncDeg());
         assertEquals(2.9965691442158913, gcs.getR(), 1e-12);
         assertEquals(57.10004805715773, gcs.getA95(), 1e-12);
         assertEquals(145.73623359977222, gcs.getK(), 1e-12);
@@ -175,9 +192,11 @@ public class GreatCirclesTest {
     }
     
     /**
-     * Test results of a three-circle intersection with two endpoints. This is
-     * purely a characterization test: the expected data is generated from
-     * GreatCircles itself.
+     * Test results of a three-circle intersection with no endpoints. This is a
+     * characterization test: the expected results were generated from
+     * GreatCircles itself. The code that generated the expected results also
+     * passes the non-constrained tests based on the McFadden & McElhinny (1988)
+     * example data, providing indirect verification of this test's reliability.
      */
     @Test
     public void testTwoEndpointsAndThreeCircles() {
@@ -216,11 +235,66 @@ public class GreatCirclesTest {
         }
         return vecs;
     }
-
-        
-//    @Test
-//    public void testNoConstraintsNoEndpoints() {
-//        fail();
-//    }
     
+    /**
+     * Test calculation results against example in McFadden & McElhinny
+     * (1988): circles and endpoints, but no sector constraints.
+     */
+    @Test
+    public void testWithoutConstraintsWithEndpoints() {
+        final List<Vec3> endpoints =
+                vectorListFromDirections(mcfaddenEndpoints);
+        final List<GreatCircle> circles = new ArrayList<>();
+        for (double[] fields: mcfaddenCircles) {
+            circles.add(new GreatCircle(
+                    new Vec3(fields[0], fields[1], fields[2])));
+        }
+        final GreatCircles gcs = new GreatCircles(endpoints, circles);
+        System.out.println("> "+gcs.getMeanDirection().getDecDeg()+" "+
+                gcs.getMeanDirection().getIncDeg());
+        assertEquals(183.1, gcs.getMeanDirection().getDecDeg(), 0.1);
+        assertEquals(-51.2, gcs.getMeanDirection().getIncDeg(), 0.1);
+        assertEquals(8, gcs.getM() + gcs.getN());
+        assertEquals(7.8336, gcs.getR(), 0.0001);
+        assertEquals(24.032, gcs.getK(), 0.001);
+        assertEquals(12.5, gcs.getA95(), 0.1);
+    }
+    
+    /**
+     * Test calculation results against example in McFadden & McElhinny
+     * (1988): circles only, no endpoints or sector constraints.
+     */
+    @Test
+    public void testWithoutConstraintsWithoutEndpoints() {
+        final List<GreatCircle> circles = new ArrayList<>();
+        for (double[] fields: mcfaddenCircles) {
+            circles.add(new GreatCircle(
+                    new Vec3(fields[0], fields[1], fields[2])));
+        }
+        final GreatCircles gcs = new GreatCircles(null, circles);
+        
+        /*
+         * There's a slight complication in checking the direction: since we
+         * don't have the data from the original points to which the circles
+         * were fitted, there are two equally valid and opposite solutions.
+         * (M&M 1988 presumably used the point data in picking a starting
+         * point for the iteration, but they only published the great circle
+         * poles.) Thus the test here confirms that we have either M&M's
+         * direction or its inverse. The other parameters (k, R, etc.) are
+         * the same for either solution.
+         */
+        final Vec3 actualDirection = gcs.getMeanDirection();
+        final Vec3 expectedDirection = Vec3.fromPolarDegrees(1, -50.5, 246.8);
+        final Vec3 directionToCheck =
+                Math.abs(actualDirection.angleTo(expectedDirection)) < PI / 2 ?
+                actualDirection :
+                actualDirection.invert();
+        
+        assertTrue(Math.abs(expectedDirection.angleTo(directionToCheck)) <=
+                Math.toRadians(0.1));
+        assertEquals(6, gcs.getM() + gcs.getN());
+        assertEquals(5.9735, gcs.getR(), 0.0001);
+        assertEquals(75.592, gcs.getK(), 0.005);
+        assertEquals(10.1, gcs.getA95(), 0.1);
+    }
 }
