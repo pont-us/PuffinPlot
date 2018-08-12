@@ -53,7 +53,8 @@ public final class Suite {
     private SuiteCalcs suiteCalcs;
     private final List<String> loadWarnings = new ArrayList<>();
     private boolean hasUnknownTreatType = false;
-    private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
+    private static final Logger logger =
+            Logger.getLogger("net.talvi.puffinplot");
     private CustomFlagNames customFlagNames =
             new CustomFlagNames(Collections.<String>emptyList());
     private CustomNoteNames customNoteNames =
@@ -379,7 +380,7 @@ public final class Suite {
         setSaved(false);
         // TODO we can use getSites for this now!
         final Set<Site> sitesDone = new HashSet<>();
-        for (Sample sample : getSamples()) {
+        for (Sample sample: getSamples()) {
             final Site site = sample.getSite();
             if (site == null) continue;
             if (sitesDone.contains(site)) continue;

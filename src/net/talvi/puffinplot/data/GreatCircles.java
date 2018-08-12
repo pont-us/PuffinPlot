@@ -56,24 +56,8 @@ public final class GreatCircles implements FisherParams {
     private final double k;
     private final double R;
     private final int minPoints;
-    
-    /* TODO: remove all Preferences stuff from this class. It's only used
-     * for the validity condition, which can easily be passed to the
-     * constructor. As it is, the class can't be unit tested fully without
-     * mocking Preferences.userNodeForPackage (tricky since it's static),
-     * and usage of the class outside the PuffinPlot application gets
-     * ugly. It's effectively a global variable -- but worse, since it's 
-     * persistent. Best is probably to pass the condition to the constructor
-     * and store it in a final field, which means that (1) it doesn't need
-     * to be passed explicitly to isValid and toStrings and (2) it can be
-     * cached the first time it's calculated, so the interpreter only needs
-     * to be run once.
-     * 
-     * It would also be worth considering turning the constructors into
-     * static factory methods.
-     */
-    private final Preferences prefs = Preferences.userNodeForPackage(
-            net.talvi.puffinplot.PuffinPrefs.class);
+    private final String validityCondition;
+    private Boolean isValid;
 
     private static final double MAX_ITERATIONS = 1000;
     private static final double STABLE_LIMIT = Math.PI / 1800; // 0.1 degree
@@ -90,7 +74,7 @@ public final class GreatCircles implements FisherParams {
     }
     
     private GreatCircles(List<GreatCircle> circles, List<Vec3> endpoints,
-            Vec3 direction, double R) {
+            Vec3 direction, double R, String validityCondition) {
         this.circles = circles;
         this.endpoints = endpoints;
         this.direction = direction;
@@ -99,37 +83,87 @@ public final class GreatCircles implements FisherParams {
         this.k = (2*getM()+getN()-2)/(2*(getM()+getN()-R));
         this.a95 = alpha(0.95);
         logger.log(Level.FINEST, "a95 {0}", a95);
+        this.validityCondition = validityCondition;
+        this.isValid = null;
     }
 
     /**
      * Calculates a mean direction from the supplied great circle and
      * directions. At least one endpoint OR at least two great circles
-     * are required.
+     * are required. The validity condition is read from PuffinPlot's
+     * preferences.
      * 
      * @param endpoints a set of directions (probably from linear PCA fits)
      * @param circles a set of great circles
      */
     public static GreatCircles instance(List<Vec3> endpoints,
             List<GreatCircle> circles) {
+        /* TODO: remove all Preferences stuff from this class. It's only used
+         * for the validity condition, which can easily be passed to the
+         * constructor. As it is, the class can't be unit tested fully without
+         * mocking Preferences.userNodeForPackage (tricky since it's static),
+         * and usage of the class outside the PuffinPlot application gets
+         * ugly. It's effectively a global variable -- but worse, since it's
+         * persistent. Best is probably to pass the condition to the constructor
+         * and store it in a final field, which means that (1) it doesn't need
+         * to be passed explicitly to isValid and toStrings and (2) it can be
+         * cached the first time it's calculated, so the interpreter only needs
+         * to be run once.
+         *
+         * It would also be worth considering turning the constructors into
+         * static factory methods.
+         */
+        final Preferences prefs = Preferences.userNodeForPackage(
+                net.talvi.puffinplot.PuffinPrefs.class);
+        final String validityCondition =
+                prefs.get("data.greatcircles.validityExpr", "true");
+        return instance(endpoints, circles, validityCondition);
+    }
+
+    /**
+     * Calculates a mean direction from the supplied great circle and
+     * directions. At least one endpoint OR at least two great circles are
+     * required.
+     * 
+     * This method takes a validity expression written in JavaScript, which
+     * is used to determine whether the results of the calculation are
+     * considered valid. The expression should return a boolean value.
+     * The following variables are available to the expression:
+     * 
+     * <dl>
+     * <dt>M</dt> the number of endpoints
+     * <dt>N</dt> the number of great circles
+     * <dt>k</dt> the precision parameter
+     * <dt>a95</dt> the α<sub>95</sub> value
+     * </dl>
+     * 
+     * An unparseable expression will be evaluated to <code>false</code>.
+     *
+     * @param endpoints a set of directions (probably from linear PCA fits)
+     * @param circles a set of great circles
+     * @param validityCondition an JavaScript expression to evaluate
+     *     whether the calculated direction should be considered valid 
+     * @return the net.talvi.puffinplot.data.GreatCircles
+     */
+    public static GreatCircles instance(List<Vec3> endpoints,
+            List<GreatCircle> circles, String validityCondition) {
         if (endpoints == null) {
             endpoints = Collections.emptyList();
         }
-        // this.endpoints = endpoints;
         if (circles == null) {
             circles = Collections.emptyList();
         }
         circles = Collections.unmodifiableList(new ArrayList<>(circles));
-        // this.circles = circles;
         if (!(endpoints.size() > 0 || circles.size() > 1)) {
             throw new IllegalArgumentException("At least one endpoint "
                     + "or two great circles required.");
         }
-        final boolean goodFirstGuess = (endpoints.size() > 0);
+        final boolean goodFirstGuess = endpoints.size() > 0;
         final List<Vec3> D;
         if (goodFirstGuess) {
             D = endpoints;
         } else {
-            /* 
+            /*
              * We can't use a SingletonList for D since it's immutable,
              * and we want to remove this guess after the first iteration.
              */ 
@@ -159,10 +193,12 @@ public final class GreatCircles implements FisherParams {
         logger.log(Level.FINEST, "{0} iterations", iter);
         final double R = Vec3.sum(D).plus(Vec3.sum(G)).mag();
         final Vec3 direction = Vec3.sum(D).plus(Vec3.sum(G)).normalize();
-        return new GreatCircles(circles, endpoints, direction, R);
+        return new GreatCircles(circles, endpoints, direction, R,
+                validityCondition);
     }
 
-    private static Vec3 pickStartingPointForIteration(List<GreatCircle> circles) {
+    private static Vec3 pickStartingPointForIteration(
+            List<GreatCircle> circles) {
         /* 
          * If the great circles have the point data to which they were fitted,
          * use the resultant direction of the last moments in the paths.
@@ -290,9 +326,10 @@ public final class GreatCircles implements FisherParams {
      * @return {@code true} if this great-circle fit is valid
      */
     public boolean isValid() {
-        final String validityCondition =
-                prefs.get("data.greatcircles.validityExpr", "true");
-        return isValid(validityCondition);
+        if (isValid == null) {
+            isValid = isValid(validityCondition);
+        }
+        return isValid;
     }
     
     /** Returns {@code true} if this great-circle fit is valid according

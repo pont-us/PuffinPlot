@@ -39,7 +39,8 @@ import java.util.logging.Logger;
 
 public class Site {
 
-    private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
+    private static final Logger logger =
+            Logger.getLogger("net.talvi.puffinplot");
     private final String name;
     private final List<Sample> samples;
     private FisherValues fisher;

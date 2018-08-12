@@ -173,6 +173,11 @@ public class GreatCirclesTest {
         }
         final GreatCircles gcs = GreatCircles.instance(null,
                 circles);
+        final GreatCircles gcsWithValidCondition = GreatCircles.instance(null,
+                circles, "a95 < 60 && k > 145");
+        final GreatCircles gcsWithInvalidCondition = GreatCircles.instance(null,
+                circles, "a95 < 60 && k > 146");
+        
         assertEquals(2.9965691442158913, gcs.getR(), 1e-12);
         assertEquals(57.10004805715773, gcs.getA95(), 1e-12);
         assertEquals(145.73623359977222, gcs.getK(), 1e-12);
@@ -181,6 +186,8 @@ public class GreatCirclesTest {
         assertTrue(gcs.isA95Valid());
         assertTrue(gcs.isValid("a95 < 60 && k > 145"));
         assertFalse(gcs.isValid("a95 < 60 && k > 146"));
+        assertTrue(gcsWithValidCondition.isValid());
+        assertFalse(gcsWithInvalidCondition.isValid());
         /* Until GreatCircles is modified to take the validity expression
          * as a constructor argument rather than from the Preferences,
          * we have to check the toStrings result against a regular
