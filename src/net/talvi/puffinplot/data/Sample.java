@@ -607,7 +607,7 @@ public class Sample {
         touch();
         final List<Vec3> points = getCirclePoints(correction);
         if (points.size() < 2) return;
-        greatCircle = GreatCircle.createFromBestFit(points);
+        greatCircle = GreatCircle.fromBestFit(points);
     }
     
     /** Returns the treatment level for the first point used in the great-circle fit. 

@@ -82,7 +82,7 @@ public final class GreatCircle {
      * @param pole pole direction for the great circle
      * @return a great circle with the supplied pole
      */
-    public static GreatCircle createFromPole(Vec3 pole) {
+    public static GreatCircle fromPole(Vec3 pole) {
         return new GreatCircle(pole, Collections.emptyList(),
                 Double.NaN);
     }
@@ -95,7 +95,7 @@ public final class GreatCircle {
      * @param vectors the direction vectors for which to fit the circle
      * @return a great circle fitted to the supplied vectors
      */
-    public static GreatCircle createFromBestFit(List<Vec3> vectors) {
+    public static GreatCircle fromBestFit(List<Vec3> vectors) {
                 final List<Vec3> pointsUnscaled = vectors;
         final List<Vec3> points = new ArrayList<>(vectors.size());
         for (Vec3 p: pointsUnscaled) {

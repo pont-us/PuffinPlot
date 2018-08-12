@@ -55,7 +55,7 @@ public class GreatCirclesTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorWithNoData() {
-        new GreatCircles(Collections.emptyList(), Collections.emptyList());
+        GreatCircles.instance(Collections.emptyList(), Collections.emptyList());
     }
     
     /**
@@ -64,16 +64,16 @@ public class GreatCirclesTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorWithInsufficientData() {
-        final GreatCircle gc = GreatCircle.createFromBestFit(Arrays.asList(
+        final GreatCircle gc = GreatCircle.fromBestFit(Arrays.asList(
                 new Vec3[] {Vec3.NORTH, Vec3.EAST}));
-        new GreatCircles(Collections.emptyList(),
+        GreatCircles.instance(Collections.emptyList(),
                 Collections.singletonList(gc));
     }
     
     
     @Test
     public void testGetM() {
-        final GreatCircles gcs = new GreatCircles(
+        final GreatCircles gcs = GreatCircles.instance(
                 Collections.singletonList(Vec3.NORTH),
                 Collections.emptyList());
         assertEquals(1, gcs.getM());
@@ -81,7 +81,7 @@ public class GreatCirclesTest {
 
     @Test
     public void testGetN() {
-        final GreatCircles gcs = new GreatCircles(
+        final GreatCircles gcs = GreatCircles.instance(
                 Collections.singletonList(Vec3.NORTH),
                 Collections.emptyList());
         assertEquals(0, gcs.getN());
@@ -89,9 +89,9 @@ public class GreatCirclesTest {
 
     @Test
     public void testGetCircles() {
-        final GreatCircle gc = GreatCircle.createFromBestFit(Arrays.asList(
+        final GreatCircle gc = GreatCircle.fromBestFit(Arrays.asList(
                 new Vec3[] {Vec3.NORTH, Vec3.EAST}));
-        final GreatCircles gcs =new GreatCircles(
+        final GreatCircles gcs =GreatCircles.instance(
                 Collections.singletonList(Vec3.EAST),
                 Collections.singletonList(gc));
         final List<GreatCircle> actual = gcs.getCircles();
@@ -106,7 +106,7 @@ public class GreatCirclesTest {
 
     @Test
     public void testGetMeanDirection() {
-        final GreatCircles gcs = new GreatCircles(
+        final GreatCircles gcs = GreatCircles.instance(
                 Collections.singletonList(Vec3.NORTH),
                 Collections.emptyList());
         assertTrue(Vec3.NORTH.equals(gcs.getMeanDirection(), 1e-10));
@@ -118,7 +118,7 @@ public class GreatCirclesTest {
      */
     @Test
     public void testNullCircleList() {
-        final GreatCircles gcs = new GreatCircles(
+        final GreatCircles gcs = GreatCircles.instance(
                 Collections.singletonList(Vec3.NORTH),
                 null);
     }
@@ -143,7 +143,7 @@ public class GreatCirclesTest {
     
     @Test
     public void testSimpleValidityConditions() {
-        final GreatCircles gcs = new GreatCircles(
+        final GreatCircles gcs = GreatCircles.instance(
                 Collections.singletonList(Vec3.NORTH),
                 Collections.emptyList());
         assertTrue(Vec3.NORTH.equals(gcs.getMeanDirection(), 1e-10));
@@ -169,9 +169,9 @@ public class GreatCirclesTest {
         };
         final List<GreatCircle> circles = new ArrayList<>(circlePoints.length);
         for (double[][] pairs: circlePoints) {
-            circles.add(GreatCircle.createFromBestFit(vectorListFromDirections(pairs)));
+            circles.add(GreatCircle.fromBestFit(vectorListFromDirections(pairs)));
         }
-        final GreatCircles gcs = new GreatCircles(null,
+        final GreatCircles gcs = GreatCircles.instance(null,
                 circles);
         assertEquals(2.9965691442158913, gcs.getR(), 1e-12);
         assertEquals(57.10004805715773, gcs.getA95(), 1e-12);
@@ -207,12 +207,12 @@ public class GreatCirclesTest {
         };
         final List<GreatCircle> circles = new ArrayList<>(circlePoints.length);
         for (double[][] pairs: circlePoints) {
-            circles.add(GreatCircle.createFromBestFit(vectorListFromDirections(pairs)));
+            circles.add(GreatCircle.fromBestFit(vectorListFromDirections(pairs)));
         }
 
         double[][] endpoints = {{3, 2}, {-1, -1}};
         final GreatCircles gcs =
-                new GreatCircles(vectorListFromDirections(endpoints),
+                GreatCircles.instance(vectorListFromDirections(endpoints),
                 circles);
         System.out.println("> "+gcs.getMeanDirection().getDecDeg()+" "+
                 gcs.getMeanDirection().getIncDeg());
@@ -246,9 +246,9 @@ public class GreatCirclesTest {
                 vectorListFromDirections(mcfaddenEndpoints);
         final List<GreatCircle> circles = new ArrayList<>();
         for (double[] fields: mcfaddenCircles) {
-            circles.add(GreatCircle.createFromPole(new Vec3(fields[0], fields[1], fields[2])));
+            circles.add(GreatCircle.fromPole(new Vec3(fields[0], fields[1], fields[2])));
         }
-        final GreatCircles gcs = new GreatCircles(endpoints, circles);
+        final GreatCircles gcs = GreatCircles.instance(endpoints, circles);
         System.out.println("> "+gcs.getMeanDirection().getDecDeg()+" "+
                 gcs.getMeanDirection().getIncDeg());
         assertEquals(183.1, gcs.getMeanDirection().getDecDeg(), 0.1);
@@ -267,9 +267,9 @@ public class GreatCirclesTest {
     public void testWithoutConstraintsWithoutEndpoints() {
         final List<GreatCircle> circles = new ArrayList<>();
         for (double[] fields: mcfaddenCircles) {
-            circles.add(GreatCircle.createFromPole(new Vec3(fields[0], fields[1], fields[2])));
+            circles.add(GreatCircle.fromPole(new Vec3(fields[0], fields[1], fields[2])));
         }
-        final GreatCircles gcs = new GreatCircles(null, circles);
+        final GreatCircles gcs = GreatCircles.instance(null, circles);
         
         /*
          * There's a slight complication in checking the direction: since we

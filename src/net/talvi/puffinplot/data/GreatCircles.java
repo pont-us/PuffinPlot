@@ -89,6 +89,18 @@ public final class GreatCircles implements FisherParams {
         SCRIPT_ENGINE = sem.getEngineByMimeType("application/javascript");
     }
     
+    private GreatCircles(List<GreatCircle> circles, List<Vec3> endpoints,
+            Vec3 direction, double R) {
+        this.circles = circles;
+        this.endpoints = endpoints;
+        this.direction = direction;
+        this.R = R;
+        this.minPoints = calculateMinPoints();
+        this.k = (2*getM()+getN()-2)/(2*(getM()+getN()-R));
+        this.a95 = alpha(0.95);
+        logger.log(Level.FINEST, "a95 {0}", a95);
+    }
+
     /**
      * Calculates a mean direction from the supplied great circle and
      * directions. At least one endpoint OR at least two great circles
@@ -97,21 +109,21 @@ public final class GreatCircles implements FisherParams {
      * @param endpoints a set of directions (probably from linear PCA fits)
      * @param circles a set of great circles
      */
-    public GreatCircles(List<Vec3> endpoints, List<GreatCircle> circles) {
+    public static GreatCircles instance(List<Vec3> endpoints,
+            List<GreatCircle> circles) {
         if (endpoints == null) {
             endpoints = Collections.emptyList();
         }
-        this.endpoints = endpoints;
+        // this.endpoints = endpoints;
         if (circles == null) {
             circles = Collections.emptyList();
         }
         circles = Collections.unmodifiableList(new ArrayList<>(circles));
-        this.circles = circles;
+        // this.circles = circles;
         if (!(endpoints.size() > 0 || circles.size() > 1)) {
             throw new IllegalArgumentException("At least one endpoint "
                     + "or two great circles required.");
         }
-        minPoints = calculateMinPoints();
         final boolean goodFirstGuess = (endpoints.size() > 0);
         final List<Vec3> D;
         if (goodFirstGuess) {
@@ -122,7 +134,7 @@ public final class GreatCircles implements FisherParams {
              * and we want to remove this guess after the first iteration.
              */ 
             D = new ArrayList<>(1);
-            D.add(pickStartingPointForIteration());
+            D.add(pickStartingPointForIteration(circles));
         }
         final List<Vec3> G = new ArrayList<>(circles.size());
         G.addAll(Collections.nCopies(circles.size(), Vec3.ORIGIN));
@@ -144,22 +156,20 @@ public final class GreatCircles implements FisherParams {
                 D.remove(0);
             }
         }
-        logger.log(Level.INFO, "{0} iterations", iter);
-        R = Vec3.sum(D).plus(Vec3.sum(G)).mag();
-        k = (2*getM()+getN()-2)/(2*(getM()+getN()-R));
-        direction = Vec3.sum(D).plus(Vec3.sum(G)).normalize();
-        a95 = alpha(0.95);
-        logger.log(Level.INFO, "a95 {0}", a95);
+        logger.log(Level.FINEST, "{0} iterations", iter);
+        final double R = Vec3.sum(D).plus(Vec3.sum(G)).mag();
+        final Vec3 direction = Vec3.sum(D).plus(Vec3.sum(G)).normalize();
+        return new GreatCircles(circles, endpoints, direction, R);
     }
 
-    private Vec3 pickStartingPointForIteration() {
+    private static Vec3 pickStartingPointForIteration(List<GreatCircle> circles) {
         /* 
          * If the great circles have the point data to which they were fitted,
          * use the resultant direction of the last moments in the paths.
          */
         Vec3 guess = Vec3.ORIGIN;
         boolean anyPointsFound = false;
-        for (GreatCircle c : circles) {
+        for (GreatCircle c: circles) {
             if (!c.getPoints().isEmpty()) {
                 guess = guess.plus(c.lastPoint().minus(c.getPoints().get(0)));
                 anyPointsFound = true;

@@ -137,7 +137,7 @@ public class Site {
         }
         if ((endpoints.size() > 0 && circles.size() > 0)
                 || circles.size() > 1) {
-            greatCircles = new GreatCircles(endpoints, circles);
+            greatCircles = GreatCircles.instance(endpoints, circles);
         } else {
             clearGcFit();
         }
