@@ -35,6 +35,7 @@ public final class GreatCircle {
 
     private final static Logger logger =
             Logger.getLogger(GreatCircle.class.getName());
+
     private final List<Vec3> points;
     private final Vec3 pole;
     private final double mad1;
@@ -45,39 +46,29 @@ public final class GreatCircle {
             "GC strike (deg)", "GC dip (deg)",
             "GC MAD1", "GC npoints");
 
-    /**
-     * Constructs a best-fitting great circle for the supplied vectors.
-     * The vectors do not need to be normalized, but only their directions
-     * are considered when fitting the circle.
-     * 
-     * @param vectors the direction vectors for which to fit the circle
-     */
-    public GreatCircle(List<Vec3> vectors) {
-        final List<Vec3> pointsUnscaled = vectors;
-        points = new ArrayList<>(vectors.size());
-        for (Vec3 p: pointsUnscaled) {
-            this.points.add(p.normalize());
-        }
-        final Eigens eigens = Eigens.fromVectors(points, true);
-        this.pole = eigens.getVectors().get(2).normalize();
-        mad1 = eigens.getMad1();
+    private GreatCircle(Vec3 pole, List<Vec3> points, double mad1) {
+        this.pole = pole;
+        this.points = points;
+        this.mad1 = mad1;
         
-        // Calculate the direction of the point trend along the circle
-        // (clockwise / anticlockwise). Can't be sure that all points
-        // will be strictly in the right direction, so we'll add up
-        // the offsets of all the point pairs and take the sign of the sum.
-        // (Can't just take angle between first and last point, since
-        // the path might be more than 180 degrees -- though of course
-        // that would imply something more complex than a single component
-        // peeling off.)
+        /* Calculate the direction of the point trend along the circle
+         * (clockwise / anticlockwise). Can't be sure that all points
+         * will be strictly in the right direction, so we'll add up
+         * the offsets of all the point pairs and take the sign of the sum.
+         * (Can't just take angle between first and last point, since
+         * the path might be more than 180 degrees -- though of course
+         * that would imply something more complex than a single component
+         * peeling off.)
+         */
         double total = 0;
         for (int i=1; i<points.size(); i++) {
             total += nearestOnCircle(points.get(i-1)).
                     angleTo(nearestOnCircle(points.get(i)));
         }
-        pointTrend = Math.signum(total);
+        pointTrend = total == 0 ? Double.NaN : Math.signum(total);
+        
         for (Vec3 p: points) {
-            logger.log(Level.FINE, "{0}   {1}", new Object[] {p.toString(),
+            logger.log(Level.FINEST, "{0}   {1}", new Object[] {p.toString(),
                 angleFromLast(nearestOnCircle(p))});
         }
     }
@@ -89,14 +80,34 @@ public final class GreatCircle {
      * if called on a great circle instantiated using this constructor.
      * 
      * @param pole pole direction for the great circle
+     * @return a great circle with the supplied pole
      */
-    public GreatCircle(Vec3 pole) {
-        this.pole = pole;
-        points = Collections.emptyList();
-        mad1 = Double.NaN;
-        pointTrend = Double.NaN;
+    public static GreatCircle createFromPole(Vec3 pole) {
+        return new GreatCircle(pole, Collections.emptyList(),
+                Double.NaN);
+    }
+    
+    /**
+     * Constructs a best-fitting great circle for the supplied vectors.
+     * The vectors do not need to be normalized, but only their directions
+     * are considered when fitting the circle.
+     * 
+     * @param vectors the direction vectors for which to fit the circle
+     * @return a great circle fitted to the supplied vectors
+     */
+    public static GreatCircle createFromBestFit(List<Vec3> vectors) {
+                final List<Vec3> pointsUnscaled = vectors;
+        final List<Vec3> points = new ArrayList<>(vectors.size());
+        for (Vec3 p: pointsUnscaled) {
+            points.add(p.normalize());
+        }
+        final Eigens eigens = Eigens.fromVectors(points, true);
+        final Vec3 pole = eigens.getVectors().get(2).normalize();
+        final double mad1 = eigens.getMad1();
+        return new GreatCircle(pole, points, mad1);
     }
 
+    
     /** Returns the normalized points to which the great circle was fitted,
      * if any. If there are none, an empty list will be returned.
      * 

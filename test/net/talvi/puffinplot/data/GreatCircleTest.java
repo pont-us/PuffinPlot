@@ -73,7 +73,7 @@ public class GreatCircleTest {
         }
         
         for (int i=0; i<inputs.size(); i++) {
-            final GreatCircle actual = new GreatCircle(inputs.get(i));
+            final GreatCircle actual = GreatCircle.createFromBestFit(inputs.get(i));
             final Vec3 pole = actual.getPole().x > 0 ?
                     actual.getPole() : actual.getPole().invert();
             assertTrue(poles.get(i).equals(pole, 1e-6));
@@ -94,7 +94,7 @@ public class GreatCircleTest {
                 vecs.add(new Vec3(random.nextDouble()-0.5*10,
                 random.nextDouble()-0.5*10, random.nextDouble()-0.5*10));
             }
-            final GreatCircle gc = new GreatCircle(vecs);
+            final GreatCircle gc = GreatCircle.createFromBestFit(vecs);
             final Vec3 otherVector = new Vec3(random.nextDouble()-0.5*10,
                 random.nextDouble()-0.5*10, random.nextDouble()-0.5*10);
             assertTrue(gc.getPole().nearestOnCircle(otherVector).
@@ -112,7 +112,7 @@ public class GreatCircleTest {
                 vecs.add(new Vec3(random.nextDouble()-0.5*10,
                 random.nextDouble()-0.5*10, random.nextDouble()-0.5*10));
             }
-            final GreatCircle gc = new GreatCircle(vecs);
+            final GreatCircle gc = GreatCircle.createFromBestFit(vecs);
             assertEquals(vecs.get(nVecs-1).normalize(), gc.lastPoint());
         }
     }
@@ -123,9 +123,7 @@ public class GreatCircleTest {
         final Vec3 v1 = new Vec3(1, 1, 0);
         final Vec3 v2 = new Vec3(0, 1, 0);
         final Vec3 v3 = new Vec3(-1, 1, 0);
-        final GreatCircle gc = new GreatCircle(
-                Arrays.asList(new Vec3[] {v0, v1, v2})
-        );
+        final GreatCircle gc = GreatCircle.createFromBestFit(Arrays.asList(new Vec3[] {v0, v1, v2}));
         assertEquals(0, gc.angleFromLast(v2), 1e-6);
         assertEquals(-Math.PI/2, gc.angleFromLast(v1), 1e-6);
         assertEquals(Math.PI/2, gc.angleFromLast(v3), 1e-6);
@@ -136,9 +134,7 @@ public class GreatCircleTest {
         final Vec3 v0 = new Vec3(1, 0, 0);
         final Vec3 v1 = new Vec3(1, 1, 0);
         final Vec3 v2 = new Vec3(0, 1, 0);
-        final GreatCircle gc = new GreatCircle(
-                Arrays.asList(new Vec3[] {v0, v1, v2})
-        );
+        final GreatCircle gc = GreatCircle.createFromBestFit(Arrays.asList(new Vec3[] {v0, v1, v2}));
         final List<Double> expected = Arrays.stream(new double[] {
             0, 90, 90, 0, 0, 3}).boxed().collect(Collectors.toList());
         final List<Double> actual = gc.toStrings().stream().
@@ -169,7 +165,7 @@ public class GreatCircleTest {
      */
     @Test
     public void testPoleConstructor() {
-        final GreatCircle gc = new GreatCircle(Vec3.NORTH);
+        final GreatCircle gc = GreatCircle.createFromPole(Vec3.NORTH);
         assertEquals(Vec3.NORTH, gc.getPole());
     }
     
@@ -179,7 +175,7 @@ public class GreatCircleTest {
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testLastPointWithNoPoints() {
-        final GreatCircle gc = new GreatCircle(Vec3.NORTH);
+        final GreatCircle gc = GreatCircle.createFromPole(Vec3.NORTH);
         gc.lastPoint();
     }
     
@@ -189,7 +185,7 @@ public class GreatCircleTest {
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testAngleFromLastWithNoPoints() {
-        final GreatCircle gc = new GreatCircle(Vec3.NORTH);
+        final GreatCircle gc = GreatCircle.createFromPole(Vec3.NORTH);
         gc.angleFromLast(Vec3.EAST);
     }
     
@@ -199,7 +195,7 @@ public class GreatCircleTest {
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testMad1WithNoPoints() {
-        final GreatCircle gc = new GreatCircle(Vec3.NORTH);
+        final GreatCircle gc = GreatCircle.createFromPole(Vec3.NORTH);
         gc.getMad1();
     }
 
