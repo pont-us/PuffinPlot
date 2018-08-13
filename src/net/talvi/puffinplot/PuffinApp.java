@@ -438,7 +438,7 @@ public final class PuffinApp {
             final Suite suite = new Suite("PuffinPlot (process mode)");
             try {
                 suite.readFiles(Arrays.asList(new File[] {new File(inputFileString)}));
-                suite.doAllCalculations(Correction.NONE);
+                suite.doAllCalculations(Correction.NONE, getGreatCirclesValidityCondition());
                 suite.calculateSuiteMeans(suite.getSamples(), suite.getSites());
                 
                 final String bareFilename = inputFileString.replaceFirst("[.]...$", "");
@@ -522,7 +522,8 @@ public final class PuffinApp {
     public void redoCalculations() {
         for (Suite suite: suites) {
             suite.doSampleCalculations(getCorrection());
-            suite.doSiteCalculations(getCorrection());
+            suite.doSiteCalculations(getCorrection(),
+                    getGreatCirclesValidityCondition());
         }
     }
 
@@ -568,7 +569,8 @@ public final class PuffinApp {
      */
     public void calculateGreatCirclesDirections() {
         for (Site site: getSelectedSites()) {
-            site.calculateGreatCirclesDirection(getCorrection());
+            site.calculateGreatCirclesDirection(getCorrection(),
+                    getGreatCirclesValidityCondition());
         }
         updateDisplay();
     }
@@ -598,7 +600,7 @@ public final class PuffinApp {
             if (site.getGreatCircles() != null) {
                 // PCAs are also used in GC calculations, so this needs
                 // to be recalculated even if only the PCA has changed.
-                site.calculateGreatCirclesDirection(getCorrection());
+                site.calculateGreatCirclesDirection(getCorrection(), getGreatCirclesValidityCondition());
             }
         }
     }
@@ -848,7 +850,8 @@ public final class PuffinApp {
                     prefs.get2gProtocol(),
                     !"X/Y/Z".equals(prefs.getPrefs().get("readTwoGeeMagFrom", "X/Y/Z")),
                     fileType, format, importOptions);
-            suite.doAllCalculations(getCorrection());
+            suite.doAllCalculations(getCorrection(),
+                    getGreatCirclesValidityCondition());
             final List<String> warnings = suite.getLoadWarnings();
             if (warnings.size() > 0) {
                 final StringBuilder sb =
@@ -2156,7 +2159,8 @@ public final class PuffinApp {
             LOGGER.log(Level.INFO, "Temporary directory: {0}", tempDir.toString());
         
             getSuite().saveAs(tempDir.resolve(Paths.get("data.ppl")).toFile());
-            getSuite().doAllCalculations(getCorrection());
+            getSuite().doAllCalculations(getCorrection(),
+                    getGreatCirclesValidityCondition());
             getSuite().calculateSuiteMeans(getSelectedSamples(), getSelectedSites());
             
             getSuite().saveCalcsSample(tempDir.resolve(Paths.get("data-sample.csv")).toFile());
@@ -2183,4 +2187,10 @@ public final class PuffinApp {
         }
         
     }
+    
+    private static String getGreatCirclesValidityCondition() {
+        return Preferences.userNodeForPackage(PuffinPrefs.class).
+                get("data.greatcircles.validityExpr", "true");
+    }
+
 }

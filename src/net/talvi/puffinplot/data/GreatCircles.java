@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.prefs.Preferences;
 import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
@@ -86,7 +85,6 @@ public final class GreatCircles implements FisherParams {
         this.validityCondition = validityCondition;
         this.isValid = null;
     }
-
     /**
      * Calculates a mean direction from the supplied great circle and
      * directions. At least one endpoint OR at least two great circles
@@ -96,29 +94,6 @@ public final class GreatCircles implements FisherParams {
      * @param endpoints a set of directions (probably from linear PCA fits)
      * @param circles a set of great circles
      */
-    public static GreatCircles instance(List<Vec3> endpoints,
-            List<GreatCircle> circles) {
-        /* TODO: remove all Preferences stuff from this class. It's only used
-         * for the validity condition, which can easily be passed to the
-         * constructor. As it is, the class can't be unit tested fully without
-         * mocking Preferences.userNodeForPackage (tricky since it's static),
-         * and usage of the class outside the PuffinPlot application gets
-         * ugly. It's effectively a global variable -- but worse, since it's
-         * persistent. Best is probably to pass the condition to the constructor
-         * and store it in a final field, which means that (1) it doesn't need
-         * to be passed explicitly to isValid and toStrings and (2) it can be
-         * cached the first time it's calculated, so the interpreter only needs
-         * to be run once.
-         *
-         * It would also be worth considering turning the constructors into
-         * static factory methods.
-         */
-        final Preferences prefs = Preferences.userNodeForPackage(
-                net.talvi.puffinplot.PuffinPrefs.class);
-        final String validityCondition =
-                prefs.get("data.greatcircles.validityExpr", "true");
-        return instance(endpoints, circles, validityCondition);
-    }
 
     /**
      * Calculates a mean direction from the supplied great circle and
@@ -261,7 +236,7 @@ public final class GreatCircles implements FisherParams {
         final double NN = getM() + getN() / 2.0;
         final double v = 1 - ((NN-1)/(k*R)) *
                 ( Math.pow(1/p, 1/(NN-1)) - 1 );
-        logger.log(Level.INFO, String.format(Locale.ENGLISH,
+        logger.log(Level.FINEST, String.format(Locale.ENGLISH,
                 "%d %d %f %f %f %f",
                 getM(), getN(), NN, k, R, v));
         return Math.toDegrees(Math.acos(v));
@@ -337,8 +312,7 @@ public final class GreatCircles implements FisherParams {
      * 
      * @return {@code true} if this great-circle fit is valid
      */
-
-    public boolean isValid(String validityCondition) {
+    private boolean isValid(String validityCondition) {
         // Avoid firing up an interpreter for the most common cases.
         switch(validityCondition) {
             case "true":

@@ -366,7 +366,8 @@ public final class Suite {
         }
     }
 
-    /** Calculate mean directions for all suitable sites in the suite.
+    /**
+     * Calculates mean directions for all suitable sites in the suite.
      * For each site, a Fisher mean and a great-circle mean may
      * be calculated. The Fisher mean is only calculated for sites
      * with a sufficient number of PCA directions for samples. The great-circle
@@ -374,9 +375,13 @@ public final class Suite {
      * great circles fitted to samples.
      * 
      * @param correction the correction to apply to the magnetic moment
-     * data when performing the calculations
+     *     data when performing the calculations
+     * @param greatCirclesValidityCondition an expression which is evaluated
+     *     to determine whether a great-circles direction is considered valid
+     *     (see {@link net.talvi.puffinplot.data.GreatCircles#instance(java.util.List, java.util.List, java.lang.String)}).
      */
-    public void doSiteCalculations(Correction correction) {
+    public void doSiteCalculations(Correction correction,
+            String greatCirclesValidityCondition) {
         setSaved(false);
         // TODO we can use getSites for this now!
         final Set<Site> sitesDone = new HashSet<>();
@@ -385,14 +390,17 @@ public final class Suite {
             if (site == null) continue;
             if (sitesDone.contains(site)) continue;
             site.calculateFisherStats(correction);
-            site.calculateGreatCirclesDirection(correction);
+            site.calculateGreatCirclesDirection(correction,
+                    greatCirclesValidityCondition);
             sitesDone.add(site);
         }
     }
 
     /**
      * Creates a new, empty suite.
-     * @param creator a string identifying the program and version creating the suite
+     * 
+     * @param creator a string identifying the program and version creating the
+     *     suite
      */
     public Suite(String creator) {
         suiteCreator = creator;
@@ -667,13 +675,18 @@ public final class Suite {
     /** Performs all possible sample and site calculations.
      *  Intended to be called after instantiating a new Suite from a file.
      * @param correction the correction to apply to the magnetic moment
-     * data when performing the calculations
+     *     data when performing the calculations
+     * @param greatCirclesValidityCondition an expression which is evaluated
+     *     to determine whether a great-circles direction is considered valid
+     *     (see {@link net.talvi.puffinplot.data.GreatCircles#instance(java.util.List, java.util.List, java.lang.String)}).
+
      */
-    public void doAllCalculations(Correction correction) {
+    public void doAllCalculations(Correction correction,
+            String greatCirclesValidityCondition) {
         setSaved(false);
         doSampleCalculations(correction);
         if (!getSites().isEmpty()) {
-            doSiteCalculations(correction);
+            doSiteCalculations(correction, greatCirclesValidityCondition);
         }
     }
     

@@ -119,7 +119,8 @@ public class Site {
      * data when fitting the great circles.
      * @see GreatCircles
      */
-    public void calculateGreatCirclesDirection(Correction correction) {
+    public void calculateGreatCirclesDirection(Correction correction,
+            String validityCondition) {
         List<Vec3> endpoints = new LinkedList<>();
         LinkedList<GreatCircle> circles = new LinkedList<>();
         for (Sample sample: getSamples()) {
@@ -138,7 +139,8 @@ public class Site {
         }
         if ((endpoints.size() > 0 && circles.size() > 0)
                 || circles.size() > 1) {
-            greatCircles = GreatCircles.instance(endpoints, circles);
+            greatCircles = GreatCircles.instance(endpoints, circles,
+                    validityCondition);
         } else {
             clearGcFit();
         }
