@@ -1,5 +1,5 @@
 /* This file is part of PuffinPlot, a program for palaeomagnetic
- * data plotting and analysis. Copyright 2012 Pontus Lurcock.
+ * data plotting and analysis. Copyright 2012-2018 Pontus Lurcock.
  *
  * PuffinPlot is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,5 +86,47 @@ public class SampleTest {
                         actual.getAxis(axisIndex), 1e-6));
             }
         }
+    }
+    
+    @Test
+    public void testRotateAroundZAxis() {
+        final Vec3[] directions = {
+            Vec3.ORIGIN, Vec3.DOWN, Vec3.NORTH, Vec3.NORTH.plus(Vec3.DOWN)
+        };
+        final Vec3[] directionsPlus90 = {
+            Vec3.ORIGIN, Vec3.DOWN, Vec3.EAST, Vec3.EAST.plus(Vec3.DOWN)            
+        };
+        
+        final Sample sample = makeSampleFromVectors(directions);
+        final Sample sampleForwardRotated = makeSampleFromVectors(directions);
+        sampleForwardRotated.rotateAroundZAxis(90);
+        final Sample samplePlus90 = makeSampleFromVectors(directions);
+        final Sample samplePlus90BackwardRotated = makeSampleFromVectors(directions);
+        sampleForwardRotated.rotateAroundZAxis(-90);
+        
+        assertTrue(doSamplesHaveSameMoments(sampleForwardRotated, samplePlus90));
+        assertTrue(doSamplesHaveSameMoments(sample, samplePlus90BackwardRotated));
+    }
+    
+    private Sample makeSampleFromVectors(Vec3[] vectors) {
+        final Sample sample = new Sample("test sample", null);
+        for (Vec3 vector: vectors) {
+            sample.addDatum(new Datum(vector));
+        }
+        return sample;
+    }
+    
+    private boolean doSamplesHaveSameMoments(Sample s0, Sample s1) {
+        if (s0.getData().size() != s1.getData().size()) {
+            return false;
+        }
+        for (int i=0; i < s0.getData().size(); i++) {
+            final Vec3 v0 = s0.getDatum(i).getMoment();
+            final Vec3 v1 = s1.getDatum(i).getMoment();
+            if (!v0.equals(v1, 1e-10)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

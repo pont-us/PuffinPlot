@@ -1052,4 +1052,10 @@ public class Sample {
         data = data.subList(0, items);
     }
     
+    public void rotateAroundZAxis(double angleDegrees) {
+        getData().forEach((Datum d) -> {
+            d.setMoment(d.getMoment().rotZ(Math.toRadians(angleDegrees)));
+        });
+    }
+    
 }

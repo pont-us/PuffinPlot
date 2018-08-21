@@ -953,6 +953,19 @@ public class Vec3Test {
             }
         }
     }
+    
+    @Test
+    public void testRotZ() {
+        assertTrue(Vec3.EAST.equals(Vec3.NORTH.rotZ(Math.PI/2), delta));
+        assertTrue(Vec3.NORTH.equals(Vec3.EAST.rotZ(3*Math.PI/2), delta));
+        assertTrue(Vec3.ORIGIN.equals(Vec3.ORIGIN.rotZ(Math.PI/3), delta));
+        assertTrue(Vec3.DOWN.equals(Vec3.DOWN.rotZ(1), delta));
+        final Random rnd = new Random(99);
+        for (Vec3 v: testVectors) {
+            final double angle = (rnd.nextDouble() * 4 - 2) * Math.PI;
+            assertTrue(v.equals(v.rotZ(angle).rotZ(-angle), delta));
+        }
+    }
 
     private static double getVectorComponent(Vec3 v, int i) {
         switch (i) {
