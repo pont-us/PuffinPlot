@@ -16,6 +16,8 @@
  */
 package net.talvi.puffinplot;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import net.talvi.puffinplot.data.Vec3;
 
@@ -40,4 +42,13 @@ public class TestUtils {
         return v0.equals(v1, delta) || v0.invert().equals(v1, delta);
     }
     
+    public static List<Vec3> makeVectorList(double[][] components, boolean normalize) {
+        final List<Vec3> result = new ArrayList<Vec3>(components.length);
+        for (double[] triplet: components) {
+            assert(triplet.length == 3);
+            final Vec3 v = new Vec3(triplet[0], triplet[1], triplet[2]);
+            result.add(normalize ? v.normalize() : v);
+        }
+        return result;
+    }
 }

@@ -18,22 +18,25 @@ package net.talvi.puffinplot.data;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Reader;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import net.talvi.puffinplot.PuffinUserException;
 import net.talvi.puffinplot.data.file.IapdLoaderTest;
 import org.junit.After;
@@ -42,6 +45,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Rule;
+import org.junit.rules.TemporaryFolder;
+import net.talvi.puffinplot.TestUtils;
 
 /**
  *
@@ -64,17 +70,6 @@ public class SuiteTest {
             + "SUITE	ORIGINAL_FILE_TYPE	TWOGEE\n"
             + "SUITE	ORIGINAL_CREATOR_PROGRAM	PuffinPlot 6c33364b465f\n"
             + "SUITE	SAVED_BY_PROGRAM	PuffinPlot 6c33364b465f\n";
-    
-    public SuiteTest() {
-    }
-    
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
     
     @Before
     public void setUp() {
@@ -294,4 +289,122 @@ public class SuiteTest {
         }
     }
     
+    @Test(expected = IllegalArgumentException.class)
+    public void testReadFilesEmptyList() {
+        final Suite suite = new Suite("test");
+        try {
+            suite.readFiles(Collections.emptyList());
+        } catch (IOException ex) {
+            Logger.getLogger(SuiteTest.class.getName()).log(Level.SEVERE, null, ex);
+            fail();
+        }
+    }
+    
+    @Test(expected = NullPointerException.class)
+    public void testReadFilesNullList() {
+        try {
+            new Suite("test").readFiles(null);
+        } catch (IOException ex) {
+            Logger.getLogger(SuiteTest.class.getName()).log(Level.SEVERE, null, ex);
+            fail();
+        }
+    }
+    
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
+    @Test
+    public void testNonExistentFile() {
+        Path path;
+        final File file =
+                folder.getRoot().toPath().resolve("nonexistent").toFile();
+        try {
+            Suite suite = new Suite("test");
+            suite.readFiles(Collections.singletonList(file));
+            assertTrue(suite.isEmpty());
+            assertEquals(1, suite.getLoadWarnings().size());
+        } catch (IOException ex) {
+            Logger.getLogger(SuiteTest.class.getName()).log(Level.SEVERE, null, ex);
+            fail();
+        }
+    }
+    
+    @Test
+    public void testCalculateSuiteMeans() {
+        final List<Vec3> testData = TestUtils.makeVectorList(new double[][] {
+            {1, 2, 3},
+            {1, 2, 4},
+            {4, 5, -6},
+            {4, 5, -7},
+            {1, 2, 5},
+            {1, 3, 6},
+            {2, 3, -6},
+            {2, 4, -7},
+            {1, 1, 1},
+            {1, 2, 1},
+            {2, 1, -2},
+            {1, 2, -2},
+            {3, 2, 2},
+            {4, 2, 2},
+            {3, 2, -1},
+            {4, 2, -1}
+        }, true);
+        // (might need more samples to get a meaningful result for each site)
+
+        final List<Site> sites = new ArrayList<>();
+        final double[][] siteLocations = {
+            {45, 45},
+            {-45, 45},
+            {30, 50},
+            {-30, -50}
+        };
+        final Suite suite = new Suite("test");
+
+        for (int siteIndex = 0; siteIndex < siteLocations.length; siteIndex++) {
+            final Site site = suite.getOrCreateSite(Integer.toString(siteIndex));
+            site.setLocation(Location.fromDegrees(siteLocations[siteIndex][0],
+                    siteLocations[siteIndex][1]));
+            sites.add(site);
+        }
+        
+        final List<Sample> samples = new ArrayList<>();
+        for (int i=0; i<testData.size(); i++) {
+            final Sample sample = new Sample(String.format("%d", i), suite);
+            sample.setImportedDirection(testData.get(i));
+            final Site site = sites.get(i % siteLocations.length);
+            sample.setSite(site);
+            site.addSample(sample);
+            samples.add(sample);
+            suite.addSample(sample, Integer.toString(i));
+        }
+        
+        suite.doAllCalculations(Correction.NONE, "true");
+        for (Site site: sites) {
+            site.calculateFisherStats(Correction.NONE);
+        }
+        suite.calculateSuiteMeans(suite.getSamples(), suite.getSites());
+        
+        final SuiteCalcs.Means dirsBySample =
+                SuiteCalcs.Means.calculate(testData);
+        final SuiteCalcs.Means vgpsBySample =
+                SuiteCalcs.Means.calculate(samples.stream().map(
+                        (s) -> VGP.calculate(s.getDirection(), 0,
+                                s.getSite().getLocation()).getLocation().
+                                toVec3()).collect(Collectors.toList()));
+        final SuiteCalcs.Means dirsBySite =
+                SuiteCalcs.Means.calculate(sites.stream().map((s) ->
+                s.getMeanDirection()).collect(Collectors.toList()));
+        final SuiteCalcs.Means vgpsBySite =
+                SuiteCalcs.Means.calculate(sites.stream().map((s) ->
+                VGP.calculate(s.getMeanDirection(), 0, s.getLocation()).
+                        getLocation().toVec3()).collect(Collectors.toList()));
+                
+        // Calculate directly using SuiteMeans. We're not checking the
+        // maths here; that should happen in the SuiteMeans unit tests
+        // (or maybe even lower down).
+        final SuiteCalcs expectedCalcs = new SuiteCalcs(dirsBySite,
+                dirsBySample, vgpsBySite, vgpsBySample);
+        
+        assertEquals(expectedCalcs.toStrings(),
+                suite.getSuiteMeans().toStrings());
+        }
 }

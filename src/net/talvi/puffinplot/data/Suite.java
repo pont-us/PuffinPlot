@@ -1,5 +1,5 @@
 /* This file is part of PuffinPlot, a program for palaeomagnetic
- * data plotting and analysis. Copyright 2012-2015 Pontus Lurcock.
+ * data plotting and analysis. Copyright 2012-2018 Pontus Lurcock.
  *
  * PuffinPlot is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,6 +90,7 @@ public final class Suite {
      * directions for samples within the suite. The Fisher parameters
      * are stored in the suite and can be retrieved with
      * {@link #getSuiteMeans()}.
+     * 
      * @param selSamples samples for which to calculate means
      * @param selSites sites for which to calculate means
      */
@@ -437,7 +438,7 @@ public final class Suite {
      * <p>After readFiles returns, #getLoadWarnings() can be used
      * to return a list of problems that occurred during file reading.</p>
      * 
-     * @param files the files from which to read the data
+     * @param files the files from which to read the data (non-null, non-empty)
      * @param sensorLengths for 2G long core files only: the effective lengths 
      * of the magnetometer's SQUID sensors,
      * used to correct Cartesian magnetic moment data
@@ -453,7 +454,11 @@ public final class Suite {
             TwoGeeLoader.Protocol protocol, boolean usePolarMoment,
             FileType fileType, FileFormat format,
             Map<Object,Object> importOptions) throws IOException {
-        assert(files.size() > 0);
+        Objects.requireNonNull(files, "files may not be null");
+        if (files.isEmpty()) {
+            throw new IllegalArgumentException("File list may not be empty.");
+        }
+
         if (isEmpty()) { // only set the name if suite is empty
             if (files.size() == 1) {
                 name = files.get(0).getName();
@@ -476,7 +481,7 @@ public final class Suite {
         List<String> puffinLines = Collections.emptyList();
         boolean sensorLengthWarning = false;
         // If fileType is PUFFINPLOT_NEW, originalFileType can
-        // be overrwritten by value specified in file.
+        // be overwritten by value specified in file.
         originalFileType = fileType;
         
         for (File file: files) {
@@ -655,8 +660,7 @@ public final class Suite {
                     final Vec3 v = Vec3.fromPolarDegrees(1., inc, dec);
                     Sample sample = new Sample(sampleName, this);
                     sample.setImportedDirection(v);
-                    samples.add(sample);
-                    samplesById.put(sampleName, sample);
+                    addSample(sample, sampleName);
                 }
             }
         }
@@ -670,6 +674,11 @@ public final class Suite {
             }
         }
         updateReverseIndex();
+    }
+
+    void addSample(Sample sample, final String sampleName) {
+        samples.add(sample);
+        samplesById.put(sampleName, sample);
     }
     
     /** Performs all possible sample and site calculations.
