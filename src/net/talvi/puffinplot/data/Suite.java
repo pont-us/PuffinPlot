@@ -1385,7 +1385,7 @@ public final class Suite {
     package-private, or moved to Suite and kept fully private -- if
     it's called without corresponding updates to Suite.data, the data
     structures end up in an inconsistent state and strange results will
-    probably ensure.
+    probably ensue.
      */
     private Collection mergeDuplicateMeasurementsInSample(Sample sample) {
         Map<TreatAndStep, List<Datum>> treatMap = new HashMap<>();

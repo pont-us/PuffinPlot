@@ -1,5 +1,5 @@
 /* This file is part of PuffinPlot, a program for palaeomagnetic
- * data plotting and analysis. Copyright 2012 Pontus Lurcock.
+ * data plotting and analysis. Copyright 2012-2018 Pontus Lurcock.
  *
  * PuffinPlot is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,13 +36,10 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import net.talvi.puffinplot.PuffinUserException;
 import net.talvi.puffinplot.data.file.IapdLoaderTest;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Rule;
@@ -54,6 +51,9 @@ import net.talvi.puffinplot.TestUtils;
  * @author pont
  */
 public class SuiteTest {
+
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
     
     private File puffinFile1;
     private Suite syntheticSuite1;
@@ -310,13 +310,11 @@ public class SuiteTest {
         }
     }
     
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
     @Test
     public void testNonExistentFile() {
         Path path;
         final File file =
-                folder.getRoot().toPath().resolve("nonexistent").toFile();
+                temporaryFolder.getRoot().toPath().resolve("nonexistent").toFile();
         try {
             Suite suite = new Suite("test");
             suite.readFiles(Collections.singletonList(file));
@@ -330,6 +328,11 @@ public class SuiteTest {
     
     @Test
     public void testCalculateSuiteMeans() {
+        /*
+         * The test data is arranged so as to distribute sample and site
+         * means and VGPs fairly evenly across hemispheres, giving sufficient
+         * data for a meaningful calculation in most of the categories.
+         */
         final List<Vec3> testData = TestUtils.makeVectorList(new double[][] {
             {1, 2, 3},
             {1, 2, 4},
@@ -348,8 +351,12 @@ public class SuiteTest {
             {3, 2, -1},
             {4, 2, -1}
         }, true);
-        // (might need more samples to get a meaningful result for each site)
 
+        final Suite suite = new Suite("test");
+
+        /*
+         * Create and initialize sites.
+         */
         final List<Site> sites = new ArrayList<>();
         final double[][] siteLocations = {
             {45, 45},
@@ -357,8 +364,6 @@ public class SuiteTest {
             {30, 50},
             {-30, -50}
         };
-        final Suite suite = new Suite("test");
-
         for (int siteIndex = 0; siteIndex < siteLocations.length; siteIndex++) {
             final Site site = suite.getOrCreateSite(Integer.toString(siteIndex));
             site.setLocation(Location.fromDegrees(siteLocations[siteIndex][0],
@@ -366,6 +371,9 @@ public class SuiteTest {
             sites.add(site);
         }
         
+        /*
+         * Create samples and add them to the sites and suite.
+         */
         final List<Sample> samples = new ArrayList<>();
         for (int i=0; i<testData.size(); i++) {
             final Sample sample = new Sample(String.format("%d", i), suite);
@@ -377,12 +385,20 @@ public class SuiteTest {
             suite.addSample(sample, Integer.toString(i));
         }
         
+        /*
+         * Generate the actual data from the hand-crafted Suite.
+         */
         suite.doAllCalculations(Correction.NONE, "true");
         for (Site site: sites) {
             site.calculateFisherStats(Correction.NONE);
         }
         suite.calculateSuiteMeans(suite.getSamples(), suite.getSites());
         
+        /*
+         * Generate the expected data by calculating directly using SuiteCalcs.
+         * We're not checking the maths here; that should happen in the
+         * SuiteMeans unit tests (or maybe even lower down).
+         */
         final SuiteCalcs.Means dirsBySample =
                 SuiteCalcs.Means.calculate(testData);
         final SuiteCalcs.Means vgpsBySample =
@@ -397,14 +413,91 @@ public class SuiteTest {
                 SuiteCalcs.Means.calculate(sites.stream().map((s) ->
                 VGP.calculate(s.getMeanDirection(), 0, s.getLocation()).
                         getLocation().toVec3()).collect(Collectors.toList()));
-                
-        // Calculate directly using SuiteMeans. We're not checking the
-        // maths here; that should happen in the SuiteMeans unit tests
-        // (or maybe even lower down).
         final SuiteCalcs expectedCalcs = new SuiteCalcs(dirsBySite,
                 dirsBySample, vgpsBySite, vgpsBySample);
         
+        /*
+         * SuiteCalcs doesn't implement an equals method, but the toStrings
+         * method is a convenient way to test for equality without
+         * complications from exact floating-point comparisons.
+         */
         assertEquals(expectedCalcs.toStrings(),
                 suite.getSuiteMeans().toStrings());
         }
+    
+    @Test
+    public void testReadDirectionalData() {
+        try {
+            testReadDirectionalData(MeasType.DISCRETE,
+                    "discrete.txt",
+                    "SAMPLE1 30 40\nSAMPLE2\t50\t60",
+                    new String[] {"SAMPLE1", "SAMPLE2"},
+                    new double[][] {{30, 40}, {50, 60}});
+            testReadDirectionalData(MeasType.CONTINUOUS,
+                    "continuous.txt",
+                    "0.1 , 35 , 45\n0.2,55,65",
+                    new String[] {"0.1", "0.2"},
+                    new double[][] {{35, 45}, {55, 65}});
+        } catch (IOException ex) {
+            Logger.getLogger(SuiteTest.class.getName()).
+                    log(Level.SEVERE, null, ex);
+            fail();
+        }
+    }
+
+    private void testReadDirectionalData(final MeasType measType,
+            final String filename,
+            final String fileContents, final String[] sampleNames,
+            final double[][] directions) throws IOException {
+        final Suite suite = new Suite("test");
+        suite.readDirectionalData(Collections.singletonList(
+                TestUtils.writeStringToTemporaryFile(filename, fileContents,
+                temporaryFolder)));
+        assertEquals(sampleNames.length, suite.getSamples().size());
+        assertEquals(measType, suite.getMeasType());
+        for (int i=0; i<sampleNames.length; i++) {
+            final Sample sample = suite.getSampleByIndex(i);
+            assertTrue(Vec3.fromPolarDegrees(
+                    1, directions[i][1], directions[i][0]).
+                    equals(sample.getDirection()));
+            assertEquals(sampleNames[i], sample.getNameOrDepth());
+        }
+    }
+    
+    @Test(expected = IOException.class)
+    public void testReadDirectionalDataFromNonexistentFile()
+            throws IOException {
+        syntheticSuite1.readDirectionalData(Collections.singletonList(
+                temporaryFolder.getRoot().toPath().resolve("nonexistent").
+                        toFile()));
+    }
+    
+    @Test
+    public void testSetAndGetCurrentSampleIndex() {
+        for (int i=0; i<2; i++) {
+            syntheticSuite1.setCurrentSampleIndex(i);
+            assertEquals(i, syntheticSuite1.getCurrentSampleIndex());
+        }
+    }
+
+    @Test
+    public void testGetCurrentSample() {
+        final List<Sample> samples = syntheticSuite1.getSamples();
+        for (int i=0; i<2; i++) {
+            syntheticSuite1.setCurrentSampleIndex(i);
+            assertEquals(samples.get(i),
+                    syntheticSuite1.getCurrentSample());
+        }
+    }
+    
+    @Test
+    public void testGetSampleByIndexOfMinusOne() {
+        assertNull(syntheticSuite1.getSampleByIndex(-1));
+    }
+    
+    @Test
+    public void testGetSampleByIndexFromEmptySuite() {
+        assertNull(new Suite("test").getSampleByIndex(0));
+    }
+
 }

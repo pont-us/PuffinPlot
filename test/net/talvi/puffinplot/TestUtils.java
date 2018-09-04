@@ -16,10 +16,16 @@
  */
 package net.talvi.puffinplot;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import net.talvi.puffinplot.data.Vec3;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * Utility methods used by unit tests.
@@ -50,5 +56,15 @@ public class TestUtils {
             result.add(normalize ? v.normalize() : v);
         }
         return result;
+    }
+    
+    public static File writeStringToTemporaryFile(String fileName,
+            String fileContents,
+            TemporaryFolder temporaryFolder) throws IOException {
+        final Path filePath = temporaryFolder.getRoot().toPath().
+                resolve(fileName);
+        Files.write(filePath, fileContents.getBytes(),
+                StandardOpenOption.CREATE);
+        return filePath.toFile();
     }
 }
