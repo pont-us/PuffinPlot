@@ -79,7 +79,7 @@ public final class Suite {
         return Collections.unmodifiableList(loadWarnings);
     }
 
-    private void updateReverseIndex() {
+    void updateReverseIndex() {
         indicesBySample = new HashMap<>(getNumSamples());
         for (int i=0; i<samples.size(); i++) {
             indicesBySample.put(samples.get(i), i);
@@ -308,13 +308,19 @@ public final class Suite {
      * type will be set to that of the supplied datum.
      * 
      * @param d the datum to add
-     * @throws IllegalArgumentException if the measurement type of
-     * the datum does not match the measurement type of the suite
+     * @throws IllegalArgumentException if d is null, or if the measurement
+     * type of is invalid (i.e. it is null, UNSET, or incompatible with this
+     * suite's measurement type)
+     * 
      */
     public void addDatum(Datum d) {
-        assert(d != null);
-        assert(d.getMeasType() != null);
-        assert(d.getMeasType() != MeasType.UNSET);
+        Objects.requireNonNull(d);
+        Objects.requireNonNull(d.getMeasType());
+        if (d.getMeasType() == MeasType.UNSET) {
+            throw new IllegalArgumentException(
+                    "Measurement type may not be UNSET");
+        }
+
         if (measType == MeasType.UNSET) {
             measType = d.getMeasType();
         }

@@ -113,6 +113,7 @@ public class SuiteTest {
                 syntheticSuite1.addDatum(d);
             }
         }
+        syntheticSuite1.updateReverseIndex();
     }
     
     @After
@@ -499,5 +500,78 @@ public class SuiteTest {
     public void testGetSampleByIndexFromEmptySuite() {
         assertNull(new Suite("test").getSampleByIndex(0));
     }
+    
+    @Test(expected = NullPointerException.class)
+    public void testAddDatumNull() {
+        syntheticSuite1.addDatum(null);
+    }
 
+    @Test(expected = NullPointerException.class)
+    public void testAddDatumNullMeasType() {
+        final Datum d = new Datum();
+        d.setMeasType(null);
+        syntheticSuite1.addDatum(d);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddDatumUnsetMeasType() {
+        final Datum d = new Datum();
+        d.setMeasType(MeasType.UNSET);
+        syntheticSuite1.addDatum(d);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddDatumIncompatibleMeasType() {
+        final Datum d = new Datum();
+        d.setMeasType(MeasType.DISCRETE);
+        syntheticSuite1.addDatum(d);
+    }
+
+    @Test
+    public void testAddDatumUnknownTreatType() {
+        final Datum d = new Datum();
+        d.setMeasType(MeasType.CONTINUOUS);
+        d.setDepth("0");
+        d.setTreatType(TreatType.UNKNOWN);
+        syntheticSuite1.addDatum(d);
+    }
+
+    @Test
+    public void testToStringReturnsSuiteName() {
+        assertEquals(syntheticSuite1.getName(), syntheticSuite1.toString());
+    }
+    
+    @Test
+    public void testGetIndexBySample() {
+        final int index = 0;
+        assertEquals(index,
+                syntheticSuite1.getIndexBySample(
+                        syntheticSuite1.getSampleByIndex(index)));
+    }
+    
+    @Test
+    public void testIsSaved() {
+        final Suite suite = new Suite("test");
+        loadFileDataIntoSuite(puffinFile1, suite);
+        assertTrue(suite.isSaved());
+        suite.getSampleByIndex(0).clearPca();
+        assertFalse(suite.isSaved());        
+    }
+    
+    @Test
+    public void testSavedListener() {
+        boolean[] saved = new boolean[1];
+        syntheticSuite1.addSavedListener((boolean newState) -> {
+            saved[0] = newState;
+        });
+        syntheticSuite1.setSaved(false);
+        assertFalse(saved[0]);
+        syntheticSuite1.setSaved(true);
+        assertTrue(saved[0]);
+    }
+    
+    @Test
+    public void testGetCreator() {
+        assertEquals("SuiteTest", syntheticSuite1.getCreator());
+    }
 }
