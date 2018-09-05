@@ -76,10 +76,9 @@ public class SuiteTest {
         // Create an empty temporary file.
         puffinFile1 = null;
         try {
-            puffinFile1 = File.createTempFile("puffinplot-test-", ".ppl");
-            //file.deleteOnExit();
+            puffinFile1 = temporaryFolder.newFile("puffinplot-test.ppl");
         } catch (IOException ex) {
-            Logger.getLogger(IapdLoaderTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SuiteTest.class.getName()).log(Level.SEVERE, null, ex);
             fail("Error creating temporary file.");
         }
         
@@ -87,7 +86,7 @@ public class SuiteTest {
         try (FileWriter fw = new FileWriter(puffinFile1)) {
             fw.write(FILE_TEXT);
         } catch (IOException ex) {
-            Logger.getLogger(IapdLoaderTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SuiteTest.class.getName()).log(Level.SEVERE, null, ex);
             fail("Error writing data to temporary file.");
         }
         
@@ -560,13 +559,21 @@ public class SuiteTest {
     
     @Test
     public void testSavedListener() {
+        /*
+         * To get around the "final variables only" restriction on Java
+         * closures, we wrap the boolean value in an array.
+         */
         boolean[] saved = new boolean[1];
-        syntheticSuite1.addSavedListener((boolean newState) -> {
-            saved[0] = newState;
-        });
+
+        final Suite.SavedListener savedListener =
+                (boolean newState) -> { saved[0] = newState; };
+        syntheticSuite1.addSavedListener(savedListener);
         syntheticSuite1.setSaved(false);
         assertFalse(saved[0]);
         syntheticSuite1.setSaved(true);
+        assertTrue(saved[0]);
+        syntheticSuite1.removeSavedListener(savedListener);
+        syntheticSuite1.setSaved(false);
         assertTrue(saved[0]);
     }
     
@@ -574,4 +581,78 @@ public class SuiteTest {
     public void testGetCreator() {
         assertEquals("SuiteTest", syntheticSuite1.getCreator());
     }
+    
+    @Test
+    public void testIsFilenameSet() {
+        assertFalse(syntheticSuite1.isFilenameSet());
+        final Suite suite = new Suite("test");
+        loadFileDataIntoSuite(puffinFile1, suite);
+        assertTrue(suite.isFilenameSet());
+    }
+    
+    @Test
+    public void testSaveWithNoFilenameSet() throws PuffinUserException {
+        /* Defined behaviour here is simply to do nothing, since no
+         * save path has been set.
+         */
+        syntheticSuite1.save();
+    }
+    
+    @Test
+    public void testGetCustomFlagNames() {
+        assertEquals(0, syntheticSuite1.getCustomFlagNames().size());
+    }
+
+    @Test
+    public void testGetCustomNoteNames() {
+        assertEquals(0, syntheticSuite1.getCustomNoteNames().size());
+    }
+    
+    @Test
+    public void testGetPuffinFile() {
+        final Suite suite = new Suite("test");
+        loadFileDataIntoSuite(puffinFile1, suite);
+        assertEquals(puffinFile1, suite.getPuffinFile());
+    }
+    
+    @Test
+    public void testReadFilesFromDirectory() {
+        final Suite suite = new Suite("test");
+        loadFileDataIntoSuite(puffinFile1.getParentFile(), suite);
+        assertEquals(2, suite.getNumSamples());
+    }
+    
+    @Test
+    public void testGetMinDepth() {
+        assertEquals(0, syntheticSuite1.getMinDepth(), 1e-10);
+    }
+
+    @Test
+    public void testGetMaxDepth() {
+        assertEquals(9, syntheticSuite1.getMaxDepth(), 1e-10);
+    }
+    
+    @Test
+    public void testSetSiteNamesByDepth() {
+        syntheticSuite1.setSiteNamesByDepth(syntheticSuite1.getSamples(), 5);
+        for (Sample sample: syntheticSuite1.getSamples()) {
+            assertEquals(
+                    sample.getDepth() < 5 ? "0.00" : "5.00",
+                    sample.getSite().getName()
+            );
+        }
+    }
+    
+    @Test
+    public void testSetNamedSiteForSamplesAndClearSites() {
+        final String siteName = "site1";
+        syntheticSuite1.setNamedSiteForSamples(syntheticSuite1.getSamples(), siteName);
+        assertEquals(1, syntheticSuite1.getSites().size());
+        for (Sample sample: syntheticSuite1.getSamples()) {
+            assertEquals(siteName, sample.getSite().getName());
+        }
+        syntheticSuite1.clearSites();
+        assertTrue(syntheticSuite1.getSites().isEmpty());
+    }
+
 }
