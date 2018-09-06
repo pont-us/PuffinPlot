@@ -27,6 +27,7 @@ import static org.junit.Assert.*;
 import static java.lang.Math.PI;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -189,8 +190,12 @@ public class GreatCirclesTest {
          * expression, since the first field may be either N or Y.
          */
         assertTrue(Pattern.matches(
-                "[NY],359[.]7099,3[.]6285,57[.]1000,145[.]7362,3,0,2[.]9966,3",
+                "Y,359[.]7099,3[.]6285,57[.]1000,145[.]7362,3,0,2[.]9966,3",
                 String.join(",", gcs.toStrings())));
+        assertTrue(Pattern.matches(
+                "N,359[.]7099,3[.]6285,57[.]1000,145[.]7362,3,0,2[.]9966,3",
+                String.join(",", gcsWithInvalidCondition.toStrings())));
+        
     }
     
     /**
@@ -292,5 +297,22 @@ public class GreatCirclesTest {
         assertEquals(5.9735, gcs.getR(), 0.0001);
         assertEquals(75.592, gcs.getK(), 0.005);
         assertEquals(10.1, gcs.getA95(), 0.1);
+    }
+    
+    /**
+     * A pathological case: test with three mutually orthogonal circles as
+     * input. This will not produce a physically meaningful result, but the test
+     * checks that the algorithm won't hang or crash, and that the resulting
+     * alpha-95 value is not finite.
+     */
+    @Test
+    public void testOrthogonalCircles() {
+        final Vec3[] polesArray = new Vec3[] {
+            Vec3.NORTH, Vec3.EAST, Vec3.DOWN};
+        List<GreatCircle> gcList = Arrays.stream(polesArray).
+                map((pole) -> GreatCircle.fromPole(pole)).
+                collect(Collectors.toList());
+        final GreatCircles gcs = GreatCircles.instance(null, gcList, "true");
+        assertFalse(gcs.isA95Valid());
     }
 }

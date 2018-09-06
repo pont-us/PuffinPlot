@@ -1,5 +1,5 @@
 /* This file is part of PuffinPlot, a program for palaeomagnetic
- * data plotting and analysis. Copyright 2012-2015 Pontus Lurcock.
+ * data plotting and analysis. Copyright 2012-2018 Pontus Lurcock.
  *
  * PuffinPlot is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,12 +38,6 @@ public enum MeasType {
     private final Pattern namePattern;
     private final String niceName;
     
-    private MeasType() {
-        niceName = null;
-        namePattern = null;
-        columnHeader = null;
-    }
-    
     private MeasType(String niceName, String namePattern, String columnHeader) {
         this.niceName = niceName;
         this.namePattern = Pattern.compile(namePattern,
@@ -52,7 +46,7 @@ public enum MeasType {
     }
     
     private boolean matches(String name) {
-        return namePattern!=null && namePattern.matcher(name).find();
+        return namePattern.matcher(name).find();
     }
     
     /** Creates a measurement type from a string representation. 
@@ -60,7 +54,7 @@ public enum MeasType {
      * @return the corresponding measurement type
      */
     public static MeasType fromString(String string) {
-        for (MeasType mt : MeasType.values()) {
+        for (MeasType mt: MeasType.values()) {
             if (mt.matches(string)) {
                 return mt;
             }
