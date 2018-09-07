@@ -16,6 +16,8 @@
  */
 package net.talvi.puffinplot.data;
 
+import java.util.Arrays;
+import net.talvi.puffinplot.TestUtils;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -39,5 +41,23 @@ public class VGPTest {
         assertEquals(342.7, vgp.getLocation().getLongDeg(), delta);
         assertEquals(4.0, vgp.getDp(), delta);
         assertEquals(6.3, vgp.getDm(), delta);
+        assertEquals(Arrays.asList("67.7635", "342.7285", "4.0000", "6.3246"),
+                vgp.toStrings());
+    }
+    
+    @Test
+    public void testGetHeaders() {
+        assertEquals(
+                "VGP lat (deg),VGP long (deg),VGP dp (deg),VGP dm (deg)",
+                String.join(",", VGP.getHeaders()));
+        assertTrue(TestUtils.isPrintableAscii(
+                String.join(",",VGP.getHeaders())));
+    }
+    
+    @Test
+    public void testGetEmptyFields() {
+        assertEquals(VGP.getHeaders().size(), VGP.getEmptyFields().size());
+        assertTrue(VGP.getEmptyFields().stream().
+                allMatch(field -> "".equals(field)));
     }
 }

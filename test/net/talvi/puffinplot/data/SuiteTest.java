@@ -37,7 +37,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import net.talvi.puffinplot.PuffinUserException;
-import net.talvi.puffinplot.data.file.IapdLoaderTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -108,6 +107,7 @@ public class SuiteTest {
                 d.setAfZ(demag);
                 d.setTreatType(TreatType.DEGAUSS_XYZ);
                 d.setSample(sample);
+                d.setMagSus(depth);
                 sample.addDatum(d);
                 syntheticSuite1.addDatum(d);
             }
@@ -655,4 +655,16 @@ public class SuiteTest {
         assertTrue(syntheticSuite1.getSites().isEmpty());
     }
 
+    @Test
+    public void testRescaleMagSus() {
+        syntheticSuite1.setSaved(true);
+        syntheticSuite1.rescaleMagSus(2);
+        assertFalse(syntheticSuite1.isSaved());
+        for (Sample sample: syntheticSuite1.getSamples()) {
+            for (Datum d: sample.getData()) {
+                assertEquals(Double.parseDouble(d.getDepth())*2,
+                        d.getMagSus(), 1e-10);
+            }
+        }
+    }
 }
