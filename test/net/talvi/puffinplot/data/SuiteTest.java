@@ -44,6 +44,7 @@ import static org.junit.Assert.*;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 import net.talvi.puffinplot.TestUtils;
+import org.junit.Assume;
 
 /**
  *
@@ -56,6 +57,7 @@ public class SuiteTest {
     
     private File puffinFile1;
     private Suite syntheticSuite1;
+    private Suite syntheticSuite2;
     
     final String FILE_TEXT = "PuffinPlot file. Version 3\n"
             + "DISCRETE_ID	DEPTH	RUN_NUMBER	TIMESTAMP	SLOT_NUMBER	MEAS_TYPE	X_MOMENT	Y_MOMENT	Z_MOMENT	MAG_SUS	VOLUME	AREA	SAMPLE_AZ	SAMPLE_DIP	FORM_AZ	FORM_DIP	MAG_DEV	TREATMENT	AF_X	AF_Y	AF_Z	TEMPERATURE	IRM_FIELD	ARM_FIELD	ARM_AXIS	PP_SELECTED	PP_ANCHOR_PCA	PP_HIDDEN	PP_ONCIRCLE	PP_INPCA\n"
@@ -89,16 +91,17 @@ public class SuiteTest {
             fail("Error writing data to temporary file.");
         }
         
-        createSuite();
+        createSuites();
     }
     
-    private void createSuite() {
+    private void createSuites() {
         syntheticSuite1 = new Suite("SuiteTest");
         for (int depth=0; depth<10; depth++) {
-            String depthString = String.format("%d", depth);
-            Sample sample = new Sample(depthString, syntheticSuite1);
+            final String depthString = String.format("%d", depth);
+            final Sample sample = new Sample(depthString, syntheticSuite1);
             for (int demag=0; demag<100; demag += 10) {
-                final Datum d = new Datum((depth+1.)*(100.-demag), 0, 0);
+                final Datum d = new Datum((depth+1.)*(100.-demag),
+                        depth*50, demag);
                 d.setDepth(depthString);
                 d.setSuite(syntheticSuite1);
                 d.setMeasType(MeasType.CONTINUOUS);
@@ -113,6 +116,32 @@ public class SuiteTest {
             }
         }
         syntheticSuite1.updateReverseIndex();
+        
+        syntheticSuite2 = new Suite("SuiteTest");
+        for (int sampleIndex=0; sampleIndex<10; sampleIndex++) {
+            final String sampleName = String.format("SAMPLE_%d", sampleIndex);
+            final Sample sample = new Sample(sampleName, syntheticSuite2);
+            for (int demag=0; demag<100; demag += 10) {
+                final Datum d = new Datum((sampleIndex+1.)*(100.-demag),
+                        sampleIndex*50, demag);
+                d.setDiscreteId(sampleName);
+                d.setSuite(syntheticSuite2);
+                d.setMeasType(MeasType.DISCRETE);
+                d.setAfX(demag);
+                d.setAfY(demag);
+                d.setAfZ(demag);
+                d.setTreatType(TreatType.DEGAUSS_XYZ);
+                d.setSample(sample);
+                d.setMagSus(sampleIndex);
+                d.setSampAz(0);
+                d.setSampDip(0);
+                d.setFormAz(0);
+                d.setFormDip(0);
+                sample.addDatum(d);
+                syntheticSuite2.addDatum(d);
+            }
+        }
+        syntheticSuite2.updateReverseIndex();
     }
     
     @After
@@ -542,10 +571,16 @@ public class SuiteTest {
     
     @Test
     public void testGetIndexBySample() {
-        final int index = 0;
-        assertEquals(index,
+        final int sampleIndex = 0;
+        assertEquals(sampleIndex,
                 syntheticSuite1.getIndexBySample(
-                        syntheticSuite1.getSampleByIndex(index)));
+                        syntheticSuite1.getSampleByIndex(sampleIndex)));
+    }
+    
+    @Test
+    public void testGetIndexBySampleWithSampleNotInSuite() {
+        final Sample notInSuite = new Sample("test", null);
+        assertEquals(-1, syntheticSuite1.getIndexBySample(notInSuite));
     }
     
     @Test
@@ -563,7 +598,7 @@ public class SuiteTest {
          * To get around the "final variables only" restriction on Java
          * closures, we wrap the boolean value in an array.
          */
-        boolean[] saved = new boolean[1];
+        final boolean[] saved = new boolean[1];
 
         final Suite.SavedListener savedListener =
                 (boolean newState) -> { saved[0] = newState; };
@@ -626,9 +661,25 @@ public class SuiteTest {
     public void testGetMinDepth() {
         assertEquals(0, syntheticSuite1.getMinDepth(), 1e-10);
     }
+    
+    @Test
+    public void testGetMinDepthOnDiscreteSuite() {
+        assertTrue(Double.isNaN(syntheticSuite2.getMinDepth()));
+    }
 
     @Test
     public void testGetMaxDepth() {
+        assertEquals(9, syntheticSuite1.getMaxDepth(), 1e-10);
+    }
+    
+    @Test
+    public void testGetMaxDepthOnDiscreteSuite() {
+        assertTrue(Double.isNaN(syntheticSuite2.getMaxDepth()));
+    }
+    
+    @Test
+    public void testGetMaxDepthWithOutOfOrderDepths() {
+        syntheticSuite1.getSampleByIndex(0).setDepth("7");
         assertEquals(9, syntheticSuite1.getMaxDepth(), 1e-10);
     }
     
@@ -644,9 +695,22 @@ public class SuiteTest {
     }
     
     @Test
+    public void testSetNamedSiteForSamplesRepeatedly() {
+        syntheticSuite1.setNamedSiteForSamples(syntheticSuite1.getSamples(),
+                "site1");
+        assertEquals("site1", syntheticSuite1.getSites().stream().
+                map((site) -> site.getName()).collect(Collectors.joining()));
+        syntheticSuite1.setNamedSiteForSamples(syntheticSuite1.getSamples(),
+                "site2");
+        assertEquals("site2", syntheticSuite1.getSites().stream().
+                map((site) -> site.getName()).collect(Collectors.joining()));
+    }
+    
+    @Test
     public void testSetNamedSiteForSamplesAndClearSites() {
         final String siteName = "site1";
-        syntheticSuite1.setNamedSiteForSamples(syntheticSuite1.getSamples(), siteName);
+        syntheticSuite1.setNamedSiteForSamples(syntheticSuite1.getSamples(),
+                siteName);
         assertEquals(1, syntheticSuite1.getSites().size());
         for (Sample sample: syntheticSuite1.getSamples()) {
             assertEquals(siteName, sample.getSite().getName());
@@ -667,4 +731,117 @@ public class SuiteTest {
             }
         }
     }
+    
+    /**
+     * Here we just test that doSiteCalculations produces the same effect
+     * as calculating directly from the Site objects. The correctness of
+     * the calculations is checked in the tests for the appropriate 
+     * calculation classes.
+     */
+    @Test
+    public void testDoSiteCalculations() {
+        for (Sample sample: syntheticSuite1.getSamples()) {
+            for (Datum datum: sample.getData()) {
+                datum.setInPca(true);
+                datum.setOnCircle(true);
+            }
+            sample.doPca(Correction.NONE);
+            sample.fitGreatCircle(Correction.NONE);
+        }
+        syntheticSuite1.setSiteNamesByDepth(syntheticSuite1.getSamples(), 5);
+        
+        // Set a null site to check that this site-less samples are
+        // correctly handled.
+        syntheticSuite1.getSampleByIndex(0).setSite(null);
+        syntheticSuite1.doSiteCalculations(Correction.NONE, "true");
+        for (Site site: syntheticSuite1.getSites()) {
+            final FisherValues actualFisherValues = site.getFisherValues();
+            final GreatCircles actualGreatCircles = site.getGreatCircles();
+            site.clearFisherStats();
+            site.clearGcFit();
+            site.calculateFisherStats(Correction.NONE);
+            site.calculateGreatCirclesDirection(Correction.NONE, "true");
+            assertEquals(site.getFisherValues().toStrings(),
+                    actualFisherValues.toStrings());
+            assertEquals(site.getGreatCircles().toStrings(),
+                    actualGreatCircles.toStrings());
+        }
+    }
+
+    @Test
+    public void testCalculateAmsStatisticsHext() throws IOException {
+        testCalculateAmsStatistics(Suite.AmsCalcType.HEXT, 1);
+    }
+    
+    @Test
+    public void testCalculateAmsStatisticsBootstrap() throws IOException {
+        testCalculateAmsStatistics(Suite.AmsCalcType.BOOT, 1);
+    }
+    
+    @Test
+    public void testCalculateAmsStatisticsParametricBootstrap()
+            throws IOException {
+        testCalculateAmsStatistics(Suite.AmsCalcType.PARA_BOOT, 2);
+    }
+    
+    private void testCalculateAmsStatistics(Suite.AmsCalcType calcType,
+            int expectedTauValue) throws IOException {
+        Assume.assumeTrue("Linux".equals(System.getProperty("os.name")));
+        for (int sampleIndex=0; sampleIndex<10; sampleIndex++) {
+            syntheticSuite2.getSampleByIndex(sampleIndex).setAmsDirections(
+                    90, 0, 0, sampleIndex, 0, 90+sampleIndex);
+        }
+        
+        
+        /*
+         * This script outputs nonsense values, because we're not checking
+         * the correctness of the calculation here -- just that the script
+         * is getting called appropriately. It uses the tau value (first
+         * field) to signal whether "-par" was passed as the third argument
+         * (as it should be for parametric bootstrap calculation): tau==1 for
+         * "no -par", and tau==2 for "-par present". Apart from this, the
+         * output is not checked.
+         */
+        final File script = TestUtils.writeStringToTemporaryFile("script.sh",
+                "#!/bin/sh\n\n" +
+                        "if [ $# -gt 2 ] && [ $3 = \"-par\" ]\n" +
+                        "then line=\"2 2 3 4 5 6 7 8 9 10\"\n" +
+                        "else line=\"1 2 3 4 5 6 7 8 9 10\"\n" +
+                        "fi\n" +
+                        "for i in 1 2 3 4 5 6 7 8 9; do echo $line; done\n",
+                temporaryFolder);
+        script.setExecutable(true);
+        syntheticSuite2.calculateAmsStatistics(syntheticSuite2.getSamples(),
+                calcType, script.getCanonicalPath());
+        final List<KentParams> kentParams = 
+                calcType==Suite.AmsCalcType.HEXT ?
+                syntheticSuite2.getAmsHextParams() :
+                syntheticSuite2.getAmsBootstrapParams();
+        assertEquals(3, kentParams.size());
+        assertTrue(kentParams.stream().noneMatch((kp) -> kp == null));
+        assertEquals(expectedTauValue, (int) kentParams.get(0).getTau());
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testCalculateAmsStatisticsWithNoAmsData() throws IOException {
+        final File script = TestUtils.writeStringToTemporaryFile("script.sh",
+                "#!/bin/sh\n", temporaryFolder);
+        syntheticSuite2.calculateAmsStatistics(syntheticSuite2.getSamples(),
+                Suite.AmsCalcType.HEXT, script.getCanonicalPath());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCalculateAmsStatisticsWithInsufficientAmsData()
+            throws IOException {
+        for (int sampleIndex=0; sampleIndex<2; sampleIndex++) {
+            syntheticSuite2.getSampleByIndex(sampleIndex).setAmsDirections(
+                    90, 0, 0, sampleIndex, 0, 90+sampleIndex);
+        }
+        final File script = TestUtils.writeStringToTemporaryFile("script.sh",
+                "#!/bin/sh\n", temporaryFolder);
+        syntheticSuite2.calculateAmsStatistics(syntheticSuite2.getSamples(),
+                Suite.AmsCalcType.HEXT, script.getCanonicalPath());
+    }
+
+
 }

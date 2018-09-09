@@ -807,7 +807,6 @@ public class Sample {
         final Vec3 k2 = correctFully(Vec3.fromPolarDegrees(1., i2, d2));
         final Vec3 k3 = correctFully(Vec3.fromPolarDegrees(1., i3, d3));
         ams = Tensor.fromDirections(k1, k2, k3);
-        System.out.println(ams.toTensorComponentString());
     }
     
     private Vec3 correctFully(Vec3 v) {
@@ -815,7 +814,7 @@ public class Sample {
                toRadians(getSampDip()));
        final Vec3 fc = sc.correctForm(toRadians(getFormAz() + getMagDev()),
                toRadians(getFormDip()));
-        return fc;
+       return fc;
     }
 
     /** Returns this sample's AMS tensor.
