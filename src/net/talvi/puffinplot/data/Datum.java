@@ -427,10 +427,6 @@ public class Datum {
         if (correction.includesEmpty()) {
             result = result.minus(getLine().getEmptySlot().getMoment());
         }
-        if (correction.includesTray()) {
-            Datum tray = getSuite().getTrayCorrection(this);
-            if (tray != null) result = result.minus(tray.getMoment());
-        }
         result = correctVector(result, correction);
         return result;
     }

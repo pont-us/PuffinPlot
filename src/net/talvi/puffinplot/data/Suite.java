@@ -290,14 +290,6 @@ public final class Suite {
         }
     }
 
-    /* Part of the old empty-slot correction code. Not currently used,
-     * but leaving in for now. */
-    private Line getLineContainer(int lineNumber) {
-        if (!dataByLine.containsKey(lineNumber))
-            dataByLine.put(lineNumber, new Line(lineNumber));
-        return dataByLine.get(lineNumber);
-    }
-
     /**
      * Adds a datum to the suite.
      * 
@@ -901,23 +893,6 @@ public final class Suite {
         return index==null ? -1 : index;
     }
     
-    /** Returns the tray correction for the specified data point.
-     * Not currently used.
-     * @param d a data point representing a magnetic measurement
-     * @return a data point containing the magnetic moment of the
-     * section of the tray on which the measurement was made
-     */
-    public Datum getTrayCorrection(Datum d) {
-        Sample s = d.getSample();
-        int slot = s.getSlotNumber();
-        if (emptyTraySamples != null && emptyTraySamples.size()>slot) {
-            Sample empty = emptyTraySamples.get(slot);
-            return empty.getDatumByRunNumber(d.getRunNumber());
-        } else {
-            return null;
-        }
-    }
-
     /** Returns the name of this suite. 
      * @return the name of this suite */
     @Override
