@@ -148,6 +148,7 @@ public class Vec3Test {
         // A couple of simple tests
         testOneEquatorPoint(0, 1, 1, 0, 1, -1, 0, 1, 0);
         testOneEquatorPoint(1, 0, 1, 1, 0, -1, 1, 0, 0);
+        testOneEquatorPoint(0, 0, 1, 0, 1, -1, 0, 1, 0);
 
         // Unequal length vectors
         testOneEquatorPoint(0, 2, 5, 0, 1, -1, 0, 1, 0);
@@ -159,7 +160,6 @@ public class Vec3Test {
         testEquatorPointOpposite();
         testEquatorPointVertical();
         
-
         // Illegal arguments
         final Vec3[][] illegal = {
             {new Vec3(Double.NaN, 0, 0), Vec3.ORIGIN},
@@ -168,10 +168,10 @@ public class Vec3Test {
             {Vec3.DOWN.invert(), Vec3.DOWN.invert()}
         };
 
-        for (Vec3[] illegalPair : illegal) {
+        for (Vec3[] illegalPair: illegal) {
             try {
                 Vec3.equatorPoint(illegalPair[0], illegalPair[1]);
-                assertTrue(false); // fail the test
+                fail();
             } catch (IllegalArgumentException e) {
                 // expected behaviour -- do nothing
             }

@@ -28,6 +28,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -734,6 +735,23 @@ public class SuiteTest {
     }
     
     @Test
+    public void testSetSiteNamesBySubstring() {
+        final int siteCutoff = 5;
+        for (int i=0; i<syntheticSuite2.getNumSamples(); i++) {
+            final Sample sample = syntheticSuite2.getSampleByIndex(i);
+            sample.setNameOrDepth((i < siteCutoff ? "SITE1_" : "SITE2_") +
+                    sample.getNameOrDepth());
+        }
+        syntheticSuite2.setSiteNamesBySubstring(syntheticSuite2.getSamples(),
+                BitSet.valueOf(new byte[] {(byte) 0b00011111}));
+        for (int i=0; i<syntheticSuite2.getNumSamples(); i++) {
+            final Sample sample = syntheticSuite2.getSampleByIndex(i);
+            assertEquals(i < siteCutoff ? "SITE1" : "SITE2",
+                    sample.getSite().getName());
+        }
+    }
+    
+    @Test
     public void testSetNamedSiteForSamplesRepeatedly() {
         syntheticSuite1.setNamedSiteForSamples(syntheticSuite1.getSamples(),
                 "site1");
@@ -896,7 +914,64 @@ public class SuiteTest {
             assertFalse(syntheticSuite1.containsSample(sampleName));
             assertFalse(syntheticSuite2.containsSample(sampleName));
         }
-        
     }
 
+    @Test
+    public void testCalculateAndGetSiteFishers() {
+        for (Sample sample: syntheticSuite1.getSamples()) {
+            sample.selectAll();
+            sample.useSelectionForPca();
+            sample.doPca(Correction.NONE);
+        }
+        syntheticSuite1.setSiteNamesByDepth(syntheticSuite1.getSamples(), 5);
+        syntheticSuite1.calculateSiteFishers(Correction.NONE);
+                
+        final List<FisherValues> actual = syntheticSuite1.getSiteFishers();
+        assertEquals(2, actual.size());
+        assertEquals(FisherValues.calculate(syntheticSuite1.getSamples().
+                subList(0, 5).stream().map(sample -> sample.getDirection()).
+                collect(Collectors.toList())).toStrings(),
+                actual.get(0).toStrings());
+        assertEquals(FisherValues.calculate(syntheticSuite1.getSamples().
+                subList(5, 10).stream().map(sample -> sample.getDirection()).
+                collect(Collectors.toList())).toStrings(),
+                actual.get(1).toStrings());
+    }
+    
+    @Test
+    public void testRemoveSamplesOutsideDepthRange() {
+        syntheticSuite1.removeSamplesOutsideDepthRange(2.5, 7.5);
+        assertEquals("34567",
+                syntheticSuite1.getSamples().stream().
+                        map(sample -> sample.getNameOrDepth()).
+                        collect(Collectors.joining()));
+        createSuites();
+        syntheticSuite1.removeSamplesOutsideDepthRange(-50, 50);
+        assertEquals("0123456789",
+                syntheticSuite1.getSamples().stream().
+                        map(sample -> sample.getNameOrDepth()).
+                        collect(Collectors.joining()));        
+        createSuites();
+        syntheticSuite1.removeSamplesOutsideDepthRange(0, 5);
+        assertEquals("012345",
+                syntheticSuite1.getSamples().stream().
+                        map(sample -> sample.getNameOrDepth()).
+                        collect(Collectors.joining()));        
+    }
+    
+    @Test
+    public void testImportLocations() throws IOException {
+        syntheticSuite1.setSiteNamesByDepth(syntheticSuite1.getSamples(), 5);
+        final File locationFile =
+                TestUtils.writeStringToTemporaryFile("locations.txt",
+                        "0.00,30,45\n5.00,-20,350\nnonexistent,15,15\n",
+                        temporaryFolder);
+        syntheticSuite1.importLocations(locationFile);
+        assertTrue(Location.fromDegrees(30, 45).toVec3().equals(
+                syntheticSuite1.getSiteByName("0.00").getLocation().toVec3(),
+                1e-10));
+        assertTrue(Location.fromDegrees(-20, 350).toVec3().equals(
+                syntheticSuite1.getSiteByName("5.00").getLocation().toVec3(),
+                1e-10));
+    }
 }
