@@ -24,12 +24,17 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Rule;
+import org.junit.rules.TemporaryFolder;
 
 /**
  *
  * @author pont
  */
 public class SuiteRpiEstimateTest {
+
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
     
     @Test
     public void testCalculateWithMagSus() {
@@ -98,9 +103,11 @@ public class SuiteRpiEstimateTest {
         return datum;
     }
     
-    private static void checkWrittenFile(String expected, SuiteRpiEstimate rpis) {
+    private void checkWrittenFile(String expected, SuiteRpiEstimate rpis) {
         try {
-            final Path tempDir = Files.createTempDirectory("puffintest");
+            final Path tempDir = Files.createTempDirectory(
+                    temporaryFolder.getRoot().toPath(),
+                    "puffintest");
             final Path tempFile = tempDir.resolve(Paths.get("rpifile"));
             rpis.writeToFile(tempFile.toString());
             final String actual = new String(Files.readAllBytes(tempFile));

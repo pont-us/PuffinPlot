@@ -144,10 +144,6 @@ public class SuiteTest {
         syntheticSuite2.updateReverseIndex();
     }
     
-    @After
-    public void tearDown() {
-    }
-
     @Test
     public void testConvertDiscreteToContinuous() {
         final Map<String, String> nameToDepth = new HashMap<>();
@@ -167,6 +163,36 @@ public class SuiteTest {
         assertNotNull(suiteFromFile.getSampleByName("5.67"));
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void testConvertDiscreteToContinuousOnContinuousSuite()
+            throws Suite.MissingSampleNameException {
+        /*
+         * We supply a valid map to make sure that the exception is triggered
+         * by the suite being continuous, not by the map being incomplete.
+         */
+        final Map<String, String> nameToDepth =
+                syntheticSuite1.getSamples().stream().
+                        map(sample -> sample.getNameOrDepth()).
+                        collect(Collectors.toMap(x -> x, x -> x));
+        syntheticSuite1.convertDiscreteToContinuous(nameToDepth);
+    }
+    
+    @Test(expected = Suite.MissingSampleNameException.class)
+    public void testConvertDiscreteToContinuousWithIncompleteMap()
+            throws Suite.MissingSampleNameException {
+        final Map<String, String> nameToDepth = new HashMap<>();
+        final int omittedSampleIndex = 2;
+        for (int sampleIndex=0; sampleIndex < syntheticSuite2.getNumSamples();
+                sampleIndex++) {
+            if (sampleIndex != omittedSampleIndex) {
+                nameToDepth.put(syntheticSuite2.getSampleByIndex(sampleIndex).
+                        getNameOrDepth(),
+                        String.format("%d", sampleIndex));
+            }
+        }
+        syntheticSuite2.convertDiscreteToContinuous(nameToDepth);
+    }
+    
     @Test
     public void testAmsCalcType() {
         assertSame(Suite.AmsCalcType.HEXT,
@@ -194,10 +220,10 @@ public class SuiteTest {
                 sample.fitGreatCircle(Correction.NONE);
                 sample.calculateMdf();
             }
-            final File csvFile = File.createTempFile("puffinplot-test-", ".ppl");
+            final File csvFile = File.createTempFile("puffinplot-test-",
+                    ".csv", temporaryFolder.getRoot());
             syntheticSuite1.saveCalcsSample(csvFile);
-            syntheticSuite1.saveCalcsSample(new File("/home/pont/test.csv"));
-            List<String> lines = Files.readAllLines(csvFile.toPath());
+            final List<String> lines = Files.readAllLines(csvFile.toPath());
             // Check that header line is correct
             assertEquals("Suite,Depth,NRM intensity (A/m),"+
                     "MS jump temp. (degC),Steps,PCA dec. (deg),"+
@@ -307,7 +333,7 @@ public class SuiteTest {
     
     private File saveSuiteToTempFile(Suite suite) {
         try {
-            final File savedFile = File.createTempFile("puffinplot-test-", ".ppl");
+            final File savedFile = File.createTempFile("puffinplot-test-", ".ppl", temporaryFolder.getRoot());
             savedFile.delete();
             suite.saveAs(savedFile);
             return savedFile;
@@ -626,6 +652,19 @@ public class SuiteTest {
     }
     
     @Test
+    public void testSaveWithFilenameSet() throws PuffinUserException {
+        final Suite suite1 = new Suite("SuiteTest");
+        loadFileDataIntoSuite(puffinFile1, suite1);
+        puffinFile1.delete();
+        final String sampleName = "New sample name";
+        suite1.getSampleByIndex(0).setNameOrDepth(sampleName);
+        suite1.save();
+        final Suite suite2 = new Suite("SuiteTest");
+        loadFileDataIntoSuite(puffinFile1, suite2);
+        assertEquals(sampleName, suite2.getSampleByIndex(0).getNameOrDepth());
+    }
+    
+    @Test
     public void testSaveWithNoFilenameSet() throws PuffinUserException {
         /* Defined behaviour here is simply to do nothing, since no
          * save path has been set.
@@ -769,19 +808,15 @@ public class SuiteTest {
     }
 
     @Test
-    public void testCalculateAmsStatisticsHext() throws IOException {
+    public void testCalculateAndClearAmsStatisticsHext() throws IOException {
         testCalculateAmsStatistics(Suite.AmsCalcType.HEXT, 1);
-    }
-    
-    @Test
-    public void testCalculateAmsStatisticsBootstrap() throws IOException {
         testCalculateAmsStatistics(Suite.AmsCalcType.BOOT, 1);
-    }
-    
-    @Test
-    public void testCalculateAmsStatisticsParametricBootstrap()
-            throws IOException {
         testCalculateAmsStatistics(Suite.AmsCalcType.PARA_BOOT, 2);
+        assertNotNull(syntheticSuite2.getAmsHextParams());
+        assertNotNull(syntheticSuite2.getAmsBootstrapParams());
+        syntheticSuite2.clearAmsCalculations();
+        assertNull(syntheticSuite2.getAmsHextParams());
+        assertNull(syntheticSuite2.getAmsBootstrapParams());
     }
     
     private void testCalculateAmsStatistics(Suite.AmsCalcType calcType,
@@ -843,5 +878,25 @@ public class SuiteTest {
                 Suite.AmsCalcType.HEXT, script.getCanonicalPath());
     }
 
+    @Test
+    public void testContainsSample() {
+        for (int i=0; i<9; i++) {
+            final String sampleName = String.format("SAMPLE_%d", i);
+            assertTrue(syntheticSuite2.containsSample(sampleName));
+            assertFalse(syntheticSuite1.containsSample(sampleName));
+        }
+        for (int i=0; i<9; i++) {
+            final String sampleName = String.format("%d", i);
+            assertTrue(syntheticSuite1.containsSample(sampleName));
+            assertFalse(syntheticSuite2.containsSample(sampleName));
+        }
+        
+        for (String sampleName: new String[] {"", "nonexistent", "SAMPLE_99",
+            "???"}) {
+            assertFalse(syntheticSuite1.containsSample(sampleName));
+            assertFalse(syntheticSuite2.containsSample(sampleName));
+        }
+        
+    }
 
 }

@@ -655,6 +655,11 @@ public class Sample {
                 d.setDepth(nameOrDepth);
             }
         }
+        if (getMeasType() == MeasType.DISCRETE) {
+            for (Datum d: getData()) {
+                d.setDiscreteId(nameOrDepth);
+            }
+        }
     }
 
     /** Returns the tray slot number for discrete samples. Not currently used.

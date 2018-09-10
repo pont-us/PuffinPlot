@@ -156,14 +156,12 @@ public class KentParams {
             }
             writer.close();
             ArrayList<String> args = new ArrayList<>(4);
-            Collections.addAll(args, scriptPath, "-f", tempFile.getAbsolutePath());
+            Collections.addAll(args, scriptPath, "-f",
+                    tempFile.getAbsolutePath());
             if (parametric) args.add("-par");
-            List<String> output = execute(args.toArray(new String[] {}));
+            final List<String> output = execute(args.toArray(new String[] {}));
             tempFile.delete();
-            System.out.println("N ="+tensors.size());
-            for (String s : output) {
-                System.out.println(s);
-            }
+
             for (int i=4; i<7; i++) {
                 Scanner sc = new Scanner(output.get(i));
                 sc.useLocale(Locale.ENGLISH);
@@ -204,7 +202,7 @@ public class KentParams {
                writer.write(t.toTensorComponentString() + "\n");
            }
            writer.close();
-           String[] args = {scriptPath, "-f", tempFile.getAbsolutePath()};
+           final String[] args = {scriptPath, "-f", tempFile.getAbsolutePath()};
            List<String> output = execute(args);
            tempFile.delete();
            for (int i=2; i<5; i++) {
