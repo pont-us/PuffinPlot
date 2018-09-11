@@ -755,7 +755,7 @@ public final class Suite {
      */
     public void saveCalcsSite(File file) throws PuffinUserException {
         CsvWriter writer = null;
-        if (getSites() == null) {
+        if (getSites() == null || getSites().isEmpty()) {
             throw new PuffinUserException("No sites are defined.");
         }
         try {
@@ -1041,6 +1041,8 @@ public final class Suite {
      * and formation corrections, importAmsWithDialog will try to read them as
      * fields appended to the end of the line.</p>
      * 
+     * <p>Not fully tested -- use with caution.</p>
+     * 
      * <p>Not currently used in PuffinPlot.</p>
      * 
      * @param files the files from which to read the data
@@ -1052,7 +1054,7 @@ public final class Suite {
             throws IOException {
         setSaved(false);
         BufferedReader reader = null;
-        directions = false;
+        // directions = false;
         for (File file: files) {
             try {
                 reader = new BufferedReader(new FileReader(file));

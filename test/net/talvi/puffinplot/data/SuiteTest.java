@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.DateFormat;
@@ -38,13 +39,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import net.talvi.puffinplot.PuffinUserException;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 import net.talvi.puffinplot.TestUtils;
+import net.talvi.puffinplot.data.file.TwoGeeLoader;
+import net.talvi.puffinplot.data.file.testdata.TestFileLocator;
 import org.junit.Assume;
 
 /**
@@ -146,22 +148,37 @@ public class SuiteTest {
     }
     
     @Test
-    public void testConvertDiscreteToContinuous() {
+    public void testConvertDiscreteToContinuousWithMap()
+            throws Suite.MissingSampleNameException, IOException {
         final Map<String, String> nameToDepth = new HashMap<>();
         nameToDepth.put("31X-1W-143", "3.14");
         nameToDepth.put("31X-1W-27.5", "5.67");
         Suite suiteFromFile = new Suite("testConvertDiscreteToContinuous");
         loadFileDataIntoSuite(puffinFile1, suiteFromFile);
-        try {
             suiteFromFile.convertDiscreteToContinuous(nameToDepth);
-        } catch (Suite.MissingSampleNameException ex) {
-            Logger.getLogger(SuiteTest.class.getName()).log(Level.SEVERE, null, ex);
-            fail();
-        }
         
         assertEquals(MeasType.CONTINUOUS, suiteFromFile.getMeasType());
         assertNotNull(suiteFromFile.getSampleByName("3.14"));
         assertNotNull(suiteFromFile.getSampleByName("5.67"));
+    }
+    
+    @Test
+    public void testConvertDiscreteToContinuousWithFile()
+            throws IOException, Suite.MissingSampleNameException {
+        // SAMPLE_%d
+        final File depthFile = TestUtils.writeStringToTemporaryFile(
+                "depths.txt",
+                "SAMPLE_0, 50\nSAMPLE_1, 51\n" +
+                        "SAMPLE_2, 52\nSAMPLE_3, 53\n" +
+                        "SAMPLE_4, 54\nSAMPLE_5, 55\n" +
+                        "SAMPLE_6, 56\nSAMPLE_7, 57\n" +
+                        "SAMPLE_8, 58\nSAMPLE_9, 59\n",
+                temporaryFolder);
+        syntheticSuite2.convertDiscreteToContinuous(depthFile);
+        assertEquals("50,51,52,53,54,55,56,57,58,59",
+                syntheticSuite2.getSamples().stream().
+                        map(sample -> sample.getNameOrDepth()).
+                        collect(Collectors.joining(",")));
     }
 
     @Test(expected = IllegalStateException.class)
@@ -211,42 +228,36 @@ public class SuiteTest {
     }
     
     @Test
-    public void testSaveCalcsSample() {
-        try {
-            for (Sample sample: syntheticSuite1.getSamples()) {
-                sample.getData().stream().forEach(d -> d.setSelected(true));
-                sample.useSelectionForPca();
-                sample.useSelectionForCircleFit();
-                sample.doPca(Correction.NONE);
-                sample.fitGreatCircle(Correction.NONE);
-                sample.calculateMdf();
-            }
-            final File csvFile = File.createTempFile("puffinplot-test-",
-                    ".csv", temporaryFolder.getRoot());
-            syntheticSuite1.saveCalcsSample(csvFile);
-            final List<String> lines = Files.readAllLines(csvFile.toPath());
-            // Check that header line is correct
-            assertEquals("Suite,Depth,NRM intensity (A/m),"+
-                    "MS jump temp. (degC),Steps,PCA dec. (deg),"+
-                    "PCA inc. (deg),PCA MAD1,PCA MAD3,PCA anchored,"+
-                    "PCA equation,PCA npoints,PCA start (degC or mT),"+
-                    "PCA end (degC or mT),PCA contiguous,GC dec (deg),"+
-                    "GC inc (deg),GC strike (deg),GC dip (deg),GC MAD1,"+
-                    "GC npoints,MDF half-intensity (A/m),"+
-                    "MDF demagnetization (degC or T),MDF midpoint reached,"+
-                    "Fisher dec. (deg),Fisher inc. (deg),Fisher a95 (deg),"+
-                    "Fisher k,Fisher nDirs,Fisher R,AMS dec1,AMS inc1,"+
-                    "AMS dec2,AMS inc2,AMS dec3,AMS inc3",
-                    lines.get(0));
-            assertEquals(syntheticSuite1.getSamples().size()+1, lines.size());
-            // Check that lines have right number of fields
-            for (String line: lines) {
-                assertEquals(35, line.chars().filter(c -> c == ',').count());
-            }
-            
-        } catch (PuffinUserException | IOException ex) {
-            Logger.getLogger(SuiteTest.class.getName()).log(Level.SEVERE, null, ex);
-            fail();
+    public void testSaveCalcsSample() throws IOException, PuffinUserException {
+        for (Sample sample: syntheticSuite1.getSamples()) {
+            sample.getData().stream().forEach(d -> d.setSelected(true));
+            sample.useSelectionForPca();
+            sample.useSelectionForCircleFit();
+            sample.doPca(Correction.NONE);
+            sample.fitGreatCircle(Correction.NONE);
+            sample.calculateMdf();
+        }
+        final File csvFile = File.createTempFile("puffinplot-test-",
+                ".csv", temporaryFolder.getRoot());
+        syntheticSuite1.saveCalcsSample(csvFile);
+        final List<String> lines = Files.readAllLines(csvFile.toPath());
+        // Check that header line is correct
+        assertEquals("Suite,Depth,NRM intensity (A/m),"+
+                "MS jump temp. (degC),Steps,PCA dec. (deg),"+
+                "PCA inc. (deg),PCA MAD1,PCA MAD3,PCA anchored,"+
+                "PCA equation,PCA npoints,PCA start (degC or mT),"+
+                "PCA end (degC or mT),PCA contiguous,GC dec (deg),"+
+                "GC inc (deg),GC strike (deg),GC dip (deg),GC MAD1,"+
+                "GC npoints,MDF half-intensity (A/m),"+
+                "MDF demagnetization (degC or T),MDF midpoint reached,"+
+                "Fisher dec. (deg),Fisher inc. (deg),Fisher a95 (deg),"+
+                "Fisher k,Fisher nDirs,Fisher R,AMS dec1,AMS inc1,"+
+                "AMS dec2,AMS inc2,AMS dec3,AMS inc3",
+                lines.get(0));
+        assertEquals(syntheticSuite1.getSamples().size()+1, lines.size());
+        // Check that lines have right number of fields
+        for (String line: lines) {
+            assertEquals(35, line.chars().filter(c -> c == ',').count());
         }
     }
     
@@ -256,18 +267,13 @@ public class SuiteTest {
      * is expected to change).
      */
     @Test
-    public void testLoadAndSaveSuite() {
+    public void testLoadAndSaveSuite() throws IOException, PuffinUserException {
         final DateFormat iso8601format =
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
         final Suite suite = new Suite("testLoadAndSaveSuite");
         loadFileDataIntoSuite(puffinFile1, suite);
         final File savedFile = saveSuiteToTempFile(suite);
-        try {
-            suite.saveAs(savedFile);
-        } catch (PuffinUserException ex) {
-            Logger.getLogger(SuiteTest.class.getName()).log(Level.SEVERE, null, ex);
-            fail("Exception saving suite");
-        }
+        suite.saveAs(savedFile);
         try (FileReader reader = new FileReader(savedFile);
                 BufferedReader br = new BufferedReader(reader)) {
             for (String expectedLine: FILE_TEXT.split("\n")) {
@@ -286,10 +292,12 @@ public class SuiteTest {
                 }
             }
         } catch (IOException ex) {
-            Logger.getLogger(SuiteTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SuiteTest.class.getName()).
+                    log(Level.SEVERE, null, ex);
             fail("Exception loading suite");
         } catch (ParseException ex) {
-            Logger.getLogger(SuiteTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SuiteTest.class.getName()).
+                    log(Level.SEVERE, null, ex);
             fail("Exception parsing date");
         }
     }
@@ -297,10 +305,18 @@ public class SuiteTest {
     /**
      * Test that saving a suite, then loading it from the saved file produces
      * an identical suite.
-     * 
      */
     @Test
-    public void testSaveAndLoadSuite() {
+    public void testSaveAndLoadSuite() throws IOException, PuffinUserException {
+        syntheticSuite1.getCustomFlagNames().add(0, "customgflag1");
+        syntheticSuite1.getCustomNoteNames().add(0, "customgnote1");
+        final String customFlags =
+                syntheticSuite1.getCustomFlagNames().exportAsString();
+        final String customNotes =
+                syntheticSuite1.getCustomNoteNames().exportAsString();
+        syntheticSuite1.setSiteNamesByDepth(syntheticSuite1.getSamples(), 100);
+        syntheticSuite1.getSiteByName("0.00").setLocation(
+                Location.fromDegrees(30, 60));
         final File savedFile = saveSuiteToTempFile(syntheticSuite1);
         final Suite loadedSuite = new Suite("testSaveAndLoadSuite");
         loadFileDataIntoSuite(savedFile, loadedSuite);
@@ -312,58 +328,52 @@ public class SuiteTest {
                     actualSample.getData().iterator();
             for (Datum expectedDatum: expectedSample.getData()) {
                 final Datum actualDatum = actualData.next();
-                assertTrue(expectedDatum.getMoment().equals(actualDatum.getMoment()));
+                assertEquals(expectedDatum.getMoment(),
+                        actualDatum.getMoment());
                 assertEquals(expectedDatum.getTreatType(),
                         actualDatum.getTreatType());
-                assertEquals(expectedDatum.getIdOrDepth(), actualDatum.getIdOrDepth());
-                assertEquals(expectedDatum.getMeasType(), actualDatum.getMeasType());
-                assertEquals(expectedDatum.getAfX(), actualDatum.getAfX(), 0.0001);
+                assertEquals(expectedDatum.getIdOrDepth(),
+                        actualDatum.getIdOrDepth());
+                assertEquals(expectedDatum.getMeasType(),
+                        actualDatum.getMeasType());
+                assertEquals(expectedDatum.getAfX(),
+                        actualDatum.getAfX(), 0.0001);
             }
         }
+        assertEquals(customFlags,
+                loadedSuite.getCustomFlagNames().exportAsString());
+        assertEquals(customNotes,
+                loadedSuite.getCustomNoteNames().exportAsString());
+        assertEquals(
+                syntheticSuite1.getSiteByName("0.00").getLocation().toStrings(),
+                loadedSuite.getSiteByName("0.00").getLocation().toStrings());
     }
     
-    private void loadFileDataIntoSuite(File file, Suite suiteFromFile) {
+    private void loadFileDataIntoSuite(File file, Suite suiteFromFile)
+            throws IOException {
         final File[] files = {file};
-        try {
             suiteFromFile.readFiles(Arrays.asList(files));
-        } catch (IOException ex) {
-            Logger.getLogger(SuiteTest.class.getName()).log(Level.SEVERE, null, ex);
-            fail("Error reading file.");
-        }
     }
     
-    private File saveSuiteToTempFile(Suite suite) {
-        try {
-            final File savedFile = File.createTempFile("puffinplot-test-", ".ppl", temporaryFolder.getRoot());
-            savedFile.delete();
-            suite.saveAs(savedFile);
-            return savedFile;
-        } catch (IOException | PuffinUserException ex) {
-            Logger.getLogger(SuiteTest.class.getName()).log(Level.SEVERE, null, ex);
-            fail("Exception creating temporary file.");
-            return null;
-        }
+    private File saveSuiteToTempFile(Suite suite)
+            throws IOException, PuffinUserException {
+        final File savedFile =
+                File.createTempFile("puffinplot-test-", ".ppl",
+                        temporaryFolder.getRoot());
+        savedFile.delete();
+        suite.saveAs(savedFile);
+        return savedFile;
     }
     
     @Test(expected = IllegalArgumentException.class)
-    public void testReadFilesEmptyList() {
+    public void testReadFilesEmptyList() throws IOException {
         final Suite suite = new Suite("test");
-        try {
-            suite.readFiles(Collections.emptyList());
-        } catch (IOException ex) {
-            Logger.getLogger(SuiteTest.class.getName()).log(Level.SEVERE, null, ex);
-            fail();
-        }
+        suite.readFiles(Collections.emptyList());
     }
     
     @Test(expected = NullPointerException.class)
-    public void testReadFilesNullList() {
-        try {
-            new Suite("test").readFiles(null);
-        } catch (IOException ex) {
-            Logger.getLogger(SuiteTest.class.getName()).log(Level.SEVERE, null, ex);
-            fail();
-        }
+    public void testReadFilesNullList() throws IOException {
+        new Suite("test").readFiles(null);
     }
     
     @Test
@@ -611,7 +621,7 @@ public class SuiteTest {
     }
     
     @Test
-    public void testIsSaved() {
+    public void testIsSaved() throws IOException {
         final Suite suite = new Suite("test");
         loadFileDataIntoSuite(puffinFile1, suite);
         assertTrue(suite.isSaved());
@@ -645,7 +655,7 @@ public class SuiteTest {
     }
     
     @Test
-    public void testIsFilenameSet() {
+    public void testIsFilenameSet() throws IOException {
         assertFalse(syntheticSuite1.isFilenameSet());
         final Suite suite = new Suite("test");
         loadFileDataIntoSuite(puffinFile1, suite);
@@ -653,7 +663,8 @@ public class SuiteTest {
     }
     
     @Test
-    public void testSaveWithFilenameSet() throws PuffinUserException {
+    public void testSaveWithFilenameSet()
+            throws PuffinUserException, IOException {
         final Suite suite1 = new Suite("SuiteTest");
         loadFileDataIntoSuite(puffinFile1, suite1);
         puffinFile1.delete();
@@ -684,14 +695,14 @@ public class SuiteTest {
     }
     
     @Test
-    public void testGetPuffinFile() {
+    public void testGetPuffinFile() throws IOException {
         final Suite suite = new Suite("test");
         loadFileDataIntoSuite(puffinFile1, suite);
         assertEquals(puffinFile1, suite.getPuffinFile());
     }
     
     @Test
-    public void testReadFilesFromDirectory() {
+    public void testReadFilesFromDirectory() throws IOException {
         final Suite suite = new Suite("test");
         loadFileDataIntoSuite(puffinFile1.getParentFile(), suite);
         assertEquals(2, suite.getNumSamples());
@@ -796,7 +807,8 @@ public class SuiteTest {
      * calculation classes.
      */
     @Test
-    public void testDoSiteCalculations() {
+    public void testDoAndSaveSiteCalculations()
+            throws PuffinUserException, IOException {
         for (Sample sample: syntheticSuite1.getSamples()) {
             for (Datum datum: sample.getData()) {
                 datum.setInPca(true);
@@ -806,10 +818,13 @@ public class SuiteTest {
             sample.fitGreatCircle(Correction.NONE);
         }
         syntheticSuite1.setSiteNamesByDepth(syntheticSuite1.getSamples(), 5);
+        syntheticSuite1.getSiteByName("0.00").
+                setLocation(Location.fromDegrees(15, 25));
         
-        // Set a null site to check that this site-less samples are
+        // Set a null site to check that site-less samples are
         // correctly handled.
         syntheticSuite1.getSampleByIndex(0).setSite(null);
+        
         syntheticSuite1.doSiteCalculations(Correction.NONE, "true");
         for (Site site: syntheticSuite1.getSites()) {
             final FisherValues actualFisherValues = site.getFisherValues();
@@ -823,8 +838,35 @@ public class SuiteTest {
             assertEquals(site.getGreatCircles().toStrings(),
                     actualGreatCircles.toStrings());
         }
+        
+        /*
+         * This part is purely a characterization test, with expected output
+         * generated from a previous run. The correctness of the calculations
+         * is checked elsewhere.
+         */
+        
+        final File siteCalcsFile = temporaryFolder.getRoot().toPath().
+                resolve("sitecalcs.csv").toFile();
+        syntheticSuite1.saveCalcsSite(siteCalcsFile);
+        final String siteCalcsString =
+                new String(Files.readAllBytes(siteCalcsFile.toPath()));
+        final String expectedCalcs =
+                "Site,Samples,Fisher dec. (deg),Fisher inc. (deg),Fisher a95 (deg),Fisher k,Fisher nDirs,Fisher R,"
+                + "GC valid,GC dec. (deg),GC inc. (deg),GC a95 (deg),GC k,GC N,GC M,GC R,GC min points,"
+                + "GC D1min (degC or mT),GC D1max (degC or mT),GC D2min (degC or mT),GC D2max (degC or mT),"
+                + "Lat (deg),Long (deg),VGP lat (deg),VGP long (deg),VGP dp (deg),VGP dm (deg)\n"
+                + "0.00,5,22.8728,14.4217,16.7387,21.8470,5,4.8169,Y,183.0448,13.0636,6.8346,269.1429,5,0,4.9944,10,0.00000,0.00000,90.0000,90.0000,15.0,25.0,-68.1725,16.8419,3.5534,6.9694\n"
+                + "5.00,5,33.9598,3.3541,1.0511,5300.1858,5,4.9992,Y,189.9534,4.3122,1.6842,4422.6002,5,0,4.9997,10,0.00000,0.00000,90.0000,90.0000,,,,,,\n";
+                assertEquals(expectedCalcs, 
+                siteCalcsString);
     }
 
+    @Test(expected = PuffinUserException.class)
+    public void testSaveCalcsSiteWithNoSites() throws PuffinUserException {
+        syntheticSuite1.saveCalcsSite(temporaryFolder.getRoot().toPath().
+                resolve("sitecalcs.csv").toFile());
+    }
+    
     @Test
     public void testCalculateAndClearAmsStatisticsHext() throws IOException {
         testCalculateAmsStatistics(Suite.AmsCalcType.HEXT, 1);
@@ -973,5 +1015,156 @@ public class SuiteTest {
         assertTrue(Location.fromDegrees(-20, 350).toVec3().equals(
                 syntheticSuite1.getSiteByName("5.00").getLocation().toVec3(),
                 1e-10));
+    }
+    
+    @Test
+    public void testImportAmsFromAsc() throws IOException {
+        final String filename = "LPA03091.ASC";
+        final InputStream dataStream =
+                TestFileLocator.class.getResourceAsStream(filename);
+        final Path filePath =
+                temporaryFolder.getRoot().toPath().resolve(filename);
+        Files.copy(dataStream, filePath);
+        
+        /*
+         * Import to a sample that doesn't exist yet, with directions
+         * relative to geographic north.
+         */
+        
+        syntheticSuite2.importAmsFromAsc(
+                Collections.singletonList(filePath.toFile()), false);
+        assertEquals(11, syntheticSuite2.getNumSamples());
+        final Sample sample =
+                syntheticSuite2.getSampleByName("LPA0309.1");
+        assertNotNull(sample);
+        assertNotNull(sample.getAms());
+        
+        /*
+         * To exercise some more code paths, we now import again to the same
+         * (existing) sample, after adding a Datum with orientation parameters
+         * to it. This time we specify magnetic rather than geographic north.
+         */
+        
+        final Datum datum = new Datum();
+        datum.setSampAz(0);
+        datum.setSampDip(0);
+        datum.setFormAz(0);
+        datum.setFormDip(0);
+        sample.addDatum(datum);
+        syntheticSuite2.importAmsFromAsc(
+                Collections.singletonList(filePath.toFile()), true);
+        
+    }
+    
+    @Test
+    public void testReadFilesWithMultipleFiles() throws IOException {
+        final Suite suite = new Suite("SuiteTest");
+        suite.readFiles(Arrays.asList(puffinFile1, puffinFile1));
+        assertEquals(temporaryFolder.getRoot().getName(), suite.getName());
+    }
+    
+    @Test
+    public void testReadFilesSuiteNameSetting() throws IOException {
+        final Suite suite = new Suite("SuiteTest");
+        
+        /*
+         * Reading a file into an empty suite should set the suite name
+         * from the filename.
+         */
+        suite.readFiles(Collections.singletonList(puffinFile1));
+        assertEquals(puffinFile1.getName(), suite.getName());
+
+        /*
+         * Reading a file into a non-empty suite should not change
+         * the suite's name.
+         */
+        final Path otherFilePath =
+                temporaryFolder.getRoot().toPath().resolve("other-file.ppl");        
+        Files.copy(puffinFile1.toPath(), otherFilePath);
+        suite.readFiles(Collections.singletonList(otherFilePath.toFile()));
+        assertEquals(puffinFile1.getName(), suite.getName());
+    }
+    
+    @Test
+    public void testReadUnreadableFile() throws IOException {
+        final Suite suite = new Suite("SuiteTest");
+        puffinFile1.setReadable(false);
+        suite.readFiles(Collections.singletonList(puffinFile1));
+        assertEquals(1, suite.getLoadWarnings().size());
+        assertEquals(0, suite.getNumSamples());
+    }
+    
+    @Test
+    public void testReadFileInUnknownFormat() throws IOException {
+        final Suite suite = new Suite("SuiteTest");
+        suite.readFiles(Collections.singletonList(puffinFile1),
+                SensorLengths.fromPresetName("1:1:1"),
+                TwoGeeLoader.Protocol.NORMAL, false,
+                FileType.UNKNOWN, null,
+                Collections.EMPTY_MAP);
+        assertEquals(1, suite.getLoadWarnings().size());
+        assertEquals(0, suite.getNumSamples());
+    }
+    
+    @Test
+    public void testReadDiscreteDataIntoContinuousSuite() throws IOException {
+        final int initialNumberOfSamples = syntheticSuite1.getNumSamples();
+        syntheticSuite1.readFiles(Collections.singletonList(puffinFile1));
+        assertEquals(1, syntheticSuite1.getLoadWarnings().size());
+        assertEquals(initialNumberOfSamples, syntheticSuite1.getNumSamples());
+    }
+    
+    @Test
+    public void testImportAmsFromDelimitedFileWithTensor() throws IOException {
+        final File ascFile1 = TestUtils.writeStringToTemporaryFile("test1.asc",
+                "sample1 0.9948 1.0040 1.0012 0.0016 0.0106 -0.0047 "+
+                        "0 90 0 0 0\n",
+                temporaryFolder);
+        final Suite suite = new Suite("SuiteTest");
+        suite.importAmsFromDelimitedFile(Collections.singletonList(ascFile1),
+                false);
+        assertEquals("0.99480 1.00400 1.00120 0.00160 0.01060 -0.00470",
+                suite.getSampleByName("sample1").getAms().
+                        toTensorComponentString());
+        
+        // Try overwriting with new data to check that existing samples
+        // are handled correctly.
+        final File ascFile2 = TestUtils.writeStringToTemporaryFile("test2.asc",
+                "sample1 0.9111 1.0040 1.0012 0.0016 0.0106 -0.0047 "+
+                        "0 90 0 0 0\n",
+                temporaryFolder);
+        suite.importAmsFromDelimitedFile(Collections.singletonList(ascFile2),
+                false);
+        assertEquals("0.91110 1.00400 1.00120 0.00160 0.01060 -0.00470",
+                suite.getSampleByName("sample1").getAms().
+                        toTensorComponentString());
+    }
+    
+    @Test
+    public void testImportAmsFromDelimitedFileWithDirections()
+            throws IOException {
+        final File ascFile1 = TestUtils.writeStringToTemporaryFile("test1.asc",
+                "sample1 42 98 23 211 39 321\n",
+                temporaryFolder);
+        final Suite suite = new Suite("SuiteTest");
+        final Datum d = new Datum(Vec3.NORTH);
+        d.setSampAz(0);
+        d.setSampDip(90);
+        d.setFormAz(0);
+        d.setFormDip(0);
+        d.setMagDev(0);
+        d.setMeasType(MeasType.DISCRETE);
+        d.setDiscreteId("sample1");
+        suite.addDatum(d);
+        final Sample sample = suite.getSampleByIndex(0);
+        sample.setCorrections(0, 90, 0, 0, 0);
+        suite.updateReverseIndex();
+        suite.importAmsFromDelimitedFile(Collections.singletonList(ascFile1),
+                true);
+        /*
+         * Not checking the correctness of the calculation here, just that
+         * it was added correctly to the right sample in the suite.
+         */
+        assertNotNull(suite.getSampleByName("sample1").getAms());
     }
 }
