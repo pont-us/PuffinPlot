@@ -27,6 +27,8 @@ import static java.lang.Math.toDegrees;
  * @author pont
  */
 public class SampleTest {
+
+    final private static double delta = 1e-10;
     
     @Test
     public void testSelectByTreatmentLevelRange() {
@@ -129,4 +131,35 @@ public class SampleTest {
         }
         return true;
     }
+    
+    @Test
+    public void testSetValue() {
+        final DatumField[] fields = {
+            DatumField.SAMPLE_AZ, DatumField.SAMPLE_DIP,
+            DatumField.VIRT_SAMPLE_HADE, DatumField.FORM_AZ,
+            DatumField.FORM_DIP, DatumField.VIRT_FORM_STRIKE,
+            DatumField.MAG_DEV};
+        
+        final double value = 3.14;
+        final String valueString = String.format("%g", value);
+        final Sample sample = new Sample("sample1", null);
+
+        sample.setValue(DatumField.SAMPLE_AZ, valueString);
+        assertEquals(value, sample.getSampAz(), delta);
+        sample.setValue(DatumField.SAMPLE_DIP, valueString);
+        assertEquals(value, sample.getSampDip(), delta);
+        sample.setValue(DatumField.VIRT_SAMPLE_HADE, valueString);
+        assertEquals(value, sample.getSampHade(), delta);
+        sample.setValue(DatumField.FORM_AZ, valueString);
+        assertEquals(value, sample.getFormAz(), delta);
+        sample.setValue(DatumField.FORM_DIP, valueString);
+        assertEquals(value, sample.getFormDip(), delta);
+        sample.setValue(DatumField.VIRT_FORM_STRIKE, valueString);
+        assertEquals(value, sample.getFormStrike(), delta);
+        sample.setValue(DatumField.MAG_DEV, valueString);
+        assertEquals(value, sample.getMagDev(), delta);
+        
+        
+    }
+
 }

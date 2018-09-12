@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -35,6 +36,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -378,9 +380,8 @@ public class SuiteTest {
     
     @Test
     public void testNonExistentFile() {
-        Path path;
-        final File file =
-                temporaryFolder.getRoot().toPath().resolve("nonexistent").toFile();
+        final File file = temporaryFolder.getRoot().toPath().
+                resolve("nonexistent").toFile();
         try {
             Suite suite = new Suite("test");
             suite.readFiles(Collections.singletonList(file));
@@ -393,7 +394,8 @@ public class SuiteTest {
     }
     
     @Test
-    public void testCalculateSuiteMeans() {
+    public void testCalculateAndSaveSuiteMeans()
+            throws PuffinUserException, IOException {
         /*
          * The test data is arranged so as to distribute sample and site
          * means and VGPs fairly evenly across hemispheres, giving sufficient
@@ -489,6 +491,23 @@ public class SuiteTest {
          */
         assertEquals(expectedCalcs.toStrings(),
                 suite.getSuiteMeans().toStrings());
+        
+        StringBuffer expectedFileContents = new StringBuffer();
+        expectedFileContents.append(SuiteCalcs.getHeaders().stream().
+                collect(Collectors.joining(",")) + "\n");
+        for (List<String> line: expectedCalcs.toStrings()) {
+            expectedFileContents.append(line.stream().
+                    collect(Collectors.joining(",")) + "\n");
+        }
+        
+        final File savedCalcs = temporaryFolder.getRoot().toPath().
+                resolve("suitecalcs.csv").toFile();
+        suite.saveCalcsSuite(savedCalcs);
+        
+        final String actualFileContents =
+                new String(Files.readAllBytes(savedCalcs.toPath()));
+        
+        assertEquals(expectedFileContents.toString(), actualFileContents);
         }
     
     @Test
@@ -1167,4 +1186,82 @@ public class SuiteTest {
          */
         assertNotNull(suite.getSampleByName("sample1").getAms());
     }
+    
+    @Test
+    public void testExportToFiles() throws IOException {
+        syntheticSuite2.exportToFiles(temporaryFolder.getRoot(),
+                Arrays.asList(DatumField.AF_X, DatumField.X_MOMENT,
+                        DatumField.Y_MOMENT, DatumField.Z_MOMENT));
+        for (Sample sample: syntheticSuite2.getSamples()) {
+            final List<String> lines = Files.readAllLines(
+                    Paths.get(temporaryFolder.getRoot().getCanonicalPath(),
+                            sample.getNameOrDepth()));
+            final Iterator<String> lineIterator = lines.iterator();
+            final Iterator<Datum> datumIterator = sample.getData().iterator();
+            while (datumIterator.hasNext()) {
+                final Datum datum = datumIterator.next();
+                final String line = lineIterator.next();
+                final Scanner scanner = new Scanner(line);
+                final double actualAfx = scanner.nextDouble();
+                final Vec3 actualMoment =
+                        new Vec3(scanner.nextDouble(), scanner.nextDouble(),
+                        scanner.nextDouble());
+                assertTrue(datum.getMoment().equals(actualMoment, 1e-10));
+                assertEquals(datum.getAfX(), actualAfx, 1e-10);
+            }
+        }
+    }
+    
+    @Test(expected = PuffinUserException.class)
+    public void testSaveCalcsSuiteWithNoCalculations()
+            throws PuffinUserException {
+        syntheticSuite1.saveCalcsSuite(temporaryFolder.getRoot().toPath().
+                resolve("calculations.csv").toFile());
+    }
+    
+    @Test
+    public void testDoReversalTest() {
+        final List<Vec3> suite1directions =
+                TestUtils.makeVectorList(new double[][] {
+                    { 1,  0,  1},
+                    {-1,  0,  1},
+                    { 0,  1, -1},
+                    { 0, -1, -1}
+                }, true);
+        final List<Vec3> suite2directions =
+                TestUtils.makeVectorList(new double[][] {
+                    { 1,  0, -1},
+                    {-1,  0, -1},
+                    { 0,  1,  1},
+                    { 0, -1,  1}
+                }, true);
+        
+        final Suite suite1 = makeSuiteFromDirections(suite1directions);
+        final Suite suite2 = makeSuiteFromDirections(suite2directions);
+        
+        List<FisherValues> fishers =
+                Suite.doReversalTest(Arrays.asList(suite1, suite2));
+        
+        assertTrue(Vec3.DOWN.equals(
+                fishers.get(0).getMeanDirection(), 1e-10));
+        assertTrue(Vec3.DOWN.invert().equals(
+                fishers.get(1).getMeanDirection(), 1e-10));
+        for (FisherValues fv: fishers) {
+            assertEquals(4, fv.getN());
+            assertEquals(2.8284271247461903, fv.getR(), 1e-10);
+            assertEquals(73.15012775459878, fv.getA95(), 1e-10);
+            assertEquals(2.560660171779822, fv.getK(), 1e-10);
+        }
+    }
+    
+    private static Suite makeSuiteFromDirections(List<Vec3> directions) {
+        final Suite suite = new Suite("SuiteTest");
+        for (int i=0; i<directions.size(); i++) {
+            final Sample sample = new Sample(String.format("%d", i), suite);
+            sample.setImportedDirection(directions.get(i));
+            suite.addSample(sample, Integer.toString(i));
+        }
+        return suite;
+    }
+    
 }
