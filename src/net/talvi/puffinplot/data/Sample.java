@@ -1021,7 +1021,8 @@ public class Sample {
             case VIRT_FORM_STRIKE: setFormStrike(parseDouble(value)); break;
             case MAG_DEV: setMagDev(parseDouble(value)); break;
             default:
-                logger.log(Level.WARNING, "Unhandled Datum field: {0}", field.name());
+                logger.log(Level.WARNING, "Unhandled Datum field: {0}",
+                        field.name());
                 break;
         }
         for (Datum d: getData()) {
@@ -1060,6 +1061,41 @@ public class Sample {
         getData().forEach((Datum d) -> {
             d.setMoment(d.getMoment().rotZ(Math.toRadians(angleDegrees)));
         });
+    }
+    
+    /**
+     * Returns the discrete ID of this sample, as determined by the 
+     * discrete ID of the first Datum within the sample. For samples with
+     * continuous measurement type, this is the identifier of the entire
+     * measured core section. If the sample contains no Datum objects,
+     * this method will return {@code null}.
+     * 
+     * @return discrete sample ID, core section ID, or {@code null}
+     */
+    public String getDiscreteId() {
+        if (hasData()) {
+            return getDatum(0).getDiscreteId();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Sets the discrete ID of this sample by setting the discrete IDs of its
+     * {@code Datum} objects, if the sample has any {@code Datum} objects. If
+     * the sample has no {@code Datum} objects, {@code IllegalStateException}
+     * will be thrown. (This limitation is a historical artefact which will be
+     * removed when PuffinPlot's data model is revised to store the discrete
+     * ID within the {@code Sample} object itself.)
+     *
+     * @param discreteId the discrete ID to set
+     */
+    void setDiscreteId(String discreteId) {
+        if (hasData()) {
+            getData().forEach(d -> { d.setDiscreteId(discreteId); });
+        } else {
+            throw new IllegalStateException("This sample has no Datum objects");
+        }
     }
     
 }

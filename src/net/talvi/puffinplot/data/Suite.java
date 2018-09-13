@@ -1308,6 +1308,25 @@ public final class Suite {
         return suiteCreator;
     }
 
+    public List<Sample> getSamplesByDiscreteId(String id) {
+        Objects.requireNonNull(id);
+        return getSamples().stream().filter(s -> id.equals(s.getDiscreteId())).
+                collect(Collectors.toList());
+    }
+
+    void rotateSamplesByDiscreteId(Map<String, Double> rotations) {
+        for (Sample sample: getSamples()) {
+            final String discreteId = sample.getDiscreteId();
+            if (rotations.containsKey(discreteId)) {
+                final double rotationAngle = rotations.get(discreteId);
+                for (Datum datum: sample.getData()) {
+                    datum.setMoment(datum.getMoment().
+                            rotZ(Math.toRadians(rotationAngle)));
+                }
+            }
+        }
+    }
+
     private static class TreatAndStep {
         private final TreatType treatType;
         private final Double treatStep;

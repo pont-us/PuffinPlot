@@ -28,6 +28,7 @@ import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -37,9 +38,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import net.talvi.puffinplot.PuffinUserException;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,6 +62,8 @@ public class SuiteTest {
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+    final private static double delta = 1e-10;
     
     private File puffinFile1;
     private Suite syntheticSuite1;
@@ -1262,6 +1267,50 @@ public class SuiteTest {
             suite.addSample(sample, Integer.toString(i));
         }
         return suite;
+    }
+    
+    @Test
+    public void testGetSamplesByDiscreteId() {
+        for (int i=0; i<syntheticSuite1.getNumSamples(); i++) {
+            syntheticSuite1.getSampleByIndex(i).
+                    setDiscreteId(i<5 ? "ID1" : "ID2");
+        }
+        final List<Sample> samplesWithId1 =
+                syntheticSuite1.getSamplesByDiscreteId("ID1");
+        assertEquals(syntheticSuite1.getSamples().subList(0, 5),
+                samplesWithId1);
+    }
+    
+    @Test
+    public void testRotateSamplesByDiscreteId() {
+        for (int i=0; i<syntheticSuite1.getNumSamples(); i++) {
+            syntheticSuite1.getSampleByIndex(i).
+                    setDiscreteId(i<5 ? "ID1" : "ID2");
+        }
+        
+        final Function<Suite, List<Vec3>> extractDirections =
+                suite -> suite.getSamples().stream().
+                        flatMap(sample -> sample.getData().stream()).
+                        map(Datum::getMoment).collect(Collectors.toList());
+        
+        final List<Vec3>originalDirections =
+                extractDirections.apply(syntheticSuite1);
+        final List<Vec3> expectedRotatedDirections = new ArrayList<>();
+        for (int i=0; i<originalDirections.size(); i++) {
+            expectedRotatedDirections.add(originalDirections.get(i).
+                    rotZ(Math.toRadians(i < 50 ? 30 : -30)));
+        }
+        final Map<String, Double> rotations = Stream.of(
+            new SimpleEntry<>("ID1", 30.),  new SimpleEntry<>("ID2", -30.)).
+                collect(Collectors.toMap(
+                        SimpleEntry::getKey, SimpleEntry::getValue));
+        syntheticSuite1.rotateSamplesByDiscreteId(rotations);
+        final List<Vec3> actualRotatedDirections =
+                extractDirections.apply(syntheticSuite1);
+        for (int i=0; i<expectedRotatedDirections.size(); i++) {
+            assertTrue(expectedRotatedDirections.get(i).equals(
+            actualRotatedDirections.get(i), delta));
+        }
     }
     
 }

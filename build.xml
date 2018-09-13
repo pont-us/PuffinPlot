@@ -19,7 +19,7 @@
     		 dest="${ivy.jar.file}" usetimestamp="true"/>
     </target>
     
-    <target name="install-ivy" depends="download-ivy" description="--> install ivy">
+    <target name="install-ivy" description="--> install ivy">
       <!-- Remove depends="download-ivy" from the above to build without Internet access -->
         <path id="ivy.lib.path">
             <fileset dir="${ivy.jar.dir}" includes="*.jar"/>

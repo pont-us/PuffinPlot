@@ -134,12 +134,6 @@ public class SampleTest {
     
     @Test
     public void testSetValue() {
-        final DatumField[] fields = {
-            DatumField.SAMPLE_AZ, DatumField.SAMPLE_DIP,
-            DatumField.VIRT_SAMPLE_HADE, DatumField.FORM_AZ,
-            DatumField.FORM_DIP, DatumField.VIRT_FORM_STRIKE,
-            DatumField.MAG_DEV};
-        
         final double value = 3.14;
         final String valueString = String.format("%g", value);
         final Sample sample = new Sample("sample1", null);
@@ -158,8 +152,44 @@ public class SampleTest {
         assertEquals(value, sample.getFormStrike(), delta);
         sample.setValue(DatumField.MAG_DEV, valueString);
         assertEquals(value, sample.getMagDev(), delta);
-        
-        
+    }
+    
+    @Test
+    public void testGetDiscreteId() {
+        final Sample sample = new Sample("sample1", null);
+        final Datum datum = new Datum(Vec3.ORIGIN);
+        datum.setMeasType(MeasType.CONTINUOUS);
+        final String discreteId = "discrete-id-1";
+        datum.setDiscreteId(discreteId);
+        datum.setSample(sample);
+        sample.addDatum(datum);
+        assertEquals(discreteId, sample.getDiscreteId());
+    }
+    
+    @Test
+    public void testGetDiscreteIdWithNoData() {
+        final Sample sample = new Sample("sample1", null);
+        assertNull(sample.getDiscreteId());        
+    }
+    
+    @Test
+    public void testSetDiscreteId() {
+        final Sample sample = new Sample("sample1", null);
+        final Datum datum = new Datum(Vec3.ORIGIN);
+        datum.setMeasType(MeasType.CONTINUOUS);
+        datum.setSample(sample);
+        sample.addDatum(datum);
+
+        final String discreteId = "discrete-id-1";
+        sample.setDiscreteId(discreteId);
+        assertEquals(discreteId, sample.getDiscreteId());        
+    }
+    
+    @Test(expected = IllegalStateException.class)
+    public void testSetDiscreteIdWithNoData() {
+        final Sample sample = new Sample("sample1", null);
+        final String discreteId = "discrete-id-1";
+        sample.setDiscreteId(discreteId);
     }
 
 }

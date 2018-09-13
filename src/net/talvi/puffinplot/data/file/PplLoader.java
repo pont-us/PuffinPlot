@@ -67,7 +67,7 @@ public class PplLoader extends AbstractFileLoader {
             }
             Matcher matcher = puffinHeader.matcher(firstLine);
             if (!matcher.matches()) {
-                throw new IOException(file + "doesn't appear to be a "
+                throw new IOException(file + " doesn't appear to be a "
                         + "PuffinPlot file.");
             }
             String versionString = matcher.group(1);
