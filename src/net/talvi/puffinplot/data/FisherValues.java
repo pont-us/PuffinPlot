@@ -84,6 +84,9 @@ public class FisherValues implements FisherParams {
         final List<Vec3> normPoints = new ArrayList<>(vectors.size());
         final double N = vectors.size();
         for (Vec3 point: vectors) {
+            // TODO handle point = (0, 0, 0) case -- should never happen
+            // with real data but currently results in NaNs for normPoints
+            // so needs to be handled explicitly if it ever does occur.
             normPoints.add(point.normalize());
         }
         final double p = 0.05; // significance level, so 0.05 for 95%

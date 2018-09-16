@@ -37,7 +37,7 @@ import net.talvi.puffinplot.data.file.*;
  * 
  * @author pont
  */
-public final class Suite {
+public final class Suite implements SampleGroup {
 
     private List<Site> sites = new ArrayList<>();
     private File puffinFile;
@@ -1308,7 +1308,7 @@ public final class Suite {
         return suiteCreator;
     }
 
-    public List<Sample> getSamplesByDiscreteId(String id) {
+    List<Sample> getSamplesByDiscreteId(String id) {
         Objects.requireNonNull(id);
         return getSamples().stream().filter(s -> id.equals(s.getDiscreteId())).
                 collect(Collectors.toList());

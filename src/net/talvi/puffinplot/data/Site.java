@@ -37,7 +37,7 @@ import java.util.logging.Logger;
  * @author pont
  */
 
-public class Site {
+public class Site implements SampleGroup {
 
     private static final Logger logger =
             Logger.getLogger("net.talvi.puffinplot");
