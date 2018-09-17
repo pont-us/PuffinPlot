@@ -710,14 +710,32 @@ public class SuiteTest {
     
     @Test
     public void testGetCustomFlagNames() {
-        assertEquals(0, syntheticSuite1.getCustomFlagNames().size());
+        testCustomNames(syntheticSuite1.getCustomFlagNames());
     }
 
     @Test
     public void testGetCustomNoteNames() {
-        assertEquals(0, syntheticSuite1.getCustomNoteNames().size());
+        testCustomNames(syntheticSuite1.getCustomNoteNames());
     }
     
+    private void testCustomNames(final CustomFields<String> customNames) {
+        assertEquals(0, customNames.size());
+        customNames.add(0, "test1");
+        customNames.add(0, "test0");
+        assertEquals("test0\ttest1", customNames.exportAsString());
+        customNames.swapAdjacent(0);
+        assertEquals("test1\ttest0", customNames.exportAsString());
+        customNames.remove(0);
+        assertEquals("test0", customNames.get(0));
+        assertNull(customNames.get(1)); // out of range: should be null
+        customNames.setSize(3, "test3");
+        assertEquals("test3\ttest3\ttest3", customNames.exportAsString());
+        customNames.set(0, "test0");
+        assertEquals("test0\ttest3\ttest3", customNames.exportAsString());
+        customNames.set(5, "test5"); // out of range: should do nothing
+        assertEquals("test0\ttest3\ttest3", customNames.exportAsString());
+    }
+
     @Test
     public void testGetPuffinFile() throws IOException {
         final Suite suite = new Suite("test");

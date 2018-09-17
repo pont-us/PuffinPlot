@@ -21,6 +21,9 @@ import java.util.Random;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static java.lang.Math.toDegrees;
+import java.util.Arrays;
+import java.util.BitSet;
+import java.util.List;
 
 /**
  *
@@ -29,39 +32,43 @@ import static java.lang.Math.toDegrees;
 public class SampleTest {
 
     final private static double delta = 1e-10;
-    
-    @Test
-    public void testSelectByTreatmentLevelRange() {
-        final Sample s = new Sample("Test sample", null);
-        
+
+    private static Sample makeSimpleSample() {
+        final Sample defaultSample = new Sample("Test sample", null);
         for (int i=0; i<10; i++) {
             final Datum d = new Datum(10-i, 20-i, 30-i);
             d.setTreatType(TreatType.DEGAUSS_XYZ);
             d.setAfX(i);
             d.setAfY(i);
             d.setAfZ(i);
-            s.addDatum(d);
+            defaultSample.addDatum(d);
         }
+        return defaultSample;
+    }
+    
+    @Test
+    public void testSelectByTreatmentLevelRange() {
+        final Sample sample = makeSimpleSample();
         
         final double[] mins = {2.5, 5.5, 10.5, Double.NEGATIVE_INFINITY};
         final double[] maxs = {7.5, 6.5, 0, Double.POSITIVE_INFINITY};
         
-        for (int i=0; i<mins.length; i++) {
-        s.selectByTreatmentLevelRange(mins[i], maxs[i]);
-        
-        for (Datum d: s.getData()) {
-            final boolean shouldBeSelected =
-                    d.getTreatmentLevel() >= mins[i] &&
-                    d.getTreatmentLevel() <= maxs[i];
-            assertEquals(d.isSelected(), shouldBeSelected);
+        for (int i = 0; i < mins.length; i++) {
+            sample.selectByTreatmentLevelRange(mins[i], maxs[i]);
+
+            for (Datum d : sample.getData()) {
+                final boolean shouldBeSelected
+                        = d.getTreatmentLevel() >= mins[i]
+                        && d.getTreatmentLevel() <= maxs[i];
+                assertEquals(d.isSelected(), shouldBeSelected);
+            }
         }
-        }
         
-        s.selectByTreatmentLevelRange(Double.NaN, Double.NaN);
+        sample.selectByTreatmentLevelRange(Double.NaN, Double.NaN);
         // Result is undefined so we don't test it, but we're making sure
         // that calling with NaNs doesn't produce an exception.
     }
-    
+
     @Test
     public void testSetAmsFromTensor() {
         final Random rnd = new Random(13);
@@ -191,5 +198,52 @@ public class SampleTest {
         final String discreteId = "discrete-id-1";
         sample.setDiscreteId(discreteId);
     }
+
+    @Test
+    public void testIsSelectionContiguous() {
+        final Sample sample = makeSimpleSample();
+        assertTrue(sample.isSelectionContiguous());        
+        for (int i=3; i<8; i++) {
+            sample.getDatum(i).setSelected(true);
+        }
+        assertTrue(sample.isSelectionContiguous());
+        sample.getDatum(5).setSelected(false);
+        assertFalse(sample.isSelectionContiguous());
+    }
+    
+    @Test
+    public void testGetSelectedData() {
+        final Sample sample = makeSimpleSample();
+        for (int i=3; i<8; i++) {
+            sample.getDatum(i).setSelected(true);
+        }
+        assertEquals(sample.getData().subList(3, 8),
+                sample.getSelectedData());
+    }
+    
+    @Test
+    public void testGetSelectionBitSet() {
+        final Sample sample = makeSimpleSample();
+        final List<Integer> bits = Arrays.asList(1, 3, 6);
+        final BitSet expectedBitSet = new BitSet();
+        for (Integer i: bits) {
+            sample.getDatum(i).setSelected(true);
+            expectedBitSet.set(i);
+        }
+        assertEquals(expectedBitSet, sample.getSelectionBitSet());
+    }
+
+    @Test
+    public void testSetSelectionBitSet() {
+        final BitSet bitSet = new BitSet();
+        final List<Integer> bitList = Arrays.asList(1, 3, 6);
+        final Sample sample = makeSimpleSample();
+        bitList.forEach(i -> bitSet.set(i));
+        sample.setSelectionBitSet(bitSet);
+        for (int i=0; i<sample.getNumData(); i++) {
+            assertEquals(bitList.contains(i), sample.getDatum(i).isSelected());
+        }
+    }
+
 
 }

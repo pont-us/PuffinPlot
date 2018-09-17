@@ -672,14 +672,13 @@ public class Datum {
      * Sets the value of a specified data field using a string.
      * 
      * @param field the field to set the value of (non-null)
-     * @param value a string representation of the value to set the field to (non-null)
+     * @param value a string representation of the value to set the field to
+     *              (non-null)
      * @param factor conversion factor for double values
      * 
      * For double values, the field is set to the parsed value multiplied
      * by the conversion factor.
      * 
-     * @throws NumberFormatException if the format of the string is 
-     * not compatible with the format of the field to be set
      * @throws NullPointerException if {@code field} or {@code value} is null
      */
     public void setValue(DatumField field, String value, double factor) {
@@ -688,31 +687,39 @@ public class Datum {
         touch();
         try {
             doSetValue(field, value, factor);
-        } catch (NumberFormatException e1) {
+        } catch (NumberFormatException exception) {
+            /*
+             * Silently swallowing a runtime exception is often a bad thing, but
+             * in this case it might actually be possible to continue usefully
+             * without the value. If it makes the program keel over later, the
+             * log message should make it easier to trace. This method may be
+             * dealing with values from unknown file format variants or
+             * corrupted files, so it seems inappropriate to let a runtime
+             * exception loose here. There might be a case for rethrowing as a
+             * checked exception, however.
+             */
             logger.warning(String.format(Locale.ENGLISH,
                     "Invalid value ‘%s’ for field ‘%s’; using default ‘%s’",
                     value, field.toString(), field.getDefaultValue()));
-            try {
-                /* NB default value is already in correct units, so we
-                   set the conversion factor to 1. */
-                doSetValue(field, field.getDefaultValue(), 1.);
-            } catch (NumberFormatException e2) {
-                final String msg = String.format(Locale.ENGLISH,
-                        "Invalid value "+
-                        "when setting field '%s' to value '%s':\n%s",
-                        field.toString(), value, e2.getMessage());
-                logger.warning(msg);
-                // Failing silently is often a bad thing, but in this case
-                // it might actually be possible to continue usefully without
-                // this field. If it makes the program keel over later, the
-                // log message should make it easier to trace.
-            }
+
+            /*
+             * In the absence of a parseable supplied value, we set the field to
+             * the default value. The default value is already in correct units,
+             * so we specify a conversion factor of 1. Theoretically, of course,
+             * another NumberFormatException might be thrown here, but in that
+             * case it would indicate a definite bug (since the default values
+             * are hard-coded and should of course be valid string
+             * representations of the appropriate types!) and the exception
+             * should be allowed to go free so that the bug can be noticed and
+             * fixed.
+             */
+            doSetValue(field, field.getDefaultValue(), 1.);
         }
     }
     
     private void doSetValue(DatumField field, String s, double factor) {
-        assert field != null;
-        assert s != null;
+        requireNonNull(field, "field must be non-null");
+        requireNonNull(s, "value must be non-null");
         double doubleVal = 0;
         final Class type = field.getType();
         boolean boolVal = false;
