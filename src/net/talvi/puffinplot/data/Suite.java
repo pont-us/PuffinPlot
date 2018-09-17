@@ -1135,14 +1135,14 @@ public final class Suite implements SampleGroup {
     public void exportToFiles(File directory, List<DatumField> fields) {
         if (directory.exists()) {
             if (!directory.isDirectory()) {
-                logger.info(String.format(Locale.ENGLISH,
+                logger.warning(String.format(Locale.ENGLISH,
                         "exportToFiles: %s is not a directory",
                         directory.toString()));
                 return;
             }
         } else {
             if (!directory.mkdirs()) {
-                logger.info(String.format(Locale.ENGLISH,
+                logger.warning(String.format(Locale.ENGLISH,
                         "exportToFiles: couldn't create %s",
                         directory.toString()));
                 return;

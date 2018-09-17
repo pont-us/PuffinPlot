@@ -23,6 +23,7 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import net.talvi.puffinplot.TestUtils.ListHandler;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -59,21 +60,9 @@ public class DatumTest {
     
     @Test
     public void testSetValueWithBadNumberFormat() {
-        final List<LogRecord> records = new ArrayList<>();
-
-        final Handler handler = new Handler() {
-            @Override
-            public void publish(LogRecord record) {
-                records.add(record);
-            }
-
-            @Override public void flush() {}
-
-            @Override public void close() throws SecurityException {}
-        };
-        Logger.getLogger("net.talvi.puffinplot").addHandler(handler);
+        final ListHandler handler = ListHandler.createAndAdd();
         new Datum().setValue(DatumField.AREA, "not a number", 1);
-        assertEquals(Level.WARNING, records.get(0).getLevel());
+        assertTrue(handler.oneWarningLogged());
     }
     
     @Test
@@ -157,5 +146,5 @@ public class DatumTest {
         defaultDatum.setSuite(suite);
         assertEquals(suite, defaultDatum.getSuite());
     }
-    
+
 }

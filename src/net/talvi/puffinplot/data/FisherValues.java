@@ -115,7 +115,7 @@ public class FisherValues implements FisherParams {
     
     @Override
     public boolean isA95Valid() {
-        return !(Double.isNaN(a95) || Double.isInfinite(a95));
+        return Double.isFinite(a95);
     }
 
     @Override

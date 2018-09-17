@@ -24,6 +24,10 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 import net.talvi.puffinplot.data.Vec3;
 import org.junit.rules.TemporaryFolder;
 
@@ -33,6 +37,33 @@ import org.junit.rules.TemporaryFolder;
  * @author pont
  */
 public class TestUtils {
+    
+    public static class ListHandler extends Handler {
+
+        public final List<LogRecord> records = new ArrayList<>();
+
+        @Override
+        public void publish(LogRecord record) {
+            records.add(record);
+        }
+
+        @Override public void flush() {}
+
+        @Override public void close() throws SecurityException {}
+        
+        public boolean oneWarningLogged() {
+            return records.size() == 1 &&
+                    records.get(0).getLevel() == Level.WARNING;
+        }
+        
+        public static ListHandler createAndAdd() {
+            final ListHandler handler = new ListHandler();
+            Logger.getLogger("net.talvi.puffinplot").addHandler(handler);
+            return handler;
+        }
+    }
+    
+
     
     public static Vec3 randomVector(Random rnd, double max) {
         return new Vec3(rnd.nextDouble()*2*max-max,

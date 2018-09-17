@@ -50,6 +50,7 @@ import static org.junit.Assert.*;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 import net.talvi.puffinplot.TestUtils;
+import net.talvi.puffinplot.TestUtils.ListHandler;
 import net.talvi.puffinplot.data.file.TwoGeeLoader;
 import net.talvi.puffinplot.data.file.testdata.TestFileLocator;
 import org.junit.Assume;
@@ -1329,6 +1330,35 @@ public class SuiteTest {
             assertTrue(expectedRotatedDirections.get(i).equals(
             actualRotatedDirections.get(i), delta));
         }
+    }
+
+    @Test(expected = PuffinUserException.class)
+    public void testSaveCalcsSampleNoSamples()
+            throws IOException, PuffinUserException {
+        final Suite suite = new Suite("test");
+        suite.saveCalcsSample(temporaryFolder.newFile());
+    }
+    
+    @Test
+    public void testExportToFilesWithFileBlockingDirectory()
+            throws IOException {
+        final ListHandler handler = ListHandler.createAndAdd();
+        final File file = temporaryFolder.newFile("blocks_directory");
+        syntheticSuite1.exportToFiles(file,
+                Arrays.asList(DatumField.AREA));
+        assertTrue(handler.oneWarningLogged());
+    }
+    
+    @Test
+    public void testExportToFilesInUncreatableDirectory()
+            throws IOException {
+        final ListHandler handler = ListHandler.createAndAdd();
+        final File file = temporaryFolder.newFile("blocks_directory");
+        final File specifiedDirectory =
+                file.toPath().resolve("desired_subdirectory").toFile();
+        syntheticSuite1.exportToFiles(specifiedDirectory,
+                Arrays.asList(DatumField.AREA));
+        assertEquals(Level.WARNING, handler.records.get(0).getLevel());
     }
     
 }
