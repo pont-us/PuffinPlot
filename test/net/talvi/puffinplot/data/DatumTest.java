@@ -62,7 +62,7 @@ public class DatumTest {
     public void testSetValueWithBadNumberFormat() {
         final ListHandler handler = ListHandler.createAndAdd();
         new Datum().setValue(DatumField.AREA, "not a number", 1);
-        assertTrue(handler.oneWarningLogged());
+        assertTrue(handler.wasOneWarningLogged());
     }
     
     @Test

@@ -1,5 +1,5 @@
 /* This file is part of PuffinPlot, a program for palaeomagnetic
- * data plotting and analysis. Copyright 2012-2015 Pontus Lurcock.
+ * data plotting and analysis. Copyright 2012-2018 Pontus Lurcock.
  *
  * PuffinPlot is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.prefs.Preferences;
 import static java.lang.Double.parseDouble;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 
 /**
  * <p>Represents the effective SQUID sensor lengths of a magnetometer, 
@@ -120,23 +122,30 @@ public class SensorLengths {
      * 
      * @param string a string definition
      * @return the sensor lengths specified in the string
-     * @throws IllegalArgumentException if the string is null or not recognized
+     * @throws IllegalArgumentException if the string is not recognized
      */
     public static SensorLengths fromString(String string) {
-        Scanner sc = new Scanner(string);
+        Objects.requireNonNull(string);
+        final Scanner sc = new Scanner(string);
         sc.useLocale(Locale.ENGLISH);
         sc.useDelimiter("\t");
-        String type = sc.next();
-        if (null != type) switch (type) {
-            case "PRESET":
-                final String preset = sc.next();
-                return SensorLengths.fromPresetName(preset);
-            case "CUSTOM":
-                return SensorLengths.fromStrings(sc.next(), sc.next(), sc.next());
-            default:
-                throw new IllegalArgumentException("Unknown SensorLengths type "+type);
+        try {
+            final String type = sc.next(); // should never return null
+            switch (type) {
+                case "PRESET":
+                    final String preset = sc.next();
+                    return SensorLengths.fromPresetName(preset);
+                case "CUSTOM":
+                    return SensorLengths.fromStrings(sc.next(), sc.next(),
+                            sc.next());
+                default:
+                    throw new IllegalArgumentException(
+                            "Unknown SensorLengths type "+type);
+            }
+        } catch (NoSuchElementException exception) {
+            throw new IllegalArgumentException(
+                    "Missing field in sensor length string.", exception);
         }
-        throw new IllegalArgumentException("null passed to SensorLengths.fromString");
     }
 
     /**

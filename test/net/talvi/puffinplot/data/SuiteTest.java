@@ -1346,7 +1346,7 @@ public class SuiteTest {
         final File file = temporaryFolder.newFile("blocks_directory");
         syntheticSuite1.exportToFiles(file,
                 Arrays.asList(DatumField.AREA));
-        assertTrue(handler.oneWarningLogged());
+        assertTrue(handler.wasOneWarningLogged());
     }
     
     @Test

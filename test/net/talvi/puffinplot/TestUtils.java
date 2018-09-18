@@ -51,7 +51,7 @@ public class TestUtils {
 
         @Override public void close() throws SecurityException {}
         
-        public boolean oneWarningLogged() {
+        public boolean wasOneWarningLogged() {
             return records.size() == 1 &&
                     records.get(0).getLevel() == Level.WARNING;
         }
