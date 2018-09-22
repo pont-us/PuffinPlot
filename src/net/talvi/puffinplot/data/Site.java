@@ -239,7 +239,7 @@ public class Site implements SampleGroup {
 
     void addSample(Sample sample) {
         if (sample==null) {
-            logger.warning("null sample passed to Suite.addSample.");
+            logger.warning("null sample passed to Site.addSample.");
             return;
         }
         if (!samples.contains(sample)) {
@@ -250,7 +250,7 @@ public class Site implements SampleGroup {
     
     void removeSample(Sample sample) {
         if (sample==null) {
-            logger.warning("null sample passed to Suite.removeSample.");
+            logger.warning("null sample passed to Site.removeSample.");
             return;
         }
         samples.remove(sample);
