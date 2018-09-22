@@ -72,30 +72,25 @@ public enum FileType {
      * @return the type of the file; {@code UNKNOWN} if it could not be guessed
      * @throws IOException if an I/O error occurred
      */
-	static public FileType guess(File file) throws IOException {
-		final String name = file.getName().toLowerCase(Locale.ENGLISH);
-		if (name.endsWith(".dat")) return TWOGEE;
-                else if (name.endsWith(".iapd")) return IAPD;
-		else if (name.endsWith(".txt")) return ZPLOT;
-                else if (name.endsWith(".sam")) return CALTECH;
-		else if (name.endsWith(".ppl")) {
-                    BufferedReader reader = null;
-                    FileType result = PUFFINPLOT_OLD;
-                    try {
-                         reader = new BufferedReader(new FileReader(file));
-                         final String line = reader.readLine();
-                         if (line != null && line.startsWith("PuffinPlot file."))
-                             result = PUFFINPLOT_NEW;
-                    } finally {
-                        try { if (reader != null) reader.close(); }
-                        catch (IOException ex) {
-                            logger.warning(ex.getLocalizedMessage());
-                        }
-                    }
-                    return result;
+    static public FileType guess(File file) throws IOException {
+        final String name = file.getName().toLowerCase(Locale.ENGLISH);
+        if (name.endsWith(".dat")) return TWOGEE;
+        else if (name.endsWith(".iapd")) return IAPD;
+        else if (name.endsWith(".txt")) return ZPLOT;
+        else if (name.endsWith(".sam")) return CALTECH;
+        else if (name.endsWith(".ppl")) {
+            FileType result = PUFFINPLOT_OLD;
+            try (BufferedReader reader =
+                    new BufferedReader(new FileReader(file))) {
+                final String line = reader.readLine();
+                if (line != null && line.startsWith("PuffinPlot file.")) {
+                    result = PUFFINPLOT_NEW;
                 }
-		else return UNKNOWN;
-	}
+            }
+            return result;
+        }
+        else return UNKNOWN;
+    }
 
     /**
      * Returns a user-friendly name for this filetype.

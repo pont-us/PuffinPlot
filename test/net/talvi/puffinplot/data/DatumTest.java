@@ -16,13 +16,8 @@
  */
 package net.talvi.puffinplot.data;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
 import net.talvi.puffinplot.TestUtils.ListHandler;
 import org.junit.Test;
 import static org.junit.Assert.*;
