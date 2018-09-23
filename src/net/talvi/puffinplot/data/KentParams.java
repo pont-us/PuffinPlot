@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import static java.lang.Math.toRadians;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * <p>A class representing the parameters of a Kent confidence ellipse.
@@ -110,19 +112,20 @@ public class KentParams {
     }
 
     private static List<String> execute(String[] args) throws IOException {
-        Process process = Runtime.getRuntime().exec(args);
-        InputStream inputStream = process.getInputStream();
-        BufferedReader reader =
+        final Process process = Runtime.getRuntime().exec(args);
+        final InputStream inputStream = process.getInputStream();
+        final BufferedReader reader =
                 new BufferedReader(new InputStreamReader(inputStream));
-        List<String> output = new ArrayList<>(8);
+        final List<String> output = new ArrayList<>(8);
         try {
             process.waitFor();
-        } catch (InterruptedException e) {
-            System.out.println("interrupted");
-            // do nothing
+        } catch (InterruptedException exception) {
+            Logger.getLogger("net.talvi.puffinplot").log(Level.SEVERE,
+                    "External process interrupted", exception);
+            // Do nothing
         }
         do {
-            String line = reader.readLine();
+            final String line = reader.readLine();
             if (line == null) break;
             output.add(line);
         } while (true);

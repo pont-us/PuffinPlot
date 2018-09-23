@@ -930,7 +930,6 @@ public class SuiteTest {
                     90, 0, 0, sampleIndex, 0, 90+sampleIndex);
         }
         
-        
         /*
          * This script outputs nonsense values, because we're not checking
          * the correctness of the calculation here -- just that the script
