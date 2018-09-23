@@ -1,5 +1,5 @@
 /* This file is part of PuffinPlot, a program for palaeomagnetic
- * data plotting and analysis. Copyright 2012-2015 Pontus Lurcock.
+ * data plotting and analysis. Copyright 2012-2018 Pontus Lurcock.
  *
  * PuffinPlot is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,8 @@ public final class SuiteCalcs {
          * @param upper statistics for the upper-hemisphere directions
          * @param lower statistics for the lower-hemisphere directions
          */
-        private Means(FisherValues all, FisherValues upper, FisherValues lower) {
+        private Means(FisherValues all, FisherValues upper,
+                FisherValues lower) {
             this.all = all;
             this.upper = upper;
             this.lower = lower;
@@ -69,14 +70,16 @@ public final class SuiteCalcs {
         }
 
         /**
-         * @return Fisher statistics on the upper-hemisphere directions in a suite.
+         * @return Fisher statistics on the upper-hemisphere directions in a
+         * suite.
          */
         public FisherValues getUpper() {
             return upper;
         }
 
         /**
-         * @return Fisher statistics on the lower-hemisphere directions in a suite.
+         * @return Fisher statistics on the lower-hemisphere directions in a
+         * suite.
          */
         public FisherValues getLower() {
             return lower;
@@ -101,9 +104,9 @@ public final class SuiteCalcs {
          * Calculate Fisher statistics on a set of directions.
          * 
          * Separate statistics are calculated for the whole set of directions,
-         * for the upper-hemisphere directions only, and for the lower-hemisphere
-         * directions only.
-         * 
+         * for the upper-hemisphere directions only, and for the
+         * lower-hemisphere directions only.
+         *
          * @param directions directions on which to calculate statistics
          * @return the calculated statistics
          */

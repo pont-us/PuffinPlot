@@ -79,7 +79,8 @@ public class TestUtils {
         return v0.equals(v1, delta) || v0.invert().equals(v1, delta);
     }
     
-    public static List<Vec3> makeVectorList(double[][] components, boolean normalize) {
+    public static List<Vec3> makeVectorList(double[][] components,
+            boolean normalize) {
         final List<Vec3> result = new ArrayList<Vec3>(components.length);
         for (double[] triplet: components) {
             assert(triplet.length == 3);
