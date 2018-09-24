@@ -1,5 +1,5 @@
 /* This file is part of PuffinPlot, a program for palaeomagnetic
- * data plotting and analysis. Copyright 2012 Pontus Lurcock.
+ * data plotting and analysis. Copyright 2012-2018 Pontus Lurcock.
  *
  * PuffinPlot is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  */
 package net.talvi.puffinplot.data;
 
-import java.util.List;
 import java.util.Locale;
 
 /**
