@@ -21,9 +21,13 @@ import java.util.Random;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static java.lang.Math.toDegrees;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -31,32 +35,36 @@ import java.util.List;
  */
 public class SampleTest {
 
-    final private static double delta = 1e-10;
+    private static final double delta = 1e-10;
+    private final Sample simpleSample;
 
+    public SampleTest() {
+        simpleSample = makeSimpleSample();
+    }
+    
     private static Sample makeSimpleSample() {
-        final Sample defaultSample = new Sample("Test sample", null);
+        final Sample s = new Sample("Test sample", null);
         for (int i=0; i<10; i++) {
             final Datum d = new Datum(10-i, 20-i, 30-i);
             d.setTreatType(TreatType.DEGAUSS_XYZ);
             d.setAfX(i);
             d.setAfY(i);
             d.setAfZ(i);
-            defaultSample.addDatum(d);
+            s.addDatum(d);
         }
-        return defaultSample;
+        return s;
     }
     
     @Test
     public void testSelectByTreatmentLevelRange() {
-        final Sample sample = makeSimpleSample();
         
         final double[] mins = {2.5, 5.5, 10.5, Double.NEGATIVE_INFINITY};
         final double[] maxs = {7.5, 6.5, 0, Double.POSITIVE_INFINITY};
         
         for (int i = 0; i < mins.length; i++) {
-            sample.selectByTreatmentLevelRange(mins[i], maxs[i]);
+            simpleSample.selectByTreatmentLevelRange(mins[i], maxs[i]);
 
-            for (Datum d : sample.getData()) {
+            for (Datum d: simpleSample.getData()) {
                 final boolean shouldBeSelected
                         = d.getTreatmentLevel() >= mins[i]
                         && d.getTreatmentLevel() <= maxs[i];
@@ -64,7 +72,7 @@ public class SampleTest {
             }
         }
         
-        sample.selectByTreatmentLevelRange(Double.NaN, Double.NaN);
+        simpleSample.selectByTreatmentLevelRange(Double.NaN, Double.NaN);
         // Result is undefined so we don't test it, but we're making sure
         // that calling with NaNs doesn't produce an exception.
     }
@@ -201,49 +209,151 @@ public class SampleTest {
 
     @Test
     public void testIsSelectionContiguous() {
-        final Sample sample = makeSimpleSample();
-        assertTrue(sample.isSelectionContiguous());        
+        assertTrue(simpleSample.isSelectionContiguous());        
         for (int i=3; i<8; i++) {
-            sample.getDatum(i).setSelected(true);
+            simpleSample.getDatum(i).setSelected(true);
         }
-        assertTrue(sample.isSelectionContiguous());
-        sample.getDatum(5).setSelected(false);
-        assertFalse(sample.isSelectionContiguous());
+        assertTrue(simpleSample.isSelectionContiguous());
+        simpleSample.getDatum(5).setSelected(false);
+        assertFalse(simpleSample.isSelectionContiguous());
     }
     
     @Test
     public void testGetSelectedData() {
-        final Sample sample = makeSimpleSample();
         for (int i=3; i<8; i++) {
-            sample.getDatum(i).setSelected(true);
+            simpleSample.getDatum(i).setSelected(true);
         }
-        assertEquals(sample.getData().subList(3, 8),
-                sample.getSelectedData());
+        assertEquals(simpleSample.getData().subList(3, 8),
+                simpleSample.getSelectedData());
     }
     
     @Test
     public void testGetSelectionBitSet() {
-        final Sample sample = makeSimpleSample();
         final List<Integer> bits = Arrays.asList(1, 3, 6);
         final BitSet expectedBitSet = new BitSet();
         for (Integer i: bits) {
-            sample.getDatum(i).setSelected(true);
+            simpleSample.getDatum(i).setSelected(true);
             expectedBitSet.set(i);
         }
-        assertEquals(expectedBitSet, sample.getSelectionBitSet());
+        assertEquals(expectedBitSet, simpleSample.getSelectionBitSet());
     }
 
     @Test
     public void testSetSelectionBitSet() {
         final BitSet bitSet = new BitSet();
         final List<Integer> bitList = Arrays.asList(1, 3, 6);
-        final Sample sample = makeSimpleSample();
         bitList.forEach(i -> bitSet.set(i));
-        sample.setSelectionBitSet(bitSet);
-        for (int i=0; i<sample.getNumData(); i++) {
-            assertEquals(bitList.contains(i), sample.getDatum(i).isSelected());
+        simpleSample.setSelectionBitSet(bitSet);
+        for (int i=0; i<simpleSample.getNumData(); i++) {
+            assertEquals(bitList.contains(i), simpleSample.getDatum(i).isSelected());
         }
     }
 
+    @Test
+    public void testHideAndDeselectSelectedPoints() {
+        final Set<Datum> dataToHide = new HashSet<>();
+        for (int i = 3; i < 7; i++) {
+            dataToHide.add(simpleSample.getDatum(i));
+        }
+        dataToHide.forEach(d -> d.setSelected(true));
+        assertTrue(simpleSample.getData().stream().allMatch(d -> !d.isHidden()));
+        simpleSample.hideAndDeselectSelectedPoints();
+        assertTrue(simpleSample.getData().stream().allMatch(d -> !d.isSelected()));
+        assertTrue(simpleSample.getData().stream().allMatch(
+                d -> dataToHide.contains(d) == d.isHidden()));
+    }
+    
+    @Test
+    public void testUnhideAllPoints() {
+        for (int i = 3; i < 7; i++) {
+            simpleSample.getDatum(i).setHidden(true);
+        }
+        simpleSample.unhideAllPoints();
+        assertTrue(simpleSample.getData().stream().allMatch(d -> !d.isHidden()));
+    }
 
+    @Test
+    public void testInvertMoments() {
+        final List<Vec3> expected = simpleSample.getData().stream().
+                map(d -> d.getMoment().invert()).
+                collect(Collectors.toList());
+        simpleSample.invertMoments();
+        for (int i=0; i<simpleSample.getNumData(); i++) {
+            assertTrue(expected.get(i).equals(
+                    simpleSample.getDatum(i).getMoment(),
+                    delta));
+        }
+    }
+    
+    @Test
+    public void testSelectVisible() {
+        for (int i = 3; i < 7; i++) {
+            simpleSample.getDatum(i).setHidden(true);
+        }
+        simpleSample.selectVisible();
+        assertTrue(simpleSample.getData().stream().
+                allMatch(d -> d.isHidden() != d.isSelected()));        
+    }
+    
+    @Test
+    public void testClearGreatCircle() {
+        simpleSample.getData().forEach(d -> d.setOnCircle(true));
+        simpleSample.fitGreatCircle(Correction.NONE);
+        assertNotNull(simpleSample.getGreatCircle());
+        simpleSample.clearGreatCircle();
+        assertNull(simpleSample.getGreatCircle());
+    }
+    
+    @Test
+    public void testClearCalculations() {
+        simpleSample.getData().forEach(d -> {
+            d.setOnCircle(true);
+            d.setInPca(true);
+            d.setSelected(true);
+        });
+        simpleSample.doPca(Correction.NONE);
+        simpleSample.fitGreatCircle(Correction.NONE);
+        simpleSample.calculateFisher(Correction.NONE);
+        simpleSample.calculateMdf();
+        assertNotNull(simpleSample.getGreatCircle());
+        assertNotNull(simpleSample.getPcaValues());
+        assertNotNull(simpleSample.getFisherValues());
+        assertNotNull(simpleSample.getMdf());
+        simpleSample.clearCalculations();
+        assertNull(simpleSample.getGreatCircle());
+        assertNull(simpleSample.getPcaValues());
+        assertNull(simpleSample.getFisherValues());
+        assertNull(simpleSample.getMdf());        
+    }
+    
+    @Test
+    public void testFlip() {
+        for (MeasurementAxis axis: MeasurementAxis.values()) {
+            final Sample sample = makeSimpleSample();
+            final List<Vec3> expected = sample.getData().stream().
+                    map(d -> d.getMoment().rot180(axis)).
+                    collect(Collectors.toList());
+            sample.flip(axis);
+            for (int i = 0; i < sample.getNumData(); i++) {
+                assertTrue(expected.get(i).equals(
+                        sample.getDatum(i).getMoment(),
+                        delta));
+            }
+        }
+    }
+    
+    @Test
+    public void testGetSuite() {
+        assertNull(simpleSample.getSuite());
+        final Suite suite = new Suite("test");
+        final Sample withSuite = new Sample("with suite", suite);
+        assertNotNull(withSuite.getSuite());
+    }
+    
+    @Test
+    public void testTruncateData() {
+        final List<Datum> data = new ArrayList<>(simpleSample.getData());
+        simpleSample.truncateData(7);
+        assertEquals(data.subList(0, 7), simpleSample.getData());
+    }
 }
