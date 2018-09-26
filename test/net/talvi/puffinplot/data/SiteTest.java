@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 import net.talvi.puffinplot.TestUtils.ListHandler;
 import org.junit.Test;
@@ -241,7 +242,7 @@ public class SiteTest {
         final ListHandler handler = ListHandler.createAndAdd();
         final Site site = new Site("site0");
         site.addSample(null);
-        assertTrue(handler.wasOneWarningLogged());
+        assertTrue(handler.wasOneMessageLogged(Level.WARNING));
     }
 
     @Test
@@ -260,6 +261,6 @@ public class SiteTest {
         final ListHandler handler = ListHandler.createAndAdd();
         final Site site = new Site("site0");
         site.removeSample(null);
-        assertTrue(handler.wasOneWarningLogged());        
+        assertTrue(handler.wasOneMessageLogged(Level.WARNING));        
     }
 }

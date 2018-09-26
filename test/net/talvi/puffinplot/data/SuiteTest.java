@@ -357,6 +357,12 @@ public class SuiteTest {
                 loadedSuite.getSiteByName("0.00").getLocation().toStrings());
     }
     
+    @Test(expected = PuffinUserException.class)
+    public void testSaveAsWithIOException() throws PuffinUserException {
+        syntheticSuite1.saveAs(temporaryFolder.getRoot().toPath().
+                resolve("nonexistent").resolve("somefile.csv").toFile());
+    }
+    
     private void loadFileDataIntoSuite(File file, Suite suiteFromFile)
             throws IOException {
         final File[] files = {file};
@@ -852,35 +858,7 @@ public class SuiteTest {
     @Test
     public void testDoAndSaveSiteCalculations()
             throws PuffinUserException, IOException {
-        for (Sample sample: syntheticSuite1.getSamples()) {
-            for (Datum datum: sample.getData()) {
-                datum.setInPca(true);
-                datum.setOnCircle(true);
-            }
-            sample.doPca(Correction.NONE);
-            sample.fitGreatCircle(Correction.NONE);
-        }
-        syntheticSuite1.setSiteNamesByDepth(syntheticSuite1.getSamples(), 5);
-        syntheticSuite1.getSiteByName("0.00").
-                setLocation(Location.fromDegrees(15, 25));
-        
-        // Set a null site to check that site-less samples are
-        // correctly handled.
-        syntheticSuite1.getSampleByIndex(0).setSite(null);
-        
-        syntheticSuite1.doSiteCalculations(Correction.NONE, "true");
-        for (Site site: syntheticSuite1.getSites()) {
-            final FisherValues actualFisherValues = site.getFisherValues();
-            final GreatCircles actualGreatCircles = site.getGreatCircles();
-            site.clearFisherStats();
-            site.clearGcFit();
-            site.calculateFisherStats(Correction.NONE);
-            site.calculateGreatCirclesDirection(Correction.NONE, "true");
-            assertEquals(site.getFisherValues().toStrings(),
-                    actualFisherValues.toStrings());
-            assertEquals(site.getGreatCircles().toStrings(),
-                    actualGreatCircles.toStrings());
-        }
+        setUpSiteCalculations(syntheticSuite1);
         
         /*
          * This part is purely a characterization test, with expected output
@@ -900,14 +878,52 @@ public class SuiteTest {
                 + "Lat (deg),Long (deg),VGP lat (deg),VGP long (deg),VGP dp (deg),VGP dm (deg)\n"
                 + "0.00,5,22.8728,14.4217,16.7387,21.8470,5,4.8169,Y,183.0448,13.0636,6.8346,269.1429,5,0,4.9944,10,0.00000,0.00000,90.0000,90.0000,15.0,25.0,-68.1725,16.8419,3.5534,6.9694\n"
                 + "5.00,5,33.9598,3.3541,1.0511,5300.1858,5,4.9992,Y,189.9534,4.3122,1.6842,4422.6002,5,0,4.9997,10,0.00000,0.00000,90.0000,90.0000,,,,,,\n";
-                assertEquals(expectedCalcs, 
-                siteCalcsString);
+        assertEquals(expectedCalcs, siteCalcsString);
+    }
+
+    private static void setUpSiteCalculations(Suite suite) {
+        for (Sample sample: suite.getSamples()) {
+            for (Datum datum: sample.getData()) {
+                datum.setInPca(true);
+                datum.setOnCircle(true);
+            }
+            sample.doPca(Correction.NONE);
+            sample.fitGreatCircle(Correction.NONE);
+        }
+        suite.setSiteNamesByDepth(suite.getSamples(), 5);
+        suite.getSiteByName("0.00").
+                setLocation(Location.fromDegrees(15, 25));
+        
+        // Set a null site to check that site-less samples are
+        // correctly handled.
+        suite.getSampleByIndex(0).setSite(null);
+        
+        suite.doSiteCalculations(Correction.NONE, "true");
+        for (Site site: suite.getSites()) {
+            final FisherValues actualFisherValues = site.getFisherValues();
+            final GreatCircles actualGreatCircles = site.getGreatCircles();
+            site.clearFisherStats();
+            site.clearGcFit();
+            site.calculateFisherStats(Correction.NONE);
+            site.calculateGreatCirclesDirection(Correction.NONE, "true");
+            assertEquals(site.getFisherValues().toStrings(),
+                    actualFisherValues.toStrings());
+            assertEquals(site.getGreatCircles().toStrings(),
+                    actualGreatCircles.toStrings());
+        }
     }
 
     @Test(expected = PuffinUserException.class)
     public void testSaveCalcsSiteWithNoSites() throws PuffinUserException {
         syntheticSuite1.saveCalcsSite(temporaryFolder.getRoot().toPath().
                 resolve("sitecalcs.csv").toFile());
+    }
+    
+    @Test(expected = PuffinUserException.class)
+    public void testSaveCalcsSiteWithIOException() throws PuffinUserException {
+        setUpSiteCalculations(syntheticSuite1);
+        syntheticSuite1.saveCalcsSite(temporaryFolder.getRoot().toPath().
+                resolve("nonexistent").resolve("somefile.csv").toFile());
     }
     
     @Test
@@ -1242,6 +1258,20 @@ public class SuiteTest {
                 resolve("calculations.csv").toFile());
     }
     
+    @Test(expected = PuffinUserException.class)
+    public void testSavedCalcsSuiteWithIOException()
+            throws PuffinUserException {
+        syntheticSuite1.getSamples().forEach(s -> {
+            s.selectAll();
+            s.useSelectionForPca();
+            s.doPca(Correction.NONE);
+        });
+        syntheticSuite1.calculateSuiteMeans(syntheticSuite1.getSamples(),
+                syntheticSuite1.getSites());
+        syntheticSuite1.saveCalcsSuite(temporaryFolder.getRoot().toPath().
+                resolve("nonexistent").resolve("somefile.csv").toFile());
+    }
+    
     @Test
     public void testDoReversalTest() {
         final List<Vec3> suite1directions =
@@ -1338,6 +1368,18 @@ public class SuiteTest {
         suite.saveCalcsSample(temporaryFolder.newFile());
     }
     
+    @Test(expected = PuffinUserException.class)
+    public void testSavedCalcsSampleWithIOException()
+            throws PuffinUserException {
+        syntheticSuite1.getSamples().forEach(s -> {
+            s.selectAll();
+            s.useSelectionForPca();
+            s.doPca(Correction.NONE);
+        });
+        syntheticSuite1.saveCalcsSample(temporaryFolder.getRoot().toPath().
+                resolve("nonexistent").resolve("somefile.csv").toFile());
+    }
+    
     @Test
     public void testExportToFilesWithFileBlockingDirectory()
             throws IOException {
@@ -1345,7 +1387,7 @@ public class SuiteTest {
         final File file = temporaryFolder.newFile("blocks_directory");
         syntheticSuite1.exportToFiles(file,
                 Arrays.asList(DatumField.AREA));
-        assertTrue(handler.wasOneWarningLogged());
+        assertTrue(handler.wasOneMessageLogged(Level.WARNING));
     }
     
     @Test
@@ -1358,6 +1400,20 @@ public class SuiteTest {
         syntheticSuite1.exportToFiles(specifiedDirectory,
                 Arrays.asList(DatumField.AREA));
         assertEquals(Level.WARNING, handler.records.get(0).getLevel());
+    }
+    
+    @Test
+    public void testFromStringWithMalformedCreationDate() {
+        final ListHandler handler = TestUtils.ListHandler.createAndAdd();
+        syntheticSuite1.fromString("CREATION_DATE\twibble");
+        assertTrue(handler.wasOneMessageLogged(Level.SEVERE));
+    }
+    
+    @Test
+    public void testFromStringWithMalformedModificationDate() {
+        final ListHandler handler = TestUtils.ListHandler.createAndAdd();
+        syntheticSuite1.fromString("MODIFICATION_DATE\twibble");
+        assertTrue(handler.wasOneMessageLogged(Level.SEVERE));
     }
     
 }

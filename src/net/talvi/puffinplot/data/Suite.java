@@ -784,7 +784,7 @@ public final class Suite implements SampleGroup {
                         fisherCsv, gcCsv, gcCsv2, locCsv, vgpCsv);
             }
         } catch (IOException ex) {
-           throw new Error(ex);
+           throw new PuffinUserException(ex);
         } finally {
             if (writer != null) {
                 try { writer.close(); }
@@ -1375,33 +1375,35 @@ public final class Suite implements SampleGroup {
         datum.setMoment(Vec3.meanDirection(vectors));
     }
         
-    /*
-    This (currently untested) function should merge duplicate measurements
-    within the Sample, but the Suite also has references to the Datum
-    instances which need to be updated. The idea is that this sample
-    is called for each sample that needs merging, and the union of the
-    returned collections is then passed to a function in Suite which
-    will remove the listed Datum objects from its data list. (I don't
-    think Suite keeps any caches which need to be updated, but I should
-    check this when implementing.) This method should be kept
-    package-private, or moved to Suite and kept fully private -- if
-    it's called without corresponding updates to Suite.data, the data
-    structures end up in an inconsistent state and strange results will
-    probably ensue.
+    /** 
+     * This (currently untested) method should merge duplicate measurements
+     * within a specified Sample, but the Suite also has references to the Datum
+     * instances which need to be updated. The idea is that this method is
+     * called for each sample that needs merging, and the union of the returned
+     * collections is then passed to a function in Suite which will remove the
+     * listed Datum objects from its data list. (I don't think Suite keeps any
+     * caches whIf this method is called without corresponding updates to
+     * Suite.data, the data structures end up in an inconsistent state and
+     * strange results will probably ensue.
+     * 
+     * 
      */
     private Collection mergeDuplicateMeasurementsInSample(Sample sample) {
-        Map<TreatAndStep, List<Datum>> treatMap = new HashMap<>();
+        final Map<TreatAndStep, List<Datum>> treatMap = new HashMap<>();
         for (Datum d : sample.getData()) {
             final TreatAndStep key = new TreatAndStep(d);
             if (!treatMap.containsKey(key)) {
-                treatMap.put(key, new ArrayList<Datum>());
+                treatMap.put(key, new ArrayList<>());
             }
             treatMap.get(key).add(d);
         }
-        // First check if any merging needs to be done at all, to avoid
-        // needlessly creating a new object.
+        
+        /*
+         * First check if any merging needs to be done at all, to avoid
+         * needlessly creating a new object.
+         */
         boolean anyMergables = false;
-        for (List<Datum> ds : treatMap.values()) {
+        for (List<Datum> ds: treatMap.values()) {
             if (ds.size() > 1) {
                 anyMergables = true;
                 break;
@@ -1410,7 +1412,8 @@ public final class Suite implements SampleGroup {
         if (!anyMergables) {
             return Collections.EMPTY_LIST;
         }
-        Collection<Datum> toRemove = new HashSet<>(treatMap.size());
+
+        final Collection<Datum> toRemove = new HashSet<>(treatMap.size());
         for (Datum d : sample.getData()) {
             List<Datum> duplicates = treatMap.get(new TreatAndStep(d));
             if (duplicates.get(0) == d) {

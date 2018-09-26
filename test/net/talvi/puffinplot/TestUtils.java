@@ -51,9 +51,9 @@ public class TestUtils {
 
         @Override public void close() throws SecurityException {}
         
-        public boolean wasOneWarningLogged() {
+        public boolean wasOneMessageLogged(Level level) {
             return records.size() == 1 &&
-                    records.get(0).getLevel() == Level.WARNING;
+                    records.get(0).getLevel() == level;
         }
         
         public static ListHandler createAndAdd() {

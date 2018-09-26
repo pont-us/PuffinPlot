@@ -16,20 +16,19 @@
  */
 package net.talvi.puffinplot.data;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
 import net.talvi.puffinplot.TestUtils.ListHandler;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
 
-/**
- *
- * @author pont
- */
 public class DatumTest {
     
     private Datum defaultDatum;
+    private double delta = 1e-10;
     
     @Before
     public void setUp() {
@@ -57,7 +56,7 @@ public class DatumTest {
     public void testSetValueWithBadNumberFormat() {
         final ListHandler handler = ListHandler.createAndAdd();
         new Datum().setValue(DatumField.AREA, "not a number", 1);
-        assertTrue(handler.wasOneWarningLogged());
+        assertTrue(handler.wasOneMessageLogged(Level.WARNING));
     }
     
     @Test
@@ -140,6 +139,92 @@ public class DatumTest {
         final Suite suite = new Suite("test");
         defaultDatum.setSuite(suite);
         assertEquals(suite, defaultDatum.getSuite());
+    }
+    
+    @Test
+    public void testGetFormattedTreatmentLevelThermal() {
+        final Datum thermal = new Datum();
+        thermal.setTreatType(TreatType.THERMAL);
+        thermal.setTemp(70);
+        assertEquals("70", thermal.getFormattedTreatmentLevel());
+    }
+
+    @Test
+    public void testGetFormattedTreatmentLevelAf() {
+        final Datum af = new Datum();
+        af.setTreatType(TreatType.DEGAUSS_Z);
+        af.setAfZ(0.6);
+        assertEquals("600", af.getFormattedTreatmentLevel());
+    }
+
+    @Test
+    public void testMaxTreatmentLevel() {
+        final List<Datum> data = new ArrayList<>();
+        for (double tl: new double[] {20, 80, 50}) {
+            final Datum datum = new Datum();
+            datum.setTreatType(TreatType.THERMAL);
+            datum.setTemp(tl);
+            data.add(datum);
+        }
+        assertEquals(80, Datum.maxTreatmentLevel(data), delta);
+    }
+
+    @Test
+    public void testMaxIntensity() {
+        final List<Datum> data = new ArrayList<>();
+        for (double intensity: new double[] {3, 1, 4, 1, 5, 9, 2, 6}) {
+            final Datum datum = new Datum(intensity, 0, 0);
+            data.add(datum);
+        }
+        assertEquals(9, Datum.maxIntensity(data), delta);
+    }
+
+    @Test
+    public void testMaxMagSus() {
+        final List<Datum> data = new ArrayList<>();
+        for (double magSus: new double[] {3, 1, 4, 1, 5, 9, 2, 6}) {
+            final Datum datum = new Datum();
+            datum.setMagSus(magSus);
+            data.add(datum);
+        }
+        assertEquals(9, Datum.maxMagSus(data), delta);
+    }
+    
+    @Test
+    public void testIsMagSusOnly() {
+        final Datum withMoment = new Datum(1, 2, 3);
+        assertFalse(withMoment.isMagSusOnly());
+        withMoment.setMagSus(7);
+        assertFalse(withMoment.isMagSusOnly());
+        final Datum noMoment = new Datum(null);
+        assertFalse(noMoment.isMagSusOnly());
+        noMoment.setMagSus(7);
+        assertTrue(noMoment.isMagSusOnly());
+    }
+    
+    @Test
+    public void testSetAndGetArmField() {
+        final Datum d = new Datum();
+        final double armField = 77;
+        d.setArmField(armField);
+        assertEquals(armField, d.getArmField(), delta);
+    }
+    
+    @Test
+    public void testSetAndGetArea() {
+        final Datum d = new Datum();
+        final double area = 12;
+        d.setArea(area);
+        assertEquals(area, d.getArea(), delta);
+    }
+    
+    @Test
+    public void testSetAndGetArmAxis() {
+        final Datum d = new Datum();
+        for (ArmAxis axis: ArmAxis.values()) {
+            d.setArmAxis(axis);
+            assertEquals(axis, d.getArmAxis());
+        }
     }
 
 }
