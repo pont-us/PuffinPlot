@@ -702,13 +702,12 @@ public final class Suite implements SampleGroup {
      * @throws PuffinUserException if an error occurred while writing the file
      */
     public void saveCalcsSample(File file) throws PuffinUserException {
-        CsvWriter writer = null;
-        try {
-            if (samples.isEmpty()) {
-                throw new PuffinUserException("No calculations to save.");
-            }
-
-            writer = new CsvWriter(new FileWriter(file));
+        if (samples.isEmpty()) {
+            throw new PuffinUserException("No calculations to save.");
+        }
+            
+        try (FileWriter fw = new FileWriter(file);
+                CsvWriter writer = new CsvWriter(fw)) {
             writer.writeCsv("Suite", measType.getColumnHeader(),
                     "NRM intensity (A/m)",
                     "MS jump temp. (degC)",
@@ -728,24 +727,24 @@ public final class Suite implements SampleGroup {
                 final Tensor ams = sample.getAms();
                 writer.writeCsv(getName(), sample.getNameOrDepth(),
                         String.format(Locale.ENGLISH, "%.4g", sample.getNrm()),
-                        String.format(Locale.ENGLISH, "%.4g", sample.getMagSusJump()),
+                        String.format(Locale.ENGLISH, "%.4g",
+                                sample.getMagSusJump()),
                         sample.getData().size(),
-                        pca == null ? PcaAnnotated.getEmptyFields() : pca.toStrings(),
-                        circle == null ? GreatCircle.getEmptyFields() : circle.toStrings(),
-                        mdf == null ? MedianDestructiveField.getEmptyFields() : mdf.toStrings(),
-                        fisher == null ? FisherValues.getEmptyFields() : fisher.toStrings(),
-                        ams == null ? Tensor.getEmptyFields() : ams.toStrings(),
+                        pca == null ? PcaAnnotated.getEmptyFields() :
+                                pca.toStrings(),
+                        circle == null ? GreatCircle.getEmptyFields() :
+                                circle.toStrings(),
+                        mdf == null ? MedianDestructiveField.getEmptyFields() :
+                                mdf.toStrings(),
+                        fisher == null ? FisherValues.getEmptyFields() :
+                                fisher.toStrings(),
+                        ams == null ? Tensor.getEmptyFields() :
+                                ams.toStrings(),
                         sample.getCustomFlags().toStrings(),
                         sample.getCustomNotes().toStrings());
             }
         } catch (IOException ex) {
             throw new PuffinUserException(ex);
-        } finally {
-            try {
-                if (writer != null) writer.close();
-            } catch (IOException ex) {
-                throw new PuffinUserException(ex);
-            }
         }
     }
 
@@ -754,12 +753,11 @@ public final class Suite implements SampleGroup {
      * @throws PuffinUserException if an error occurred while writing the file
      */
     public void saveCalcsSite(File file) throws PuffinUserException {
-        CsvWriter writer = null;
         if (getSites() == null || getSites().isEmpty()) {
             throw new PuffinUserException("No sites are defined.");
         }
-        try {
-            writer = new CsvWriter(new FileWriter(file));
+        try (FileWriter fw = new FileWriter(file);
+                CsvWriter writer = new CsvWriter(fw)) {
             writer.writeCsv("Site", "Samples",
                     FisherValues.getHeaders(), GreatCircles.getHeaders(),
                     Site.getGreatCircleLimitHeader(),
@@ -785,11 +783,6 @@ public final class Suite implements SampleGroup {
             }
         } catch (IOException ex) {
            throw new PuffinUserException(ex);
-        } finally {
-            if (writer != null) {
-                try { writer.close(); }
-                catch (IOException e) { throw new Error(e); }
-            }
         }
     }
 
@@ -798,23 +791,17 @@ public final class Suite implements SampleGroup {
      * @throws PuffinUserException if an error occurred while writing the file
      */
     public void saveCalcsSuite(File file) throws PuffinUserException {
-        CsvWriter writer = null;
-        try {
-            if (suiteCalcs == null) {
-                throw new PuffinUserException("There are no calculations to save.");
-            }
-            writer = new CsvWriter(new FileWriter(file));
+        if (suiteCalcs == null) {
+            throw new PuffinUserException("There are no calculations to save.");
+        }
+        try (FileWriter fw = new FileWriter(file);
+                CsvWriter writer = new CsvWriter(fw)) {
             writer.writeCsv(SuiteCalcs.getHeaders());
             for (List<String> line: suiteCalcs.toStrings()) {
                 writer.writeCsv(line);
             }
         } catch (IOException ex) {
            throw new PuffinUserException(ex);
-        } finally {
-            if (writer != null) {
-                try { writer.close(); }
-                catch (IOException e) { logger.warning(e.getLocalizedMessage()); }
-            }
         }
     }
 
@@ -1382,7 +1369,8 @@ public final class Suite implements SampleGroup {
      * called for each sample that needs merging, and the union of the returned
      * collections is then passed to a function in Suite which will remove the
      * listed Datum objects from its data list. (I don't think Suite keeps any
-     * caches whIf this method is called without corresponding updates to
+     * caches which need to be updated, but I should check this when
+     * implementing.) If this method is called without corresponding updates to
      * Suite.data, the data structures end up in an inconsistent state and
      * strange results will probably ensue.
      * 

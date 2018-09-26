@@ -244,7 +244,34 @@ public class SuiteTest {
             sample.doPca(Correction.NONE);
             sample.fitGreatCircle(Correction.NONE);
             sample.calculateMdf();
+            sample.calculateFisher(Correction.NONE);
         }
+        testSaveCalcsSampleHelper();
+    }
+
+    @Test
+    public void testSaveCalcsSampleMdfOnly()
+            throws IOException, PuffinUserException {
+        for (Sample sample: syntheticSuite1.getSamples()) {
+            sample.getData().stream().forEach(d -> d.setSelected(true));
+            sample.calculateMdf();
+        }
+        testSaveCalcsSampleHelper();
+    }
+
+    @Test
+    public void testSaveCalcsSamplePcaOnly()
+            throws IOException, PuffinUserException {
+        for (Sample sample: syntheticSuite1.getSamples()) {
+            sample.getData().stream().forEach(d -> d.setSelected(true));
+            sample.useSelectionForPca();
+            sample.doPca(Correction.NONE);
+        }
+        testSaveCalcsSampleHelper();
+    }
+
+    private void testSaveCalcsSampleHelper()
+            throws PuffinUserException, IOException {
         final File csvFile = File.createTempFile("puffinplot-test-",
                 ".csv", temporaryFolder.getRoot());
         syntheticSuite1.saveCalcsSample(csvFile);

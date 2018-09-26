@@ -16,6 +16,7 @@
  */
 package net.talvi.puffinplot.data;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
@@ -27,7 +28,7 @@ import java.util.Objects;
  * Despite the name of the class, any single character may be used as the
  * separator.
  */
-public class CsvWriter {
+public class CsvWriter implements Closeable {
 
     private final Writer writer;
     private final String separator;
