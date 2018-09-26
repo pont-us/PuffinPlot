@@ -106,37 +106,20 @@ public class SuiteTest {
     }
     
     private void createSuites() {
-        syntheticSuite1 = new Suite("SuiteTest");
-        for (int depth=0; depth<10; depth++) {
-            final String depthString = String.format("%d", depth);
-            final Sample sample = new Sample(depthString, syntheticSuite1);
-            for (int demag=0; demag<100; demag += 10) {
-                final Datum d = new Datum((depth+1.)*(100.-demag),
-                        depth*50, demag);
-                d.setDepth(depthString);
-                d.setSuite(syntheticSuite1);
-                d.setMeasType(MeasType.CONTINUOUS);
-                d.setAfX(demag);
-                d.setAfY(demag);
-                d.setAfZ(demag);
-                d.setTreatType(TreatType.DEGAUSS_XYZ);
-                d.setSample(sample);
-                d.setMagSus(depth);
-                sample.addDatum(d);
-                syntheticSuite1.addDatum(d);
-            }
-        }
-        syntheticSuite1.updateReverseIndex();
-        
-        syntheticSuite2 = new Suite("SuiteTest");
+        syntheticSuite1 = createContinuousSuite();
+        syntheticSuite2 = createDiscreteSuite();
+    }
+
+    private static Suite createDiscreteSuite() {
+        final Suite suite = new Suite("SuiteTest");
         for (int sampleIndex=0; sampleIndex<10; sampleIndex++) {
             final String sampleName = String.format("SAMPLE_%d", sampleIndex);
-            final Sample sample = new Sample(sampleName, syntheticSuite2);
+            final Sample sample = new Sample(sampleName, suite);
             for (int demag=0; demag<100; demag += 10) {
                 final Datum d = new Datum((sampleIndex+1.)*(100.-demag),
                         sampleIndex*50, demag);
                 d.setDiscreteId(sampleName);
-                d.setSuite(syntheticSuite2);
+                d.setSuite(suite);
                 d.setMeasType(MeasType.DISCRETE);
                 d.setAfX(demag);
                 d.setAfY(demag);
@@ -149,10 +132,36 @@ public class SuiteTest {
                 d.setFormAz(0);
                 d.setFormDip(0);
                 sample.addDatum(d);
-                syntheticSuite2.addDatum(d);
+                suite.addDatum(d);
             }
         }
-        syntheticSuite2.updateReverseIndex();
+        suite.updateReverseIndex();
+        return suite;
+    }
+
+    private static Suite createContinuousSuite() {
+        final Suite suite = new Suite("SuiteTest");
+        for (int depth=0; depth<10; depth++) {
+            final String depthString = String.format("%d", depth);
+            final Sample sample = new Sample(depthString, suite);
+            for (int demag=0; demag<100; demag += 10) {
+                final Datum d = new Datum((depth+1.)*(100.-demag),
+                        depth*50, demag);
+                d.setDepth(depthString);
+                d.setSuite(suite);
+                d.setMeasType(MeasType.CONTINUOUS);
+                d.setAfX(demag);
+                d.setAfY(demag);
+                d.setAfZ(demag);
+                d.setTreatType(TreatType.DEGAUSS_XYZ);
+                d.setSample(sample);
+                d.setMagSus(depth);
+                sample.addDatum(d);
+                suite.addDatum(d);
+            }
+        }
+        suite.updateReverseIndex();
+        return suite;
     }
     
     @Test
@@ -432,8 +441,15 @@ public class SuiteTest {
         }
     }
     
+    /**
+     * This rather bloated test simultaneously tests calculateSuiteMeans,
+     * saveCalcsSuite, and calculateMultiSuiteMeans.
+     * 
+     * @throws PuffinUserException
+     * @throws IOException 
+     */
     @Test
-    public void testCalculateAndSaveSuiteMeans()
+    public void testCalculateAndSaveSuiteMeansAndMultiSuiteMeans()
             throws PuffinUserException, IOException {
         /*
          * The test data is arranged so as to distribute sample and site
@@ -459,12 +475,23 @@ public class SuiteTest {
             {4, 2, -1}
         }, true);
 
-        final Suite suite = new Suite("test");
+        // A single suite for testing calculateSuiteMeans
+        final Suite bigSuite = new Suite("test");
+        
+        /*
+         * Two smaller suites, which will have the same contents as bigSuite,
+         * for testing calculateMultiSuiteMeans. The first suite will contain
+         * the two even-indexed sites, and the second the odd-indexed sites.
+         */
+        final List<Suite> smallSuites = Arrays.asList(
+                new Suite("test"), new Suite("test"));
 
         /*
          * Create and initialize sites.
          */
-        final List<Site> sites = new ArrayList<>();
+        final List<Site> bigSuiteSites = new ArrayList<>();
+        final List<List<Site>> smallSuiteSites = Arrays.asList(
+                new ArrayList<>(), new ArrayList<>());
         final double[][] siteLocations = {
             {45, 45},
             {-45, 45},
@@ -472,34 +499,66 @@ public class SuiteTest {
             {-30, -50}
         };
         for (int siteIndex = 0; siteIndex < siteLocations.length; siteIndex++) {
-            final Site site = suite.getOrCreateSite(Integer.toString(siteIndex));
-            site.setLocation(Location.fromDegrees(siteLocations[siteIndex][0],
-                    siteLocations[siteIndex][1]));
-            sites.add(site);
+            final String siteId = Integer.toString(siteIndex);
+            final Site bigSuiteSite = bigSuite.getOrCreateSite(siteId);
+            final Location location =
+                    Location.fromDegrees(siteLocations[siteIndex][0],
+                            siteLocations[siteIndex][1]);
+            bigSuiteSite.setLocation(location);
+            bigSuiteSites.add(bigSuiteSite);
+            
+            // Pick suite according to the site index.
+            final int smallSuiteIndex = siteIndex % 2;
+            final Suite smallSuite = smallSuites.get(smallSuiteIndex);
+            final Site smallSuiteSite = smallSuite.getOrCreateSite(siteId);
+            smallSuiteSite.setLocation(location);
+            smallSuiteSites.get(smallSuiteIndex).add(smallSuiteSite);
         }
         
         /*
-         * Create samples and add them to the sites and suite.
+         * Create samples and add them to the sites and suites.
          */
         final List<Sample> samples = new ArrayList<>();
         for (int i=0; i<testData.size(); i++) {
-            final Sample sample = new Sample(String.format("%d", i), suite);
-            sample.setImportedDirection(testData.get(i));
-            final Site site = sites.get(i % siteLocations.length);
-            sample.setSite(site);
-            site.addSample(sample);
-            samples.add(sample);
-            suite.addSample(sample, Integer.toString(i));
+            final Vec3 direction = testData.get(i);
+            final int siteIndex = i % siteLocations.length;
+            final int smallSuiteIndex = siteIndex % 2;
+            final String sampleName = String.format("%d", i);
+
+            final Sample bigSuiteSample = new Sample(sampleName, bigSuite);
+            bigSuiteSample.setImportedDirection(direction);
+            final Site site = bigSuiteSites.get(siteIndex);
+            bigSuiteSample.setSite(site);
+            site.addSample(bigSuiteSample);
+            samples.add(bigSuiteSample);
+            bigSuite.addSample(bigSuiteSample, Integer.toString(i));
+
+            final Suite smallSuite = smallSuites.get(smallSuiteIndex);
+            final Sample smallSuiteSample = new Sample(sampleName, smallSuite);
+            smallSuiteSample.setImportedDirection(direction);
+            final Site site2 = smallSuiteSites.get(smallSuiteIndex).get(siteIndex / 2);
+            smallSuiteSample.setSite(site2);
+            site2.addSample(smallSuiteSample);
+            smallSuite.addSample(smallSuiteSample, Integer.toString(i));
         }
         
         /*
-         * Generate the actual data from the hand-crafted Suite.
+         * Generate the actual data from the hand-crafted suites. The small
+         * suites combined contain the same data as the large suite, so we
+         * expect the calculation results to match.
          */
-        suite.doAllCalculations(Correction.NONE, "true");
-        for (Site site: sites) {
-            site.calculateFisherStats(Correction.NONE);
+        bigSuite.doAllCalculations(Correction.NONE, "true");
+        bigSuiteSites.forEach(s -> s.calculateFisherStats(Correction.NONE));
+        bigSuite.calculateSuiteMeans(bigSuite.getSamples(),
+                bigSuite.getSites());
+        
+        for (Suite smallSuite: smallSuites) {
+            smallSuite.doAllCalculations(Correction.NONE, "true");
+            smallSuite.getSites().forEach(s -> 
+                s.calculateFisherStats(Correction.NONE));
         }
-        suite.calculateSuiteMeans(suite.getSamples(), suite.getSites());
+        final SuiteCalcs multiSuiteMeans =
+                Suite.calculateMultiSuiteMeans(smallSuites);
         
         /*
          * Generate the expected data by calculating directly using SuiteCalcs.
@@ -514,10 +573,10 @@ public class SuiteTest {
                                 s.getSite().getLocation()).getLocation().
                                 toVec3()).collect(Collectors.toList()));
         final SuiteCalcs.Means dirsBySite =
-                SuiteCalcs.Means.calculate(sites.stream().map((s) ->
+                SuiteCalcs.Means.calculate(bigSuiteSites.stream().map((s) ->
                 s.getMeanDirection()).collect(Collectors.toList()));
         final SuiteCalcs.Means vgpsBySite =
-                SuiteCalcs.Means.calculate(sites.stream().map((s) ->
+                SuiteCalcs.Means.calculate(bigSuiteSites.stream().map((s) ->
                 VGP.calculate(s.getMeanDirection(), 0, s.getLocation()).
                         getLocation().toVec3()).collect(Collectors.toList()));
         final SuiteCalcs expectedCalcs = new SuiteCalcs(dirsBySite,
@@ -529,9 +588,12 @@ public class SuiteTest {
          * complications from exact floating-point comparisons.
          */
         assertEquals(expectedCalcs.toStrings(),
-                suite.getSuiteMeans().toStrings());
+                bigSuite.getSuiteMeans().toStrings());
         
-        StringBuffer expectedFileContents = new StringBuffer();
+        assertEquals(expectedCalcs.toStrings(),
+                multiSuiteMeans.toStrings());
+        
+        StringBuilder expectedFileContents = new StringBuilder();
         expectedFileContents.append(SuiteCalcs.getHeaders().stream().
                 collect(Collectors.joining(",")) + "\n");
         for (List<String> line: expectedCalcs.toStrings()) {
@@ -541,13 +603,12 @@ public class SuiteTest {
         
         final File savedCalcs = temporaryFolder.getRoot().toPath().
                 resolve("suitecalcs.csv").toFile();
-        suite.saveCalcsSuite(savedCalcs);
+        bigSuite.saveCalcsSuite(savedCalcs);
         
         final String actualFileContents =
                 new String(Files.readAllBytes(savedCalcs.toPath()));
-        
         assertEquals(expectedFileContents.toString(), actualFileContents);
-        }
+    }
     
     @Test
     public void testReadDirectionalData() {

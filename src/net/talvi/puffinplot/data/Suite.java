@@ -140,9 +140,8 @@ public final class Suite implements SampleGroup {
     }
     
     /** Calculates and returns Fisher statistics on all the calculated PCA 
-     * directions for samples within supplied suite. The Fisher parameters
-     * are stored in the suite and can be retrieved with
-     * {@link #getSuiteMeans()}.
+     * directions for samples within supplied suites.
+     * 
      * @param suites the suites on which to calculate statistics
      * @return the results of the calculation
      */
