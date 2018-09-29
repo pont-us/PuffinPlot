@@ -19,6 +19,10 @@ package net.talvi.puffinplot.data;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.DoubleConsumer;
+import java.util.function.DoubleSupplier;
+import java.util.function.ObjDoubleConsumer;
+import java.util.function.ToDoubleFunction;
 import java.util.logging.Level;
 import net.talvi.puffinplot.TestUtils.ListHandler;
 import org.junit.Test;
@@ -28,7 +32,7 @@ import org.junit.Before;
 public class DatumTest {
     
     private Datum defaultDatum;
-    private double delta = 1e-10;
+    private static final double delta = 1e-10;
     
     @Before
     public void setUp() {
@@ -211,14 +215,6 @@ public class DatumTest {
     }
     
     @Test
-    public void testSetAndGetArea() {
-        final Datum d = new Datum();
-        final double area = 12;
-        d.setArea(area);
-        assertEquals(area, d.getArea(), delta);
-    }
-    
-    @Test
     public void testSetAndGetArmAxis() {
         final Datum d = new Datum();
         for (ArmAxis axis: ArmAxis.values()) {
@@ -226,5 +222,130 @@ public class DatumTest {
             assertEquals(axis, d.getArmAxis());
         }
     }
+    
+    @Test
+    public void testGetTreatmentStepArm() {
+        testGetTreatmentStep(TreatType.ARM, Datum::setAfZ);
+    }
+    
+    @Test
+    public void testGetTreatmentStepDegaussXyz() {
+        testGetTreatmentStep(TreatType.DEGAUSS_XYZ, Datum::setAfZ);
+    }
+    
+    @Test
+    public void testGetTreatmentStepDegaussZ() {
+        testGetTreatmentStep(TreatType.DEGAUSS_Z, Datum::setAfZ);
+    }
+    
+    @Test
+    public void testGetTreatmentStepIRM() {
+        testGetTreatmentStep(TreatType.IRM, Datum::setIrmField);
+    }
+    
+    @Test
+    public void testGetTreatmentStepThermal() {
+        testGetTreatmentStep(TreatType.THERMAL, Datum::setTemp);
+    }
+    
+    private static void testGetTreatmentStep(TreatType type,
+            ObjDoubleConsumer<Datum> setValue) {
+        final Datum d = new Datum();
+        for (double value: new double[] {0, 0.01, 17, 529}) {
+            d.setTreatType(type);
+            setValue.accept(d, value);
+            assertEquals(value, d.getTreatmentStep(), delta);
+        }
+    }
+    
+    @Test
+    public void testSetAndGetSampAz() {
+        testDoubleSetterAndGetter(Datum::setSampAz, Datum::getSampAz);
+    }
+    
+    @Test
+    public void testSetAndGetSampDip() {
+        testDoubleSetterAndGetter(Datum::setSampDip, Datum::getSampDip);
+    }
+    
+    @Test
+    public void testSetAndGetSampHade() {
+        testDoubleSetterAndGetter(Datum::setSampHade, Datum::getSampHade);
+    }
+    
+    @Test
+    public void testSetAndGetAfX() {
+        testDoubleSetterAndGetter(Datum::setAfX, Datum::getAfX);
+    }
+    
+    @Test
+    public void testSetAndGetAfY() {
+        testDoubleSetterAndGetter(Datum::setAfY, Datum::getAfY);
+    }
+    
+    @Test
+    public void testSetAndGetAfZ() {
+        testDoubleSetterAndGetter(Datum::setAfZ, Datum::getAfZ);
+    }
+    
+    @Test
+    public void testSetAndGetArea() {
+        testDoubleSetterAndGetter(Datum::setArea, Datum::getArea);
+    }
+    
+    @Test
+    public void testSetAndGetMagSus() {
+        testDoubleSetterAndGetter(Datum::setMagSus, Datum::getMagSus);
+    }
+    
+    @Test
+    public void testSetAndGetVolume() {
+        testDoubleSetterAndGetter(Datum::setVolume, Datum::getVolume);
+    }
 
+    @Test
+    public void testSetAndGetFormAz() {
+        testDoubleSetterAndGetter(Datum::setFormAz, Datum::getFormAz);
+    }
+    
+    @Test
+    public void testSetAndGetFormDip() {
+        testDoubleSetterAndGetter(Datum::setFormDip, Datum::getFormDip);
+    }
+    
+    @Test
+    public void testSetAndGetFormStrike() {
+        testDoubleSetterAndGetter(Datum::setFormStrike, Datum::getFormStrike);
+    }
+    
+    @Test
+    public void testSetAndGetXDrift() {
+        testDoubleSetterAndGetter(Datum::setXDrift, Datum::getXDrift);
+    }
+    
+    @Test
+    public void testSetAndGetYDrift() {
+        testDoubleSetterAndGetter(Datum::setYDrift, Datum::getYDrift);
+    }
+    
+    @Test
+    public void testSetAndGetZDrift() {
+        testDoubleSetterAndGetter(Datum::setZDrift, Datum::getZDrift);
+    }
+    
+    private void testDoubleSetterAndGetter(ObjDoubleConsumer<Datum> setter,
+            ToDoubleFunction<Datum> getter) {
+        final Suite suite = new Suite("test");
+        final Datum datum = new Datum();
+        datum.setSuite(suite);
+        for (double value: new double[] {0, 0.01, 10.01, 17, 129}) {
+            suite.setSaved(true);
+            setter.accept(datum, value);
+            assertFalse(suite.isSaved());
+            assertEquals(value, getter.applyAsDouble(datum), delta);
+        }
+    }
+    
+
+    
 }

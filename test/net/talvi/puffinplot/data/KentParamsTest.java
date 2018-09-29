@@ -24,6 +24,7 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import net.talvi.puffinplot.TestUtils;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -135,7 +136,8 @@ public class KentParamsTest {
         final KentParams kpFromDoubles = new KentParams(tau, tauSigma, dec, inc,
                 etaMag, etaDec, etaInc, zetaMag, zetaDec, zetaInc);
         final KentParams kpFromString =
-                new KentParams(String.format("%f %f %f %f %f %f %f %f %f %f",
+                new KentParams(String.format(Locale.ENGLISH,
+                        "%f %f %f %f %f %f %f %f %f %f",
                         tau, tauSigma, dec, inc, etaMag, etaDec, etaInc,
                         zetaMag, zetaDec, zetaInc));
         for (KentParams kp: new KentParams[] {kpFromDoubles, kpFromString}) {

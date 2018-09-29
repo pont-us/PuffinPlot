@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.function.Function;
@@ -1329,6 +1330,7 @@ public class SuiteTest {
                 final Datum datum = datumIterator.next();
                 final String line = lineIterator.next();
                 final Scanner scanner = new Scanner(line);
+                scanner.useLocale(Locale.ENGLISH);
                 final double actualAfx = scanner.nextDouble();
                 final Vec3 actualMoment =
                         new Vec3(scanner.nextDouble(), scanner.nextDouble(),

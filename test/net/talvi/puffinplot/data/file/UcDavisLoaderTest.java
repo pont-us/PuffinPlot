@@ -21,6 +21,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -113,7 +114,8 @@ public class UcDavisLoaderTest {
         
         for (int i=0; i<FILE_DATA.length; i++) {
             final double[] dataline = FILE_DATA[i];
-            final String depthString = String.format("%.5f", dataline[0]);
+            final String depthString = String.format(Locale.ENGLISH,
+                    "%.5f", dataline[0]);
             final double level = dataline[1] / 1000.;
             final Datum d = suite.getSampleByName(depthString).
                     getDatumByTreatmentLevel(level);

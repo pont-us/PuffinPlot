@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -150,7 +151,7 @@ public class SampleTest {
     @Test
     public void testSetValue() {
         final double value = 3.14;
-        final String valueString = String.format("%g", value);
+        final String valueString = String.format(Locale.ENGLISH, "%g", value);
         final Sample sample = new Sample("sample1", null);
 
         sample.setValue(DatumField.SAMPLE_AZ, valueString);
