@@ -22,8 +22,12 @@ import java.util.List;
 import java.util.function.DoubleConsumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.ObjDoubleConsumer;
+import java.util.function.ObjIntConsumer;
 import java.util.function.ToDoubleFunction;
+import java.util.function.ToIntFunction;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import net.talvi.puffinplot.TestUtils.ListHandler;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -61,6 +65,11 @@ public class DatumTest {
         final ListHandler handler = ListHandler.createAndAdd();
         new Datum().setValue(DatumField.AREA, "not a number", 1);
         assertTrue(handler.wasOneMessageLogged(Level.WARNING));
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetValueWithNonSettableField() {
+        new Datum().setValue(DatumField.VIRT_MSJUMP, "1.0", 1);
     }
     
     @Test
@@ -186,7 +195,8 @@ public class DatumTest {
     @Test
     public void testMaxMagSus() {
         final List<Datum> data = new ArrayList<>();
-        for (double magSus: new double[] {3, 1, 4, 1, 5, 9, 2, 6}) {
+        for (double magSus:
+                new double[] {3, 1, 4, 1, 5, Double.NaN, 9, 2, 6, 5}) {
             final Datum datum = new Datum();
             datum.setMagSus(magSus);
             data.add(datum);
@@ -338,7 +348,7 @@ public class DatumTest {
         final Suite suite = new Suite("test");
         final Datum datum = new Datum();
         datum.setSuite(suite);
-        for (double value: new double[] {0, 0.01, 10.01, 17, 129}) {
+        for (double value: new double[] {0, 0.01, 10.01, 17, 129, 280}) {
             suite.setSaved(true);
             setter.accept(datum, value);
             assertFalse(suite.isSaved());
@@ -346,6 +356,52 @@ public class DatumTest {
         }
     }
     
+    @Test
+    public void testSetAndGetRunNumber() {
+        testIntSetterAndGetter(Datum::setRunNumber, Datum::getRunNumber);
+    }
+    
+    @Test
+    public void testSetAndGetSlotNumber() {
+        testIntSetterAndGetter(Datum::setSlotNumber, Datum::getSlotNumber);
+    }
+    
+    private void testIntSetterAndGetter(ObjIntConsumer<Datum> setter,
+            ToIntFunction<Datum> getter) {
+        final Suite suite = new Suite("test");
+        final Datum datum = new Datum();
+        datum.setSuite(suite);
+        for (int value: new int[] {-1, 0, 5, 10, 12, 9997}) {
+            suite.setSaved(true);
+            setter.accept(datum, value);
+            assertFalse(suite.isSaved());
+            assertEquals(value, getter.applyAsInt(datum), delta);
+        }
+    }
+    
+    @Test
+    public void testIgnoreOnLoading() {
+        for (MeasType mt: MeasType.values()) {
+            final Datum d = new Datum();
+            d.setMeasType(mt);
+            assertEquals(mt == MeasType.NONE, d.ignoreOnLoading());
+        }
+    }
 
+    @Test
+    public void testSetAndGetLine() {
+        final Datum d = new Datum();
+        final Line line = new Line(17);
+        d.setLine(line);
+        assertSame(line, d.getLine());
+    }
+
+    @Test
+    public void testSetAndGetTimestamp() {
+        final Datum d = new Datum();
+        final String timestamp = "An arbitrary string";
+        d.setTimestamp(timestamp);
+        assertEquals(timestamp, d.getTimestamp());
+    }
     
 }
