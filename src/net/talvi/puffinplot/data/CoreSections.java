@@ -20,6 +20,12 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+/**
+ * A collection of {@code CoreSection}s, stored as a linked hash map
+ * indexed by a string identifier. The purpose of this class is to
+ * implement useful operations on groups of {@code CoreSection}s.
+ * 
+ */
 class CoreSections {
 
     private final LinkedHashMap<String,CoreSection> sections;
@@ -28,6 +34,16 @@ class CoreSections {
         this.sections = sections;
     }
     
+    /**
+     * Split a sample list into core sections according to the discrete
+     * IDs of the samples. It is assumed that the samples are continuous
+     * and that the discrete ID corresponds to the core section. The
+     * ordering of the core sections, and of the samples within them,
+     * corresponds to the original order of the supplied samples.
+     * 
+     * @param sampleList samples to split
+     * @return a hash of core sections indexed by discrete ID
+     */
     public static CoreSections fromSampleListByDiscreteId(
             List<Sample> sampleList) {
         final LinkedHashMap<String,List<Sample>> sublists =
@@ -55,11 +71,37 @@ class CoreSections {
         return new CoreSections(sectionsTmp);
     }
     
+    /**
+     * Get the hash of core sections.
+     * 
+     * @return a hash of core sections indexed by discrete ID
+     */
     public LinkedHashMap<String,CoreSection> getSections() {
         return sections;
     }
 
-    void alignSections(double topAlignment, int margin) {
+    /**
+     * Aligns the declinations of these core sections from the top
+     * down. For each core section, the "top declination" and "bottom
+     * declination" are determined from the Fisherian mean of the directions
+     * of the topmost or bottommost samples. The number of samples used
+     * for this calculation is determined by the value of the
+     * {@code margin} argument. The initial declination is given as the
+     * {@code topAlignment} argument. First, the magnetizations in the
+     * top section are rotated by an equal amount around the vertical
+     * axis, in such a way that the top declination of the top section
+     * equals {@code topAlignment}. The next section down is rotated in
+     * a similar way, except that in this case its top declination is
+     * brought into alignment with the top section's (rotated) bottom
+     * declination. This process is repeated down the core, with the
+     * each section being rotated as a whole in order align its top declination
+     * with the bottom declination of the section above it.
+     * 
+     * @param topAlignment target declination for top of core, in degrees
+     * @param margin number of samples to use in determining top and bottom
+     * declinations
+     */
+    public void alignSections(double topAlignment, int margin) {
         double alignTo = topAlignment;
         for (CoreSection section: sections.values()) {
             section.getSamples().forEach(s -> s.doPca(Correction.NONE));

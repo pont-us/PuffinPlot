@@ -25,27 +25,49 @@ import java.util.stream.Collectors;
  * sequence of {@code Sample}s. This can be useful, for instance, for
  * rotating an entire section to align its declination with a neighbouring
  * section.
- * 
- * @author pont
  */
 
 public class CoreSection implements SampleGroup {
 
     private final List<Sample> samples;
 
+    /**
+     * A representation of the end of a core section -- top or bottom.
+     */
     public static enum End {
-        TOP, BOTTOM;
+
+        /**
+         * The top of a core section
+         */
+        TOP,
+
+        /**
+         * The bottom of a core section
+         */
+        BOTTOM;
     }
   
     private CoreSection(List<Sample> samples) {
         this.samples = samples;
     }
 
+    /**
+     * Returns a core section containing the specified samples in the
+     * specified order. Note that the samples are not copied: the returned
+     * {@code CoreSection} contains references to the original samples,
+     * so operations upon it may modify them.
+     * 
+     * @param samples
+     * @return 
+     */
     public static CoreSection fromSamples(List<Sample> samples) {
         Objects.requireNonNull(samples);
         return new CoreSection(samples);
     }
 
+    /**
+     * @return the samples in this core section
+     */
     @Override
     public List<Sample> getSamples() {
         return samples;
@@ -69,6 +91,15 @@ public class CoreSection implements SampleGroup {
         }
     }
 
+    /**
+     * Returns the topmost or bottommost samples in this core section.
+     * 
+     * @param end the end from which to return the samples
+     * (top or bottom)
+     * @param nSamples the number of samples to return (from 0 to
+     * the number of samples in this section)
+     * @return the topmost or bottommost samples
+     */
     public List<Sample> getSamplesNearEnd(End end, int nSamples) {
         if (nSamples < 0) {
             throw new IllegalArgumentException(
@@ -90,6 +121,14 @@ public class CoreSection implements SampleGroup {
         }
     }
     
+    /**
+     * Calculates and returns the Fisherian mean direction of the
+     * topmost or bottommost samples in this section.
+     * 
+     * @param end the section end (top or bottom)
+     * @param nSamples the number of samples to average
+     * @return the mean direction of the top or bottom samples
+     */
     public Vec3 getDirectionNearEnd(End end, int nSamples) {
         final List<Sample> endSamples = getSamplesNearEnd(end, nSamples);
         return FisherValues.calculate(endSamples.stream().

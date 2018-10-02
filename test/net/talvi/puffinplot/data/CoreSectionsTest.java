@@ -18,7 +18,6 @@ package net.talvi.puffinplot.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,14 +25,10 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
 
-/**
- *
- * @author pont
- */
 public class CoreSectionsTest {
 
     private List<Sample> sampleList;
-    private double delta = 1e-10;
+    private final double delta = 1e-10;
     
     @Before
     public void setUp() {
@@ -85,11 +80,9 @@ public class CoreSectionsTest {
     }
     
     /**
-     * Test section alignment with a margin of three samples.
-     * Expected results worked out by hand. To keep things simple,
-     * all samples have flat inclination and declinations are all
-     * multiples of 45 degrees.
-     * 
+     * Test section alignment with a margin of three samples. Expected results
+     * worked out by hand. To keep things simple, all samples have flat
+     * inclination and declinations are all multiples of 45 degrees.
      */
     @Test
     public void testAlignSections2() {
@@ -139,7 +132,7 @@ public class CoreSectionsTest {
     private List<Sample> makeFlatSamples(double[] decs, String discreteId,
             int startDepth) {
         int depth = startDepth;
-        final List<Sample> samples = new ArrayList<Sample>();
+        final List<Sample> samples = new ArrayList<>();
         for (double dec: decs) {
             samples.add(makeSample(depth, discreteId,
                     Vec3.fromPolarDegrees(1, 0, dec)));

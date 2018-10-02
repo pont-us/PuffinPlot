@@ -32,7 +32,7 @@ import org.junit.Before;
  */
 public class CoreSectionTest {
 
-    private static final double delta = 1e-10;
+    private final double delta = 1e-10;
     
     private List<Sample> sampleList;
     private CoreSection section;
