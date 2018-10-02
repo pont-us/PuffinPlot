@@ -18,7 +18,10 @@ package net.talvi.puffinplot.data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import net.talvi.puffinplot.TestUtils;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -29,6 +32,8 @@ import org.junit.Before;
  */
 public class CoreSectionTest {
 
+    private static final double delta = 1e-10;
+    
     private List<Sample> sampleList;
     private CoreSection section;
     
@@ -146,7 +151,8 @@ public class CoreSectionTest {
             final Vec3 actualMeanDirection = CoreSection.
                     fromSamples(samples).getDirectionNearEnd(
                             CoreSection.End.TOP, nSamples);
-            assertTrue(expectedMeanDirection.equals(actualMeanDirection, 1e-10));
+            assertTrue(expectedMeanDirection.
+                    equals(actualMeanDirection, 1e-10));
         }
     }
 
@@ -167,6 +173,59 @@ public class CoreSectionTest {
         return FisherValues.calculate(samples.stream().
                         map(Sample::getDirection).
                         collect(Collectors.toList())).getMeanDirection();
+    }
+
+    @Test
+    public void testRotateDeclinationsWithImportedDirections() {
+        List<Vec3> inputDirs = makeRandomDirections();
+        final double angle = 19;
+        final List<Vec3> expectedDirs = inputDirs.stream().
+                map((Vec3 v) -> v.rotZ(Math.toRadians(angle))).
+                collect(Collectors.toList());
+        final List<Sample> samples = IntStream.range(0, inputDirs.size()).
+                mapToObj(i -> {
+                    Sample s = new Sample("test" + i, null);
+                    s.setImportedDirection(inputDirs.get(i));
+                    return s;
+                }).collect(Collectors.toList());
+        CoreSection.fromSamples(samples).rotateDeclinations(angle);
+        assertTrue(IntStream.range(0, 10).
+                allMatch((int i) -> expectedDirs.get(i).
+                        equals(samples.get(i).getDirection(), delta)));
+    }
+
+    @Test
+    public void testRotateDeclinationsWithData() {
+        final List<Vec3> inputDirs = makeRandomDirections();
+        final double angle = 56;
+        final List<Vec3> expectedDirs = inputDirs.stream().map((Vec3 v) ->
+                v.rotZ(Math.toRadians(angle))).collect(Collectors.toList());
+        final List<Sample> samples = IntStream.range(0,
+                inputDirs.size()).mapToObj((int i) -> {
+            Sample s = new Sample("test" + i, null);
+            for (Vec3 v: new Vec3[] {inputDirs.get(i),
+                inputDirs.get(i).times(0.5)} ) {
+                    Datum d = new Datum(v);
+                    s.addDatum(d);
+                    d.setInPca(true);
+                    d.setPcaAnchored(true);
+                    s.doPca(Correction.NONE);
+            }
+            return s;
+        }).collect(Collectors.toList());
+        CoreSection.fromSamples(samples).rotateDeclinations(angle);
+        samples.forEach(s -> s.doPca(Correction.NONE));
+        assertTrue(IntStream.range(0, 10).allMatch((int i) ->
+                expectedDirs.get(i).equals(samples.get(i).getDirection(),
+                        delta)));
+    }
+
+    private static List<Vec3> makeRandomDirections() {
+        final Random rnd = new Random(42);
+        final List<Vec3> inputDirs = IntStream.range(0, 10).
+                mapToObj(i -> TestUtils.randomVector(rnd, 1).normalize()).
+                collect(Collectors.toList());
+        return inputDirs;
     }
     
 }

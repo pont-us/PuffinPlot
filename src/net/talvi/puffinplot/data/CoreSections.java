@@ -1,5 +1,5 @@
 /* This file is part of PuffinPlot, a program for palaeomagnetic
- * data plotting and analysis. Copyright 2012 Pontus Lurcock.
+ * data plotting and analysis. Copyright 2012-2018 Pontus Lurcock.
  *
  * PuffinPlot is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,12 +19,7 @@ package net.talvi.puffinplot.data;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
-/**
- *
- * @author pont
- */
 class CoreSections {
 
     private final LinkedHashMap<String,CoreSection> sections;
@@ -33,8 +28,10 @@ class CoreSections {
         this.sections = sections;
     }
     
-    public static CoreSections fromSampleListByDiscreteId(List<Sample> sampleList) {
-        final LinkedHashMap<String,List<Sample>> sublists = new LinkedHashMap<>();
+    public static CoreSections fromSampleListByDiscreteId(
+            List<Sample> sampleList) {
+        final LinkedHashMap<String,List<Sample>> sublists =
+                new LinkedHashMap<>();
         String previousId = null;
         for (Sample sample: sampleList) {
             final String thisId = sample.getDiscreteId();
@@ -48,9 +45,11 @@ class CoreSections {
             previousId = thisId;
         }
         
-        final LinkedHashMap<String,CoreSection> sectionsTmp = new LinkedHashMap<>();
+        final LinkedHashMap<String,CoreSection> sectionsTmp =
+                new LinkedHashMap<>();
         for (String discreteId: sublists.keySet()) {
-            sectionsTmp.put(discreteId, CoreSection.fromSamples(sublists.get(discreteId)));
+            sectionsTmp.put(discreteId,
+                    CoreSection.fromSamples(sublists.get(discreteId)));
         }
 
         return new CoreSections(sectionsTmp);
@@ -58,6 +57,23 @@ class CoreSections {
     
     public LinkedHashMap<String,CoreSection> getSections() {
         return sections;
+    }
+
+    void alignSections(double topAlignment) {
+        final int margin = 1;
+        double alignTo = topAlignment;
+        for (CoreSection section: sections.values()) {
+            section.getSamples().forEach(s -> s.doPca(Correction.NONE));
+            final double topDeclination = section.
+                    getDirectionNearEnd(CoreSection.End.TOP, margin).
+                    getDecDeg();
+            final double offset = alignTo - topDeclination;
+            section.rotateDeclinations(offset);
+            section.getSamples().forEach(s -> s.doPca(Correction.NONE));
+            alignTo = section.
+                    getDirectionNearEnd(CoreSection.End.BOTTOM, margin).
+                    getDecDeg();
+        }
     }
 
 }

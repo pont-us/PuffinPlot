@@ -31,6 +31,7 @@ import org.junit.Before;
 public class CoreSectionsTest {
 
     private List<Sample> sampleList;
+    private double delta = 1e-10;
     
     @Before
     public void setUp() {
@@ -39,17 +40,52 @@ public class CoreSectionsTest {
     
     @Test
     public void testSplitByDiscreteId() {
-        final CoreSections sections = CoreSections.fromSampleListByDiscreteId(sampleList);
-        final List<String> expectedPartition = Arrays.asList("0,1,2", "3,4,5", "6,7,8", "9");
+        final CoreSections sections =
+                CoreSections.fromSampleListByDiscreteId(sampleList);
+        final List<String> expectedPartition =
+                Arrays.asList("0,1,2", "3,4,5", "6,7,8", "9");
         final List<String> actualPartition = new ArrayList<>();
         for (CoreSection section: sections.getSections().values()) {
-            final String actualSampleDepths = section.getSamples().stream().map(Sample::getNameOrDepth).collect(Collectors.joining(","));
+            final String actualSampleDepths = section.getSamples().stream().
+                    map(Sample::getNameOrDepth).
+                    collect(Collectors.joining(","));
             actualPartition.add(actualSampleDepths);
         }
-            assertEquals(expectedPartition, actualPartition);
+        assertEquals(expectedPartition, actualPartition);
     }
     
+    @Test
+    public void testAlignSections() {
+        final List<Sample> samples =
+                makeUniformSampleList(Vec3.fromPolarDegrees(1, 40, 20),
+                        new double[] {0, 1, 2, 3}, "part0");
+        samples.addAll(makeUniformSampleList(Vec3.fromPolarDegrees(1, 50, 30),
+                        new double[] {4, 5, 6, 7}, "part1"));
+        samples.forEach(s -> s.doPca(Correction.NONE));
+        final CoreSections cs =
+                CoreSections.fromSampleListByDiscreteId(samples);
+        final double topAlignment = 0;
+        cs.alignSections(topAlignment);
+        assertTrue(cs.getSections().get("part0").getSamples().stream().
+                allMatch(s -> Math.abs(s.getDirection().getDecDeg() - topAlignment) < delta));
+    }
     
+    private List<Sample> makeUniformSampleList(Vec3 direction,
+            double[] depths, String name) {
+        final List<Sample> samples = new ArrayList<>(10);
+        for (int i=0; i<depths.length; i++) {
+            final String depthString = String.format("%f", depths[i]);
+            final Sample sample = new Sample(depthString, null);
+            for (int j=3; j>0; j--) {
+                final Datum d = new Datum(direction.times(j));
+                d.setInPca(true);
+                sample.addDatum(d);
+            }
+            sample.setDiscreteId(name);
+            samples.add(sample);
+        }
+        return samples;
+    }
     
     
 }

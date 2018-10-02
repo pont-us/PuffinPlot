@@ -16,7 +16,6 @@
  */
 package net.talvi.puffinplot.data;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -52,7 +51,12 @@ public class CoreSection implements SampleGroup {
         return samples;
     }
 
-
+    /**
+     * Rotates the declinations of all the data points in all the samples
+     * by the specified angle.
+     * 
+     * @param clockwiseDegrees rotation angle
+     */
     public void rotateDeclinations(double clockwiseDegrees) {
         getSamples().forEach(s -> s.getData().forEach(
                 d -> d.setMoment(d.getMoment().
@@ -88,7 +92,7 @@ public class CoreSection implements SampleGroup {
     
     public Vec3 getDirectionNearEnd(End end, int nSamples) {
         final List<Sample> endSamples = getSamplesNearEnd(end, nSamples);
-        return FisherValues.calculate(endSamples.subList(0, nSamples).stream().
+        return FisherValues.calculate(endSamples.stream().
                 map(Sample::getDirection).
                 collect(Collectors.toList())).getMeanDirection();
 

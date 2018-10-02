@@ -63,8 +63,6 @@ public class TestUtils {
         }
     }
     
-
-    
     public static Vec3 randomVector(Random rnd, double max) {
         return new Vec3(rnd.nextDouble()*2*max-max,
                         rnd.nextDouble()*2*max-max,
