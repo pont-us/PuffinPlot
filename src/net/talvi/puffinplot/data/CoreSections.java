@@ -59,8 +59,7 @@ class CoreSections {
         return sections;
     }
 
-    void alignSections(double topAlignment) {
-        final int margin = 1;
+    void alignSections(double topAlignment, int margin) {
         double alignTo = topAlignment;
         for (CoreSection section: sections.values()) {
             section.getSamples().forEach(s -> s.doPca(Correction.NONE));

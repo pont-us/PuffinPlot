@@ -18,6 +18,8 @@ package net.talvi.puffinplot.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.Test;
@@ -54,38 +56,110 @@ public class CoreSectionsTest {
         assertEquals(expectedPartition, actualPartition);
     }
     
+    /**
+     * Simple alignment test of three sections with a margin of one sample. Each
+     * section has a constant declination, so the final core is expected to have
+     * the same declination throughout.
+     */
     @Test
-    public void testAlignSections() {
+    public void testAlignSections1() {
         final List<Sample> samples =
                 makeUniformSampleList(Vec3.fromPolarDegrees(1, 40, 20),
                         new double[] {0, 1, 2, 3}, "part0");
         samples.addAll(makeUniformSampleList(Vec3.fromPolarDegrees(1, 50, 30),
                         new double[] {4, 5, 6, 7}, "part1"));
-        samples.forEach(s -> s.doPca(Correction.NONE));
+        samples.addAll(makeUniformSampleList(Vec3.fromPolarDegrees(1, 60, -30),
+                        new double[] {8, 9, 10, 11}, "part2"));
         final CoreSections cs =
                 CoreSections.fromSampleListByDiscreteId(samples);
-        final double topAlignment = 0;
-        cs.alignSections(topAlignment);
-        assertTrue(cs.getSections().get("part0").getSamples().stream().
-                allMatch(s -> Math.abs(s.getDirection().getDecDeg() - topAlignment) < delta));
+        final double topAlignment = 17;
+        cs.alignSections(topAlignment, 1);
+        assertTrue(samples.stream().allMatch(s -> Math.abs(s.getDirection().
+                        getDecDeg() - topAlignment) < delta));
+        assertArrayEquals(
+                new double[] {40, 40, 40, 40, 50, 50, 50, 50, 60, 60, 60, 60},
+                samples.stream().
+                        mapToDouble(s -> s.getDirection().getIncDeg()).
+                        toArray(),
+                delta);
+    }
+    
+    /**
+     * Test section alignment with a margin of three samples.
+     * Expected results worked out by hand. To keep things simple,
+     * all samples have flat inclination and declinations are all
+     * multiples of 45 degrees.
+     * 
+     */
+    @Test
+    public void testAlignSections2() {
+        final double[][] inputDecs = {
+            {0, 45, 90, 90, 135, 180},
+            {270, 315, 0, 225, 180, 270},
+            {90, 45, 135, 0, 0, 0}
+        };
+        final double[][] expectedOutput = {
+            {270, 315, 0, 0, 45, 90},
+            {0, 45, 90, 315, 270, 0},
+            {315, 270, 0, 225, 225, 225}
+        };
+        final List<Sample> samples = new ArrayList<>();
+        int depth = 0;
+        for (int i = 0; i < inputDecs.length; i += 1) {
+            samples.addAll(makeFlatSamples(inputDecs[i], "part"+i, depth));
+            depth += inputDecs[i].length;
+        }
+        final CoreSections cs =
+                CoreSections.fromSampleListByDiscreteId(samples);
+        final double topAlignment = 315;
+        cs.alignSections(topAlignment, 3);
+        final Iterator<String> csIterator =
+                cs.getSections().keySet().iterator();
+        for (int i = 0; i < inputDecs.length; i += 1) {
+            final double[] expected = expectedOutput[i];
+            final double[] actual =
+                    cs.getSections().get(csIterator.next()).getSamples().
+                            stream().mapToDouble(s -> s.getDirection().
+                                    getDecDeg()).
+                            map(d -> d > 360-delta ? d-360 : d).toArray();
+            assertArrayEquals(expected, actual, delta);
+        }
     }
     
     private List<Sample> makeUniformSampleList(Vec3 direction,
-            double[] depths, String name) {
+            double[] depths, String discreteId) {
         final List<Sample> samples = new ArrayList<>(10);
         for (int i=0; i<depths.length; i++) {
-            final String depthString = String.format("%f", depths[i]);
-            final Sample sample = new Sample(depthString, null);
-            for (int j=3; j>0; j--) {
-                final Datum d = new Datum(direction.times(j));
-                d.setInPca(true);
-                sample.addDatum(d);
-            }
-            sample.setDiscreteId(name);
+            Sample sample = makeSample(depths[i], discreteId, direction);
             samples.add(sample);
         }
         return samples;
     }
-    
+
+    private List<Sample> makeFlatSamples(double[] decs, String discreteId,
+            int startDepth) {
+        int depth = startDepth;
+        final List<Sample> samples = new ArrayList<Sample>();
+        for (double dec: decs) {
+            samples.add(makeSample(depth, discreteId,
+                    Vec3.fromPolarDegrees(1, 0, dec)));
+            depth++;
+        }
+        return samples;
+    }
+   
+    private Sample makeSample(double depth, String discreteId, Vec3 direction) {
+        final String depthString = String.format("%f", depth);
+        final Sample sample = new Sample(depthString, null);
+        for (int j=3; j>0; j--) {
+            final Datum d = new Datum(direction.times(j));
+            d.setInPca(true);
+            sample.addDatum(d);
+        }
+        sample.setDiscreteId(discreteId);
+        sample.doPca(Correction.NONE);
+        return sample;
+    }
+
     
 }
