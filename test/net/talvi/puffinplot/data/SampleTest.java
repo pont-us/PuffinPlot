@@ -24,6 +24,7 @@ import static java.lang.Math.toDegrees;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -31,7 +32,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import net.talvi.puffinplot.TestUtils;
 import net.talvi.puffinplot.TestUtils.ListHandler;
 
 public class SampleTest {
@@ -240,6 +240,8 @@ public class SampleTest {
         assertTrue(simpleSample.isSelectionContiguous());
         simpleSample.getDatum(5).setSelected(false);
         assertFalse(simpleSample.isSelectionContiguous());
+        simpleSample.selectAll();
+        assertTrue(simpleSample.isSelectionContiguous());
     }
     
     @Test
@@ -485,29 +487,140 @@ public class SampleTest {
     
     @Test
     public void testSetAndGetFormStrike() {
-        final Sample sample = new Sample("test", null);
         for (int strike: new int[] {0, 1, 45, 180, 300, 359}) {
-            sample.setValue(DatumField.VIRT_FORM_STRIKE,
+            simpleSample.setValue(DatumField.VIRT_FORM_STRIKE,
                     String.format(Locale.ENGLISH, "%d", strike));
-            assertEquals(strike, sample.getFormStrike(), delta);
+            assertEquals(strike, simpleSample.getFormStrike(), delta);
         }
     }
     
     @Test
     public void testToStringsImportedDirection() {
-        final Sample sample = new Sample("test", null);
-        sample.setImportedDirection(Vec3.fromPolarDegrees(1, 30, 40));
+        simpleSample.setImportedDirection(Vec3.fromPolarDegrees(1, 30, 40));
         assertEquals(Arrays.asList("IMPORTED_DIRECTION\t40.000\t30.000"),
-                sample.toStrings());
+                simpleSample.toStrings());
     }
     
     @Test
     public void testFromStringImportedDirection() {
-        final Sample sample = new Sample("test", null);
-        sample.fromString("IMPORTED_DIRECTION\t40.000\t30.000");
+        simpleSample.fromString("IMPORTED_DIRECTION\t40.000\t30.000");
         assertTrue(Vec3.fromPolarDegrees(1, 30, 40).
-                equals(sample.getDirection(), delta));
+                equals(simpleSample.getDirection(), delta));
+    }
+
+    /**
+     * Should return normally with no side effects.
+     */
+    @Test
+    public void testFromStringWithEmptyString() {
+        simpleSample.fromString("");
     }
     
+    @Test
+    public void testFromStringWithUnknownField() {
+        ListHandler handler = ListHandler.createAndAdd();
+        simpleSample.fromString("SOME_UNKNOWN_FIELD\t666");
+        handler.wasOneMessageLogged(Level.WARNING);
+    }
     
+    @Test
+    public void testGetDatumByTreatmentLevel() {
+        assertEquals(5,
+                simpleSample.getDatumByTreatmentLevel(5).getTreatmentLevel(),
+                delta);
+    }
+    
+    @Test
+    public void testGetDatumByTreatmentLevelWithNoData() {
+        final Sample sample = new Sample("test", null);
+        assertNull(sample.getDatumByTreatmentLevel(0));
+    }
+
+    @Test
+    public void testGetDatumByTreatmentTypeAndLevel() {
+        final Datum datum = simpleSample.getDatumByTreatmentTypeAndLevel(
+                Collections.singleton(TreatType.DEGAUSS_XYZ), 5);
+        assertEquals(5, datum.getTreatmentLevel(), delta);
+    }
+
+    @Test
+    public void testGetDatumByTreatmentLevelWithNoMatchingData() {
+        assertNull(simpleSample.getDatumByTreatmentLevel(17));
+    }
+
+    @Test
+    public void testGetDatumByTreatmentTypeAndLevelWithNoData() {
+        final Sample sample = new Sample("test", null);
+        assertNull(sample.getDatumByTreatmentTypeAndLevel(
+                new HashSet(Arrays.asList(TreatType.values())), 0));
+    }
+
+    @Test
+    public void testGetDatumByTreatmentTypeAndLevelWithNoMatchingData() {
+        assertNull(simpleSample.getDatumByTreatmentTypeAndLevel(
+                Collections.singleton(TreatType.THERMAL), 5));
+    }
+
+    @Test
+    public void testGetDirectionWithFisherValues() {
+        simpleSample.selectAll();
+        simpleSample.calculateFisher(Correction.NONE);
+        final Vec3 expected =
+                FisherValues.calculate(simpleSample.getSelectedData().
+                        stream().map(d -> d.getMoment()).
+                        collect(Collectors.toList())).getMeanDirection();
+        assertTrue(expected.equals(simpleSample.getDirection(), delta));
+    }
+    
+    @Test
+    public void testGetCirclePoints() {
+        final List<Integer> circlePoints = Arrays.asList(2, 3, 6, 7);
+        final List<Vec3> expected =
+                circlePoints.stream().map(i -> simpleSample.getDatum(i).
+                        getMoment()).collect(Collectors.toList());
+        circlePoints.forEach(i -> simpleSample.getDatum(i).setOnCircle(true));
+        final List<Vec3> actual = simpleSample.getCirclePoints(Correction.NONE);
+        assertEquals(expected.size(), actual.size());
+        for (int i=0; i<expected.size(); i++) {
+            assertTrue(expected.get(i).equals(actual.get(i), delta));
+        }
+    }
+    
+    @Test
+    public void testGetFirstRunNumber() {
+        IntStream.range(0, simpleSample.getNumData()).
+                forEach(i -> simpleSample.getDatum(i).setRunNumber(i+5));
+        assertEquals(5, simpleSample.getFirstRunNumber());
+    }
+    
+    @Test
+    public void testGetLastRunNumber() {
+        IntStream.range(0, simpleSample.getNumData()).
+                forEach(i -> simpleSample.getDatum(i).setRunNumber(i+5));
+        assertEquals(simpleSample.getNumData() + 4,
+                simpleSample.getLastRunNumber());
+    }
+    
+    @Test
+    public void testDatumByRunNumber() {
+        IntStream.range(0, simpleSample.getNumData()).
+                forEach(i -> simpleSample.getDatum(i).setRunNumber(i+5));
+        assertEquals(simpleSample.getDatum(5),
+                simpleSample.getDatumByRunNumber(11));
+    }
+    
+    @Test
+    public void testGetSlotNumber() {
+        simpleSample.getDatum(0).setSlotNumber(17);
+        assertEquals(17, simpleSample.getSlotNumber());
+    }
+    
+    @Test
+    public void testGetVisibleData() {
+        simpleSample.getDatum(5).setHidden(true);
+        final List<Datum> expected =
+                new ArrayList<>(simpleSample.getData());
+        expected.remove(5);
+        assertEquals(expected, simpleSample.getVisibleData());
+    }
 }

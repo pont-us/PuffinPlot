@@ -386,21 +386,25 @@ public class Sample {
     }
     
     /**
-     * Returns a Datum specified by treatment level and type.
-     * 
+     * Returns a Datum with a specified treatment type and level. The treatment
+     * type is checked against a supplied set. A datum is considered to match if
+     * its treatment type is in the set and its treatment level is approximately
+     * equal to the specified level. A datum's treatment level is approximately
+     * equal to the specified level if the two differ by less than 1e-6.
+     *
      * If the Sample contains more than one Datum with the given level and type,
      * only the first is returned. If there is no matching Datum, {@code null}
-     * is returned. Any treatment levels differing by less than 1e-6 are
-     * considered equal.
+     * is returned. 
      * 
      * This method is mainly intended for use with ARM demagnetization data,
      * which can contain a mixture of "degauss" and "ARM" treatment types.
      * 
-     * @param types a set of treatment type
+     * @param types a set of treatment types
      * @param level a treatment level
      * @return the first datum in the sample with the given treatment level
      */
-    public Datum getDatumByTreatmentTypeAndLevel(Set<TreatType> types, double level) {
+    public Datum getDatumByTreatmentTypeAndLevel(Set<TreatType> types,
+            double level) {
         final double threshold = 1e-6;
         for (Datum d: data) {
                 if (abs(d.getTreatmentLevel() - level) < threshold
@@ -882,7 +886,7 @@ public class Sample {
     public void fromString(String string) {
         final String[] parts =
                 string.split("\t", -1); // don't discard trailing empty strings
-        if (null != parts[0]) switch (parts[0]) {
+        switch (parts[0]) {
             case "CUSTOM_FLAGS":
                 final List<Boolean> flags = new ArrayList<>(parts.length-1);
                 for (int i=1; i<parts.length; i++) {
