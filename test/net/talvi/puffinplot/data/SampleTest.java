@@ -28,12 +28,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import net.talvi.puffinplot.TestUtils;
+import net.talvi.puffinplot.TestUtils.ListHandler;
 
-/**
- *
- * @author pont
- */
 public class SampleTest {
 
     private static final double delta = 1e-10;
@@ -168,6 +168,29 @@ public class SampleTest {
         assertEquals(value, sample.getFormStrike(), delta);
         sample.setValue(DatumField.MAG_DEV, valueString);
         assertEquals(value, sample.getMagDev(), delta);
+    }
+    
+    @Test
+    public void testSetValueUnhandledField() {
+        final ListHandler handler = ListHandler.createAndAdd();
+        final Sample sample = new Sample("sample1", null);
+        sample.setValue(DatumField.MAG_SUS, "0");
+        assertTrue(handler.wasOneMessageLogged(Level.WARNING));
+    }
+    
+    @Test
+    public void testSetValueWithData() {
+        final DatumField df = DatumField.SAMPLE_AZ;
+        final double value = 2.71;
+        final Sample sample = new Sample("sample1", null);
+        for (int i=0; i<3; i++) {
+            final Datum d = new Datum();
+            sample.addDatum(d);
+        }
+        sample.setValue(df, String.format(Locale.ENGLISH, "%g", value));
+        assertTrue(sample.getData().stream().allMatch(d ->
+                Math.abs(value - Double.parseDouble(d.getValue(df))) < delta
+        ));
     }
     
     @Test
@@ -357,4 +380,134 @@ public class SampleTest {
         simpleSample.truncateData(7);
         assertEquals(data.subList(0, 7), simpleSample.getData());
     }
+
+    @Test
+    public void testCalculateAndGetMagSusJump() {
+        final Sample s = makeThermalMagSusSample(
+                30, 10, 50, 24.999, 70, 24.999*2.5001, 90, 100);
+        s.calculateMagSusJump();
+        assertEquals(70, s.getMagSusJump(), delta);
+    }
+    
+    @Test
+    public void testCalculateAndGetMagSusJumpWithoutJump() {
+        final Sample s = makeThermalMagSusSample(
+                40, 40, 50, 50, 60, 60, 70, 70, 80, 80
+        );
+        s.calculateMagSusJump();
+        assertEquals(0, s.getMagSusJump(), delta);
+    }
+    
+    @Test
+    public void testCalculateAndGetMagSusJumpWithoutMagSusData() {
+        final Sample s = makeThermalMagSusSample(
+                40, Double.NaN, 50, Double.NaN, 60, Double.NaN
+        );
+        s.calculateMagSusJump();
+        assertEquals(0, s.getMagSusJump(), delta);
+    }
+    
+    private static Sample makeThermalMagSusSample(double... tempsAndms) {
+        final Sample s = new Sample("test", null);
+        for (int i=0; i<tempsAndms.length; i+=2) {
+            final Datum d = new Datum();
+            d.setTreatType(TreatType.THERMAL);
+            d.setTemp(tempsAndms[i]);
+            d.setMagSus(tempsAndms[i+1]);
+            s.addDatum(d);
+        }
+        return s;
+    }
+    
+    @Test
+    public void testIsPcaAnchoredNoData() {
+        assertFalse(new Sample("test", null).isPcaAnchored());
+    }
+    
+    @Test
+    public void testIsPcaAnchored() {
+        final Datum d = new Datum();
+        final Sample s = new Sample("test", null);
+        s.addDatum(d);
+        d.setPcaAnchored(false);
+        assertFalse(s.isPcaAnchored());
+        d.setPcaAnchored(true);
+        assertTrue(s.isPcaAnchored());
+    }
+    
+    @Test
+    public void testGetNrmEmptySample() {
+        final Sample s = new Sample("test", null);
+        assertTrue(Double.isNaN(s.getNrm()));
+    }
+    
+    @Test
+    public void testGetNrm() {
+        final Sample s = new Sample("test", null);
+        final Vec3 nrm = new Vec3(3, 2, 1);
+        s.addDatum(new Datum(nrm));
+        s.addDatum(new Datum(nrm.times(0.8)));
+        s.addDatum(new Datum(nrm.times(0.6)));
+        assertEquals(nrm.mag(), s.getNrm(), delta);
+    }
+    
+    @Test
+    public void testHasMsData() {
+        final Sample sample = new Sample("test", null);
+        assertFalse(sample.hasMsData());
+        sample.addDatum(new Datum());
+        assertFalse(sample.hasMsData());
+        final Datum datum = new Datum();
+        datum.setMagSus(1);
+        sample.addDatum(datum);
+        assertTrue(sample.hasMsData());
+    }
+    
+    @Test
+    public void testGetMeasType() {
+        final Sample sample = new Sample("test", null);
+        assertEquals(MeasType.DISCRETE, sample.getMeasType());
+        addDatumWithMeasurementType(sample, MeasType.NONE);
+        assertEquals(MeasType.DISCRETE, sample.getMeasType());
+        addDatumWithMeasurementType(sample, MeasType.UNKNOWN);
+        assertEquals(MeasType.DISCRETE, sample.getMeasType());
+        addDatumWithMeasurementType(sample, MeasType.UNSET);
+        assertEquals(MeasType.DISCRETE, sample.getMeasType());
+        addDatumWithMeasurementType(sample, MeasType.CONTINUOUS);
+        assertEquals(MeasType.CONTINUOUS, sample.getMeasType());
+    }
+    
+    private static void addDatumWithMeasurementType(Sample sample, MeasType mt) {
+        final Datum datum = new Datum(Vec3.NORTH);
+        datum.setMeasType(mt);
+        sample.addDatum(datum);
+    }
+    
+    @Test
+    public void testSetAndGetFormStrike() {
+        final Sample sample = new Sample("test", null);
+        for (int strike: new int[] {0, 1, 45, 180, 300, 359}) {
+            sample.setValue(DatumField.VIRT_FORM_STRIKE,
+                    String.format(Locale.ENGLISH, "%d", strike));
+            assertEquals(strike, sample.getFormStrike(), delta);
+        }
+    }
+    
+    @Test
+    public void testToStringsImportedDirection() {
+        final Sample sample = new Sample("test", null);
+        sample.setImportedDirection(Vec3.fromPolarDegrees(1, 30, 40));
+        assertEquals(Arrays.asList("IMPORTED_DIRECTION\t40.000\t30.000"),
+                sample.toStrings());
+    }
+    
+    @Test
+    public void testFromStringImportedDirection() {
+        final Sample sample = new Sample("test", null);
+        sample.fromString("IMPORTED_DIRECTION\t40.000\t30.000");
+        assertTrue(Vec3.fromPolarDegrees(1, 30, 40).
+                equals(sample.getDirection(), delta));
+    }
+    
+    
 }

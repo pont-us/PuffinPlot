@@ -176,12 +176,13 @@ public class Sample {
     }
 
     /**
-     * Calculates the position of the first jump in magnetic susceptibility
-     * in the sample's demagnetization data. The result is stored within 
-     * this sample. A jump is defined as an increase of at least 2.5 times
-     * in a single treatment step. If the is no magnetic susceptibility
-     * data, or if no jump occurs, a value of 0 will be used.
-     * 
+     * Finds the first jump in magnetic susceptibility in the sample's
+     * demagnetization data. The temperature at which this jump occurs is stored
+     * within this sample and can be retrieved by the {@code getMagSusJump()}
+     * method. A jump is defined as an increase of at least 2.5 times in a
+     * single treatment step. If there is no magnetic susceptibility data, or if
+     * no jump occurs, a value of 0 will be stored.
+       * 
      * @see #getMagSusJump()
      * 
      */
