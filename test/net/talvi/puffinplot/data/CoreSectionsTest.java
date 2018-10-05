@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -36,11 +37,12 @@ public class CoreSectionsTest {
     }
     
     @Test
-    public void testSplitByDiscreteId() {
+    public void testFromSampleListByDiscreteId() {
+        sampleList.get(4).setDiscreteId(null);
         final CoreSections sections =
                 CoreSections.fromSampleListByDiscreteId(sampleList);
         final List<String> expectedPartition =
-                Arrays.asList("0,1,2", "3,4,5", "6,7,8", "9");
+                Arrays.asList("0,1,2", "3,5", "6,7,8", "9");
         final List<String> actualPartition = new ArrayList<>();
         for (CoreSection section: sections.getSections().values()) {
             final String actualSampleDepths = section.getSamples().stream().
@@ -154,5 +156,37 @@ public class CoreSectionsTest {
         return sample;
     }
 
+    @Test
+    public void testGetSectionEndSamplesWithMarginOf1() {
+        final CoreSections sections =
+                CoreSections.fromSampleListByDiscreteId(sampleList);
+        final Set<Sample> expected =
+                Arrays.asList(0, 2, 3, 5, 6, 8, 9).stream().
+                        map(i -> sampleList.get(i)).collect(Collectors.toSet());
+        final Set<Sample> actual = sections.getEndSamples(1);
+        assertEquals(expected, actual);
+    }
     
+    @Test
+    public void testGetSectionEndSamplesWithMarginOf3() {
+        final List<Sample> samples = new ArrayList<>(30);
+        for (int depth=0; depth<30; depth++) {
+            final String depthString = String.format("%d", depth);
+            final Sample sample = new Sample(depthString, null);
+            final Datum d = new Datum();
+            d.setDepth(depthString);
+            d.setDiscreteId(String.format("%d", depth / 10));
+            sample.addDatum(d);
+            samples.add(sample);
+        }
+        final CoreSections sections =
+                CoreSections.fromSampleListByDiscreteId(samples);
+        final Set<Sample> expected = Arrays.asList(
+                0, 1, 2, 7, 8, 9,
+                10, 11, 12, 17, 18, 19,
+                20, 21, 22, 27, 28, 29).stream().
+                        map(i -> samples.get(i)).collect(Collectors.toSet());
+        final Set<Sample> actual = sections.getEndSamples(3);
+        assertEquals(expected, actual);
+    }
 }

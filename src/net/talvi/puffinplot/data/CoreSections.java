@@ -19,6 +19,11 @@ package net.talvi.puffinplot.data;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import static net.talvi.puffinplot.data.CoreSection.End;
 
 /**
  * A collection of {@code CoreSection}s, stored as a linked hash map
@@ -72,9 +77,14 @@ class CoreSections {
     }
     
     /**
-     * Get the hash of core sections.
+     * Get a linked map of core sections. The map is indexed by
+     * core section identifier (which corresponds to the discrete ID
+     * of a sample with continuous measurement type). Entries in the
+     * map are ordered; if this object was produced by {@code
+     * fromSampleListByDiscreteId}, the order corresponds to the original
+     * sample order.
      * 
-     * @return a hash of core sections indexed by discrete ID
+     * @return a map of core sections indexed by core section identifier
      */
     public LinkedHashMap<String,CoreSection> getSections() {
         return sections;
@@ -115,6 +125,26 @@ class CoreSections {
                     getDirectionNearEnd(CoreSection.End.BOTTOM, margin).
                     getDecDeg();
         }
+    }
+
+    /**
+     * Returns a set containing all the samples which are near the end
+     * of any section within this group of sections. The topmost and
+     * bottommost {@code margin} samples of each section are counted
+     * as being "near the end".
+     * 
+     * @param margin the number of samples from each end of each section
+     *   to include in the returned set of samples
+     * @return all the samples which are within {@code margin} samples
+     *   of the end of any section within this group
+     */
+    public Set<Sample> getEndSamples(int margin) {
+        return getSections().values().stream().
+                map(s -> Stream.concat(
+                        s.getSamplesNearEnd(End.TOP, margin).stream(),
+                        s.getSamplesNearEnd(End.BOTTOM, margin).stream())).
+                        flatMap(Function.identity()).
+                collect(Collectors.toSet());
     }
 
 }
