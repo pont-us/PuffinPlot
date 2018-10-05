@@ -71,10 +71,13 @@ public final class Suite implements SampleGroup {
     private String fileCreator;
     private final Set<SavedListener> savedListenerSet = new HashSet<>();
 
-    /** Get the list of warnings produced when data was being loaded from
-     * one or more files.
-     * @return the list of warnings produced when data was being loaded from
-     * one or more files */
+    /**
+     * Get the list of warnings produced when data was being loaded from one or
+     * more files.
+     *
+     * @return the list of warnings produced when data was being loaded from one
+     * or more files
+     */
     public List<String> getLoadWarnings() {
         return Collections.unmodifiableList(loadWarnings);
     }
@@ -86,11 +89,11 @@ public final class Suite implements SampleGroup {
         }
     }
 
-    /** Calculates Fisher statistics on all the calculated PCA 
-     * directions for samples within the suite. The Fisher parameters
-     * are stored in the suite and can be retrieved with
-     * {@link #getSuiteMeans()}.
-     * 
+    /**
+     * Calculates Fisher statistics on all the calculated PCA directions for
+     * samples within the suite. The Fisher parameters are stored in the suite
+     * and can be retrieved with {@link #getSuiteMeans()}.
+     *
      * @param selSamples samples for which to calculate means
      * @param selSites sites for which to calculate means
      */
@@ -139,11 +142,12 @@ public final class Suite implements SampleGroup {
                 SuiteCalcs.Means.calculate(sampleVgps));
     }
     
-    /** Calculates and returns Fisher statistics on all the calculated PCA 
+    /**
+     * Calculates and returns Fisher statistics on all the calculated PCA
      * directions for samples within supplied suites.
-     * 
-     * @param suites the suites on which to calculate statistics
-     * @return the results of the calculation
+     *
+     * @param  suites the suites on which to calculate statistics
+     * @return        the results of the calculation
      */
     public static SuiteCalcs calculateMultiSuiteMeans(List<Suite> suites) {
         final List<Sample> selSamps = new ArrayList<>();
@@ -155,10 +159,12 @@ public final class Suite implements SampleGroup {
         return doCalculateSuiteMeans(selSamps, selSites);
     }
     
-    /** Performs a reversal test on a list of suites. 
+    /**
+     * Performs a reversal test on a list of suites.
+     *
      * @param suites the suites on which to perform the test.
-     * @return a two-item list containing Fisher statistics for the
-     * normal and reversed modes of the data in the suites, in that order
+     * @return a two-item list containing Fisher statistics for the normal and
+     * reversed modes of the data in the suites, in that order
      */
     public static List<FisherValues> doReversalTest(List<Suite> suites) {
         List<Vec3> normal = new ArrayList<>(), reversed = new ArrayList<>();
@@ -179,14 +185,19 @@ public final class Suite implements SampleGroup {
         return Arrays.asList(fisherNormal, fisherReversed);
     }
     
-    /** Returns the Fisher parameters calculated on the entire suite. 
-     * @return the Fisher parameters calculated on the entire suite */
+    /**
+     * Returns the Fisher parameters calculated on the entire suite.
+     *
+     * @return the Fisher parameters calculated on the entire suite
+     */
     public SuiteCalcs getSuiteMeans() {
         return suiteCalcs;
     }
 
-    /** For each site in this suite, calculates Fisher statistics on the
-     * sample PCA directions.
+    /**
+     * For each site in this suite, calculates Fisher statistics on the sample
+     * PCA directions.
+     *
      * @param correction the correction to apply to the magnetic moment
      * measurements when performing the PCA calculations
      * @see #getSiteFishers()
@@ -199,8 +210,10 @@ public final class Suite implements SampleGroup {
         }
     }
 
-    /** Returns the results of the per-site Fisher statistics calculated 
-     * by {@link #calculateSiteFishers(net.talvi.puffinplot.data.Correction)}.
+    /**
+     * Returns the results of the per-site Fisher statistics calculated by
+     * {@link #calculateSiteFishers(net.talvi.puffinplot.data.Correction)}.
+     *
      * @return the results of previously calculated per-site Fisher statistics
      */
     public List<FisherValues> getSiteFishers() {
@@ -211,23 +224,29 @@ public final class Suite implements SampleGroup {
         return result;
     }
 
-    /** Reports whether a default PuffinPlot file is set for this suite. 
-     * @return {@code true} if a default PuffinPlot file is set for this suite */
+    /**
+     * Reports whether a default PuffinPlot file is set for this suite.
+     *
+     * @return {@code true} if a default PuffinPlot file is set for this suite
+     */
     public boolean isFilenameSet() {
         return getPuffinFile() != null;
     }
 
-    /** If a default PuffinPlot file is set for this suite, saves the suite data
+    /**
+     * If a default PuffinPlot file is set for this suite, saves the suite data
      * to that file. If not, does nothing.
+     *
      * @throws PuffinUserException if an error occurred while saving the data
      */
     public void save() throws PuffinUserException {
         if (getPuffinFile() != null) saveAs(getPuffinFile());
     }
 
-    /** Saves the data in this suite to a specified file. The specified
-     * file is also set as the default PuffinPlot file for this suite.
-     * 
+    /**
+     * Saves the data in this suite to a specified file. The specified file is
+     * also set as the default PuffinPlot file for this suite.
+     *
      * @param file the file to which to save the suite's data
      * @throws PuffinUserException if an error occurred while saving data
      */
@@ -291,18 +310,17 @@ public final class Suite implements SampleGroup {
 
     /**
      * Adds a datum to the suite.
-     * 
-     * If no corresponding sample exists, one is created. The measurement
-     * type of the datum must be compatible with that of the suite -- that
-     * is, either they must be the same, or the suite's measurement type
-     * must be {@code UNSET}. In the latter case, the suite's measurement
-     * type will be set to that of the supplied datum.
-     * 
+     *
+     * If no corresponding sample exists, one is created. The measurement type
+     * of the datum must be compatible with that of the suite -- that is, either
+     * they must be the same, or the suite's measurement type must be
+     * {@code UNSET}. In the latter case, the suite's measurement type will be
+     * set to that of the supplied datum.
+     *
      * @param d the datum to add
-     * @throws IllegalArgumentException if d is null, or if the measurement
-     * type of is invalid (i.e. it is null, UNSET, or incompatible with this
-     * suite's measurement type)
-     * 
+     * @throws IllegalArgumentException if d is null, or if the measurement type
+     * of is invalid (i.e. it is null, UNSET, or incompatible with this suite's
+     * measurement type)
      */
     public void addDatum(Datum d) {
         Objects.requireNonNull(d);
@@ -430,10 +448,10 @@ public final class Suite implements SampleGroup {
     }
 
     /**
-     * <p>Reads data into this suite from the specified files.</p>
+     * Reads data into this suite from the specified files.
      * 
-     * <p>After readFiles returns, #getLoadWarnings() can be used
-     * to return a list of problems that occurred during file reading.</p>
+     * After readFiles returns, #getLoadWarnings() can be used
+     * to return a list of problems that occurred during file reading.
      * 
      * @param files the files from which to read the data (non-null, non-empty)
      * @param sensorLengths for 2G long core files only: the effective lengths 
@@ -464,21 +482,24 @@ public final class Suite implements SampleGroup {
             }
         }
         
-        // Remember whether the suite was initially empty -- this is needed
-        // to correctly set the saved state later.
+        /* Remember whether the suite was initially empty -- this is needed
+         * to correctly set the saved state later.
+         */
         final boolean wasEmpty = isEmpty();
         
-        // Clear any existing load warnings: if we're appending data to
-        // a suite with existing data, it may contain warnings from a previous
-        // readFiles call.
+        /* Clear any existing load warnings: if we're appending data to
+         * a suite with existing data, it may contain warnings from a previous
+         * readFiles call.
+         */
         loadWarnings.clear();
         
         files = expandDirs(files);
         final ArrayList<Datum> tempDataList = new ArrayList<>();
         List<String> puffinLines = Collections.emptyList();
         boolean sensorLengthWarning = false;
-        // If fileType is PUFFINPLOT_NEW, originalFileType can
-        // be overwritten by value specified in file.
+        /* If fileType is PUFFINPLOT_NEW, originalFileType can
+         * be overwritten by value specified in file.
+         */
         originalFileType = fileType;
         
         for (File file: files) {
@@ -535,8 +556,7 @@ public final class Suite implements SampleGroup {
                 break;
             case DIRECTIONS:
                 readDirectionalData(files);
-                return;
-                // break;
+                return; // NB: return, not break
             default:
                 loadWarnings.add(String.format(Locale.ENGLISH,
                         "%s is of unknown file type.", file.getName()));
@@ -619,8 +639,9 @@ public final class Suite implements SampleGroup {
         processPuffinLines(puffinLines);
         updateReverseIndex();
         
-        // A suite isn't considered "unsaved" if it was empty before this
-        // file was loaded.
+        /* A suite isn't considered "unsaved" if it was empty before this
+         * file was loaded.
+         */
         setSaved(wasEmpty);
     }
 
@@ -678,14 +699,15 @@ public final class Suite implements SampleGroup {
         samplesById.put(sampleName, sample);
     }
     
-    /** Performs all possible sample and site calculations.
-     *  Intended to be called after instantiating a new Suite from a file.
-     * @param correction the correction to apply to the magnetic moment
-     *     data when performing the calculations
-     * @param greatCirclesValidityCondition an expression which is evaluated
-     *     to determine whether a great-circles direction is considered valid
-     *     (see {@link net.talvi.puffinplot.data.GreatCircles#instance(java.util.List, java.util.List, java.lang.String)}).
-
+    /**
+     * Performs all possible sample and site calculations. Intended to be called
+     * after instantiating a new Suite from a file.
+     *
+     * @param correction the correction to apply to the magnetic moment data
+     * when performing the calculations
+     * @param greatCirclesValidityCondition an expression which is evaluated to
+     * determine whether a great-circles direction is considered valid (see
+     * {@link net.talvi.puffinplot.data.GreatCircles#instance(java.util.List, java.util.List, java.lang.String)}).
      */
     public void doAllCalculations(Correction correction,
             String greatCirclesValidityCondition) {
@@ -696,7 +718,9 @@ public final class Suite implements SampleGroup {
         }
     }
     
-    /** Exports sample calculations to a specified file in CSV format.
+    /**
+     * Exports sample calculations to a specified file in CSV format.
+     *
      * @param file the file to which to write the sample calculations
      * @throws PuffinUserException if an error occurred while writing the file
      */
@@ -747,7 +771,9 @@ public final class Suite implements SampleGroup {
         }
     }
 
-    /** Exports site calculations to a specified file in CSV format.
+    /**
+     * Exports site calculations to a specified file in CSV format.
+     *
      * @param file the file to which to write the site calculations
      * @throws PuffinUserException if an error occurred while writing the file
      */
@@ -785,7 +811,10 @@ public final class Suite implements SampleGroup {
         }
     }
 
-    /** Saves the Fisher mean direction for the whole suite to a file in CSV format
+    /**
+     * Saves the Fisher mean direction for the whole suite to a file in CSV
+     * format
+     *
      * @param file the file to which to write the mean direction
      * @throws PuffinUserException if an error occurred while writing the file
      */
@@ -804,65 +833,89 @@ public final class Suite implements SampleGroup {
         }
     }
 
-    /** Returns a sample from this suite with the specified name,
-     * or {@code null} if no such sample exists. 
-     * 
+    /**
+     * Returns a sample from this suite with the specified name, or {@code null}
+     * if no such sample exists.
+     *
      * @param name a sample name
-     * @return a sample from this suite with the specified name,
-     * or {@code null} if no such sample exists
+     * @return a sample from this suite with the specified name, or {@code null}
+     * if no such sample exists
      */
     public Sample getSampleByName(String name) {
         return samplesById.get(name);
     }
 
-    /** Returns the index defining the current sample. 
-     * @return the index defining the current sample */
+    /**
+     * Returns the index defining the current sample.
+     *
+     * @return the index defining the current sample
+     */
     public int getCurrentSampleIndex() {
         return currentSampleIndex;
     }
     
-    /** Sets the index defining the current sample. 
-     * @param value the index defining the current sample */
+    /**
+     * Sets the index defining the current sample.
+     *
+     * @param value the index defining the current sample
+     */
     public void setCurrentSampleIndex(int value) {
         currentSampleIndex = value;
     }
 
-    /** Returns the current sample 
-     * @return the current sample */
+    /**
+     * Returns the current sample
+     *
+     * @return the current sample
+     */
     public Sample getCurrentSample() {
         return getSampleByIndex(getCurrentSampleIndex());
     }
  
-    /** Returns all the samples in this suite.
-     * @return all the samples in this suite */
+    /**
+     * Returns all the samples in this suite.
+     *
+     * @return all the samples in this suite
+     */
     public List<Sample> getSamples() {
         return Collections.unmodifiableList(samples);
     }
 
-    /** Returns the measurement type of this suite (discrete or continuous) 
-     * @return the measurement type of this suite (discrete or continuous) */
+    /**
+     * Returns the measurement type of this suite (discrete or continuous)
+     *
+     * @return the measurement type of this suite (discrete or continuous)
+     */
     public MeasType getMeasType() {
         return measType;
     }
 
-    /** Returns the name of this suite.
-     * @return the name of this suite */
+    /**
+     * Returns the name of this suite.
+     *
+     * @return the name of this suite
+     */
     public String getName() {
         return name;
     }
 
-    /** Returns the number of samples in this suite.
-     * @return the number of samples in this suite */
+    /**
+     * Returns the number of samples in this suite.
+     *
+     * @return the number of samples in this suite
+     */
     public int getNumSamples() {
         return samplesById.size();
     }
 
-    /** Returns the sample with the specified index.
-     * 
+    /**
+     * Returns the sample with the specified index.
+     *
      * If the suite contains no samples, or the index is -1, returns null.
-     * 
+     *
      * @param i an index number for a sample
-     * @return the sample with the specified index */
+     * @return the sample with the specified index
+     */
     public Sample getSampleByIndex(int i) {
         if (getSamples().isEmpty() || i==-1) {
             return null;
@@ -1019,17 +1072,16 @@ public final class Suite implements SampleGroup {
     }
 
     /**
-     * <p>Imports AMS data from a whitespace-delimited file.
+     * Imports AMS data from a whitespace-delimited file.
      * If {@code directions==false}, line format is k11 k22 k33 k12 k23 k13 
      * (tensor components) otherwise it's
      * inc1 dec1 inc2 dec2 inc3 dec3 (axis directions, decreasing magnitude).
      * If there's no sample in the suite from which to take the sample
      * and formation corrections, importAmsWithDialog will try to read them as
-     * fields appended to the end of the line.</p>
-     * 
-     * <p>Not fully tested -- use with caution.</p>
-     * 
-     * <p>Not currently used in PuffinPlot.</p>
+     * fields appended to the end of the line.
+     * <p>
+     * <em>Not fully tested -- use with caution.</em>
+     * Not currently accessible from the PuffinPlot GUI.
      * 
      * @param files the files from which to read the data
      * @param directions {@code true} to read axis directions,
@@ -1077,13 +1129,14 @@ public final class Suite implements SampleGroup {
         updateReverseIndex();
     }
 
-    /** Imports AMS data from ASC files in the format produced by
-     * Agico's SAFYR and SUSAR programs.
-     * 
+    /**
+     * Imports AMS data from ASC files in the format produced by Agico's SAFYR
+     * and SUSAR programs.
+     *
      * @param files the ASC files to read
-     * @param magneticNorth {@code true} if the sample dip azimuths 
-     * in the file are relative to magnetic north; {@code false} if
-     * they are relative to geographic north
+     * @param magneticNorth {@code true} if the sample dip azimuths in the file
+     * are relative to magnetic north; {@code false} if they are relative to
+     * geographic north
      * @throws IOException if an I/O error occurred while reading the file
      */
     public void importAmsFromAsc(List<File> files, boolean magneticNorth)
@@ -1113,8 +1166,10 @@ public final class Suite implements SampleGroup {
         updateReverseIndex();
     }
 
-    /** Exports a subset of this suite's data to multiple files, one file
-     * per sample. The files are in a tab-delimited text format.
+    /**
+     * Exports a subset of this suite's data to multiple files, one file per
+     * sample. The files are in a tab-delimited text format.
+     *
      * @param directory the directory in which to create the files
      * @param fields the fields to export
      */
@@ -1158,8 +1213,11 @@ public final class Suite implements SampleGroup {
         }
     }
 
-    /** Returns the names (titles) of the custom flags for this suite.
-     * @return the names (titles) of the custom flags for this suite  */
+    /**
+     * Returns the names (titles) of the custom flags for this suite.
+     *
+     * @return the names (titles) of the custom flags for this suite
+     */
     public CustomFields<String> getCustomFlagNames() {
         return customFlagNames;
     }
@@ -1167,26 +1225,24 @@ public final class Suite implements SampleGroup {
     private void processPuffinLines(List<String> lines) {
         for (String line: lines) {
             final String[] parts = line.split("\t");
-            if (null != parts[0]) switch (parts[0]) {
+            switch (parts[0]) {
                 case "SUITE":
                     fromString(line.substring(6));
                     break;
                 case "SAMPLE":
                     final String sampleId = parts[1];
                     Sample sample = getSampleByName(sampleId);
-                    /* We create a sample here if returned sample is
-                    * null, to deal with suites which have samples with no
-                    * associated Datum lines. At present (2013-09-18)
-                    * all samples have data, but implementing #271
-                    * (import of sample-level data) will probably
-                    * require the ability to save and load files without
-                    * demagnetization steps.
-                    */
+                    /*
+                     * We create a sample here if returned sample is null, to
+                     * deal with suites which have samples with no associated
+                     * Datum lines.
+                     */
                     if (sample == null) {
                         sample = new Sample(sampleId, this);
                         samplesById.put(sampleId, sample);
                         samples.add(sample);
-                    }   sample.fromString(line.substring(8+sampleId.length()));
+                    }
+                    sample.fromString(line.substring(8 + sampleId.length()));
                     break;
                 case "SITE":
                     final Site site = getOrCreateSite(parts[1]);
@@ -1196,46 +1252,62 @@ public final class Suite implements SampleGroup {
         }
     }
 
-    /** Returns the names (titles) of the custom notes for this suite.
-     * @return the names (titles) of the custom notes for this suite  */
+    /**
+     * Returns the names (titles) of the custom notes for this suite.
+     *
+     * @return the names (titles) of the custom notes for this suite
+     */
     public CustomFields<String> getCustomNoteNames() {
         return customNoteNames;
     }
 
-    /** Returns the parameters of the last AMS bootstrap statistics
-     * (if any) calculated on this suite's data.
-     * @return the parameters of the last AMS bootstrap statistics
-     * (if any) calculated on this suite's data */
+    /**
+     * Returns the parameters of the last AMS bootstrap statistics (if any)
+     * calculated on this suite's data.
+     *
+     * @return the parameters of the last AMS bootstrap statistics (if any)
+     * calculated on this suite's data
+     */
     public List<KentParams> getAmsBootstrapParams() {
         return amsBootstrapParams;
     }
 
-    /** Returns the parameters of the last AMS Hext statistics
-     * (if any) calculated on this suite's data.
-     * @return the parameters of the last AMS Hext statistics
-     * (if any) calculated on this suite's data */
+    /**
+     * Returns the parameters of the last AMS Hext statistics (if any)
+     * calculated on this suite's data.
+     *
+     * @return the parameters of the last AMS Hext statistics (if any)
+     * calculated on this suite's data
+     */
     public List<KentParams> getAmsHextParams() {
         return hextParams;
     }
 
-    /** Clears any AMS calculations on this suite */
+    /**
+     * Clears any AMS calculations on this suite
+     */
     public void clearAmsCalculations() {
         setSaved(false);
         amsBootstrapParams = null;
         hextParams = null;
     }
 
-    /** Returns the sites within this suite. 
-     * @return the sites within this suite */
+    /**
+     * Returns the sites within this suite.
+     *
+     * @return the sites within this suite
+     */
     public List<Site> getSites() {
         return Collections.unmodifiableList(sites);
     }
 
-    /** Returns a site with the given name, or {@code null} if
-     * this suite contains no such site.
+    /**
+     * Returns a site with the given name, or {@code null} if this suite
+     * contains no such site.
+     *
      * @param siteName a site name
-     * @return a site with the given name, or {@code null} if
-     * this suite contains no such site
+     * @return a site with the given name, or {@code null} if this suite
+     * contains no such site
      */
     public Site getSiteByName(String siteName) {
         for (Site site: sites) {
@@ -1255,8 +1327,13 @@ public final class Suite implements SampleGroup {
         return site;
     }
 
-    /** Returns the name of the PuffinPlot file associated with this suite, if any. 
-     * @return the name of the PuffinPlot file associated with this suite, if any */
+    /**
+     * Returns the name of the PuffinPlot file associated with this suite, if
+     * any.
+     *
+     * @return the name of the PuffinPlot file associated with this suite, if
+     * any
+     */
     public File getPuffinFile() {
         return puffinFile;
     }
@@ -1286,8 +1363,9 @@ public final class Suite implements SampleGroup {
     }
 
     /**
-     * Get a string identifying the program and version which created this suite.
-     * 
+     * Returns a string identifying the program and version which created this
+     * suite.
+     *
      * @return the creator
      */
     public String getCreator() {
@@ -1372,8 +1450,6 @@ public final class Suite implements SampleGroup {
      * implementing.) If this method is called without corresponding updates to
      * Suite.data, the data structures end up in an inconsistent state and
      * strange results will probably ensue.
-     * 
-     * 
      */
     private Collection mergeDuplicateMeasurementsInSample(Sample sample) {
         final Map<TreatAndStep, List<Datum>> treatMap = new HashMap<>();
@@ -1415,11 +1491,13 @@ public final class Suite implements SampleGroup {
     }
     
     /**
-     * Merges Datum objects with the same Sample and treatment step (EXPERIMENTAL).
-     * 
+     * Merges Datum objects with the same Sample and treatment step
+     * (EXPERIMENTAL).
+     *
      * This function is currently untested and not accessible from the GUI.
-     * 
-     * @param samples samples containing the Datum objects to merge (where possible)
+     *
+     * @param samples samples containing the Datum objects to merge (where
+     * possible)
      */
     public void mergeDuplicateMeasurements(Collection<Sample> samples) {
         final Set<Datum> toRemove = new HashSet<>();
@@ -1480,16 +1558,21 @@ public final class Suite implements SampleGroup {
         PARA_BOOT }; 
 
     
-    /** Calculates and stores AMS statistics using an external script.
-     * 
+    /**
+     * Calculates and stores AMS statistics using an external script.
+     *
      * @param samples the samples on which to calculate statistics
      * @param calcType the type of AMS calculation to perform
-     * @param scriptPath the filesystem path of the script which will perform the calculation
-     * @throws IOException if there was an error running the script or reading its output
-     * @throws IllegalArgumentException if the samples contain insufficient AMS data
+     * @param scriptPath the filesystem path of the script which will perform
+     * the calculation
+     * @throws IOException if there was an error running the script or reading
+     * its output
+     * @throws IllegalArgumentException if the samples contain insufficient AMS
+     * data
      */
-    public void calculateAmsStatistics(List<Sample> samples, AmsCalcType calcType,
-            String scriptPath) throws IOException, IllegalArgumentException {
+    public void calculateAmsStatistics(List<Sample> samples,
+            AmsCalcType calcType, String scriptPath)
+            throws IOException, IllegalArgumentException {
         /* It may not be immediately obvious why this should be an instance
          * method of Suite. In fact the only reason for this is that it
          * stores its results in Suite. This is probably OK. The main deficiency
@@ -1505,9 +1588,11 @@ public final class Suite implements SampleGroup {
             if (s.getAms() != null) tensors.add(s.getAms());
         }
         if (tensors.isEmpty()) {
-            throw new IllegalArgumentException("No AMS data in specified samples.");
+            throw new IllegalArgumentException(
+                    "No AMS data in specified samples.");
         } else if (tensors.size()<3) {
-            throw new IllegalArgumentException("Too few samples with AMS data.");
+            throw new IllegalArgumentException(
+                    "Too few samples with AMS data.");
         }
         switch (calcType) {
             case HEXT:
@@ -1525,9 +1610,11 @@ public final class Suite implements SampleGroup {
     }
     
     private void removeEmptySites() {
-        // ‘Iterator.remove is the only safe way to modify a collection 
-        // during iteration’
-        // -- http://docs.oracle.com/javase/tutorial/collections/interfaces/collection.html
+        /*
+         * ‘Iterator.remove is the only safe way to modify a collection during
+         * iteration’ --
+         * http://docs.oracle.com/javase/tutorial/collections/interfaces/collection.html
+         */
         for (Iterator<Site> it = sites.iterator(); it.hasNext(); ) {
             if (it.next().isEmpty()) {
                 it.remove();
@@ -1536,9 +1623,11 @@ public final class Suite implements SampleGroup {
     }
     
     /**
-     * For a continuous suite, returns the minimum depth of a sample
-     * within the suite. 
-     * @return the minimum depth of a sample within the suite */
+     * For a continuous suite, returns the minimum depth of a sample within the
+     * suite.
+     *
+     * @return the minimum depth of a sample within the suite
+     */
     public double getMinDepth() {
         if (!getMeasType().isContinuous()) return Double.NaN;
         double minimum = Double.POSITIVE_INFINITY;
@@ -1551,8 +1640,12 @@ public final class Suite implements SampleGroup {
         return minimum;
     }
         
-    /** For a continuous suite, returns the maximum depth of a sample within the suite. 
-     * @return the maximum depth of a sample within the suite */
+    /**
+     * For a continuous suite, returns the maximum depth of a sample within the
+     * suite.
+     *
+     * @return the maximum depth of a sample within the suite
+     */
     public double getMaxDepth() {
         if (!getMeasType().isContinuous()) return Double.NaN;
         double maximum = Double.NEGATIVE_INFINITY;
@@ -1565,7 +1658,8 @@ public final class Suite implements SampleGroup {
         return maximum;
     }
     
-    /** Clears all sites for this suite.
+    /**
+     * Clears all sites for this suite.
      */
     public void clearSites() {
         setSaved(false);
@@ -1575,12 +1669,15 @@ public final class Suite implements SampleGroup {
         }
     }
     
-    /** A SiteNamer turns a sample name into a site name. It is used
-     * to automatically define site names for a number of samples according
-     * to a pre-programmed scheme.
+    /**
+     * A SiteNamer turns a sample name into a site name. It is used to
+     * automatically define site names for a number of samples according to a
+     * pre-programmed scheme.
      */
     public static interface SiteNamer {
-        /** Determines a site name from a sample name. 
+        /**
+         * Determines a site name from a sample name.
+         *
          * @param sample the name of a sample
          * @return the name of a site which should contain the sample with the
          * specified name
@@ -1588,13 +1685,16 @@ public final class Suite implements SampleGroup {
         String siteName(Sample sample);
     }
     
-    /** Sets sites for supplied samples according to a supplied site namer.
-     * Where a site with the required name exists, it will be used; 
-     * otherwise a new site with the required name will be created.
+    /**
+     * Sets sites for supplied samples according to a supplied site namer. Where
+     * a site with the required name exists, it will be used; otherwise a new
+     * site with the required name will be created.
+     *
      * @param samples the samples for which to set sites
      * @param siteNamer the site namer which will produce the site names
      */
-    public void setSitesForSamples(Collection<Sample> samples, SiteNamer siteNamer) {
+    public void setSitesForSamples(Collection<Sample> samples,
+            SiteNamer siteNamer) {
         setSaved(false);
         for (Sample sample: samples) {
             final Site oldSite = sample.getSite();
@@ -1608,9 +1708,11 @@ public final class Suite implements SampleGroup {
         removeEmptySites();
     }
     
-    /** Explicitly sets a site for the specified samples.
-     * If a site with the requested name exists, it will be used;
-     * otherwise a new site with that name will be created.
+    /**
+     * Explicitly sets a site for the specified samples. If a site with the
+     * requested name exists, it will be used; otherwise a new site with that
+     * name will be created.
+     *
      * @param samples the samples for which to set the site
      * @param siteName the name of the site into which to put the samples
      */
@@ -1625,15 +1727,18 @@ public final class Suite implements SampleGroup {
         });
     }
     
-    /** Sets site names for samples according to chosen characters from the
-     * sample names. The caller supplies a bit-set; for each sample name,
-     * the site name is determined by taking the characters of the sample
-     * name for which the corresponding bit is set.
-     * 
+    /**
+     * Sets site names for samples according to chosen characters from the
+     * sample names. The caller supplies a bit-set; for each sample name, the
+     * site name is determined by taking the characters of the sample name for
+     * which the corresponding bit is set.
+     *
      * @param samples the samples for which to set sites
-     * @param charMask the mask determining which characters to use for the site name
+     * @param charMask the mask determining which characters to use for the site
+     * name
      */
-    public void setSiteNamesBySubstring(Collection<Sample> samples, final BitSet charMask) {
+    public void setSiteNamesBySubstring(Collection<Sample> samples,
+            final BitSet charMask) {
         setSaved(false);
         setSitesForSamples(samples, new SiteNamer() {
             @Override
@@ -1650,33 +1755,38 @@ public final class Suite implements SampleGroup {
         });
     }
     
-    /** Sets site names for a continuous suite according to the depth of the samples.
-     * A thickness is specified to the method, and the suite is divided into
-     * sites of that thickness. Each site is named for the shallowest depth
+    /**
+     * Sets site names for a continuous suite according to the depth of the
+     * samples. A thickness is specified to the method, and the suite is divided
+     * into sites of that thickness. Each site is named for the shallowest depth
      * within it.
+     *
      * @param samples the samples for which to set site names
-     * @param thickness the thickness of each site */
-    public void setSiteNamesByDepth(Collection<Sample> samples, final double thickness) {
+     * @param thickness the thickness of each site
+     */
+    public void setSiteNamesByDepth(Collection<Sample> samples,
+            final double thickness) {
         setSaved(false);
         setSitesForSamples(samples, new SiteNamer() {
             @Override
             public String siteName(Sample sample) {
-                double minDepth = getMinDepth();
-                double relDepth = sample.getDepth() - minDepth;
-                double slice = Math.floor(relDepth / thickness);
-                String sliceName = String.format(Locale.ENGLISH, "%.2f", slice*thickness+minDepth);
+                final double minDepth = getMinDepth();
+                final double relDepth = sample.getDepth() - minDepth;
+                final double slice = Math.floor(relDepth / thickness);
+                final String sliceName = String.format(Locale.ENGLISH, "%.2f",
+                        slice * thickness + minDepth);
                 return sliceName;
             }
         });
     }
     
-    /** Creates a new sample and adds it to this suite.
-     * The sample's position is determined by
-     * its name. Provided that the suite is sorted by sample name (or depth),
-     * the sample will be inserted at its correct position according to 
-     * that sorting. Note that the reverse (sample-to-index) map is not
-     * updated; this must be done manually with a call to
-     * updateReverseIndex().
+    /**
+     * Creates a new sample and adds it to this suite. The sample's position is
+     * determined by its name. Provided that the suite is sorted by sample name
+     * (or depth), the sample will be inserted at its correct position according
+     * to that sorting. Note that the reverse (sample-to-index) map is not
+     * updated; this must be done manually with a call to updateReverseIndex().
+     *
      * @param id the identifier or name of the new sample
      * @return a new sample with the supplied identifier
      */
@@ -1693,18 +1803,22 @@ public final class Suite implements SampleGroup {
         return newSample;
     }
 
-    /** Determine whether this suite contain a same with a specified
-     * identifier (name).
+    /**
+     * Determine whether this suite contain a same with a specified identifier
+     * (name).
+     *
      * @param id a sample identifier
-     * @return {@code true} if this suite contains a sample with the
-     * specified identifier
+     * @return {@code true} if this suite contains a sample with the specified
+     * identifier
      */
     public boolean containsSample(String id) {
         return samplesById.containsKey(id);
     }
 
-    /** Multiplies all magnetic susceptibility measurements in this
-     * suite by the specified factor.
+    /**
+     * Multiplies all magnetic susceptibility measurements in this suite by the
+     * specified factor.
+     *
      * @param factor a factor by which to multiply all the magnetic
      * susceptibility measurements in this suite
      */
@@ -1717,7 +1831,9 @@ public final class Suite implements SampleGroup {
         }
     }
     
-    /** Sorts this suite's samples in ascending order of depth    */
+    /**
+     * Sorts this suite's samples in ascending order of depth
+     */
     public void sortSamplesByDepth() {
         Collections.sort(samples, new Comparator<Sample>() {
             @Override
