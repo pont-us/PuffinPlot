@@ -22,6 +22,7 @@ import static java.lang.Double.parseDouble;
 import static java.lang.Math.toRadians;
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,8 +36,6 @@ import java.util.stream.Collectors;
  * This class represents a sample on which measurements have been made.
  * It may correspond either to a discrete, physical specimen, or to
  * a particular point on a continuous long core or u-channel sample.
- * 
- * @author pont
  */
 public class Sample {
     
@@ -1101,6 +1100,17 @@ public class Sample {
         } else {
             throw new IllegalStateException("This sample has no Datum objects");
         }
+    }
+    
+    /**
+     * Remove specified data from this sample. Any {@code Datum) in the
+     * collection passed to this method will be removed. Any {@code Datum}
+     * in the collection which is not in this Sample will be ignored.
+     * 
+     * @param data the data to remove
+     */
+    public void removeData(Collection<Datum> toRemove) {
+        toRemove.forEach(d -> data.remove(d));
     }
     
 }

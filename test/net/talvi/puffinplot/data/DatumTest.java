@@ -18,16 +18,17 @@ package net.talvi.puffinplot.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.function.DoubleConsumer;
-import java.util.function.DoubleSupplier;
+import java.util.Random;
 import java.util.function.ObjDoubleConsumer;
 import java.util.function.ObjIntConsumer;
 import java.util.function.ToDoubleFunction;
 import java.util.function.ToIntFunction;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.stream.IntStream;
+import net.talvi.puffinplot.TestUtils;
 import net.talvi.puffinplot.TestUtils.ListHandler;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -404,4 +405,48 @@ public class DatumTest {
         assertEquals(timestamp, d.getTimestamp());
     }
     
+    @Test(expected = NullPointerException.class)
+    public void testSetMomentToMeanNull() {
+        new Datum().setMomentToMean(null);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetMomentToMeanEmpty() {
+        new Datum().setMomentToMean(Collections.emptyList());
+    }
+    
+    @Test
+    public void testSetMomentToMean() {
+        final Datum target = new Datum();
+        final Random rnd = new Random(83);
+        for (int nVectors = 1; nVectors < 10; nVectors++) {
+            final List<Vec3> vectors = IntStream.range(0, nVectors).
+                    mapToObj(i -> TestUtils.randomVector(rnd, 1)).
+                    collect(Collectors.toList());
+            final List<Datum> data = vectors.stream().map(v -> new Datum(v)).
+                    collect(Collectors.toList());
+            target.setMomentToMean(data);
+            assertTrue(Vec3.mean(vectors).equals(target.getMoment(), delta));
+        }
+    }
+        
+    @Test
+    public void testGetTreatmentLevelIrm() {
+        final Datum d = new Datum();
+        d.setTreatType(TreatType.IRM);
+        d.setIrmField(0.7);
+        assertEquals(0.7, d.getTreatmentLevel(), delta);
+    }
+    
+    @Test
+    public void testGetValueMsJump() {
+        final Datum d = new Datum();
+        d.setSample(new Sample("test", null) {
+            @Override
+            public double getMagSusJump() {
+                return 17;
+            }
+        });
+        assertEquals("17.0", d.getValue(DatumField.VIRT_MSJUMP));
+    }
 }

@@ -623,4 +623,17 @@ public class SampleTest {
         expected.remove(5);
         assertEquals(expected, simpleSample.getVisibleData());
     }
+    
+    @Test
+    public void testRemoveData() {
+        final Set<Datum> toRemove = Arrays.stream(new int[] {2, 3, 5, 6}).
+                mapToObj(i -> simpleSample.getDatum(i)).
+                collect(Collectors.toSet());
+        final List<Datum> shouldRemain =
+                Arrays.stream(new int[] {0, 1, 4, 7, 8, 9}).
+                        mapToObj(i -> simpleSample.getDatum(i)).
+                        collect(Collectors.toList());
+        simpleSample.removeData(toRemove);
+        assertEquals(shouldRemain, simpleSample.getData());
+    }
 }

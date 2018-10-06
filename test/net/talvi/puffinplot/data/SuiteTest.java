@@ -38,6 +38,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -1506,4 +1507,48 @@ public class SuiteTest {
         assertTrue(handler.wasOneMessageLogged(Level.SEVERE));
     }
     
+    @Test
+    public void testMergeDuplicateMeasurementsWithEmptyList() {
+        final Suite suite = new Suite("test");
+        suite.mergeDuplicateMeasurements(Collections.emptyList());
+    }
+    
+    @Test
+    public void testMergeDuplicateMeasurementsWithNoDuplicates() {
+        final Suite suite = new Suite("test");
+        final Sample sample = new Sample("sample0", suite);
+        suite.addSample(sample, "sample0");
+        final List<Datum> expected = new ArrayList<>();
+        for (int step=0; step<3; step++) {
+            final Datum d = new Datum();
+            d.setTreatType(TreatType.THERMAL);
+            d.setTemp(step*10);
+            sample.addDatum(d);
+            expected.add(d);
+        }
+        suite.mergeDuplicateMeasurements(Collections.singletonList(sample));
+        assertEquals(expected, sample.getData());
+    }
+
+    @Test
+    public void testMergeDuplicateMeasurements() {
+        final Suite suite = new Suite("test");
+        final Sample sample = new Sample("sample0", suite);
+        suite.addSample(sample, "sample0");
+        final List<Vec3> vectors = new ArrayList<>();
+        Random rnd = new Random(77);
+        for (int step=0; step<3; step++) {
+            final Vec3 vector = TestUtils.randomVector(rnd, 1);
+            final Datum d = new Datum(vector);
+            d.setTreatType(TreatType.THERMAL);
+            d.setTemp(50);
+            sample.addDatum(d);
+            vectors.add(vector);
+        }
+        final Vec3 expectedMean = Vec3.mean(vectors);
+        suite.mergeDuplicateMeasurements(Collections.singletonList(sample));
+        assertEquals(1, sample.getData().size());
+        assertTrue(expectedMean.equals(sample.getDatum(0).getMoment()));
+    }
+
 }

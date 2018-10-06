@@ -25,9 +25,11 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
 import static java.util.Objects.requireNonNull;
+import java.util.stream.Collectors;
 
 /**
  * <p>Datum is the fundamental data class of PuffinPlot. It represents the
@@ -57,6 +59,7 @@ public class Datum {
     private static final double
             DEFAULT_AREA = 4.0, // can be overridden by Area field in file
             DEFAULT_VOLUME = 10.8; // can be overridden by Volume field in file
+
     private String discreteId = "UNSET";
     private MeasType measType = MeasType.UNSET;
     private TreatType treatType = TreatType.UNKNOWN;
@@ -886,4 +889,22 @@ public class Datum {
         }
         return result;
     }
+
+    /**
+     * Sets the magnetization vector of this datum to the mean of the
+     * magnetization vectors of {@code data}.
+     *
+     * @param data data from which to calculate the mean magnetization vector;
+     *   must be non-null and non-empty
+     */
+    public void setMomentToMean(List<Datum> data) {
+        Objects.requireNonNull(data);
+        if (data.isEmpty()) {
+            throw new IllegalArgumentException("Empty list passed to"
+                    + "setMomentToMean.");
+        }
+        setMoment(Vec3.mean(data.stream().map(d -> d.getMoment()).
+                collect(Collectors.toList())));
+    }
+
 }

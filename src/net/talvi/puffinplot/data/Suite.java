@@ -329,7 +329,6 @@ public final class Suite implements SampleGroup {
             throw new IllegalArgumentException(
                     "Measurement type may not be UNSET");
         }
-
         if (measType == MeasType.UNSET) {
             measType = d.getMeasType();
         }
@@ -571,11 +570,12 @@ public final class Suite implements SampleGroup {
                 boolean dataIsOk = true;
                 if (measTypes.contains(MeasType.DISCRETE) &&
                         measTypes.contains((MeasType.CONTINUOUS))) {
-                    // The loaded file mixes measurement types. This should
-                    // never happen in normal circumstances, but it's
-                    // conceivable that, for example, a user concatenated
-                    // incompatible files by mistake.
-                    
+                    /*
+                     * The loaded file mixes measurement types. This should
+                     * never happen in normal circumstances, but it's
+                     * conceivable that, for example, a user concatenated
+                     * incompatible files by mistake.
+                     */
                     dataIsOk = false;
                     loadWarnings.add(String.format(Locale.ENGLISH,
                         "%s mixes discrete and continuous measurements.\n"
@@ -598,7 +598,8 @@ public final class Suite implements SampleGroup {
                 }
                 
                 if (dataIsOk) {
-                    tempDataList.ensureCapacity(tempDataList.size() + loadedData.size());
+                    tempDataList.ensureCapacity(tempDataList.size() +
+                            loadedData.size());
                     for (Datum d: loadedData) {
                         // TODO: check for matching measurement type here
                         if (!d.ignoreOnLoading()) addDatum(d);
@@ -613,12 +614,12 @@ public final class Suite implements SampleGroup {
                     "1:1:1".equals(sensorLengths.getPreset()) &&
                     !usePolarMoment) {
                 sensorLengthWarning = true;
-
             }
         }
         
         if (sensorLengthWarning) {
-            loadWarnings.add("Reading vector long core data with unset sensor\n" +
+            loadWarnings.add(
+                    "Reading vector long core data with unset sensor\n" +
                     "lengths! Magnetization vectors may be incorrect. See\n" +
                     "PuffinPlot manual for details.");
         }
@@ -1423,22 +1424,7 @@ public final class Suite implements SampleGroup {
             return true;
         }
     }
-            
-    /**
-     * Sets the magnetization vector of {@code datum} to the mean of the
-     * magnetization vectors of {@code data}.
-     *
-     * @param datum recipient of the mean magnetization vector
-     * @param data data from which to calculate the mean magnetization vector
-     */
-    private static void setVectorToMean(Datum datum, List<Datum> data) {
-        final Collection<Vec3> vectors = new ArrayList<>(data.size());
-        for (Datum d : data) {
-            vectors.add(d.getMoment());
-        }
-        datum.setMoment(Vec3.meanDirection(vectors));
-    }
-        
+
     /** 
      * This (currently untested) method should merge duplicate measurements
      * within a specified Sample, but the Suite also has references to the Datum
@@ -1480,13 +1466,12 @@ public final class Suite implements SampleGroup {
         for (Datum d : sample.getData()) {
             List<Datum> duplicates = treatMap.get(new TreatAndStep(d));
             if (duplicates.get(0) == d) {
-                setVectorToMean(d, duplicates);
+                d.setMomentToMean(duplicates);
             } else {
                 toRemove.add(d);
             }
         }
-        sample.getData().removeAll(toRemove);
-        // TODO implement a Sample method for this -- getData() returns an unmodifiable list
+        sample.removeData(toRemove);
         return toRemove;
     }
     
@@ -1494,7 +1479,7 @@ public final class Suite implements SampleGroup {
      * Merges Datum objects with the same Sample and treatment step
      * (EXPERIMENTAL).
      *
-     * This function is currently untested and not accessible from the GUI.
+     * This function not currently accessible from the GUI.
      *
      * @param samples samples containing the Datum objects to merge (where
      * possible)
