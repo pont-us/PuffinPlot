@@ -31,11 +31,9 @@ import java.util.stream.Collectors;
 import net.talvi.puffinplot.PuffinUserException;
 import net.talvi.puffinplot.data.file.*;
 
-/** A suite of data, containing a number of samples.
- * This will usually correspond to a section (for discrete studies)
- * or core (for continuous studies).
- * 
- * @author pont
+/**
+ * A suite of data, containing a number of samples. This will usually correspond
+ * to a section (for discrete studies) or core (for continuous studies).
  */
 public final class Suite implements SampleGroup {
 
@@ -1392,92 +1390,8 @@ public final class Suite implements SampleGroup {
         }
     }
 
-    private static class TreatAndStep {
-        private final TreatType treatType;
-        private final Double treatStep;
-        
-        public TreatAndStep(Datum datum) {
-            this.treatType = datum.getTreatType();
-            this.treatStep = datum.getTreatmentStep();
-        }
-        
-        @Override
-        public int hashCode() {
-            return treatType.hashCode() ^ treatStep.hashCode();
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            final TreatAndStep other = (TreatAndStep) obj;
-            if (this.treatType != other.treatType) {
-                return false;
-            }
-            if (!Objects.equals(this.treatStep, other.treatStep)) {
-                return false;
-            }
-            return true;
-        }
-    }
-
-    /** 
-     * This (currently untested) method should merge duplicate measurements
-     * within a specified Sample, but the Suite also has references to the Datum
-     * instances which need to be updated. The idea is that this method is
-     * called for each sample that needs merging, and the union of the returned
-     * collections is then passed to a function in Suite which will remove the
-     * listed Datum objects from its data list. (I don't think Suite keeps any
-     * caches which need to be updated, but I should check this when
-     * implementing.) If this method is called without corresponding updates to
-     * Suite.data, the data structures end up in an inconsistent state and
-     * strange results will probably ensue.
-     */
-    private Collection mergeDuplicateMeasurementsInSample(Sample sample) {
-        final Map<TreatAndStep, List<Datum>> treatMap = new HashMap<>();
-        for (Datum d : sample.getData()) {
-            final TreatAndStep key = new TreatAndStep(d);
-            if (!treatMap.containsKey(key)) {
-                treatMap.put(key, new ArrayList<>());
-            }
-            treatMap.get(key).add(d);
-        }
-        
-        /*
-         * First check if any merging needs to be done at all, to avoid
-         * needlessly creating a new object.
-         */
-        boolean anyMergables = false;
-        for (List<Datum> ds: treatMap.values()) {
-            if (ds.size() > 1) {
-                anyMergables = true;
-                break;
-            }
-        }
-        if (!anyMergables) {
-            return Collections.EMPTY_LIST;
-        }
-
-        final Collection<Datum> toRemove = new HashSet<>(treatMap.size());
-        for (Datum d : sample.getData()) {
-            List<Datum> duplicates = treatMap.get(new TreatAndStep(d));
-            if (duplicates.get(0) == d) {
-                d.setMomentToMean(duplicates);
-            } else {
-                toRemove.add(d);
-            }
-        }
-        sample.removeData(toRemove);
-        return toRemove;
-    }
-    
     /**
      * Merges Datum objects with the same Sample and treatment step
-     * (EXPERIMENTAL).
      *
      * This function not currently accessible from the GUI.
      *
@@ -1485,9 +1399,8 @@ public final class Suite implements SampleGroup {
      * possible)
      */
     public void mergeDuplicateMeasurements(Collection<Sample> samples) {
-        final Set<Datum> toRemove = new HashSet<>();
         for (Sample sample: samples) {
-            mergeDuplicateMeasurementsInSample(sample);
+            sample.mergeDuplicateMeasurements();
         }
     }
     

@@ -24,9 +24,13 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -1112,5 +1116,91 @@ public class Sample {
     public void removeData(Collection<Datum> toRemove) {
         toRemove.forEach(d -> data.remove(d));
     }
+
+    /**
+     * This method merges duplicate measurements
+     * within a specified Sample, but the Suite also has references to the Datum
+     * instances which need to be updated. The idea is that this method is
+     * called for each sample that needs merging, and the union of the returned
+     * collections is then passed to a function in Suite which will remove the
+     * listed Datum objects from its data list. (I don't think Suite keeps any
+     * caches which need to be updated, but I should check this when
+     * implementing.) If this method is called without corresponding updates to
+     * Suite.data, the data structures end up in an inconsistent state and
+     * strange results will probably ensue.
+     */
+    public Collection mergeDuplicateMeasurements() {
+        final Map<TreatmentTypeAndLevel, List<Datum>> treatmentMap =
+                new HashMap<>();
+        for (Datum d: this.getData()) {
+            final TreatmentTypeAndLevel key = new TreatmentTypeAndLevel(d);
+            if (!treatmentMap.containsKey(key)) {
+                treatmentMap.put(key, new ArrayList<>());
+            }
+            treatmentMap.get(key).add(d);
+        }
+        /*
+         * First check if any merging needs to be done at all, to avoid
+         * needlessly creating a new object.
+         */
+        boolean anyMergables = false;
+        for (List<Datum> ds: treatmentMap.values()) {
+            if (ds.size() > 1) {
+                anyMergables = true;
+                break;
+            }
+        }
+        if (!anyMergables) {
+            return Collections.EMPTY_LIST;
+        }
+        final Collection<Datum> toRemove = new HashSet<>(treatmentMap.size());
+        for (Datum d: this.getData()) {
+            List<Datum> duplicates =
+                    treatmentMap.get(new TreatmentTypeAndLevel(d));
+            if (duplicates.get(0) == d) {
+                d.setMomentToMean(duplicates);
+            } else {
+                toRemove.add(d);
+            }
+        }
+        this.removeData(toRemove);
+        return toRemove;
+    }
+
+    private static class TreatmentTypeAndLevel {
+        private final TreatType treatType;
+        private final Double treatStep;
+        
+        public TreatmentTypeAndLevel(Datum datum) {
+            this.treatType = datum.getTreatType();
+            this.treatStep = datum.getTreatmentStep();
+        }
+        
+        @Override
+        public int hashCode() {
+            return treatType.hashCode() ^ treatStep.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final TreatmentTypeAndLevel other = (TreatmentTypeAndLevel) obj;
+            if (this.treatType != other.treatType) {
+                return false;
+            }
+            if (!Objects.equals(this.treatStep, other.treatStep)) {
+                return false;
+            }
+            return true;
+        }
+    }
+
+    
+
     
 }
