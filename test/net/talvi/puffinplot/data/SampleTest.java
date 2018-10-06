@@ -32,6 +32,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import net.talvi.puffinplot.TestUtils;
 import net.talvi.puffinplot.TestUtils.ListHandler;
 
 public class SampleTest {
@@ -635,5 +636,24 @@ public class SampleTest {
                         collect(Collectors.toList());
         simpleSample.removeData(toRemove);
         assertEquals(shouldRemain, simpleSample.getData());
+    }
+
+    @Test
+    public void testMergeDuplicateMeasurements() {
+        final Sample sample = new Sample("sample0", null);
+        final List<Vec3> vectors = new ArrayList<>();
+        final Random rnd = new Random(77);
+        for (int step=0; step<3; step++) {
+            final Vec3 vector = TestUtils.randomVector(rnd, 1);
+            final Datum d = new Datum(vector);
+            d.setTreatType(TreatType.THERMAL);
+            d.setTemp(50);
+            sample.addDatum(d);
+            vectors.add(vector);
+        }
+        final Vec3 expectedMean = Vec3.mean(vectors);
+        sample.mergeDuplicateMeasurements();
+        assertEquals(1, sample.getData().size());
+        assertTrue(expectedMean.equals(sample.getDatum(0).getMoment()));
     }
 }

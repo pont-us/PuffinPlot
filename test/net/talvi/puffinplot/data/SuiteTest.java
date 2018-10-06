@@ -56,6 +56,7 @@ import net.talvi.puffinplot.TestUtils.ListHandler;
 import net.talvi.puffinplot.data.file.TwoGeeLoader;
 import net.talvi.puffinplot.data.file.testdata.TestFileLocator;
 import org.junit.Assume;
+import org.mockito.Mockito;
 
 /**
  *
@@ -1533,22 +1534,10 @@ public class SuiteTest {
     @Test
     public void testMergeDuplicateMeasurements() {
         final Suite suite = new Suite("test");
-        final Sample sample = new Sample("sample0", suite);
+        final Sample sample = Mockito.mock(Sample.class);
         suite.addSample(sample, "sample0");
-        final List<Vec3> vectors = new ArrayList<>();
-        Random rnd = new Random(77);
-        for (int step=0; step<3; step++) {
-            final Vec3 vector = TestUtils.randomVector(rnd, 1);
-            final Datum d = new Datum(vector);
-            d.setTreatType(TreatType.THERMAL);
-            d.setTemp(50);
-            sample.addDatum(d);
-            vectors.add(vector);
-        }
-        final Vec3 expectedMean = Vec3.mean(vectors);
         suite.mergeDuplicateMeasurements(Collections.singletonList(sample));
-        assertEquals(1, sample.getData().size());
-        assertTrue(expectedMean.equals(sample.getDatum(0).getMoment()));
+        Mockito.verify(sample).mergeDuplicateMeasurements();
     }
 
 }
