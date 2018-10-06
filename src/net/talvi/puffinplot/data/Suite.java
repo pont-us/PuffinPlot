@@ -1391,17 +1391,16 @@ public final class Suite implements SampleGroup {
     }
 
     /**
-     * Merges Datum objects with the same Sample and treatment step
+     * Within each of the supplied samples, merges any Datum objects
+     * which have the same treatment type and treatment level.
      *
-     * This function not currently accessible from the GUI.
+     * This function is not currently accessible from the GUI.
      *
-     * @param samples samples containing the Datum objects to merge (where
-     * possible)
+     * @param samplesToMerge samples containing the Datum objects to merge
+     * (where possible)
      */
-    public void mergeDuplicateMeasurements(Collection<Sample> samples) {
-        for (Sample sample: samples) {
-            sample.mergeDuplicateMeasurements();
-        }
+    public void mergeDuplicateMeasurements(Collection<Sample> samplesToMerge) {
+        samplesToMerge.forEach(Sample::mergeDuplicateMeasurements);
     }
     
     private class CustomFlagNames extends CustomFields<String> {

@@ -1111,25 +1111,23 @@ public class Sample {
      * collection passed to this method will be removed. Any {@code Datum}
      * in the collection which is not in this Sample will be ignored.
      * 
-     * @param data the data to remove
+     * @param toRemove the data to remove
      */
     public void removeData(Collection<Datum> toRemove) {
         toRemove.forEach(d -> data.remove(d));
     }
 
     /**
-     * This method merges duplicate measurements
-     * within a specified Sample, but the Suite also has references to the Datum
-     * instances which need to be updated. The idea is that this method is
-     * called for each sample that needs merging, and the union of the returned
-     * collections is then passed to a function in Suite which will remove the
-     * listed Datum objects from its data list. (I don't think Suite keeps any
-     * caches which need to be updated, but I should check this when
-     * implementing.) If this method is called without corresponding updates to
-     * Suite.data, the data structures end up in an inconsistent state and
-     * strange results will probably ensue.
+     * Merges duplicate measurements within this Sample. Measurements are
+     * duplicates if they have the same treatment type and treatment level. They
+     * are merged by retaining only the first measurement in each set of
+     * duplicates and setting its moment to the mean of the moments of the
+     * entire set of duplicates.
+     * 
+     * @return the data which were removed
+     * 
      */
-    public Collection mergeDuplicateMeasurements() {
+    public Set<Datum> mergeDuplicateMeasurements() {
         final Map<TreatmentTypeAndLevel, List<Datum>> treatmentMap =
                 new HashMap<>();
         for (Datum d: this.getData()) {
@@ -1151,9 +1149,9 @@ public class Sample {
             }
         }
         if (!anyMergables) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptySet();
         }
-        final Collection<Datum> toRemove = new HashSet<>(treatmentMap.size());
+        final Set<Datum> toRemove = new HashSet<>(treatmentMap.size());
         for (Datum d: this.getData()) {
             List<Datum> duplicates =
                     treatmentMap.get(new TreatmentTypeAndLevel(d));
