@@ -970,6 +970,19 @@ public class SuiteTest {
                 + "0.00,5,22.8728,14.4217,16.7387,21.8470,5,4.8169,Y,183.0448,13.0636,6.8346,269.1429,5,0,4.9944,10,0.00000,0.00000,90.0000,90.0000,15.0,25.0,-68.1725,16.8419,3.5534,6.9694\n"
                 + "5.00,5,33.9598,3.3541,1.0511,5300.1858,5,4.9992,Y,189.9534,4.3122,1.6842,4422.6002,5,0,4.9997,10,0.00000,0.00000,90.0000,90.0000,,,,,,\n";
         assertEquals(expectedCalcs, siteCalcsString);
+        syntheticSuite1.getSites().forEach(s -> s.clearFisherStats());
+        syntheticSuite1.getSites().forEach(s -> s.clearGcFit());
+        syntheticSuite1.saveCalcsSite(siteCalcsFile);
+        final String siteCalcsString2 =
+                new String(Files.readAllBytes(siteCalcsFile.toPath()));
+        final String expectedCalcs2 =
+                "Site,Samples,Fisher dec. (deg),Fisher inc. (deg),Fisher a95 (deg),Fisher k,Fisher nDirs,Fisher R,"
+                + "GC valid,GC dec. (deg),GC inc. (deg),GC a95 (deg),GC k,GC N,GC M,GC R,GC min points,"
+                + "GC D1min (degC or mT),GC D1max (degC or mT),GC D2min (degC or mT),GC D2max (degC or mT),"
+                + "Lat (deg),Long (deg),VGP lat (deg),VGP long (deg),VGP dp (deg),VGP dm (deg)\n"
+                + "0.00,5,,,,,,,,,,,,,,,,,,,,15.0,25.0,-68.1725,16.8419,3.5534,6.9694\n"
+                + "5.00,5,,,,,,,,,,,,,,,,,,,,,,,,,\n";
+        assertEquals(expectedCalcs2, siteCalcsString2);
     }
 
     private static void setUpSiteCalculations(Suite suite) {
@@ -1187,22 +1200,48 @@ public class SuiteTest {
                 syntheticSuite2.getSampleByName("LPA0309.1");
         assertNotNull(sample);
         assertNotNull(sample.getAms());
+
+        /*
+         * Expected values generated from a previous run, but verified against
+         * the pre-transformed geographic system directions in the input file.
+         * Actual values recalculated from scratch using the specimen system
+         * directions and sample orientation from the file. There is a minor
+         * discrepancy: the file gives 0.9931 rather than 0.9330 for the first
+         * parameter. But SAFYR presumably calculated that using full accuracy
+         * for the specimen-system directions, while PuffinPlot has to work with
+         * the 4 d.p. that the ASC file provides.
+         */
+        assertEquals("0.99303 1.01217 0.99480 0.00477 0.00079 0.00490",
+                syntheticSuite2.getSampleByName("LPA0309.1").getAms().
+                        toTensorComponentString());
         
         /*
          * To exercise some more code paths, we now import again to the same
          * (existing) sample, after adding a Datum with orientation parameters
-         * to it. This time we specify magnetic rather than geographic north.
+         * to it. This time we specify magnetic rather than geographic north
+         * (although in this case it's the same anyway).
          */
-        
         final Datum datum = new Datum();
         datum.setSampAz(0);
-        datum.setSampDip(0);
+        datum.setSampDip(90);
         datum.setFormAz(0);
         datum.setFormDip(0);
         sample.addDatum(datum);
         syntheticSuite2.importAmsFromAsc(
                 Collections.singletonList(filePath.toFile()), true);
         
+        /*
+         * The expected values are taken from the same "principal directions"
+         * fields in the file that AmsLoader reads. However, the test
+         * is non-trivial because the Tensor constructor transforms the
+         * tensor by the sample and formation orientations. In this case
+         * we've set those orientations to 0 / 90 / 0 / 0, corresponding
+         * to an identity transformation, so we end up with the same
+         * values.
+         */
+        assertEquals("0.99480 1.00400 1.00120 0.00160 0.01060 -0.00470",
+                syntheticSuite2.getSampleByName("LPA0309.1").getAms().
+                        toTensorComponentString());
     }
     
     @Test

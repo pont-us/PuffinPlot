@@ -712,9 +712,7 @@ public final class Suite implements SampleGroup {
             String greatCirclesValidityCondition) {
         setSaved(false);
         doSampleCalculations(correction);
-        if (!getSites().isEmpty()) {
-            doSiteCalculations(correction, greatCirclesValidityCondition);
-        }
+        doSiteCalculations(correction, greatCirclesValidityCondition);
     }
     
     /**
@@ -725,7 +723,7 @@ public final class Suite implements SampleGroup {
      */
     public void saveCalcsSample(File file) throws PuffinUserException {
         if (samples.isEmpty()) {
-            throw new PuffinUserException("No calculations to save.");
+            throw new PuffinUserException("No samples in suite.");
         }
             
         try (FileWriter fw = new FileWriter(file);
@@ -777,7 +775,8 @@ public final class Suite implements SampleGroup {
      * @throws PuffinUserException if an error occurred while writing the file
      */
     public void saveCalcsSite(File file) throws PuffinUserException {
-        if (getSites() == null || getSites().isEmpty()) {
+        if (getSites().isEmpty()) {
+            // A null check here would be dead code: sites is never null.
             throw new PuffinUserException("No sites are defined.");
         }
         try (FileWriter fw = new FileWriter(file);
@@ -973,10 +972,12 @@ public final class Suite implements SampleGroup {
                 setMeasType(MeasType.valueOf(parts[1]));
                 break;
             case "CUSTOM_FLAG_NAMES":
-                customFlagNames = new CustomFlagNames(Arrays.asList(parts).subList(1, parts.length));
+                customFlagNames = new CustomFlagNames(
+                        Arrays.asList(parts).subList(1, parts.length));
                 break;
             case "CUSTOM_NOTE_NAMES":
-                customNoteNames = new CustomNoteNames(Arrays.asList(parts).subList(1, parts.length));
+                customNoteNames = new CustomNoteNames(
+                        Arrays.asList(parts).subList(1, parts.length));
                 break;
             case "CREATION_DATE":
             {
@@ -1371,13 +1372,28 @@ public final class Suite implements SampleGroup {
         return suiteCreator;
     }
 
-    List<Sample> getSamplesByDiscreteId(String id) {
+    /**
+     * Return the samples with a given discrete ID. For discrete suites,
+     * there will usually be at most one sample with a given discrete ID.
+     * For continuous suites, an entire core section may be returned.
+     * 
+     * @param id
+     * @return 
+     */
+    public List<Sample> getSamplesByDiscreteId(String id) {
         Objects.requireNonNull(id);
         return getSamples().stream().filter(s -> id.equals(s.getDiscreteId())).
                 collect(Collectors.toList());
     }
 
-    void rotateSamplesByDiscreteId(Map<String, Double> rotations) {
+    /**
+     * Rotate the declination of magnetic moment data in this suite according to
+     * the discrete ID of the sample.
+     * 
+     * @param rotations a map from discrete sample IDs to rotation angles
+     * (clockwise in degrees)
+     */
+    public void rotateSamplesByDiscreteId(Map<String, Double> rotations) {
         for (Sample sample: getSamples()) {
             final String discreteId = sample.getDiscreteId();
             if (rotations.containsKey(discreteId)) {
@@ -1410,7 +1426,8 @@ public final class Suite implements SampleGroup {
         @Override
         public void add(int position, String value) {
             super.add(position, value);
-            for (Sample s: getSamples()) s.getCustomFlags().add(position, Boolean.FALSE);
+            for (Sample s: getSamples())
+                s.getCustomFlags().add(position, Boolean.FALSE);
         }
         @Override
         public void remove(int position) {
@@ -1420,7 +1437,8 @@ public final class Suite implements SampleGroup {
         @Override
         public void swapAdjacent(int position) {
             super.swapAdjacent(position);
-            for (Sample s: getSamples()) s.getCustomFlags().swapAdjacent(position);
+            for (Sample s: getSamples())
+                s.getCustomFlags().swapAdjacent(position);
         }
     }
 
