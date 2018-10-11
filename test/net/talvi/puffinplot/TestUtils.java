@@ -33,8 +33,6 @@ import org.junit.rules.TemporaryFolder;
 
 /**
  * Utility methods used by unit tests.
- * 
- * @author pont
  */
 public class TestUtils {
     
@@ -97,4 +95,5 @@ public class TestUtils {
                 StandardOpenOption.CREATE);
         return filePath.toFile();
     }
+
 }

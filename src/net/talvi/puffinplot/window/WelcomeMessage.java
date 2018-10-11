@@ -24,6 +24,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import net.talvi.puffinplot.PuffinApp;
+import net.talvi.puffinplot.Version;
 
 /**
  * A welcome message for the main window.
@@ -43,9 +44,9 @@ final class WelcomeMessage extends JPanel {
     private void createComponents(PuffinApp app) {
         setBorder(new EmptyBorder(12, 12, 12, 12));
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        final PuffinApp.Version version = PuffinApp.getInstance().getVersion();
+        final Version version = PuffinApp.getInstance().getVersion();
         final String welcome = String.format(Locale.ENGLISH,
-                "Welcome to PuffinPlot, version %s. " + "This puffin hatched on %s.",
+                "Welcome to PuffinPlot, version %s. This puffin hatched on %s.",
                 version.getVersionString(), version.getDateString());
         add(new JLabel(welcome));
         add(new JLabel(String.format(Locale.ENGLISH,

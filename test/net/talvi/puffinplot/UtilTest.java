@@ -6,6 +6,8 @@ package net.talvi.puffinplot;
 
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.time.DateTimeException;
+import java.time.ZonedDateTime;
 import java.util.BitSet;
 import java.util.Locale;
 import org.junit.Test;
@@ -162,4 +164,43 @@ public class UtilTest {
                 new Rectangle2D.Double(0, 0, 4, 4));
         assertTrue(linesEqual(line0, clipped0));
     }
+
+    @Test
+    public void testParseGitTimestamp() {
+        final ZonedDateTime expected =
+                ZonedDateTime.parse("2018-10-07T11:09:17+02:00");
+        final String gitTimestap = "1538903357 +0200";
+        assertEquals(expected, Util.parseGitTimestamp(gitTimestap));
+    }
+    
+    @Test(expected = NullPointerException.class)
+    public void testParseGitTimestampWithNull() {
+        Util.parseGitTimestamp(null);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testParseGitTimestampWithEmptyString() {
+        Util.parseGitTimestamp("");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testParseGitTimestampWithThreeFields() {
+        Util.parseGitTimestamp("1 2 3");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testParseGitTimestampWithOneField() {
+        Util.parseGitTimestamp("1");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testParseGitTimestampWithBadTimestamp() {
+        Util.parseGitTimestamp("wibble +0000");
+    }
+
+    @Test(expected = DateTimeException.class)
+    public void testParseGitTimestampWithBadTimezone() {
+        Util.parseGitTimestamp("1538903357 +wibble");
+    }
+
 }

@@ -1,5 +1,5 @@
 /* This file is part of PuffinPlot, a program for palaeomagnetic
- * data plotting and analysis. Copyright 2012-2015 Pontus Lurcock.
+ * data plotting and analysis. Copyright 2012-2018 Pontus Lurcock.
  *
  * PuffinPlot is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.NoSuchAlgorithmException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -186,7 +185,7 @@ public final class PuffinApp {
         System.setProperty("apple.laf.useScreenMenuBar", "true");
         System.setProperty("com.apple.mrj.application.apple.menu.about.name", "PuffinPlot");
         loadBuildProperties();
-        version = new Version();
+        version = Version.fromMercurialProperties(this::getBuildProperty);
         prefs = new PuffinPrefs(this);
         lastUsedFileOpenDirs = new IdToFileMap(prefs.getPrefs());
         actions = new PuffinActions(this);
@@ -607,8 +606,6 @@ public final class PuffinApp {
     
     /**
      * For all selected samples, fit a great circle to the selected points.
-     * 
-     * 
      */
     public void fitGreatCirclesToSelection() {
         for (Sample sample: getSelectedSamples()) {
@@ -764,7 +761,8 @@ public final class PuffinApp {
      * accessible via the GUI.
      */
     public void createNewSuite() {
-        final Suite suite = new Suite("PuffinPlot " + version.versionString);
+        final Suite suite = new Suite("PuffinPlot " +
+                version.getVersionString());
         suite.addSavedListener((boolean newState) -> {
             updateMainWindowTitle();
         });
@@ -839,7 +837,7 @@ public final class PuffinApp {
             
             final Suite suite;
             if (reallyCreateNewSuite) {
-                suite = new Suite("PuffinPlot " + version.versionString);
+                suite = new Suite("PuffinPlot " + version.getVersionString());
                 suite.addSavedListener((boolean newState) -> {
                     updateMainWindowTitle();
                 });
@@ -1409,7 +1407,6 @@ public final class PuffinApp {
         updateDisplay();
     }
     
-    
     void invertSelectedSamples() {
                 final List<Sample> samples = getSelectedSamples();
         if (samples.isEmpty()) return;
@@ -1794,76 +1791,6 @@ public final class PuffinApp {
         return version;
     }
     
-    /**
-     * A class containing information about PuffinPlot's version.
-     */
-    public class Version {
-        private final String versionString;
-        private final String dateString;
-        private final String yearRange;
-        
-        private Version() {
-            String hgRev = getBuildProperty("build.hg.revid");
-            final String hgDate = getBuildProperty("build.hg.date");
-            final String hgTag = getBuildProperty("build.hg.tag");
-            final boolean modified = hgRev.endsWith("+");
-            hgRev = hgRev.replace("+", "");
-            if (hgTag.startsWith("version_") && !modified) {
-                versionString = hgTag.substring(8);
-            } else {
-                versionString = hgRev +
-                        (modified ? " (modified)" : "");
-            }
-            /* The filtered hgdate format consists of an epoch time
-             * in UTC, a space, and a timezone offset in seconds.
-             * We don't care about the timezone, so we just take the
-             * first part. */
-            final String hgEpochDate = hgDate.split(" ")[0];
-            final String buildDate = getBuildProperty("build.date");
-            String dateStringTmp =  buildDate +
-                    " (date of build; revision date not available)";
-            try {
-                final Date date = new Date(Long.parseLong(hgEpochDate) * 1000);
-                final DateFormat df = new SimpleDateFormat("yyyy.MM.dd HH:mm");
-                dateStringTmp = df.format(date);
-            } catch (NumberFormatException ex) {
-                 // Nothing to do -- we just fall back to the default string.
-            }
-            dateString = dateStringTmp;
-            
-            String yearTmp = "2012";
-            if (!"unknown".equals(buildDate)) {
-                yearTmp = buildDate.substring(0, 4);
-            }
-            if ("2012".equals(yearTmp)) {
-                yearRange = "2012";
-            } else {
-                yearRange = "2012–"+yearTmp;
-            }
-        }
-
-        /**
-         * @return a string representing this Version
-         */
-        public String getVersionString() {
-            return versionString;
-        }
-
-        /**
-         * @return a string representing the release date of this Version
-         */
-        public String getDateString() {
-            return dateString;
-        }
-        
-        /**
-         * @return a string representing the copyright year range of this Version
-         */
-        public String getYearRange() {
-            return yearRange;
-        }
-    }
-        
     private void setApplicationIcon() {
         List<Image> icons = new ArrayList<>(10);
         final Toolkit kit = Toolkit.getDefaultToolkit();

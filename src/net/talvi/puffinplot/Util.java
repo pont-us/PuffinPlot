@@ -33,6 +33,8 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
@@ -453,4 +455,18 @@ public class Util {
             }
         //}
     }
+
+    static Object parseGitTimestamp(String gitTimestap) {
+        final String[] parts = gitTimestap.split(" ");
+        if (parts.length != 2) {
+            throw new IllegalArgumentException(String.format(
+                    "Malformed git timestamp \"%s\": should have 2 parts,"
+                            + "not %d.", gitTimestap, parts.length));
+        }
+        final long epochSeconds = Long.parseLong(parts[0]);
+        final String timeZone = parts[1];
+        return Instant.ofEpochSecond(epochSeconds).atZone(ZoneId.of(timeZone));
+    }
+
+
 }
