@@ -35,6 +35,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
@@ -456,7 +457,7 @@ public class Util {
         //}
     }
 
-    static Object parseGitTimestamp(String gitTimestap) {
+    static ZonedDateTime parseGitTimestamp(String gitTimestap) {
         final String[] parts = gitTimestap.split(" ");
         if (parts.length != 2) {
             throw new IllegalArgumentException(String.format(
