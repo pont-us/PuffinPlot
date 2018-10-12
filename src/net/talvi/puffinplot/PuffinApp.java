@@ -185,7 +185,7 @@ public final class PuffinApp {
         System.setProperty("apple.laf.useScreenMenuBar", "true");
         System.setProperty("com.apple.mrj.application.apple.menu.about.name", "PuffinPlot");
         loadBuildProperties();
-        version = Version.fromMercurialProperties(this::getBuildProperty);
+        version = Version.fromGitProperties(this::getBuildProperty);
         prefs = new PuffinPrefs(this);
         lastUsedFileOpenDirs = new IdToFileMap(prefs.getPrefs());
         actions = new PuffinActions(this);

@@ -72,7 +72,7 @@
                     <linecontainsregexp>
                         <regexp pattern="^committer "/>
                     </linecontainsregexp>
-                    <replaceregex pattern="^committer .* (\d+ [+]\d\d\d\d$)" replace="\1" flags=""/>
+                    <replaceregex pattern="^committer .* (\d+ [+-]\d\d\d\d$)" replace="\1" flags=""/>
                 </outputfilterchain>
             </redirector>
         </exec>

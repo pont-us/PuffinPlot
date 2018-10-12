@@ -8,7 +8,7 @@ done
 
 rm -f missfont.log
 
-./create-hg-cmds.py
+./create-git-cmds.py
 
 pdflatex manual
 bibtex manual

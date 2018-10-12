@@ -40,9 +40,9 @@ def make_date_string():
 def main():
     version_string = make_version_string()
     date_string = make_date_string()
-    with open("hg-cmds.tex", "w") as outfile:
-        outfile.write("\\def\\HgVersion{%s}\n" % version_string)
-        outfile.write("\\def\\HgDate{%s}\n" % date_string)
+    with open("hg-commands.tex", "w") as outfile:
+        outfile.write("\\def\\VcsVersion{%s}\n" % version_string)
+        outfile.write("\\def\\VcsDate{%s}\n" % date_string)
 
 if __name__ == "__main__":
     main()
