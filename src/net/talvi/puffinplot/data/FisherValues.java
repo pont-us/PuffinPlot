@@ -42,12 +42,12 @@ public class FisherValues implements FisherParams {
         Arrays.asList("Fisher dec. (deg)", "Fisher inc. (deg)",
             "Fisher a95 (deg)", "Fisher k", "Fisher nDirs", "Fisher R");
 
-    private FisherValues(List<Vec3> directions, double a95, double k, int N,
+    private FisherValues(List<Vec3> directions, double a95, double k,
             double R, Vec3 meanDirection) {
         this.directions = Collections.unmodifiableList(directions);
         this.a95 = a95;
         this.k = k;
-        this.N = N;
+        this.N = directions.size();
         this.R = R;
         this.meanDirection = meanDirection;
     }
@@ -104,8 +104,8 @@ public class FisherValues implements FisherParams {
          */
         final double a95 = Math.toDegrees(acos(cosOfA95));
 
-        return new FisherValues(normPoints, a95, k, vectors.size(),
-                R, Vec3.meanDirection(normPoints));
+        return new FisherValues(normPoints, a95, k, R,
+                Vec3.meanDirection(normPoints));
     }
     
     @Override
@@ -131,15 +131,6 @@ public class FisherValues implements FisherParams {
     @Override
     public double getR() {
         return R;
-    }
-    
-    /**
-     * Returns the number of directions used to calculate these Fisherian parameters.
-     * 
-     * @return the number of directions used to calculate these Fisherian parameters
-     */
-    public int getNDirs() {
-        return directions.size();
     }
 
     @Override
@@ -170,7 +161,7 @@ public class FisherValues implements FisherParams {
     public List<String> toStrings() {
         return Arrays.asList(fmt(getMeanDirection().getDecDeg()),
                 fmt(getMeanDirection().getIncDeg()), fmt(getA95()),
-                fmt(getK()), Integer.toString(getNDirs()),
+                fmt(getK()), Integer.toString(getN()),
                 fmt(getR()));
     }
     

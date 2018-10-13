@@ -86,7 +86,6 @@ public class FisherValuesTest {
             assertEquals(expectedResults[resultIndex][1],
                     fv.getMeanDirection().getIncDeg(), 0.1);
             assertEquals(expectedResults[resultIndex][2], fv.getN(), 0);
-            assertEquals(expectedResults[resultIndex][2], fv.getNDirs(), 0);
             assertEquals(expectedResults[resultIndex][3], fv.getR(), 0.0001);
             assertEquals(expectedResults[resultIndex][4], fv.getK(), 0.1);
             final double expectedA95 = expectedResults[resultIndex][5];
@@ -143,7 +142,7 @@ public class FisherValuesTest {
             } else if (header.contains("k")) {
                 expectedValue = fv.getK();
             } else if (header.contains("n")) {
-                expectedValue = fv.getNDirs();
+                expectedValue = fv.getN();
             } else if (header.contains("r")) {
                 expectedValue = fv.getR();
             } else {

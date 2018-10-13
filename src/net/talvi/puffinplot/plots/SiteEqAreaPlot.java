@@ -215,7 +215,7 @@ public class SiteEqAreaPlot extends EqAreaPlot {
                 circle().scale(1.5).filled(meanDir.z>0).build();
         g.setColor(Color.BLACK);
         meanPoint.draw(g);
-        if (fisherMean.getNDirs() > 1) {
+        if (fisherMean.getN() > 1) {
             if (fisherMean != fisherCache) {
                 fisherLineCache = new LineCache(getStroke(), getDashedStroke());
                 if (fisherMean.isA95Valid()) {

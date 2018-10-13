@@ -108,7 +108,7 @@ public class SiteParamsTable extends Plot {
                 values.set(8, "GC:" + (gcs.isValid() ? "v" : "i"));
             } else if (site.getFisherValues() != null) {
                 final FisherValues fvs = site.getFisherValues();
-                values.set(2, fmt("%d", fvs.getNDirs()));
+                values.set(2, fmt("%d", fvs.getN()));
                 values.set(3, "0");
                 final Vec3 direction = fvs.getMeanDirection();
                 values.set(4, fmt("%.1f", direction.getDecDeg()));
