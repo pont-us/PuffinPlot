@@ -81,7 +81,7 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
 import net.talvi.puffinplot.data.*;
-import net.talvi.puffinplot.data.Suite.AmsCalcType;
+import net.talvi.puffinplot.data.AmsCalculationType;
 import net.talvi.puffinplot.data.file.FileFormat;
 import net.talvi.puffinplot.plots.SampleClickListener;
 import net.talvi.puffinplot.window.*;
@@ -1192,7 +1192,7 @@ public final class PuffinApp {
      * @param calcType the type of calculation to perform
      * @param scriptName the external script which will perform the calculations
      */
-    public void doAmsCalc(AmsCalcType calcType, String scriptName) {
+    public void doAmsCalc(AmsCalculationType calcType, String scriptName) {
         if (showErrorIfNoSuite()) return;
         try {
             final String directory =

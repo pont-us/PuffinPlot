@@ -32,13 +32,12 @@ import net.talvi.puffinplot.data.DatumField;
 import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
-import net.talvi.puffinplot.data.Suite.AmsCalcType;
+import net.talvi.puffinplot.data.AmsCalculationType;
 
 /**
  * A container class for individual instances of {@link PuffinAction}
  * which represent particular user actions in PuffinPlot.
  * 
- * @author pont
  */
 public class PuffinActions {
 
@@ -834,7 +833,7 @@ public class PuffinActions {
             null, false, KeyEvent.VK_B) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            app.doAmsCalc(AmsCalcType.BOOT, "bootams.py");
+            app.doAmsCalc(AmsCalculationType.BOOT, "bootams.py");
         }
     };
 
@@ -847,7 +846,7 @@ public class PuffinActions {
             null, false, KeyEvent.VK_P) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            app.doAmsCalc(AmsCalcType.PARA_BOOT, "bootams.py");
+            app.doAmsCalc(AmsCalculationType.PARA_BOOT, "bootams.py");
         }
     };
 
@@ -859,7 +858,7 @@ public class PuffinActions {
             null, false, KeyEvent.VK_H) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            app.doAmsCalc(AmsCalcType.HEXT, "s_hext.py");
+            app.doAmsCalc(AmsCalculationType.HEXT, "s_hext.py");
         }
     };
 

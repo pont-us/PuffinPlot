@@ -232,13 +232,11 @@ public class SuiteTest {
     }
     
     @Test
-    public void testAmsCalcType() {
-        assertSame(Suite.AmsCalcType.HEXT,
-                Suite.AmsCalcType.valueOf("HEXT"));
-        assertSame(Suite.AmsCalcType.BOOT,
-                Suite.AmsCalcType.valueOf("BOOT"));
-        assertSame(Suite.AmsCalcType.PARA_BOOT,
-                Suite.AmsCalcType.valueOf("PARA_BOOT"));
+    public void testAmsCalculationType() {
+        assertSame(AmsCalculationType.HEXT, AmsCalculationType.valueOf("HEXT"));
+        assertSame(AmsCalculationType.BOOT, AmsCalculationType.valueOf("BOOT"));
+        assertSame(AmsCalculationType.PARA_BOOT,
+                AmsCalculationType.valueOf("PARA_BOOT"));
     }
     
     @Test
@@ -1032,9 +1030,9 @@ public class SuiteTest {
     
     @Test
     public void testCalculateAndClearAmsStatisticsHext() throws IOException {
-        testCalculateAmsStatistics(Suite.AmsCalcType.HEXT, 1);
-        testCalculateAmsStatistics(Suite.AmsCalcType.BOOT, 1);
-        testCalculateAmsStatistics(Suite.AmsCalcType.PARA_BOOT, 2);
+        testCalculateAmsStatistics(AmsCalculationType.HEXT, 1);
+        testCalculateAmsStatistics(AmsCalculationType.BOOT, 1);
+        testCalculateAmsStatistics(AmsCalculationType.PARA_BOOT, 2);
         assertNotNull(syntheticSuite2.getAmsHextParams());
         assertNotNull(syntheticSuite2.getAmsBootstrapParams());
         syntheticSuite2.clearAmsCalculations();
@@ -1042,7 +1040,7 @@ public class SuiteTest {
         assertNull(syntheticSuite2.getAmsBootstrapParams());
     }
     
-    private void testCalculateAmsStatistics(Suite.AmsCalcType calcType,
+    private void testCalculateAmsStatistics(AmsCalculationType calcType,
             int expectedTauValue) throws IOException {
         Assume.assumeTrue("Linux".equals(System.getProperty("os.name")));
         for (int sampleIndex=0; sampleIndex<10; sampleIndex++) {
@@ -1071,7 +1069,7 @@ public class SuiteTest {
         syntheticSuite2.calculateAmsStatistics(syntheticSuite2.getSamples(),
                 calcType, script.getCanonicalPath());
         final List<KentParams> kentParams = 
-                calcType==Suite.AmsCalcType.HEXT ?
+                calcType==AmsCalculationType.HEXT ?
                 syntheticSuite2.getAmsHextParams() :
                 syntheticSuite2.getAmsBootstrapParams();
         assertEquals(3, kentParams.size());
@@ -1084,7 +1082,7 @@ public class SuiteTest {
         final File script = TestUtils.writeStringToTemporaryFile("script.sh",
                 "#!/bin/sh\n", temporaryFolder);
         syntheticSuite2.calculateAmsStatistics(syntheticSuite2.getSamples(),
-                Suite.AmsCalcType.HEXT, script.getCanonicalPath());
+                AmsCalculationType.HEXT, script.getCanonicalPath());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -1097,7 +1095,7 @@ public class SuiteTest {
         final File script = TestUtils.writeStringToTemporaryFile("script.sh",
                 "#!/bin/sh\n", temporaryFolder);
         syntheticSuite2.calculateAmsStatistics(syntheticSuite2.getSamples(),
-                Suite.AmsCalcType.HEXT, script.getCanonicalPath());
+                AmsCalculationType.HEXT, script.getCanonicalPath());
     }
 
     @Test

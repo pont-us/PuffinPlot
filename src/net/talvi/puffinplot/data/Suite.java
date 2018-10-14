@@ -1406,7 +1406,7 @@ public final class Suite implements SampleGroup {
             }
         }
     }
-
+    
     /**
      * Within each of the supplied samples, merges any Datum objects
      * which have the same treatment type and treatment level.
@@ -1463,16 +1463,6 @@ public final class Suite implements SampleGroup {
             for (Sample s: getSamples()) s.getCustomNotes().swapAdjacent(position);
         }
     }
-        
-    /** The type of a statistical calculation on AMS tensors. */
-    public static enum AmsCalcType {
-        /** Hext statistics*/
-        HEXT,
-        /** nonparametric bootstrap statistics */
-        BOOT,
-        /** parametric bootstrap statistics */
-        PARA_BOOT }; 
-
     
     /**
      * Calculates and stores AMS statistics using an external script.
@@ -1487,7 +1477,7 @@ public final class Suite implements SampleGroup {
      * data
      */
     public void calculateAmsStatistics(List<Sample> samples,
-            AmsCalcType calcType, String scriptPath)
+            AmsCalculationType calcType, String scriptPath)
             throws IOException, IllegalArgumentException {
         /* It may not be immediately obvious why this should be an instance
          * method of Suite. In fact the only reason for this is that it
