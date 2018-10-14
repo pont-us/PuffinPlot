@@ -875,6 +875,7 @@ public final class Suite implements SampleGroup {
      *
      * @return all the samples in this suite
      */
+    @Override
     public List<Sample> getSamples() {
         return Collections.unmodifiableList(samples);
     }
@@ -1589,6 +1590,7 @@ public final class Suite implements SampleGroup {
      * automatically define site names for a number of samples according to a
      * pre-programmed scheme.
      */
+    @FunctionalInterface
     public static interface SiteNamer {
         /**
          * Determines a site name from a sample name.
@@ -1634,12 +1636,7 @@ public final class Suite implements SampleGroup {
     public void setNamedSiteForSamples(Collection<Sample> samples,
             final String siteName) {
         setSaved(false);
-        setSitesForSamples(samples, new SiteNamer() {
-            @Override
-            public String siteName(Sample sample) {
-                return siteName;
-            }
-        });
+        setSitesForSamples(samples, sample -> siteName);
     }
     
     /**
@@ -1778,11 +1775,20 @@ public final class Suite implements SampleGroup {
         updateReverseIndex();
     }
     
-    public class MissingSampleNameException extends Exception
-    {
-      public MissingSampleNameException(String message) {
-          super(message);
-      }
+    /**
+     * This exception indicates that a supplied argument did not contain
+     * an expected sample name.
+     */
+    public class MissingSampleNameException extends Exception {
+        /**
+         * Creates a new {@code MissingSampleNameException} with the
+         * supplied message.
+         * 
+         * @param message a message giving details about the exception
+         */
+        public MissingSampleNameException(String message) {
+            super(message);
+        }
     }
     
     /**
@@ -1816,6 +1822,16 @@ public final class Suite implements SampleGroup {
         sortSamplesByDepth();
     }
     
+    /**
+     * Converts a discrete suite to a continuous suite, using a file to provide
+     * the mapping from sample names to depths.
+     * 
+     * @param file a text file consisting of lines in the format
+     *   {@literal <sample-name>,<sample-depth>
+     * @throws IOException if there was a problem reading the file
+     * @throws MissingSampleNameException if there are samples in this suite
+     *   which are not listed in the specified file
+     */
     public void convertDiscreteToContinuous(File file)
             throws IOException, MissingSampleNameException {
         final Map<String,String> nameToDepth = new HashMap<>();
