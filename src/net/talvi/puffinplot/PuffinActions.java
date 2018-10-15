@@ -1103,4 +1103,17 @@ public class PuffinActions {
             app.showCreateBundleDialog();
         }
     };
+
+    /**
+     * Automatically aligns declinations between core sections.
+     */
+    public final Action alignSectionDeclinations =
+            new PuffinAction("Align core section declinations…",
+            "Automatically align declinations between core sections.",
+            null, false, null) {
+        private static final long serialVersionUID = 1L;
+        @Override public void actionPerformed(ActionEvent e) {
+            app.alignSectionDeclinations();
+        }
+    };
 }

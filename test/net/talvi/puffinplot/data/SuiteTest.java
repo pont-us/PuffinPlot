@@ -1577,4 +1577,29 @@ public class SuiteTest {
         Mockito.verify(sample).mergeDuplicateMeasurements();
     }
 
+    @Test
+    public void testAlignSectionDeclinations() {
+        
+        final Suite suite = new Suite("test");
+        for (int section = 0; section < 3; section++) {
+            final double declination = (section+1)*10;
+            for (int sampleIndex = 0; sampleIndex < 10; sampleIndex++) {
+                final double depth = section * 10 + sampleIndex;
+                final Sample sample = TestUtils.makeOneComponentSample(depth,
+                        String.format("SECTION_%d", section),
+                        Vec3.fromPolarDegrees(1, 0, declination));
+                suite.addSample(sample, String.format("%f", depth));
+            }
+        }
+        
+        final double topDeclination = 45;
+        
+        suite.alignSectionDeclinations(topDeclination, 1);
+        
+        assertTrue(suite.getSamples().stream().allMatch(
+                sample -> sample.getData().stream().allMatch(
+                        datum -> Math.abs(datum.getMoment().getDecDeg() -
+                                topDeclination) < delta )));
+    }
+    
 }

@@ -1407,6 +1407,12 @@ public final class Suite implements SampleGroup {
         }
     }
     
+    public void alignSectionDeclinations(double topDeclination, int margin) {
+        final CoreSections coreSections =
+                CoreSections.fromSampleListByDiscreteId(getSamples());
+        coreSections.alignSections(topDeclination, margin);
+    }
+    
     /**
      * Within each of the supplied samples, merges any Datum objects
      * which have the same treatment type and treatment level.
@@ -1419,7 +1425,7 @@ public final class Suite implements SampleGroup {
     public void mergeDuplicateMeasurements(Collection<Sample> samplesToMerge) {
         samplesToMerge.forEach(Sample::mergeDuplicateMeasurements);
     }
-    
+
     private class CustomFlagNames extends CustomFields<String> {
         public CustomFlagNames(List<String> list) {
             super(list);

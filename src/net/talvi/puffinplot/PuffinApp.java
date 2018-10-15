@@ -104,10 +104,8 @@ import org.freehep.graphicsbase.util.UserProperties;
  * {@link PuffinActions} act as thin wrappers around one or a few calls 
  * to {@code PuffinApp}. Most of {@code PuffinApp}'s interaction with the
  * data is via the {@link Suite}, {@link Site}, and {@link Sample} classes.
- * 
- * @author pont
  */
-public final class PuffinApp {
+public class PuffinApp {
 
     private static PuffinApp app;
     private static final Logger LOGGER = Logger.getLogger("net.talvi.puffinplot");
@@ -2120,4 +2118,12 @@ public final class PuffinApp {
                 get("data.greatcircles.validityExpr", "true");
     }
 
+    /**
+     * Automatically align declinations between core sections in the current
+     * suite.
+     */
+    public void alignSectionDeclinations() {
+        getSuite().alignSectionDeclinations(0, 1);
+    }
+    
 }

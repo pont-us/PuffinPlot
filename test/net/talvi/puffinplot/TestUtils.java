@@ -28,6 +28,9 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import net.talvi.puffinplot.data.Correction;
+import net.talvi.puffinplot.data.Datum;
+import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Vec3;
 import org.junit.rules.TemporaryFolder;
 
@@ -35,6 +38,32 @@ import org.junit.rules.TemporaryFolder;
  * Utility methods used by unit tests.
  */
 public class TestUtils {
+
+    /**
+     * Creates a simple sample with three demagnetization steps aligned
+     * in the specified direction, so that a PCA on the sample will produce
+     * that direction. This method also performs PCA on the sample before
+     * returning it, setting the sample direction.
+     * 
+     * @param depth depth of sample
+     * @param discreteId discrete ID of sample
+     * @param direction direction of data to be created
+     * 
+     * @return 
+     */
+    public static Sample makeOneComponentSample(double depth, String discreteId,
+            Vec3 direction) {
+        final String depthString = String.format("%f", depth);
+        final Sample sample = new Sample(depthString, null);
+        for (int j = 3; j > 0; j--) {
+            final Datum d = new Datum(direction.times(j));
+            d.setInPca(true);
+            sample.addDatum(d);
+        }
+        sample.setDiscreteId(discreteId);
+        sample.doPca(Correction.NONE);
+        return sample;
+    }
     
     public static class ListHandler extends Handler {
 

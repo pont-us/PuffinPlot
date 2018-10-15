@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import net.talvi.puffinplot.TestUtils;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -125,7 +126,7 @@ public class CoreSectionsTest {
             double[] depths, String discreteId) {
         final List<Sample> samples = new ArrayList<>(10);
         for (int i=0; i<depths.length; i++) {
-            Sample sample = makeSample(depths[i], discreteId, direction);
+            Sample sample = TestUtils.makeOneComponentSample(depths[i], discreteId, direction);
             samples.add(sample);
         }
         return samples;
@@ -136,26 +137,13 @@ public class CoreSectionsTest {
         int depth = startDepth;
         final List<Sample> samples = new ArrayList<>();
         for (double dec: decs) {
-            samples.add(makeSample(depth, discreteId,
+            samples.add(TestUtils.makeOneComponentSample(depth, discreteId,
                     Vec3.fromPolarDegrees(1, 0, dec)));
             depth++;
         }
         return samples;
     }
    
-    private Sample makeSample(double depth, String discreteId, Vec3 direction) {
-        final String depthString = String.format("%f", depth);
-        final Sample sample = new Sample(depthString, null);
-        for (int j=3; j>0; j--) {
-            final Datum d = new Datum(direction.times(j));
-            d.setInPca(true);
-            sample.addDatum(d);
-        }
-        sample.setDiscreteId(discreteId);
-        sample.doPca(Correction.NONE);
-        return sample;
-    }
-
     @Test
     public void testGetSectionEndSamplesWithMarginOf1() {
         final CoreSections sections =

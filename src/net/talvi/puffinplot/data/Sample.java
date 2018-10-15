@@ -1098,7 +1098,7 @@ public class Sample {
      *
      * @param discreteId the discrete ID to set
      */
-    void setDiscreteId(String discreteId) {
+    public void setDiscreteId(String discreteId) {
         if (hasData()) {
             getData().forEach(d -> { d.setDiscreteId(discreteId); });
         } else {

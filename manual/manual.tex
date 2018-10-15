@@ -831,6 +831,18 @@ CiLpA-10-53 & 3-4,9-11 & Lp-53 \\
   columns. The first column contains sample names, and the second column
   contains the associated depths. The CSV file must contain a row for
   every sample in the suite.
+
+\item[Edit\submenu Align core section declinations\ldots] operates on
+  continuous suites made up of core sections with no absolute azimuthal
+  alignment. The alignment is carried out using PCA directions, which
+  must be calculated before carrying out the alignment. The top core
+  section is rotated so that the PCA direction at the top aligns with a
+  specified reference direction; for each core section below the top
+  section, the section is rotated so that the PCA direction at its top
+  aligns with the PCA direction at the bottom of the core section above
+  it. The number of samples averaged at the core ends to produce the
+  `top' and `bottom' directions can be specified.
+
 \end{menuitemlist}
 
 \subsubsection{\label{sec:functions-calcs}Calculations menu}

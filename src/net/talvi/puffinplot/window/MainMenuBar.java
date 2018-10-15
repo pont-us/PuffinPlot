@@ -161,7 +161,8 @@ public final class MainMenuBar extends JMenuBar {
                         pa.setSitesByDepth, pa.clearSites),
                 pa.hideSelectedSteps, pa.unhideAllSteps,
                 pa.showCustomFlagsWindow, pa.showCustomNotesWindow,
-                pa.rescaleMagSus, pa.convertDiscreteToContinuous));
+                pa.rescaleMagSus, pa.convertDiscreteToContinuous,
+                pa.alignSectionDeclinations));
         
         add(makeMenu("Calculations", KeyEvent.VK_C,
                 pa.pcaOnSelection, anchorItem = new AnchorItem(),
