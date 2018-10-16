@@ -52,6 +52,7 @@ public final class FileFormat {
     private final FieldUnit fieldUnit;
     private final static String prefsPrefix = "fileformat";
     private final static String[] emptyStringArray = {};
+    private final boolean specifiesVolume;
     
     /**
      * Creates a new file format with the specified parameters.
@@ -79,6 +80,7 @@ public final class FileFormat {
         this.columnWidths = columnWidths;
         this.momentUnit = momentUnit;
         this.fieldUnit = fieldUnit;
+        this.specifiesVolume = columnMap.values().contains(DatumField.VOLUME);
     }
     
     private String[] splitLine(String line) {
@@ -137,7 +139,7 @@ public final class FileFormat {
                     break;
                 case VIRT_INCLINATION:
                     inc = Util.parseDoubleSafely(valueString);
-                    break; 
+                    break;
                 default:
                     datum.setValue(fieldType, fieldStrings[i], scale);
             }
@@ -147,6 +149,9 @@ public final class FileFormat {
                 intensity = 1;
             }
             datum.setMoment(Vec3.fromPolarDegrees(intensity, inc, dec));
+        }
+        if (specifiesVolume) {
+            datum.setMoment(datum.getMoment().divideBy(datum.getVolume()));
         }
         return datum;
     }
@@ -168,13 +173,13 @@ public final class FileFormat {
     
     /**
      * Turns a string containing comma-separated decimal integers into a
-     * {@link List} of {@link Integer}.
+     * {@link List} of {@link Integer}s.
      * 
      * @param widthString a string of comma-separated decimal integers
      * @return the list of integers defined by the input string
      */
     public static List<Integer> convertStringToColumnWidths(String widthString) {
-        String[] widths = widthString.split(", *");
+        String[] widths = widthString.trim().split(" *, *");
         List<Integer> result = new ArrayList<>(widths.length);
         for (String wString: widths) {
             if ("".equals(wString)) continue;
