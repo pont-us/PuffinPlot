@@ -4,8 +4,10 @@ PuffinPlot 1.4 release notes
 The release numbering scheme changed with the 1.4 release: 1.4 is
 the immediate successor of 1.03.
 
-TO DO: document bundle stuff
+Installation requirements
+-------------------------
 
+-   PuffinPlot now requires Java 8 or higher.
 
 Data manipulation
 -----------------
@@ -17,7 +19,10 @@ Data manipulation
 Calculations
 ------------
 
--   RPI
+-   RPI calculation implemented, using normalization to ARM, IRM, or
+    magnetic susceptibility.
+-   Automatic realignment of declination data for continuous suites
+	in which the core sections are not azimuthally oriented.
 
 Scripting
 ---------
@@ -63,6 +68,8 @@ Data export
 -   Degree signs in exported data replaced with "deg", to accommodate
 	software that has trouble with non-ASCII character sets.
 -   Precision of exported parameters increased to four decimal places.
+-   PuffinPlot can now export a bundle containing both data and a
+    processing script, allowing analyses to be reproduced automatically.
 
 Bug fixes
 ---------
@@ -73,13 +80,20 @@ Bug fixes
 -   Formatting of PCA equations in exported CSV files is now
 	locale-independent, so will always use "." rather than ","
 	as the decimal separator.
+-   Custom file import used to ignore the sample volume field; it now
+    makes use of it if present, and defaults to a volume of 1 cm³
+	if it is not present.
 
-Other notes
------------
+Developer notes
+---------------
 
--   PuffinPlot now requires Java 8 or higher.
 -   The build process now uses the Ivy dependency manager to download
-	required libraries automatically.
+    required libraries automatically.
+-   Several hundred unit tests have been added, mainly for the data
+    and calculation classes. This helps to verify the correctness of
+    PuffinPlot's data processing, and to avoid the introduction of
+	bugs during future development.
+
 
 PuffinPlot 1.03 release notes
 =============================
