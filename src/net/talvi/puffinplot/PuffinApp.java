@@ -37,6 +37,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.io.Reader;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -181,7 +182,8 @@ public class PuffinApp {
         PuffinApp.app = this;
         // com.apple.macos.useScreenMenuBar deprecated since 1.4, I think
         System.setProperty("apple.laf.useScreenMenuBar", "true");
-        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "PuffinPlot");
+        System.setProperty("com.apple.mrj.application.apple.menu.about.name",
+                "PuffinPlot");
         loadBuildProperties();
         version = Version.fromGitProperties(this::getBuildProperty);
         prefs = new PuffinPrefs(this);
@@ -227,7 +229,7 @@ public class PuffinApp {
         Correction corr =
                 Correction.fromString(prefs.getPrefs().get("correction", "false false NONE false"));
         setCorrection(corr);
-        getMainWindow().getControlPanel().setCorrection(corr);
+        mainWindow.getControlPanel().setCorrection(corr);
         // prefs window needs the graph list from MainGraphDisplay from MainWindow
         // prefs window also needs the correction.
         prefsWindow = new PrefsWindow();
@@ -255,34 +257,39 @@ public class PuffinApp {
         public void uncaughtException(Thread thread, Throwable exception) {
             final String ERROR_FILE = "PUFFIN-ERROR.txt";
             boolean quit = unhandledErrorDialog();
-            File f = new File(System.getProperty("user.home"), ERROR_FILE);
-            try {
-                final java.io.PrintWriter w =
-                        new java.io.PrintWriter(new FileWriter(f));
-                w.println("PuffinPlot error file");
-                w.println("Build date: " + getInstance().
+            final File errorFile =
+                    new File(System.getProperty("user.home"), ERROR_FILE);
+            try (PrintWriter writer = new PrintWriter(errorFile)) {
+                writer.println("PuffinPlot error file");
+                writer.println("Build date: " + getInstance().
                         getBuildProperty("build.date"));
                 final Date now = new Date();
                 final SimpleDateFormat df =
                         new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                w.println("Crash date: " + df.format(now));
+                writer.println("Crash date: " + df.format(now));
                 for (String prop : new String[]{"java.version", "java.vendor",
-                            "os.name", "os.arch", "os.version", "user.name"}) {
-                    w.println(String.format(Locale.ENGLISH,
+                    "os.name", "os.arch", "os.version", "user.name"}) {
+                    writer.println(String.format(Locale.ENGLISH,
                             "%-16s%s", prop,
                             System.getProperty(prop)));
                 }
-                w.println("Locale: " + Locale.getDefault().toString());
-                exception.printStackTrace(w);
-                w.println("\nLog messages: \n");
+                writer.println("Locale: " + Locale.getDefault().toString());
+                exception.printStackTrace(writer);
+                writer.println("\nLog messages: \n");
                 LOG_MEMORY_HANDLER.push();
                 LOG_MEMORY_HANDLER.flush();
                 LOG_STREAM.flush();
-                w.append(LOG_STREAM.toString());
-                w.close();
-            } catch (IOException ex) {
-                exception.printStackTrace();
-                ex.printStackTrace();
+                writer.append(LOG_STREAM.toString());
+                writer.flush();
+            } catch (IOException secondaryException) {
+                /*
+                 * Explicitly pass System.err rather than using the
+                 * no-argument method to make it clear (to humans and static
+                 * analysis tools) that this is not a temporary hack -- at
+                 * this stage it's probably the best we can do.
+                 */
+                secondaryException.printStackTrace(System.err);
+                exception.printStackTrace(System.err);
             }
             if (quit) {
                 System.exit(1);
@@ -301,9 +308,9 @@ public class PuffinApp {
         
         final Preferences prefs =
                 Preferences.userNodeForPackage(PuffinPrefs.class);
-        String lnf = prefs.get("lookandfeel", "Default");
         try {
-            if (null != lnf) switch (lnf) {
+            final String lookAndFeel = prefs.get("lookandfeel", "Default");
+            if (null != lookAndFeel) switch (lookAndFeel) {
                 case "Native":
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                     break;
@@ -311,17 +318,19 @@ public class PuffinApp {
                     UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
                     break;
                 case "Nimbus":
-                    /* Nimbus isn't guaranteed to be available on all systems,
-                    * so we make sure it's there before trying to set it.
-                    * If it's not there, nothing will happen so the system
-                    * default will be used.
-                    */
+                    /*
+                     * Nimbus isn't guaranteed to be available on all systems,
+                     * so we make sure it's there before trying to set it. If
+                     * it's not there, nothing will happen so the system default
+                     * will be used.
+                     */
                     for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                         if ("Nimbus".equals(info.getName())) {
                             UIManager.setLookAndFeel(info.getClassName());
                             break;
                         }
-                    }   break;
+                    }
+                    break;
             }
         } catch (ClassNotFoundException | InstantiationException |
                  IllegalAccessException | UnsupportedLookAndFeelException ex) {
@@ -372,7 +381,8 @@ public class PuffinApp {
         }
     }
     
-    private static void processCliArguments(CommandLine commandLine, Options options) {
+    private static void processCliArguments(CommandLine commandLine,
+            Options options) {
         if (commandLine.hasOption("help")) {
             final HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp("java -jar PuffinPlot.jar <options>", options);
@@ -383,21 +393,24 @@ public class PuffinApp {
             final String scriptLanguage =
                     commandLine.hasOption("scriptlanguage") ?
                     commandLine.getOptionValue("scriptlanguage") : "python";
+            try {
                 ScriptEngine engineTemp = null;
-                try {
                 switch (scriptLanguage) {
                     case "javascript":
-                        final ScriptEngineManager sem = new ScriptEngineManager();
-                        engineTemp = sem.getEngineByMimeType("application/javascript");
+                        final ScriptEngineManager sem =
+                                new ScriptEngineManager();
+                        engineTemp = sem.getEngineByMimeType(
+                                "application/javascript");
                         break;
                     case "python":
                         if (!JythonJarManager.checkInstalled(true)) {
-                            System.err.println("Cannot run python script: Jython is not installed.\n"
-                                    + "Please install using the -installjython option.");
+                            System.err.println("Cannot run python script: "
+                                    + "Jython is not installed.\n"
+                                    + "Please install using the "
+                                    + "-installjython option.");
                             System.exit(1);
                         }
                         engineTemp = createPythonScriptEngine();
-                        
                         break;
                     default:
                         System.out.println("Unknown scripting language "+
@@ -431,22 +444,26 @@ public class PuffinApp {
         }
         
         else if (commandLine.hasOption("process")) {
-            final String inputFileString = commandLine.getOptionValue("process");
+            final String inputFileString =
+                    commandLine.getOptionValue("process");
             final Suite suite = new Suite("PuffinPlot (process mode)");
             try {
-                suite.readFiles(Arrays.asList(new File[] {new File(inputFileString)}));
-                suite.doAllCalculations(Correction.NONE, getGreatCirclesValidityCondition());
+                suite.readFiles(Arrays.asList(new File(inputFileString)));
+                suite.doAllCalculations(Correction.NONE,
+                        getGreatCirclesValidityCondition());
                 suite.calculateSuiteMeans(suite.getSamples(), suite.getSites());
                 
-                final String bareFilename = inputFileString.replaceFirst("[.]...$", "");
+                final String bareFilename =
+                        inputFileString.replaceFirst("[.]...$", "");
                 
                 suite.saveCalcsSample(new File(bareFilename + "-sample.csv"));
                 suite.saveCalcsSite(new File(bareFilename + "-site.csv"));
                 suite.saveCalcsSuite(new File(bareFilename + "-suite.csv"));
                 
             } catch (IOException | PuffinUserException ex) {
-                System.err.println("Error processing.");
-                Logger.getLogger(PuffinApp.class.getName()).log(Level.SEVERE, null, ex);
+                System.err.println("An error occurred during processing.");
+                Logger.getLogger(PuffinApp.class.getName()).
+                        log(Level.SEVERE, null, ex);
             }
         }
         
@@ -597,7 +614,8 @@ public class PuffinApp {
             if (site.getGreatCircles() != null) {
                 // PCAs are also used in GC calculations, so this needs
                 // to be recalculated even if only the PCA has changed.
-                site.calculateGreatCirclesDirection(getCorrection(), getGreatCirclesValidityCondition());
+                site.calculateGreatCirclesDirection(getCorrection(),
+                        getGreatCirclesValidityCondition());
             }
         }
     }
@@ -697,11 +715,12 @@ public class PuffinApp {
     }
     
     /**
-     * Sets the correction to apply to the displayed data.
+     * Sets the correction to apply to the displayed data. This method is
+     * final because it is used in the constructor.
      * 
      * @param correction the correction to apply to the displayed data
      */
-    public void setCorrection(Correction correction) {
+    final public void setCorrection(Correction correction) {
         this.correction = correction;
     }
     
@@ -844,7 +863,8 @@ public class PuffinApp {
             }
             suite.readFiles(files, prefs.getSensorLengths(),
                     prefs.get2gProtocol(),
-                    !"X/Y/Z".equals(prefs.getPrefs().get("readTwoGeeMagFrom", "X/Y/Z")),
+                    !"X/Y/Z".equals(prefs.getPrefs().
+                            get("readTwoGeeMagFrom", "X/Y/Z")),
                     fileType, format, importOptions);
             suite.doAllCalculations(getCorrection(),
                     getGreatCirclesValidityCondition());
@@ -1050,9 +1070,12 @@ public class PuffinApp {
         if (sample==null) return null;
         return sample.getSite();
     }
-    
-    /** Gets all the sites containing any of the currently selected samples.
-     * @return all the sites which contain any of the currently selected samples */
+
+    /**
+     * Gets all the sites containing any of the currently selected samples.
+     *
+     * @return all the sites which contain any of the currently selected samples
+     */
     public List<Site> getSelectedSites() {
         final List<Sample> samples = getSelectedSamples();
         final Set<Site> siteSet = new java.util.LinkedHashSet<>();
@@ -1066,9 +1089,13 @@ public class PuffinApp {
         return new ArrayList<>(siteSet);
     }
     
-    /** Gets all the samples in all the sites having at least one selected sample.
-     * @return all the samples contained in any site containing at least 
-     * one selected sample */
+    /**
+     * Gets all the samples in all the sites having at least one selected
+     * sample.
+     *
+     * @return all the samples contained in any site containing at least one
+     * selected sample
+     */
     public List<Sample> getAllSamplesInSelectedSites() {
         final List<Sample> samples = new ArrayList<>();
         for (Site site: getSelectedSites()) {
@@ -1077,7 +1104,9 @@ public class PuffinApp {
         return samples;
     }
     
-    /** Terminates this instance of PuffinApp immediately. */
+    /**
+     * Terminates this instance of PuffinApp immediately.
+     */
     public void quit() {
         for (Suite suite: getSuites()) {
             if (!canSuiteBeClosed(suite)) return;
@@ -1251,6 +1280,9 @@ public class PuffinApp {
         return files;
     }
     
+    /**
+     * Show the "Open folder" dialog on Mac OS X.
+     */
     public void showMacOpenFolderDialog() {
         final String title = "Open folder";
         List<File> files = Collections.emptyList();
@@ -1444,7 +1476,8 @@ public class PuffinApp {
     }
     
     /**
-     * Clears any previously calculated Fisherian or great-circle site directions.
+     * Clears any previously calculated Fisherian or great-circle site
+     * directions.
      */
     public void clearSiteCalculations() {
         if (showErrorIfNoSuite()) return;
@@ -1474,22 +1507,25 @@ public class PuffinApp {
      * rather than a regular file, does not exist but cannot be created,
      * or cannot be opened for any other reason 
      */
-    public void exportPdfItext(File pdfFile) throws FileNotFoundException, DocumentException {
+    public void exportPdfItext(File pdfFile)
+            throws FileNotFoundException, DocumentException {
         final MainGraphDisplay display = getMainWindow().getGraphDisplay();
         final Dimension size = display.getMaximumSize();
-        com.lowagie.text.Document document =
-                new com.lowagie.text.Document(new Rectangle(size.width, size.height));
-        // The font mapping is fairly rudimentary at present, and will
-        // probably only work for the `standard' Java fonts. Getting it to
-        // work properly is non-trivial. One possible approach is to 
-        // use DefaultFontMapper.insertDirectory for all known possible
-        // platform font paths to build up a mapping, but apparently this
-        // is too slow to be practical -- see
-        // http://www.mail-archive.com/itext-questions@lists.sourceforge.net/msg01669.html
-        // The way to go would probably be a custom font mapper (since 
-        // we only use one font anyway) which uses some platform-informed
-        // heuristics to locate the font on disk.
-        // See p. 483 of the itext book for more details.
+        com.lowagie.text.Document document = new com.lowagie.text.Document(
+                new Rectangle(size.width, size.height));
+        /*
+         * The font mapping is fairly rudimentary at present, and will probably
+         * only work for the `standard' Java fonts. Getting it to work properly
+         * is non-trivial. One possible approach is to use
+         * DefaultFontMapper.insertDirectory for all known possible platform
+         * font paths to build up a mapping, but apparently this is too slow to
+         * be practical -- see
+         * http://www.mail-archive.com/itext-questions@lists.sourceforge.net/msg01669.html
+         * The way to go would probably be a custom font mapper (since we only
+         * use one font anyway) which uses some platform-informed heuristics to
+         * locate the font on disk. See p. 483 of the itext book for more
+         * details.
+         */
         com.lowagie.text.pdf.PdfWriter writer =
                 com.lowagie.text.pdf.PdfWriter.getInstance(document,
                 new java.io.FileOutputStream(pdfFile));
@@ -1501,7 +1537,8 @@ public class PuffinApp {
         // a rough imitation of the Java printing interface
         do {
             document.newPage();  // shouldn't make a difference on first pass
-            Graphics2D g2 = content.createGraphics(size.width, size.height, mapper);
+            Graphics2D g2 =
+                    content.createGraphics(size.width, size.height, mapper);
             finished = display.printPdfPage(g2, pdfPage);
             g2.dispose();
             pdfPage++;
@@ -1522,9 +1559,12 @@ public class PuffinApp {
 
         final UserProperties userProps = (UserProperties)
                 org.freehep.graphicsio.pdf.PDFGraphics2D.getDefaultProperties();
-        userProps.setProperty(org.freehep.graphicsio.pdf.PDFGraphics2D.TEXT_AS_SHAPES, false);
-        userProps.setProperty(org.freehep.graphicsio.pdf.PDFGraphics2D.COMPRESS, true);
-        userProps.setProperty(org.freehep.graphicsio.pdf.PDFGraphics2D.ORIENTATION,
+        userProps.setProperty(
+                org.freehep.graphicsio.pdf.PDFGraphics2D.TEXT_AS_SHAPES, false);
+        userProps.setProperty(
+                org.freehep.graphicsio.pdf.PDFGraphics2D.COMPRESS, true);
+        userProps.setProperty(
+                org.freehep.graphicsio.pdf.PDFGraphics2D.ORIENTATION,
                 org.freehep.graphicsio.PageConstants.LANDSCAPE);
         
         org.freehep.graphicsio.pdf.PDFGraphics2D.setDefaultProperties(userProps);
@@ -1547,13 +1587,11 @@ public class PuffinApp {
         } while (!finished);
         
         graphics2d.endExport();
-        // Don't call graphics2d.closeStream() here: endExport already 
-        // calls it, and trying to re-close it will throw an exception. See
-        // http://java.freehep.org/vectorgraphics/xref/org/freehep/graphicsio/AbstractVectorGraphicsIO.html#261
-    }
-    
-    public void exportGraphics() {
-        
+        /*
+         * Don't call graphics2d.closeStream() here: endExport already 
+         * calls it, and trying to re-close it will throw an exception. See
+         * http://java.freehep.org/vectorgraphics/xref/org/freehep/graphicsio/AbstractVectorGraphicsIO.html#261
+         */
     }
     
     /**
@@ -1595,7 +1633,8 @@ public class PuffinApp {
                 CsvWriter writer = null;
                 try {
                     if (multiSuiteCalcs == null) {
-                        throw new PuffinUserException("There are no calculations to save.");
+                        throw new PuffinUserException(
+                                "There are no calculations to save.");
                     }
                     writer = new CsvWriter(new FileWriter(pathname));
                     writer.writeCsv(SuiteCalcs.getHeaders());
@@ -1606,8 +1645,11 @@ public class PuffinApp {
                     throw new PuffinUserException(ex);
                 } finally {
                     if (writer != null) {
-                        try { writer.close(); }
-                        catch (IOException e) { LOGGER.warning(e.getLocalizedMessage()); }
+                        try {
+                            writer.close();
+                        } catch (IOException e) {
+                            LOGGER.warning(e.getLocalizedMessage());
+                        }
                     }
                 }
             } catch (PuffinUserException ex) {
@@ -1620,18 +1662,19 @@ public class PuffinApp {
     /**
      * Runs a specified Python script, first downloading Jython if required.
      * 
-     * This method attempts to run a specified Python script. First it
-     * checks if the Jython jar is already cached locally in PuffinPlot's
-     * application data folder. If not, it prompts the user for confirmation
-     * and downloads and caches it from a hardcoded URL. If the download is
-     * successful, or if Jython is already available, the script will then
-     * be run, with the variable "puffin_app" set to this PuffinApp.
-     * 
+     * This method attempts to run a specified Python script. First it checks if
+     * the Jython jar is already cached locally in PuffinPlot's application data
+     * folder. If not, it prompts the user for confirmation and downloads and
+     * caches it from a hardcoded URL. If the download is successful, or if
+     * Jython is already available, the script will then be run, with the
+     * variable "puffin_app" set to this PuffinApp.
+     *
      * @param scriptPath the path to the script
-     * @throws java.io.IOException if an IO error occurred while running the script
-     * @throws javax.script.ScriptException if a scripting error occurred
+     * @throws IOException if an IO error occurred while running the script
+     * @throws ScriptException if a scripting error occurred
      */
-    public void runPythonScriptInGui(String scriptPath) throws IOException, ScriptException  {
+    public void runPythonScriptInGui(String scriptPath)
+            throws IOException, ScriptException  {
         // Check whether there's a cached Jython JAR with the expected size.
         // If not, delete and redownload. We don't calculate the SHA-1 here as
         // doing it on every run would be slow,  but verifying the size is a
@@ -1641,10 +1684,10 @@ public class PuffinApp {
             final Object[] buttons = {"Download Jython", "Cancel"};
             final int choice = JOptionPane.showOptionDialog(getMainWindow(),
                     "<html><body><p style='width: 400px;'>"
-                            + "To run Python scripts, PuffinPlot first needs to download "
-                            + "the Jython package from the Internet. "
-                            + "Jython will be saved on this computer for "
-                            + "future use. The size of the download is "
+                            + "To run Python scripts, PuffinPlot first needs "
+                            + "to download the Jython package from the "
+                            + "Internet. Jython will be saved on this computer "
+                            + "for future use. The size of the download is "
                             + "around 37 MB. Do you wish to proceed with this "
                             + "download now?</p>",
                     "Jython download required",
@@ -1677,7 +1720,8 @@ public class PuffinApp {
                     if (worker.getException() != null) {
                         errorDialog("Error during download",
                                 "<html><p style='width: 400px';>"
-                                        + "An error occured during the download. (Error description: ‘"
+                                        + "An error occured during the "
+                                        + "download. (Error description: ‘"
                                         + worker.getException().getLocalizedMessage()
                                         + "’) Please try again. If the error persists, "
                                         + "please report it to puffinplot@gmail.com.");
@@ -1685,7 +1729,8 @@ public class PuffinApp {
                         // No exception occurred, but the file is corrupted.
                         errorDialog("Download failed",
                                 "<html><p style='width: 400px';>"
-                                        + "There was a problem with the downloaded Jython file.\n"
+                                        + "There was a problem with the "
+                                        + "downloaded Jython file.\n"
                                         + "Please try again.");
                     }
                     return;
@@ -1736,7 +1781,12 @@ public class PuffinApp {
         }
     }
 
-    public void runJavascriptScript(String scriptPath) throws Exception {
+    /**
+     *  Runs a specified script written in JavaScript
+     * 
+     * @param scriptPath the path to the JavaScript script
+     */
+    public void runJavascriptScript(String scriptPath) {
         final ScriptEngineManager sem = new ScriptEngineManager();
         final ScriptEngine se = sem.getEngineByMimeType("application/javascript");
         se.put("puffin_app", this);
@@ -2024,13 +2074,18 @@ public class PuffinApp {
         if (destinationPath == null) {
             return;
         }
-        final SuiteRpiEstimate rpis = SuiteRpiEstimate.calculateWithArm(nrmSuite, armSuite,
-                Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+        final SuiteRpiEstimate rpis =
+                SuiteRpiEstimate.calculateWithArm(nrmSuite, armSuite,
+                        Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
         rpis.writeToFile(destinationPath);
     }
     
+    /**
+     * Show the dialog for a discrete to continuous sample conversion.
+     */
     public void showDiscreteToContinuousDialog() {
-        final List<File> files = openFileDialog("Select CSV file for conversion");
+        final List<File> files =
+                openFileDialog("Select CSV file for conversion");
         if (files.isEmpty()) return;
         final File file = files.get(0);
         final Suite suite = getSuite();
@@ -2065,6 +2120,9 @@ public class PuffinApp {
         destPath.toFile().setExecutable(true, false);
     }
     
+    /**
+     * Show the dialog for creating and exporting a data and code bundle.
+     */
     public void showCreateBundleDialog() {
         
         if (getSuite() == null) {
@@ -2077,22 +2135,29 @@ public class PuffinApp {
         
         // choose options
         
-        final Path zipPath = Paths.get(getSavePath("Choose bundle location", ".zip", "ZIP archive"));
+        final Path zipPath = Paths.get(getSavePath("Choose bundle location",
+                ".zip", "ZIP archive"));
         
         try {
             final Path tempDir = Files.createTempDirectory("puffinplot");
-            LOGGER.log(Level.INFO, "Temporary directory: {0}", tempDir.toString());
+            LOGGER.log(Level.INFO, "Temporary directory: {0}",
+                    tempDir.toString());
         
             getSuite().saveAs(tempDir.resolve(Paths.get("data.ppl")).toFile());
             getSuite().doAllCalculations(getCorrection(),
                     getGreatCirclesValidityCondition());
-            getSuite().calculateSuiteMeans(getSelectedSamples(), getSelectedSites());
+            getSuite().calculateSuiteMeans(getSelectedSamples(),
+                    getSelectedSites());
             
-            getSuite().saveCalcsSample(tempDir.resolve(Paths.get("data-sample.csv")).toFile());
-            getSuite().saveCalcsSite(tempDir.resolve(Paths.get("data-site.csv")).toFile());
-            getSuite().saveCalcsSuite(tempDir.resolve(Paths.get("data-suite.csv")).toFile());
+            getSuite().saveCalcsSample(tempDir.
+                    resolve(Paths.get("data-sample.csv")).toFile());
+            getSuite().saveCalcsSite(tempDir.
+                    resolve(Paths.get("data-site.csv")).toFile());
+            getSuite().saveCalcsSuite(tempDir.
+                    resolve(Paths.get("data-suite.csv")).toFile());
             
-            final Path scriptPath = tempDir.resolve(Paths.get("process-data.sh"));
+            final Path scriptPath =
+                    tempDir.resolve(Paths.get("process-data.sh"));
             try (FileWriter fw = new FileWriter(scriptPath.toFile())) {
                 fw.write("#!/bin/sh\n\n"
                         + "java -jar PuffinPlot.jar -process data.ppl\n");
@@ -2108,9 +2173,9 @@ public class PuffinApp {
 
             Util.zipDirectory(tempDir, zipPath);
         } catch (IOException | PuffinUserException ex) {
-            Logger.getLogger(PuffinApp.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PuffinApp.class.getName()).
+                    log(Level.SEVERE, null, ex);
         }
-        
     }
     
     private static String getGreatCirclesValidityCondition() {
