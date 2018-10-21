@@ -46,31 +46,8 @@ public class SiteMeanDisplay extends GraphDisplay implements Printable {
         super();
         zoomTransform = AffineTransform.getScaleInstance(1.0, 1.0);
 
-        PlotParams params = new PlotParams() {
-            @Override
-            public Sample getSample() {
-                return PuffinApp.getInstance().getSample(); }
-            @Override
-            public Correction getCorrection() {
-                throw new UnsupportedOperationException(); }
-            @Override
-            public MeasurementAxis getVprojXaxis() {
-                throw new UnsupportedOperationException(); }
-            @Override
-            public MeasurementAxis getHprojXaxis() {
-                throw new UnsupportedOperationException();
-            }
-            @Override
-            public MeasurementAxis getHprojYaxis() {
-                throw new UnsupportedOperationException();
-            }
-            @Override
-            public List<Sample> getAllSamplesInSelectedSites() {
-                throw new UnsupportedOperationException();
-            }
-        };
-
-        Plot plot = new SiteEqAreaPlot(this, params,
+        Plot plot = new SiteEqAreaPlot(this,
+                PuffinApp.getInstance().getPlotParams(),
                 new Rectangle2D.Double(50, 50, 450, 450),
                 PuffinApp.getInstance().getPrefs().getPrefs());
         plot.setVisible(true);

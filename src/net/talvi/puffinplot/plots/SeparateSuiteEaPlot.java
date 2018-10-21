@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.prefs.Preferences;
-import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.FisherValues;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
@@ -87,9 +86,11 @@ public class SeparateSuiteEaPlot extends EqAreaPlot {
         updatePlotDimensions(g);
         clearPoints();
         drawAxes();
-        Suite suite = PuffinApp.getInstance().getSuite();
+        final Sample sample = params.getSample();
+        if (sample==null) return;
+        final Suite suite = sample.getSuite();
         if (suite==null) return;
-        List<FisherValues> fishers = groupedBySite 
+        final List<FisherValues> fishers = groupedBySite 
                 ? suite.getSiteFishers()
                 : Collections.singletonList(suite.getSuiteMeans().getDirsBySample().getAll());
         if (fishers==null) return;
@@ -143,7 +144,7 @@ public class SeparateSuiteEaPlot extends EqAreaPlot {
                 g.setStroke(oldStroke);
             } else {
                 g.setStroke(thinStroke);
-                for (Sample s: PuffinApp.getInstance().getSelectedSamples()) {
+                for (Sample s: params.getSelectedSamples()) {
                     if (s == null) continue;
                     final Vec3 direction = s.getDirection();
                     if (direction == null) continue;

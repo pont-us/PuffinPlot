@@ -30,6 +30,11 @@ import net.talvi.puffinplot.data.Sample;
  * parameters. In the case of the main graph display in PuffinPlot's GUI, the
  * parameters are read from the {@link net.talvi.puffinplot.PuffinApp} object,
  * which in turn gets them from user selections in the control panel.
+ * <p>
+ * It is not guaranteed that there will always be a valid value available for
+ * each parameter. Methods returning lists may return empty lists, and
+ * methods returning single objects may return {@code null}.
+ * 
  */
 public interface PlotParams {
 
@@ -39,6 +44,13 @@ public interface PlotParams {
      * @return the sample to plot
      */
     public Sample getSample();
+    
+    
+    /**
+     * @return a list of the currently selected samples. May be empty,
+     * but not null
+     */
+    public List<Sample> getSelectedSamples();
 
     /**
      * Returns the correction to be applied to magnetic moment data.

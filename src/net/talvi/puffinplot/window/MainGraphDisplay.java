@@ -27,8 +27,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.PuffinApp;
-import net.talvi.puffinplot.data.Correction;
-import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.plots.Plot;
 import net.talvi.puffinplot.plots.ZPlot;
@@ -59,44 +57,16 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
     MainGraphDisplay(final PuffinApp app) {
         super();
         this.app = app;
-        params = new PlotParams() {
-            @Override
-            public Sample getSample() {
-                return samplesForPrinting == null
-                        ? app.getSample()
-                        : samplesForPrinting.get(printPageIndex);
-            }
-            @Override
-            public Correction getCorrection() {
-                return app.getCorrection();
-            }
-            @Override
-            public MeasurementAxis getVprojXaxis() {
-                return app.getMainWindow().getControlPanel().getVprojXaxis();
-            }
-
-            @Override
-            public MeasurementAxis getHprojXaxis() {
-                return app.getMainWindow().getControlPanel().getHprojXaxis();
-            }
-
-            @Override
-            public MeasurementAxis getHprojYaxis() {
-                return app.getMainWindow().getControlPanel().getHprojYaxis();
-            }
-
-            @Override
-            public List<Sample> getAllSamplesInSelectedSites() {
-                return app.getAllSamplesInSelectedSites();
-            }
-        };
+        params = app.getPlotParams();
         createPlots();
     }
 
-    /** Deletes all plots and recreates them. Some plots may have 
-     * settings which are only updated when the plot is created;
-     * this method allows them to take notice of changes in these
-     * settings without a restart of the whole program. */
+    /**
+     * Deletes all plots and recreates them. Some plots may have settings which
+     * are only updated when the plot is created; this method allows them to
+     * take notice of changes in these settings without a restart of the whole
+     * program.
+     */
     public void recreatePlots() {
         plots.clear();
         createPlots();
@@ -143,7 +113,7 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
             return NO_SUCH_PAGE;
         }
         printPageIndex = pageIndex;
-        Graphics2D g2 = (Graphics2D) graphics;
+        final Graphics2D g2 = (Graphics2D) graphics;
 
         if (app.isOnOsX()) {
             /* Superscripts don't print properly on OS X (at least not
@@ -189,5 +159,13 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
         } else {
             return false;
         }
+    }
+    
+    public boolean isPrintingInProgress() {
+        return samplesForPrinting != null;
+    }
+    
+    public Sample getCurrentlyPrintingSample() {
+        return samplesForPrinting.get(printPageIndex);
     }
 }

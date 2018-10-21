@@ -40,7 +40,8 @@ public class SuiteEqAreaWindow extends JFrame {
     public SuiteEqAreaWindow(PuffinApp app) {
         setPreferredSize(new Dimension(600, 600));
         setTitle("Suite equal-area plot");
-        JPanel contentPane = graphDisplay = new SuiteEqAreaDisplay(app.getPrefs().getPrefs());
+        final JPanel contentPane = graphDisplay = new SuiteEqAreaDisplay(
+                app.getPlotParams(), app.getPrefs().getPrefs());
         contentPane.setOpaque(true); //content panes must be opaque
         setContentPane(contentPane);
         pack();

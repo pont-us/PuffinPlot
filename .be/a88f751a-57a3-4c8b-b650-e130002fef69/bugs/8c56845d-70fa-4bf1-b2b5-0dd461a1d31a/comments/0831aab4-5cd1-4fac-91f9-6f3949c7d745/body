@@ -1,0 +1,10 @@
+If this is implemented, I think the colour scheme should be isoluminant
+-- we don't want points fading out at one end of the scale.
+https://www.kennethmoreland.com/color-maps/ColorMapsExpanded.pdf is
+informative: "Isoluminant color maps. The green to red color map is
+popular because it uses a pair of opponent colors, but the cyan to mauve
+color map is much easier to see by individuals with deuteranope or
+protanopic vision." For actual colourmap data,
+https://github.com/pyviz/colorcet looks useful: contains a large range
+of colourmaps as CSV file, of which six are isoluminant.
+

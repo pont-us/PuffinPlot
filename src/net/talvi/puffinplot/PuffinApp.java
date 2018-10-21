@@ -118,6 +118,8 @@ public class PuffinApp {
     private final List<Suite> suites = new ArrayList<>();
     private Suite currentSuite;
     private PageFormat currentPageFormat;
+    private final MainGraphDisplay mainGraphDisplay;
+    private final PlotParams plotParams;
     private final MainWindow mainWindow;
     private final PuffinPrefs prefs;
     private final TableWindow tableWindow;
@@ -177,6 +179,7 @@ public class PuffinApp {
      * will cause the main PuffinPlot window to be opened immediately.
      */
     public PuffinApp() {
+
         LOGGER.info("Instantiating PuffinApp.");
         // have to set app here (not in main) since we need it during initialization
         PuffinApp.app = this;
@@ -189,17 +192,17 @@ public class PuffinApp {
         prefs = new PuffinPrefs(this);
         lastUsedFileOpenDirs = new IdToFileMap(prefs.getPrefs());
         actions = new PuffinActions(this);
-        
-        /*
-         * TODO: Fix this temporary hack. We currently have three PlotParams
-         * objects (for MainGraphDisplay, TableWIndow (here), and
-         * SiteMeanDisplay). A single, accessible PlotParams for the whole
-         * Swing GUI would make more sense.
-         */
-        tableWindow = new TableWindow(new PlotParams() {
+               plotParams = new PlotParams() {
             @Override
             public Sample getSample() {
-                return PuffinApp.this.getSample();
+                return mainGraphDisplay != null &&
+                        mainGraphDisplay.isPrintingInProgress()
+                        ? mainGraphDisplay.getCurrentlyPrintingSample()
+                        : PuffinApp.this.getSample();
+            }
+            @Override
+            public List<Sample> getSelectedSamples() {
+                return PuffinApp.this.getSelectedSamples();
             }
             @Override
             public Correction getCorrection() {
@@ -224,8 +227,9 @@ public class PuffinApp {
             public List<Sample> getAllSamplesInSelectedSites() {
                 return PuffinApp.this.getAllSamplesInSelectedSites();
             }
-        });
-        
+        };
+
+        tableWindow = new TableWindow(getPlotParams());
         suiteEqAreaWindow = new SuiteEqAreaWindow(this);
         siteEqAreaWindow = new SiteMeanWindow();
         editSampleParametersWindow = new EditSampleParametersWindow();
@@ -234,9 +238,10 @@ public class PuffinApp {
         // NB main window must be instantiated last, as
         // the Window menu references the other windows
         mainWindow = MainWindow.getInstance(this);
+        mainGraphDisplay = mainWindow.getGraphDisplay();
         setApplicationIcon();
-        Correction corr =
-                Correction.fromString(prefs.getPrefs().get("correction", "false false NONE false"));
+        Correction corr = Correction.fromString(
+                prefs.getPrefs().get("correction", "false false NONE false"));
         setCorrection(corr);
         mainWindow.getControlPanel().setCorrection(corr);
         // prefs window needs the graph list from MainGraphDisplay from MainWindow
@@ -248,13 +253,13 @@ public class PuffinApp {
         currentPageFormat = PrinterJob.getPrinterJob().defaultPage();
         currentPageFormat.setOrientation(PageFormat.LANDSCAPE);
         aboutBox = new AboutBox(this);
-        final MainGraphDisplay display = mainWindow.getGraphDisplay();
+
         final SampleClickListener scListener = new PuffinAppSampleClickListener();
-        display.getPlotByClassName("SampleParamsTable").
+        mainGraphDisplay.getPlotByClassName("SampleParamsTable").
                 addSampleClickListener(scListener);
-        display.getPlotByClassName("SiteParamsTable").
+        mainGraphDisplay.getPlotByClassName("SiteParamsTable").
                 addSampleClickListener(scListener);
-        display.getPlotByClassName("VgpTable").
+        mainGraphDisplay.getPlotByClassName("VgpTable").
                 addSampleClickListener(scListener);
         mainWindow.getMainMenuBar().updateRecentFiles();
         mainWindow.setVisible(true);
@@ -517,6 +522,14 @@ public class PuffinApp {
     public static PuffinApp getInstance() { return app; }
 
     /**
+     * @return the plot parameters controlled by the GUI of this PuffinApp
+     * instance
+     */
+    public PlotParams getPlotParams() {
+        return plotParams;
+    }
+    
+    /**
      * Reports whether the empty-slot correction is currently active.
      * The empty-slot correction is not currently used, and this
      * method is reserved for a future re-implementation of the feature.
@@ -740,6 +753,8 @@ public class PuffinApp {
     public void updateDisplay() {
         getMainWindow().sampleChanged();
         getTableWindow().dataChanged();
+        getSiteEqAreaWindow().repaint(100);
+        getSuiteEqAreaWindow().repaint(100);
     }
 
     private boolean canSuiteBeClosed(Suite suite) {

@@ -41,11 +41,11 @@ public class SuiteEqAreaDisplay extends GraphDisplay implements Printable {
     /** Creates a new suite equal-area graph display
      * @param prefs preferences for plot
      */
-    public SuiteEqAreaDisplay(Preferences prefs) {
+    public SuiteEqAreaDisplay(PlotParams params, Preferences prefs) {
         super();
         zoomTransform = AffineTransform.getScaleInstance(1.0, 1.0);
         Plot plot = new SeparateSuiteEaPlot(
-                null, null, new Rectangle2D.Double(50, 50, 600, 600),
+                null, params, new Rectangle2D.Double(50, 50, 600, 600),
                 prefs);
         plot.setVisible(true);
         plots.put(plot.getName(), plot);
