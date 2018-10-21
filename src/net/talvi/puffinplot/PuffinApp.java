@@ -190,8 +190,12 @@ public class PuffinApp {
         lastUsedFileOpenDirs = new IdToFileMap(prefs.getPrefs());
         actions = new PuffinActions(this);
         
-        // TODO Fix this temporary hack -- we should have a single 
-        // easily accessible PlotParams object rather than the current mess.
+        /*
+         * TODO: Fix this temporary hack. We currently have three PlotParams
+         * objects (for MainGraphDisplay, TableWIndow (here), and
+         * SiteMeanDisplay). A single, accessible PlotParams for the whole
+         * Swing GUI would make more sense.
+         */
         tableWindow = new TableWindow(new PlotParams() {
             @Override
             public Sample getSample() {
@@ -214,6 +218,11 @@ public class PuffinApp {
             @Override
             public MeasurementAxis getHprojYaxis() {
                 return getMainWindow().getControlPanel().getHprojYaxis();
+            }
+
+            @Override
+            public List<Sample> getAllSamplesInSelectedSites() {
+                return PuffinApp.this.getAllSamplesInSelectedSites();
             }
         });
         
@@ -1934,6 +1943,7 @@ public class PuffinApp {
                 suite.saveAs(file);
                 getRecentFiles().add(Collections.singletonList(file));
                 getMainWindow().getMainMenuBar().updateRecentFiles();
+                updateMainWindowTitle();
             } catch (PuffinUserException ex) {
                 errorDialog("Error saving file", ex);
             }

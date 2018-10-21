@@ -16,47 +16,56 @@
  */
 package net.talvi.puffinplot.window;
 
+import java.util.List;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;
 
 /**
- * <p>The current parameters for a plot. This interface provides a way
- * for a plot to retrieve ‘dynamic’ parameters affecting its
- * appearance – that is, parameters which can change after
- * the plot has been created. An object implementing this interface
- * is passed to a plot's constructor; the plot can then call back
- * through this interface to read the current state of the parameters.
- * In the case of the main graph display in PuffinPlot's GUI,
- * the parameters are read from the {@link net.talvi.puffinplot.PuffinApp}
- * object, which in turn gets them from user selections in the control
- * panel.</p>
- * 
- * @author pont
+ * The current parameters for a plot. This interface provides a way for a plot
+ * to retrieve ‘dynamic’ parameters affecting its appearance – that is,
+ * parameters which can change after the plot has been created. An object
+ * implementing this interface is passed to a plot's constructor; the plot can
+ * then call back through this interface to read the current state of the
+ * parameters. In the case of the main graph display in PuffinPlot's GUI, the
+ * parameters are read from the {@link net.talvi.puffinplot.PuffinApp} object,
+ * which in turn gets them from user selections in the control panel.
  */
 public interface PlotParams {
 
-    /** Returns the sample to plot.
-     * @return the sample to plot */
+    /**
+     * Returns the sample to plot.
+     *
+     * @return the sample to plot
+     */
     public Sample getSample();
 
-    /** Returns the correction to be applied to magnetic moment data.
-     * @return the correction to be applied to magnetic moment data */
+    /**
+     * Returns the correction to be applied to magnetic moment data.
+     *
+     * @return the correction to be applied to magnetic moment data
+     */
     public Correction getCorrection();
 
-    /** 
+    /**
      * @return the X axis of the Zijderveld plot's vertical projection
      */
     public MeasurementAxis getVprojXaxis();
-    
-    /** 
+
+    /**
      * @return the X axis of the Zijderveld plot's horizontal projection
      */
     public MeasurementAxis getHprojXaxis();
-    
-    /** 
+
+    /**
      * @return the Y axis of the Zijderveld plot's horizontal projection
      */
     public MeasurementAxis getHprojYaxis();
+    
+    /**
+     * @return a list of all samples in all selected sites (may be empty,
+     * but not null)
+     */
+    public List<Sample> getAllSamplesInSelectedSites();
 
 }

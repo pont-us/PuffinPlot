@@ -84,6 +84,11 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
             public MeasurementAxis getHprojYaxis() {
                 return app.getMainWindow().getControlPanel().getHprojYaxis();
             }
+
+            @Override
+            public List<Sample> getAllSamplesInSelectedSites() {
+                return app.getAllSamplesInSelectedSites();
+            }
         };
         createPlots();
     }

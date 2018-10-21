@@ -22,6 +22,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
+import java.util.List;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.MeasurementAxis;
@@ -61,6 +62,10 @@ public class SiteMeanDisplay extends GraphDisplay implements Printable {
             }
             @Override
             public MeasurementAxis getHprojYaxis() {
+                throw new UnsupportedOperationException();
+            }
+            @Override
+            public List<Sample> getAllSamplesInSelectedSites() {
                 throw new UnsupportedOperationException();
             }
         };

@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.prefs.Preferences;
-import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.KentParams;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
@@ -35,8 +34,6 @@ import net.talvi.puffinplot.window.PlotParams;
  * A plot which shows the principal axes of anisotropy of magnetic
  * susceptibility (AMS) tensors, and statistical means and confidence
  * regions for groups of tensors.
- * 
- * @author pont
  */
 public class AmsPlot extends EqAreaPlot {
 
@@ -45,8 +42,9 @@ public class AmsPlot extends EqAreaPlot {
     private List<List<Vec3>> cachedBootstrapRegions = new ArrayList<>();
     private List<List<Vec3>> cachedHextRegions = new ArrayList<>();    
     
-    /** Creates an AMS plot with the supplied parameters.
-     * 
+    /**
+     * Creates an AMS plot with the supplied parameters.
+     *
      * @param parent the graph display containing the plot
      * @param params the parameters of the plot
      * @param prefs the preferences containing the plot configuration
@@ -55,15 +53,11 @@ public class AmsPlot extends EqAreaPlot {
         super(parent, params, prefs);
     }
 
-    /** Returns this plot's internal name.
-     * @return this plot's internal name */
     @Override
     public String getName() {
         return "ams";
     }
 
-    /** Returns this plot's user-friendly name.
-     * @return this plot's user-friendly name */
     @Override
     public String getNiceName() {
         return "AMS";
@@ -107,22 +101,30 @@ public class AmsPlot extends EqAreaPlot {
     }
 
     private void drawLhLineSegments(Graphics2D g, List<Vec3> vs) {
-         // determine whether we're in upper hemisphere, ignoring
-         // z co-ordinates very close to zero. Assumes all segments
-         // in same hemisphere.
-         boolean upperHemisph = true;
-         for (Vec3 v: vs) { if (v.z > 1e-10) { upperHemisph = false; break; } }
-         List<Vec3> vs2 = vs;
-         if (upperHemisph) {
-             vs2 = new ArrayList<>(vs.size());
-             for (Vec3 v: vs) {
-                 vs2.add(v.invert());
-             }
-         }
-         g.draw(vectorsToPath(vs2));
-     }
+        /*
+         * Determine whether we're in upper hemisphere, ignoring z co-ordinates
+         * very close to zero. Assumes all segments in same hemisphere.
+         */
+        boolean upperHemisphere = true;
+        for (Vec3 v: vs) {
+            if (v.z > 1e-10) {
+                upperHemisphere = false;
+                break;
+            }
+        }
+        List<Vec3> vs2 = vs;
+        if (upperHemisphere) {
+            vs2 = new ArrayList<>(vs.size());
+            for (Vec3 v: vs) {
+                vs2.add(v.invert());
+            }
+        }
+        g.draw(vectorsToPath(vs2));
+    }
 
-    /** Draws this plot. 
+    /**
+     * Draws this plot.
+     *
      * @param g the graphics context to which to draw the plot
      */
     @Override
@@ -135,7 +137,7 @@ public class AmsPlot extends EqAreaPlot {
 
         g.setStroke(getStroke());
 
-        List<Sample> samples = PuffinApp.getInstance().getAllSamplesInSelectedSites();
+        List<Sample> samples = params.getAllSamplesInSelectedSites();
         if (samples.isEmpty()) samples = Collections.singletonList(sample);
         for (Sample s: samples) {
             if (s.getAms() != null) {
