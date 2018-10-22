@@ -238,7 +238,7 @@ public class PuffinActions {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent arg0) {
             if (app.getSuite() != null) {
-                app.doSaveAs(app.getSuite());
+                app.showSaveAsDialog(app.getSuite());
             }
         }
     };
@@ -871,7 +871,7 @@ public class PuffinActions {
             null, false, KeyEvent.VK_S) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            app.rescaleMagSus();
+            app.showRescaleMagSusDialog();
         }
     };
         

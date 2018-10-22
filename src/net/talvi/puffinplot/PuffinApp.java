@@ -98,7 +98,8 @@ import org.freehep.graphicsbase.util.UserProperties;
 public class PuffinApp {
 
     private static PuffinApp app;
-    private static final Logger LOGGER = Logger.getLogger("net.talvi.puffinplot");
+    private static final Logger LOGGER =
+            Logger.getLogger("net.talvi.puffinplot");
     private static final java.io.ByteArrayOutputStream LOG_STREAM =
             new java.io.ByteArrayOutputStream();
     private static final MemoryHandler LOG_MEMORY_HANDLER;
@@ -134,10 +135,12 @@ public class PuffinApp {
     private ScriptEngine pythonEngine = null;
     private final Version version;
     
-    /* I don't use IdToFileMap for lastUsedSaveDirectories, because I think
-    it's better that the save directories *don't* persist between restarts
-    of the program. Inkscape has persistent save directories and I've found
-    it to be very counterintuitive. */
+    /*
+     * I don't use IdToFileMap for lastUsedSaveDirectories, because I think it's
+     * better that the save directories *don't* persist between restarts of the
+     * program. Inkscape has persistent save directories and I've found it to be
+     * very counterintuitive.
+     */
     private final java.util.Map<String,String> lastUsedSaveDirectories =
             new java.util.HashMap<>();
 
@@ -243,7 +246,8 @@ public class PuffinApp {
         currentPageFormat.setOrientation(PageFormat.LANDSCAPE);
         aboutBox = new AboutBox(this);
 
-        final SampleClickListener scListener = new PuffinAppSampleClickListener();
+        final SampleClickListener scListener =
+                new PuffinAppSampleClickListener();
         mainGraphDisplay.getPlotByClassName("SampleParamsTable").
                 addSampleClickListener(scListener);
         mainGraphDisplay.getPlotByClassName("SiteParamsTable").
@@ -349,7 +353,7 @@ public class PuffinApp {
 
     /**
      * Recalculates all sample and site calculations in all currently open
-     * suites; intended to be called when the correction (none/sample/formation)
+     * suites. Intended to be called when the correction (none/sample/formation)
      * has changed.
      */
     public void redoCalculations() {
@@ -363,7 +367,8 @@ public class PuffinApp {
     private void loadBuildProperties() {
         InputStream propStream = null;
         try {
-            propStream = PuffinApp.class.getResourceAsStream("build.properties");
+            propStream =
+                    PuffinApp.class.getResourceAsStream("build.properties");
             buildProperties = new Properties();
             buildProperties.load(propStream);
         } catch (IOException ex) {
@@ -375,7 +380,8 @@ public class PuffinApp {
             if (propStream != null)
                 try {propStream.close();} catch (IOException e) {}
         }
-        LOGGER.log(Level.INFO, "Build date: {0}", getBuildProperty("build.date"));
+        LOGGER.log(Level.INFO, "Build date: {0}",
+                getBuildProperty("build.date"));
     }
     
     /**
@@ -1281,7 +1287,7 @@ public class PuffinApp {
      * Scales all magnetic susceptibility values in the current suite by
      * a user-specified factor.
      */
-    public void rescaleMagSus() {
+    public void showRescaleMagSusDialog() {
         if (showErrorIfNoSuite()) return;
         final String factorString = JOptionPane.showInputDialog(
                 getMainWindow(),
@@ -1609,7 +1615,8 @@ public class PuffinApp {
      */
     public void runJavascriptScript(String scriptPath) {
         final ScriptEngineManager sem = new ScriptEngineManager();
-        final ScriptEngine se = sem.getEngineByMimeType("application/javascript");
+        final ScriptEngine se =
+                sem.getEngineByMimeType("application/javascript");
         se.put("puffin_app", this);
         try {
             Reader reader = new FileReader(scriptPath);
@@ -1735,19 +1742,19 @@ public class PuffinApp {
      */
     public void save(Suite suite) {
         if (suite != null) {
-                if (suite.isFilenameSet()) try {
-                    suite.save();
-                    final File file = suite.getPuffinFile();
-                    app.getRecentFiles().add(Collections.singletonList(file));
-                    app.getMainWindow().getMainMenuBar().updateRecentFiles();
-                } catch (PuffinUserException ex) {
-                    app.errorDialog("Error saving file", ex);
-                }
-                else doSaveAs(suite);
+            if (suite.isFilenameSet()) try {
+                suite.save();
+                final File file = suite.getPuffinFile();
+                app.getRecentFiles().add(Collections.singletonList(file));
+                app.getMainWindow().getMainMenuBar().updateRecentFiles();
+            } catch (PuffinUserException ex) {
+                app.errorDialog("Error saving file", ex);
             }
+            else showSaveAsDialog(suite);
+        }
     }
     
-    void doSaveAs(Suite suite) {
+    void showSaveAsDialog(Suite suite) {
         String pathname = getSavePath("Save data", ".ppl", "PuffinPlot data");
         if (pathname != null) {
             try {
@@ -1935,7 +1942,8 @@ public class PuffinApp {
         if (jarFile == null) {
             return;
         }
-        LOGGER.log(Level.INFO, "PuffinPlot jar file location: {0}", jarFile.getAbsolutePath());
+        LOGGER.log(Level.INFO, "PuffinPlot jar file location: {0}",
+                jarFile.getAbsolutePath());
         final Path jarPath = jarFile.toPath();
         final Path destPath = destinationDir.resolve("PuffinPlot.jar");
         Files.copy(jarPath, destPath, StandardCopyOption.COPY_ATTRIBUTES);
@@ -1949,7 +1957,7 @@ public class PuffinApp {
         
         if (getSuite() == null) {
             errorDialog("No suite loaded", "PuffinPlot cannot create a bundle, "
-            +"as there is no data suite loaded.");
+            + "as there is no data suite loaded.");
             return;
         }
         
@@ -2012,5 +2020,4 @@ public class PuffinApp {
     public void alignSectionDeclinations() {
         getSuite().alignSectionDeclinations(0, 1);
     }
-    
 }
