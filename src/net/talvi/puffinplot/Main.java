@@ -179,7 +179,7 @@ public class Main {
                 final ScriptEngine engine = engineTemp;
                 if (commandLine.hasOption("withapp")) {
                     java.awt.EventQueue.invokeLater(() -> {
-                        final PuffinApp scriptApp = new PuffinApp();
+                        final PuffinApp scriptApp = PuffinApp.getInstance();
                         engine.put("puffin_app", scriptApp);
                         try (Reader reader = new FileReader(scriptPath)) {
                             engine.eval(reader);
@@ -240,7 +240,8 @@ public class Main {
         else {
             // Start PuffinPlot in normal desktop mode.
             java.awt.EventQueue.invokeLater(() -> {
-                final PuffinApp dummy = new PuffinApp();
+                final PuffinApp app = PuffinApp.getInstance();
+                app.show();
             });
         }
     }

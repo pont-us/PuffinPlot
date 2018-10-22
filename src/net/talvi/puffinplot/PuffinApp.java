@@ -170,7 +170,7 @@ public class PuffinApp {
      * Instantiates a new PuffinPlot application object. Instantiating PuffinApp
      * will cause the main PuffinPlot window to be opened immediately.
      */
-    public PuffinApp() {
+    private PuffinApp() {
 
         LOGGER.info("Instantiating PuffinApp.");
         // have to set app here (not in main) since we need it during initialization
@@ -184,7 +184,7 @@ public class PuffinApp {
         prefs = new PuffinPrefs(this);
         lastUsedFileOpenDirs = new IdToFileMap(prefs.getPrefs());
         actions = new PuffinActions(this);
-               plotParams = new PlotParams() {
+        plotParams = new PlotParams() {
             @Override
             public Sample getSample() {
                 return mainGraphDisplay != null &&
@@ -255,8 +255,11 @@ public class PuffinApp {
         mainGraphDisplay.getPlotByClassName("VgpTable").
                 addSampleClickListener(scListener);
         mainWindow.getMainMenuBar().updateRecentFiles();
-        mainWindow.setVisible(true);
         LOGGER.info("PuffinApp instantiation complete.");
+    }
+    
+    public void show() {
+        mainWindow.setVisible(true);
     }
 
     static class ExceptionHandler implements UncaughtExceptionHandler {
@@ -314,13 +317,18 @@ public class PuffinApp {
     }
     
     /**
-     * Returns the single instance of PuffinApp. Only one instance of
-     * PuffinApp can exist at a time, and it may always be found using
-     * this method.
-     * 
+     * Returns the single instance of PuffinApp, first creating it if necessary.
+     * Only one instance of PuffinApp can exist at a time, and it may always be
+     * obtained using this method.
+     *
      * @return the single instance of PuffinApp
      */
-    public static PuffinApp getInstance() { return app; }
+    public static PuffinApp getInstance() {
+        if (app == null) {
+            app = new PuffinApp();
+        }
+        return app;
+    }
 
     /**
      * @return the plot parameters controlled by the GUI of this PuffinApp

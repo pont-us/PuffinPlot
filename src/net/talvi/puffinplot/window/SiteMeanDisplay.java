@@ -22,11 +22,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
-import java.util.List;
 import net.talvi.puffinplot.PuffinApp;
-import net.talvi.puffinplot.data.Correction;
-import net.talvi.puffinplot.data.MeasurementAxis;
-import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.plots.SiteEqAreaPlot;
 import net.talvi.puffinplot.plots.Plot;
 
@@ -41,7 +37,9 @@ import net.talvi.puffinplot.plots.Plot;
  */
 public class SiteMeanDisplay extends GraphDisplay implements Printable {
 
-    /** Creates a new site mean graph display. */
+    /**
+     * Creates a new site mean graph display.
+     */
     public SiteMeanDisplay() {
         super();
         zoomTransform = AffineTransform.getScaleInstance(1.0, 1.0);
@@ -54,13 +52,14 @@ public class SiteMeanDisplay extends GraphDisplay implements Printable {
         plots.put(plot.getName(), plot);
     }
 
-    /** Prints this graph display.
-     * 
+    /**
+     * Prints this graph display.
+     *
      * @param graphics the graphics object to which to draw the display
      * @param pageFormat the page format
      * @param pageIndex the page number
-     * @return {@link #PAGE_EXISTS} if the page number is valid,
-     * otherwise {@link #NO_SUCH_PAGE}
+     * @return {@link #PAGE_EXISTS} if the page number is valid, otherwise
+     * {@link #NO_SUCH_PAGE}
      * @throws PrinterException if a printing error occurred
      */
     @Override

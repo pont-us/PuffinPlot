@@ -44,7 +44,7 @@ final class WelcomeMessage extends JPanel {
     private void createComponents(PuffinApp app) {
         setBorder(new EmptyBorder(12, 12, 12, 12));
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        final Version version = PuffinApp.getInstance().getVersion();
+        final Version version = app.getVersion();
         final String welcome = String.format(Locale.ENGLISH,
                 "Welcome to PuffinPlot, version %s. This puffin hatched on %s.",
                 version.getVersionString(), version.getDateString());
