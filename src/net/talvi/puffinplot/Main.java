@@ -49,7 +49,6 @@ import org.apache.commons.cli.ParseException;
 public class Main {
 
     private static final Logger LOGGER = Logger.getLogger("net.talvi.puffinplot");
-
     
     /**
      * Instantiates and starts a new PuffinApp.
@@ -58,7 +57,6 @@ public class Main {
     public static void main(final String[] args) {
         LOGGER.setLevel(Level.ALL);
         LOGGER.fine("Entering main method.");
-        Thread.setDefaultUncaughtExceptionHandler(new PuffinApp.ExceptionHandler());
         
         final Preferences prefs =
                 Preferences.userNodeForPackage(PuffinPrefs.class);
@@ -241,6 +239,8 @@ public class Main {
             // Start PuffinPlot in normal desktop mode.
             java.awt.EventQueue.invokeLater(() -> {
                 final PuffinApp app = PuffinApp.getInstance();
+                Thread.setDefaultUncaughtExceptionHandler(
+                        app.new ExceptionHandler());
                 app.show();
             });
         }

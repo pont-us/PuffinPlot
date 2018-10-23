@@ -262,17 +262,51 @@ public class PuffinApp {
         mainWindow.setVisible(true);
     }
 
-    static class ExceptionHandler implements UncaughtExceptionHandler {
+    class ExceptionHandler implements UncaughtExceptionHandler {
+
+        /**
+         * This is a flag to prevent re-entrant calls to the
+         * {@code uncaughtException} method. The method is synchronized,
+         * which prevents it being called concurrently from more than one
+         * thread, but it's possible that a method called from
+         * {@code uncaughtException} itself (or something further down the
+         * call chain) will throw an exception which will again be caught. 
+         * Even if the second exception occurs in another thread,
+         * {@code uncaughtException} may be called again in its initial
+         * thread, as there's no guarantee that it will be called in the
+         * thread that caused the exception -- that's clear from the fact
+         * that the source thread is supplied as a parameter.
+         * <p>
+         * This flag is set on entry to the method and cleared on exit. If it is
+         * true on entry, {@code uncaughtException} terminates the JVM
+         * immediately to avoid getting trapped in a recursive loop.
+         * <p>
+         * The {@code volatile} modifier isn't really be necessary since the
+         * {@code synchronized} modifier on {@code uncaughtException} should
+         * ensure that it's never at risk of concurrent access, but it doesn't
+         * do any harm and adds an extra layer of safety.
+         */
+        private volatile boolean handlingException = false;
+        
         @Override
-        public void uncaughtException(Thread thread, Throwable exception) {
-            final String ERROR_FILE = "PUFFIN-ERROR.txt";
-            boolean quit = unhandledErrorDialog();
-            final File errorFile =
-                    new File(System.getProperty("user.home"), ERROR_FILE);
+        public synchronized void uncaughtException(Thread thread,
+                Throwable exception) {
+            System.out.println("entering "+thread);
+            if (handlingException) {
+                /*
+                 * We don't even risk trying to print a stack trace here:
+                 * an infinite recursive loop of {@code uncaughtException}
+                 * calls is VERY undesirable, so we try to exit as quickly
+                 * and safely as possible.
+                 */
+                System.exit(1);
+            }
+            handlingException = true;
+            final File errorFile = new File(System.getProperty("user.home"),
+                    "PUFFIN-ERROR.txt");
             try (PrintWriter writer = new PrintWriter(errorFile)) {
                 writer.println("PuffinPlot error file");
-                writer.println("Build date: " + getInstance().
-                        getBuildProperty("build.date"));
+                writer.println("Build date: " + getBuildProperty("build.date"));
                 final Date now = new Date();
                 final SimpleDateFormat df =
                         new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -291,19 +325,32 @@ public class PuffinApp {
                 LOG_STREAM.flush();
                 writer.append(LOG_STREAM.toString());
                 writer.flush();
-            } catch (IOException secondaryException) {
+                if (unhandledErrorDialog()) {
+                    System.exit(1);
+                }
+            } catch (Throwable secondaryException) {
                 /*
-                 * Explicitly pass System.err rather than using the
+                 * This should catch anything thrown directly while attempting
+                 * to handle the initial exception. It won't help if there's
+                 * an exception in another thread, but the handlingException
+                 * flag should take care of that.
+                 * 
+                 * We explicitly pass System.err rather than using the
                  * no-argument method to make it clear (to humans and static
                  * analysis tools) that this is not a temporary hack -- at
                  * this stage it's probably the best we can do.
                  */
                 secondaryException.printStackTrace(System.err);
                 exception.printStackTrace(System.err);
-            }
-            if (quit) {
+                /*
+                 * If the exception handler itself is throwing exceptions, it's
+                 * best to exit ASAP rather than risk getting trapped in an
+                 * infinite loop.
+                 */
                 System.exit(1);
             }
+            handlingException = false;
+            System.out.println("leaving "+thread);
         }
     }
     
