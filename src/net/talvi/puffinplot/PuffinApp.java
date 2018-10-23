@@ -847,13 +847,12 @@ public class PuffinApp {
         errorDialog(title, ex.getLocalizedMessage());
     }
     
-    private static boolean unhandledErrorDialog() {
-        final Object[] options = {"Continue", "Quit"};
-        String messageText =
+    private boolean unhandledErrorDialog() {
+        final JLabel message = new JLabel(
                 "<html><body style=\"width: 400pt; font-weight: normal;\">" +
                 "<p><b>An unexpected error occurred.</b></p>" +
                 "<p>We apologize for the inconvenience. Please report this " +
-                "error to PP_ADDRESS@gmail.com. " +
+                "error to puffinplot@gmail.com. " +
                 "PuffinPlot will try to write the details " +
                 "to a file called PUFFIN-ERROR.txt in your home folder. "+
                 "Please attach this file to your report. " +
@@ -861,14 +860,11 @@ public class PuffinApp {
                 "quit now and restart PuffinPlot. " +
                 "If you have unsaved data, press Continue, then save your "+
                 "data to a new file before quitting PuffinPlot." +
-                "</p></body></html>";
-        messageText = messageText.replaceAll("PP_ADDRESS", "puffinplot");
-        final JLabel message = new JLabel(messageText);
-        int response =
-                JOptionPane.showOptionDialog(getInstance().getMainWindow(),
-                message, "Unexpected error",
-                JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
-                null, options, options[1]);
+                "</p></body></html>");
+        final Object[] options = {"Continue", "Quit"};
+        final int response = JOptionPane.showOptionDialog(getMainWindow(),
+                message, "Unexpected error", JOptionPane.DEFAULT_OPTION,
+                JOptionPane.WARNING_MESSAGE, null, options, options[1]);
         return (response==1);
     }
 
