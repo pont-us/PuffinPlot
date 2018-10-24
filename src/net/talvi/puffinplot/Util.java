@@ -52,6 +52,10 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
  * @author pont
  */
 public class Util {
+
+    private static final boolean MAC_OS_X =
+            System.getProperty("os.name").toLowerCase(Locale.ENGLISH).
+                    startsWith("mac os x");
     
     /**
      * Takes an integer, reduces it by one, and ensures it lies in the
@@ -469,5 +473,13 @@ public class Util {
         return Instant.ofEpochSecond(epochSeconds).atZone(ZoneId.of(timeZone));
     }
 
+    /**
+     * Reports whether the JVM is running on Mac OS X.
+     * 
+     * @return {@code true} if this PuffinApp is running on Mac OS X
+     */
+    public static boolean runningOnOsX() {
+        return MAC_OS_X;
+    }
 
 }

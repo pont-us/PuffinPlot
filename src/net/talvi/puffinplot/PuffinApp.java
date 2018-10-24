@@ -80,6 +80,7 @@ import net.talvi.puffinplot.data.*;
 import net.talvi.puffinplot.data.AmsCalculationType;
 import net.talvi.puffinplot.data.file.FileFormat;
 import net.talvi.puffinplot.plots.SampleClickListener;
+import static net.talvi.puffinplot.Util.runningOnOsX;
 import net.talvi.puffinplot.window.*;
 import org.freehep.graphicsbase.util.UserProperties;
 
@@ -126,9 +127,6 @@ public class PuffinApp {
     private final IdToFileMap lastUsedFileOpenDirs;
     private java.util.BitSet pointSelectionClipboard = new java.util.BitSet(0);
     private Properties buildProperties;
-    private static final boolean MAC_OS_X =
-            System.getProperty("os.name").toLowerCase(Locale.ENGLISH).
-                    startsWith("mac os x");
     private SuiteCalcs multiSuiteCalcs;
     private ScriptEngine pythonEngine = null;
     private final Version version;
@@ -238,7 +236,7 @@ public class PuffinApp {
         // prefs window needs the graph list from MainGraphDisplay from MainWindow
         // prefs window also needs the correction.
         prefsWindow = new PrefsWindow();
-        if (MAC_OS_X) {
+        if (runningOnOsX()) {
             createAppleEventHandler();
         }
         currentPageFormat = PrinterJob.getPrinterJob().defaultPage();
@@ -257,17 +255,12 @@ public class PuffinApp {
         LOGGER.info("PuffinApp instantiation complete.");
     }
     
+    /**
+     * Shows the main window of this PuffinApp. If the main window is already
+     * visible, this method has no effect.
+     */
     public void show() {
         mainWindow.setVisible(true);
-    }
-    
-    /**
-     * Reports whether this PuffinApp is running on Mac OS X.
-     * 
-     * @return {@code true} if this PuffinApp is running on Mac OS X
-     */
-    public boolean isOnOsX() {
-        return PuffinApp.MAC_OS_X;
     }
     
     /**
@@ -737,8 +730,8 @@ public class PuffinApp {
             return;
         }
         window.setTitle("PuffinPlot: " + currentSuite.getName() +
-                (currentSuite.isSaved() || isOnOsX() ? "" : " *"));
-        if (isOnOsX()) {
+                (currentSuite.isSaved() || runningOnOsX()? "" : " *"));
+        if (runningOnOsX()) {
             // See Apple tech note TN2196
             // https://developer.apple.com/library/mac/technotes/tn2007/tn2196.html#WINDOW_DOCUMENTMODIFIED
             // http://nadeausoftware.com/articles/2009/01/mac_java_tip_how_control_window_decorations
@@ -1025,7 +1018,7 @@ public class PuffinApp {
         final File startingDir = lastUsedFileOpenDirs.get(title);
         // Returns null if none set, but JFileChooser handles it appropriately.
         List<File> files = Collections.emptyList();
-        final boolean useSwingChooserForOpen = !isOnOsX();
+        final boolean useSwingChooserForOpen = !runningOnOsX();
         
         // If we are on OS X, having this flag set would *prohibit* selection
         // of files, so we make sure it's clear. showOpenMacFileDialog is
@@ -1724,7 +1717,7 @@ public class PuffinApp {
     
     String getSavePath(final String title, final String extension,
             final String type) {
-        final boolean useSwingChooserForSave = !isOnOsX();
+        final boolean useSwingChooserForSave = !runningOnOsX();
         final String lastDirKey = title + extension + type;
         // It's a deliberate choice not to use IdToFileMap here --
         // see comment on lastUsedSaveDirectories declaration.

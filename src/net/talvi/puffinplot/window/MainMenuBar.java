@@ -28,6 +28,7 @@ import net.talvi.puffinplot.PuffinAction;
 import net.talvi.puffinplot.PuffinActions;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.RecentFileList;
+import net.talvi.puffinplot.Util;
 import net.talvi.puffinplot.data.Sample;
 
 /**
@@ -132,7 +133,7 @@ public final class MainMenuBar extends JMenuBar {
         
         add(makeMenu("File", KeyEvent.VK_F,
                 pa.open,
-                app.isOnOsX() ? pa.openFolder : null,
+                Util.runningOnOsX() ? pa.openFolder : null,
                 recentFilesMenu, pa.save, pa.saveAs, pa.close,
                 makeMenu("Export data", KeyEvent.VK_D,
                         pa.exportCalcsSample,

@@ -27,6 +27,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.PuffinApp;
+import net.talvi.puffinplot.Util;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.plots.Plot;
 import net.talvi.puffinplot.plots.ZPlot;
@@ -115,7 +116,7 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
         printPageIndex = pageIndex;
         final Graphics2D g2 = (Graphics2D) graphics;
 
-        if (app.isOnOsX()) {
+        if (Util.runningOnOsX()) {
             /* Superscripts don't print properly on OS X (at least not
              * on Java 7 or Java 8u25), so we set a rendering hint that
              * tells the plotting code to fall back to E notation.

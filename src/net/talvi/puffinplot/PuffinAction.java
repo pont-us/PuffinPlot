@@ -106,7 +106,7 @@ public abstract class PuffinAction extends AbstractAction {
      * @return {@code true} if this Action should not be shown on menus
      */
     public boolean isExcludedFromMenu() {
-        return PuffinApp.getInstance().isOnOsX() && specialMacMenuItem;
+        return Util.runningOnOsX() && specialMacMenuItem;
     }
     
 }
