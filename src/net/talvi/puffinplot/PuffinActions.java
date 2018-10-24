@@ -63,6 +63,8 @@ public class PuffinActions {
         private static final long serialVersionUID = 1L;
         @Override
         public void actionPerformed(ActionEvent e) {
+                    if (true) throw new RuntimeException();
+
             app.about();
         }
     };

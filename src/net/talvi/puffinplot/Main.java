@@ -236,11 +236,12 @@ public class Main {
         }
         
         else {
-            // Start PuffinPlot in normal desktop mode.
+            // Start PuffinPlot in interactive Swing GUI mode.
             java.awt.EventQueue.invokeLater(() -> {
+                final ExceptionHandler handler = new ExceptionHandler();
+                Thread.setDefaultUncaughtExceptionHandler(handler);
                 final PuffinApp app = PuffinApp.getInstance();
-                Thread.setDefaultUncaughtExceptionHandler(
-                        app.new ExceptionHandler());
+                handler.setApp(app);
                 app.show();
             });
         }

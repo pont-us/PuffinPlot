@@ -31,15 +31,15 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
+import java.io.OutputStream;
 import java.io.Reader;
-import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -50,12 +50,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.NoSuchAlgorithmException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -100,8 +98,8 @@ public class PuffinApp {
     private static PuffinApp app;
     private static final Logger LOGGER =
             Logger.getLogger("net.talvi.puffinplot");
-    private static final java.io.ByteArrayOutputStream LOG_STREAM =
-            new java.io.ByteArrayOutputStream();
+    private static final ByteArrayOutputStream LOG_STREAM =
+            new ByteArrayOutputStream();
     private static final MemoryHandler LOG_MEMORY_HANDLER;
 
     private final PuffinActions actions;
@@ -150,7 +148,7 @@ public class PuffinApp {
         logStringHandler.setLevel(Level.ALL);
         LOGGER.addHandler(LOG_MEMORY_HANDLER =
                 new MemoryHandler(logStringHandler, 100, Level.OFF));
-        LOG_MEMORY_HANDLER.setLevel(Level.ALL);
+        LOG_MEMORY_HANDLER.setLevel(Level.INFO);
     }
 
     private class PuffinAppSampleClickListener implements SampleClickListener {
@@ -261,98 +259,6 @@ public class PuffinApp {
     public void show() {
         mainWindow.setVisible(true);
     }
-
-    class ExceptionHandler implements UncaughtExceptionHandler {
-
-        /**
-         * This is a flag to prevent re-entrant calls to the
-         * {@code uncaughtException} method. The method is synchronized,
-         * which prevents it being called concurrently from more than one
-         * thread, but it's possible that a method called from
-         * {@code uncaughtException} itself (or something further down the
-         * call chain) will throw an exception which will again be caught. 
-         * Even if the second exception occurs in another thread,
-         * {@code uncaughtException} may be called again in its initial
-         * thread, as there's no guarantee that it will be called in the
-         * thread that caused the exception -- that's clear from the fact
-         * that the source thread is supplied as a parameter.
-         * <p>
-         * This flag is set on entry to the method and cleared on exit. If it is
-         * true on entry, {@code uncaughtException} terminates the JVM
-         * immediately to avoid getting trapped in a recursive loop.
-         * <p>
-         * The {@code volatile} modifier isn't really be necessary since the
-         * {@code synchronized} modifier on {@code uncaughtException} should
-         * ensure that it's never at risk of concurrent access, but it doesn't
-         * do any harm and adds an extra layer of safety.
-         */
-        private volatile boolean handlingException = false;
-        
-        @Override
-        public synchronized void uncaughtException(Thread thread,
-                Throwable exception) {
-            System.out.println("entering "+thread);
-            if (handlingException) {
-                /*
-                 * We don't even risk trying to print a stack trace here:
-                 * an infinite recursive loop of {@code uncaughtException}
-                 * calls is VERY undesirable, so we try to exit as quickly
-                 * and safely as possible.
-                 */
-                System.exit(1);
-            }
-            handlingException = true;
-            final File errorFile = new File(System.getProperty("user.home"),
-                    "PUFFIN-ERROR.txt");
-            try (PrintWriter writer = new PrintWriter(errorFile)) {
-                writer.println("PuffinPlot error file");
-                writer.println("Build date: " + getBuildProperty("build.date"));
-                final Date now = new Date();
-                final SimpleDateFormat df =
-                        new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                writer.println("Crash date: " + df.format(now));
-                for (String prop : new String[]{"java.version", "java.vendor",
-                    "os.name", "os.arch", "os.version", "user.name"}) {
-                    writer.println(String.format(Locale.ENGLISH,
-                            "%-16s%s", prop,
-                            System.getProperty(prop)));
-                }
-                writer.println("Locale: " + Locale.getDefault().toString());
-                exception.printStackTrace(writer);
-                writer.println("\nLog messages: \n");
-                LOG_MEMORY_HANDLER.push();
-                LOG_MEMORY_HANDLER.flush();
-                LOG_STREAM.flush();
-                writer.append(LOG_STREAM.toString());
-                writer.flush();
-                if (unhandledErrorDialog()) {
-                    System.exit(1);
-                }
-            } catch (Throwable secondaryException) {
-                /*
-                 * This should catch anything thrown directly while attempting
-                 * to handle the initial exception. It won't help if there's
-                 * an exception in another thread, but the handlingException
-                 * flag should take care of that.
-                 * 
-                 * We explicitly pass System.err rather than using the
-                 * no-argument method to make it clear (to humans and static
-                 * analysis tools) that this is not a temporary hack -- at
-                 * this stage it's probably the best we can do.
-                 */
-                secondaryException.printStackTrace(System.err);
-                exception.printStackTrace(System.err);
-                /*
-                 * If the exception handler itself is throwing exceptions, it's
-                 * best to exit ASAP rather than risk getting trapped in an
-                 * infinite loop.
-                 */
-                System.exit(1);
-            }
-            handlingException = false;
-            System.out.println("leaving "+thread);
-        }
-    }
     
     /**
      * Reports whether this PuffinApp is running on Mac OS X.
@@ -375,6 +281,22 @@ public class PuffinApp {
             app = new PuffinApp();
         }
         return app;
+    }
+    
+    /**
+     * Pushes any buffered output to the in-memory log handler, flushes
+     * the log handler and log stream, and returns the log stream. This
+     * method is mainly intended to let {@link ExceptionHandler} write
+     * logging information to a crash report file.
+     * 
+     * @return the output stream of PuffinApp's logger
+     * @throws IOException if an I/O error occurred while flushing the stream
+     */
+    static OutputStream flushLogAndGetStream() throws IOException {
+        LOG_MEMORY_HANDLER.push();
+        LOG_MEMORY_HANDLER.flush();
+        LOG_STREAM.flush();
+        return LOG_STREAM;
     }
 
     /**
@@ -845,27 +767,6 @@ public class PuffinApp {
      */
     public void errorDialog(String title, PuffinUserException ex) {
         errorDialog(title, ex.getLocalizedMessage());
-    }
-    
-    private boolean unhandledErrorDialog() {
-        final JLabel message = new JLabel(
-                "<html><body style=\"width: 400pt; font-weight: normal;\">" +
-                "<p><b>An unexpected error occurred.</b></p>" +
-                "<p>We apologize for the inconvenience. Please report this " +
-                "error to puffinplot@gmail.com. " +
-                "PuffinPlot will try to write the details " +
-                "to a file called PUFFIN-ERROR.txt in your home folder. "+
-                "Please attach this file to your report. " +
-                "If you have no unsaved data it is recommended that you " +
-                "quit now and restart PuffinPlot. " +
-                "If you have unsaved data, press Continue, then save your "+
-                "data to a new file before quitting PuffinPlot." +
-                "</p></body></html>");
-        final Object[] options = {"Continue", "Quit"};
-        final int response = JOptionPane.showOptionDialog(getMainWindow(),
-                message, "Unexpected error", JOptionPane.DEFAULT_OPTION,
-                JOptionPane.WARNING_MESSAGE, null, options, options[1]);
-        return (response==1);
     }
 
     @SuppressWarnings("unchecked")
