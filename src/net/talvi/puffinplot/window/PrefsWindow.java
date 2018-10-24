@@ -54,18 +54,19 @@ public class PrefsWindow extends JFrame {
     private static final long serialVersionUID = 1L;
     private final JTextField[] sensorLengthField = new JTextField[3];
     private final PresetsBox presetsBox;
-    // private final JTextField protocolBox;
     private final List<PlotBox> plotBoxes = new ArrayList<>(24);
     private final List<PrefTextField> prefTextFields = new ArrayList<>();
-    private final PuffinPrefs prefs =
-            PuffinApp.getInstance().getPrefs();
+    private final PuffinApp app;
+    private final PuffinPrefs prefs;
     private final static Dimension prefDim = new Dimension(100, 30);
     
     /**
      * Creates a new preferences window.
      */
-    public PrefsWindow() {
+    public PrefsWindow(PuffinApp app) {
         super("Preferences");
+        this.app = app;
+        prefs = app.getPrefs();
         final Insets insets = new Insets(4,4,4,4);
         final int BOTH = GridBagConstraints.BOTH;
         setPreferredSize(new Dimension(500, 560));
@@ -156,7 +157,7 @@ public class PrefsWindow extends JFrame {
         final JPanel plotsSubPanel = new JPanel(false);
         plotsSubPanel.setLayout(new GridLayout(0, 2));
 
-        for (Plot plot: PuffinApp.getInstance().getMainWindow().getGraphDisplay().getPlots()) {
+        for (Plot plot: app.getMainWindow().getGraphDisplay().getPlots()) {
             final PlotBox pb = new PlotBox(plot);
             plotsSubPanel.add(pb);
             plotBoxes.add(pb);
@@ -229,7 +230,7 @@ public class PrefsWindow extends JFrame {
             }
         });
         
-        final PuffinActions actions = PuffinApp.getInstance().getActions();
+        final PuffinActions actions = app.getActions();
         add(makeActionButton(actions.clearPreferences, "Clear"),
                 new GridBagConstraints(
                 0, 1, 1, 1, 1, .01, GridBagConstraints.LINE_START,
@@ -246,7 +247,7 @@ public class PrefsWindow extends JFrame {
                 3, 1, 1, 1, 1, .01, GridBagConstraints.LINE_END,
                 BOTH, new Insets(4, 50, 4, 4), 20, 0));
         pack();
-        setLocationRelativeTo(PuffinApp.getInstance().getMainWindow());
+        setLocationRelativeTo(app.getMainWindow());
     }
 
     private JButton makeActionButton(final Action action, String name) {
@@ -336,10 +337,10 @@ public class PrefsWindow extends JFrame {
             prefs.getPrefs().flush();
         } catch (BackingStoreException ex) {
             logger.log(Level.WARNING, null, ex);
-            PuffinApp.getInstance().errorDialog("PuffinPlot error",
+            app.errorDialog("PuffinPlot error",
                     "The preferences could not be saved.");
         }
-        PuffinApp.getInstance().updateDisplay();
+        app.updateDisplay();
     }
 
     private class PlotBox extends JPanel {
@@ -392,13 +393,13 @@ public class PrefsWindow extends JFrame {
         private static final long serialVersionUID = 1L;
         public MagDevCheckBox() {
             super("Bedding is vs. magnetic north",
-                   PuffinApp.getInstance().getCorrection().isMagDevAppliedToFormation());
+                   app.getCorrection().isMagDevAppliedToFormation());
             addItemListener(this);
         }
 
         @Override
         public void itemStateChanged(ItemEvent e) {
-            PuffinApp.getInstance().getCorrection().setMagDevAppliedToFormation(isSelected());
+            app.getCorrection().setMagDevAppliedToFormation(isSelected());
         }
     }
     

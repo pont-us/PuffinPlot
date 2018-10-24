@@ -55,11 +55,13 @@ public class EditSampleParametersWindow extends JFrame {
     private final Map<DatumField, JTextField> textFieldMap =
             new EnumMap<>(DatumField.class);
     private final ActionListener actionListener;
+    private final PuffinApp app;
     
 
     /** Creates a new correction window. */
-    public EditSampleParametersWindow() {
+    public EditSampleParametersWindow(PuffinApp app) {
         super("Edit corrections");
+        this.app = app;
         setResizable(false);
         final Container cp = getContentPane();
         cp.setLayout(new BoxLayout(cp, BoxLayout.Y_AXIS));
@@ -126,7 +128,6 @@ public class EditSampleParametersWindow extends JFrame {
             if (event.getSource() == cancelButton)
                 setVisible(false);
             if (event.getSource() == setButton) {
-                final PuffinApp app = PuffinApp.getInstance();
                 final List<Sample> samples = app.getSelectedSamples();
                 for (DatumField field : fields) {
                     if (checkBoxMap.get(field).isSelected()) {

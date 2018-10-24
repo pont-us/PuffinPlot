@@ -40,8 +40,9 @@ import net.talvi.puffinplot.data.Suite;
 public class SampleChooser extends JPanel {
 
     private static final long serialVersionUID = 7533359714843605451L;
-    private DepthSlider depthSlider;
-    private SampleList sampleList;
+    private final PuffinApp app;
+    private final DepthSlider depthSlider;
+    private final SampleList sampleList;
     private final JScrollPane samplePane;
 
     private final Action nextAction = new AbstractAction() {
@@ -62,10 +63,12 @@ public class SampleChooser extends JPanel {
         }
     };
     
-    SampleChooser() {
+    SampleChooser(PuffinApp app) {
+        this.app = app;
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-        add(depthSlider = new DepthSlider());
-        samplePane = new JScrollPane(sampleList = new SampleList(new DefaultListModel()));
+        add(depthSlider = new DepthSlider(app));
+        sampleList = new SampleList(new DefaultListModel());
+        samplePane = new JScrollPane(sampleList);
         samplePane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         add(samplePane);
         int modifierKey = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
@@ -83,7 +86,7 @@ public class SampleChooser extends JPanel {
      */
     public List<Sample> getSelectedSamples() {
         final List<Sample> samples;
-        final Suite suite = PuffinApp.getInstance().getSuite();
+        final Suite suite = app.getSuite();
         if (suite == null) return Collections.emptyList();
         switch (suite.getMeasType()) {
         case DISCRETE:
@@ -127,10 +130,9 @@ public class SampleChooser extends JPanel {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (getSelectedIndex() != -1) {
-                    PuffinApp.getInstance().getSuite().
-                            setCurrentSampleIndex(getSelectedIndex());
+                    app.getSuite().setCurrentSampleIndex(getSelectedIndex());
                 }
-                PuffinApp.getInstance().updateDisplay();
+                app.updateDisplay();
             }
             });
         }
@@ -154,7 +156,7 @@ public class SampleChooser extends JPanel {
      * Puffin application's current suite.
      */
     public void updateSuite() {
-        final Suite suite = PuffinApp.getInstance().getSuite();
+        final Suite suite = app.getSuite();
         if (suite == null) {
             setVisibility(false, false);
             return;
@@ -199,7 +201,7 @@ public class SampleChooser extends JPanel {
      * application returned by {@link PuffinApp#getInstance()}.
      */
     public void updateValueFromSuite() {
-        final Suite suite = PuffinApp.getInstance().getSuite();
+        final Suite suite = app.getSuite();
         final int index = suite.getCurrentSampleIndex();
         switch (suite.getMeasType()) {
             case CONTINUOUS:

@@ -58,17 +58,17 @@ class DepthSlider extends JPanel
     private final List<ChangeListener> changeListeners = new LinkedList<>();
 
     /** Creates a new slider. */
-    public DepthSlider() {
+    public DepthSlider(PuffinApp app) {
         super();
         setBackground(Color.LIGHT_GRAY);
         setOpaque(true);
         addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                Suite suite = PuffinApp.getInstance().getSuite();
+                final Suite suite = app.getSuite();
                 if (suite != null) {
                     suite.setCurrentSampleIndex(getValue());
-                    PuffinApp.getInstance().updateDisplay();
+                    app.updateDisplay();
                 }
             }
         });

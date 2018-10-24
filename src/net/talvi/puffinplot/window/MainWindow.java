@@ -85,7 +85,7 @@ public final class MainWindow extends JFrame {
         mainPanel = new JPanel();
         controlPanel = new ControlPanel(app);
         welcomeMessage = WelcomeMessage.getInstance(app);
-        sampleChooser = new SampleChooser();
+        sampleChooser = new SampleChooser(app);
         statusBar = new JPanel();
         statusLabel = new JLabel("Status bar");        
     }

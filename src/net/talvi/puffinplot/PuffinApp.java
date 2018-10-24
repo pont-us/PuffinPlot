@@ -217,11 +217,11 @@ public class PuffinApp {
             }
         };
 
-        tableWindow = new TableWindow(getPlotParams());
+        tableWindow = new TableWindow(plotParams);
         suiteEqAreaWindow = new SuiteEqAreaWindow(this);
-        siteEqAreaWindow = new SiteMeanWindow(getPlotParams(),
-                getPrefs().getPrefs());
-        editSampleParametersWindow = new EditSampleParametersWindow();
+        siteEqAreaWindow = new SiteMeanWindow(plotParams,
+                prefs.getPrefs());
+        editSampleParametersWindow = new EditSampleParametersWindow(this);
         treatmentWindow = new TreatmentWindow(this);
         citeWindow = new CiteWindow(this);
         // NB main window must be instantiated last, as
@@ -235,7 +235,7 @@ public class PuffinApp {
         mainWindow.getControlPanel().setCorrection(corr);
         // prefs window needs the graph list from MainGraphDisplay from MainWindow
         // prefs window also needs the correction.
-        prefsWindow = new PrefsWindow();
+        prefsWindow = new PrefsWindow(this);
         if (runningOnOsX()) {
             createAppleEventHandler();
         }
@@ -1155,7 +1155,7 @@ public class PuffinApp {
             getPrefs().load();
             getMainWindow().getGraphDisplay().recreatePlots();
             updateDisplay();
-            prefsWindow = new PrefsWindow();
+            prefsWindow = new PrefsWindow(this);
         } catch (BackingStoreException ex) {
             LOGGER.log(Level.WARNING, "Error clearing preferences", ex);
             errorDialog("Error clearing preferences", ex.getLocalizedMessage());
