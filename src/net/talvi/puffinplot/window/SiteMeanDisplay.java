@@ -16,13 +16,14 @@
  */
 package net.talvi.puffinplot.window;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
-import net.talvi.puffinplot.PuffinApp;
+import java.util.prefs.Preferences;
 import net.talvi.puffinplot.plots.SiteEqAreaPlot;
 import net.talvi.puffinplot.plots.Plot;
 
@@ -40,14 +41,13 @@ public class SiteMeanDisplay extends GraphDisplay implements Printable {
     /**
      * Creates a new site mean graph display.
      */
-    public SiteMeanDisplay() {
+    public SiteMeanDisplay(PlotParams params, Preferences prefs) {
         super();
+        setOpaque(true); // content panes must be opaque
+        setPreferredSize(new Dimension(600, 600));
         zoomTransform = AffineTransform.getScaleInstance(1.0, 1.0);
-
-        Plot plot = new SiteEqAreaPlot(this,
-                PuffinApp.getInstance().getPlotParams(),
-                new Rectangle2D.Double(50, 50, 450, 450),
-                PuffinApp.getInstance().getPrefs().getPrefs());
+        final Plot plot = new SiteEqAreaPlot(this, params,
+                new Rectangle2D.Double(20, 20, 560, 560), prefs);
         plot.setVisible(true);
         plots.put(plot.getName(), plot);
     }
@@ -65,8 +65,9 @@ public class SiteMeanDisplay extends GraphDisplay implements Printable {
     @Override
     public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
             throws PrinterException {
-        if (pageIndex > 0) return NO_SUCH_PAGE;
-        else {
+        if (pageIndex > 0) {
+            return NO_SUCH_PAGE;
+        } else {
             printPlots(pageFormat, graphics);
             return PAGE_EXISTS;
         }

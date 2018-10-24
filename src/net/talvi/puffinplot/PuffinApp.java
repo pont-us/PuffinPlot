@@ -221,7 +221,8 @@ public class PuffinApp {
 
         tableWindow = new TableWindow(getPlotParams());
         suiteEqAreaWindow = new SuiteEqAreaWindow(this);
-        siteEqAreaWindow = new SiteMeanWindow();
+        siteEqAreaWindow = new SiteMeanWindow(getPlotParams(),
+                getPrefs().getPrefs());
         editSampleParametersWindow = new EditSampleParametersWindow();
         treatmentWindow = new TreatmentWindow(this);
         citeWindow = new CiteWindow(this);
