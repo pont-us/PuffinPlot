@@ -177,7 +177,7 @@ public class Main {
                 final ScriptEngine engine = engineTemp;
                 if (commandLine.hasOption("withapp")) {
                     java.awt.EventQueue.invokeLater(() -> {
-                        final PuffinApp scriptApp = PuffinApp.getInstance();
+                        final PuffinApp scriptApp = PuffinApp.create();
                         engine.put("puffin_app", scriptApp);
                         try (Reader reader = new FileReader(scriptPath)) {
                             engine.eval(reader);
@@ -240,7 +240,7 @@ public class Main {
             java.awt.EventQueue.invokeLater(() -> {
                 final ExceptionHandler handler = new ExceptionHandler();
                 Thread.setDefaultUncaughtExceptionHandler(handler);
-                final PuffinApp app = PuffinApp.getInstance();
+                final PuffinApp app = PuffinApp.create();
                 handler.setApp(app);
                 app.show();
             });

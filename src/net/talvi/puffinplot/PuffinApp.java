@@ -95,7 +95,6 @@ import org.freehep.graphicsbase.util.UserProperties;
  */
 public class PuffinApp {
 
-    private static PuffinApp app;
     private static final Logger LOGGER =
             Logger.getLogger("net.talvi.puffinplot");
     private static final ByteArrayOutputStream LOG_STREAM =
@@ -119,7 +118,6 @@ public class PuffinApp {
     private final AboutBox aboutBox;
     private final CiteWindow citeWindow;
     private RecentFileList recentFiles;
-    private boolean emptyCorrectionActive;
     private Correction correction;
     private final IdToFileMap lastUsedFileOpenDirs;
     private java.util.BitSet pointSelectionClipboard = new java.util.BitSet(0);
@@ -160,14 +158,12 @@ public class PuffinApp {
     }
     
     /**
-     * Instantiates a new PuffinPlot application object. Instantiating PuffinApp
-     * will cause the main PuffinPlot window to be opened immediately.
+     * Instantiates a new PuffinPlot application object.
      */
     private PuffinApp() {
 
         LOGGER.info("Instantiating PuffinApp.");
         // have to set app here (not in main) since we need it during initialization
-        PuffinApp.app = this;
         // com.apple.macos.useScreenMenuBar deprecated since 1.4, I think
         System.setProperty("apple.laf.useScreenMenuBar", "true");
         System.setProperty("com.apple.mrj.application.apple.menu.about.name",
@@ -253,25 +249,21 @@ public class PuffinApp {
     }
     
     /**
+     * Create and return a new PuffinApp object. The GUI elements are created,
+     * but not shown.
+     *
+     * @return a new PuffinApp object
+     */
+    public static PuffinApp create() {
+        return new PuffinApp();
+    }
+    
+    /**
      * Shows the main window of this PuffinApp. If the main window is already
      * visible, this method has no effect.
      */
     public void show() {
         mainWindow.setVisible(true);
-    }
-    
-    /**
-     * Returns the single instance of PuffinApp, first creating it if necessary.
-     * Only one instance of PuffinApp can exist at a time, and it may always be
-     * obtained using this method.
-     *
-     * @return the single instance of PuffinApp
-     */
-    public static PuffinApp getInstance() {
-        if (app == null) {
-            app = new PuffinApp();
-        }
-        return app;
     }
     
     /**
@@ -611,7 +603,7 @@ public class PuffinApp {
                     if (format == null) {
                         return;
                     }
-                    format.writeToPrefs(app.getPrefs().getPrefs());
+                    format.writeToPrefs(getPrefs().getPrefs());
                     break;
                 case IAPD:
                     final IapdImportDialog iapdDialog =
@@ -1276,15 +1268,15 @@ public class PuffinApp {
         com.lowagie.text.pdf.PdfWriter writer =
                 com.lowagie.text.pdf.PdfWriter.getInstance(document,
                 new java.io.FileOutputStream(pdfFile));
-        FontMapper mapper = new DefaultFontMapper();
+        final FontMapper mapper = new DefaultFontMapper();
         document.open();
-        PdfContentByte content = writer.getDirectContent();
+        final PdfContentByte content = writer.getDirectContent();
         int pdfPage = 0;
         boolean finished;
         // a rough imitation of the Java printing interface
         do {
             document.newPage();  // shouldn't make a difference on first pass
-            Graphics2D g2 =
+            final Graphics2D g2 =
                     content.createGraphics(size.width, size.height, mapper);
             finished = display.printPdfPage(g2, pdfPage);
             g2.dispose();
@@ -1369,7 +1361,7 @@ public class PuffinApp {
     
     
     void exportCalcsMultiSuite() {
-        if (app.getSuite() == null) {
+        if (getSuite() == null) {
                 errorDialog("Error saving calculations", "No file loaded.");
                 return;
         }
@@ -1607,7 +1599,7 @@ public class PuffinApp {
         try {
             Desktop.getDesktop().browse(new URI(uriString));
         } catch (URISyntaxException | IOException ex) {
-            app.errorDialog("Error opening web page", ex.getLocalizedMessage());
+            errorDialog("Error opening web page", ex.getLocalizedMessage());
         }
     }
     
@@ -1665,10 +1657,10 @@ public class PuffinApp {
             if (suite.isFilenameSet()) try {
                 suite.save();
                 final File file = suite.getPuffinFile();
-                app.getRecentFiles().add(Collections.singletonList(file));
-                app.getMainWindow().getMainMenuBar().updateRecentFiles();
+                getRecentFiles().add(Collections.singletonList(file));
+                getMainWindow().getMainMenuBar().updateRecentFiles();
             } catch (PuffinUserException ex) {
-                app.errorDialog("Error saving file", ex);
+                errorDialog("Error saving file", ex);
             }
             else showSaveAsDialog(suite);
         }
@@ -1715,12 +1707,12 @@ public class PuffinApp {
                     return type;
                 }
             });}
-            int choice = chooser.showSaveDialog(app.getMainWindow());
+            int choice = chooser.showSaveDialog(getMainWindow());
             if (choice == JFileChooser.APPROVE_OPTION) {
                 pathname = chooser.getSelectedFile().getPath();
             }
         } else {
-            final FileDialog fd = new FileDialog(app.getMainWindow(), title,
+            final FileDialog fd = new FileDialog(getMainWindow(), title,
                     FileDialog.SAVE);
             if (startingDir != null) {
                 fd.setDirectory(startingDir);
@@ -1745,12 +1737,12 @@ public class PuffinApp {
             lastUsedSaveDirectories.put(lastDirKey, file.getParent());
             if (file.exists()) {
                 if (file.isDirectory()) {
-                    app.errorDialog("File exists",
+                    errorDialog("File exists",
                             "There is already a folder with this filename.\n"
                             + "Please choose another name for the file.");
                     pathname = null;
                 } else if (!file.canWrite()) {
-                    app.errorDialog("File exists",
+                    errorDialog("File exists",
                             "There is already a file with this filename.\n"
                             + "This file cannot be overwritten.\n"
                             + "Please choose another filename.");
@@ -1758,7 +1750,7 @@ public class PuffinApp {
                 } else {
                     final String[] options = {"Overwrite", "Cancel"};
                     final int option =
-                            JOptionPane.showOptionDialog(app.getMainWindow(),
+                            JOptionPane.showOptionDialog(getMainWindow(),
                             "There is already a file with this name.\n"
                             + "Are you sure you wish to overwrite it?",
                             "File exists",
