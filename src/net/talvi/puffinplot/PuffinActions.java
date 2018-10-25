@@ -317,38 +317,6 @@ public class PuffinActions {
     };
 
     /**
-     * Flags the current sample as an empty slot to be used as a control
-     * for machine noise (not currently implemented).
-     */
-    public final Action useAsEmptySlot = new PuffinAction("Use as empty slot",
-            "Use this sample as a control for machine noise", null, false,
-            KeyEvent.VK_E) {
-        private static final long serialVersionUID = 1L;
-        @Override public void actionPerformed(ActionEvent e) {
-            for (Sample s : app.getSuite().getSamples()) {
-                s.setEmptySlot(false);
-            }
-            app.getSample().setEmptySlot(true);
-            app.updateDisplay();
-        }
-    };
-   
-    /**
-     * Unflags any samples previously flagged as empty slots.
-     * 
-     * @see #useAsEmptySlot
-     */
-    public final Action unsetEmptySlot = new AbstractAction("Unset empty slot") {
-        private static final long serialVersionUID = 1L;
-        @Override public void actionPerformed(ActionEvent e) {
-            for (Sample s : app.getSuite().getSamples()) {
-                s.setEmptySlot(false);
-            }
-            app.updateDisplay();
-        }
-    };
-
-    /**
      * Calculates Fisherian statistics on selected demagnetization steps
      * of the selected samples.
      */

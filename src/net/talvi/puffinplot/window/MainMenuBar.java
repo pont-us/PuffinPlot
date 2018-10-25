@@ -114,23 +114,6 @@ public final class MainMenuBar extends JMenuBar {
             }
         });
 
-        final JCheckBoxMenuItem useEmptyItem =
-                new JCheckBoxMenuItem("Apply empty correction") {
-            private static final long serialVersionUID = 1L;
-                    @Override
-                    public boolean isSelected() {
-                        return MainMenuBar.this.app.isEmptyCorrectionActive();
-                    }
-                };
-        useEmptyItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                app.setEmptyCorrectionActive(!app.isEmptyCorrectionActive());
-                app.updateDisplay();
-            }
-        });
-        useEmptyItem.setAccelerator(KeyStroke.getKeyStroke('Y', modifierKey));
-        
         add(makeMenu("File", KeyEvent.VK_F,
                 pa.open,
                 Util.runningOnOsX() ? pa.openFolder : null,

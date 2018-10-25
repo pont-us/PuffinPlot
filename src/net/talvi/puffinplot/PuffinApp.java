@@ -55,7 +55,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -120,8 +119,6 @@ public class PuffinApp {
     private final AboutBox aboutBox;
     private final CiteWindow citeWindow;
     private RecentFileList recentFiles;
-    private CustomFieldEditor customFlagsWindow = null;
-    private CustomFieldEditor customNotesWindow;
     private boolean emptyCorrectionActive;
     private Correction correction;
     private final IdToFileMap lastUsedFileOpenDirs;
@@ -299,27 +296,6 @@ public class PuffinApp {
      */
     public PlotParams getPlotParams() {
         return plotParams;
-    }
-    
-    /**
-     * Reports whether the empty-slot correction is currently active.
-     * The empty-slot correction is not currently used, and this
-     * method is reserved for a future re-implementation of the feature.
-     * 
-     * @return {@code} true if the empty-slot correction is active
-     */
-    public boolean isEmptyCorrectionActive() {
-        return emptyCorrectionActive;
-    }
-
-    /**
-     * Activates or deactivates the empty-slot correction.
-     * 
-     * @param b {@code true} to activate the empty-slot correction;
-     * {@code false} to deactivate it.
-     */
-    public void setEmptyCorrectionActive(boolean b) {
-        emptyCorrectionActive = b;
     }
 
     /**
@@ -972,16 +948,14 @@ public class PuffinApp {
     /** Shows the window for editing the titles of the custom flags. */
     public void showCustomFlagsWindow() {
         if (currentSuite == null) return;
-        customFlagsWindow =
-                new CustomFieldEditor(currentSuite.getCustomFlagNames(),
+        new CustomFieldEditor(currentSuite.getCustomFlagNames(),
                 "Edit custom flags", this);
     }
     
     /** Shows the window for editing the titles of the custom notes. */
     public void showCustomNotesWindow() {
         if (currentSuite == null) return;
-        customNotesWindow =
-                new CustomFieldEditor(currentSuite.getCustomNoteNames(),
+        new CustomFieldEditor(currentSuite.getCustomNoteNames(),
                 "Edit custom notes", this);
     }
     
