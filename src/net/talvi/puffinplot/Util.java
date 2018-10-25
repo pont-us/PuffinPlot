@@ -214,7 +214,8 @@ public class Util {
      * Windows, a subdirectory of the LOCALAPPDATA directory is used.
      * 
      * @return Path to a directory for application data
-     * @throws IOException if there was an error creating or finding the directory
+     * @throws IOException if there was an error creating or finding the
+     * directory
      */
     public static Path getAppDataDirectory() throws IOException {
         final String parentDir;
@@ -337,7 +338,8 @@ public class Util {
         return new Line2D.Double(xmid-xd, ymid-yd, xmid+xd, ymid+yd);
     }
     
-    private static int numericalPermissions(Collection<PosixFilePermission> perms) {
+    private static int numericalPermissions(
+            Collection<PosixFilePermission> perms) {
         int result = 0;
         for (PosixFilePermission pfp: perms) {
             switch (pfp) {
@@ -377,9 +379,10 @@ public class Util {
             throws IOException {
         final byte[] buffer = new byte[1024];
         
-        // We use the Apache Commons compress library rather than the built-in
-        // java.util zip library, because the latter doesn't support Posix
-        // file permissions.
+        /* We use the Apache Commons compress library rather than the built-in
+         * java.util zip library, because the latter doesn't support Posix
+         * file permissions.
+         */
         
         try (final ZipArchiveOutputStream zipStream =
                 new ZipArchiveOutputStream(zipFile.toFile())) {
@@ -393,7 +396,8 @@ public class Util {
                         final ZipArchiveEntry entry =
                                 new ZipArchiveEntry(relPath.toString());
                         
-                        entry.setUnixMode(numericalPermissions(Files.getPosixFilePermissions(path)));
+                        entry.setUnixMode(numericalPermissions(
+                                Files.getPosixFilePermissions(path)));
                         zipStream.putArchiveEntry(entry);
                         final Path fullFilePath = dir.resolve(path);
                         try (final FileInputStream inStream =
@@ -442,23 +446,19 @@ public class Util {
     }
     
     /**
-     * 
-     * @param url
-     * @param outputPath 
+     * Downloads data from a URL and saves it to a file.
+     *
+     * @param url the URL to use as a data source
+     * @param outputPath the file to which to save the data found at the URL
      */
-    public static void downloadUrlToFile(String url, Path outputPath) throws IOException {
-
-        // NOTE: Files.copy can block indefinitely. Should this be in a new thread?
-       
-        
-        // Use REPLACE_EXISTING?
-        
-               // if (!Files.exists(jythonPath)) {
-            final URI uri = URI.create(url);
-            try (InputStream in = uri.toURL().openStream()) {
-                Files.copy(in, outputPath);
-            }
-        //}
+    public static void downloadUrlToFile(String url, Path outputPath)
+            throws IOException {
+        // TODO: Files.copy can block indefinitely. Should this be in a new thread?
+        // TODO: Use REPLACE_EXISTING?
+        final URI uri = URI.create(url);
+        try (InputStream in = uri.toURL().openStream()) {
+            Files.copy(in, outputPath);
+        }
     }
 
     static ZonedDateTime parseGitTimestamp(String gitTimestap) {

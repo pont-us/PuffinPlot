@@ -1,24 +1,45 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/* This file is part of PuffinPlot, a program for palaeomagnetic
+ * data plotting and analysis. Copyright 2012-2018 Pontus Lurcock.
+ *
+ * PuffinPlot is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PuffinPlot is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with PuffinPlot.  If not, see <http://www.gnu.org/licenses/>.
  */
 package net.talvi.puffinplot;
 
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.NoSuchAlgorithmException;
 import java.time.DateTimeException;
 import java.time.ZonedDateTime;
 import java.util.BitSet;
+import java.util.Collections;
 import java.util.Locale;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Rule;
+import org.junit.rules.TemporaryFolder;
 
-/**
- *
- * @author pont
- */
 public class UtilTest {
 
+    @Rule
+    public TemporaryFolder tempDir = new TemporaryFolder();
+    
     private BitSet makeBitSet(String spec) {
         BitSet result = new BitSet();
         for (int i=0; i<spec.length(); i++) {
@@ -36,7 +57,10 @@ public class UtilTest {
             "4-6,8-10,10,11,15-16", "0001110111100011",
             "1-4,3-5,10,12-14,17", "11111000010111001",
             "1-1000", "11111111111111111111",
-            "1-5,10-85", "11111000011111111111"
+            "1-5,10-85", "11111000011111111111",
+            "1,not numbers,5-not a number", "1",
+            "-1,2", "11",
+            "-99", "1"
         };
         final int limit = 20;
         for (int i=0; i<inputsAndResults.length; i+=2) {
@@ -122,9 +146,6 @@ public class UtilTest {
 
     }
     
-    /**
-     * Tests the {@link Util#clipLineToRectangle(java.awt.geom.Line2D, java.awt.geom.Rectangle2D)} method.
-     */
     @Test
     public void testClipLineToRectangle() {
         
@@ -163,6 +184,18 @@ public class UtilTest {
         final Line2D clipped0 = Util.clipLineToRectangle(line0,
                 new Rectangle2D.Double(0, 0, 4, 4));
         assertTrue(linesEqual(line0, clipped0));
+    }
+    
+    @Test
+    public void testClipLineToRectangleWithNullLine() {
+        assertNull(Util.clipLineToRectangle(null,
+                new Rectangle2D.Double(1, 2, 3, 4)));
+    }
+
+    @Test
+    public void testClipLineToRectangleWithNullRectangle() {
+        assertNull(Util.clipLineToRectangle(new Line2D.Double(1, 2, 3, 4),
+                null));
     }
 
     @Test
@@ -203,4 +236,41 @@ public class UtilTest {
         Util.parseGitTimestamp("1538903357 +wibble");
     }
 
+    @Test
+    public void testCalculateSha1() throws
+            FileNotFoundException, IOException, NoSuchAlgorithmException {
+        final String inputData = String.join("", Collections.nCopies(20,
+                "An arbitrary string for use as SHA-1 input data. "));
+        final File inputFile = tempDir.newFile("sha1-input-data");
+        try (PrintWriter out = new PrintWriter(inputFile)) {
+            out.println(inputData);
+        }
+        final String actual = Util.calculateSHA1(inputFile);
+        // Expected value calculated by sha1sum (GNU coreutils)
+        final String expected =
+                "79F6BF1176017EF4CA66824E5DEFFC7C609D06E8";
+        assertEquals(expected, actual);
+    }
+    
+    @Test
+    public void testDownloadUrlToFile() throws IOException {
+        final String originalData = "An arbitrary string.\n";
+        final File source = tempDir.newFile("source");
+        final Path destination =
+                tempDir.getRoot().toPath().resolve("destination");
+        try (PrintWriter out = new PrintWriter(source)) {
+            out.print(originalData);
+        }
+        Util.downloadUrlToFile(source.toURI().toURL().toString(),
+                destination);
+        final String downloadedData =
+                new String(Files.readAllBytes(destination));
+        assertEquals(originalData, downloadedData);
+    }
+    
+    @Test
+    public void testParseDoubleSafely() {
+        assertEquals(9.87, Util.parseDoubleSafely("9.87"), 1e-10);
+        assertEquals(0, Util.parseDoubleSafely("not a number"), 1e-10);
+    }
 }
