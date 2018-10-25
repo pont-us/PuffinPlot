@@ -45,10 +45,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1843,80 +1841,24 @@ public class PuffinApp {
         }
     }
     
-    private void copyPuffinPlotJarFile(Path destinationDir) throws IOException {
-        File jarFile = null;
-        try {
-            jarFile = new File(PuffinApp.class.getProtectionDomain().
-                    getCodeSource().getLocation().toURI().getPath());
-        } catch (URISyntaxException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-        }
-        if (jarFile == null) {
-            return;
-        }
-        LOGGER.log(Level.INFO, "PuffinPlot jar file location: {0}",
-                jarFile.getAbsolutePath());
-        final Path jarPath = jarFile.toPath();
-        final Path destPath = destinationDir.resolve("PuffinPlot.jar");
-        Files.copy(jarPath, destPath, StandardCopyOption.COPY_ATTRIBUTES);
-        destPath.toFile().setExecutable(true, false);
-    }
-    
     /**
      * Show the dialog for creating and exporting a data and code bundle.
      */
-    public void showCreateBundleDialog() {
-        
+    public void showCreateBundleDialog() {        
         if (getSuite() == null) {
             errorDialog("No suite loaded", "PuffinPlot cannot create a bundle, "
-            + "as there is no data suite loaded.");
+                    + "as there is no data suite loaded.");
             return;
         }
         
-        LOGGER.info("Starting bundle creation.");
-        
-        // choose options
-        
         final Path zipPath = Paths.get(getSavePath("Choose bundle location",
                 ".zip", "ZIP archive"));
-        
         try {
-            final Path tempDir = Files.createTempDirectory("puffinplot");
-            LOGGER.log(Level.INFO, "Temporary directory: {0}",
-                    tempDir.toString());
-        
-            getSuite().saveAs(tempDir.resolve(Paths.get("data.ppl")).toFile());
-            getSuite().doAllCalculations(getCorrection(),
-                    getGreatCirclesValidityCondition());
-            getSuite().calculateSuiteMeans(getSelectedSamples(),
-                    getSelectedSites());
-            
-            getSuite().saveCalcsSample(tempDir.
-                    resolve(Paths.get("data-sample.csv")).toFile());
-            getSuite().saveCalcsSite(tempDir.
-                    resolve(Paths.get("data-site.csv")).toFile());
-            getSuite().saveCalcsSuite(tempDir.
-                    resolve(Paths.get("data-suite.csv")).toFile());
-            
-            final Path scriptPath =
-                    tempDir.resolve(Paths.get("process-data.sh"));
-            try (FileWriter fw = new FileWriter(scriptPath.toFile())) {
-                fw.write("#!/bin/sh\n\n"
-                        + "java -jar PuffinPlot.jar -process data.ppl\n");
-            }
-            scriptPath.toFile().setExecutable(true, false);
-            
-            final Path readmePath = tempDir.resolve(Paths.get("README.TXT"));
-            try (FileWriter fw = new FileWriter(readmePath.toFile())) {
-                fw.write("TODO\n");
-            }
-            
-            copyPuffinPlotJarFile(tempDir);
-
-            Util.zipDirectory(tempDir, zipPath);
+            Bundle.createBundle(getSuite(), zipPath, getCorrection(),
+                    getSelectedSamples(), getSelectedSites());
         } catch (IOException | PuffinUserException ex) {
-            Logger.getLogger(PuffinApp.class.getName()).
-                    log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
+            errorDialog("Error creating bundle", ex.getLocalizedMessage());
         }
     }
     
