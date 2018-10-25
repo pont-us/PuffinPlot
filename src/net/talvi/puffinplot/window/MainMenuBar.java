@@ -179,18 +179,13 @@ public final class MainMenuBar extends JMenuBar {
                 , pa.calculateRpi
         ));
         add(makeMenu("Window", KeyEvent.VK_W,
-                new WindowMenuItem("Data table", KeyEvent.VK_D) {
-                    private static final long serialVersionUID = 1L;
-                    @Override
-                    JFrame window(PuffinApp a) {return a.getTableWindow();}},
-                new WindowMenuItem("Site equal-area plot", KeyEvent.VK_I) {
-                    private static final long serialVersionUID = 1L;
-                    @Override
-                    JFrame window(PuffinApp a) {return a.getSiteEqAreaWindow();}},
-                new WindowMenuItem("Suite equal-area plot", KeyEvent.VK_U) {
-                    private static final long serialVersionUID = 1L;
-                    @Override
-                    JFrame window(PuffinApp a) {return a.getSuiteEqAreaWindow();}}));
+                new WindowMenuItem("Data table", KeyEvent.VK_D,
+                        app::getTableWindow),
+                new WindowMenuItem("Site equal-area plot", KeyEvent.VK_I,
+                        app::getSiteEqAreaWindow),
+                new WindowMenuItem("Suite equal-area plot", KeyEvent.VK_U,
+                        app::getSuiteEqAreaWindow)
+                    ));
         add(makeMenu("Help", KeyEvent.VK_H,
                 pa.openPuffinWebsite, pa.openCiteWindow, pa.about));
     }

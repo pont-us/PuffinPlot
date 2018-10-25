@@ -16,7 +16,6 @@
  */
 package net.talvi.puffinplot.window;
 
-import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import net.talvi.puffinplot.PuffinApp;
@@ -38,11 +37,9 @@ public class SuiteEqAreaWindow extends JFrame {
      * @param app the application instance for which to create the window
      */
     public SuiteEqAreaWindow(PuffinApp app) {
-        setPreferredSize(new Dimension(600, 600));
         setTitle("Suite equal-area plot");
         final JPanel contentPane = graphDisplay = new SuiteEqAreaDisplay(
                 app.getPlotParams(), app.getPrefs().getPrefs());
-        contentPane.setOpaque(true); //content panes must be opaque
         setContentPane(contentPane);
         pack();
         setLocationRelativeTo(app.getMainWindow());

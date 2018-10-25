@@ -16,6 +16,7 @@
  */
 package net.talvi.puffinplot.window;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
@@ -23,7 +24,6 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.util.prefs.Preferences;
-import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.plots.Plot;
 import net.talvi.puffinplot.plots.SeparateSuiteEaPlot;
 
@@ -43,9 +43,11 @@ public class SuiteEqAreaDisplay extends GraphDisplay implements Printable {
      */
     public SuiteEqAreaDisplay(PlotParams params, Preferences prefs) {
         super();
+        setOpaque(true); //content panes must be opaque
         zoomTransform = AffineTransform.getScaleInstance(1.0, 1.0);
-        Plot plot = new SeparateSuiteEaPlot(
-                null, params, new Rectangle2D.Double(50, 50, 600, 600),
+        setPreferredSize(new Dimension(600, 600));
+        final Plot plot = new SeparateSuiteEaPlot(
+                null, params, new Rectangle2D.Double(20, 20, 560, 560),
                 prefs);
         plot.setVisible(true);
         plots.put(plot.getName(), plot);

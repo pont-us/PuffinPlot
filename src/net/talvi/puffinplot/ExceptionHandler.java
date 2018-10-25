@@ -78,7 +78,7 @@ class ExceptionHandler implements Thread.UncaughtExceptionHandler {
     @Override
     public synchronized void uncaughtException(Thread thread,
             Throwable exception) {
-        System.out.println("entering "+thread);
+        System.err.println("Uncaught exception in PuffinPlot.");
         if (handlingException) {
             /*
              * We don't even risk trying to print a stack trace here:
@@ -139,7 +139,6 @@ class ExceptionHandler implements Thread.UncaughtExceptionHandler {
             System.exit(1);
         }
         handlingException = false;
-        System.out.println("leaving "+thread);
     }
     
     private boolean unhandledErrorDialog() {

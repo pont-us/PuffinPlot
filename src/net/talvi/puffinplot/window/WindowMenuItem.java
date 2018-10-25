@@ -16,28 +16,43 @@
  */
 package net.talvi.puffinplot.window;
 
-import net.talvi.puffinplot.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Objects;
+import java.util.function.Supplier;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 
-abstract class WindowMenuItem extends JCheckBoxMenuItem {
+class WindowMenuItem extends JCheckBoxMenuItem {
 
-    public WindowMenuItem(String name, int mnemonic) {
+    private final Supplier<JFrame> windowSupplier;
+
+    /**
+     * The constructor takes a window *supplier* rather than a window, since
+     * this is safer e.g. if the window itself is created after this menu
+     * item, or if it's recreated later on.
+     * 
+     * @param name menu item name
+     * @param mnemonic mnemonic (short-cut)
+     * @param windowSupplier function supplying the window to open/close
+     */
+    public WindowMenuItem(String name, int mnemonic,
+            Supplier<JFrame> windowSupplier) {
         super(name);
+        Objects.requireNonNull(windowSupplier);
+        this.windowSupplier = windowSupplier;
         setMnemonic(mnemonic);
         addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent arg0) {
-                window().setVisible(WindowMenuItem.super.isSelected());
-                window().invalidate();
-                window().repaint(100);
+                getWindow().setVisible(WindowMenuItem.super.isSelected());
+                getWindow().invalidate();
+                getWindow().repaint(100);
             }
         });
-        window().addWindowListener(new WindowAdapter() {
+        getWindow().addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
                 setSelected(false);
@@ -45,16 +60,20 @@ abstract class WindowMenuItem extends JCheckBoxMenuItem {
         });
     }
 
-    private JFrame window() {
-        final PuffinApp app = PuffinApp.getInstance();
-        return (app==null) ? null : window(app);
+    /**
+     * We need a null check here because this gets called (via super(name))
+     * before the constructor can set the windowSupplier field.
+     * 
+     * @return the window returned by the window supplier, or null
+     * if no window supplier is set
+     */
+    private JFrame getWindow() {
+        return windowSupplier == null ? null : windowSupplier.get();
     }
-    
-    abstract JFrame window(PuffinApp app);
     
     @Override
     public boolean isSelected() {
-        return window() != null ? window().isVisible() : false;
+        return getWindow() != null ? getWindow().isVisible() : false;
     }
 
     @Override
