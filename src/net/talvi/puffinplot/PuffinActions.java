@@ -467,31 +467,34 @@ public class PuffinActions {
             null, false, null) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            app.clearSelectedSamplePcas();
+            app.modifySelectedSamples(Sample::clearPca);
         }
     };
     
     /**
      * For each selected sample, clears great circle fit.
      */
-    public final Action clearSampleGreatCircle = new PuffinAction("Clear sample GC fits",
+    public final Action clearSampleGreatCircle = new PuffinAction(
+            "Clear sample GC fits",
             "Clear great-circle fits for selected samples",
             null, false, null) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            app.clearSelectedSampleGcs();
+            app.modifySelectedSamples(Sample::clearGreatCircle);
         }
     };
     
     /**
-     * For each selected sample, clears all calculations and deselects all points.
+     * For each selected sample, clears all calculations and deselects all
+     * points.
      */
-    public final Action clearSampleCalcs = new PuffinAction("Clear sample calculations",
+    public final Action clearSampleCalcs = new PuffinAction(
+            "Clear sample calculations",
             "Clear all calculations and selected steps for selected samples",
             'Z', false, KeyEvent.VK_C) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            app.clearSelectedSampleCalculations();
+            app.modifySelectedSamples(Sample::clearCalculations);
         }
     };
     
@@ -499,7 +502,8 @@ public class PuffinActions {
      * Within each selected sample, selects all the points.
      */
     public final Action selectAll = new PuffinAction("Select all steps",
-            "Select all visible treatment steps in selected samples", 'D', false, KeyEvent.VK_A) {
+            "Select all visible treatment steps in selected samples", 'D',
+            false, KeyEvent.VK_A) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
             for (Sample s: app.getSelectedSamples()) {
@@ -512,8 +516,10 @@ public class PuffinActions {
     /**
      * For each selected sample, deselects all the points.
      */
-    public final Action clearSelection = new PuffinAction("Clear step selection",
-            "Unselect all treatment steps in selected samples", 'D', true, KeyEvent.VK_E) {
+    public final Action clearSelection = new PuffinAction(
+            "Clear step selection",
+            "Deselect all treatment steps in selected samples", 'D', true,
+            KeyEvent.VK_E) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
             for (Sample s: app.getSelectedSamples()) s.selectNone();
@@ -537,10 +543,10 @@ public class PuffinActions {
      * For each selected sample, sets the selected points using the 
      * range currently copied to the clipboard.
      */
-    public final Action pasteStepSelection =
-            new PuffinAction("Paste step selection",
+    public final Action pasteStepSelection = new PuffinAction(
+            "Paste step selection",
             "Select the treatment steps corresponding to those copied to the clipboard",
-                    'K', false, KeyEvent.VK_P) {
+            'K', false, KeyEvent.VK_P) {
         private static final long serialVersionUID = 1L;
                 @Override public void actionPerformed(ActionEvent e) {
                     app.pastePointSelection(); }};
@@ -564,8 +570,8 @@ public class PuffinActions {
      * For each selected sample, makes all the points visible.
      */
     public final Action unhideAllSteps = new PuffinAction("Show all steps",
-            "Make hidden treatment steps visible again for all selected samples", 'G',
-            true, KeyEvent.VK_O) {
+            "Make hidden treatment steps visible again for all selected samples",
+            'G', true, KeyEvent.VK_O) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
             for (Sample s : app.getSelectedSamples()) s.unhideAllPoints();
@@ -613,7 +619,8 @@ public class PuffinActions {
      * Opens a printing dialog box allowing printing of the suite equal-area 
      * data display.
      */
-    public final Action printSuiteEqArea = new PuffinAction("Print suite EA window…",
+    public final Action printSuiteEqArea = new PuffinAction(
+            "Print suite EA window…",
             "Print the contents of the suite equal-area plot window",
             null, false, KeyEvent.VK_U) {
         private static final long serialVersionUID = 1L;
@@ -690,7 +697,8 @@ public class PuffinActions {
      * Opens a window which allows the user to edit the list of user-defined
      * flags for the current suite.
      */
-    public final Action showCustomFlagsWindow = new PuffinAction("Edit custom flags…",
+    public final Action showCustomFlagsWindow = new PuffinAction(
+            "Edit custom flags…",
             "Edit user-defined flags for samples",
             null, false, KeyEvent.VK_D) {
         private static final long serialVersionUID = 1L;
@@ -703,7 +711,8 @@ public class PuffinActions {
      * Opens a window which allows the user to edit the list of user-defined
      * note headings for the current suite.
      */
-    public final Action showCustomNotesWindow = new PuffinAction("Edit custom notes…",
+    public final Action showCustomNotesWindow = new PuffinAction(
+            "Edit custom notes…",
             "Edit user-defined notes for samples",
             null, false, KeyEvent.VK_N) {
         private static final long serialVersionUID = 1L;
@@ -732,7 +741,8 @@ public class PuffinActions {
      * Opens a save dialog allowing the current main display to be saved
      * as an SVG file using the FreeHEP library.
      */
-    public final Action exportSvgFreehep = new PuffinAction("Export SVG (FreeHEP)…",
+    public final Action exportSvgFreehep = new PuffinAction(
+            "Export SVG (FreeHEP)…",
             "Save current display to an SVG file, using the FreeHEP graphics library",
             '7', false, KeyEvent.VK_V) {
         private static final long serialVersionUID = 1L;

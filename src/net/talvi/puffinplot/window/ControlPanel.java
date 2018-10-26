@@ -280,7 +280,7 @@ public class ControlPanel extends JPanel
         if (s == rotationBox || s == vVsBox || s == hprojBox) {
             if (s == rotationBox) {
                 app.setCorrection(getCorrection());
-                app.redoCalculations();
+                app.redoCalculationsForAllSuites();
             }
             app.getMainWindow().repaint();
         }

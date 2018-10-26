@@ -64,6 +64,7 @@ import java.util.logging.SimpleFormatter;
 import java.util.logging.StreamHandler;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+import java.util.stream.Collectors;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
@@ -293,7 +294,7 @@ public class PuffinApp {
      * suites. Intended to be called when the correction (none/sample/formation)
      * has changed.
      */
-    public void redoCalculations() {
+    public void redoCalculationsForAllSuites() {
         for (Suite suite: suites) {
             suite.doSampleCalculations(getCorrection());
             suite.doSiteCalculations(getCorrection(),
@@ -352,23 +353,25 @@ public class PuffinApp {
     }
 
     /**
-     * Redo existing site calculations affected by specified samples.
+     * Redo existing sample and site calculations affected by specified samples.
      * 
-     * Any existing great-circle or Fisherian calculations will be done
-     * for any site containing one of the specified samples. Site 
-     * calculations will not be done for sites that don't have them already.
-     * 
+     * Any existing PCA calculations or great-circle fits will be done for the
+     * specified samples, and any existing great-circle or Fisherian
+     * calculations will be done for any site containing one of the specified
+     * samples. Site calculations will not be done for sites that don't have
+     * them already.
+       * 
      * This method does not update the display.
      * 
      * @param samples samples which have changed
      */
-    private void recalculateAffectedSites(Collection<Sample> samples) {
-        final Set<Site> affectedSites = new java.util.HashSet<>();
-        for (Sample sample: samples) {
-            if (sample.getSite() != null) {
-                affectedSites.add(sample.getSite());
-            }
-        }
+    private void recalculateSamplesAndSites(Collection<Sample> samples) {
+        final Set<Site> affectedSites = samples.stream().
+                map(sample -> sample.getSite()).filter(site -> site != null).
+                collect(Collectors.toSet());
+
+        samples.forEach(s -> s.doPca(getCorrection()));
+        samples.forEach(s -> s.fitGreatCircle(getCorrection()));
         for (Site site: affectedSites) {
             if (site.getFisherValues() != null) {
                 site.calculateFisherStats(getCorrection());
@@ -390,7 +393,7 @@ public class PuffinApp {
             sample.useSelectionForCircleFit();
             sample.fitGreatCircle(getCorrection());
         }
-        recalculateAffectedSites(getSelectedSamples());
+        recalculateSamplesAndSites(getSelectedSamples());
         updateDisplay();
     }
     
@@ -409,40 +412,7 @@ public class PuffinApp {
                 sample.doPca(getCorrection());
             }
         }
-        recalculateAffectedSites(getSelectedSamples());
-        updateDisplay();
-    }
-    
-    /**
-     * Clear PCA calculations for selected samples.
-     * 
-     * Any affected site data will also be recalculated.
-     */
-    public void clearSelectedSamplePcas() {
-        forEachSelectedSample(s -> s.clearPca());
-        recalculateAffectedSites(getSelectedSamples());
-        updateDisplay();
-    }
-    
-    /**
-     * Clear great circle fits for selected samples.
-     * 
-     * Any affected site data will also be recalculated.
-     */
-    public void clearSelectedSampleGcs() {
-        forEachSelectedSample(s -> s.clearGreatCircle());
-        recalculateAffectedSites(getSelectedSamples());
-        updateDisplay();
-    }
-    
-    /**
-     * Clear selected points and stored calculations for selected samples.
-     * 
-     * Any affected site data will also be recalculated.
-     */
-    public void clearSelectedSampleCalculations() {
-        forEachSelectedSample(s -> s.clearCalculations());
-        recalculateAffectedSites(getSelectedSamples());
+        recalculateSamplesAndSites(getSelectedSamples());
         updateDisplay();
     }
     
@@ -790,15 +760,24 @@ public class PuffinApp {
     /** Gets all the currently selected samples.
      * @return the currently selected samples */
     public List<Sample> getSelectedSamples() {
-        List<Sample> result =
+        final List<Sample> result =
                 getMainWindow().getSampleChooser().getSelectedSamples();
         if (result==null) return Collections.emptyList();
         return result;
     }
     
-    private void forEachSelectedSample(Consumer<Sample> func) {
+    /**
+     * Apply the supplied function to each of the currently selected
+     * samples, then redo any existing calculations for the selected
+     * samples and any sites that contain them.
+     * 
+     * @param function function to apply to the currently selected samples
+     */
+    public void modifySelectedSamples(Consumer<Sample> function) {
         final List<Sample> samples = getSelectedSamples();
-        samples.stream().forEach((s) -> { func.accept(s); });
+        samples.stream().forEach(function);
+        recalculateSamplesAndSites(samples);
+        updateDisplay();
     }
 
     /** Returns the site for which data is currently being displayed.
@@ -1103,8 +1082,10 @@ public class PuffinApp {
         }
     }
     
-    /** Shows a confirmation dialog. If the user confirms, all user preferences
-     * data is deleted and preferences revert to default values. */
+    /**
+     * Shows a confirmation dialog. If the user confirms, all user preferences
+     * data is deleted and preferences revert to default values.
+     */
     public void clearPreferences() {
         int result = JOptionPane.showConfirmDialog
                 (getMainWindow(), "Are you sure you wish to clear "
@@ -1126,8 +1107,10 @@ public class PuffinApp {
         }
     }
     
-    /** Copies the current pattern of selected points to a clipboard.
-     *  @see #pastePointSelection()
+    /**
+     * Copies the current pattern of selected points to a clipboard.
+     *
+     * @see #pastePointSelection()
      */
     public void copyPointSelection() {
         final Sample sample = getSample();
@@ -1143,9 +1126,8 @@ public class PuffinApp {
      */
     public void pastePointSelection() {
         if (pointSelectionClipboard==null) return;
-        forEachSelectedSample(s ->
+        modifySelectedSamples(s ->
                 s.setSelectionBitSet(pointSelectionClipboard));
-        updateDisplay();
     }
     
     /**
@@ -1169,9 +1151,8 @@ public class PuffinApp {
                 "Flip samples", JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.WARNING_MESSAGE);
         if (choice == JOptionPane.OK_OPTION) {
-            forEachSelectedSample(s -> s.flip(axis));
+            modifySelectedSamples(s -> s.flip(axis));
         }
-        updateDisplay();
     }
     
     void invertSelectedSamples() {
@@ -1188,9 +1169,8 @@ public class PuffinApp {
                 "Invert samples", JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.WARNING_MESSAGE);
         if (choice == JOptionPane.OK_OPTION) {
-            forEachSelectedSample(s -> s.invertMoments());
+            modifySelectedSamples(Sample::invertMoments);
         }
-        updateDisplay();
     }
     
     /**
