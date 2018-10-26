@@ -58,10 +58,13 @@ public class EditSampleParametersWindow extends JFrame {
     private final PuffinApp app;
     
 
-    /** Creates a new correction window. */
+    /**
+     * Creates a new correction window.
+     */
     public EditSampleParametersWindow(PuffinApp app) {
         super("Edit corrections");
         this.app = app;
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setResizable(false);
         final Container cp = getContentPane();
         cp.setLayout(new BoxLayout(cp, BoxLayout.Y_AXIS));
@@ -113,10 +116,9 @@ public class EditSampleParametersWindow extends JFrame {
         cp.add(buttonPanel);
 
         pack();
-        setLocationRelativeTo(null);
+        setLocationRelativeTo(app.getMainWindow());
     }
 
-    
     private class EspwActionListener implements ActionListener {
         /** <p>Handle an action event. The events handled are clicks on the
          * ‘Cancel’ and ‘Set’ buttons.</p>
@@ -125,8 +127,10 @@ public class EditSampleParametersWindow extends JFrame {
          */
         @Override
         public void actionPerformed(ActionEvent event) {
-            if (event.getSource() == cancelButton)
+            if (event.getSource() == cancelButton) {
                 setVisible(false);
+                dispose();
+            }
             if (event.getSource() == setButton) {
                 final List<Sample> samples = app.getSelectedSamples();
                 for (DatumField field : fields) {
@@ -137,8 +141,10 @@ public class EditSampleParametersWindow extends JFrame {
                         }
                     }
                 }
-                setVisible(false);
+                app.recalculateSamplesAndSites(samples);
                 app.updateDisplay();
+                setVisible(false);
+                dispose();
             }
         }
     }

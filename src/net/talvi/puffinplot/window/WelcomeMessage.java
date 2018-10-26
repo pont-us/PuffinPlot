@@ -56,7 +56,7 @@ final class WelcomeMessage extends JPanel {
         citePanel.setBorder(new EmptyBorder(12, 0, 12, 12));
         citePanel.setLayout(new BoxLayout(citePanel, BoxLayout.X_AXIS));
         citePanel.add(new JLabel("If you use PuffinPlot in a published work, please "));
-        final JButton citeMeButton = new JButton(app.getActions().openCiteWindow);
+        final JButton citeMeButton = new JButton(app.getActions().showCiteDialog);
         citePanel.add(citeMeButton);
         // Override the default text for the action.
         citeMeButton.setText("click here to cite the PuffinPlot paper.");

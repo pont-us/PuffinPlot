@@ -207,9 +207,9 @@ public class CiteWindow extends JFrame {
         contentPane.add(closeButton);
         
         pack();
-        // Centre on screen. Must be done after pack() -- see
+        // Centre over main window. Must be done after pack() -- see
         // http://stackoverflow.com/questions/3480102 .
-        setLocationRelativeTo(null);
+        setLocationRelativeTo(app.getMainWindow());
     }
     
     private class CiteButton extends JButton {

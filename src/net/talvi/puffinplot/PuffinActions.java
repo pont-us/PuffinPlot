@@ -32,6 +32,9 @@ import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.data.AmsCalculationType;
+import net.talvi.puffinplot.window.CiteWindow;
+import net.talvi.puffinplot.window.EditSampleParametersWindow;
+import net.talvi.puffinplot.window.TreatmentWindow;
 
 /**
  * A container class for individual instances of {@link PuffinAction}
@@ -436,26 +439,36 @@ public class PuffinActions {
      * Opens a window allowing the user to edit the sample and formation
      * orientations and the local magnetic declination.
      */
-    public final Action editSampleParameters = new PuffinAction(
+    public final Action showEditSampleParametersDialog = new PuffinAction(
             "Sample parameters…",
             "Edit sample volume, sample and formation orientations, and local geomagnetic field declination",
             null, false, KeyEvent.VK_R) {
         private static final long serialVersionUID = 1L;
+        private EditSampleParametersWindow espDialog;
         @Override public void actionPerformed(ActionEvent e) {
-            app.getEditSampleParametersWindow().setVisible(true);
+            if (espDialog == null) {
+                espDialog = new EditSampleParametersWindow(app);
+            }
+            espDialog.setLocationRelativeTo(app.getMainWindow());
+            espDialog.setVisible(true);
         }
     };
     
     /**
-     * Opens a window allowing the user to set the treatment type for
+     * Shows a window allowing the user to set the treatment type for
      * the selected samples.
      */
     public final Action setTreatType = new PuffinAction("Set treatment type…",
             "Set the treatment type for the selected samples.",
             null, false, KeyEvent.VK_T) {
         private static final long serialVersionUID = 1L;
+        private TreatmentWindow treatmentWindow;
         @Override public void actionPerformed(ActionEvent e) {
-            app.getTreatmentWindow().setVisible(true);
+            if (treatmentWindow == null) {
+                treatmentWindow = new TreatmentWindow(app);
+            }
+            treatmentWindow.setLocationRelativeTo(app.getMainWindow());
+            treatmentWindow.setVisible(true);
         }
     };
     
@@ -1022,12 +1035,17 @@ public class PuffinActions {
     /**
      * Opens the Citation window.
      */
-    public final Action openCiteWindow = new PuffinAction("Cite PuffinPlot…",
+    public final Action showCiteDialog = new PuffinAction("Cite PuffinPlot…",
             "Show information on citing PuffinPlot", null, false,
             KeyEvent.VK_C) {
         private static final long serialVersionUID = 1L;
+        private CiteWindow citeWindow;
         @Override public void actionPerformed(ActionEvent e) {
-            app.showCiteWindow();
+            if (citeWindow == null) {
+                citeWindow = new CiteWindow(app);
+            }
+            citeWindow.setLocationRelativeTo(app.getMainWindow());
+            citeWindow.setVisible(true);
         }
     };
 

@@ -110,12 +110,9 @@ public class PuffinApp {
     private final PuffinPrefs prefs;
     private final TableWindow tableWindow;
     private final SuiteEqAreaWindow suiteEqAreaWindow;
-    private final EditSampleParametersWindow editSampleParametersWindow;
     private final SiteMeanWindow siteEqAreaWindow;
-    private final TreatmentWindow treatmentWindow;
     private PrefsWindow prefsWindow;
     private final AboutBox aboutBox;
-    private final CiteWindow citeWindow;
     private RecentFileList recentFiles;
     private Correction correction;
     private final IdToFileMap lastUsedFileOpenDirs;
@@ -213,9 +210,6 @@ public class PuffinApp {
         suiteEqAreaWindow = new SuiteEqAreaWindow(this);
         siteEqAreaWindow = new SiteMeanWindow(plotParams,
                 prefs.getPrefs());
-        editSampleParametersWindow = new EditSampleParametersWindow(this);
-        treatmentWindow = new TreatmentWindow(this);
-        citeWindow = new CiteWindow(this);
         // NB main window must be instantiated last, as
         // the Window menu references the other windows
         mainWindow = MainWindow.getInstance(this);
@@ -365,7 +359,7 @@ public class PuffinApp {
      * 
      * @param samples samples which have changed
      */
-    private void recalculateSamplesAndSites(Collection<Sample> samples) {
+    public void recalculateSamplesAndSites(Collection<Sample> samples) {
         final Set<Site> affectedSites = samples.stream().
                 map(sample -> sample.getSite()).filter(site -> site != null).
                 collect(Collectors.toSet());
@@ -430,12 +424,6 @@ public class PuffinApp {
         return mainWindow;
     }
     
-    /** Shows this PuffinApp's citation window
-     */
-    public void showCiteWindow() {
-        citeWindow.setVisible(true);
-    }
- 
     /**
      * Returns the correction currently being applied to the data displayed
      * by this PuffinApp.
@@ -882,23 +870,6 @@ public class PuffinApp {
     public SiteMeanWindow getSiteEqAreaWindow() {
         return siteEqAreaWindow;
     }
-    
-    /** Returns the window for user editing of correction data.
-     * (sample volume, sample orientation, formation orientation,
-     *  geomagnetic declination)
-     * @return the sample parameter editing window */
-    public EditSampleParametersWindow getEditSampleParametersWindow() {
-        return editSampleParametersWindow;
-    }
-
-    
-    /** Returns a window allowing the user to set the treatment type.
-     * @return the ‘set treatment type’ window
-     */
-    public TreatmentWindow getTreatmentWindow() {
-        return treatmentWindow;
-    }
-    
     
     /** Returns the list of recently used files. 
      * @return the list of recently used files */

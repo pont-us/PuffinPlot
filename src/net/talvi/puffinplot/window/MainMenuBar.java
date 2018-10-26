@@ -134,7 +134,7 @@ public final class MainMenuBar extends JMenuBar {
         
         add(makeMenu("Edit",KeyEvent.VK_E,
                 pa.selectAll, pa.clearSelection,
-                movePlotsItem, pa.resetLayout, pa.editSampleParameters,
+                movePlotsItem, pa.resetLayout, pa.showEditSampleParametersDialog,
                 pa.setTreatType,
                 pa.copyStepSelection, pa.pasteStepSelection,
                 makeMenu("Rotate/invert samples", KeyEvent.VK_F,
@@ -170,7 +170,7 @@ public final class MainMenuBar extends JMenuBar {
                         app::getSuiteEqAreaWindow)
                     ));
         add(makeMenu("Help", KeyEvent.VK_H,
-                pa.openPuffinWebsite, pa.openCiteWindow, pa.about));
+                pa.openPuffinWebsite, pa.showCiteDialog, pa.about));
     }
 
     private class AnchorItem extends JCheckBoxMenuItem {
