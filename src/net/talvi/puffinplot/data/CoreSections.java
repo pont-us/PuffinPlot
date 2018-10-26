@@ -147,4 +147,8 @@ class CoreSections {
                 collect(Collectors.toSet());
     }
 
+    public boolean areSectionEndDirectionsDefined(int margin) {
+        return getEndSamples(margin).stream().
+                allMatch(s -> s.getDirection() != null);
+    }
 }

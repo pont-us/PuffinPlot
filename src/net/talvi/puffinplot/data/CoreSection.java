@@ -128,12 +128,33 @@ public class CoreSection implements SampleGroup {
      * @param end the section end (top or bottom)
      * @param nSamples the number of samples to average
      * @return the mean direction of the top or bottom samples
+     * 
+     * @throws IllegalStateException if any section end samples do not
+     * have a direction
      */
     public Vec3 getDirectionNearEnd(End end, int nSamples) {
         final List<Sample> endSamples = getSamplesNearEnd(end, nSamples);
+        if (endSamples.stream().anyMatch(s -> s.getDirection() == null)) {
+            throw new IllegalStateException("Some end samples have no "
+                    + "defined direction.");
+        } 
         return FisherValues.calculate(endSamples.stream().
                 map(Sample::getDirection).
                 collect(Collectors.toList())).getMeanDirection();
-
     }
+
+    /**
+     * Report whether the direction is defined near the specified end
+     * of this core. The direction is defined iff every sample near the
+     * end has a direction.
+     * 
+     * @param end the section end
+     * @param nSamples the number of samples to regard as "near the end"
+     * @return true iff all the samples near the end have a direction
+     */
+    boolean isDirectionDefinedNearEnd(End end, int nSamples) {
+        final List<Sample> endSamples = getSamplesNearEnd(end, nSamples);
+        return endSamples.stream().allMatch(s -> s.getDirection() != null);
+    }
+
 }

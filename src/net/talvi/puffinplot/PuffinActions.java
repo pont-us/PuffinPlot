@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
 import net.talvi.puffinplot.data.DatumField;
@@ -437,7 +436,8 @@ public class PuffinActions {
      * Opens a window allowing the user to edit the sample and formation
      * orientations and the local magnetic declination.
      */
-    public final Action editSampleParameters = new PuffinAction("Sample parameters…",
+    public final Action editSampleParameters = new PuffinAction(
+            "Sample parameters…",
             "Edit sample volume, sample and formation orientations, and local geomagnetic field declination",
             null, false, KeyEvent.VK_R) {
         private static final long serialVersionUID = 1L;

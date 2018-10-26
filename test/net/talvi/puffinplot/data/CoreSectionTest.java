@@ -22,6 +22,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import net.talvi.puffinplot.TestUtils;
+import net.talvi.puffinplot.data.CoreSection.End;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -169,6 +170,26 @@ public class CoreSectionTest {
         }        
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void testGetDirectionNearEndInvalid() {
+        final List<Sample> samples = makeSampleListDirectionsOnly();
+        samples.get(2).setImportedDirection(null);
+        CoreSection.fromSamples(samples).getDirectionNearEnd(End.TOP, 3);
+    }
+    
+    @Test
+    public void testIsDirectionDefinedNearEnd() {
+        final List<Sample> samples = makeSampleListDirectionsOnly();
+        samples.get(2).setImportedDirection(null);
+        samples.get(6).setImportedDirection(null);
+        final CoreSection section = CoreSection.fromSamples(samples);
+        assertTrue(section.isDirectionDefinedNearEnd(End.TOP, 1));
+        assertTrue(section.isDirectionDefinedNearEnd(End.TOP, 2));
+        assertFalse(section.isDirectionDefinedNearEnd(End.TOP, 3));
+        assertTrue(section.isDirectionDefinedNearEnd(End.BOTTOM, 3));
+        assertFalse(section.isDirectionDefinedNearEnd(End.BOTTOM, 4));
+    }
+    
     private static Vec3 meanDirection(List<Sample> samples) {
         return FisherValues.calculate(samples.stream().
                         map(Sample::getDirection).

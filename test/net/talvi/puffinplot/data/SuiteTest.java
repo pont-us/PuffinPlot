@@ -38,7 +38,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Random;
 import java.util.Scanner;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -1600,6 +1599,22 @@ public class SuiteTest {
                 sample -> sample.getData().stream().allMatch(
                         datum -> Math.abs(datum.getMoment().getDecDeg() -
                                 topDeclination) < delta )));
+    }
+    
+    @Test
+    public void testAreSectionEndDirectionsDefined() {
+        final List<Sample> samples =
+                TestUtils.makeUniformSampleList(Vec3.fromPolarDegrees(1, 40, 20),
+                        new double[] {0, 1, 2, 3}, "part0");
+        samples.addAll(TestUtils.makeUniformSampleList(Vec3.fromPolarDegrees(1, 50, 30),
+                        new double[] {4, 5, 6, 7}, "part1"));
+        final Suite suite = new Suite("test");
+        samples.forEach(s -> suite.addSample(s, s.getDiscreteId()));
+        assertTrue(suite.areSectionEndDirectionsDefined(2));
+        assertTrue(suite.areSectionEndDirectionsDefined(3));
+        samples.get(1).clearPca();
+        assertTrue(suite.areSectionEndDirectionsDefined(1));
+        assertFalse(suite.areSectionEndDirectionsDefined(2));
     }
     
 }

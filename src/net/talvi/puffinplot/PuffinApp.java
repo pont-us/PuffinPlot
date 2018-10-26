@@ -1852,6 +1852,17 @@ public class PuffinApp {
      * suite.
      */
     public void alignSectionDeclinations() {
+        if (getSuite() == null) {
+            errorDialog("No suite loaded", "PuffinPlot align core sections, "
+                    + "as there is no data suite loaded.");
+            return;
+        }
+        if (getSuite().getMeasType() != MeasType.CONTINUOUS) {
+            errorDialog("Can't align core sections",
+                    "Core section alignment can only be done on continuous "
+                            + "suites.");
+            return;
+        }
         getSuite().alignSectionDeclinations(0, 1);
     }
 }

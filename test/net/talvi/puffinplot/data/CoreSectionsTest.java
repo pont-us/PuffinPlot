@@ -18,14 +18,20 @@ package net.talvi.puffinplot.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import net.talvi.puffinplot.TestUtils;
+import net.talvi.puffinplot.data.CoreSection.End;
+import net.talvi.puffinplot.data.CoreSection;
+
+import static net.talvi.puffinplot.data.CoreSection.End;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
+import org.mockito.Mockito;
 
 public class CoreSectionsTest {
 
@@ -62,11 +68,11 @@ public class CoreSectionsTest {
     @Test
     public void testAlignSections1() {
         final List<Sample> samples =
-                makeUniformSampleList(Vec3.fromPolarDegrees(1, 40, 20),
+                TestUtils.makeUniformSampleList(Vec3.fromPolarDegrees(1, 40, 20),
                         new double[] {0, 1, 2, 3}, "part0");
-        samples.addAll(makeUniformSampleList(Vec3.fromPolarDegrees(1, 50, 30),
+        samples.addAll(TestUtils.makeUniformSampleList(Vec3.fromPolarDegrees(1, 50, 30),
                         new double[] {4, 5, 6, 7}, "part1"));
-        samples.addAll(makeUniformSampleList(Vec3.fromPolarDegrees(1, 60, -30),
+        samples.addAll(TestUtils.makeUniformSampleList(Vec3.fromPolarDegrees(1, 60, -30),
                         new double[] {8, 9, 10, 11}, "part2"));
         final CoreSections cs =
                 CoreSections.fromSampleListByDiscreteId(samples);
@@ -122,16 +128,23 @@ public class CoreSectionsTest {
         }
     }
     
-    private List<Sample> makeUniformSampleList(Vec3 direction,
-            double[] depths, String discreteId) {
-        final List<Sample> samples = new ArrayList<>(10);
-        for (int i=0; i<depths.length; i++) {
-            Sample sample = TestUtils.makeOneComponentSample(depths[i], discreteId, direction);
-            samples.add(sample);
-        }
-        return samples;
+    @Test
+    public void testAreSectionEndDirectionsDefined() {
+        final List<Sample> samples =
+                TestUtils.makeUniformSampleList(Vec3.fromPolarDegrees(1, 40, 20),
+                        new double[] {0, 1, 2, 3}, "part0");
+        samples.addAll(TestUtils.makeUniformSampleList(Vec3.fromPolarDegrees(1, 50, 30),
+                        new double[] {4, 5, 6, 7}, "part1"));
+        final CoreSections cs =
+                CoreSections.fromSampleListByDiscreteId(samples);
+        assertTrue(cs.areSectionEndDirectionsDefined(1));
+        assertTrue(cs.areSectionEndDirectionsDefined(2));
+        assertTrue(cs.areSectionEndDirectionsDefined(3));
+        samples.get(1).clearPca();
+        assertTrue(cs.areSectionEndDirectionsDefined(1));
+        assertFalse(cs.areSectionEndDirectionsDefined(2));
     }
-
+    
     private List<Sample> makeFlatSamples(double[] decs, String discreteId,
             int startDepth) {
         int depth = startDepth;

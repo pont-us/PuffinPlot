@@ -1413,6 +1413,12 @@ public final class Suite implements SampleGroup {
         coreSections.alignSections(topDeclination, margin);
     }
     
+    public boolean areSectionEndDirectionsDefined(int margin) {
+        final CoreSections coreSections =
+                CoreSections.fromSampleListByDiscreteId(getSamples());
+        return coreSections.areSectionEndDirectionsDefined(margin);
+    }
+    
     /**
      * Within each of the supplied samples, merges any Datum objects
      * which have the same treatment type and treatment level.

@@ -30,6 +30,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Datum;
+import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Vec3;
 import org.junit.rules.TemporaryFolder;
@@ -57,12 +58,22 @@ public class TestUtils {
         final Sample sample = new Sample(depthString, null);
         for (int j = 3; j > 0; j--) {
             final Datum d = new Datum(direction.times(j));
+            d.setMeasType(MeasType.CONTINUOUS);
             d.setInPca(true);
             sample.addDatum(d);
         }
         sample.setDiscreteId(discreteId);
         sample.doPca(Correction.NONE);
         return sample;
+    }
+
+    public static List<Sample> makeUniformSampleList(Vec3 direction, double[] depths, String discreteId) {
+        final List<Sample> samples = new ArrayList<>(10);
+        for (int i = 0; i < depths.length; i++) {
+            Sample sample = TestUtils.makeOneComponentSample(depths[i], discreteId, direction);
+            samples.add(sample);
+        }
+        return samples;
     }
     
     public static class ListHandler extends Handler {
