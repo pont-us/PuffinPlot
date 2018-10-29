@@ -24,8 +24,14 @@ public class PuffinActionsTest {
     @Test
     public void testAlignSectionDeclinations() {
         final PuffinApp app = Mockito.mock(PuffinApp.class);
-        new PuffinActions(app).alignSectionDeclinations.actionPerformed(null);
-        Mockito.verify(app).alignSectionDeclinations();
+        final PuffinActions actions = new PuffinActions(app);
+        /*
+         * For now, we just test that an error dialog is shown when
+         * getSuite() is null.
+         */
+        actions.alignSectionDeclinations.actionPerformed(null);
+        Mockito.verify(app).errorDialog(Mockito.<String>any(),
+                Mockito.<String>any());
     }
     
 }

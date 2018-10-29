@@ -32,6 +32,7 @@ import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.data.AmsCalculationType;
+import net.talvi.puffinplot.window.AlignDeclinationsDialog;
 import net.talvi.puffinplot.window.CiteWindow;
 import net.talvi.puffinplot.window.EditSampleParametersWindow;
 import net.talvi.puffinplot.window.TreatmentWindow;
@@ -1106,10 +1107,15 @@ public class PuffinActions {
     public final Action alignSectionDeclinations =
             new PuffinAction("Align core section declinations…",
             "Automatically align declinations between core sections.",
-            null, false, null) {
+            null, false, KeyEvent.VK_G) {
         private static final long serialVersionUID = 1L;
+        private AlignDeclinationsDialog alignDeclinationsDialog;
         @Override public void actionPerformed(ActionEvent e) {
-            app.alignSectionDeclinations();
+            if (alignDeclinationsDialog == null) {
+                alignDeclinationsDialog = new AlignDeclinationsDialog(app);
+            }
+            alignDeclinationsDialog.setLocationRelativeTo(app.getMainWindow());
+            alignDeclinationsDialog.setVisible(true);
         }
     };
 }

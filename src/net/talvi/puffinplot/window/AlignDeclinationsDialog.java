@@ -16,18 +16,20 @@
  */
 package net.talvi.puffinplot.window;
 
-/**
- *
- * @author pont
- */
+import javax.swing.JOptionPane;
+import net.talvi.puffinplot.PuffinApp;
+import net.talvi.puffinplot.data.MeasType;
+import net.talvi.puffinplot.data.Suite;
 
+public class AlignDeclinationsDialog extends javax.swing.JDialog {
 
-public class AlignDeclinationsDialog extends javax.swing.JFrame {
+    private final PuffinApp app;
 
     /**
      * Creates new form AlignDeclinationsDialog
      */
-    public AlignDeclinationsDialog() {
+    public AlignDeclinationsDialog(PuffinApp app) {
+        this.app = app;
         initComponents();
     }
 
@@ -45,11 +47,16 @@ public class AlignDeclinationsDialog extends javax.swing.JFrame {
         endLengthTextField = new javax.swing.JTextField();
         topDecLabel = new javax.swing.JLabel();
         topDecTextField = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        alignButton = new javax.swing.JButton();
+        cancelButton = new javax.swing.JButton();
 
         setTitle("Align core declinations");
         setResizable(false);
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
+            }
+        });
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel1.setLabelFor(endLengthTextField);
@@ -57,21 +64,30 @@ public class AlignDeclinationsDialog extends javax.swing.JFrame {
         jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
 
         endLengthTextField.setText("1");
+        endLengthTextField.setNextFocusableComponent(topDecTextField);
 
         topDecLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         topDecLabel.setLabelFor(topDecTextField);
         topDecLabel.setText("Top declination");
 
         topDecTextField.setText("0");
+        topDecTextField.setNextFocusableComponent(cancelButton);
 
-        jButton1.setText("Align");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        alignButton.setText("Align");
+        alignButton.setNextFocusableComponent(endLengthTextField);
+        alignButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                alignButtonActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Cancel");
+        cancelButton.setText("Cancel");
+        cancelButton.setNextFocusableComponent(alignButton);
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -89,9 +105,9 @@ public class AlignDeclinationsDialog extends javax.swing.JFrame {
                             .addComponent(endLengthTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE)
                             .addComponent(topDecTextField)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jButton2)
+                        .addComponent(cancelButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1)))
+                        .addComponent(alignButton)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -107,8 +123,8 @@ public class AlignDeclinationsDialog extends javax.swing.JFrame {
                     .addComponent(topDecTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(alignButton)
+                    .addComponent(cancelButton))
                 .addContainerGap())
         );
 
@@ -134,55 +150,77 @@ public class AlignDeclinationsDialog extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /*
-         * Set the Nimbus look and feel
-         */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /*
-         * If Nimbus (introduced in Java SE 6) is not available, stay with the
-         * default look and feel. For details see
-         * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-         */
+    private Integer tryToParseInteger(String s) {
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info: javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(AlignDeclinationsDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(AlignDeclinationsDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(AlignDeclinationsDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(AlignDeclinationsDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            return Integer.parseInt(s);
+        } catch (NumberFormatException ex) {
+            app.errorDialog("Invalid number", 
+                    String.format("\"%s\" is not a number.", s));
         }
-        //</editor-fold>
-
-        /*
-         * Create and display the form
-         */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new AlignDeclinationsDialog().setVisible(true);
-            }
-        });
+        return null;
     }
+    
+    private Double tryToParseDouble(String s) {
+        try {
+            return Double.parseDouble(s);
+        } catch (NumberFormatException ex) {
+            app.errorDialog("Invalid number", 
+                    String.format("\"%s\" is not a number.", s));
+        }
+        return null;
+    }
+    
+    private boolean canAlignSectionDeclinations() {
+        final Suite suite = app.getSuite();
+        if (suite == null) {
+            app.errorDialog("No suite loaded",
+                    "PuffinPlot cannot align core sections, "
+                    + "as there is no data suite loaded.");
+            return false;
+        }
+        if (suite.getMeasType() != MeasType.CONTINUOUS) {
+            app.errorDialog("Can't align core sections",
+                    "Core section alignment can only be done on continuous "
+                            + "suites.");
+            return false;
+        }
+        return true;
+    }
+    
+    private void alignButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alignButtonActionPerformed
+        final Integer endLength =
+                tryToParseInteger(endLengthTextField.getText());
+        if (endLength == null) return;
+        final Double topDeclination =
+                tryToParseDouble(topDecTextField.getText());
+        if (topDeclination == null) return;
+        if (canAlignSectionDeclinations()) {
+            if (canAlignSectionDeclinations()) {
+                app.getSuite().
+                        alignSectionDeclinations(topDeclination, endLength);
+                JOptionPane.showMessageDialog(app.getMainWindow(),
+                        "Core section declinations successfully aligned.",
+                        "Core sections aligned",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+            setVisible(false);
+        }
+    }//GEN-LAST:event_alignButtonActionPerformed
+
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        setVisible(false);
+    }//GEN-LAST:event_cancelButtonActionPerformed
+
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        if (!canAlignSectionDeclinations()) {
+            setVisible(false);
+        }
+    }//GEN-LAST:event_formComponentShown
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton alignButton;
+    private javax.swing.JButton cancelButton;
     private javax.swing.JTextField endLengthTextField;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel topDecLabel;

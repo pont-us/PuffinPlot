@@ -671,8 +671,8 @@ public class PuffinApp {
      * @param message the message to be displayed
      */
     public void errorDialog(String title, String message) {
-        JOptionPane.showMessageDialog
-        (getMainWindow(), message, title, JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(getMainWindow(), message, title,
+                JOptionPane.ERROR_MESSAGE);
     }
 
     /**
@@ -1816,24 +1816,5 @@ public class PuffinApp {
     static String getGreatCirclesValidityCondition() {
         return Preferences.userNodeForPackage(PuffinPrefs.class).
                 get("data.greatcircles.validityExpr", "true");
-    }
-
-    /**
-     * Automatically align declinations between core sections in the current
-     * suite.
-     */
-    public void alignSectionDeclinations() {
-        if (getSuite() == null) {
-            errorDialog("No suite loaded", "PuffinPlot align core sections, "
-                    + "as there is no data suite loaded.");
-            return;
-        }
-        if (getSuite().getMeasType() != MeasType.CONTINUOUS) {
-            errorDialog("Can't align core sections",
-                    "Core section alignment can only be done on continuous "
-                            + "suites.");
-            return;
-        }
-        getSuite().alignSectionDeclinations(0, 1);
     }
 }
