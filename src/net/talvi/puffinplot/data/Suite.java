@@ -1771,10 +1771,9 @@ public final class Suite implements SampleGroup {
                 filter(s -> s.getDepth()< minDepth || s.getDepth() > maxDepth).
                 collect(Collectors.toSet());
         samples.removeAll(samplesToRemove);
-        samplesToRemove.forEach((s) -> {
-            samplesById.remove(s.getNameOrDepth());
-        });
+        samplesToRemove.forEach(s -> samplesById.remove(s.getNameOrDepth()));
         updateReverseIndex();
+        setSaved(false);
     }
     
     /**
@@ -1882,4 +1881,5 @@ public final class Suite implements SampleGroup {
     public void removeSavedListener(SavedListener savedListener) {
         savedListenerSet.remove(savedListener);
     }
+    
 }

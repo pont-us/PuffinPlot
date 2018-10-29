@@ -35,6 +35,7 @@ import net.talvi.puffinplot.data.AmsCalculationType;
 import net.talvi.puffinplot.window.AlignDeclinationsDialog;
 import net.talvi.puffinplot.window.CiteWindow;
 import net.talvi.puffinplot.window.EditSampleParametersWindow;
+import net.talvi.puffinplot.window.RemoveByDepthRangeDialog;
 import net.talvi.puffinplot.window.TreatmentWindow;
 
 /**
@@ -1116,6 +1117,23 @@ public class PuffinActions {
             }
             alignDeclinationsDialog.setLocationRelativeTo(app.getMainWindow());
             alignDeclinationsDialog.setVisible(true);
+        }
+    };
+    
+    public final Action removeSamplesOutsideDepthRange =
+            new PuffinAction("Remove samples by depth…",
+            "Remove samples whose depth lies outside a specified range.",
+            null, false, KeyEvent.VK_M) {
+        private static final long serialVersionUID = 1L;
+        private RemoveByDepthRangeDialog removeByDepthRangeDialog;
+        @Override public void actionPerformed(ActionEvent e) {
+            if (removeByDepthRangeDialog == null) {
+                removeByDepthRangeDialog =
+                        new RemoveByDepthRangeDialog(app.getMainWindow(), true,
+                                app);
+            }
+            removeByDepthRangeDialog.setLocationRelativeTo(app.getMainWindow());
+            removeByDepthRangeDialog.setVisible(true);
         }
     };
 }

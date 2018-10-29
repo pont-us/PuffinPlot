@@ -16,6 +16,7 @@
  */
 package net.talvi.puffinplot;
 
+import java.awt.Component;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -42,6 +43,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
+import javax.swing.JOptionPane;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 
@@ -481,5 +483,30 @@ public class Util {
     public static boolean runningOnOsX() {
         return MAC_OS_X;
     }
+    
+    public static Integer tryToParseInteger(Component parentWindow, String s) {
+        try {
+            return Integer.parseInt(s);
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(parentWindow,
+                    String.format("\"%s\" is not an integer.", s),
+                    "Invalid number",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+        return null;
+    }
+    
+    public static Double tryToParseDouble(Component parentWindow, String s) {
+        try {
+            return Double.parseDouble(s);
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(parentWindow,
+                    String.format("\"%s\" is not a number.", s),
+                    "Invalid number",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+        return null;
+    }
+    
 
 }

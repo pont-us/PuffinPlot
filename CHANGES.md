@@ -13,28 +13,32 @@ Data manipulation
 -----------------
 
 -   "Discrete to continuous" feature implemented, allowing conversion
-	of discrete suites to continuous suites using a supplementary
-	CSV file containing a sample-to-depth map.
+    of discrete suites to continuous suites using a supplementary
+    CSV file containing a sample-to-depth map.
+-   Automatic realignment of declination data, allowing reconstruction of
+    a continuous declination record for continuous suites in which the
+    core sections are not azimuthally oriented with respected to each
+    other.
+-   Remove samples outside a specified depth range.
+
 
 Calculations
 ------------
 
 -   RPI calculation implemented, using normalization to ARM, IRM, or
     magnetic susceptibility.
--   Automatic realignment of declination data for continuous suites
-	in which the core sections are not azimuthally oriented.
 
 Scripting
 ---------
 
 -   The Jython package is no longer bundled as part of PuffinPlot,
     dramatically reducing the download size. PuffinPlot still retains
-	Python support: Jython is downloaded and installed automatically
-	if and when it is required.
+    Python support: Jython is downloaded and installed automatically
+    if and when it is required.
 -   PuffinPlot now supports scripting in JavaScript as well as Python.
 -   The user-defined great circle validity check now uses Javascript
-	rather than Python. In practice, this only means a slight change
-	in syntax.
+    rather than Python. In practice, this only means a slight change
+    in syntax.
 
 User interface
 --------------
@@ -42,14 +46,14 @@ User interface
 -   Files can now be opened by dragging them to the main window.
 -   Current suite name and "unsaved" indicator added to the title bar.
 -   When saving files, PuffinPlot now defaults to the last-used
-	folder.
+    folder.
 -   Status bar added to main window.
 
 Graphing and data display
 -------------------------
 
 -   Per-sample Fisher statistics are now shown in the sample parameters
-	legend.
+    legend.
 -   R parameter now shown to 4 decimal places in site and suite parameter
     tables.
 
@@ -57,16 +61,16 @@ Data import
 -----------
 
 -   PuffinPlot can now import the text-based PMD format developed by
-	R. Enkin and supported by several palaeomagnetic programs including
-	PMGSC, Paleomac, and Remasoft.
+    R\. Enkin and supported by several palaeomagnetic programs including
+    PMGSC, Paleomac, and Remasoft.
 -   PuffinPlot can now import the JR6 format developed by AGICO and
-	supported by programs including REMA6W, Remasoft, and Paleomac.
+    supported by programs including REMA6W, Remasoft, and Paleomac.
 
 Data export
 -----------
 
 -   Degree signs in exported data replaced with "deg", to accommodate
-	software that has trouble with non-ASCII character sets.
+    software that has trouble with non-ASCII character sets.
 -   Precision of exported parameters increased to four decimal places.
 -   PuffinPlot can now export a bundle containing both data and a
     processing script, allowing analyses to be reproduced automatically.
@@ -78,11 +82,11 @@ Bug fixes
 -   PDF export no longer produces an extra page.
 -   Display is now updated automatically when sites are edited.
 -   Formatting of PCA equations in exported CSV files is now
-	locale-independent, so will always use "." rather than ","
-	as the decimal separator.
+    locale-independent, so will always use "." rather than ","
+    as the decimal separator.
 -   Custom file import used to ignore the sample volume field; it now
     makes use of it if present, and defaults to a volume of 1 cm³
-	if it is not present.
+    if it is not present.
 
 Developer notes
 ---------------
@@ -92,8 +96,10 @@ Developer notes
 -   Several hundred unit tests have been added, mainly for the data
     and calculation classes. This helps to verify the correctness of
     PuffinPlot's data processing, and to avoid the introduction of
-	bugs during future development.
-
+    bugs during future development.
+-   PuffinPlot's version control has been migrated from Mercurcial
+    to Git, and the main repository from Bitbucket to GitHub.
+    
 
 PuffinPlot 1.03 release notes
 =============================

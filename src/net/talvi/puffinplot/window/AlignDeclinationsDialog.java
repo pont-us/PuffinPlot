@@ -16,8 +16,10 @@
  */
 package net.talvi.puffinplot.window;
 
+import java.awt.Component;
 import javax.swing.JOptionPane;
 import net.talvi.puffinplot.PuffinApp;
+import net.talvi.puffinplot.Util;
 import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.Suite;
 
@@ -150,26 +152,7 @@ public class AlignDeclinationsDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private Integer tryToParseInteger(String s) {
-        try {
-            return Integer.parseInt(s);
-        } catch (NumberFormatException ex) {
-            app.errorDialog("Invalid number", 
-                    String.format("\"%s\" is not a number.", s));
-        }
-        return null;
-    }
-    
-    private Double tryToParseDouble(String s) {
-        try {
-            return Double.parseDouble(s);
-        } catch (NumberFormatException ex) {
-            app.errorDialog("Invalid number", 
-                    String.format("\"%s\" is not a number.", s));
-        }
-        return null;
-    }
-    
+
     private boolean canAlignSectionDeclinations() {
         final Suite suite = app.getSuite();
         if (suite == null) {
@@ -188,11 +171,11 @@ public class AlignDeclinationsDialog extends javax.swing.JDialog {
     }
     
     private void alignButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alignButtonActionPerformed
-        final Integer endLength =
-                tryToParseInteger(endLengthTextField.getText());
+        final Integer endLength = Util.tryToParseInteger(
+                app.getMainWindow(), endLengthTextField.getText());
         if (endLength == null) return;
-        final Double topDeclination =
-                tryToParseDouble(topDecTextField.getText());
+        final Double topDeclination = Util.tryToParseDouble(
+                        app.getMainWindow(), topDecTextField.getText());
         if (topDeclination == null) return;
         if (canAlignSectionDeclinations()) {
             if (canAlignSectionDeclinations()) {
