@@ -19,12 +19,14 @@ package net.talvi.puffinplot.plots;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.prefs.Preferences;
+import net.talvi.puffinplot.Util;
 import net.talvi.puffinplot.data.GreatCircle;
 import net.talvi.puffinplot.data.PcaValues;
 import net.talvi.puffinplot.data.Sample;
@@ -49,6 +51,7 @@ public class SampleParamsTable extends Plot {
     private final List<String> headers = 
             Arrays.asList(new String[] {"Sample", "type", "dec.", "inc."});
     private final Preferences prefs;
+    private final DecimalFormat angleFormat;
     
     /** Creates a sample parameter table with the supplied parameters.
      * 
@@ -60,6 +63,7 @@ public class SampleParamsTable extends Plot {
             Preferences prefs) {
         super(parent, params, prefs);
         this.prefs = prefs;
+        angleFormat = new DecimalFormat("##0.0", Util.getDecimalFormatSymbols());
     }
     
     @Override
@@ -72,8 +76,11 @@ public class SampleParamsTable extends Plot {
         return "Sample parameter table";
     }
     
-    private static String fmt(Object... args) {
-        return String.format(Locale.ENGLISH, "%.1f", args);
+    /*
+     * Synchronized because DecimalFormat is not thread-safe.
+     */
+    private synchronized String fmt(double x) {
+        return angleFormat.format(x);
     }
 
     @Override
@@ -90,7 +97,8 @@ public class SampleParamsTable extends Plot {
                 site.getSamples() :
                 selectedSample.getSuite().getSamples();
         
-        points.add(new TextLinePoint(this, g, 10, null, null, headers, xSpacing, Color.BLACK));
+        points.add(new TextLinePoint(this, g, 10, null, null, headers,
+                xSpacing, Color.BLACK));
 
         final Color highlightColour = (prefs != null &&
                 prefs.getBoolean("plots.highlightCurrentSample", false)) ?
@@ -102,7 +110,7 @@ public class SampleParamsTable extends Plot {
                 break;
             }
             final List<String> values = new ArrayList<>(4);
-            values.addAll(Collections.nCopies(4, "--"));
+            values.addAll(Collections.nCopies(4, "‒‒")); // figure dashes
             values.set(0, sample.getNameOrDepth());
             if (sample.getGreatCircle() != null) {
                 final GreatCircle gc = sample.getGreatCircle();

@@ -34,6 +34,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.DecimalFormatSymbols;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -58,6 +59,14 @@ public class Util {
     private static final boolean MAC_OS_X =
             System.getProperty("os.name").toLowerCase(Locale.ENGLISH).
                     startsWith("mac os x");
+
+    final static DecimalFormatSymbols decimalFormatSymbols =
+            new DecimalFormatSymbols(Locale.ENGLISH);
+
+    static {
+        decimalFormatSymbols.setMinusSign('−');
+        decimalFormatSymbols.setExponentSeparator("e");
+    }
     
     /**
      * Takes an integer, reduces it by one, and ensures it lies in the
@@ -484,6 +493,14 @@ public class Util {
         return MAC_OS_X;
     }
     
+    /**
+     * Try to parse a string to an Integer object; if a 
+     * NumberFormatException is thrown, show an error dialog and return null.
+     * 
+     * @param parentWindow parent for the error dialog
+     * @param s string to parse
+     * @return value of string, or null if not parseable as integer
+     */
     public static Integer tryToParseInteger(Component parentWindow, String s) {
         try {
             return Integer.parseInt(s);
@@ -496,6 +513,14 @@ public class Util {
         return null;
     }
     
+    /**
+     * Try to parse a string to a Double object; if a 
+     * NumberFormatException is thrown, show an error dialog and return null.
+     * 
+     * @param parentWindow parent for the error dialog
+     * @param s string to parse
+     * @return value of string, or null if not parseable as double
+     */
     public static Double tryToParseDouble(Component parentWindow, String s) {
         try {
             return Double.parseDouble(s);
@@ -508,5 +533,17 @@ public class Util {
         return null;
     }
     
-
+    /**
+     * Return symbols for formatting decimal numbers for on-screen display. The
+     * purpose of this method is to serve (eventually) as a single source from
+     * which global settings for the preferred minus sign (ASCII hyphen-minus or
+     * "proper" Unicode minus) and exponent separator ("e" or "E") can be
+     * retrieved.
+     * 
+     * @return decimal format symbols for on-screen display
+     */
+    public static DecimalFormatSymbols getDecimalFormatSymbols() {
+        return decimalFormatSymbols;
+    }
+    
 }

@@ -20,6 +20,7 @@ import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.awt.font.TextLayout;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.text.AttributedCharacterIterator;
@@ -62,13 +63,13 @@ class TextLinePoint implements PlotPoint {
         for (int i=0; i<values.size(); i++) {
             final String s = values.get(i);
             final double space = xSpacing.get(i);
-            AttributedString as = new AttributedString(s);
+            final AttributedString as = new AttributedString(s);
             plot.applyTextAttributes(as);
-            AttributedCharacterIterator ai = as.getIterator();
+            final AttributedCharacterIterator ai = as.getIterator();
             strings.add(ai);
-            double x = xMin + xPos;
-            Rectangle2D b = metrics.getStringBounds(ai, 0, s.length(), g);
-            Rectangle2D b2 = new Rectangle2D.Double(b.getMinX() + x,
+            final double x = xMin + xPos;
+            final Rectangle2D b = metrics.getStringBounds(ai, 0, s.length(), g);
+            final Rectangle2D b2 = new Rectangle2D.Double(b.getMinX() + x,
                     b.getMinY() + yPos, b.getWidth(), b.getHeight());
             if (bbox == null) {
                 bbox = (Rectangle2D) b2.clone();
@@ -91,12 +92,20 @@ class TextLinePoint implements PlotPoint {
             }
         }
 
-        final FontMetrics fontMetrics = g.getFontMetrics();
         double x = xMin + 10;
         for (int i=0; i<strings.size(); i++) {
             final AttributedCharacterIterator s = strings.get(i);
-            final Rectangle2D bounds =
-                    fontMetrics.getStringBounds(s, s.getBeginIndex(), s.getEndIndex(), g);
+            /*
+             * Note: TextLayout is more accurate than
+             * FontMetrics::getStringBounds, since the latter uses a plain
+             * (non-attributed) character iterator -- see e.g.
+             * https://stackoverflow.com/a/24019384/6947739 . There's still
+             * a one-pixel horizontal offset between negative and
+             * non-negative numbers; so far I've found no possible remedy for
+             * this.
+             */
+            final TextLayout tl = new TextLayout(s, g.getFontRenderContext());
+            final Rectangle2D bounds = tl.getBounds();
             final double space = xSpacing.get(i);
             final double xOffset = space - bounds.getWidth();
             g.drawString(s, (float) (x + xOffset), (float) yPos);

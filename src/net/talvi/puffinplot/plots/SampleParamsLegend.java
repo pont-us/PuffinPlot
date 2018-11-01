@@ -19,11 +19,13 @@ package net.talvi.puffinplot.plots;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.prefs.Preferences;
+import net.talvi.puffinplot.Util;
 import net.talvi.puffinplot.data.FisherParams;
 import net.talvi.puffinplot.data.GreatCircle;
 import net.talvi.puffinplot.data.PcaValues;
@@ -42,6 +44,8 @@ import net.talvi.puffinplot.window.PlotParams;
  */
 public class SampleParamsLegend extends Plot {
 
+    private final DecimalFormat angleFormat;
+    
     /** Creates a new sample parameter legend with the supplied parameters.
      * 
      * @param parent the graph display containing the legend
@@ -51,6 +55,7 @@ public class SampleParamsLegend extends Plot {
     public SampleParamsLegend(GraphDisplay parent, PlotParams params,
             Preferences prefs) {
         super(parent, params, prefs);
+        angleFormat = new DecimalFormat("##0.00", Util.getDecimalFormatSymbols());
     }
 
     @Override
@@ -68,8 +73,14 @@ public class SampleParamsLegend extends Plot {
         return 12;
     }
     
-    private static String fmt(String format, Object... arguments) {
-        return String.format(Locale.ENGLISH, format, arguments);
+    private String fmt(String format, double d0, double d1) {
+        return String.format(Locale.ENGLISH, format,
+                angleFormat.format(d0), angleFormat.format(d1));
+    }
+    
+    private String fmt(String format, double d0) {
+        return String.format(Locale.ENGLISH, format,
+                angleFormat.format(d0));
     }
     
     @Override
@@ -82,29 +93,33 @@ public class SampleParamsLegend extends Plot {
         final GreatCircle gc = sample.getGreatCircle();
         if (gc != null) {
             strings.addAll(Arrays.asList(
-                fmt("GC  dec %.2f / inc %.2f",
+                fmt("GC  dec %s / inc %s",
                     gc.getPole().getDecDeg(), gc.getPole().getIncDeg()),
-                fmt("GC  MAD1 %.2f", gc.getMad1())));
+                fmt("GC  MAD1 %s", gc.getMad1())));
         }
         
         final PcaValues pca = sample.getPcaValues();
         if (pca != null) {
             strings.addAll(Arrays.asList(
-                fmt("PCA  dec %.2f / inc %.2f",
+                fmt("PCA  dec %s / inc %s",
                     pca.getDirection().getDecDeg(),
                     pca.getDirection().getIncDeg()),
-                fmt("PCA  MAD1 %.2f / MAD3 %.2f",
+                fmt("PCA  MAD1 %s / MAD3 %s",
                     pca.getMad1(), pca.getMad3()),
-                pca.getEquation()));
+                /*
+                 * This is a rather hacky method of getting the equation to
+                 * use proper minus signs, but it works.
+                 */
+                pca.getEquation().replace("-", "−")));
         }
         
         final FisherParams fisher = sample.getFisherValues();
         if (fisher != null) {
             strings.addAll(Arrays.asList(
-                    fmt("Fisher dec %.2f / inc %.2f",
+                    fmt("Fisher dec %s / inc %s",
                         fisher.getMeanDirection().getDecDeg(),
                         fisher.getMeanDirection().getIncDeg()),
-                    fmt("Fisher α95 %.2f / k %.2f",
+                    fmt("Fisher α95 %s / k %s",
                         fisher.getA95(), fisher.getK())));
         }
         

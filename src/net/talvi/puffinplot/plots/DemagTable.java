@@ -19,11 +19,13 @@ package net.talvi.puffinplot.plots;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import static java.lang.String.format;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.prefs.Preferences;
+import net.talvi.puffinplot.Util;
 import net.talvi.puffinplot.data.Datum;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.TreatType;
@@ -43,7 +45,7 @@ public class DemagTable extends Plot {
 
     private final double us = getUnitSize();
     private final List<Double> xSpacing =
-            Arrays.asList(360*us, 420*us, 420*us, 620*us, 580*us);
+            Arrays.asList(360*us, 450*us, 450*us, 660*us, 580*us);
     private final int ySpacing = (int) (120 * getUnitSize());
     private final List<String> headers = 
             Arrays.asList(new String[] {"demag.", "dec.", "inc.", "int.", "m.s."});
@@ -72,7 +74,7 @@ public class DemagTable extends Plot {
         return "Data table";
     }
 
-    private String fmt(String format, double value) {
+    private static String fmt(String format, double value) {
         final String withHyphens = format(Locale.ENGLISH, format,
                 value);
         return withHyphens;
@@ -100,6 +102,12 @@ public class DemagTable extends Plot {
         final boolean useSequence = (Datum.maxTreatmentLevel(data) == 0);
         int sequence = 1;
         float yPos = 2 * ySpacing;
+        final DecimalFormat angleFormat = 
+                new DecimalFormat("0.0;-0.0", Util.getDecimalFormatSymbols());
+        final DecimalFormat intensityFormat =
+                new DecimalFormat("0.00E00", Util.getDecimalFormatSymbols());
+        final DecimalFormat magSusFormat =
+                new DecimalFormat("0.0E00", Util.getDecimalFormatSymbols());
         for (Datum d: data) {
             if (yPos > getDimensions().getHeight()) {
                 break;
@@ -109,17 +117,18 @@ public class DemagTable extends Plot {
             final String demag = useSequence ? Integer.toString(sequence)
                     : d.getFormattedTreatmentLevel();
             values.add(demag);
-            values.add(fmt("%.1f", p.getDecDeg()));
-            values.add(fmt("% .1f", p.getIncDeg()));
-            /* Don't use .1g, it tickles a bug in Java (#6469160) which
-            throws an ArrayFormatException (at least in Sun Java 5 & 6).
-            Update: apparently fixed in Java 8 -- see
-            http://bugs.java.com/view_bug.do?bug_id=6469160 . No reason to
-            change the format at the moment, though.
-            */
-            values.add(fmt("%.2e", p.mag()));
-            values.add(Double.isNaN(d.getMagSus()) ? "-" :
-                       fmt("%.1e", d.getMagSus()));
+            values.add(angleFormat.format(p.getDecDeg()));
+            values.add(angleFormat.format(p.getIncDeg()));
+            /*
+             * Don't use .1g, it tickles a bug in Java (#6469160) which throws
+             * an ArrayFormatException (at least in Sun Java 5 & 6). Update:
+             * apparently fixed in Java 8 -- see
+             * http://bugs.java.com/view_bug.do?bug_id=6469160 . No reason to
+             * change the format at the moment, though.
+             */
+            values.add(intensityFormat.format(p.mag()));
+            values.add(Double.isNaN(d.getMagSus()) ? "—" :
+                       magSusFormat.format(d.getMagSus()));
             points.add(new TextLinePoint(this, g, yPos, d, null, values,
                     xSpacing, Color.BLACK));
             yPos += ySpacing;
