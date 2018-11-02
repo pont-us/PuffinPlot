@@ -16,11 +16,11 @@
  */
 package net.talvi.puffinplot;
 
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.DefaultFontMapper;
-import com.lowagie.text.pdf.FontMapper;
-import com.lowagie.text.pdf.PdfContentByte;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.awt.DefaultFontMapper;
+import com.itextpdf.awt.FontMapper;
+import com.itextpdf.text.pdf.PdfContentByte;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FileDialog;
@@ -1199,7 +1199,7 @@ public class PuffinApp {
             throws FileNotFoundException, DocumentException {
         final MainGraphDisplay display = getMainWindow().getGraphDisplay();
         final Dimension size = display.getMaximumSize();
-        com.lowagie.text.Document document = new com.lowagie.text.Document(
+        com.itextpdf.text.Document document = new com.itextpdf.text.Document(
                 new Rectangle(size.width, size.height));
         /*
          * The font mapping is fairly rudimentary at present, and will probably
@@ -1214,8 +1214,8 @@ public class PuffinApp {
          * locate the font on disk. See p. 483 of the itext book for more
          * details.
          */
-        com.lowagie.text.pdf.PdfWriter writer =
-                com.lowagie.text.pdf.PdfWriter.getInstance(document,
+        com.itextpdf.text.pdf.PdfWriter writer =
+                com.itextpdf.text.pdf.PdfWriter.getInstance(document,
                 new java.io.FileOutputStream(pdfFile));
         final FontMapper mapper = new DefaultFontMapper();
         document.open();

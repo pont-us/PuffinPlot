@@ -16,7 +16,7 @@
  */
 package net.talvi.puffinplot;
 
-import com.lowagie.text.DocumentException;
+import com.itextpdf.text.DocumentException;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
