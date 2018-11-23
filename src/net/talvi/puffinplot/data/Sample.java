@@ -1107,7 +1107,7 @@ public class Sample {
     }
     
     /**
-     * Remove specified data from this sample. Any {@code Datum) in the
+     * Remove specified data from this sample. Any {@code Datum} in the
      * collection passed to this method will be removed. Any {@code Datum}
      * in the collection which is not in this Sample will be ignored.
      * 

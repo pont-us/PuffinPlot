@@ -1378,8 +1378,8 @@ public final class Suite implements SampleGroup {
      * there will usually be at most one sample with a given discrete ID.
      * For continuous suites, an entire core section may be returned.
      * 
-     * @param id
-     * @return 
+     * @param id a discrete ID
+     * @return a list of the samples in this Suite with the specified ID
      */
     public List<Sample> getSamplesByDiscreteId(String id) {
         Objects.requireNonNull(id);
@@ -1828,7 +1828,7 @@ public final class Suite implements SampleGroup {
      * the mapping from sample names to depths.
      * 
      * @param file a text file consisting of lines in the format
-     *   {@literal <sample-name>,<sample-depth>
+     *   {@literal <sample-name>,<sample-depth>}
      * @throws IOException if there was a problem reading the file
      * @throws MissingSampleNameException if there are samples in this suite
      *   which are not listed in the specified file

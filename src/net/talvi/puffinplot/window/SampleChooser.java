@@ -198,7 +198,7 @@ public class SampleChooser extends JPanel {
      * 
      * This sample chooser's display is updated to show the currently
      * selected sample in the currently displayed suite of the PuffinPlot
-     * application returned by {@link PuffinApp#getInstance()}.
+     * application supplied to this SampleChooser's constructor.
      */
     public void updateValueFromSuite() {
         final Suite suite = app.getSuite();

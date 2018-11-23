@@ -307,8 +307,13 @@ public class OrientationParameters {
      * PuffinPlot's own orientation parameter convention is: 
      * P1=12, P2=90, P3=12, P4=0.
      * 
-     * @param vectorAndOrientations
-     * @return
+     * @param vectorAndOrientations a vector and orientations, to be
+     *   interpreted according to the orientation parameters represented
+     *   by this object
+     * @return a vector and orientations which, when interpeted
+     *   according to PuffinPlot's orientation parameters, represent the
+     *   same vector and orientations as those suppled to the method
+     *   
      */
     public VectorAndOrientations convertToPuffinPlotConvention(
             VectorAndOrientations vectorAndOrientations) {

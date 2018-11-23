@@ -57,8 +57,8 @@ public class CoreSection implements SampleGroup {
      * {@code CoreSection} contains references to the original samples,
      * so operations upon it may modify them.
      * 
-     * @param samples
-     * @return 
+     * @param samples a list of samples
+     * @return a core section containing the provided samples
      */
     public static CoreSection fromSamples(List<Sample> samples) {
         Objects.requireNonNull(samples);
