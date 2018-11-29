@@ -137,7 +137,7 @@ public final class MainMenuBar extends JMenuBar {
                 movePlotsItem, pa.resetLayout, pa.showEditSampleParametersDialog,
                 pa.setTreatType,
                 pa.copyStepSelection, pa.pasteStepSelection,
-                makeMenu("Rotate/invert samples", KeyEvent.VK_F,
+                makeMenu("Rotate/invert samples", KeyEvent.VK_V,
                         pa.flipSampleX, pa.flipSampleY, pa.flipSampleZ,
                         pa.invertSamples),
                 makeMenu("Edit sites", KeyEvent.VK_I,

@@ -108,62 +108,8 @@ public class SuiteTest {
     }
     
     private void createSuites() {
-        syntheticSuite1 = createContinuousSuite();
-        syntheticSuite2 = createDiscreteSuite();
-    }
-
-    private static Suite createDiscreteSuite() {
-        final Suite suite = new Suite("SuiteTest");
-        for (int sampleIndex=0; sampleIndex<10; sampleIndex++) {
-            final String sampleName = String.format("SAMPLE_%d", sampleIndex);
-            final Sample sample = new Sample(sampleName, suite);
-            for (int demag=0; demag<100; demag += 10) {
-                final Datum d = new Datum((sampleIndex+1.)*(100.-demag),
-                        sampleIndex*50, demag);
-                d.setDiscreteId(sampleName);
-                d.setSuite(suite);
-                d.setMeasType(MeasType.DISCRETE);
-                d.setAfX(demag);
-                d.setAfY(demag);
-                d.setAfZ(demag);
-                d.setTreatType(TreatType.DEGAUSS_XYZ);
-                d.setSample(sample);
-                d.setMagSus(sampleIndex);
-                d.setSampAz(0);
-                d.setSampDip(0);
-                d.setFormAz(0);
-                d.setFormDip(0);
-                sample.addDatum(d);
-                suite.addDatum(d);
-            }
-        }
-        suite.updateReverseIndex();
-        return suite;
-    }
-
-    private static Suite createContinuousSuite() {
-        final Suite suite = new Suite("SuiteTest");
-        for (int depth=0; depth<10; depth++) {
-            final String depthString = String.format("%d", depth);
-            final Sample sample = new Sample(depthString, suite);
-            for (int demag=0; demag<100; demag += 10) {
-                final Datum d = new Datum((depth+1.)*(100.-demag),
-                        depth*50, demag);
-                d.setDepth(depthString);
-                d.setSuite(suite);
-                d.setMeasType(MeasType.CONTINUOUS);
-                d.setAfX(demag);
-                d.setAfY(demag);
-                d.setAfZ(demag);
-                d.setTreatType(TreatType.DEGAUSS_XYZ);
-                d.setSample(sample);
-                d.setMagSus(depth);
-                sample.addDatum(d);
-                suite.addDatum(d);
-            }
-        }
-        suite.updateReverseIndex();
-        return suite;
+        syntheticSuite1 = TestUtils.createContinuousSuite();
+        syntheticSuite2 = TestUtils.createDiscreteSuite();
     }
     
     @Test

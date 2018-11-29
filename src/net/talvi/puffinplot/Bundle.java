@@ -16,9 +16,12 @@
  */
 package net.talvi.puffinplot;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,6 +30,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import static net.talvi.puffinplot.PuffinApp.getGreatCirclesValidityCondition;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Sample;
@@ -54,27 +58,41 @@ public class Bundle {
         
         suite.saveCalcsSample(
                 tempDir.resolve(Paths.get("data-sample.csv")).toFile());
-        suite.saveCalcsSite(
-                tempDir.resolve(Paths.get("data-site.csv")).toFile());
+        if (!suite.getSites().isEmpty()) {
+            suite.saveCalcsSite(
+                    tempDir.resolve(Paths.get("data-site.csv")).toFile());
+        }
         suite.saveCalcsSuite(
                 tempDir.resolve(Paths.get("data-suite.csv")).toFile());
         
-        final Path scriptPath =
-                tempDir.resolve(Paths.get("process-data.sh"));
-        try (FileWriter fw = new FileWriter(scriptPath.toFile())) {
-            fw.write("#!/bin/sh\n\n"
-                    + "java -jar PuffinPlot.jar -process data.ppl\n");
-        }
-        scriptPath.toFile().setExecutable(true, false);
-        
-        final Path readmePath = tempDir.resolve(Paths.get("README.TXT"));
-        try (FileWriter fw = new FileWriter(readmePath.toFile())) {
-            fw.write("TODO\n");
-        }
-        
+        writeFile(tempDir, "process-data.sh", true,
+                "#!/bin/sh\n\n" +
+                        "java -jar PuffinPlot.jar -process data.ppl\n");
+        writeFile(tempDir, "process-data.bat", true,
+                "java -jar PuffinPlot.jar -process data.ppl\n");
+
+        final InputStream readMeStream =
+                Bundle.class.getResourceAsStream("bundle-readme.md");
+        /* NB: this file reading technique will convert all line endings
+         * to \n. It's not a problem here since they're all \n anyway.
+         */
+        final String readMeContents =
+                new BufferedReader(new InputStreamReader(readMeStream)).
+                        lines().collect(Collectors.joining("\n", "", "\n"));        
+        writeFile(tempDir, "README.md", false, readMeContents);
         copyPuffinPlotJarFile(tempDir);
-        
         Util.zipDirectory(tempDir, bundlePath);
+    }
+    
+    private static void writeFile(Path parent, String filename,
+            boolean executable, String contents) throws IOException {
+        final Path path = parent.resolve(Paths.get(filename));
+        try (FileWriter fw = new FileWriter(path.toFile())) {
+            fw.write(contents);
+        }
+        if (executable) {
+            path.toFile().setExecutable(true, false);
+        }
     }
     
     private static void copyPuffinPlotJarFile(Path destinationDir)

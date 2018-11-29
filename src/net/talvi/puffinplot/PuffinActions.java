@@ -298,9 +298,10 @@ public class PuffinActions {
     /**
      * Inverts every vector in the currently selected samples.
      */
-    public final Action invertSamples = new PuffinAction("Invert sample directions",
-            "Invert all magnetization directions for selected samples", null, false,
-            KeyEvent.VK_I) {
+    public final Action invertSamples = new PuffinAction(
+            "Invert sample directions",
+            "Invert all magnetization directions for selected samples",
+            null, false, KeyEvent.VK_I) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent arg0) {
             app.invertSelectedSamples();
@@ -696,7 +697,8 @@ public class PuffinActions {
      * IRM data as a tab-delimited text file.
      */
     public final Action exportIrm = new PuffinAction("Export IRM data…",
-            "Export IRM field/remanence for this suite", null, false, KeyEvent.VK_R) {
+            "Export IRM field/remanence for this suite", null, false,
+            KeyEvent.VK_I) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
             if (app.getSuite() == null) return;
@@ -715,7 +717,7 @@ public class PuffinActions {
     public final Action showCustomFlagsWindow = new PuffinAction(
             "Edit custom flags…",
             "Edit user-defined flags for samples",
-            null, false, KeyEvent.VK_D) {
+            null, false, KeyEvent.VK_F) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
            app.showCustomFlagsWindow();
@@ -1082,7 +1084,7 @@ public class PuffinActions {
     public final Action convertDiscreteToContinuous =
             new PuffinAction("Discrete to continuous…",
             "Converts a discrete suite into a continuous one.",
-            null, false, KeyEvent.VK_L) {
+            null, false, KeyEvent.VK_D) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
             app.showDiscreteToContinuousDialog();
@@ -1095,7 +1097,7 @@ public class PuffinActions {
     public final Action createBundle =
             new PuffinAction("Create bundle…",
             "Create a self-contained runnable bundle for the current analyses.",
-            null, false, null) {
+            null, false, KeyEvent.VK_B) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
             app.showCreateBundleDialog();

@@ -80,7 +80,14 @@ public final class Suite implements SampleGroup {
         return Collections.unmodifiableList(loadWarnings);
     }
 
-    void updateReverseIndex() {
+    /**
+     * Update this suit's internal index mapping samples to their indices
+     * within the suite. This method is only public to make it usable from
+     * testing code when constructing artificial suites; normal users of
+     * the Suite API do not need to call it explicitly.
+     * 
+     */
+    public void updateReverseIndex() {
         indicesBySample = new HashMap<>(getNumSamples());
         for (int i=0; i<samples.size(); i++) {
             indicesBySample.put(samples.get(i), i);
@@ -1294,7 +1301,8 @@ public final class Suite implements SampleGroup {
     }
 
     /**
-     * Returns the sites within this suite.
+     * Returns the sites within this suite. If there are no sites, the returned
+     * list will be empty, but it will never be null.
      *
      * @return the sites within this suite
      */

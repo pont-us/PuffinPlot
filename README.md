@@ -4,7 +4,8 @@ PuffinPlot is a program for palaeomagnetic data plotting and analysis,
 written by Pontus Lurcock. This readme describes the requirements for
 building PuffinPlot and its documentation from source, and is intended
 for developers rather than users. Users are advised to download the
-latest PuffinPlot release and consult the included user manual instead.
+latest PuffinPlot release from the project website at
+http://talvi.net/puffinplot/ and consult the included user manual.
 
 ## Building PuffinPlot
 
