@@ -36,19 +36,22 @@ public class AmsDataTest {
     private final String expectedName;
     private final double[] expectedTensor;
     private final double expectedSampleAz, expectedSampleDip;
+    private final double expectedFormAz, expectedFormDip;
     private final double expectedFTest;
     private final AmsData amsData;
     
     public AmsDataTest(String name, List<Double> tensorList, double sampleAz,
-            double sampleDip, double fTest) {
+            double sampleDip, double formAz, double formDip, double fTest) {
         final double[] tensor =
                 tensorList.stream().mapToDouble(Double::doubleValue).toArray();
         this.expectedName = name;
         this.expectedTensor = tensor;
         this.expectedSampleAz = sampleAz;
         this.expectedSampleDip = sampleDip;
+        this.expectedFormAz = formAz;
+        this.expectedFormDip = formDip;
         this.expectedFTest = fTest;
-        this.amsData = new AmsData(name, tensor, sampleAz, sampleDip, fTest);
+        this.amsData = new AmsData(name, tensor, sampleAz, sampleDip, formAz, formDip, fTest);
     }
     
     private static List<Double> listOf(double x0, double x1, double x2,
@@ -69,7 +72,9 @@ public class AmsDataTest {
               "test"+i,
                listOf(rnd.nextDouble(), rnd.nextDouble(), rnd.nextDouble(),
                       rnd.nextDouble(), rnd.nextDouble(), rnd.nextDouble()),
-               rnd.nextDouble(), rnd.nextDouble(), rnd.nextDouble()
+               rnd.nextDouble(), rnd.nextDouble(),
+               rnd.nextDouble(), rnd.nextDouble(),
+               rnd.nextDouble()
             };
         }
         
@@ -94,6 +99,16 @@ public class AmsDataTest {
     @Test
     public void testGetSampleDip() {
         assertEquals(expectedSampleDip, amsData.getSampleDip(), 0);
+    }
+
+    @Test
+    public void testGetFormAz() {
+        assertEquals(expectedFormAz, amsData.getFormAz(), 0);
+    }
+
+    @Test
+    public void testGetFormDip() {
+        assertEquals(expectedFormDip, amsData.getFormDip(), 0);
     }
 
     @Test

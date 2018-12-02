@@ -28,6 +28,7 @@ public final class AmsData {
     private final String name;
     private final double[] tensor;
     private final double sampleAz, sampleDip;
+    private final double formAz, formDip;
     private final double fTest;
 
     /**
@@ -38,14 +39,19 @@ public final class AmsData {
      * susceptibility anisotropy
      * @param sampleAz the azimuth of the sample's dip, in degrees
      * @param sampleDip the sample's dip, in degrees
+     * @param formAz the value of formAz
+     * @param formDip the value of formDip
      * @param fTest the F-test value as defined by Jelínek
      */
-    public AmsData(String name, double[] tensor, double sampleAz, double sampleDip,
-            double fTest) {
+    public AmsData(String name, double[] tensor,
+            double sampleAz, double sampleDip,
+            double formAz, double formDip, double fTest) {
         this.name = name;
         this.tensor = tensor;
         this.sampleAz = sampleAz;
         this.sampleDip = sampleDip;
+        this.formAz = formAz;
+        this.formDip = formDip;
         this.fTest = fTest;
     }
 
@@ -71,6 +77,18 @@ public final class AmsData {
      * @return the sample's dip in degrees */
     public double getSampleDip() {
         return sampleDip;
+    }
+
+    /** Returns the formation dip azimuth in degrees.
+     * @return the formation dip azimuth in degrees */
+    public double getFormAz() {
+        return formAz;
+    }
+
+    /** Returns the formation dip in degrees.
+     * @return the formation dip in degrees */
+    public double getFormDip() {
+        return formDip;
     }
 
     /** Returns the F-test value for the sample's anisotropy measurement.

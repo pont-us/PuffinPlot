@@ -1027,31 +1027,6 @@ public final class Suite implements SampleGroup {
         }
     }
 
-    private double getFormAz() {
-        for (Sample s: samples) {
-            final double v = s.getFormAz();
-            if (!Double.isNaN(v)) return v;
-        }
-        return 0;
-    }
-
-    private double getFormDip() {
-        for (Sample s: samples) {
-            final double v = s.getFormDip();
-            if (!Double.isNaN(v)) return v;
-        }
-        return 0;
-    }
-
-    private double getMagDev() {
-        for (Sample s: samples) {
-            final double v = s.getMagDev();
-            if (!Double.isNaN(v)) return v;
-        }
-        return 0;
-    }
-    
-    
     /**
      * Imports site locations from a CSV file.
      * 
@@ -1155,23 +1130,64 @@ public final class Suite implements SampleGroup {
             final AmsLoader amsLoader = new AmsLoader(file);
             allData.addAll(amsLoader.readFile());
         }
-        for (AmsData ad: allData) {
-            final String sampleName = ad.getName();
-            if (ad.getfTest() < 3.9715) continue;
+        for (AmsData amsData: allData) {
+            final String sampleName = amsData.getName();
+            if (amsData.getfTest() < 3.9715) continue;
             if (!containsSample(sampleName)) {
                 insertNewSample(sampleName);
             }
             final Sample sample = getSampleByName(sampleName);
             if (!sample.hasData()) {
-                double azimuth = ad.getSampleAz();
-                if (!magneticNorth) azimuth -= getMagDev();
-                sample.setCorrections(azimuth, ad.getSampleDip(),
-                        getFormAz(), getFormDip(), getMagDev());
+                double azimuth = amsData.getSampleAz();
+                if (!magneticNorth) {
+                    azimuth -= getFirstValidMagneticDeviation();
+                }
+                sample.setCorrections(azimuth,
+                        amsData.getSampleDip(),
+                        getFirstValidFormationAzimuth(),
+                        getFirstValidFormationDip(),
+                        getFirstValidMagneticDeviation());
             }
-            final double[] v = ad.getTensor();
+            final double[] v = amsData.getTensor();
             sample.setAmsFromTensor(v[0], v[1], v[2], v[3], v[4], v[5]);
         }
         updateReverseIndex();
+    }
+
+    /**
+     * @return the first valid (i.e. finite) formation azimuth for any sample
+     * in this suite, or 0 if there are none
+     */
+    private double getFirstValidFormationAzimuth() {
+        for (Sample s: samples) {
+            final double v = s.getFormAz();
+            if (!Double.isNaN(v)) return v;
+        }
+        return 0;
+    }
+
+    /**
+     * @return the first valid (i.e. finite) formation dip for any sample
+     * in this suite, or 0 if there are none
+     */
+    private double getFirstValidFormationDip() {
+        for (Sample s: samples) {
+            final double v = s.getFormDip();
+            if (!Double.isNaN(v)) return v;
+        }
+        return 0;
+    }
+
+    /**
+     * @return the first valid (i.e. finite) magnetic deviation for any sample
+     * in this suite, or 0 if there are none
+     */
+    private double getFirstValidMagneticDeviation() {
+        for (Sample s: samples) {
+            final double v = s.getMagDev();
+            if (!Double.isNaN(v)) return v;
+        }
+        return 0;
     }
 
     /**

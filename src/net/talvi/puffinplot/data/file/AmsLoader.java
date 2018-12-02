@@ -27,9 +27,7 @@ import java.util.List;
 import static java.lang.Double.parseDouble;
 
 /**
- * Turns an AGICO .ASC AMS file into a list of AMS tensors.
- *
- * @author pont
+ * Turns an AGICO .ASC AMS file into a list of AmsData objects.
  */
 
 public class AmsLoader {
@@ -112,9 +110,10 @@ public class AmsLoader {
             
             if (chunk[tensorHeader + 2].length != 8 ||
                 chunk[tensorHeader + 3].length != 8 ||
-                chunk[0].length < 1 ||
-                chunk[3].length < 2 ||
-                chunk[5].length < 2 ||
+                chunk[0].length < 1 || // sample name
+                chunk[3].length < 2 || // azimuth
+                chunk[5].length < 2 || // dip
+                chunk[10].length < 6 || // foliations / lineations
                 chunk[fTestHeader+2].length < 7) {
                 // The fields we need aren't in the expected positions.
                 throw new IOException("Data fields not found "+
@@ -134,7 +133,7 @@ public class AmsLoader {
                         (chunk[0][0], // sample name
                         tensor,
                         parseDouble(chunk[3][1]), // azimuth
-                        parseDouble(chunk[5][1]), // dip
+                        parseDouble(chunk[5][1]), 0, 0, // dip
                         parseDouble(fTestLine[fTestLine.length-3])
                         /* We count backwards from the end of the line for
                            the F-test result, because SAFYR has 7 fields
