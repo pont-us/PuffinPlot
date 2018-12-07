@@ -59,9 +59,9 @@ public class FileFormatTest {
                 );
         final List<Datum> data = ff.readLines(lines);
         checkData(data, new double[][] {
-            {0, -0.000154145985711346, 0.00111303493792548, 0.0000614355017155996, 7},
-            {0.020, -0.000410316523565281, 0.00073027305999604, 0.0000465447567892467, 7},
-            {0.040, -0.000357310155704129, 0.000702409617710834, -0.0000347900773511451, 7},
+            {0, -0.000154145985711346, 0.00111303493792548, 0.0000614355017155996, 7, 0, 90, 0, 0},
+            {0.020, -0.000410316523565281, 0.00073027305999604, 0.0000465447567892467, 7, 0, 90, 0, 0},
+            {0.040, -0.000357310155704129, 0.000702409617710834, -0.0000347900773511451, 7, 0, 90, 0, 0},
         });
     }
     
@@ -74,6 +74,10 @@ public class FileFormatTest {
             assertEquals(expected[2], datum.getMoment().y, delta);
             assertEquals(expected[3], datum.getMoment().z, delta);
             assertEquals(expected[4], datum.getVolume(), delta);
+            assertEquals(expected[5], datum.getSampAz(), delta);
+            assertEquals(expected[6], datum.getSampDip(), delta);
+            assertEquals(expected[7], datum.getFormAz(), delta);
+            assertEquals(expected[8], datum.getFormDip(), delta);
         }
     }
         

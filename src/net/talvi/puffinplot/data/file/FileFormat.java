@@ -110,6 +110,10 @@ public final class FileFormat {
         datum.setTreatType(treatmentType);
         datum.setDepth("0");
         datum.setDiscreteId("UNKNOWN");
+        datum.setSampAz(0);
+        datum.setSampDip(90);
+        datum.setFormAz(0);
+        datum.setFormDip(0);
         double dec = Double.NaN, inc = Double.NaN, intensity = Double.NaN;
         for (int i=0; i<fieldStrings.length; i++) {
             if (!columnMap.containsKey(i)) continue;
