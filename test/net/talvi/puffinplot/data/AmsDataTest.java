@@ -26,10 +26,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-/**
- *
- * @author pont
- */
 @RunWith(Parameterized.class)
 public class AmsDataTest {
     
@@ -51,7 +47,8 @@ public class AmsDataTest {
         this.expectedFormAz = formAz;
         this.expectedFormDip = formDip;
         this.expectedFTest = fTest;
-        this.amsData = new AmsData(name, tensor, sampleAz, sampleDip, formAz, formDip, fTest);
+        this.amsData = new AmsData(name, tensor, sampleAz, sampleDip,
+                formAz, formDip, fTest);
     }
     
     private static List<Double> listOf(double x0, double x1, double x2,

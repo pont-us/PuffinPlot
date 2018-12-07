@@ -25,6 +25,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 import static java.lang.Double.parseDouble;
+import java.util.regex.Matcher;
 
 /**
  * Turns an AGICO .ASC AMS file into a list of AmsData objects.
@@ -111,8 +112,8 @@ public class AmsLoader {
             if (chunk[tensorHeader + 2].length != 8 ||
                 chunk[tensorHeader + 3].length != 8 ||
                 chunk[0].length < 1 || // sample name
-                chunk[3].length < 2 || // azimuth
-                chunk[5].length < 2 || // dip
+                chunk[3].length < 2 || // sample azimuth
+                chunk[5].length < 2 || // sample dip
                 chunk[10].length < 6 || // foliations / lineations
                 chunk[fTestHeader+2].length < 7) {
                 // The fields we need aren't in the expected positions.
@@ -129,11 +130,22 @@ public class AmsLoader {
                     parseDouble(chunk[(tensorHeader + 3)][6]),
                     parseDouble(chunk[(tensorHeader + 3)][7])};
                 final String[] fTestLine = chunk[fTestHeader + 2];
-                final AmsData amsData = new AmsData
-                        (chunk[0][0], // sample name
+                final String foliation1 = chunk[10][1];
+                final Pattern foliationPattern =
+                        Pattern.compile("(\\d+)/(\\d+)");
+                final Matcher foliationMatch =
+                        foliationPattern.matcher(foliation1);
+                if (!foliationMatch.matches()) {
+                    throw new IOException("Malformed foliation \"" +
+                            foliation1 + "\"");
+                }
+                final AmsData amsData = new AmsData(
+                        chunk[0][0], // sample name
                         tensor,
-                        parseDouble(chunk[3][1]), // azimuth
-                        parseDouble(chunk[5][1]), 0, 0, // dip
+                        parseDouble(chunk[3][1]), // sample azimuth
+                        parseDouble(chunk[5][1]), // sample dip
+                        parseDouble(foliationMatch.group(1)), // fol. dip dir.
+                        parseDouble(foliationMatch.group(2)), // fol. dip
                         parseDouble(fTestLine[fTestLine.length-3])
                         /* We count backwards from the end of the line for
                            the F-test result, because SAFYR has 7 fields
@@ -141,9 +153,9 @@ public class AmsLoader {
                            SUSAR has only 6. */
                         );
                 result.add(amsData);
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException exception) {
                 throw new IOException("Malformed data "+
-                        "in file " + ascFile.getName());
+                        "in file " + ascFile.getName(), exception);
             }
         } while (true);
         return result;
