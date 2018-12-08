@@ -1117,12 +1117,23 @@ public final class Suite implements SampleGroup {
      * and SUSAR programs.
      *
      * @param files the ASC files to read
-     * @param magneticNorth {@code true} if the sample dip azimuths in the file
+     * @param magneticNorth {@code true} if the sample and formation dip
+     * azimuths in the file
      * are relative to magnetic north; {@code false} if they are relative to
      * geographic north
+     * @param overwriteSampleCorrection If importing to an existing sample,
+     * overwrite the sample's sample correction with the values specified
+     * in the ASC file. Otherwise, retain the values already set for the
+     * sample.
+     * @param overwriteFormationCorrection  If importing to an existing sample,
+     * overwrite the sample's formation correction with the values specified
+     * in the ASC file. Otherwise, retain the values already set for the
+     * sample.
      * @throws IOException if an I/O error occurred while reading the file
      */
-    public void importAmsFromAsc(List<File> files, boolean magneticNorth)
+    public void importAmsFromAsc(List<File> files, boolean magneticNorth,
+            boolean overwriteSampleCorrection,
+            boolean overwriteFormationCorrection)
             throws IOException {
         setSaved(false);
         final List<AmsData> allData = new ArrayList<>();
@@ -1137,15 +1148,32 @@ public final class Suite implements SampleGroup {
                 insertNewSample(sampleName);
             }
             final Sample sample = getSampleByName(sampleName);
-            if (!sample.hasData()) {
-                double azimuth = amsData.getSampleAz();
-                if (!magneticNorth) {
-                    azimuth -= getFirstValidMagneticDeviation();
+            if (sample.hasData()) {
+                /* Overwrite sample and formation corrections if
+                 * appropriate parameters passed.
+                 */
+                if (overwriteSampleCorrection) {
+                    sample.setCorrections(
+                            amsData.getSampleAz(), amsData.getSampleDip(),
+                            sample.getFormAz(), sample.getFormDip(),
+                            sample.getMagDev());
                 }
-                sample.setCorrections(azimuth,
-                        amsData.getSampleDip(),
-                        getFirstValidFormationAzimuth(),
-                        getFirstValidFormationDip(),
+                if (overwriteFormationCorrection) {
+                    sample.setCorrections(
+                            sample.getSampAz(), sample.getSampDip(),
+                            amsData.getFormAz(), amsData.getFormDip(),
+                            sample.getMagDev());
+                }
+            } else { // No demagnetization data in sample
+                double sampleAzimuth = amsData.getSampleAz();
+                double formationAzimuth = amsData.getFormAz();
+                if (!magneticNorth) {
+                    sampleAzimuth -= getFirstValidMagneticDeviation();
+                    formationAzimuth -= getFirstValidMagneticDeviation();
+                }
+                sample.setCorrections(
+                        sampleAzimuth, amsData.getSampleDip(),
+                        formationAzimuth, amsData.getFormDip(),
                         getFirstValidMagneticDeviation());
             }
             final double[] v = amsData.getTensor();

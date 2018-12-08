@@ -429,7 +429,9 @@ public class Sample {
                 sorted().distinct().toArray();
     }
     
-    /** Adds a data point to this sample.
+    /**
+     * Adds a data point to this sample.
+     * 
      * @param datum a data point to add to this sample
      */
     public void addDatum(Datum datum) {

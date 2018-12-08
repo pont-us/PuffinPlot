@@ -1124,20 +1124,15 @@ public class SuiteTest {
     
     @Test
     public void testImportAmsFromAsc() throws IOException {
-        final String filename = "LPA03091.ASC";
-        final InputStream dataStream =
-                TestFileLocator.class.getResourceAsStream(filename);
-        final Path filePath =
-                temporaryFolder.getRoot().toPath().resolve(filename);
-        Files.copy(dataStream, filePath);
+        Path filePath = extractAscFileFromResources();
         
         /*
          * Import to a sample that doesn't exist yet, with directions
          * relative to geographic north.
          */
-        
         syntheticSuite2.importAmsFromAsc(
-                Collections.singletonList(filePath.toFile()), false);
+                Collections.singletonList(filePath.toFile()), false,
+                false, false);
         assertEquals(11, syntheticSuite2.getNumSamples());
         final Sample sample =
                 syntheticSuite2.getSampleByName("LPA0309.1");
@@ -1169,9 +1164,15 @@ public class SuiteTest {
         datum.setSampDip(90);
         datum.setFormAz(0);
         datum.setFormDip(0);
+        
+        /* This will set the sample's sample/formation corrections
+         * from those of the datum.
+         */
         sample.addDatum(datum);
+        
         syntheticSuite2.importAmsFromAsc(
-                Collections.singletonList(filePath.toFile()), true);
+                Collections.singletonList(filePath.toFile()),
+                true, false, false);
         
         /*
          * The expected values are taken from the same "principal directions"
@@ -1185,6 +1186,34 @@ public class SuiteTest {
         assertEquals("0.99480 1.00400 1.00120 0.00160 0.01060 -0.00470",
                 syntheticSuite2.getSampleByName("LPA0309.1").getAms().
                         toTensorComponentString());
+        
+        /*
+         * Now we import a third time to the same sample. This time we
+         * set the corrections to arbitrary values beforehand, but
+         * request that they be overwritten by values read from the ASC
+         * file.
+         */
+        sample.setCorrections(17, 18, 19, 20, 0);
+        syntheticSuite2.importAmsFromAsc(
+                Collections.singletonList(filePath.toFile()),
+                true, true, true);
+        assertEquals("0.99303 1.01217 0.99480 0.00477 0.00079 0.00490",
+                syntheticSuite2.getSampleByName("LPA0309.1").getAms().
+                        toTensorComponentString());
+        assertEquals(28, sample.getSampAz(), delta);
+        assertEquals(0, sample.getSampDip(), delta);
+        assertEquals(0, sample.getFormAz(), delta);
+        assertEquals(0, sample.getFormDip(), delta);
+    }
+
+    private Path extractAscFileFromResources() throws IOException {
+        final String filename = "LPA03091.ASC";
+        final InputStream dataStream =
+                TestFileLocator.class.getResourceAsStream(filename);
+        final Path filePath =
+                temporaryFolder.getRoot().toPath().resolve(filename);
+        Files.copy(dataStream, filePath);
+        return filePath;
     }
     
     @Test

@@ -1032,7 +1032,7 @@ public class PuffinApp {
         }
         try {
             List<File> files = openFileDialog("Select AMS files");
-            getSuite().importAmsFromAsc(files, false);
+            getSuite().importAmsFromAsc(files, false, false, false);
             getMainWindow().suitesChanged();
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
