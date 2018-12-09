@@ -928,7 +928,14 @@ public class PuffinApp {
         updateDisplay();
     }
         
-    private List<File> openFileDialog(String title) {
+    /**
+     * Show an "open file" dialog.
+     * 
+     * @param title title for the dialog
+     * @return a list of the files selected by the user; may be empty
+     * if no files were selected
+     */
+    public List<File> openFileDialog(String title) {
         final File startingDir = lastUsedFileOpenDirs.get(title);
         // Returns null if none set, but JFileChooser handles it appropriately.
         List<File> files = Collections.emptyList();
@@ -1030,14 +1037,10 @@ public class PuffinApp {
         if (showErrorIfNoSuite()) {
             return;
         }
-        try {
-            List<File> files = openFileDialog("Select AMS files");
-            getSuite().importAmsFromAsc(files, false, false, false);
-            getMainWindow().suitesChanged();
-        } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-            errorDialog("Error importing AMS", ex.getLocalizedMessage());
-        }
+        final ImportAmsDialog importAmsDialog = new ImportAmsDialog(this);
+        importAmsDialog.setLocationRelativeTo(mainWindow);
+        importAmsDialog.setVisible(true);
+
     }
     
     /** <p>Shows an ‘open file’ dialog box; if the user selects a file,

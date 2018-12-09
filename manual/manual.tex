@@ -651,15 +651,21 @@ range of its values across all the samples at a site.
 \item[File\submenu Import data\submenu Import AMS\ldots] imports
   \caps{ams} data from a file and adds it to the current suite. The file
   must be in the \caps{.asc} format produced by the \caps{Safyr} and
-  \caps{Susar} programs distributed with \caps{Agico} kappabridges. The
-  \caps{ams} data is assigned to the appropriate samples within the
-  suite by matching the sample names specified in the \caps{asc} file
-  with the sample names for the demagnetization data. If the \caps{ams}
-  file contains data for samples not in the suite, these samples will be
-  created and added to the suite. \caps{Ams} data is not displayed by
-  default; the equal-area plot of \caps{ams} data can be activated from
-  the \ppcmd{Preferences} window. AMS import has been tested with data
-  from \caps{Safyr} versions 1.5 and 2.6 and \caps{Susar} version 4.0.
+  \caps{Susar} programs distributed with \caps{Agico} kappabridges.
+  (\caps{Ams} import has been tested with data from \caps{Safyr}
+  versions 1.5 and 2.6 and \caps{Susar} version 4.0.) The \caps{ams}
+  data is assigned to the appropriate samples within the suite by
+  matching the sample names specified in the \caps{asc} file with the
+  sample names for the demagnetization data. If the \caps{ams} file
+  contains data for samples not in the suite, these samples will be
+  created and added to the suite. PuffinPlot reads the sample correction
+  from the \caps{asc} file; it also reads the F1 (`foliation 1')
+  orientation and uses it as the formation correction. If \caps{asc}
+  data is being imported for existing samples, you can choose either to
+  keep the pre-existing sample and formation corrections, or to replace
+  one or both of them with the values read from the \caps{asc} file.
+  \caps{Ams} data is not displayed by default; the equal-area plot of
+  \caps{ams} data can be activated from the \ppcmd{Preferences} window.
 
 \item[File\submenu Page Setup\ldots] opens a window allowing you
 to change the paper size, orientation, and margins for printing.
@@ -679,6 +685,10 @@ to change the paper size, orientation, and margins for printing.
 \item[File\submenu Print site EA window\ldots] prints the contents of a
   separate window showing an equal-area plot of directions at the current
   site; see section~\ref{sec:menu-window} for more details.
+
+\item[File\submenu Run JavaScript script\ldots] runs a user-specified
+  external script written in the JavaScript programming language.
+  See section~\ref{sec:scripting} for details.
 
 \item[File\submenu Run Python script\ldots] runs a user-specified
   external script written in the Python programming language.
@@ -1114,14 +1124,14 @@ In general, support for other file formats is straighforward to add, and most
 tabular textual file formats can be opened using the \ppcmd{File\submenu
   Import data\ldots} function.
 
-\subsubsection{\label{sec:import-data}Importing data}
+\subsubsection{\label{sec:import-data}Importing data in a custom format}
 
-When \ppcmd{File\submenu Import data\ldots} is selected, PuffinPlot
-shows a window allowing you to describe a text-based, tabular file
-format; once you have specified a format, you can choose one or more
-files in that format, which PuffinPlot will then open. The file is
-assumed to contain one magnetic measurement per line. The file format
-specification consists of two parts: \emph{General settings} and
+When you open a file and select the \ppcmd{Custom format} filetype,
+PuffinPlot opens a dialog box allowing you to describe a text-based,
+tabular file format; once you have specified a format, you can choose
+one or more files in that format, which PuffinPlot will then open. The
+file is assumed to contain one magnetic measurement per line. The file
+format specification consists of two parts: \emph{General settings} and
 \emph{Column definitions}.
 
 \mypara{General settings} This part describes parameters relating to the
@@ -1172,11 +1182,14 @@ item of measurement data to be read.
 \item[Column no.] This is the number of the column to read; columns are
   numbered from left to right, starting at 1.
 
-\item[Column contents] This is the data to read from the specified column.
-  Note that not all data types need to be specified for a file format; at
-  minimum, it is sufficient to specify the demagnetization step the three
-  components of the magnetization vector (either as X, Y, and Z moments, or
-  as declination, inclination, and magnetization).
+\item[Column contents] This is the data to read from the specified
+  column. Note that not all data types need to be specified for a file
+  format; at minimum, it is sufficient to specify the demagnetization
+  step and the three components of the magnetization vector (either as
+  X, Y, and Z moments, or as declination, inclination, and
+  magnetization). For any other data types, PuffinPlot will set
+  reasonable default values if they are not specified in the file
+  format.
 
 \end{description}
 
