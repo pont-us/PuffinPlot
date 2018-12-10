@@ -105,7 +105,7 @@ Appendix~\ref{sec:citing-puffinplot} for further details.
 PuffinPlot is free software, distributed under the GNU General Public
 License. Please see the \ppcmd{LICENCE} file in the PuffinPlot archive
 for details. PuffinPlot is copyright 2012--2017 by Pontus Lurcock. The
-PuffinPlot website is located at \url{https://puffinplot.bitbucket.io/}.
+PuffinPlot website is located at \url{http://talvi.net/puffinplot}.
 
 \section{Installation}
 
@@ -129,7 +129,7 @@ Java 5.)
 \subsection{Obtaining and installing PuffinPlot}
 
 You may download the latest version of PuffinPlot from
-\url{https://bitbucket.org/pont/puffinplot/downloads}. PuffinPlot is
+\url{https://github.com/pont-us/PuffinPlot/releases}. PuffinPlot is
 distributed as a single zip archive file containing the program itself
 (in two different variants, as detailed below) and documentation. The
 documentation consists of this manual (in both HTML and PDF format) and
@@ -2025,9 +2025,10 @@ liberal terms:
 
 PuffinPlot was created with the assistance of a cornucopia of free and
 open source software; among the more significant tools are the Java
-language and platform, NetBeans, Ant, Emacs, \LaTeX\ (plus many
-\LaTeX\ packages), TeX4ht, the Gimp, and the Ubuntu operating system. I
-thank all who contributed to these projects.
+language and platform (along with many third-party Java libraries),
+NetBeans, Ant, Ivy, Emacs, \LaTeX\ (plus many \LaTeX\ packages), TeX4ht,
+the Gimp, and the Ubuntu operating system. I thank all who contributed
+to these projects.
 
 \subsection*{People}
 
@@ -2061,10 +2062,34 @@ existing functionality are fixed as quickly as possible when they are
 reported, and new features are added when time permits. The PuffinPlot
 project, including downloadable packages of all released versions and
 the complete source code, is hosted at
-\url{https://bitbucket.org/pont/puffinplot/downloads}. Bug reports,
-feature suggestions, and feedback of all kinds are always very welcome.
-Please send them to
+\url{http://talvi.net/puffinplot}. Bug reports, feature suggestions, and
+feedback of all kinds are always very welcome. Please send them to
 \textsf{\href{mailto:puffinplot@gmail.com}{puffinplot@gmail.com}}.
+
+\subsection*{How to report a bug}
+
+If you are reporting a bug, please be as specific as possible. Try to
+include as many as possible of the following:
+
+\begin{itemize}
+\item The actions that triggered the bug.
+\item What you expected to happen.
+\item What actually happened (i.e. the unexpected or buggy behaviour).
+\item The \ppcmd{PUFFIN-ERROR.txt} error report file, if PuffinPlot
+  crashed and wrote one.
+\item A copy of the data file(s) you were working on when the bug
+  appeared.
+\item If PuffinPlot produced incorrect output in a file, include a copy
+  of that file.
+\item If PuffinPlot shows incorrect output on the screen, include a
+  screenshot.
+\item The version of PuffinPlot that you're using.
+\item The operating system and Java version that PuffinPlot is running
+  on.
+\end{itemize}
+
+\noindent The more detail you include, the easier it will be to find and
+fix the bug quickly.
 
 \clearpage
 \appendix
