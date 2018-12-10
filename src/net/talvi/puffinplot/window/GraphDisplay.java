@@ -50,24 +50,35 @@ import org.freehep.util.UserProperties;
 import org.w3c.dom.DOMImplementation;
 
 /**
- * <p>A graphical UI component which lays out and draws one or more plots.
+ * A graphical UI component which lays out and draws one or more plots.
  * It may allow the user to resize and rearrange the plots,
  * and provides facilities to export the display to a 
  * file and to print it via the standard Java printing interface.
  * This is an abstract superclass which cannot be instantiated
  * directly; concrete subclasses must implement the {@code print}
- * method.</p>
+ * method.
  * 
  * @author pont
  */
 public abstract class GraphDisplay extends JPanel implements Printable {
+    
+    private static final Logger LOGGER =
+            Logger.getLogger("net.talvi.puffinplot");
+    
     private static final long serialVersionUID = -5730958004698337302L;
-    /** A map from internal plot names to the plots themselves. */
+
+    /**
+     * A map from internal plot names to the plots themselves.
+     */
     protected Map<String,Plot> plots;
-    /** A transformation applied to the graphics before painting them,
-     * intended to be used for zooming in and out of the display.
-     * It is initially set to the identity transformation. */
+
+    /**
+     * A transformation applied to the graphics before painting them, intended
+     * to be used for zooming in and out of the display. It is initially set to
+     * the identity transformation.
+     */
     protected AffineTransform zoomTransform;
+
     private final GdMouseListener mouseListener;
     private boolean dragPlotMode = false;
     private boolean draggingSelection = false;
@@ -95,9 +106,9 @@ public abstract class GraphDisplay extends JPanel implements Printable {
     }
 
     /**
-     * <p>Returns a string representation of all this display's plot sizes 
+     * Returns a string representation of all this display's plot sizes 
      * and positions. This is intended to be written to a preferences object, 
-     * allowing the plot layout to be saved and restored.</p>
+     * allowing the plot layout to be saved and restored.
      * 
      * @return a string representation of all this display's plot sizes
      * and positions
@@ -113,8 +124,11 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         return sb.toString();
     }
 
-    /** Returns a list of the plots which are currently visible.
-     * @return a list of the plots which are currently visible */
+    /**
+     * Returns a list of the plots which are currently visible.
+     *
+     * @return a list of the plots which are currently visible
+     */
     public List<Plot> getVisiblePlots() {
         final Collection<Plot> ps = getPlots();
         final List<Plot> result = new ArrayList<>(ps.size());
@@ -122,8 +136,11 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         return result;
     }
 
-    /** Returns a collection of all the plots in this graph display. 
-     * @return all the plots in this graph display. */
+    /**
+     * Returns a collection of all the plots in this graph display.
+     *
+     * @return all the plots in this graph display.
+     */
     public Collection<Plot> getPlots() {
         return plots.values();
     }
@@ -138,8 +155,11 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         return plots.get(name);
     }
 
-    /** Paints this graph display to a graphics context. 
-     * @param g the graphics context in which to paint */
+    /**
+     * Paints this graph display to a graphics context.
+     *
+     * @param g the graphics context in which to paint
+     */
     @Override
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
@@ -159,10 +179,12 @@ public abstract class GraphDisplay extends JPanel implements Printable {
                 Rectangle2D rUnzoomed = new Rectangle2D.Double();
                 rUnzoomed.setFrameFromDiagonal(
                         getAntiZoom().transform(mouseListener.startPoint, null),
-                        getAntiZoom().transform(mouseListener.currentDragPoint, null));
+                        getAntiZoom().transform(mouseListener.currentDragPoint,
+                                null));
                 for (Plot plot : visiblePlots) {
                     final boolean rightButton =
-                            mouseListener.getCurrentButton() == MouseEvent.BUTTON3;
+                            mouseListener.getCurrentButton() ==
+                            MouseEvent.BUTTON3;
                     plot.selectByRectangle(rUnzoomed, !rightButton);
                 }
                 for (Plot plot : visiblePlots) plot.draw(g2);
@@ -182,11 +204,16 @@ public abstract class GraphDisplay extends JPanel implements Printable {
                 g2.setComposite(WEAK_COMPOSITE);
                 Rectangle2D d = plot.getDimensions();
                 g2.fill(d);
-                g2.fill(new Rectangle2D.Double(d.getMinX(), d.getMinY(), margin, d.getHeight()));
-                g2.fill(new Rectangle2D.Double(d.getMaxX() - margin, d.getMinY(), margin, d.getHeight()));
-                g2.fill(new Rectangle2D.Double(d.getMinX(), d.getMinY(), d.getWidth(), margin));
-                g2.fill(new Rectangle2D.Double(d.getMinX(), d.getMaxY() - margin, d.getWidth(), margin));
-                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .5f));
+                g2.fill(new Rectangle2D.Double(d.getMinX(),
+                        d.getMinY(), margin, d.getHeight()));
+                g2.fill(new Rectangle2D.Double(d.getMaxX() - margin,
+                        d.getMinY(), margin, d.getHeight()));
+                g2.fill(new Rectangle2D.Double(d.getMinX(), d.getMinY(),
+                        d.getWidth(), margin));
+                g2.fill(new Rectangle2D.Double(d.getMinX(),
+                        d.getMaxY() - margin, d.getWidth(), margin));
+                g2.setComposite(AlphaComposite.
+                        getInstance(AlphaComposite.SRC_OVER, .5f));
                 plot.draw(g2);
                 g2.setPaint(Color.BLUE);
                 g2.setComposite(STRONG_COMPOSITE);
@@ -196,7 +223,8 @@ public abstract class GraphDisplay extends JPanel implements Printable {
                     final AttributedString as = new AttributedString(namePart);
                     as.addAttribute(TextAttribute.FAMILY, "SansSerif");
                     as.addAttribute(TextAttribute.SIZE, fontSize);
-                    as.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_ULTRABOLD);
+                    as.addAttribute(TextAttribute.WEIGHT,
+                            TextAttribute.WEIGHT_ULTRABOLD);
                     yPos += fontSize;
                     g2.drawString(as.getIterator(),
                         (float) d.getMinX()+margin, yPos);
@@ -207,42 +235,56 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         g2.setTransform(savedTransform);
     }
 
-    /** <p>Returns the inverse transform of the zoom transform.
-     * This can be used, for example, to map mouse clicks back
-     * to the graph display's original, untransformed co-ordinates.</p>
-     * @return the inverse transform of the zoom transform */
+    /**
+     * Returns the inverse transform of the zoom transform. This can be used,
+     * for example, to map mouse clicks back to the graph display's original,
+     * untransformed co-ordinates.
+     *
+     * @return the inverse transform of the zoom transform
+     */
     protected AffineTransform getAntiZoom() {
         try {
             return zoomTransform.createInverse();
         } catch (NoninvertibleTransformException ex) {
-            Logger.getLogger("net.talvi.puffinplot").log(Level.SEVERE, null, ex);
-            // This is a "can't-happen" so rethrowing an error is appropriate.
-            // It will be caught by the default handler.
+            LOGGER.log(Level.SEVERE, null, ex);
+            /*
+             * This is a "can't-happen" so rethrowing an error is appropriate.
+             * It will be caught by the default handler.
+             */
             throw new Error(ex);
         }
     }
     
-    /** Reports whether the plots are currently draggable by the user. 
-     * @return {@code true} if the plots are currently draggable by the user */
+    /**
+     * Reports whether the plots are currently draggable by the user.
+     *
+     * @return {@code true} if the plots are currently draggable by the user
+     */
     protected boolean isDragPlotMode() {
         return dragPlotMode;
     }
 
-    /** Sets whether the plots are draggable by the user.
+    /**
+     * Sets whether the plots are draggable by the user.
+     *
      * @param dragPlotMode {@code true} to make the plots draggable;
-     * {@code false} to make them non-draggable */
+     * {@code false} to make them non-draggable
+     */
     protected void setDragPlotMode(boolean dragPlotMode) {
         this.dragPlotMode = dragPlotMode;
     }
 
-    /** Resets each plot's size and position to their defaults. */
+    /**
+     * Resets each plot's size and position to their defaults.
+     */
     public void resetLayout() {
         for (Plot plot: plots.values()) plot.setDimensionsToDefault();
         repaint();
     }
 
-    /** A listener to handle mouse clicks and movements on this 
-      * graph display.*/
+    /**
+     * A listener to handle mouse clicks and movements on this graph display.
+     */
     private class GdMouseListener
     implements MouseListener, MouseMotionListener {
         /*
@@ -258,19 +300,26 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         private Datum previousDatum;
         private int currentButton;
         
-        /** Handles a mouse click event.
-         * @param e the mouse click event */
+        /**
+         * Handles a mouse click event.
+         *
+         * @param e the mouse click event
+         */
         @Override
         public void mouseClicked(MouseEvent e) {
-            final Point2D position = getAntiZoom().transform(e.getPoint(), null);
+            final Point2D position =
+                    getAntiZoom().transform(e.getPoint(), null);
             for (Plot plot: plots.values())
                 if (plot.getDimensions().contains(position))
                     plot.mouseClicked(position, e);
             repaint();
         }
         
-        /** Handles a mouse button release event.
-         * @param e the mouse button release event */
+        /**
+         * Handles a mouse button release event.
+         *
+         * @param e the mouse button release event
+         */
         @Override
         public void mouseReleased(MouseEvent e) {
             draggee = null;
@@ -279,7 +328,8 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         }
 
         private void updateDraggingPlot() {
-            double smallestSize = Double.MAX_VALUE; // when plots overlap, pick the smallest
+             // When plots overlap, pick the smallest.
+            double smallestSize = Double.MAX_VALUE;
             for (Plot plot : getVisiblePlots()) {
                 Rectangle2D dims = plot.getDimensions();
                 if (dims.contains(startPoint)) {
@@ -306,8 +356,11 @@ public abstract class GraphDisplay extends JPanel implements Printable {
             }
         }
 
-        /** Handles a mouse button press event.
-         * @param e the mouse button press event */
+        /**
+         * Handles a mouse button press event.
+         *
+         * @param e the mouse button press event
+         */
         @Override
         public void mousePressed(MouseEvent e) {
             draggee = null;
@@ -318,8 +371,11 @@ public abstract class GraphDisplay extends JPanel implements Printable {
             currentButton = e.getButton();
         }
         
-        /** Handles a mouse drag event. 
-         * @param e the mouse drag event */
+        /**
+         * Handles a mouse drag event.
+         *
+         * @param e the mouse drag event
+         */
         @Override
         public void mouseDragged(MouseEvent e) {
             Point2D thisPoint = getAntiZoom().transform(e.getPoint(), null);
@@ -355,8 +411,11 @@ public abstract class GraphDisplay extends JPanel implements Printable {
             }
         }
 
-        /** Returns the plot currently being dragged, if any. 
-         * @return the plot currently being dragged, if any */
+        /**
+         * Returns the plot currently being dragged, if any.
+         *
+         * @return the plot currently being dragged, if any
+         */
         public Plot getDraggingPlot() {
             return draggee;
         }
@@ -364,9 +423,11 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         @Override
         public void mouseEntered(MouseEvent e) {
         }
+        
         @Override
         public void mouseExited(MouseEvent e) {
         }
+        
         @Override
         public void mouseMoved(MouseEvent e) {
             final Point2D currentMovePoint = e.getPoint();
@@ -397,9 +458,12 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         }
     }
 
-    /** Prints all this display's plots to a graphics context.
+    /**
+     * Prints all this display's plots to a graphics context.
+     *
      * @param pf the page format for printing
-     * @param graphics the graphics context to which to draw */
+     * @param graphics the graphics context to which to draw
+     */
     protected void printPlots(PageFormat pf, Graphics graphics) {
         setDoubleBuffered(false);
         Graphics2D g2 = (Graphics2D) graphics;
@@ -415,15 +479,19 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         setDoubleBuffered(true);
     }
     
-    /** Writes the contents of this display to an SVG file using the Batik library.
-     * @param filename the name of the file to which to write */
+    /**
+     * Writes the contents of this display to an SVG file using the Batik
+     * library.
+     *
+     * @param filename the name of the file to which to write
+     */
     public void saveToSvgBatik(String filename) {
-        DOMImplementation domImpl =
+        final DOMImplementation domImpl =
             GenericDOMImplementation.getDOMImplementation();
-        String svgNS = "http://www.w3.org/2000/svg";
-        org.w3c.dom.Document document =
+        final String svgNS = "http://www.w3.org/2000/svg";
+        final org.w3c.dom.Document document =
                 domImpl.createDocument(svgNS, "svg", null);
-        org.apache.batik.svggen.SVGGraphics2D svgGenerator =
+        final org.apache.batik.svggen.SVGGraphics2D svgGenerator =
                 new org.apache.batik.svggen.SVGGraphics2D(document);
         svgGenerator.setUnsupportedAttributes(null);
         paint(svgGenerator);
@@ -440,13 +508,16 @@ public abstract class GraphDisplay extends JPanel implements Printable {
                 if (writer != null) writer.close();
                 if (outputStream != null) outputStream.close();
             } catch (IOException ex2) {
-                // do nothing
+                LOGGER.log(Level.SEVERE, null, ex2);
             }
-            Logger.getLogger(GraphDisplay.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
     }
     
-    /** Writes the contents of this display to an SVG file using the FreeHEP library.
+    /**
+     * Writes the contents of this display to an SVG file using the FreeHEP
+     * library.
+     *
      * @param filename the name of the file to which to write
      * @throws java.io.IOException if there is an error while writing the file
      *
