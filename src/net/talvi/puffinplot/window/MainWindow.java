@@ -126,7 +126,9 @@ public final class MainWindow extends JFrame {
         graphDisplay.addCurrentDatumListener(new CurrentDatumListener() {
             @Override
             public void datumChanged(Datum d) {
-                statusLabel.setText(d == null ? "---" : ">" + d.getAfZ());
+                statusLabel.setText(d == null ?
+                        "|" :
+                        d.toSummaryString());
             }
         });
         

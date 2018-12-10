@@ -19,6 +19,7 @@ package net.talvi.puffinplot.data;
 import static java.lang.Double.NaN;
 import static java.lang.Double.parseDouble;
 import static java.lang.Math.toRadians;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -30,6 +31,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 import static java.util.Objects.requireNonNull;
 import java.util.stream.Collectors;
+import net.talvi.puffinplot.Util;
 
 /**
  * <p>Datum is the fundamental data class of PuffinPlot. It represents the
@@ -905,6 +907,47 @@ public class Datum {
         }
         setMoment(Vec3.mean(data.stream().map(d -> d.getMoment()).
                 collect(Collectors.toList())));
+    }
+
+    public String toSummaryString() {
+        String positionInSample = "No sample";
+        if (getSample() != null) {
+            positionInSample = String.format(Locale.ENGLISH, "%d/%d",
+                    getSample().getData().indexOf(this) + 1,
+                    getSample().getNumData());
+        }
+        String magSusString = "";
+        if (Double.isFinite(getMagSus())) {
+            magSusString = String.format(Locale.ENGLISH, " | MS: %.3g",
+                    getMagSus());
+        }
+        final DecimalFormat angleFormat = 
+                new DecimalFormat("0.0;-0.0", Util.getDecimalFormatSymbols());
+        final DecimalFormat intensityFormat =
+                new DecimalFormat("0.00E00", Util.getDecimalFormatSymbols());
+        String treatmentLevel = "???";
+        switch (getTreatType()) {
+            case NONE:
+                treatmentLevel = "";
+                break;
+            case THERMAL:
+                treatmentLevel = String.format(Locale.ENGLISH, ", %.1f°C", getTemp());
+                break;
+            case IRM:
+                treatmentLevel = String.format(Locale.ENGLISH, ", %.0f mT", getIrmField()*1000);
+                break;
+            default:
+                treatmentLevel = String.format(Locale.ENGLISH, ", %.0f mT", getAfZ()*1000);
+        }
+        
+        return String.format("Step %s | %s%s | Dec: %s° | Inc: %s° | Mag: %s A/m%s",
+                positionInSample,
+                getTreatType().getNiceName(), treatmentLevel,
+                angleFormat.format(getMoment().getDecDeg()),
+                angleFormat.format(getMoment().getIncDeg()),
+                intensityFormat.format(getMoment().mag()),
+                magSusString
+                );
     }
 
 }

@@ -47,7 +47,9 @@ User interface
 -   Current suite name and "unsaved" indicator added to the title bar.
 -   When saving files, PuffinPlot now defaults to the last-used
     folder.
--   Status bar added to main window.
+-   Status bar added to main window. When the mouse pointer is over
+    a data point representing a demagnetization step, the status bar
+    shows details of this step.
 
 Graphing and data display
 -------------------------
@@ -65,6 +67,12 @@ Data import
     PMGSC, Paleomac, and Remasoft.
 -   PuffinPlot can now import the JR6 format developed by AGICO and
     supported by programs including REMA6W, Remasoft, and Paleomac.
+-   When importing from a custom file format, PuffinPlot now sets
+    default values for the sample and formation corrections if these
+	are not specified in the file.
+-   When importing AMS data, PuffinPlot can now read a formation correction
+    from the ASC file. It can also, optionally, overwrite existing sample
+    and formation corrections with values read from the ASC file.
 
 Data export
 -----------

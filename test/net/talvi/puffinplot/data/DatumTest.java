@@ -449,4 +449,42 @@ public class DatumTest {
         });
         assertEquals("17.0", d.getValue(DatumField.VIRT_MSJUMP));
     }
+    
+    @Test
+    public void testToSummaryString() {
+        final Sample sample = new Sample("test", null);
+        final Datum d0 = makeSimpleDatum(TreatType.THERMAL, 75, 24.1, -23.2, 7.123e-3);
+        final Datum d1 = makeSimpleDatum(TreatType.DEGAUSS_XYZ, 0.35, 0.0, 3.5, 1.45e-2);
+        sample.addDatum(d0);
+        sample.addDatum(d1);
+        d0.setMagSus(1.234);
+        assertEquals("Step 1/2 | Heating, 75.0°C | "
+                + "Dec: 24.1° | Inc: −23.2° | Mag: 7.12e−03 A/m | MS: 1.23",
+                d0.toSummaryString());
+        assertEquals("Step 2/2 | 3-axis degauss, 350 mT | "
+                + "Dec: 0.0° | Inc: 3.5° | Mag: 1.45e−02 A/m",
+                d1.toSummaryString());
+        
+    }
+    
+    private static Datum makeSimpleDatum(TreatType treatType,
+            double level, double dec, double inc, double moment) {
+        final Datum d = new Datum();
+        d.setTreatType(treatType);
+        switch (treatType) {
+            case THERMAL:
+                d.setTemp(level);
+                break;
+            case IRM:
+                d.setIrmField(level);
+                break;
+            default:
+                d.setAfX(level);
+                d.setAfY(level);
+                d.setAfZ(level);
+                
+        }
+        d.setMoment(Vec3.fromPolarDegrees(moment, inc, dec));
+        return d;
+    }
 }
