@@ -38,14 +38,12 @@ import java.security.NoSuchAlgorithmException;
  */
 public class JythonJarManager {
 
-    private static final long CORRECT_SIZE = 37021723;
-    private static final String CORRECT_SHA1
-            = "CDFB38BC6F8343BCF1D6ACCC2E1147E8E7B63B75";
-    public static final String SOURCE_URL_STRING
-            = "http://central.maven.org/maven2/"
-            + "org/python/jython-standalone/2.7.0/"
-            + "jython-standalone-2.7.0.jar";
-    //"http://localhost:8001/jython-standalone-2.7.0.jar";
+    private static final long CORRECT_SIZE = 41135585;
+    private static final String CORRECT_SHA1 =
+            "942C3294840DC9DFB3528D775F4D02A6D57C421F";
+    public static final String SOURCE_URL_STRING =
+            "http://central.maven.org/maven2/org/python/jython-standalone/" +
+            "2.7.1/jython-standalone-2.7.1.jar";
 
     /**
      * Returns the local path for the Jython jar file with the application data
@@ -57,11 +55,11 @@ public class JythonJarManager {
      */
     public static Path getPath() throws IOException {
         return Util.getAppDataDirectory().
-                resolve("jython-standalone-2.7.0.jar");
+                resolve("jython-standalone-2.7.1.jar");
     }
 
     /**
-     * Calculates the SHA-1 digest of the Jython jar file and verified it
+     * Calculates the SHA-1 digest of the Jython jar file and verifies it
      * against a hard-coded reference value.
      *
      * @param deleteIfIncorrect If this parameter is true, and if the SHA-1
@@ -84,11 +82,10 @@ public class JythonJarManager {
     }
 
     /**
-     * Checks whether the Jython jar file is installed locally and
-     * has the correct size. The size is checked against a known,
-     * hard-coded value. This method does <b>not</b> check the SHA-1 
-     * digest.
-     * 
+     * Checks whether the Jython jar file is installed locally and has the
+     * correct size. The size is checked against a known, hard-coded value. This
+     * method does <b>not</b> check the SHA-1 digest.
+     *
      * @param deleteIfWrongSize if true, and if the jar file
      * does not have the correct size, it will be deleted.
      * @return true iff the Jython jar file is locally installed
@@ -110,8 +107,7 @@ public class JythonJarManager {
             }
             return false;
         } else {
-            // jar installed and correct size
-            // (NB: we don't checksum it.)
+            // jar installed and correct size (NB: we don't checksum it.)
             return true;
         }
     }
@@ -140,5 +136,12 @@ public class JythonJarManager {
      */
     static void delete() throws IOException {
         getPath().toFile().delete();
+    }
+    
+    /**
+     * @return The expected size, in bytes, of the Jython jar.
+     */
+    public static long getExpectedDownloadSize() {
+        return CORRECT_SIZE;
     }
 }

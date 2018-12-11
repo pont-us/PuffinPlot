@@ -535,10 +535,29 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         graphics.dispose();
     }
     
+    /**
+     * Add a listener for changes to the current datum (i.e. the datum
+     * related to the point under the mouse pointer). A listener can
+     * be added multiple times, and will in that case be called multiple
+     * times.
+     * 
+     * @param listener the datum change listener to add
+     */
     public void addCurrentDatumListener(CurrentDatumListener listener) {
         currentDatumListeners.add(listener);
     }
     
+    /**
+     * Remove a datum change listener. If the specified listener has
+     * not been added, nothing will happen and no exception will be
+     * thrown. If the same listener has been added multiple times and
+     * there are multiple instances of it in the list of listeners,
+     * this method will only remove the first instance. This method
+     * can be called repeatedly to remove multiple instances of the
+     * same listener.
+     * 
+     * @param listener the datum change listener to remove
+     */
     public void removeCurrentDatumListener(CurrentDatumListener listener) {
         currentDatumListeners.remove(listener);
     }

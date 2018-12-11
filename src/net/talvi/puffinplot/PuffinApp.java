@@ -1366,28 +1366,32 @@ public class PuffinApp {
      */
     public void runPythonScriptInGui(String scriptPath)
             throws IOException, ScriptException  {
-        // Check whether there's a cached Jython JAR with the expected size.
-        // If not, delete and redownload. We don't calculate the SHA-1 here as
-        // doing it on every run would be slow,  but verifying the size is a
-        // very cheap operation.
+        /*
+         * Check whether there's a cached Jython JAR with the expected size. If
+         * not, delete and redownload. We don't calculate the SHA-1 here as
+         * doing it on every run would be slow, but verifying the size is a very
+         * cheap operation.
+         */
         if (!JythonJarManager.checkInstalled(true)) {
-
             final Object[] buttons = {"Download Jython", "Cancel"};
+            final String message = "<html><body><p style='width: 400px;'>"
+                    + "To run Python scripts, PuffinPlot first needs "
+                    + "to download the Jython package from the "
+                    + "Internet. Jython will be saved on this computer "
+                    + "for future use. The size of the download is "
+                    + "around %d MB. Do you wish to proceed with this "
+                    + "download now?</p>";
+            final long downloadSizeInMB =
+                    JythonJarManager.getExpectedDownloadSize() / 1_000_000;
             final int choice = JOptionPane.showOptionDialog(getMainWindow(),
-                    "<html><body><p style='width: 400px;'>"
-                            + "To run Python scripts, PuffinPlot first needs "
-                            + "to download the Jython package from the "
-                            + "Internet. Jython will be saved on this computer "
-                            + "for future use. The size of the download is "
-                            + "around 37 MB. Do you wish to proceed with this "
-                            + "download now?</p>",
+                    String.format(message, downloadSizeInMB),
                     "Jython download required",
                     JOptionPane.OK_CANCEL_OPTION,
                     JOptionPane.INFORMATION_MESSAGE,
-                    null,     // no custom icon
+                    null,        // no custom icon
                     buttons,
                     buttons[0]); // default option
-            if (choice==1) { // "Cancel" chosen
+            if (choice==1) {     // "Cancel" chosen
                 return;
             }
             
@@ -1396,8 +1400,10 @@ public class PuffinApp {
                     JythonJarManager.getPath());
             ProgressDialog.showDialog("Downloading Jython",
                     getMainWindow(), worker);
-            // The progress dialog is modal, so this will block until the
-            // download is complete or cancelled.
+            /*
+             * The progress dialog is modal, so this will block until the
+             * download is complete or cancelled.
+             */
             if (worker.isCancelled()) {
                 JythonJarManager.delete();
                 errorDialog("Download cancelled", "The Jython download was "
@@ -1427,7 +1433,7 @@ public class PuffinApp {
                     return;
                 }
             } catch (NoSuchAlgorithmException ex) {
-                Logger.getLogger(PuffinApp.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, null, ex);
             }
         }
         
