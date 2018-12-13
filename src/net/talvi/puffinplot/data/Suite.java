@@ -1629,14 +1629,26 @@ public final class Suite implements SampleGroup {
     }
     
     /**
-     * Clears all sites for this suite.
+     * Clears sites for this suite.
      */
-    public void clearSites() {
+    public void clearSites(Collection<Sample> samples) {
         setSaved(false);
-        sites = new ArrayList<>();
-        for (Sample s: samples) {
-            s.setSite(null);
-        }
+        samples.forEach(sample -> sample.setSite(null));
+        rebuildSiteListFromSamples();
+    }
+    
+    private void rebuildSiteListFromSamples() {
+        /*
+         * The distinct() filter is stable, so this produces sites in the order
+         * in which they're first encountered in the sample list. Usually we
+         * expect sites to consist of contiguous sequences of samples, in which
+         * case the ordering of any two sites S1 and S2 will correspond to the
+         * ordering of any two samples s1 and s2 such that s1 ∈ S1 and s2 ∈ S2.
+         * (More loosely: sites will be ordered like their samples.)
+         */
+        sites = getSamples().stream().map(sample -> sample.getSite()).
+                filter(Objects::nonNull).distinct().
+                collect(Collectors.toList());
     }
     
     /**

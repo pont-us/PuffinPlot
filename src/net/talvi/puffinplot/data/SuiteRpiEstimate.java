@@ -81,7 +81,7 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
      */
     public static SuiteRpiEstimate<MagSusSampleRpiEstimate>
         calculateWithMagSus(Suite nrmSuite, Suite msSuite) {
-        List<MagSusSampleRpiEstimate> rpis =
+        final List<MagSusSampleRpiEstimate> rpis =
                 new ArrayList<>(nrmSuite.getNumSamples());
         for (Sample nrmSample: nrmSuite.getSamples()) {
             final double nrm = nrmSample.getNrm();
@@ -122,14 +122,15 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
                 collect(Collectors.toList());
         final int nLevels = treatmentLevels.size();
         
-        /* We have to get steps by treatment type as well as level, to avoid
+        /*
+         * We have to get steps by treatment type as well as level, to avoid
          * accidentally retrieving the initial ARM-application step when looking
          * for a demag step with the same AF level. We need both the DEGAUSS_Z
-         * and DEGAUSS_XYZ types here, since both are routinely used for
-         * ARM demagnetization.
-         * 
-         * With Java 9, the ugly initialization below will be replaceable with
-         * a simple Set.of(TreatType.DEGAUSS_XYZ, TreatType.DEGAUSS_Z).
+         * and DEGAUSS_XYZ types here, since both are routinely used for ARM
+         * demagnetization.
+         *
+         * With Java 9, the ugly initialization below will be replaceable with a
+         * simple Set.of(TreatType.DEGAUSS_XYZ, TreatType.DEGAUSS_Z).
          */
         final Set<TreatType> demagTreatTypes =
                 Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
@@ -148,13 +149,13 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
                 for (double demagStep: treatmentLevels) {
                     final Datum nrmStep =
                             nrmSample.getDatumByTreatmentLevel(demagStep);
-
-                    // We have to treat the first ARM step as a special case,
-                    // since its treatment level will correspond to the ARM AF
-                    // field but we're actually interested in its AF demag
-                    // step, which is 0. We assume that this will just be the
-                    // first datum and fetch it by index. 
-                            
+                    /*
+                     * We have to treat the first ARM step as a special case,
+                     * since its treatment level will correspond to the ARM AF
+                     * field but we're actually interested in its AF demag step,
+                     * which is 0. We assume that this will just be the first
+                     * datum and fetch it by index.
+                     */
                     final Datum armStep = demagStep == 0 ?
                             armSample.getDatum(0) :
                             armSample.getDatumByTreatmentTypeAndLevel(

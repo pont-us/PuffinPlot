@@ -1731,7 +1731,7 @@ public class PuffinApp {
     public void calculateRpi() {
         if (getSuites().size() < 2) {
             errorDialog("Not enough suites for RPI", "An RPI calculation "
-                    + "requires two open suites: one for NRM, and one for"
+                    + "requires two open suites: one for NRM, and one for "
                     + "ARM.");
             return;
         }

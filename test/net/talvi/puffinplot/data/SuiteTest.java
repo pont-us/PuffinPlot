@@ -34,6 +34,7 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -859,15 +860,25 @@ public class SuiteTest {
     
     @Test
     public void testSetNamedSiteForSamplesAndClearSites() {
-        final String siteName = "site1";
-        syntheticSuite1.setNamedSiteForSamples(syntheticSuite1.getSamples(),
-                siteName);
-        assertEquals(1, syntheticSuite1.getSites().size());
-        for (Sample sample: syntheticSuite1.getSamples()) {
-            assertEquals(siteName, sample.getSite().getName());
+        final Suite suite = syntheticSuite1;
+        final String siteName1 = "site1";
+        suite.setNamedSiteForSamples(suite.getSamples(), siteName1);
+        assertEquals(1, suite.getSites().size());
+        for (Sample sample: suite.getSamples()) {
+            assertEquals(siteName1, sample.getSite().getName());
         }
-        syntheticSuite1.clearSites();
-        assertTrue(syntheticSuite1.getSites().isEmpty());
+        final String siteName0 = "site0";
+        suite.setNamedSiteForSamples(suite.getSamples().subList(0, 1), siteName0);
+        assertEquals(siteName0,
+                suite.getSampleByIndex(0).getSite().getName());
+        assertEquals(new HashSet(Arrays.asList(siteName0, siteName1)),
+                suite.getSites().stream().map(Site::getName).collect(Collectors.toSet())
+        );
+        suite.clearSites(suite.getSamples().subList(0, 1));
+        assertEquals(Arrays.asList(siteName1),
+                suite.getSites().stream().map(Site::getName).collect(Collectors.toList()));
+        suite.clearSites(suite.getSamples());
+        assertTrue(suite.getSites().isEmpty());
     }
 
     @Test
