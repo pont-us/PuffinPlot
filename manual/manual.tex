@@ -626,6 +626,13 @@ range of its values across all the samples at a site.
   and each line within the file contains the \caps{irm} field strength and
   the magnetization intensity of the sample after application of that field.
 
+\item[File\submenu Export data\submenu Export bundle\ldots] creates a
+  \emph{data bundle} from the current suite. This is a zip archive
+  containing the suite data and analysis parameters, calculation
+  results, and other files useful for exploring or reproducing the
+  results. Data bundles are described in more detail in
+  Section~\ref{sec:bundle}.
+
 \item[File\submenu Export graphics] is a submenu with various options
   for exporting the plots for the current and selected samples.
   See section~\ref{sec:graphics-export} for full details.
@@ -809,6 +816,9 @@ CiLpA-10-53 & 3-4,9-11 & Lp-53 \\
   equally thick sites. Each site is named after the shallowest depth within
   it.
 
+\item[Edit\submenu Edit sites\submenu Clear sites] removes all site names
+  in the current suite.
+  
 \item[Edit\submenu Hide steps] hides all the selected treatment steps in all
   the selected samples. This removes them from all the graphical plots (which
   will be rescaled to avoid unnecessary blank space), but not from the data
@@ -960,46 +970,51 @@ all the selected samples, not just the current sample.
   saved using the \ppcmd{File\submenu Export data\submenu Export multi-suite
     calculations\ldots} menu item.
 
-\end{menuitemlist}
+\item[Calculations\submenu \caps{ams}] is a submenu containing various
+  functions for \caps{ams} calculation. PuffinPlot can show the results
+  of statistical calculations on \caps{ams} tensors, giving mean
+  directions and confidence ellipses for the principal axes by one of
+  three methods; at present, however, these calculations cannot be
+  performed by PuffinPlot itself. Instead, it makes use of two Python
+  scripts from the PmagPy suite \citep{tauxe2010paleomagnetism},
+  \ppcmd{bootams.py} and \ppcmd{s\_hext.py}. In order to calculate
+  \caps{ams} statistics, these scripts must first be installed on the
+  computer running PuffinPlot, and the folder containing them must be
+  specified in the \ppcmd{Preferences} window. The PmagPy programs may
+  be obtained from \url{http://earthref.org/PMagPy/}. All \caps{ams}
+  calculations operate on the currently selected samples, except for
+  \ppcmd{Clear \caps{ams}}, which operates on the entire suite.
+  \cite{tauxe1998directions} and chapter 13 of
+  \cite{tauxe2010paleomagnetism} give more details of tensor statistics,
+  particularly with regard to the application of bootstrap methods.
 
-\mypara{\caps{Ams} calculations} PuffinPlot can show the results of
-statistical calculations on \caps{ams} tensors, giving mean directions
-and confidence ellipses for the principal axes by one of three methods;
-at present, however, these calculations cannot be performed by
-PuffinPlot itself. Instead, it makes use of two Python scripts from the
-PmagPy suite \citep{tauxe2010paleomagnetism}, \ppcmd{bootams.py} and
-\ppcmd{s\_hext.py}. In order to calculate \caps{ams} statistics, these
-scripts must first be installed on the computer running PuffinPlot, and
-the folder containing them must be specified in the \ppcmd{Preferences}
-window. The PmagPy programs may be obtained from
-\url{http://earthref.org/PMagPy/}.
+\item[Calculations\submenu \caps{ams}\submenu Calculate bootstrap
+  \caps{ams}] calculates bootstrap statistics using the
+  \ppcmd{bootams.py} program, producing Kent error ellipses which are
+  shown on the \caps{ams} plot in the main window.
 
-All \caps{ams} calculations operate on the currently selected samples.
-\cite{tauxe1998directions} and chapter 13 of \cite{tauxe2010paleomagnetism}
-give more details of tensor statistics, particularly with regard to the
-application of bootstrap methods.
+\item[Calculations\submenu \caps{ams}\submenu Parametric bootstrap
+  \caps{ams}] calculates bootstrap statistics using the
+  \ppcmd{bootams.py} program, producing Kent error ellipses which are
+  shown on the \caps{ams} plot. It differs from the previous function in
+  employing a parametric bootstrap, which can provide more realistic
+  confidence intervals for small numbers of samples on the (often
+  reasonable) assumption that measurement uncertainties are normally
+  distributed across the selected samples.
 
-\begin{menuitemlist}
+\item[Calculations\submenu \caps{ams}\submenu Calculate Hext on
+  \caps{ams}] calculates \cite{hext1963tensors} statistics using the
+  \ppcmd{s\_hext.py} program and displays the mean directions and error
+  ellipses on the \caps{ams} plot.
 
-\item[Calculations\submenu Calculate bootstrap \caps{ams}] calculates
-bootstrap statistics using the \ppcmd{bootams.py} program, producing
-Kent error ellipses which are shown on the \caps{ams} plot in the main
-window.
+\item[Calculations\submenu \caps{ams}\submenu Clear \caps{ams}
+  calculations] Clears any previously done bootstrap and Hext
+  calculations.
 
-\item[Calculations\submenu Parametric bootstrap \caps{ams}] calculates
-bootstrap statistics using the \ppcmd{bootams.py} program, producing Kent
-error ellipses which are shown on the \caps{ams} plot. It differs from the
-previous function in employing a parametric bootstrap, which can provide more
-realistic confidence intervals for small numbers of samples on the (often
-reasonable) assumption that measurement uncertainties are normally
-distributed across the selected samples.
-
-\item[Calculations\submenu Calculate Hext on \caps{ams}] calculates
-\cite{hext1963tensors} statistics using the \ppcmd{s\_hext.py} program
-and displays the mean directions and error ellipses on the \caps{ams} plot.
-
-\item[Calculations\submenu Clear \caps{ams} calculations] Clears
-any previously done bootstrap and Hext calculations.
+\item[Calculate RPI\ldots] calculates relative palaeointensity using two
+  open suites. One suite provides the \caps{nrm}, the other provides the
+  normalizing value from \caps{arm} or magnetic susceptibility.
+  \caps{Rpi} calculations are saved directly to a \caps{csv} file.
 
 \end{menuitemlist}
 
@@ -1986,19 +2001,56 @@ suite.saveCalcsSample(output_file)
   \lstset{language=Python}
 \begin{lstlisting}
 # This script goes through all the data in the current suite.
-# For any datum that doesn't have a magnetic susceptibility
+# For any treatment step that doesn't have a magnetic susceptibility
 # measurement, it sets the magnetic susceptibility to zero.
 
-suite = puffin_app.getSuite()          # find the current suite
+suite = puffin_app.getSuite()         # Find the current suite.
 
-for sample in suite.getSamples(): # For every sample in the suite,
-    for datum in sample.getData():     # and for every datum in the sample,
-        if not datum.hasMagSus():      # if it doesn't have a mag. sus. value,
-            datum.setMagSus(0)         # set the mag. sus. to 0.
+for sample in suite.getSamples():     # For every sample in the suite,
+    for step in sample.getData():     # and for every step in the sample,
+        if not step.hasMagSus():      # if it doesn't have a m.s. value,
+            step.setMagSus(0)         # set the m.s. to 0.
 \end{lstlisting}
 \end{figure}
 
-%\newpage
+\section{Creating a data bundle \label{sec:bundle}}
+
+PuffinPlot can export a suite as a data bundle, intended mainly as an
+aid to reproducible research. It provides a straightforward way to
+package up all the relevant data and analysis parameters. Using the
+contents of a data bundle both the data and analysis techniques can be
+browsed in PuffinPlot, and calculation results can be reused as they are
+or regenerated from scratch. The data bundle is useful both for personal
+storage of research results, and for public archiving or distribution,
+for example as supporting material submitted with a manuscript for
+publication.
+
+The data bundle is a zip archive containing the following files:
+
+\begin{description}
+
+\item[PuffinPlot data file] This is simply a copy of the current .ppl
+  data file, containing palaeomagnetic measurements and analysis
+  parameters such as site definitions and demagnetization steps selected
+  for PCA.
+
+\item[Sample, site, and suite calculations] exported as CSV files. If
+  no sites are defined for the suite, the site calculations are omitted.
+
+\item[Calculation scripts] which can be used to run PuffinPlot to
+  process the data file and reproduce the calculations automatically.
+
+\item[PuffinPlot jar file.] This is a software archive containing the
+  PuffinPlot program itself. Including this file in the bundle means
+  that only a Java environment is necessary to re-run or modify the
+  calculations. However, its inclusion significantly increases the size
+  of the bundle, so it may optionally be omitted.
+  
+\item[README file] describing the contents of the archive and explaining
+  how the data can be inspected and used.
+  
+\end{description}
+
 
 \section{Acknowledgements}
 
