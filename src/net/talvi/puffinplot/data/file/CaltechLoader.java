@@ -35,7 +35,9 @@ import static net.talvi.puffinplot.data.file.TwoGeeHelper.*;
 import static net.talvi.puffinplot.Util.parseDoubleSafely;
 
 /**
- * A file loader for CIT (Caltech) data files.
+ * A file loader for CIT (Caltech) data files. This code is informed in part
+ * by the file format description at
+ * http://cires1.colorado.edu/people/jones.craig/PMag_Formats.html .
  *
  * @author pont
  */
@@ -46,13 +48,15 @@ public class CaltechLoader extends AbstractFileLoader {
     private final File file;
     private final File parentDir; // for locating associated files.
     private LineNumberReader reader = null;
-    /* NB: this probably won't work for Caltech "NRM" files, which apparently
-     * use slightly different field widths.
-     * I don't have any of these files to test with at present,
-     * so for now am not supporting them. */
-    private final String patternString = "^(..)(....)(......)(......)(......)(......)"
-                + "(.........)(......)(......)(......)(.........)(.........)"
-                + "(.........)(.........)(...........)(........)";
+    /*
+     * NB: this probably won't work for Caltech "NRM" files, which apparently
+     * use slightly different field widths. I don't have any of these files to
+     * test with at present, so for now am not supporting them.
+     */
+    private final String patternString =
+            "^(..)(....)(......)(......)(......)(......)" +
+            "(.........)(......)(......)(......)(.........)(.........)" +
+            "(.........)(.........)(...........)(........)";
     private final Pattern pattern = Pattern.compile(patternString);
     
     /**
@@ -99,37 +103,50 @@ public class CaltechLoader extends AbstractFileLoader {
         try (BufferedReader subReader =
                 new BufferedReader(new FileReader(file))) {
             String line;
-            /* "In the first line the first four characters are the
-            locality id, the next 9 the sample id, and the
-            remainder (to 255) is a sample comment."  */
+            /*
+             * "In the first line the first four characters are the locality id,
+             * the next 9 the sample id, and the remainder (to 255) is a sample
+             * comment."
+             * http://cires1.colorado.edu/people/jones.craig/PMag_Formats.html
+             */
             line = subReader.readLine();
             int lastPosition = line.length() > 13 ? 13 : line.length();
             final String sampleName = line.substring(4, lastPosition);
             
-            /* "the first character is ignored, the next 6 comprise the
-            * stratigraphic level (usually in meters). The remaining fields are
-            * all the same format: first character ignored (should
-            * be a blank space) and then 5 characters used. These are the core
-            * strike, core dip, bedding strike, bedding dip, and core volume or mass." */
+            /*
+             * "the first character is ignored, the next 6 comprise the
+             * stratigraphic level (usually in meters). The remaining fields are
+             * all the same format: first character ignored (should be a blank
+             * space) and then 5 characters used. These are the core strike,
+             * core dip, bedding strike, bedding dip, and core volume or mass."
+             * http://cires1.colorado.edu/people/jones.craig/PMag_Formats.html
+             */
             final String sampleData = subReader.readLine();
-            final double stratLev = parseDoubleSafely(sampleData.substring(1, 7));
-            final double coreStrike = parseDoubleSafely(sampleData.substring(8, 13));
-            final double coreDip = parseDoubleSafely(sampleData.substring(14, 19));
-            final double bedStrike = parseDoubleSafely(sampleData.substring(20, 25));
-            final double bedDip = parseDoubleSafely(sampleData.substring(26, 31));
+            final double stratLev =
+                    parseDoubleSafely(sampleData.substring(1, 7));
+            final double coreStrike =
+                    parseDoubleSafely(sampleData.substring(8, 13));
+            final double coreDip =
+                    parseDoubleSafely(sampleData.substring(14, 19));
+            final double bedStrike =
+                    parseDoubleSafely(sampleData.substring(20, 25));
+            final double bedDip =
+                    parseDoubleSafely(sampleData.substring(26, 31));
+
+            /*
+             * The example files I have seem to use more than 5 characters for
+             * core volume or mass, so I am using the whole rest of the line for
+             * this field, since it's the last one anyway.
+             */
+            final double coreVolOrMass =
+                    parseDoubleSafely(sampleData.substring(32));
             
-            /* The example files I have seem to use more than 5 characters for
-            * core volume or mass, so I am using the whole rest of the line
-            * for this field, since it's the last one anyway.
-            */
-            final double coreVolOrMass = parseDoubleSafely(sampleData.substring(32));
-            
-            /* According to the Paleomag manual, data should start here.
-            * However, example files from JMG all have line 3 blank.
-            * So we assume that data lines start here, but check for blank
-            * lines before attempting to interpret them.
-            */
-            
+            /*
+             * According to the PaleoMag manual, data should start here.
+             * However, example files from JMG all have line 3 blank. So we
+             * assume that data lines start here, but check for blank lines
+             * before attempting to interpret them.
+             */
             while ((line = subReader.readLine()) != null) {
                 if (line.trim().isEmpty()) continue;
                 Datum d = lineToDatum(line);
@@ -151,7 +168,8 @@ public class CaltechLoader extends AbstractFileLoader {
 
         final Matcher matcher = pattern.matcher(pmagLine);
         matcher.find();
-        /*  1 demag type: AF, TT (thermal), CH (chemical)
+        /*
+         *  1 demag type: AF, TT (thermal), CH (chemical)
          *  2 demag level (degC, mT)
          *  3 geographic declination
          *  4 geographic inclination
@@ -169,8 +187,11 @@ public class CaltechLoader extends AbstractFileLoader {
          * 16 time
          */
         
-        // seems likely that 9 & 10 are dec and inc in specimen co-ordinates
-        // -- confirmed by examination of pmagpy magic import scripts
+        /*
+         * It seems likely that 9 and 10 are declination and inclination in
+         * specimen co-ordinates -- confirmed by examination of pmagpy magic
+         * import scripts.
+         */
         final double intens = Double.parseDouble(matcher.group(7));
         final double inc = Double.parseDouble(matcher.group(10));
         final double dec = Double.parseDouble(matcher.group(9));
@@ -179,7 +200,8 @@ public class CaltechLoader extends AbstractFileLoader {
         try {
             demagLevel = Double.parseDouble(demagLevelString) / 1000.0;
         } catch (NumberFormatException e) {
-            // do nothing -- defaults to zero
+            // TODO no action needed since it defaults to zero, but
+            // should log this
         }
         Datum d = new Datum(gaussToAm(Vec3.fromPolarDegrees(intens, inc, dec)));
         d.setMeasType(MeasType.DISCRETE);

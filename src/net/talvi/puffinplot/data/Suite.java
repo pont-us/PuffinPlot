@@ -1149,8 +1149,9 @@ public final class Suite implements SampleGroup {
             }
             final Sample sample = getSampleByName(sampleName);
             if (sample.hasData()) {
-                /* Overwrite sample and formation corrections if
-                 * appropriate parameters passed.
+                /*
+                 * Overwrite sample and formation corrections if appropriate
+                 * parameters passed.
                  */
                 if (overwriteSampleCorrection) {
                     sample.setCorrections(
@@ -1168,6 +1169,13 @@ public final class Suite implements SampleGroup {
                 double sampleAzimuth = amsData.getSampleAz();
                 double formationAzimuth = amsData.getFormAz();
                 if (!magneticNorth) {
+                    /*
+                     * Since there's no existing data for this sample from
+                     * which to determine the magnetic deviation, we
+                     * take it from the another sample in the suite, on the
+                     * assumption that it will be the same throughout the
+                     * suite.
+                     */
                     sampleAzimuth -= getFirstValidMagneticDeviation();
                     formationAzimuth -= getFirstValidMagneticDeviation();
                 }
@@ -1180,30 +1188,6 @@ public final class Suite implements SampleGroup {
             sample.setAmsFromTensor(v[0], v[1], v[2], v[3], v[4], v[5]);
         }
         updateReverseIndex();
-    }
-
-    /**
-     * @return the first valid (i.e. finite) formation azimuth for any sample
-     * in this suite, or 0 if there are none
-     */
-    private double getFirstValidFormationAzimuth() {
-        for (Sample s: samples) {
-            final double v = s.getFormAz();
-            if (!Double.isNaN(v)) return v;
-        }
-        return 0;
-    }
-
-    /**
-     * @return the first valid (i.e. finite) formation dip for any sample
-     * in this suite, or 0 if there are none
-     */
-    private double getFirstValidFormationDip() {
-        for (Sample s: samples) {
-            final double v = s.getFormDip();
-            if (!Double.isNaN(v)) return v;
-        }
-        return 0;
     }
 
     /**

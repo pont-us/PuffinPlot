@@ -55,6 +55,7 @@ public class ImportAmsDialog extends javax.swing.JDialog {
         cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Import AMS data from ASC file");
 
         overwriteSampleCorrectionCheckBox.setText("Overwrite existing sample orientations");
         overwriteSampleCorrectionCheckBox.addActionListener(new java.awt.event.ActionListener() {

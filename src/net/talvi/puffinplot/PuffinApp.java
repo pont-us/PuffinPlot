@@ -68,6 +68,8 @@ import java.util.stream.Collectors;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import javax.swing.Box;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -83,14 +85,13 @@ import net.talvi.puffinplot.window.*;
 import org.freehep.graphicsbase.util.UserProperties;
 
 /**
- * This class constitutes the main PuffinPlot application.
- * Instantiating it starts the PuffinPlot desktop application and opens 
- * the main window. Most of {@code PuffinApp}'s
- * functionality involves interfacing the user interface to the classes
- * which handle the actual data. Most of the actions defined in
- * {@link PuffinActions} act as thin wrappers around one or a few calls 
- * to {@code PuffinApp}. Most of {@code PuffinApp}'s interaction with the
- * data is via the {@link Suite}, {@link Site}, and {@link Sample} classes.
+ * Instantiating {@code PuffinApp} starts the PuffinPlot desktop application. It
+ * starts with no visible windows; a call to {@link PuffinApp#show()} will open
+ * the main window. {@code PuffinApp}'s main responsibility is connecting the
+ * GUI classes to the classes which handle the actual data. Most of the actions
+ * defined in {@link PuffinActions} act as thin wrappers around one or a few
+ * calls to {@code PuffinApp}. The most significant data classes used in
+ * {@code PuffinApp} are {@link Suite}, {@link Site}, and {@link Sample}.
  */
 public class PuffinApp {
 
@@ -1804,18 +1805,33 @@ public class PuffinApp {
     /**
      * Show the dialog for creating and exporting a data and code bundle.
      */
-    public void showCreateBundleDialog() {        
+    public void showCreateBundleDialog() {
         if (getSuite() == null) {
             errorDialog("No suite loaded", "PuffinPlot cannot create a bundle, "
                     + "as there is no data suite loaded.");
             return;
         }
         
-        final Path zipPath = Paths.get(getSavePath("Choose bundle location",
-                ".zip", "ZIP archive"));
+        final JCheckBox includeJarCheckBox =
+                new JCheckBox("Include PuffinPlot in bundle");
+        final int selectedOption = JOptionPane.showConfirmDialog(
+                getMainWindow(), includeJarCheckBox, "Create bundle",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (selectedOption == JOptionPane.CANCEL_OPTION) {
+            return;
+        }
+        final boolean includeJar = includeJarCheckBox.isSelected();
+        
+        final String zipPathString = getSavePath("Choose bundle location",
+                ".zip", "ZIP archive");
+        if (zipPathString == null) {
+            return;
+        }
+        final Path zipPath = Paths.get(zipPathString);
         try {
             Bundle.createBundle(getSuite(), zipPath, getCorrection(),
-                    getSelectedSamples(), getSelectedSites());
+                    getSelectedSamples(), getSelectedSites(),
+                    includeJar);
         } catch (IOException | PuffinUserException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
             errorDialog("Error creating bundle", ex.getLocalizedMessage());

@@ -43,7 +43,8 @@ public class Bundle {
             Logger.getLogger("net.talvi.puffinplot");
 
     public static void createBundle(Suite suite, Path bundlePath,
-            Correction correction, List<Sample> samples, List<Site> sites)
+            Correction correction, List<Sample> samples, List<Site> sites,
+            boolean copyJarFile)
             throws IOException, PuffinUserException {
         LOGGER.info("Starting bundle creation.");
         
@@ -73,14 +74,17 @@ public class Bundle {
 
         final InputStream readMeStream =
                 Bundle.class.getResourceAsStream("bundle-readme.md");
-        /* NB: this file reading technique will convert all line endings
-         * to \n. It's not a problem here since they're all \n anyway.
+        /*
+         * NB: this file reading technique will convert all line endings to \n.
+         * It's not a problem here since they're all \n anyway.
          */
         final String readMeContents =
                 new BufferedReader(new InputStreamReader(readMeStream)).
                         lines().collect(Collectors.joining("\n", "", "\n"));        
         writeFile(tempDir, "README.md", false, readMeContents);
-        copyPuffinPlotJarFile(tempDir);
+        if (copyJarFile) {
+            copyPuffinPlotJarFile(tempDir);
+        }
         Util.zipDirectory(tempDir, bundlePath);
     }
     

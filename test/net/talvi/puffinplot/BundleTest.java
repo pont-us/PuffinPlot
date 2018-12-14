@@ -43,7 +43,7 @@ public class BundleTest {
         final Path bundlePath = temporaryFolder.getRoot().toPath().
                 resolve("bundle.zip");
         Bundle.createBundle(suite, bundlePath, Correction.NONE,
-                suite.getSamples(), suite.getSites());
+                suite.getSamples(), suite.getSites(), true);
         final File bundleFile = bundlePath.toFile();
         checkZipContents(bundleFile, "README.md",
                 "data.ppl", "data-sample.csv", "data-suite.csv",
@@ -58,7 +58,7 @@ public class BundleTest {
                 resolve("bundle.zip");
         suite.setSitesForSamples(suite.getSamples(), site -> "only_site_name");
         Bundle.createBundle(suite, bundlePath, Correction.NONE,
-                suite.getSamples(), suite.getSites());
+                suite.getSamples(), suite.getSites(), true);
         final File bundleFile = bundlePath.toFile();
         checkZipContents(bundleFile, "README.md",
                 "data.ppl", "data-sample.csv", "data-suite.csv",
