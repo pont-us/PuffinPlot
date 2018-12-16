@@ -73,6 +73,9 @@ Data import
 -   When importing AMS data, PuffinPlot can now read a formation correction
     from the ASC file. It can also, optionally, overwrite existing sample
     and formation corrections with values read from the ASC file.
+-   Import from Caltech (CIT) files has been improved: demagnetization
+    levels for thermal treatment are now read correctly, as is the "NRM"
+    treatment code.
 
 Data export
 -----------
@@ -83,8 +86,8 @@ Data export
 -   PuffinPlot can now export a bundle containing both data and a
     processing script, allowing analyses to be reproduced automatically.
 
-Bug fixes
----------
+Miscellaneous bug fixes
+-----------------------
 
 -   Custom flags and notes are now included in exported sample data.
 -   PDF export no longer produces an extra page.

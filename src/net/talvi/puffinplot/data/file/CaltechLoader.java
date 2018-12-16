@@ -169,8 +169,8 @@ public class CaltechLoader extends AbstractFileLoader {
         final Matcher matcher = pattern.matcher(pmagLine);
         matcher.find();
         /*
-         *  1 demag type: AF, TT (thermal), CH (chemical)
-         *  2 demag level (degC, mT)
+         *  1 demag type: AF, TT (thermal), CH (chemical), NRM
+         *  2 demag level (degC, mT) (omitted when NRM)
          *  3 geographic declination
          *  4 geographic inclination
          *  5 stratigraphic declination
@@ -197,31 +197,43 @@ public class CaltechLoader extends AbstractFileLoader {
         final double dec = Double.parseDouble(matcher.group(9));
         final String demagLevelString = matcher.group(2);
         double demagLevel = 0;
-        try {
-            demagLevel = Double.parseDouble(demagLevelString) / 1000.0;
-        } catch (NumberFormatException e) {
-            // TODO no action needed since it defaults to zero, but
-            // should log this
+        if (!("M   ".equals(demagLevelString) || // "NRM"
+                "    ".equals(demagLevelString))) { // Blank -- treat as zero
+            try {
+                demagLevel = Double.parseDouble(demagLevelString);
+            } catch (NumberFormatException e) {
+                logger.log(Level.WARNING,
+                        "Unparseable demagnetization level \"{0}\" in a data "
+                                + "file listed in \"{1}\"",
+                        new Object[] {demagLevelString, file.getName()});
+            }
         }
-        Datum d = new Datum(gaussToAm(Vec3.fromPolarDegrees(intens, inc, dec)));
+        final Datum d =
+                new Datum(gaussToAm(Vec3.fromPolarDegrees(intens, inc, dec)));
         d.setMeasType(MeasType.DISCRETE);
         
         final String treatment = matcher.group(1);
-        if (null != treatment) switch (treatment) {
-            case "AF":
-                d.setTreatType(TreatType.DEGAUSS_XYZ);
-                break;
-            case "TT":
-                d.setTreatType(TreatType.THERMAL);
-                break;
-            default:
-                d.setTreatType(TreatType.UNKNOWN);
-                break;
+        if (null != treatment) {
+            switch (treatment) {
+                case "NR":
+                    d.setTreatType(TreatType.NONE);
+                    break;
+                case "AF":
+                    d.setTreatType(TreatType.DEGAUSS_XYZ);
+                    d.setAfX(demagLevel / 1000.0);
+                    d.setAfY(demagLevel / 1000.0);
+                    d.setAfZ(demagLevel / 1000.0);
+                    break;
+                case "TT":
+                    d.setTreatType(TreatType.THERMAL);
+                    d.setTemp(demagLevel);
+                    break;
+                default:
+                    d.setTreatType(TreatType.UNKNOWN);
+                    break;
+        }
         }
         
-        d.setAfX(demagLevel);
-        d.setAfY(demagLevel);
-        d.setAfZ(demagLevel);
         return d;
     }
 }

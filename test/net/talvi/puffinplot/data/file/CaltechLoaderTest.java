@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import net.talvi.puffinplot.data.Correction;
@@ -46,15 +48,49 @@ public class CaltechLoaderTest {
     
     @Test
     public void testReadAfFiles() throws IOException {
+        testReadFile("SV12_batch1.sam",
+                new String[] {"SV120101a", "SV120102a"},
+                new String[] {"0101a", "0102a" },
+                new double[][] {{359.5, 67.8, 3.4},
+                    {13.0,  60.6, 11.7}},
+                new double[] {
+                    0, .025, .050, .100, .150, .200, .300, .400, .600, .800},
+                TreatType.DEGAUSS_XYZ,
+                TreatType.DEGAUSS_XYZ,
+                10);
+    }
+    
+    @Test
+    public void testReadThermalFiles() throws IOException {
+        testReadFile("PI47-.sam",
+                new String[] {"PI47-1a", "PI47-2a"},
+                new String[] {"- 1a mag ", "- 2a mag "},
+                new double[][] {{84.5, 54.5, 8.1},
+                    {56.4, 59.5, 8.8}},
+                new double[] {
+                    0, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300,
+                    325, 350, 375, 400, 425, 450, 475, 500, 525, 550, 560,
+                    560, 570, 575, 577, 579},
+                TreatType.NONE,
+                TreatType.THERMAL,
+                28);
+    }
+
+    private void testReadFile(String samFileName,
+            String[] dataFileNames, String[] sampleNames,
+            double[][] pcaDirs, double[] demagLevels,
+            TreatType firstTreatmentType,
+            TreatType subsequentTreatmentType,
+            int nDataPerSample) throws IOException {
         final Path tempPath = temporaryFolder.getRoot().toPath();
-        final String samFileName = "SV12_batch1.sam";
         
         /*
          * Copy the resource streams into temporary files, since
          * CaltechLoader can't load from a stream.
          */
-        final String[] filenames = {
-            "SV120101a", "SV120102a", samFileName};
+        final List<String> filenames = new ArrayList<String>();
+        filenames.addAll(Arrays.asList(dataFileNames));
+        filenames.add(samFileName);
         for (String filename: filenames) {
             final InputStream inputStream =
                     TestFileLocator.class.getResourceAsStream("caltech/" +
@@ -68,46 +104,37 @@ public class CaltechLoaderTest {
                 new CaltechLoader(tempPath.resolve(samFileName).toFile());
         
         final List<Datum> data = loader.getData();
-        assertEquals(20, data.size());
         final Correction correction =
                 new Correction(false, false, Correction.Rotation.SAMPLE, false);
 
         /*
          * For a simple test, we boil down the data into a PCA value
          * for each sample, and compared with canned PCA values generated
-         * from Craig Jones' PaleoMag application (v 3.1.0b6, Windows 32-bit)
+         * with Craig Jones' PaleoMag application (v 3.1.0b6, Windows 32-bit)
          */
-        final String[] sampleNames = {
-            "0101a", "0102a" };
-        final double[][] pcaDirs = {
-            {359.5, 67.8, 3.4},
-            {13.0,  60.6, 11.7}
-        };
-        
         for (int i=0; i<sampleNames.length; i++) {
             final String sampleName = sampleNames[i];
-            final List<Vec3> sample1dirs = data.stream().
+            final List<Datum> sampleData = data.stream().
                     filter(d -> sampleName.equals(d.getIdOrDepth())).
+                    collect(Collectors.toList());
+            final List<Vec3> sampleDirs = sampleData.stream().
                     map(d -> d.getMoment(correction)).
                     collect(Collectors.toList());
-            final PcaValues pca = PcaValues.calculate(sample1dirs, false);
+            final PcaValues pca = PcaValues.calculate(sampleDirs, false);
             final double[] expected = pcaDirs[i];
-            assertEquals(expected[0], pca.getDirection().getDecDeg(), 0.01);
-            assertEquals(expected[1], pca.getDirection().getIncDeg(), 0.01);
+            assertEquals(expected[0], pca.getDirection().getDecDeg(), 0.1);
+            assertEquals(expected[1], pca.getDirection().getIncDeg(), 0.1);
             assertEquals(expected[2], pca.getMad3(), 0.1);
+            assertEquals(firstTreatmentType, sampleData.get(0).getTreatType());
+            assertTrue(sampleData.stream().skip(1).
+                allMatch(d -> d.getTreatType() == subsequentTreatmentType));
+            assertEquals(nDataPerSample, sampleData.size());
         }
         
-        assertTrue(data.stream().
-                allMatch(d -> d.getTreatType() == TreatType.DEGAUSS_XYZ));
-        final double[] demagLevels = {
-            0, 25, 50, 100, 150, 200, 300, 400, 600, 800};
         for (int i=0; i<data.size(); i++) {
-            assertEquals(demagLevels[i % 10],
-                    data.get(i).getTreatmentLevel() * 1000,
+            assertEquals(demagLevels[i % nDataPerSample],
+                    data.get(i).getTreatmentLevel(),
                     delta);
         }
-        
     }
-    
 }
- 
