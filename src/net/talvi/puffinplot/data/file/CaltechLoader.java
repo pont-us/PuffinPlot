@@ -149,7 +149,7 @@ public class CaltechLoader extends AbstractFileLoader {
              */
             while ((line = subReader.readLine()) != null) {
                 if (line.trim().isEmpty()) continue;
-                Datum d = lineToDatum(line);
+                final Datum d = lineToDatum(line);
                 if (d != null) {
                     d.setDiscreteId(sampleName);
                     //d.setSampAz((coreStrike + 90) % 360);

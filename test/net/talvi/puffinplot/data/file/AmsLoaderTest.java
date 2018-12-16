@@ -19,7 +19,6 @@ package net.talvi.puffinplot.data.file;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 import net.talvi.puffinplot.data.AmsData;
 import net.talvi.puffinplot.data.file.testdata.TestFileLocator;
@@ -39,7 +38,8 @@ public class AmsLoaderTest {
     public void testReadFile() throws Exception {
         final InputStream testInputStream =
                 TestFileLocator.class.getResourceAsStream("LPA03091.ASC");
-        final Path inputPath = temporaryFolder.getRoot().toPath().resolve("INPUT.ASC");
+        final Path inputPath = temporaryFolder.getRoot().toPath().
+                resolve("INPUT.ASC");
         Files.copy(testInputStream, inputPath);
         final AmsLoader amsLoader = new AmsLoader(inputPath.toFile());
         final List<AmsData> amsDataList = amsLoader.readFile();
