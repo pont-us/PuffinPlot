@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
  * a particular point on a continuous long core or u-channel sample.
  */
 public class Sample {
-    
+
     private List<Datum> data;
     private Site site;
     private String nameOrDepth;
@@ -420,9 +420,9 @@ public class Sample {
     
     
     /**
-     * Returns a list of the treatment levels in this sample.
+     * Returns an array of the treatment levels in this sample.
      * 
-     * @return a list of the treatment levels in this sample
+     * @return an array of the treatment levels in this sample
      */
     public double[] getTreatmentLevels() {
         return data.stream().mapToDouble(d -> d.getTreatmentLevel()).
@@ -1129,7 +1129,7 @@ public class Sample {
      * @return the data which were removed
      * 
      */
-    public Set<Datum> mergeDuplicateMeasurements() {
+    public Set<Datum> mergeDuplicateTreatmentSteps() {
         final Map<TreatmentTypeAndLevel, List<Datum>> treatmentMap =
                 new HashMap<>();
         for (Datum d: this.getData()) {
@@ -1155,7 +1155,7 @@ public class Sample {
         }
         final Set<Datum> toRemove = new HashSet<>(treatmentMap.size());
         for (Datum d: this.getData()) {
-            List<Datum> duplicates =
+            final List<Datum> duplicates =
                     treatmentMap.get(new TreatmentTypeAndLevel(d));
             if (duplicates.get(0) == d) {
                 d.setMomentToMean(duplicates);
@@ -1167,6 +1167,29 @@ public class Sample {
         return toRemove;
     }
 
+    /**
+     * Merges the demagnetization data of the supplied samples into the
+     * first sample in the list. Note that the Datum objects in the
+     * subsequent samples are not cloned: their references are copied
+     * directly into the first sample's data list. The subsequent samples
+     * should therefore be discarded after calling this function.
+     * 
+     * @param samples 
+     */
+    public static void mergeSamples(List<Sample> samples) {
+        if (samples.size() < 2) {
+            return;
+        }
+        final Sample firstSample = samples.get(0);
+        for (Sample sample: samples.subList(1, samples.size())) {
+            sample.getData().forEach(d -> firstSample.addDatum(d));
+        }
+        firstSample.mergeDuplicateTreatmentSteps();
+        firstSample.data.sort(new DatumTreatmentComparator());
+    }
+    
+
+    
     private static class TreatmentTypeAndLevel {
         private final TreatType treatType;
         private final Double treatStep;
@@ -1199,8 +1222,4 @@ public class Sample {
             return true;
         }
     }
-
-    
-
-    
 }

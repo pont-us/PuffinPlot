@@ -639,7 +639,7 @@ public class SampleTest {
     }
 
     @Test
-    public void testMergeDuplicateMeasurements() {
+    public void testMergeDuplicateTreatmentSteps() {
         final Sample sample = new Sample("sample0", null);
         final List<Vec3> vectors = new ArrayList<>();
         final Random rnd = new Random(77);
@@ -652,8 +652,56 @@ public class SampleTest {
             vectors.add(vector);
         }
         final Vec3 expectedMean = Vec3.mean(vectors);
-        sample.mergeDuplicateMeasurements();
+        sample.mergeDuplicateTreatmentSteps();
         assertEquals(1, sample.getData().size());
         assertTrue(expectedMean.equals(sample.getDatum(0).getMoment()));
     }
+    
+    @Test
+    public void testMergeSamplesWithInverseData() {
+        final Sample sample0 = makeSimpleSample();
+        final Sample sample1 = makeSimpleSample();
+        sample1.getData().forEach(d -> d.invertMoment());
+        Sample.mergeSamples(Arrays.asList(sample0, sample1));
+        sample0.getData().stream().allMatch(d -> d.getIntensity() < delta);
+    }
+    
+    @Test
+    public void testMergeSamplesWithOverlappingData() {
+        final Sample s0 = new Sample("Sample 0", null);
+        for (int i=0; i<3; i++) {
+            final Datum d = new Datum(10-i, 20-i, 30-i);
+            d.setTreatType(TreatType.THERMAL);
+            d.setTemp(i*100);
+            s0.addDatum(d);
+        }
+        final Sample s1 = new Sample("Sample 1", null);
+        for (int i=0; i<3; i++) {
+            final Datum d = new Datum(10-i, 20-i, 30-i);
+            d.setTreatType(TreatType.THERMAL);
+            d.setTemp(i*100 + 50);
+            s1.addDatum(d);
+        }
+        Sample.mergeSamples(Arrays.asList(s0, s1));
+        assertArrayEquals(
+                new double[] {0, 50, 100, 150, 200, 250},
+                s0.getData().stream().mapToDouble(d -> d.getTemp()).toArray(),
+                delta);
+    }
+    
+    @Test
+    public void testMergeSamplesWithEmptyList() {
+        Sample.mergeSamples(Collections.emptyList());
+    }
+    
+    @Test
+    public void testMergeSamplesWithOneSample() {
+        final Sample expectedSample = makeSimpleSample();
+        Sample.mergeSamples(Collections.singletonList(simpleSample));
+        for (int i=0; i<expectedSample.getNumData(); i++) {
+            assertTrue(expectedSample.getDatum(i).getMoment().
+                    equals(simpleSample.getDatum(i).getMoment(), delta));
+        }
+    }
+    
 }

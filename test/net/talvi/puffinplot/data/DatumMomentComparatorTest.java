@@ -19,22 +19,26 @@ package net.talvi.puffinplot.data;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class DatumComparatorTest {
+public class DatumMomentComparatorTest {
     
     @Test
     public void testCompare() {
-        assertTrue(new DatumComparator(MeasurementAxis.X, Correction.NONE).
+        assertTrue(makeComparator(MeasurementAxis.X).
                 compare(new Datum(2, 9, 7), new Datum(1, 0, -2)) > 0);
-        assertTrue(new DatumComparator(MeasurementAxis.X, Correction.NONE).
+        assertTrue(makeComparator(MeasurementAxis.X).
                 compare(new Datum(2, 9, 7), new Datum(3, 0, -2)) < 0);
-        assertTrue(new DatumComparator(MeasurementAxis.Y, Correction.NONE).
+        assertTrue(makeComparator(MeasurementAxis.Y).
                 compare(new Datum(2, 9, 7), new Datum(1, 0, -2)) > 0);
-        assertTrue(new DatumComparator(MeasurementAxis.Y, Correction.NONE).
+        assertTrue(makeComparator(MeasurementAxis.Y).
                 compare(new Datum(2, -9, 7), new Datum(3, 0, -2)) < 0);
-        assertTrue(new DatumComparator(MeasurementAxis.Z, Correction.NONE).
+        assertTrue(makeComparator(MeasurementAxis.Z).
                 compare(new Datum(2, 9, 7), new Datum(1, 0, -2)) > 0);
-        assertTrue(new DatumComparator(MeasurementAxis.Z, Correction.NONE).
+        assertTrue(makeComparator(MeasurementAxis.Z).
                 compare(new Datum(2, -9, -7), new Datum(3, 0, -2)) < 0);
+    }
+
+    private static DatumMomentComparator makeComparator(MeasurementAxis axis) {
+        return new DatumMomentComparator(axis, Correction.NONE);
     }
     
 }

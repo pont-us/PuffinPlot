@@ -1464,8 +1464,34 @@ public final class Suite implements SampleGroup {
      * @param samplesToMerge samples containing the Datum objects to merge
      * (where possible)
      */
-    public void mergeDuplicateMeasurements(Collection<Sample> samplesToMerge) {
-        samplesToMerge.forEach(Sample::mergeDuplicateMeasurements);
+    public void mergeDuplicateTreatmentSteps(
+            Collection<Sample> samplesToMerge) {
+        samplesToMerge.forEach(Sample::mergeDuplicateTreatmentSteps);
+    }
+
+    /**
+     * Within the supplied collection of samples, any two or more samples
+     * which have the same depth or discrete ID will be merged into a single
+     * sample. The merged sample will contain all the distinct treatment
+     * steps from the union of the duplicate samples. If a treatment step
+     * are duplicated between duplicate samples, the duplicate treatment
+     * steps will also be merged.
+     * 
+     * @param samples the collection of samples within which to merge duplicates
+     */
+    public void mergeDuplicateSamples(Collection<Sample> samples) {
+        Map<String, List<Sample>> duplicateGroups = samples.stream().
+                collect(Collectors.groupingBy(Sample::getNameOrDepth));
+        
+        for (String id: duplicateGroups.keySet()) {
+            final List<Sample> sampleGroup = duplicateGroups.get(id);
+            /*
+             * The sample group might only contain one sample, but there's
+             * no need to make a special case for that eventuality.
+             */
+            Sample.mergeSamples(sampleGroup);
+            removeSamples(sampleGroup.subList(1, sampleGroup.size()));
+        }
     }
 
     private class CustomFlagNames extends CustomFields<String> {
@@ -1818,6 +1844,10 @@ public final class Suite implements SampleGroup {
         final Set<Sample> samplesToRemove = samples.stream().
                 filter(s -> s.getDepth()< minDepth || s.getDepth() > maxDepth).
                 collect(Collectors.toSet());
+        removeSamples(samplesToRemove);
+    }
+
+    private void removeSamples(Collection<Sample> samplesToRemove) {
         samples.removeAll(samplesToRemove);
         samplesToRemove.forEach(s -> samplesById.remove(s.getNameOrDepth()));
         updateReverseIndex();

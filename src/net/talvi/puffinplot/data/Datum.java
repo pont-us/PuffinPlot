@@ -856,7 +856,8 @@ public class Datum {
      * @param delimiter the string which should separate the values
      * @return a string representation of the requested values
      */
-    public String exportFieldValues(Collection<DatumField> fields, String delimiter) {
+    public String exportFieldValues(Collection<DatumField> fields,
+            String delimiter) {
         final StringBuilder sb = new StringBuilder();
         boolean first = true;
         for (DatumField field: fields) {

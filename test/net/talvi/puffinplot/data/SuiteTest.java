@@ -1531,13 +1531,13 @@ public class SuiteTest {
     }
     
     @Test
-    public void testMergeDuplicateMeasurementsWithEmptyList() {
+    public void testMergeDuplicateTreatmentStepsWithEmptyList() {
         final Suite suite = new Suite("test");
-        suite.mergeDuplicateMeasurements(Collections.emptyList());
+        suite.mergeDuplicateTreatmentSteps(Collections.emptyList());
     }
     
     @Test
-    public void testMergeDuplicateMeasurementsWithNoDuplicates() {
+    public void testMergeDuplicateTreatmentStepsWithNoDuplicates() {
         final Suite suite = new Suite("test");
         final Sample sample = new Sample("sample0", suite);
         suite.addSample(sample, "sample0");
@@ -1549,17 +1549,17 @@ public class SuiteTest {
             sample.addDatum(d);
             expected.add(d);
         }
-        suite.mergeDuplicateMeasurements(Collections.singletonList(sample));
+        suite.mergeDuplicateTreatmentSteps(Collections.singletonList(sample));
         assertEquals(expected, sample.getData());
     }
 
     @Test
-    public void testMergeDuplicateMeasurements() {
+    public void testMergeDuplicateTreatmentSteps() {
         final Suite suite = new Suite("test");
         final Sample sample = Mockito.mock(Sample.class);
         suite.addSample(sample, "sample0");
-        suite.mergeDuplicateMeasurements(Collections.singletonList(sample));
-        Mockito.verify(sample).mergeDuplicateMeasurements();
+        suite.mergeDuplicateTreatmentSteps(Collections.singletonList(sample));
+        Mockito.verify(sample).mergeDuplicateTreatmentSteps();
     }
 
     @Test
@@ -1602,5 +1602,45 @@ public class SuiteTest {
         assertTrue(suite.areSectionEndDirectionsDefined(1));
         assertFalse(suite.areSectionEndDirectionsDefined(2));
     }
+    
+    @Test
+    public void testMergeDuplicateSamplesWithInverseSuites() {
+        final Suite suite0 = TestUtils.createContinuousSuite();
+        final Suite suite1 = TestUtils.createContinuousSuite();
+        suite1.getSamples().forEach(s -> s.getData().forEach(
+                d -> d.invertMoment()));
+        suite1.getSamples().forEach(
+                s -> suite0.addSample(s, s.getNameOrDepth()));
+        suite0.updateReverseIndex();
+        suite0.mergeDuplicateSamples(suite0.getSamples());
+        assertTrue(suite0.getSamples().stream().
+                flatMap(s -> s.getData().stream()).
+                map(d -> d.getIntensity()).allMatch(x -> x < delta));
+    }
+    
+    @Test
+    public void testMergeDuplicateSamplesWithDifferentTreatmentSteps() {
+        final Suite suite0 = TestUtils.createContinuousSuite();
+        final Suite suite1 = TestUtils.createContinuousSuite();
+        suite1.getSamples().stream().flatMap(s -> s.getData().stream()).
+                forEach(d -> {
+                    d.setAfX(d.getAfX() + 5);
+                    d.setAfY(d.getAfY() + 5);
+                    d.setAfZ(d.getAfZ() + 5);
+                });
+        suite1.getSamples().forEach(
+                s -> suite0.addSample(s, s.getNameOrDepth()));
+        suite0.updateReverseIndex();
+        suite0.mergeDuplicateSamples(suite0.getSamples());
+        for (Sample s: suite0.getSamples()) {
+            assertArrayEquals(new double[] {0, 5, 10, 15, 20, 25, 30,
+                35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95},
+                    s.getTreatmentLevels(),
+                    delta
+                );
+        }
+    }
+    
+    
     
 }
