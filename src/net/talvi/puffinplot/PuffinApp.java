@@ -523,10 +523,15 @@ public class PuffinApp {
      *
     */
     public void openFiles(List<File> files, boolean createNewSuite) {
-        if (files.isEmpty()) return;
-        // If this fileset is already in the recent-files list,
-        // it will be bumped up to the top; otherwise it will be
-        // added to the top and the last member removed.
+        if (files.isEmpty()) {
+            return;
+        }
+        
+        /*
+         * If this fileset is already in the recent-files list, it will be
+         * bumped up to the top; otherwise it will be added to the top and the
+         * last member removed.
+         */
         recentFiles.add(files);
         
         final boolean reallyCreateNewSuite = createNewSuite || getSuite()==null;
@@ -548,7 +553,7 @@ public class PuffinApp {
             }
 
             FileFormat format = null;
-            java.util.Map<Object,Object> importOptions =
+            final java.util.Map<Object,Object> importOptions =
                     new java.util.HashMap<>();
             switch (fileType) {
                 case CUSTOM_TABULAR:

@@ -57,7 +57,8 @@ public abstract class PuffinAction extends AbstractAction {
      *        platform-appropriate modifier key (ctrl or ‘apple’).
      */
     public PuffinAction(String name, String description, Character accelerator,
-            boolean shift, Integer mnemonic, boolean specialMacMenuItem, int modifier) {
+            boolean shift, Integer mnemonic, boolean specialMacMenuItem,
+            int modifier) {
         super(name);
         this.specialMacMenuItem = specialMacMenuItem;
         putValue(SHORT_DESCRIPTION, description);

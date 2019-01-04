@@ -1619,6 +1619,54 @@ public class SuiteTest {
     }
     
     @Test
+    public void testMergeDuplicateSamplesWithDuplicateSuites() {
+        final Suite suite0 = TestUtils.createContinuousSuite();
+        final Suite suite1 = TestUtils.createContinuousSuite();
+        final List<Vec3> originalDirections = suite0.getSamples().stream().
+                flatMap(s -> s.getData().stream()).
+                map(d -> d.getMoment()).
+                collect(Collectors.toList());
+        suite1.getSamples().forEach(
+                s -> suite0.addSample(s, s.getNameOrDepth()));
+        suite0.updateReverseIndex();
+        suite0.mergeDuplicateSamples(suite0.getSamples());
+        final List<Vec3> mergedDirections = suite0.getSamples().stream().
+                flatMap(s -> s.getData().stream()).
+                map(d -> d.getMoment()).
+                collect(Collectors.toList());
+        assertEquals(originalDirections.size(), mergedDirections.size());
+        for (int i=0; i<originalDirections.size(); i++) {
+            assertTrue(originalDirections.get(i).
+                    equals(mergedDirections.get(i), delta));
+        }
+    }
+    
+    @Test
+    public void testMergeDuplicateSamplesWithTrebledMoments() {
+        final Suite suite0 = TestUtils.createContinuousSuite();
+        final Suite suite1 = TestUtils.createContinuousSuite();
+        final List<Vec3> originalDirections = suite0.getSamples().stream().
+                flatMap(s -> s.getData().stream()).
+                map(d -> d.getMoment()).
+                collect(Collectors.toList());
+        suite1.getSamples().forEach(s -> s.getData().forEach(
+                d -> d.setMoment(d.getMoment().times(3))));
+        suite1.getSamples().forEach(
+                s -> suite0.addSample(s, s.getNameOrDepth()));
+        suite0.updateReverseIndex();
+        suite0.mergeDuplicateSamples(suite0.getSamples());
+        final List<Vec3> mergedDirections = suite0.getSamples().stream().
+                flatMap(s -> s.getData().stream()).
+                map(d -> d.getMoment()).
+                collect(Collectors.toList());
+        assertEquals(originalDirections.size(), mergedDirections.size());
+        for (int i=0; i<originalDirections.size(); i++) {
+            assertTrue(originalDirections.get(i).times(2).
+                    equals(mergedDirections.get(i), delta));
+        }
+    }
+    
+    @Test
     public void testMergeDuplicateSamplesWithDifferentTreatmentSteps() {
         final Suite suite0 = TestUtils.createContinuousSuite();
         final Suite suite1 = TestUtils.createContinuousSuite();
@@ -1640,7 +1688,5 @@ public class SuiteTest {
                 );
         }
     }
-    
-    
-    
 }
+ 

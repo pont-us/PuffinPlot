@@ -50,6 +50,8 @@ User interface
 -   Status bar added to main window. When the mouse pointer is over
     a data point representing a demagnetization step, the status bar
     shows details of this step.
+-   The "Edit" menu has been divided into more submenus to more
+    conveniently accommodate the newly added functions.
 
 Graphing and data display
 -------------------------

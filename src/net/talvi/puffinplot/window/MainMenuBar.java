@@ -104,7 +104,7 @@ public final class MainMenuBar extends JMenuBar {
                                 : false;
                     }
                 };
-        movePlotsItem.setMnemonic(KeyEvent.VK_Y);
+        movePlotsItem.setMnemonic(KeyEvent.VK_E);
         movePlotsItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
@@ -133,21 +133,29 @@ public final class MainMenuBar extends JMenuBar {
                 pa.runJavascriptScript, pa.runPythonScript, pa.prefs, pa.quit));
         
         add(makeMenu("Edit",KeyEvent.VK_E,
-                pa.selectAll, pa.clearSelection,
-                movePlotsItem, pa.resetLayout, pa.showEditSampleParametersDialog,
-                pa.setTreatType,
-                pa.copyStepSelection, pa.pasteStepSelection,
-                makeMenu("Rotate/invert samples", KeyEvent.VK_V,
-                        pa.flipSampleX, pa.flipSampleY, pa.flipSampleZ,
-                        pa.invertSamples),
-                makeMenu("Edit sites", KeyEvent.VK_I,
+                movePlotsItem, pa.resetLayout,
+                makeMenu("Treatment steps", KeyEvent.VK_T,
+                        pa.selectAll, pa.clearSelection,
+                        pa.copyStepSelection, pa.pasteStepSelection,
+                        pa.hideSelectedSteps, pa.unhideAllSteps,
+                        pa.mergeDuplicateTreatmentSteps),
+                makeMenu("Samples", KeyEvent.VK_A,
+                        pa.showEditSampleParametersDialog,
+                        pa.setTreatType,
+                        makeMenu("Rotate/invert samples", KeyEvent.VK_R, 
+                                pa.flipSampleX, pa.flipSampleY, pa.flipSampleZ,
+                                pa.invertSamples, pa.alignSectionDeclinations),
+                        pa.removeSamplesOutsideDepthRange,
+                        pa.mergeDuplicateSamples,
+                        pa.rescaleMagSus
+                        ),
+                makeMenu("Sites", KeyEvent.VK_I,
                         pa.setSiteName, pa.setSitesFromSampleNames,
                         pa.setSitesByDepth, pa.clearSites),
-                pa.hideSelectedSteps, pa.unhideAllSteps,
-                pa.showCustomFlagsWindow, pa.showCustomNotesWindow,
-                pa.rescaleMagSus, pa.convertDiscreteToContinuous,
-                pa.alignSectionDeclinations,
-                pa.removeSamplesOutsideDepthRange));
+                makeMenu("Suite", KeyEvent.VK_U,
+                        pa.showCustomFlagsWindow, pa.showCustomNotesWindow,
+                        pa.convertDiscreteToContinuous)
+        ));
         
         add(makeMenu("Calculations", KeyEvent.VK_C,
                 pa.pcaOnSelection, anchorItem = new AnchorItem(),

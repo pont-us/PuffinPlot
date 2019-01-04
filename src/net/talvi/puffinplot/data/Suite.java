@@ -1459,8 +1459,6 @@ public final class Suite implements SampleGroup {
      * Within each of the supplied samples, merges any Datum objects
      * which have the same treatment type and treatment level.
      *
-     * This function is not currently accessible from the GUI.
-     *
      * @param samplesToMerge samples containing the Datum objects to merge
      * (where possible)
      */
@@ -1470,13 +1468,20 @@ public final class Suite implements SampleGroup {
     }
 
     /**
-     * Within the supplied collection of samples, any two or more samples
-     * which have the same depth or discrete ID will be merged into a single
-     * sample. The merged sample will contain all the distinct treatment
-     * steps from the union of the duplicate samples. If a treatment step
-     * are duplicated between duplicate samples, the duplicate treatment
-     * steps will also be merged.
+     * Within the supplied collection of samples, any two or more samples which
+     * have the same depth or discrete ID will be merged into a single sample.
+     * The merged sample will contain all the distinct treatment steps from the
+     * union of the duplicate samples. If any of the individual merged samples
+     * contains any duplicate treatment steps, the duplicate treatment steps
+     * will also be merged.
      * 
+     * This should seldom be needed in practice since the suite creation and
+     * reading code doesn't create new samples with the same names/depths as
+     * existing ones. But the PuffinPlot application is forever acquiring new
+     * ways to edit suites and samples (and of course scripting the API can
+     * result in all sorts of weirdness), so this is a useful way to restore
+     * order in the event that a suite does get into a funny state.
+     *
      * @param samples the collection of samples within which to merge duplicates
      */
     public void mergeDuplicateSamples(Collection<Sample> samples) {

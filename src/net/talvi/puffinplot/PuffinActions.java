@@ -455,9 +455,9 @@ public class PuffinActions {
      * orientations and the local magnetic declination.
      */
     public final Action showEditSampleParametersDialog = new PuffinAction(
-            "Sample parameters…",
+            "Edit sample parameters…",
             "Edit sample volume, sample and formation orientations, and local geomagnetic field declination.",
-            null, false, KeyEvent.VK_R) {
+            null, false, KeyEvent.VK_P) {
         private static final long serialVersionUID = 1L;
         private EditSampleParametersWindow espDialog;
         @Override public void actionPerformed(ActionEvent e) {
@@ -490,7 +490,7 @@ public class PuffinActions {
     /**
      * For each selected sample, clears PCA calculation.
      */
-    public final Action clearSamplePca = new PuffinAction("Clear sample PCAs.",
+    public final Action clearSamplePca = new PuffinAction("Clear sample PCAs",
             "Clear PCA calculations for selected samples",
             null, false, null) {
         private static final long serialVersionUID = 1L;
@@ -529,7 +529,7 @@ public class PuffinActions {
     /**
      * Within each selected sample, selects all the points.
      */
-    public final Action selectAll = new PuffinAction("Select all steps.",
+    public final Action selectAll = new PuffinAction("Select all steps",
             "Select all visible treatment steps in selected samples", 'D',
             false, KeyEvent.VK_A) {
         private static final long serialVersionUID = 1L;
@@ -599,7 +599,7 @@ public class PuffinActions {
      */
     public final Action unhideAllSteps = new PuffinAction("Show all steps",
             "Make hidden treatment steps visible again for all selected samples",
-            'G', true, KeyEvent.VK_O) {
+            'G', true, KeyEvent.VK_S) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
             for (Sample s : app.getSelectedSamples()) s.unhideAllPoints();
@@ -673,7 +673,7 @@ public class PuffinActions {
      */
     public final Action resetLayout = new PuffinAction("Reset layout",
             "Move plots back to their original positions", null, false,
-            KeyEvent.VK_L) {
+            KeyEvent.VK_R) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
             app.getMainWindow().getGraphDisplay().resetLayout();
@@ -1131,7 +1131,7 @@ public class PuffinActions {
     public final Action alignSectionDeclinations =
             new PuffinAction("Align core section declinations…",
             "Automatically align declinations between core sections.",
-            null, false, KeyEvent.VK_G) {
+            null, false, KeyEvent.VK_A) {
         private static final long serialVersionUID = 1L;
         private AlignDeclinationsDialog alignDeclinationsDialog;
         @Override public void actionPerformed(ActionEvent e) {
@@ -1149,7 +1149,7 @@ public class PuffinActions {
     public final Action removeSamplesOutsideDepthRange =
             new PuffinAction("Remove samples by depth…",
             "Remove samples whose depth lies outside a specified range.",
-            null, false, KeyEvent.VK_M) {
+            null, false, KeyEvent.VK_D) {
         private static final long serialVersionUID = 1L;
         private RemoveByDepthRangeDialog removeByDepthRangeDialog;
         @Override public void actionPerformed(ActionEvent e) {
@@ -1162,4 +1162,35 @@ public class PuffinActions {
             removeByDepthRangeDialog.setVisible(true);
         }
     };
+
+    /**
+     * Merges duplicate treatment steps within the selected samples.
+     */
+    public final Action mergeDuplicateTreatmentSteps =
+            new PuffinAction("Merge duplicate steps",
+            "Merge any treatment steps with the same type and level.",
+            null, false, KeyEvent.VK_M) {
+        private static final long serialVersionUID = 1L;
+        @Override public void actionPerformed(ActionEvent e) {
+            app.getSuite().mergeDuplicateTreatmentSteps(
+                    app.getSelectedSamples());
+            app.updateDisplay();
+        }
+    };
+    
+    /**
+     * Merges samples with the same name or depth, and treatment steps
+     * with the same treatment type and level within samples.
+     */
+    public final Action mergeDuplicateSamples =
+            new PuffinAction("Merge duplicate samples",
+            "Merge any samples with the same name or depth.",
+            null, false, KeyEvent.VK_M) {
+        private static final long serialVersionUID = 1L;
+        @Override public void actionPerformed(ActionEvent e) {
+            app.getSuite().mergeDuplicateSamples(app.getSelectedSamples());
+            app.updateDisplay();
+        }
+    };
+    
 }

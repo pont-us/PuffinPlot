@@ -62,7 +62,7 @@ public class EditSampleParametersWindow extends JFrame {
      * Creates a new correction window.
      */
     public EditSampleParametersWindow(PuffinApp app) {
-        super("Edit corrections");
+        super("Edit sample parameters");
         this.app = app;
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -72,7 +72,7 @@ public class EditSampleParametersWindow extends JFrame {
         cp.add(Box.createRigidArea(new Dimension(0, 10)));
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BorderLayout());
-        JLabel label = new JLabel("Select values to modify.");
+        JLabel label = new JLabel("Select sample parameters to modify.");
         label.setAlignmentX(CENTER_ALIGNMENT);
         label.setAlignmentY(CENTER_ALIGNMENT);
         label.setHorizontalAlignment(SwingConstants.CENTER);

@@ -1188,8 +1188,6 @@ public class Sample {
         firstSample.data.sort(new DatumTreatmentComparator());
     }
     
-
-    
     private static class TreatmentTypeAndLevel {
         private final TreatType treatType;
         private final Double treatStep;
