@@ -1,0 +1,7 @@
+Both "merge measurements" and "merge samples" features now implemented
+and documented. "Merge samples" turns out seldom to be needed in
+practice -- I think PuffinPlot has got better at combining treatment
+steps into samples during loading since this bug was created. But
+considering the ever-increasing number of ways to edit a suite, there
+are doubtless still ways to end up with duplicate samples.
+

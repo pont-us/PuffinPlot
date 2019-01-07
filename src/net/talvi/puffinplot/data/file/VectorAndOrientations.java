@@ -19,14 +19,15 @@ package net.talvi.puffinplot.data.file;
 import net.talvi.puffinplot.data.Vec3;
 
 /**
- * VectorAndOrientations encapsulates a vector (in practice, most probably
- * a magnetization vector) and orientation parameters for the sample and
- * the rock formation. It is intended for use with the <code>OrientationParameters</code>
- * class, which defines an interpretation for the values in the <code>VectorAndOrientations</code>
- * class and provides a method to convert an <code>VectorAndOrientations</code>
- * into an equivalent <code>VectorAndOrientations</code> using PuffinPlot's
- * orientation parameter standard.
- * 
+ * VectorAndOrientations encapsulates a vector (in practice, most probably a
+ * magnetization vector) and orientation parameters for the sample and the rock
+ * formation. It is intended for use with the <code>OrientationParameters</code>
+ * class, which defines an interpretation for the values in the
+ * <code>VectorAndOrientations</code> class and provides a method to convert an
+ * <code>VectorAndOrientations</code> into an equivalent
+ * <code>VectorAndOrientations</code> using PuffinPlot's orientation parameter
+ * standard.
+ *
  * @see OrientationParameters
  */
 
