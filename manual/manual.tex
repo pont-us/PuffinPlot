@@ -54,9 +54,9 @@
 {\end{list}}
 
 \newcommand{\ppcmd}[1]{\textsf{#1}} % For `computer' text
-% \newcommand{\caps}[1]{\textsc{#1}} % for acronyms and initialisms
 \newcommand{\caps}[1]{\MakeTextUppercase{#1}} % for acronyms and initialisms
-\newcommand{\submenu}{ \textgreater{} } % htlatex doesn't like `>'.
+% The sans font doesn't have an arrow so we switch to roman for it.
+\newcommand{\submenu}{ \textrm{→} }
 \newcommand{\alnifi}{$\alpha_{95}$}
 \newcommand{\quot}[1]{`#1'}
 \newcommand{\mypara}[1]{\noindent\textbf{#1}
@@ -626,7 +626,7 @@ range of its values across all the samples at a site.
   and each line within the file contains the \caps{irm} field strength and
   the magnetization intensity of the sample after application of that field.
 
-\item[File\submenu Export data\submenu Export bundle\ldots] creates a
+\item[File\submenu Export data\submenu Create bundle\ldots] creates a
   \emph{data bundle} from the current suite. This is a zip archive
   containing the suite data and analysis parameters, calculation
   results, and other files useful for exploring or reproducing the
@@ -720,79 +720,140 @@ of data.
 
 \begin{menuitemlist}
 
-\item[Edit\submenu Select all steps] selects all the treatment steps in all
-  the selected samples, excluding treatment steps which have been hidden (see
-  \ppcmd{Hide steps} below).
-
-\item[Edit\submenu Clear step selection] de-selects all the treatment steps
-  in all the selected samples.
-
 \item[Edit\submenu Edit layout] allows you to reposition and resize the plots
   in the main display area. See section~\ref{sec:edit-layout} for details.
 
 \item[Edit\submenu Reset layout] resets the sizes and positions of all the
   plots to their default values.
 
-\item[Edit\submenu Sample parameters\ldots] opens a window which allows
-  you to change the sample volume, sample orientation, formation
-  orientation, and local magnetic declination for all the selected
-  samples. Each parameter type can be individually changed without
-  affecting the values of the others. For convenience, sample
-  orientation can be specified using either dip angle or hade; it is
-  possible but pointless to enter values for both of these parameters,
-  since one will overwrite the other. Similarly, formation orientation
-  can be specified using either dip azimuth or strike.
+\item[Edit\submenu Treatment steps] is a submenu containing editing
+  functions related to treatment steps within a sample.
+  
+\item[Edit\submenu Treatment steps\submenu Select all steps] selects all
+  the treatment steps in all the selected samples, excluding treatment
+  steps which have been hidden (see \ppcmd{Hide steps} below).
 
-\item[Edit\submenu Set treatment type\ldots] opens a window which allows you
-  to change the treatment type for the selected samples. Normally, the
-  treatment type will be automatically determined on opening a data file. If
-  the file does not specify the treatment type, PuffinPlot will attempt to
-  guess it. \ppcmd{Set treatment type} allows you to set the treatment type
-  explicitly in cases where PuffinPlot guesses wrong, or where the wrong
-  treatment type is given in the data file.
+\item[Edit\submenu Treatment steps\submenu Clear step selection]
+  de-selects all the treatment steps in all the selected samples.
 
-\item[Edit\submenu Copy step selection] copies the selected treatment steps
-  for the current sample to an invisible `clipboard'. The selection can be
-  pasted from the clipboard to other samples (see \ppcmd{Paste point
-    selection}), selecting the same demagnetization steps in those samples.
-  This is useful for selecting the same treatment steps in a large number of
-  samples without having to manually select them for each sample.
+\item[Edit\submenu Treatment steps\submenu Copy step selection] copies
+  the selected treatment steps for the current sample to an invisible
+  `clipboard'. The selection can be pasted from the clipboard to other
+  samples (see \ppcmd{Paste point selection}), selecting the same
+  demagnetization steps in those samples. This is useful for selecting
+  the same treatment steps in a large number of samples without having
+  to manually select them for each sample.
 
-\item[Edit\submenu Paste step selection] takes the selected treatment steps
-  from the clipboard (see \ppcmd{Copy step selection}) and selects the
-  corresponding treatment steps in all the selected samples.
+\item[Edit\submenu Treatment steps\submenu Paste step selection] takes
+  the selected treatment steps from the clipboard (see \ppcmd{Copy step
+    selection}) and selects the corresponding treatment steps in all the
+  selected samples.
 
-\item[Edit\submenu Rotate/invert samples] is a submenu allowing the
-  demagnetization data from the selected samples to be rotated 180\textdegree{}
-  around a selected axis. Such functionality is rarely required but can be
-  useful, for example, when it is found that a sample has been incorrectly
-  oriented during measurement, or when converting between different
-  orientation conventions.
+\item[Edit\submenu Treatment steps\submenu Hide steps] hides all the
+  selected treatment steps in all the selected samples. This removes
+  them from all the graphical plots (which will be rescaled to avoid
+  unnecessary blank space), but not from the data table in the main plot
+  window; on the data table, hidden treatment steps are marked with a
+  dash symbol (--) to their left. Hidden steps can be restored using the
+  \ppcmd{Show all steps} menu item.
 
-\item[Edit\submenu Rotate/invert samples\submenu Flip samples around X axis]
-  rotates the magnetic moment values for all selected samples
-  180\textdegree{} around the X axis.
+\item[Edit\submenu Treatment steps\submenu Show all steps] restores all
+  hidden treatment steps in all the selected samples.
 
-\item[Edit\submenu Rotate/invert samples\submenu Flip samples around Y axis]
-  rotates the magnetic moment values for all selected samples
-  180\textdegree{} around the Y axis.
+\item[Edit\submenu Treatment steps\submenu Merge duplicate steps]
+  A treatment step is considered a duplicate of another if they
+  are both in the same sample and have the same treatment type and
+  level. This function will replace each group of duplicate steps
+  within the selected samples with a single step. The magnetic moment
+  of the replacement step is calculated as the arithmetic mean of the
+  moments of the duplicate steps. Other treatment step data, such
+  as magnetic susceptibility, is taken from the first step in each
+  group of duplicates.
 
-\item[Edit\submenu Rotate/invert samples\submenu Flip samples around Z axis]
-  rotates the magnetic moment values for all selected samples
-  180\textdegree{} around the Z axis.
+\item[Edit\submenu Samples] is a submenu containing editing functions
+  related to whole samples.
+  
+\item[Edit\submenu Samples\submenu Edit sample parameters\ldots] opens a
+  window which allows you to change the sample volume, sample
+  orientation, formation orientation, and local magnetic declination for
+  all the selected samples. Each parameter type can be individually
+  changed without affecting the values of the others. For convenience,
+  sample orientation can be specified using either dip angle or hade; it
+  is possible but pointless to enter values for both of these
+  parameters, since one will overwrite the other. Similarly, formation
+  orientation can be specified using either dip azimuth or strike.
 
-\item[Edit\submenu Rotate/invert samples\submenu Invert sample directions]
-  Inverts every magnetization vector in every selected sample.
-  (Each of the x, y, and z co-ordinates of each vector is negated;
-  this corresponds to a point reflection through the origin.)
+\item[Edit\submenu Samples\submenu Set treatment type\ldots] opens a
+  window which allows you to change the treatment type for the selected
+  samples. Normally, the treatment type will be automatically determined
+  on opening a data file. If the file does not specify the treatment
+  type, PuffinPlot will attempt to guess it. \ppcmd{Set treatment type}
+  allows you to set the treatment type explicitly in cases where
+  PuffinPlot guesses wrong, or where the wrong treatment type is given
+  in the data file.
 
-\item[Edit\submenu Edit sites] is a submenu allowing site names to be
-  set for samples in various ways.
+\item[Edit\submenu Samples\submenu Rotate/invert samples] is a submenu
+  allowing the demagnetization data from the selected samples to be
+  rotated 180\textdegree{} around a selected axis. Such functionality is
+  rarely required but can be useful, for example, when it is found that
+  a sample has been incorrectly oriented during measurement, or when
+  converting between different orientation conventions.
 
-\item[Edit\submenu Edit sites\submenu Set site name\ldots] allows a single
+\item[Edit\submenu Samples\submenu Rotate/invert samples\submenu Flip
+  samples around X axis] rotates the magnetic moment values for all
+  selected samples 180\textdegree{} around the X axis.
+
+\item[Edit\submenu Samples\submenu Rotate/invert samples\submenu Flip
+  samples around Y axis] rotates the magnetic moment values for all
+  selected samples 180\textdegree{} around the Y axis.
+
+\item[Edit\submenu Samples\submenu Rotate/invert samples\submenu Flip
+  samples around Z axis] rotates the magnetic moment values for all
+  selected samples 180\textdegree{} around the Z axis.
+
+\item[Edit\submenu Samples\submenu Rotate/invert samples\submenu Invert
+  sample directions] Inverts every magnetization vector in every
+  selected sample. (Each of the x, y, and z co-ordinates of each vector
+  is negated; this corresponds to a point reflection through the
+  origin.)
+
+\item[Edit\submenu Samples\submenu Rotate/invert samples\submenu Align
+  core section declinations\ldots] operates on continuous suites made up
+  of core sections with no absolute azimuthal alignment. The alignment
+  is carried out using PCA directions, which must be calculated before
+  carrying out the alignment. The top core section is rotated so that
+  the PCA direction at the top aligns with a specified reference
+  direction; for each core section below the top section, the section is
+  rotated so that the PCA direction at its top aligns with the PCA
+  direction at the bottom of the core section above it. The number of
+  samples averaged at the core ends to produce the `top' and `bottom'
+  directions can be specified.
+
+\item[Edit\submenu Samples\submenu Remove samples by depth\ldots]
+  removes from the current suite all the samples outside a specified
+  depth range.
+
+\item[Edit\submenu Samples\submenu Merge duplicate samples\ldots]
+  combines any selected samples that have the same name or depth.
+  Each merged sample will contain all the treatment steps in all
+  the duplicate samples; if any of the treatment steps are duplicated,
+  they will be merged as described for the \ppcmd{Merge duplicate
+  treatment steps} function.
+  
+\item[Edit\submenu Samples\submenu Rescale susceptibility\ldots] scales
+  all the magnetic susceptibility values for the suite by a specified
+  factor. This is useful since magnetic susceptibility meters typically
+  do not report values in standard S.I. units. Note that, unlike many
+  PuffinPlot operations, the scaling is applied to the {\em entire
+    suite}, not just the selected samples.
+
+\item[Edit\submenu Sites] is a submenu allowing site names to be
+  modified for samples in various ways.
+
+\item[Edit\submenu Sites\submenu Set site name\ldots] allows a single
   site name to be set for all the selected samples.
 
-\item[Edit\submenu Edit sites\submenu Set sites from sample names\ldots] sets
+\item[Edit\submenu Sites\submenu Set sites from sample names\ldots] sets
   site names for the selected samples by taking specified characters from the
   sample names. The characters to use are specified by a list of
   comma-separated numbers and number ranges; for example, entering
@@ -809,63 +870,35 @@ CiLpA-10-53 & 1-2,5,7-8 & CiA10 \\
 CiLpA-10-53 & 3-4,9-11 & Lp-53 \\
 \bottomrule \end{tabular}
 
-\item[Edit\submenu Edit sites\submenu Set sites by depth\ldots] sets site
+\item[Edit\submenu Sites\submenu Set sites by depth\ldots] sets site
   names in continuous suites using the depths of the individual samples.
   PuffinPlot asks for a thickness value, and groups the samples within the
   core into sites of that thickness, effectively `slicing' the core into
   equally thick sites. Each site is named after the shallowest depth within
   it.
 
-\item[Edit\submenu Edit sites\submenu Clear sites] removes all site names
+\item[Edit\submenu Sites\submenu Clear sites] removes all site names
   in the current suite.
+
+\item[Edit\submenu Suite] is a submenu of functions which affect the whole
+  suite.
   
-\item[Edit\submenu Hide steps] hides all the selected treatment steps in all
-  the selected samples. This removes them from all the graphical plots (which
-  will be rescaled to avoid unnecessary blank space), but not from the data
-  table in the main plot window; on the data table, hidden treatment steps
-  are marked with a dash symbol (--) to their left. Hidden steps can be
-  restored using the \ppcmd{Show all steps} menu item.
-
-\item[Edit\submenu Show all steps] restores all hidden treatment steps in all
-  the selected samples.
-
-\item[Edit\submenu Edit custom flags\ldots] allows you to add or remove
-  user-defined flags for the suite; see section~\ref{sec:annotations} for
-  details.
-
-\item[Edit\submenu Edit custom notes\ldots] allows you to add or remove
-  user-defined note categories for the suite; see
+\item[Edit\submenu Suite\submenu Edit custom flags\ldots] allows you to
+  add or remove user-defined flags for the suite; see
   section~\ref{sec:annotations} for details.
 
-\item[Edit\submenu Rescale mag. sus.\ldots] scales all the magnetic
-  susceptibility values for the suite by a specified factor. This is useful
-  since magnetic susceptibility meters typically do not report values in
-  standard S.I. units. Note that, unlike many PuffinPlot operations, the
-  scaling is applied to the {\em entire suite}, not just the selected
-  samples.
+\item[Edit\submenu Suite\submenu Edit custom notes\ldots] allows you to
+  add or remove user-defined note categories for the suite; see
+  section~\ref{sec:annotations} for details.
 
-\item[Edit\submenu Discrete to continuous\ldots] lets you convert a
-  discrete suite to a continuous one by replacing each sample name with
-  an associated depth. Selecting this item brings up a dialog which lets
-  you choose a CSV file to open. The CSV file must consist of two
-  columns. The first column contains sample names, and the second column
-  contains the associated depths. The CSV file must contain a row for
-  every sample in the suite.
+\item[Edit\submenu Suite\submenu Discrete to continuous\ldots] lets you
+  convert a discrete suite to a continuous one by replacing each sample
+  name with an associated depth. Selecting this item brings up a dialog
+  which lets you choose a CSV file to open. The CSV file must consist of
+  two columns. The first column contains sample names, and the second
+  column contains the associated depths. The CSV file must contain a row
+  for every sample in the suite.
 
-\item[Edit\submenu Align core section declinations\ldots] operates on
-  continuous suites made up of core sections with no absolute azimuthal
-  alignment. The alignment is carried out using PCA directions, which
-  must be calculated before carrying out the alignment. The top core
-  section is rotated so that the PCA direction at the top aligns with a
-  specified reference direction; for each core section below the top
-  section, the section is rotated so that the PCA direction at its top
-  aligns with the PCA direction at the bottom of the core section above
-  it. The number of samples averaged at the core ends to produce the
-  `top' and `bottom' directions can be specified.
-
-\item[Edit\submenu Remove samples by depth\ldots] removes from the
-  current suite all the samples outside a specified depth range.
-  
 \end{menuitemlist}
 
 \subsubsection{\label{sec:functions-calcs}Calculations menu}
