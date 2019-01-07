@@ -876,7 +876,8 @@ public class PuffinActions {
      * Scales all magnetic susceptibility values in the current suite by
      * a user-specified factor.
      */
-    public final Action rescaleMagSus = new PuffinAction("Rescale mag. sus. …",
+    public final Action rescaleMagSus = new PuffinAction(
+            "Rescale susceptibility…",
             "Scale magnetic susceptibility by a constant factor (whole suite)",
             null, false, KeyEvent.VK_S) {
         private static final long serialVersionUID = 1L;

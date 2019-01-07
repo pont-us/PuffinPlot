@@ -38,12 +38,13 @@ import net.talvi.puffinplot.data.Sample;
  */
 public final class MainMenuBar extends JMenuBar {
 
-    private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
+    private static final Logger LOGGER =
+            Logger.getLogger("net.talvi.puffinplot");
     private static final long serialVersionUID = 1L;
-    final static private JMenuItem noRecentFiles =
+    private static final JMenuItem NO_RECENT_FILES =
             new JMenuItem("No recent files");
     // control or apple key as appropriate
-    private static final int modifierKey =
+    private static final int MODIFIER_KEY =
             Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
     private JMenu recentFilesMenu;
     private final JCheckBoxMenuItem anchorItem;
@@ -51,28 +52,30 @@ public final class MainMenuBar extends JMenuBar {
     private final int[] recentFileKeycodes;
 
     private static JMenu makeMenu(String name, int mnemonic, Object... things) {
-        JMenu menu = new JMenu(name);
+        final JMenu menu = new JMenu(name);
         menu.setMnemonic(mnemonic);
-        logger.log(Level.FINE, "makeMenu {0}", name);
+        LOGGER.log(Level.FINE, "makeMenu {0}", name);
         for (Object thing: things) {
             if (thing == null) continue;
             if (thing instanceof PuffinAction) {
-                PuffinAction puffinAction = (PuffinAction) thing;
+                final PuffinAction puffinAction = (PuffinAction) thing;
                 if (!puffinAction.isExcludedFromMenu()) menu.add(puffinAction);
-                logger.log(Level.FINE,
+                LOGGER.log(Level.FINE,
                         puffinAction.getValue(Action.NAME).toString());
             } else if (thing instanceof Action) {
-                Action a = (Action) thing;
+                final Action a = (Action) thing;
                 menu.add(a);
-                logger.log(Level.FINE, a.getValue(Action.NAME).toString());
+                LOGGER.log(Level.FINE, a.getValue(Action.NAME).toString());
             } else if (thing instanceof JMenuItem) {
-                // JMenu is a subclass of JMenuItem so this handles submenus
-                // as well as `raw' JMenuItems
+                /*
+                 * JMenu is a subclass of JMenuItem so this case handles
+                 * submenus as well as "raw" JMenuItems.
+                 */
                 final JMenuItem jmi = (JMenuItem) thing;
                 menu.add(jmi);
-                logger.log(Level.FINE, jmi.getText());
+                LOGGER.log(Level.FINE, jmi.getText());
             } else {
-                logger.log(Level.WARNING, "Unknown menu item {0}", thing);
+                LOGGER.log(Level.WARNING, "Unknown menu item {0}", thing);
             }
         }
         return menu;
@@ -91,7 +94,7 @@ public final class MainMenuBar extends JMenuBar {
         final PuffinActions pa = app.getActions();
         recentFilesMenu = new JMenu("Open recent file");
         recentFilesMenu.setMnemonic(KeyEvent.VK_R);
-        noRecentFiles.setEnabled(false);
+        NO_RECENT_FILES.setEnabled(false);
         updateRecentFiles();
 
         final JCheckBoxMenuItem movePlotsItem =
@@ -105,13 +108,10 @@ public final class MainMenuBar extends JMenuBar {
                     }
                 };
         movePlotsItem.setMnemonic(KeyEvent.VK_E);
-        movePlotsItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                final GraphDisplay gd = app.getMainWindow().getGraphDisplay();
-                gd.setDragPlotMode(!gd.isDragPlotMode());
-                gd.repaint();
-            }
+        movePlotsItem.addActionListener(event -> {
+            final GraphDisplay gd = app.getMainWindow().getGraphDisplay();
+            gd.setDragPlotMode(!gd.isDragPlotMode());
+            gd.repaint();
         });
 
         add(makeMenu("File", KeyEvent.VK_F,
@@ -167,8 +167,8 @@ public final class MainMenuBar extends JMenuBar {
                 pa.multiSuiteMeans,
                 makeMenu("AMS", KeyEvent.VK_A,
                         pa.bootAmsNaive, pa.bootAmsParam, pa.hextAms,
-                        pa.clearAmsCalcs)
-                , pa.calculateRpi
+                        pa.clearAmsCalcs),
+                pa.calculateRpi
         ));
         add(makeMenu("Window", KeyEvent.VK_W,
                 new WindowMenuItem("Data table", KeyEvent.VK_D,
@@ -187,33 +187,29 @@ public final class MainMenuBar extends JMenuBar {
         AnchorItem() {
             super("PCA anchored");
             setToolTipText("If this item is checked, "
-                    + "subsequent PCA analyses will be anchored");
+                    + "PCA analyses will be anchored");
             /*
-             * If an ItemListener is used here instead of an 
-             * ActionListener, it will also be called when the item
-             * is set programmatically (e.g. to reflect a state 
-             * taken from a new current sample). An ActionListener
-             * will only be activated when the state is changed by
-             * the user.
+             * If an ItemListener is used here instead of an ActionListener, it
+             * will also be called when the item is set programmatically (e.g.
+             * to reflect a state taken from a new current sample). An
+             * ActionListener will only be activated when the state is changed
+             * by the user.
              */
-            addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent event) {
-                    for (Sample s: app.getSelectedSamples()) {
-                        s.setPcaAnchored(isSelected());
-                        s.doPca(app.getCorrection());
-                    }
-                    app.updateDisplay();
+            addActionListener(event -> {
+                for (Sample sample: app.getSelectedSamples()) {
+                    sample.setPcaAnchored(isSelected());
+                    sample.doPca(app.getCorrection());
                 }
+                app.updateDisplay();
             });
-            setAccelerator(KeyStroke.getKeyStroke('T', modifierKey));
+            setAccelerator(KeyStroke.getKeyStroke('T', MODIFIER_KEY));
             setMnemonic(KeyEvent.VK_N);
         }
 
         @Override
         public boolean getState() {
-                Sample s = app.getSample();
-                return s != null ? s.isPcaAnchored() : false;
+                final Sample sample = app.getSample();
+                return sample != null ? sample.isPcaAnchored() : false;
             }
     }
 
@@ -222,8 +218,10 @@ public final class MainMenuBar extends JMenuBar {
      * This allows any stateful menu items to be changed.
      */
     public void sampleChanged() {
-        Sample s = app.getSample();
-        if (s != null) anchorItem.setSelected(s.isPcaAnchored());
+        final Sample sample = app.getSample();
+        if (sample != null) {
+            anchorItem.setSelected(sample.isPcaAnchored());
+        }
     }
     
     /**
@@ -235,10 +233,10 @@ public final class MainMenuBar extends JMenuBar {
         final String[] recentFileNames = recent.getFilesetNames();
         final List<String> toolTips = recent.getFilesetLongNames();
         if (recentFileNames.length == 0)
-            recentFilesMenu.add(noRecentFiles);
+            recentFilesMenu.add(NO_RECENT_FILES);
         for (int i=0; i<recentFileNames.length; i++) {
             final int index = i;
-            JMenuItem item = recentFilesMenu.add(new AbstractAction() {
+            final JMenuItem item = recentFilesMenu.add(new AbstractAction() {
                 private static final long serialVersionUID = 1L;
                 @Override
                 public void actionPerformed(ActionEvent arg0) {
@@ -255,5 +253,4 @@ public final class MainMenuBar extends JMenuBar {
             item.setMnemonic(recentFileKeycodes[i]);
         }
     }
-    
 }
