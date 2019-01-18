@@ -100,6 +100,10 @@ Miscellaneous bug fixes
 -   Custom file import used to ignore the sample volume field; it now
     makes use of it if present, and defaults to a volume of 1 cm³
     if it is not present.
+-   In demagnetization / intensity plots with AF treatment type, data
+	points for magnetic susceptibility measurements (if present) could
+	sometimes be plotted with an incorrect x position. This has now been
+	corrected.
 
 Developer notes
 ---------------
