@@ -21,13 +21,15 @@ automatically fetch dependencies from the Internet if required.
 
 PuffinPlot uses the following external Java libraries, or parts of them:
 
-* iText http://itextpdf.com/
-* batik http://xmlgraphics.apache.org/batik/
-* FreeHEP http://java.freehep.org/
 * appbundler https://java.net/projects/appbundler
+* batik http://xmlgraphics.apache.org/batik/
 * commons-cli https://commons.apache.org/proper/commons-cli/
 * commons-compress http://commons.apache.org/proper/commons-compress/
 * commons-math http://commons.apache.org/proper/commons-math/
+* FreeHEP http://java.freehep.org/
+* iText http://itextpdf.com/
+* JAMA https://math.nist.gov/javanumerics/jama/doc/
+* OrangeExtensions https://ymasory.github.io/OrangeExtensions/
 
 appbundler is not used by PuffinPlot itself, but it used during the
 build process to create a Mac application bundle containing PuffinPlot.

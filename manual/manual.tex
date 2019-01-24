@@ -2094,17 +2094,26 @@ PuffinPlot makes use of several software libraries generously released under
 liberal terms:
 
 \begin{itemize}
+  
+\item Apache Batik for \caps{svg} export.
 
-\item Jama, a basic linear algebra package for Java, for matrix calculations.
+\item Apache Commons for mathematical operations, command-line argument
+  processing, and compression.
 
-\item Apache batik, for \caps{svg} export.
+\item AppBundler to package PuffinPlot as a Mac OS X application.
 
-\item iText, for \caps{pdf} export.
+\item FreeHEP for graphics export.
 
-\item FreeHEP, for graphics export.
+\item iText for \caps{pdf} export.
 
-\item Jython, for scripting.
+\item JAMA for matrix calculations.
 
+\item JUnit and Mockito for unit testing.
+
+\item Jython for scripting.
+
+\item OrangeExtensions for an improved user interface on Mac OS X.
+  
 \end{itemize}
 
 \subsection*{Other software}
@@ -2129,7 +2138,7 @@ reviewer. Since its initial release, PuffinPlot has benefited from bug
 reports and suggestions from Bill Phillips, Jonathan M. Glen, Fabio
 Florindo, Eric Horsman, Terence Day, Yoichi Usui, Adrian Muxworthy,
 Russ Burmester, Andrei Kosterov, Luca Lanci, Radchagrit Supakulopas,
-Bugra Cavdar, Jay Shah, and many others.
+Bugra Cavdar, Jay Shah, Kuo-Hang Chen, and many others.
 
 \subsection*{Icon}
 
@@ -2143,19 +2152,19 @@ in \emph{Svenska f\aa glar, efter naturen och p\aa{} sten ritade} (2nd ed.,
 \section{Future development and bug reporting}
 
 PuffinPlot continues to be developed, albeit slowly and sporadically now
-that its main functionality is stable and fairly complete. Bugs in
-existing functionality are fixed as quickly as possible when they are
-reported, and new features are added when time permits. The PuffinPlot
-project, including downloadable packages of all released versions and
-the complete source code, is hosted at
-\url{http://talvi.net/puffinplot}. Bug reports, feature suggestions, and
-feedback of all kinds are always very welcome. Please send them to
+that its main functionality is complete and stable. Bugs in existing
+functionality are fixed as quickly as possible when they are reported,
+and new features are added as time permits. The PuffinPlot project,
+including downloadable packages of all released versions and the
+complete source code, is hosted at \url{http://talvi.net/puffinplot}.
+Bug reports, feature suggestions, and feedback of all kinds are always
+very welcome. Please send them to
 \textsf{\href{mailto:puffinplot@gmail.com}{puffinplot@gmail.com}}.
 
 \subsection*{How to report a bug}
 
-If you are reporting a bug, please be as specific as possible. Try to
-include as many as possible of the following:
+If you are reporting a bug, please be as specific and detailed as you
+can. Try to include as many as possible of the following:
 
 \begin{itemize}
 \item The actions that triggered the bug.
@@ -2163,6 +2172,9 @@ include as many as possible of the following:
 \item What actually happened (i.e. the unexpected or buggy behaviour).
 \item The \ppcmd{PUFFIN-ERROR.txt} error report file, if PuffinPlot
   crashed and wrote one.
+\item A file containing your PuffinPlot preferences; you can produce
+  this file by opening the Preferences window from the File menu and
+  clicking the \ppcmd{Export} button at the bottom.
 \item A copy of the data file(s) you were working on when the bug
   appeared.
 \item If PuffinPlot produced incorrect output in a file, include a copy
