@@ -145,6 +145,7 @@ public final class MainMenuBar extends JMenuBar {
                                 pa.flipSampleX, pa.flipSampleY, pa.flipSampleZ,
                                 pa.invertSamples, pa.alignSectionDeclinations),
                         pa.removeSamplesOutsideDepthRange,
+                        pa.removeSamplesByTreatmentType,
                         pa.mergeDuplicateSamples,
                         pa.rescaleMagSus
                         ),

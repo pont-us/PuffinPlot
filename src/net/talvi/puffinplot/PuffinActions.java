@@ -17,6 +17,7 @@
 package net.talvi.puffinplot;
 
 import com.itextpdf.text.DocumentException;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -26,12 +27,18 @@ import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Action;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import net.talvi.puffinplot.data.DatumField;
 import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.data.AmsCalculationType;
+import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.window.AlignDeclinationsDialog;
 import net.talvi.puffinplot.window.CiteWindow;
 import net.talvi.puffinplot.window.EditSampleParametersWindow;
@@ -1164,6 +1171,41 @@ public class PuffinActions {
         }
     };
 
+    /**
+     * Removes samples with a particular treatment type.
+     */
+    public final Action removeSamplesByTreatmentType =
+            new PuffinAction("Remove samples by treatment type…",
+            "Remove samples with a particular treatment type.",
+            null, false, KeyEvent.VK_Y) {
+        private static final long serialVersionUID = 1L;
+        @Override public void actionPerformed(ActionEvent e) {
+            final JPanel panel = new JPanel();
+            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+            final JLabel label =
+                    new JLabel("Remove selected samples with treatment type:");
+            label.setAlignmentX(0.5f);
+            panel.add(label);
+            panel.add(Box.createVerticalStrut(8));
+            final JComboBox comboBox = 
+                    new JComboBox(Arrays.stream(TreatType.values()).
+                    map(tt -> tt.getNiceName()).toArray());
+            panel.add(comboBox);
+            final int option = JOptionPane.showConfirmDialog(
+                    app.getMainWindow(), panel,
+                    "Remove samples by treatment type",
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.PLAIN_MESSAGE);
+            if (option == JOptionPane.OK_OPTION) {
+                app.getSuite().removeSamplesByTreatmentType(
+                        app.getSelectedSamples(),
+                        TreatType.values()[comboBox.getSelectedIndex()]
+                );
+                app.getMainWindow().suitesChanged();
+            }
+        }
+    };
+    
     /**
      * Merges duplicate treatment steps within the selected samples.
      */

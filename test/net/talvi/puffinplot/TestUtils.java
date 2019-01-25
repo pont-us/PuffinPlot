@@ -112,7 +112,8 @@ public class TestUtils {
             final String depthString = String.format("%d", depth);
             final Sample sample = new Sample(depthString, suite);
             for (int demag = 0; demag < 100; demag += 10) {
-                final Datum d = new Datum((depth + 1.0) * (100.0 - demag), depth * 50, demag);
+                final Datum d = new Datum((depth + 1.0) * (100.0 - demag),
+                        depth * 50, demag);
                 d.setDepth(depthString);
                 d.setSuite(suite);
                 d.setMeasType(MeasType.CONTINUOUS);

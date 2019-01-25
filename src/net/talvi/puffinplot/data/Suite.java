@@ -1852,6 +1852,25 @@ public final class Suite implements SampleGroup {
         removeSamples(samplesToRemove);
     }
 
+    /**
+     * For every sample in the supplied collection: remove the sample from
+     * this suite if any of its treatment steps has the specified treatment
+     * type.
+     * 
+     * @param removableSamples samples to consider for removal (must be 
+     *   within this suite)
+     * @param treatType the treatment type that selects which samples
+     *   should be removed.
+     */
+    public void removeSamplesByTreatmentType(
+            Collection<Sample> removableSamples, TreatType treatType) {
+        final Set<Sample> samplesToRemove = removableSamples.stream().
+                filter(s -> s.getData().stream().
+                        anyMatch(d -> d.getTreatType() == treatType)).
+                collect(Collectors.toSet());
+        removeSamples(samplesToRemove);
+    }
+    
     private void removeSamples(Collection<Sample> samplesToRemove) {
         samples.removeAll(samplesToRemove);
         samplesToRemove.forEach(s -> samplesById.remove(s.getNameOrDepth()));

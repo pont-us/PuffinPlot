@@ -9,6 +9,7 @@ Installation requirements
 
 -   PuffinPlot now requires Java 8 or higher.
 
+
 Data manipulation
 -----------------
 
@@ -19,7 +20,8 @@ Data manipulation
     a continuous declination record for continuous suites in which the
     core sections are not azimuthally oriented with respected to each
     other.
--   Remove samples outside a specified depth range.
+-   Allow user to remove samples outside a specified depth range.
+-   Allow user to remove samples with a specified treatment type.
 
 
 Calculations

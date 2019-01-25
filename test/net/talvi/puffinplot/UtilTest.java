@@ -17,6 +17,7 @@
 package net.talvi.puffinplot;
 
 import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -27,8 +28,10 @@ import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
 import java.time.DateTimeException;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -39,6 +42,8 @@ public class UtilTest {
 
     @Rule
     public TemporaryFolder tempDir = new TemporaryFolder();
+    
+    private final double delta = 1e-10;
     
     private BitSet makeBitSet(String spec) {
         BitSet result = new BitSet();
@@ -272,5 +277,52 @@ public class UtilTest {
     public void testParseDoubleSafely() {
         assertEquals(9.87, Util.parseDoubleSafely("9.87"), 1e-10);
         assertEquals(0, Util.parseDoubleSafely("not a number"), 1e-10);
+    }
+    
+    @Test
+    public void testScaleLine() {
+        final Line2D line = new Line2D.Double(0, 0, 1, 1);
+        checkLinesEqual(new Line2D.Double(-1, -1, 2, 2),
+                Util.scaleLine(line, 3));
+    }
+    
+    @Test
+    public void testScaleLineNull() {
+        assertNull(Util.scaleLine(null, 42));
+    }
+
+    @Test
+    public void testScaleLineByOne() {
+        final Line2D line = new Line2D.Double(2, 2, 3, 3);
+        checkLinesEqual(line, Util.scaleLine(line, 1));
+    }
+    
+    private void checkLinesEqual(Line2D expected, Line2D actual) {
+        /*
+         * Oddly, Line2D doesn't override equals, but Point2D does, so
+         * we have to check the endpoints individually.
+         */
+        assertEquals(expected.getP1(), actual.getP1());
+        assertEquals(expected.getP2(), actual.getP2());        
+    }
+    
+    @Test
+    public void testEnvelopeWithNoPoints() {
+        assertNull(Util.envelope(Collections.emptyList()));
+    }
+    
+    @Test
+    public void testEnvelope() {
+        final List<Point2D> points = Arrays.asList(
+                new Point2D.Double(-2, -3),
+                new Point2D.Double(0, 4),
+                new Point2D.Double(3, -1),
+                new Point2D.Double(-5, 2)
+        );
+        final Rectangle2D envelope = Util.envelope(points);
+        assertEquals(-5, envelope.getMinX(), delta);
+        assertEquals(-3, envelope.getMinY(), delta);
+        assertEquals(3, envelope.getMaxX(), delta);
+        assertEquals(4, envelope.getMaxY(), delta);
     }
 }

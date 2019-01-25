@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -1115,6 +1116,25 @@ public class SuiteTest {
                 syntheticSuite1.getSamples().stream().
                         map(sample -> sample.getNameOrDepth()).
                         collect(Collectors.joining()));        
+    }
+    
+    @Test
+    public void testRemoveSamplesByTreatmentType() {
+        final Set initialSampleSet = new HashSet(syntheticSuite1.getSamples());
+        final Set<Integer> indicesToRemove =
+                Arrays.asList(3, 5, 6).stream().collect(Collectors.toSet());
+        final Set<Sample> samplesToRemove = indicesToRemove.stream().
+                        map(i -> syntheticSuite1.getSampleByIndex(i)).
+                        collect(Collectors.toSet());
+        samplesToRemove.stream().flatMap(s -> s.getData().stream()).
+                forEach(d -> d.setTreatType(TreatType.DEGAUSS_Z));
+        syntheticSuite1.removeSamplesByTreatmentType(
+                syntheticSuite1.getSamples(), TreatType.DEGAUSS_Z);
+        final Set remainingSampleSet = new HashSet(syntheticSuite1.getSamples());
+        assertTrue(initialSampleSet.containsAll(remainingSampleSet));
+        assertTrue(initialSampleSet.containsAll(samplesToRemove));
+        assertEquals(initialSampleSet.size(),
+                samplesToRemove.size() + remainingSampleSet.size());
     }
     
     @Test

@@ -28,16 +28,16 @@ import java.util.stream.Collectors;
 
 
 /**
- * <p>RecentFileList manages a list of file-sets. It is intended to be used
+ * RecentFileList manages a list of file-sets. It is intended to be used
  * to manage a collection of recently used files for convenient re-opening
  * by a user. Note that each item in the list can comprise multiple files.
  * The length of the list is currently hard-wired to 8, though this would
- * be trivial to change if necessary.</p>
+ * be trivial to change if necessary.
  * 
- * <p>RecentFileList loads and saves its data to a {@link java.util.prefs.Preferences}
- * object, using the keys of the form {@code recentFileX}, where X is a non-negative
- * integer less than the maximum number of file-sets.
- * </p>
+ * RecentFileList loads and saves its data to a
+ * {@link java.util.prefs.Preferences} object, using the keys of the form
+ * {@code recentFileX}, where X is a non-negative integer less than the maximum
+ * number of file-sets.
  * 
  * @author pont
  */
@@ -107,9 +107,9 @@ public class RecentFileList {
      * 
      * @return the list of long names for this recent files list
      */
-    public List<String> getFilesetLongNames()
-    {
-        return fileSets.stream().map(x -> x.getLongName()).collect(Collectors.toList());
+    public List<String> getFilesetLongNames() {
+        return fileSets.stream().map(x -> x.getLongName()).
+                collect(Collectors.toList());
     }
     /**
      * Returns a specified file-set and moves it to the top of the list.
@@ -196,7 +196,8 @@ public class RecentFileList {
             return cPathNames;
         }
         
-        private static List<String> decompressPathNames(List<String> compressed) {
+        private static List<String> decompressPathNames(
+                List<String> compressed) {
             final List<String> result =
                     new ArrayList<>(compressed.size()-1);
             String prefix = compressed.get(0);
