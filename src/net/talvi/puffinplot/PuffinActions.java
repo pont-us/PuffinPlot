@@ -17,7 +17,6 @@
 package net.talvi.puffinplot;
 
 import com.itextpdf.text.DocumentException;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;

@@ -16,19 +16,26 @@
  */
 package net.talvi.puffinplot.window;
 
-import java.awt.Component;
 import javax.swing.JOptionPane;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.Util;
 import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.Suite;
 
+/**
+ * A dialog allowing the user to perform declination alignment between
+ * core sections.
+ * 
+ * @author pont
+ */
 public class AlignDeclinationsDialog extends javax.swing.JDialog {
 
     private final PuffinApp app;
 
     /**
      * Creates new form AlignDeclinationsDialog
+     * 
+     * @param app the application with which to associate the dialog
      */
     public AlignDeclinationsDialog(PuffinApp app) {
         this.app = app;

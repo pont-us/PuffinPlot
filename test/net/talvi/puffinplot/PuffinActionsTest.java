@@ -20,18 +20,91 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 public class PuffinActionsTest {
+
+    final PuffinApp app = Mockito.mock(PuffinApp.class);
+    final PuffinActions actions = new PuffinActions(app);
     
     @Test
-    public void testAlignSectionDeclinations() {
-        final PuffinApp app = Mockito.mock(PuffinApp.class);
-        final PuffinActions actions = new PuffinActions(app);
-        /*
-         * For now, we just test that an error dialog is shown when
-         * getSuite() is null.
-         */
-        actions.alignSectionDeclinations.actionPerformed(null);
-        Mockito.verify(app).errorDialog(Mockito.<String>any(),
-                Mockito.<String>any());
+    public void testAbout() {
+        actions.about.actionPerformed(null);
+        Mockito.verify(app).about();
     }
     
+    @Test
+    public void testOpen() {
+        actions.open.actionPerformed(null);
+        Mockito.verify(app).showOpenFilesDialog(true);
+    }
+    
+    @Test
+    public void testAppendFiles() {
+        actions.appendFiles.actionPerformed(null);
+        Mockito.verify(app).showOpenFilesDialog(false);
+    }
+    
+    @Test
+    public void testOpenFolder() {
+        actions.openFolder.actionPerformed(null);
+        Mockito.verify(app).showMacOpenFolderDialog();
+    }
+    
+    @Test
+    public void testClose() {
+        actions.close.actionPerformed(null);
+        Mockito.verify(app).closeCurrentSuite();
+    }
+    
+    @Test
+    public void testExportCalcsMultisuite() {
+        actions.exportCalcsMultiSuite.actionPerformed(null);
+        Mockito.verify(app).exportCalcsMultiSuite();
+    }
+    
+    @Test
+    public void testPageSetup() {
+        actions.pageSetup.actionPerformed(null);
+        Mockito.verify(app).showPageSetupDialog();
+    }
+    
+    @Test
+    public void testRunJavascriptScript() {
+        actions.runJavascriptScript.actionPerformed(null);
+        Mockito.verify(app).showRunJavascriptScriptDialog();
+    }
+    
+    @Test
+    public void testRunPythonScript() {
+        actions.runPythonScript.actionPerformed(null);
+        Mockito.verify(app).showRunPythonScriptDialog();
+    }
+    
+    @Test
+    public void testCalculateRpi() {
+        actions.calculateRpi.actionPerformed(null);
+        Mockito.verify(app).calculateRpi();
+    }
+    
+    @Test
+    public void testCreateBundle() {
+        actions.createBundle.actionPerformed(null);
+        Mockito.verify(app).showCreateBundleDialog();
+    }
+    
+    @Test
+    public void testConvertDiscreteToContinuout() {
+        actions.convertDiscreteToContinuous.actionPerformed(null);
+        Mockito.verify(app).showDiscreteToContinuousDialog();
+    }
+    
+    @Test
+    public void testImportLocations() {
+        actions.importLocations.actionPerformed(null);
+        Mockito.verify(app).showImportLocationsDialog();
+    }
+
+    @Test
+    public void testOpenPuffinWebsite() {
+        actions.openPuffinWebsite.actionPerformed(null);
+        Mockito.verify(app).openWebPage("http://talvi.net/puffinplot");
+    }
 }

@@ -26,8 +26,14 @@
 \usepackage{booktabs}
 \usepackage{listings}
 \usepackage{textcase}
-\usepackage{titlesec} % to start sections on a new page
-% \newcommand{\sectionbreak}{\clearpage}
+
+% titlesec lets use define \sectionbreak to start sections on a new
+% page. Warning: some titlesec versions have a bug that suppresses
+% section numbering -- fixed in v2.10.2 (see
+% https://tex.stackexchange.com/q/299969/93056 ).
+\usepackage{titlesec}
+\newcommand{\sectionbreak}{\clearpage}
+
 \usepackage{textcomp} % for \textdegree
 %\ifpdf
   \usepackage[unicode=true]{hyperref}
@@ -78,9 +84,9 @@
 \begin{document}
 
 \maketitle
-%\ifpdf
-%\vspace{5mm}
-%\fi
+\ifpdf
+\vspace{5cm}
+\fi
 \begin{center}
 \includegraphics[width=70mm]{figures/Fratercula_arctica.jpeg}
 \end{center}
@@ -2052,7 +2058,7 @@ for sample in suite.getSamples():     # For every sample in the suite,
 \end{lstlisting}
 \end{figure}
 
-\section{Creating a data bundle \label{sec:bundle}}
+\subsection{Creating a data bundle \label{sec:bundle}}
 
 PuffinPlot can export a suite as a data bundle, intended mainly as an
 aid to reproducible research. It provides a straightforward way to
@@ -2195,7 +2201,6 @@ can. Try to include as many as possible of the following:
 fix the bug quickly.
 
 \clearpage
-\appendix
 \section{Citing PuffinPlot\label{sec:citing-puffinplot}}
 
 PuffinPlot was introduced and described in a 2012 paper published
