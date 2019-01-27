@@ -1,6 +1,7 @@
 <ivy-module version="2.0">
     <info organisation="net.talvi" module="puffinplot"/>
     <dependencies>
+        <dependency org="junit" name="junit" rev="4.12"/>
         <dependency org="org.apache.xmlgraphics" name="batik-svggen" rev="1.10"/>
         <dependency org="org.apache.xmlgraphics" name="batik-awt-util" rev="1.10"/>
         <dependency org="org.apache.xmlgraphics" name="batik-i18n" rev="1.10"/>
