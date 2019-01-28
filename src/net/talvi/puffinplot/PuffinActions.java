@@ -16,7 +16,6 @@
  */
 package net.talvi.puffinplot;
 
-import com.itextpdf.text.DocumentException;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -32,12 +31,14 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import net.talvi.puffinplot.data.TreatmentStepField;
+
+import com.itextpdf.text.DocumentException;
+import net.talvi.puffinplot.data.AmsCalculationType;
 import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
-import net.talvi.puffinplot.data.AmsCalculationType;
 import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.TreatmentStepField;
 import net.talvi.puffinplot.window.AlignDeclinationsDialog;
 import net.talvi.puffinplot.window.CiteWindow;
 import net.talvi.puffinplot.window.EditSampleParametersWindow;

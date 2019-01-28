@@ -18,6 +18,7 @@ package net.talvi.puffinplot.data.file;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.Vec3;

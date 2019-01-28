@@ -17,6 +17,7 @@
 package net.talvi.puffinplot.window;
 
 import java.util.List;
+
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;

@@ -33,6 +33,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+
 import net.talvi.puffinplot.PuffinApp;
 
 /**

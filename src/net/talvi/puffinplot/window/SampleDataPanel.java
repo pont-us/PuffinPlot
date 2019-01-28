@@ -27,6 +27,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
 

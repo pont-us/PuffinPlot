@@ -23,7 +23,16 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Locale;
 import java.util.prefs.Preferences;
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
+
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Correction.Rotation;

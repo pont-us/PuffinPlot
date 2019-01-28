@@ -16,21 +16,22 @@
  */
 package net.talvi.puffinplot.data;
 
-import Jama.Matrix;
 import java.io.File;
 import java.io.IOException;
-import static java.lang.Math.toRadians;
 import java.nio.file.Files;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+
+import Jama.Matrix;
 import net.talvi.puffinplot.TestUtils;
-import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.Assume;
 import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import static java.lang.Math.toRadians;
+import static org.junit.Assert.assertEquals;
 
 public class KentParamsTest {
 

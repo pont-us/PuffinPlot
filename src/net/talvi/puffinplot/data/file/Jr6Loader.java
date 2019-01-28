@@ -26,8 +26,9 @@ import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import net.talvi.puffinplot.data.TreatmentStep;
+
 import net.talvi.puffinplot.data.MeasType;
+import net.talvi.puffinplot.data.TreatmentStep;
 
 public class Jr6Loader extends AbstractFileLoader {
 

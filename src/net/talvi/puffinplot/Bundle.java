@@ -31,11 +31,13 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import static net.talvi.puffinplot.PuffinApp.getGreatCirclesValidityCondition;
+
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Site;
 import net.talvi.puffinplot.data.Suite;
+
+import static net.talvi.puffinplot.PuffinApp.getGreatCirclesValidityCondition;
 
 public class Bundle {
     

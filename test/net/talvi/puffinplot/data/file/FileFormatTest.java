@@ -23,11 +23,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.prefs.Preferences;
 
-import net.talvi.puffinplot.data.*;
+import net.talvi.puffinplot.data.FieldUnit;
+import net.talvi.puffinplot.data.MeasType;
+import net.talvi.puffinplot.data.MomentUnit;
+import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.TreatmentStep;
+import net.talvi.puffinplot.data.TreatmentStepField;
+import net.talvi.puffinplot.data.Vec3;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.mockito.Mockito;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 
 public class FileFormatTest {

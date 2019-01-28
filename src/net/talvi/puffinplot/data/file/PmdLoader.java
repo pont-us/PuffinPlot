@@ -27,10 +27,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import net.talvi.puffinplot.data.TreatmentStep;
-import static java.lang.Math.toRadians;
+
 import net.talvi.puffinplot.data.MeasType;
+import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Vec3;
+
+import static java.lang.Math.toRadians;
 
 public class PmdLoader extends AbstractFileLoader {
     

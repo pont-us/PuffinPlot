@@ -19,8 +19,10 @@ package net.talvi.puffinplot.data;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  *

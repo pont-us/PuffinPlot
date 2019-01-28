@@ -20,12 +20,15 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+
 import net.talvi.puffinplot.data.AmsData;
 import net.talvi.puffinplot.data.file.testdata.TestFileLocator;
-import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 public class AmsLoaderTest {
     

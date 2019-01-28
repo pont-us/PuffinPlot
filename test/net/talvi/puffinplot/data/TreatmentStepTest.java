@@ -28,11 +28,16 @@ import java.util.function.ToIntFunction;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
 import net.talvi.puffinplot.TestUtils;
 import net.talvi.puffinplot.TestUtils.ListHandler;
-import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 public class TreatmentStepTest {
     

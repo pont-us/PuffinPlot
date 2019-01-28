@@ -27,6 +27,7 @@ import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
+
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.TreatmentStepField;
 

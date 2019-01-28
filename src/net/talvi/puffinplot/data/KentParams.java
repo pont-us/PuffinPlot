@@ -16,20 +16,21 @@
  */
 package net.talvi.puffinplot.data;
 
-import java.util.Collections;
 import java.io.BufferedReader;
-import java.io.InputStream;
-import java.util.List;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Scanner;
-import static java.lang.Math.toRadians;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static java.lang.Math.toRadians;
 
 /**
  * <p>A class representing the parameters of a Kent confidence ellipse.

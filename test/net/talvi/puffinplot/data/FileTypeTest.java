@@ -16,15 +16,17 @@
  */
 package net.talvi.puffinplot.data;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import net.talvi.puffinplot.TestUtils;
-import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  *

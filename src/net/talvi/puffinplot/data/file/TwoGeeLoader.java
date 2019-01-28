@@ -31,10 +31,17 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
-import net.talvi.puffinplot.data.*;
+import net.talvi.puffinplot.data.ArmAxis;
+import net.talvi.puffinplot.data.Correction;
+import net.talvi.puffinplot.data.MeasType;
+import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.TreatmentStep;
+import net.talvi.puffinplot.data.Vec3;
 
-import static net.talvi.puffinplot.data.file.TwoGeeHelper.*;
+import static net.talvi.puffinplot.data.file.TwoGeeHelper.gaussToAm;
+import static net.talvi.puffinplot.data.file.TwoGeeHelper.measTypeFromString;
+import static net.talvi.puffinplot.data.file.TwoGeeHelper.oerstedToTesla;
+import static net.talvi.puffinplot.data.file.TwoGeeHelper.treatTypeFromString;
 
 /**
  * A loader for data files produced by the Long Core software supplied

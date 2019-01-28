@@ -22,7 +22,14 @@ import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
+
 import net.talvi.puffinplot.PuffinAction;
 import net.talvi.puffinplot.PuffinActions;
 import net.talvi.puffinplot.PuffinApp;

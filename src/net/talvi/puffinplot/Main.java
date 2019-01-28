@@ -29,6 +29,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Suite;
 import org.apache.commons.cli.CommandLine;

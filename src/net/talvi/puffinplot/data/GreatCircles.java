@@ -16,7 +16,6 @@
  */
 package net.talvi.puffinplot.data;
 
-import static java.lang.Math.acos;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,6 +29,8 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleBindings;
+
+import static java.lang.Math.acos;
 
 /**
  * This class represents a set of great circles and a set of directions.

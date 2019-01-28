@@ -16,8 +16,6 @@
  */
 package net.talvi.puffinplot.data.file;
 
-import java.util.regex.Matcher;
-import java.util.List;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -25,15 +23,20 @@ import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.TreatmentStep;
 
-import java.util.regex.Pattern;
-import static net.talvi.puffinplot.data.file.TwoGeeHelper.*;
 import static java.lang.Double.isNaN;
-import java.util.Locale;
+import static net.talvi.puffinplot.data.file.TwoGeeHelper.gaussToAm;
+import static net.talvi.puffinplot.data.file.TwoGeeHelper.oerstedToTesla;
+import static net.talvi.puffinplot.data.file.TwoGeeHelper.treatTypeFromString;
 
 /**
  * A loader for PuffinPlot's own file format.

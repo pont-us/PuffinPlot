@@ -24,12 +24,40 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.BitSet;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Scanner;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
 import net.talvi.puffinplot.PuffinUserException;
-import net.talvi.puffinplot.data.file.*;
+import net.talvi.puffinplot.data.file.AmsLoader;
+import net.talvi.puffinplot.data.file.CaltechLoader;
+import net.talvi.puffinplot.data.file.FileFormat;
+import net.talvi.puffinplot.data.file.FileLoader;
+import net.talvi.puffinplot.data.file.IapdLoader;
+import net.talvi.puffinplot.data.file.Jr6Loader;
+import net.talvi.puffinplot.data.file.PmdLoader;
+import net.talvi.puffinplot.data.file.PplLoader;
+import net.talvi.puffinplot.data.file.TabularFileLoader;
+import net.talvi.puffinplot.data.file.TwoGeeLoader;
+import net.talvi.puffinplot.data.file.UcDavisLoader;
+import net.talvi.puffinplot.data.file.ZplotLoader;
 
 /**
  * A suite of data, containing a number of samples. This will usually correspond

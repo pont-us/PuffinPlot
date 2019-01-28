@@ -27,12 +27,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.talvi.puffinplot.data.TreatmentStep;
+
 import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Vec3;
-import static net.talvi.puffinplot.data.file.TwoGeeHelper.*;
+
 import static net.talvi.puffinplot.Util.parseDoubleSafely;
+import static net.talvi.puffinplot.data.file.TwoGeeHelper.gaussToAm;
 
 /**
  * A file loader for CIT (Caltech) data files. This code is informed in part

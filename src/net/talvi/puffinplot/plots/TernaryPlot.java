@@ -21,17 +21,19 @@ import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.prefs.Preferences;
+
+import net.talvi.puffinplot.data.Sample;
+import net.talvi.puffinplot.data.TreatmentStep;
+import net.talvi.puffinplot.data.Vec3;
+import net.talvi.puffinplot.window.GraphDisplay;
+import net.talvi.puffinplot.window.PlotParams;
+
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
-import java.util.prefs.Preferences;
-import net.talvi.puffinplot.data.TreatmentStep;
-import net.talvi.puffinplot.data.Sample;
-import net.talvi.puffinplot.data.Vec3;
-import net.talvi.puffinplot.window.GraphDisplay;
-import net.talvi.puffinplot.window.PlotParams;
 
 /**
  * An experimental ternary plot for a sample's magnetic moment data.

@@ -18,16 +18,19 @@ package net.talvi.puffinplot.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import net.talvi.puffinplot.TestUtils;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
 import static java.lang.Math.PI;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import java.util.stream.Collectors;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  *

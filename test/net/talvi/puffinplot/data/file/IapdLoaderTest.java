@@ -25,12 +25,20 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.talvi.puffinplot.data.*;
+import net.talvi.puffinplot.data.Correction;
+import net.talvi.puffinplot.data.FileType;
+import net.talvi.puffinplot.data.MeasType;
+import net.talvi.puffinplot.data.Sample;
+import net.talvi.puffinplot.data.Suite;
+import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.TreatmentStep;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 /**
  *

@@ -16,12 +16,13 @@
  */
 package net.talvi.puffinplot.data;
 
-import Jama.Matrix;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+
+import Jama.Matrix;
 
 /**
  * A second-order symmetric tensor used to represent the anisotropy of

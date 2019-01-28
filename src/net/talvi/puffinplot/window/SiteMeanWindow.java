@@ -18,6 +18,7 @@ package net.talvi.puffinplot.window;
 
 import java.util.prefs.Preferences;
 import javax.swing.JFrame;
+
 import net.talvi.puffinplot.plots.SiteEqAreaPlot;
 
 /**

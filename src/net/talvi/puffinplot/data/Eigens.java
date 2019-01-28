@@ -16,15 +16,17 @@
  */
 package net.talvi.puffinplot.data;
 
-import Jama.EigenvalueDecomposition;
-import Jama.Matrix;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import Jama.EigenvalueDecomposition;
+import Jama.Matrix;
+
 import static java.lang.Math.abs;
-import static java.lang.Math.sqrt;
 import static java.lang.Math.atan;
+import static java.lang.Math.sqrt;
 import static java.lang.Math.toDegrees;
 
 /**

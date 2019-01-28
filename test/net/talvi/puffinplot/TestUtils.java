@@ -29,8 +29,13 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-import net.talvi.puffinplot.data.*;
+import net.talvi.puffinplot.data.Correction;
+import net.talvi.puffinplot.data.MeasType;
+import net.talvi.puffinplot.data.Sample;
+import net.talvi.puffinplot.data.Suite;
+import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.TreatmentStep;
+import net.talvi.puffinplot.data.Vec3;
 import org.junit.rules.TemporaryFolder;
 
 /**

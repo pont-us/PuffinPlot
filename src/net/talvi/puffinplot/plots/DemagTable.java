@@ -18,20 +18,22 @@ package net.talvi.puffinplot.plots;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import static java.lang.String.format;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.prefs.Preferences;
+
 import net.talvi.puffinplot.Util;
-import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
+
+import static java.lang.String.format;
 
 /**
  * A table showing some of the demagnetization data.

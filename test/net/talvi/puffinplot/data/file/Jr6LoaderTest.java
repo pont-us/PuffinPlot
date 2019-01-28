@@ -26,13 +26,22 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.talvi.puffinplot.data.*;
+import net.talvi.puffinplot.data.Correction;
+import net.talvi.puffinplot.data.MeasType;
+import net.talvi.puffinplot.data.Sample;
+import net.talvi.puffinplot.data.Suite;
+import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.file.testdata.TestFileLocator;
-import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class Jr6LoaderTest {
     

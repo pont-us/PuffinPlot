@@ -23,10 +23,12 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import org.junit.Test;
-import static org.junit.Assert.*;
+
 import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import static org.junit.Assert.assertEquals;
 
 public class MainTest {
     

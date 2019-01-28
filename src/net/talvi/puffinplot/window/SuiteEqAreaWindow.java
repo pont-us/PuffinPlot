@@ -18,6 +18,7 @@ package net.talvi.puffinplot.window;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.plots.SeparateSuiteEaPlot;
 

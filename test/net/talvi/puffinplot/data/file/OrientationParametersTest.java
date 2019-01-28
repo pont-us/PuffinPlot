@@ -18,10 +18,12 @@ package net.talvi.puffinplot.data.file;
 
 import net.talvi.puffinplot.data.Vec3;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static java.lang.Math.toRadians;
 import static net.talvi.puffinplot.data.file.OrientationParameters.AzimuthParameter;
 import static net.talvi.puffinplot.data.file.OrientationParameters.DipParameter;
-import static java.lang.Math.toRadians;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 public class OrientationParametersTest {

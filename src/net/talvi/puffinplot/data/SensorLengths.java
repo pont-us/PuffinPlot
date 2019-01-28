@@ -16,16 +16,17 @@
  */
 package net.talvi.puffinplot.data;
 
-import java.util.Locale;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Scanner;
-import java.util.prefs.Preferences;
-import static java.lang.Double.parseDouble;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Scanner;
+import java.util.prefs.Preferences;
+
+import static java.lang.Double.parseDouble;
 
 /**
  * <p>Represents the effective SQUID sensor lengths of a magnetometer, 

@@ -28,7 +28,9 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
 import net.talvi.puffinplot.data.FileType;
+
 import static java.awt.event.KeyEvent.getExtendedKeyCodeForChar;
 
 /**

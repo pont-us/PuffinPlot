@@ -16,7 +16,16 @@
  */
 package net.talvi.puffinplot.data;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+
 import Jama.Matrix;
+
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.asin;
@@ -29,13 +38,6 @@ import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.toDegrees;
 import static java.lang.Math.toRadians;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
 
 /**
  * An immutable three-dimensional Cartesian vector. The class contains

@@ -23,6 +23,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.Version;
 

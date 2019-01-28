@@ -21,10 +21,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.util.LinkedList;
-import net.talvi.puffinplot.data.TreatmentStep;
 import java.util.Map;
+
 import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Vec3;
 
 /**

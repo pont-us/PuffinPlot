@@ -25,13 +25,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import net.talvi.puffinplot.data.*;
+import net.talvi.puffinplot.data.Correction;
+import net.talvi.puffinplot.data.PcaValues;
+import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.TreatmentStep;
+import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.data.file.testdata.TestFileLocator;
-import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  *

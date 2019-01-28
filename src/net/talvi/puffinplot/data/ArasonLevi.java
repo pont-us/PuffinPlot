@@ -16,16 +16,18 @@
  */
 package net.talvi.puffinplot.data;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.sin;
-import static java.lang.Math.cos;
-import static java.lang.Math.log;
-import static java.lang.Math.pow;
-import static java.lang.Math.exp;
-import static java.lang.Math.sqrt;
 import java.util.Collection;
 import java.util.logging.Logger;
+
 import org.apache.commons.math3.distribution.TDistribution;
+
+import static java.lang.Math.abs;
+import static java.lang.Math.cos;
+import static java.lang.Math.exp;
+import static java.lang.Math.log;
+import static java.lang.Math.pow;
+import static java.lang.Math.sin;
+import static java.lang.Math.sqrt;
 
 /**
  * Calculate and store Arason-Levi Maximum Likelihood Estimates (MLE) for

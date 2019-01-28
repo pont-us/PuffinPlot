@@ -15,11 +15,13 @@
  * along with PuffinPlot. If not, see <http://www.gnu.org/licenses/>.
  */
 package net.talvi.puffinplot.data;
-import static java.lang.Math.toDegrees;
-import static java.lang.Math.toRadians;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import static java.lang.Math.toDegrees;
+import static java.lang.Math.toRadians;
 
 /**
  * Represents a location on the Earth's surface (latitude/longitude).

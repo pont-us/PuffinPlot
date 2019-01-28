@@ -31,6 +31,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.CustomFields;
 

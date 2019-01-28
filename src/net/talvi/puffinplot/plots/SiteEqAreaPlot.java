@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.prefs.Preferences;
+
 import net.talvi.puffinplot.data.FisherValues;
 import net.talvi.puffinplot.data.GreatCircle;
 import net.talvi.puffinplot.data.GreatCircles;

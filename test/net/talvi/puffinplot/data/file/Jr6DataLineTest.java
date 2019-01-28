@@ -18,10 +18,12 @@ package net.talvi.puffinplot.data.file;
 
 import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.Vec3;
+import org.junit.Test;
+
 import static net.talvi.puffinplot.data.file.OrientationParameters.AzimuthParameter;
 import static net.talvi.puffinplot.data.file.OrientationParameters.DipParameter;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class Jr6DataLineTest {
     

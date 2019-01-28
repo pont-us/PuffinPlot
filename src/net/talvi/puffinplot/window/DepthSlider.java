@@ -35,6 +35,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.Suite;
 

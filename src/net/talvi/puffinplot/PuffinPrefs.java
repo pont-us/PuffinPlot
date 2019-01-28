@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.InvalidPreferencesFormatException;
 import java.util.prefs.Preferences;
+
 import net.talvi.puffinplot.data.SensorLengths;
 import net.talvi.puffinplot.data.file.TwoGeeLoader;
 

@@ -16,11 +16,6 @@
  */
 package net.talvi.puffinplot.data;
 
-import Jama.Matrix;
-import java.util.Random;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import static java.lang.Math.toDegrees;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -28,12 +23,24 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import Jama.Matrix;
 import net.talvi.puffinplot.TestUtils;
 import net.talvi.puffinplot.TestUtils.ListHandler;
+import org.junit.Test;
+
+import static java.lang.Math.toDegrees;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class SampleTest {
 

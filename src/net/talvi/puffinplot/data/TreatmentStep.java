@@ -16,9 +16,6 @@
  */
 package net.talvi.puffinplot.data;
 
-import static java.lang.Double.NaN;
-import static java.lang.Double.parseDouble;
-import static java.lang.Math.toRadians;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,9 +26,14 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
-import static java.util.Objects.requireNonNull;
 import java.util.stream.Collectors;
+
 import net.talvi.puffinplot.Util;
+
+import static java.lang.Double.NaN;
+import static java.lang.Double.parseDouble;
+import static java.lang.Math.toRadians;
+import static java.util.Objects.requireNonNull;
 
 /**
  * <p>TreatmentStep is the fundamental data class of PuffinPlot. It represents the

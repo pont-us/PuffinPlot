@@ -23,6 +23,7 @@ import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 import java.util.Locale;
 import java.util.prefs.Preferences;
+
 import net.talvi.puffinplot.data.FisherParams;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Site;

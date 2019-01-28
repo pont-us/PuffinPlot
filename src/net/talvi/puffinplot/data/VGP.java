@@ -16,16 +16,17 @@
  */
 package net.talvi.puffinplot.data;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+
 import static java.lang.Math.PI;
 import static java.lang.Math.asin;
 import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.tan;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * A class representing a virtual geomagnetic pole.

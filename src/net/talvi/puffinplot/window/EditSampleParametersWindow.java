@@ -26,10 +26,20 @@ import java.awt.event.ActionListener;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+
 import net.talvi.puffinplot.PuffinApp;
-import net.talvi.puffinplot.data.TreatmentStepField;
 import net.talvi.puffinplot.data.Sample;
+import net.talvi.puffinplot.data.TreatmentStepField;
 
 /**
  * A window allowing the user to edit orientation corrections.

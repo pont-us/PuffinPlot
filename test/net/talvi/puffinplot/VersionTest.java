@@ -19,8 +19,10 @@ package net.talvi.puffinplot;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.UnaryOperator;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
 
 public class VersionTest {
     

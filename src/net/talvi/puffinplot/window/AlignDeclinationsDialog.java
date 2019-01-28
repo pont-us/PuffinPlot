@@ -17,6 +17,7 @@
 package net.talvi.puffinplot.window;
 
 import javax.swing.JOptionPane;
+
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.Util;
 import net.talvi.puffinplot.data.MeasType;

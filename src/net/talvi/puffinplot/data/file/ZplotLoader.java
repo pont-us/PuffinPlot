@@ -26,11 +26,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 import java.util.regex.Pattern;
-import net.talvi.puffinplot.data.TreatmentStep;
+
 import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Vec3;
-import static net.talvi.puffinplot.data.file.TwoGeeHelper.*;
+
+import static net.talvi.puffinplot.data.file.TwoGeeHelper.gaussToAm;
+import static net.talvi.puffinplot.data.file.TwoGeeHelper.oerstedToTesla;
 
 /**
  * A file loader for the file format used by Steve Hurst's Zplot program.

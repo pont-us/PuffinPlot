@@ -20,12 +20,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import static java.util.Collections.max;
-import static java.util.Collections.min;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Logger;
+
+import static java.util.Collections.max;
+import static java.util.Collections.min;
 
 /**
  * <p>A site is a grouping of samples within a suite. In practice, it usually

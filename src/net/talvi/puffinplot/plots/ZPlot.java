@@ -21,20 +21,28 @@ import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import static java.lang.Math.atan;
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
 import java.text.AttributedString;
 import java.util.ArrayList;
-import static java.util.Collections.max;
-import static java.util.Collections.min;
 import java.util.Comparator;
 import java.util.List;
 import java.util.prefs.Preferences;
+
 import net.talvi.puffinplot.Util;
-import net.talvi.puffinplot.data.*;
+import net.talvi.puffinplot.data.Correction;
+import net.talvi.puffinplot.data.MeasurementAxis;
+import net.talvi.puffinplot.data.PcaValues;
+import net.talvi.puffinplot.data.Sample;
+import net.talvi.puffinplot.data.TreatmentStep;
+import net.talvi.puffinplot.data.TreatmentStepMomentComparator;
+import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
+
+import static java.lang.Math.atan;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+import static java.util.Collections.max;
+import static java.util.Collections.min;
 
 /**
  * A Zijderveld plot for a sample's demagnetization data. The vertical

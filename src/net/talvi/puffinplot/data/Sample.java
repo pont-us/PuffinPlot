@@ -16,10 +16,6 @@
  */
 package net.talvi.puffinplot.data;
 
-import Jama.Matrix;
-import static java.lang.Math.abs;
-import static java.lang.Double.parseDouble;
-import static java.lang.Math.toRadians;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
@@ -35,6 +31,12 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import Jama.Matrix;
+
+import static java.lang.Double.parseDouble;
+import static java.lang.Math.abs;
+import static java.lang.Math.toRadians;
 
 /**
  * This class represents a sample on which measurements have been made.

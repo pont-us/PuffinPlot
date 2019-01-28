@@ -24,8 +24,9 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.util.prefs.Preferences;
-import net.talvi.puffinplot.plots.SiteEqAreaPlot;
+
 import net.talvi.puffinplot.plots.Plot;
+import net.talvi.puffinplot.plots.SiteEqAreaPlot;
 
 /**
  * A graph display containing a single equal-area plot which shows

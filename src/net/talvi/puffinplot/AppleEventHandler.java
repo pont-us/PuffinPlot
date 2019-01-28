@@ -16,12 +16,13 @@
  */
 package net.talvi.puffinplot;
 
+import java.util.List;
+
 import com.apple.eawt.AboutHandler;
 import com.apple.eawt.AppEvent;
 import com.apple.eawt.AppEvent.AboutEvent;
 import com.apple.eawt.AppEvent.OpenFilesEvent;
 import com.apple.eawt.AppEvent.QuitEvent;
-import java.util.List;
 import com.apple.eawt.OpenFilesHandler;
 import com.apple.eawt.PreferencesHandler;
 import com.apple.eawt.QuitHandler;

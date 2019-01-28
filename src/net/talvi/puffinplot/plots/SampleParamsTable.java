@@ -24,8 +24,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.prefs.Preferences;
+
 import net.talvi.puffinplot.Util;
 import net.talvi.puffinplot.data.GreatCircle;
 import net.talvi.puffinplot.data.PcaValues;

@@ -22,7 +22,7 @@
 
 package net.talvi.puffinplot.window;
 
-import net.talvi.puffinplot.*;
+import net.talvi.puffinplot.PuffinApp;
 
 /**
  * An ‘about this program’ dialog box giving brief information

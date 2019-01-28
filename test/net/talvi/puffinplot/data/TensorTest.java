@@ -16,16 +16,19 @@
  */
 package net.talvi.puffinplot.data;
 
-import Jama.Matrix;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
+
+import Jama.Matrix;
 import net.talvi.puffinplot.TestUtils;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import static net.talvi.puffinplot.TestUtils.randomVector;
+
 import static net.talvi.puffinplot.TestUtils.equalOrOpposite;
+import static net.talvi.puffinplot.TestUtils.randomVector;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  *

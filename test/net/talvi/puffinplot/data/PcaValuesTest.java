@@ -2,10 +2,13 @@ package net.talvi.puffinplot.data;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Test;
-import static org.junit.Assert.*;
 import java.util.Random;
 import java.util.stream.Collectors;
+
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests the {@link PcaValues} class.

@@ -21,7 +21,13 @@ import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.util.List;
 import java.util.prefs.Preferences;
-import net.talvi.puffinplot.data.*;
+
+import net.talvi.puffinplot.data.FisherParams;
+import net.talvi.puffinplot.data.Sample;
+import net.talvi.puffinplot.data.Site;
+import net.talvi.puffinplot.data.Suite;
+import net.talvi.puffinplot.data.SuiteCalcs;
+import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 

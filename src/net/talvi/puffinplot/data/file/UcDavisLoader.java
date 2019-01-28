@@ -32,8 +32,11 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import net.talvi.puffinplot.data.*;
+import net.talvi.puffinplot.data.MeasType;
+import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.TreatmentStep;
+import net.talvi.puffinplot.data.TreatmentStepField;
+import net.talvi.puffinplot.data.Vec3;
 
 /**
  * Loader for the old UC Davis format. This format has only one line per

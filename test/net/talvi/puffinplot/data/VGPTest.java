@@ -17,9 +17,12 @@
 package net.talvi.puffinplot.data;
 
 import java.util.Arrays;
+
 import net.talvi.puffinplot.TestUtils;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Unit test for the VGP class.

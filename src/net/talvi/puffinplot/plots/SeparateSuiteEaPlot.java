@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.prefs.Preferences;
+
 import net.talvi.puffinplot.data.FisherValues;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;

@@ -27,8 +27,9 @@ import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.List;
-import net.talvi.puffinplot.data.TreatmentStep;
+
 import net.talvi.puffinplot.data.Sample;
+import net.talvi.puffinplot.data.TreatmentStep;
 
 /**
  * <p>A ‘data point’ which actually consists of a line of text.</p>

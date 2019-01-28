@@ -16,16 +16,18 @@
  */
 package net.talvi.puffinplot.data.file;
 
-import java.util.regex.Pattern;
-import net.talvi.puffinplot.data.AmsData;
-import java.util.ArrayList;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import static java.lang.Double.parseDouble;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import net.talvi.puffinplot.data.AmsData;
+
+import static java.lang.Double.parseDouble;
 
 /**
  * Turns an AGICO .ASC AMS file into a list of AmsData objects.

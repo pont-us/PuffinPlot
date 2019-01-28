@@ -25,9 +25,11 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import static java.lang.Math.sqrt;
-import net.talvi.puffinplot.data.TreatmentStep;
+
 import net.talvi.puffinplot.data.Sample;
+import net.talvi.puffinplot.data.TreatmentStep;
+
+import static java.lang.Math.sqrt;
 
 /**
  * A graph point with a geometrical shape. Available shapes are

@@ -23,14 +23,16 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Suite;
 import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.junit.Test;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
 
 public class BundleTest {
     

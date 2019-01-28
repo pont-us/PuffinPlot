@@ -16,11 +16,6 @@
  */
 package net.talvi.puffinplot;
 
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.awt.DefaultFontMapper;
-import com.itextpdf.awt.FontMapper;
-import com.itextpdf.text.pdf.PdfContentByte;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FileDialog;
@@ -75,13 +70,43 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
-import net.talvi.puffinplot.data.*;
+
+import com.itextpdf.awt.DefaultFontMapper;
+import com.itextpdf.awt.FontMapper;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfContentByte;
 import net.talvi.puffinplot.data.AmsCalculationType;
+import net.talvi.puffinplot.data.Correction;
+import net.talvi.puffinplot.data.CsvWriter;
+import net.talvi.puffinplot.data.FileType;
+import net.talvi.puffinplot.data.MeasType;
+import net.talvi.puffinplot.data.MeasurementAxis;
+import net.talvi.puffinplot.data.Sample;
+import net.talvi.puffinplot.data.Site;
+import net.talvi.puffinplot.data.Suite;
+import net.talvi.puffinplot.data.SuiteCalcs;
+import net.talvi.puffinplot.data.SuiteRpiEstimate;
+import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.file.FileFormat;
 import net.talvi.puffinplot.plots.SampleClickListener;
-import static net.talvi.puffinplot.Util.runningOnOsX;
-import net.talvi.puffinplot.window.*;
+import net.talvi.puffinplot.window.AboutBox;
+import net.talvi.puffinplot.window.CustomFieldEditor;
+import net.talvi.puffinplot.window.FiletypeDialog;
+import net.talvi.puffinplot.window.IapdImportDialog;
+import net.talvi.puffinplot.window.ImportAmsDialog;
+import net.talvi.puffinplot.window.MainGraphDisplay;
+import net.talvi.puffinplot.window.MainWindow;
+import net.talvi.puffinplot.window.PlotParams;
+import net.talvi.puffinplot.window.PrefsWindow;
+import net.talvi.puffinplot.window.ProgressDialog;
+import net.talvi.puffinplot.window.SiteMeanWindow;
+import net.talvi.puffinplot.window.SuiteEqAreaWindow;
+import net.talvi.puffinplot.window.TableWindow;
+import net.talvi.puffinplot.window.TabularImportWindow;
 import org.freehep.graphicsbase.util.UserProperties;
+
+import static net.talvi.puffinplot.Util.runningOnOsX;
 
 /**
  * Instantiating {@code PuffinApp} starts the PuffinPlot desktop application. It

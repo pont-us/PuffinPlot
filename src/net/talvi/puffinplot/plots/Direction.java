@@ -18,9 +18,10 @@
 package net.talvi.puffinplot.plots;
 
 import java.awt.geom.Point2D;
-import static java.lang.Math.abs;
 import java.util.Collection;
 import java.util.EnumSet;
+
+import static java.lang.Math.abs;
 
 /**
  * A representation of a two-dimensional perpendicular direction.

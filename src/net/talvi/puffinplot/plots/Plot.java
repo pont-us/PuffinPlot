@@ -22,23 +22,35 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
-import static java.awt.font.TextAttribute.SUPERSCRIPT;
-import static java.awt.font.TextAttribute.SUPERSCRIPT_SUPER;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.text.AttributedCharacterIterator.Attribute;
 import java.text.AttributedString;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
-import net.talvi.puffinplot.data.TreatmentStep;
+
 import net.talvi.puffinplot.data.Sample;
+import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 import net.talvi.puffinplot.window.PuffinRenderingHints;
+
+import static java.awt.font.TextAttribute.SUPERSCRIPT;
+import static java.awt.font.TextAttribute.SUPERSCRIPT_SUPER;
 
 /**
  * An abstract superclass for all plots and other data displays.

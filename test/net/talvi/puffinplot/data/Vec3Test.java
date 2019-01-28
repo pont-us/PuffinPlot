@@ -4,10 +4,6 @@
  */
 package net.talvi.puffinplot.data;
 
-import Jama.Matrix;
-import static java.lang.Math.atan2;
-import static java.lang.Math.sqrt;
-import static java.lang.Math.toRadians;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,9 +11,19 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 import java.util.stream.Collectors;
-import org.junit.Test;
-import static org.junit.Assert.*;
+
+import Jama.Matrix;
 import org.junit.Before;
+import org.junit.Test;
+
+import static java.lang.Math.atan2;
+import static java.lang.Math.sqrt;
+import static java.lang.Math.toRadians;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  *

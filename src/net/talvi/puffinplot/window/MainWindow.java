@@ -35,6 +35,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.TransferHandler;
+
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.Sample;
 

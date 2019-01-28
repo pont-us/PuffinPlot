@@ -26,6 +26,7 @@ import java.awt.print.PrinterException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.prefs.Preferences;
+
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.Util;
 import net.talvi.puffinplot.data.Sample;
