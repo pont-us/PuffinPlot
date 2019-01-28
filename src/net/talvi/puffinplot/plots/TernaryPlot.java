@@ -112,7 +112,7 @@ public class TernaryPlot extends Plot {
         double h = dims.getWidth() * (sqrt(3)/2);
         Sample sample = params.getSample();
         if (sample==null) return;
-        for (TreatmentStep d: sample.getData()) {
+        for (TreatmentStep d: sample.getTreatmentSteps()) {
             Vec3 v = d.getMoment(params.getCorrection());
             addPoint(d, projectThreeValues(v.x, v.y, v.z,
                     dims.getMinX(), dims.getMaxY(), h), false, false, true);

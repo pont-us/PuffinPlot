@@ -143,7 +143,7 @@ public class CoreSectionTest {
     }
     
     private static List<Vec3> extractDatumDirections(CoreSection section) {
-        return section.getSamples().stream().flatMap(s -> s.getData().stream()).
+        return section.getSamples().stream().flatMap(s -> s.getTreatmentSteps().stream()).
                 map(TreatmentStep::getMoment).collect(Collectors.toList());
     }
     

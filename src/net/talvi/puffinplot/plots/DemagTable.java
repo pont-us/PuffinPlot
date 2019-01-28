@@ -93,7 +93,7 @@ public class DemagTable extends Plot {
 
         final Sample sample = params.getSample();
         if (sample==null) return;
-        final List<TreatmentStep> data = sample.getData();
+        final List<TreatmentStep> data = sample.getTreatmentSteps();
         if (data.isEmpty()) return;
 
         final List<String> headers2 = new ArrayList<>(headers);

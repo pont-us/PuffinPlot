@@ -204,7 +204,7 @@ public class SuiteTest {
     @Test
     public void testSaveCalcsSample() throws IOException, PuffinUserException {
         for (Sample sample: syntheticSuite1.getSamples()) {
-            sample.getData().stream().forEach(d -> d.setSelected(true));
+            sample.getTreatmentSteps().stream().forEach(d -> d.setSelected(true));
             sample.useSelectionForPca();
             sample.useSelectionForCircleFit();
             sample.doPca(Correction.NONE);
@@ -219,7 +219,7 @@ public class SuiteTest {
     public void testSaveCalcsSampleMdfOnly()
             throws IOException, PuffinUserException {
         for (Sample sample: syntheticSuite1.getSamples()) {
-            sample.getData().stream().forEach(d -> d.setSelected(true));
+            sample.getTreatmentSteps().stream().forEach(d -> d.setSelected(true));
             sample.calculateMdf();
         }
         testSaveCalcsSampleHelper();
@@ -229,7 +229,7 @@ public class SuiteTest {
     public void testSaveCalcsSamplePcaOnly()
             throws IOException, PuffinUserException {
         for (Sample sample: syntheticSuite1.getSamples()) {
-            sample.getData().stream().forEach(d -> d.setSelected(true));
+            sample.getTreatmentSteps().stream().forEach(d -> d.setSelected(true));
             sample.useSelectionForPca();
             sample.doPca(Correction.NONE);
         }
@@ -326,8 +326,8 @@ public class SuiteTest {
         for (Sample expectedSample: syntheticSuite1.getSamples()) {
             final Sample actualSample = actualSamples.next();
             final Iterator<TreatmentStep> actualData =
-                    actualSample.getData().iterator();
-            for (TreatmentStep expectedTreatmentStep : expectedSample.getData()) {
+                    actualSample.getTreatmentSteps().iterator();
+            for (TreatmentStep expectedTreatmentStep : expectedSample.getTreatmentSteps()) {
                 final TreatmentStep actualTreatmentStep = actualData.next();
                 assertEquals(expectedTreatmentStep.getMoment(),
                         actualTreatmentStep.getMoment());
@@ -897,7 +897,7 @@ public class SuiteTest {
         syntheticSuite1.rescaleMagSus(2);
         assertFalse(syntheticSuite1.isSaved());
         for (Sample sample: syntheticSuite1.getSamples()) {
-            for (TreatmentStep d: sample.getData()) {
+            for (TreatmentStep d: sample.getTreatmentSteps()) {
                 assertEquals(Double.parseDouble(d.getDepth())*2,
                         d.getMagSus(), 1e-10);
             }
@@ -951,7 +951,7 @@ public class SuiteTest {
 
     private static void setUpSiteCalculations(Suite suite) {
         for (Sample sample: suite.getSamples()) {
-            for (TreatmentStep treatmentStep : sample.getData()) {
+            for (TreatmentStep treatmentStep : sample.getTreatmentSteps()) {
                 treatmentStep.setInPca(true);
                 treatmentStep.setOnCircle(true);
             }
@@ -1135,7 +1135,7 @@ public class SuiteTest {
         final Set<Sample> samplesToRemove = indicesToRemove.stream().
                         map(i -> syntheticSuite1.getSampleByIndex(i)).
                         collect(Collectors.toSet());
-        samplesToRemove.stream().flatMap(s -> s.getData().stream()).
+        samplesToRemove.stream().flatMap(s -> s.getTreatmentSteps().stream()).
                 forEach(d -> d.setTreatmentType(TreatmentType.DEGAUSS_Z));
         syntheticSuite1.removeSamplesByTreatmentType(
                 syntheticSuite1.getSamples(), TreatmentType.DEGAUSS_Z);
@@ -1378,7 +1378,7 @@ public class SuiteTest {
                     Paths.get(temporaryFolder.getRoot().getCanonicalPath(),
                             sample.getNameOrDepth()));
             final Iterator<String> lineIterator = lines.iterator();
-            final Iterator<TreatmentStep> datumIterator = sample.getData().iterator();
+            final Iterator<TreatmentStep> datumIterator = sample.getTreatmentSteps().iterator();
             while (datumIterator.hasNext()) {
                 final TreatmentStep treatmentStep = datumIterator.next();
                 final String line = lineIterator.next();
@@ -1481,7 +1481,7 @@ public class SuiteTest {
         
         final Function<Suite, List<Vec3>> extractDirections =
                 suite -> suite.getSamples().stream().
-                        flatMap(sample -> sample.getData().stream()).
+                        flatMap(sample -> sample.getTreatmentSteps().stream()).
                         map(TreatmentStep::getMoment).collect(Collectors.toList());
         
         final List<Vec3>originalDirections =
@@ -1579,7 +1579,7 @@ public class SuiteTest {
             expected.add(d);
         }
         suite.mergeDuplicateTreatmentSteps(Collections.singletonList(sample));
-        assertEquals(expected, sample.getData());
+        assertEquals(expected, sample.getTreatmentSteps());
     }
 
     @Test
@@ -1611,7 +1611,7 @@ public class SuiteTest {
         suite.alignSectionDeclinations(topDeclination, 1);
         
         assertTrue(suite.getSamples().stream().allMatch(
-                sample -> sample.getData().stream().allMatch(
+                sample -> sample.getTreatmentSteps().stream().allMatch(
                         datum -> Math.abs(datum.getMoment().getDecDeg() -
                                 topDeclination) < delta )));
     }
@@ -1636,14 +1636,14 @@ public class SuiteTest {
     public void testMergeDuplicateSamplesWithInverseSuites() {
         final Suite suite0 = TestUtils.createContinuousSuite();
         final Suite suite1 = TestUtils.createContinuousSuite();
-        suite1.getSamples().forEach(s -> s.getData().forEach(
+        suite1.getSamples().forEach(s -> s.getTreatmentSteps().forEach(
                 d -> d.invertMoment()));
         suite1.getSamples().forEach(
                 s -> suite0.addSample(s, s.getNameOrDepth()));
         suite0.updateReverseIndex();
         suite0.mergeDuplicateSamples(suite0.getSamples());
         assertTrue(suite0.getSamples().stream().
-                flatMap(s -> s.getData().stream()).
+                flatMap(s -> s.getTreatmentSteps().stream()).
                 map(d -> d.getIntensity()).allMatch(x -> x < delta));
     }
     
@@ -1652,7 +1652,7 @@ public class SuiteTest {
         final Suite suite0 = TestUtils.createContinuousSuite();
         final Suite suite1 = TestUtils.createContinuousSuite();
         final List<Vec3> originalDirections = suite0.getSamples().stream().
-                flatMap(s -> s.getData().stream()).
+                flatMap(s -> s.getTreatmentSteps().stream()).
                 map(d -> d.getMoment()).
                 collect(Collectors.toList());
         suite1.getSamples().forEach(
@@ -1660,7 +1660,7 @@ public class SuiteTest {
         suite0.updateReverseIndex();
         suite0.mergeDuplicateSamples(suite0.getSamples());
         final List<Vec3> mergedDirections = suite0.getSamples().stream().
-                flatMap(s -> s.getData().stream()).
+                flatMap(s -> s.getTreatmentSteps().stream()).
                 map(d -> d.getMoment()).
                 collect(Collectors.toList());
         assertEquals(originalDirections.size(), mergedDirections.size());
@@ -1675,17 +1675,17 @@ public class SuiteTest {
         final Suite suite0 = TestUtils.createContinuousSuite();
         final Suite suite1 = TestUtils.createContinuousSuite();
         final List<Vec3> originalDirections = suite0.getSamples().stream().
-                flatMap(s -> s.getData().stream()).
+                flatMap(s -> s.getTreatmentSteps().stream()).
                 map(d -> d.getMoment()).
                 collect(Collectors.toList());
-        suite1.getSamples().forEach(s -> s.getData().forEach(
+        suite1.getSamples().forEach(s -> s.getTreatmentSteps().forEach(
                 d -> d.setMoment(d.getMoment().times(3))));
         suite1.getSamples().forEach(
                 s -> suite0.addSample(s, s.getNameOrDepth()));
         suite0.updateReverseIndex();
         suite0.mergeDuplicateSamples(suite0.getSamples());
         final List<Vec3> mergedDirections = suite0.getSamples().stream().
-                flatMap(s -> s.getData().stream()).
+                flatMap(s -> s.getTreatmentSteps().stream()).
                 map(d -> d.getMoment()).
                 collect(Collectors.toList());
         assertEquals(originalDirections.size(), mergedDirections.size());
@@ -1699,7 +1699,7 @@ public class SuiteTest {
     public void testMergeDuplicateSamplesWithDifferentTreatmentSteps() {
         final Suite suite0 = TestUtils.createContinuousSuite();
         final Suite suite1 = TestUtils.createContinuousSuite();
-        suite1.getSamples().stream().flatMap(s -> s.getData().stream()).
+        suite1.getSamples().stream().flatMap(s -> s.getTreatmentSteps().stream()).
                 forEach(d -> {
                     d.setAfX(d.getAfX() + 5);
                     d.setAfY(d.getAfY() + 5);

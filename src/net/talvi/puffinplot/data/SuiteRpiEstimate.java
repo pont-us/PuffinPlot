@@ -86,13 +86,13 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
                 new ArrayList<>(nrmSuite.getNumSamples());
         for (Sample nrmSample: nrmSuite.getSamples()) {
             final double nrm = nrmSample.getNrm();
-            final String depth = nrmSample.getData().get(0).getDepth();
+            final String depth = nrmSample.getTreatmentSteps().get(0).getDepth();
             final Sample msSample = msSuite.getSampleByName(depth);
             if (msSample == null) {
                 throw new IllegalArgumentException("No MS sample for depth " +
                                                    depth);
             }
-            final double ms = msSample.getData().get(0).getMagSus();
+            final double ms = msSample.getTreatmentSteps().get(0).getMagSus();
             final double rpi = nrm/ms;
             rpis.add(new MagSusSampleRpiEstimate(
                         nrmSample, msSample,
@@ -140,7 +140,7 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
         final List<ArmSampleRpiEstimate> rpis =
                 new ArrayList<>(nrmSuite.getNumSamples());
         for (Sample nrmSample: nrmSuite.getSamples()) {
-            final String depth = nrmSample.getData().get(0).getDepth();
+            final String depth = nrmSample.getTreatmentSteps().get(0).getDepth();
             final Sample armSample = armSuite.getSampleByName(depth);
             if (armSample != null) {
                 final List<Double> nrmInts = new ArrayList<>(nLevels);

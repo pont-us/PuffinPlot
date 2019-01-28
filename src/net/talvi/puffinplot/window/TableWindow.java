@@ -106,7 +106,7 @@ public class TableWindow extends JFrame {
         @Override
         public int getRowCount() {
             if (params != null && params.getSample() != null) {
-                return params.getSample().getData().size();
+                return params.getSample().getTreatmentSteps().size();
             } else {
                 return 0;
             }
@@ -120,7 +120,7 @@ public class TableWindow extends JFrame {
         @Override
         public Object getValueAt(int row, int col) {
             try {
-                final TreatmentStep d = params.getSample().getData().get(row);
+                final TreatmentStep d = params.getSample().getTreatmentSteps().get(row);
                 return d.getValue(TreatmentStepField.values()[col]);
             } catch (NullPointerException e) {
                 throw new RuntimeException("row " + row + " col " + col, e);

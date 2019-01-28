@@ -80,7 +80,7 @@ public class CoreSection implements SampleGroup {
      * @param clockwiseDegrees rotation angle
      */
     public void rotateDeclinations(double clockwiseDegrees) {
-        getSamples().forEach(s -> s.getData().forEach(
+        getSamples().forEach(s -> s.getTreatmentSteps().forEach(
                 d -> d.setMoment(d.getMoment().
                         rotZ(Math.toRadians(clockwiseDegrees)))));
         for (Sample s: getSamples()) {

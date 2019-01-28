@@ -1,5 +1,5 @@
 /* This file is part of PuffinPlot, a program for palaeomagnetic
- * data plotting and analysis. Copyright 2012-2018 Pontus Lurcock.
+ * treatmentSteps plotting and analysis. Copyright 2012-2018 Pontus Lurcock.
  *
  * PuffinPlot is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ import static java.lang.Math.toRadians;
  */
 public class Sample {
 
-    private List<TreatmentStep> data;
+    private List<TreatmentStep> treatmentSteps;
     private Site site;
     private String nameOrDepth;
     private double depth;
@@ -72,13 +72,13 @@ public class Sample {
      * of a number giving the depth.
      * 
      * @param name sample identifier or numerical depth
-     * @param suite the data suite of which this sample is a part
+     * @param suite the treatmentSteps suite of which this sample is a part
      */
     public Sample(String name, Suite suite) {
         this.nameOrDepth = name;
         setDepth(name);
         this.suite = suite;
-        this.data = new ArrayList<>();
+        this.treatmentSteps = new ArrayList<>();
         this.customFlags = new CustomFields<>();
         this.customNotes = new CustomFields<>();
     }
@@ -100,7 +100,7 @@ public class Sample {
     public void clearPca() {
         touch();
         pca = null;
-        for (TreatmentStep d: getData()) {
+        for (TreatmentStep d: getTreatmentSteps()) {
             d.setInPca(false);
         }
     }
@@ -111,13 +111,13 @@ public class Sample {
     public void clearGreatCircle() {
         touch();
         greatCircle = null;
-        for (TreatmentStep d: getData()) {
+        for (TreatmentStep d: getTreatmentSteps()) {
             d.setOnCircle(false);
         }
     }
     
     /** Clears all calculations for this sample (PCA, MDF, and great-circle
-     * fit) and deselects all data points. */
+     * fit) and deselects all treatmentSteps points. */
     public void clearCalculations() {
         touch();
         clearPca();
@@ -134,7 +134,7 @@ public class Sample {
     }
     
     /**
-     * Calculates the median destructive field using the visible data
+     * Calculates the median destructive field using the visible treatmentSteps
      * points of this sample and stores the results within this sample.
      * 
      * @see #getMdf()
@@ -176,16 +176,16 @@ public class Sample {
      * @return the intensity of the sample's natural remanent magnetization
      */
     public double getNrm() {
-        if (data.isEmpty()) return Double.NaN;
-        return data.get(0).getIntensity();
+        if (treatmentSteps.isEmpty()) return Double.NaN;
+        return treatmentSteps.get(0).getIntensity();
     }
 
     /**
      * Finds the first jump in magnetic susceptibility in the sample's
-     * demagnetization data. The temperature at which this jump occurs is stored
+     * demagnetization treatmentSteps. The temperature at which this jump occurs is stored
      * within this sample and can be retrieved by the {@code getMagSusJump()}
      * method. A jump is defined as an increase of at least 2.5 times in a
-     * single treatment step. If there is no magnetic susceptibility data, or if
+     * single treatment step. If there is no magnetic susceptibility treatmentSteps, or if
      * no jump occurs, a value of 0 will be stored.
        * 
      * @see #getMagSusJump()
@@ -196,7 +196,7 @@ public class Sample {
         final double limit = 2.5;
         double msj = 0;
         double prevMagSus = 1e200;
-        for (TreatmentStep d: data) {
+        for (TreatmentStep d: treatmentSteps) {
             double magSus = d.getMagSus();
             if (!Double.isNaN(magSus)) {
                 if (magSus > prevMagSus * limit) {
@@ -221,27 +221,27 @@ public class Sample {
     }
 
     /**
-     * Rotates all magnetic moment data 180 degrees about the specified axis.
-     * @param axis the axis about which to rotate the data
+     * Rotates all magnetic moment treatmentSteps 180 degrees about the specified axis.
+     * @param axis the axis about which to rotate the treatmentSteps
      */
     public void flip(MeasurementAxis axis) {
         touch();
-        for (TreatmentStep d: getData()) {
+        for (TreatmentStep d: getTreatmentSteps()) {
             d.rot180(axis);
         }
     }
     
     /**
-     * Inverts all magnetic moment data.
+     * Inverts all magnetic moment treatmentSteps.
      */
     public void invertMoments() {
         touch();
-        for (TreatmentStep d: getData()) {
+        for (TreatmentStep d: getTreatmentSteps()) {
             d.invertMoment();
         }
     }
     
-    /** Sets all the selected data points within this sample to be hidden,
+    /** Sets all the selected treatmentSteps points within this sample to be hidden,
      * so they will not be shown on plots. The points are deselected as
      * well as being hidden (so after a call to the function no points 
      * there will be no selected points).
@@ -249,7 +249,7 @@ public class Sample {
      * @see TreatmentStep#isHidden() */
     public void hideAndDeselectSelectedPoints() {
         touch();
-        for (TreatmentStep d: getData()) {
+        for (TreatmentStep d: getTreatmentSteps()) {
             if (d.isSelected()) {
                 d.setSelected(false);
                 d.setHidden(true);
@@ -257,33 +257,33 @@ public class Sample {
         }
     }
     
-    /** Selects all the data points within this sample.
+    /** Selects all the treatmentSteps points within this sample.
      * 
      * @see TreatmentStep#setSelected(boolean) */
     public void selectAll() {
         touch();
-        for (TreatmentStep d : getData()) d.setSelected(true);
+        for (TreatmentStep d : getTreatmentSteps()) d.setSelected(true);
     }
 
-    /** Selects all the visible (non-hidden) data points within this sample.
+    /** Selects all the visible (non-hidden) treatmentSteps points within this sample.
      * @see TreatmentStep#setSelected(boolean)
      * @see TreatmentStep#isHidden() */
     public void selectVisible() {
         touch();
-        for (TreatmentStep d : getData()) {
+        for (TreatmentStep d : getTreatmentSteps()) {
             if (!d.isHidden()) d.setSelected(true);
         }
     }
 
-    /** De-selects all the data points within this sample.  */
+    /** De-selects all the treatmentSteps points within this sample.  */
     public void selectNone() {
         touch();
-        for (TreatmentStep d : getData()) {
+        for (TreatmentStep d : getTreatmentSteps()) {
             d.setSelected(false);
         }
     }
     
-    /** Selects all data points within a certain treatment level range.
+    /** Selects all treatmentSteps points within a certain treatment level range.
      * 
      * ‘Treatment level’ refers to AF field strength, temperature,
      * etc. Note that this is distinct from the treatment <i>step</i>,
@@ -302,37 +302,37 @@ public class Sample {
      * @see TreatmentStep#getTreatmentLevel()
      */
     public void selectByTreatmentLevelRange(double min, double max) {
-        for (TreatmentStep d: getData()) {
+        for (TreatmentStep d: getTreatmentSteps()) {
             final double level = d.getTreatmentLevel();
             d.setSelected(min <= level && level <= max);
         }
     }
     
-    /** Reports whether this sample contains any data. 
-     * @return {@code true} if this sample contains any data */
+    /** Reports whether this sample contains any treatmentSteps.
+     * @return {@code true} if this sample contains any treatmentSteps */
     public boolean hasData() {
-        return !data.isEmpty();
+        return !treatmentSteps.isEmpty();
     }
     
-    /** Returns all the data points within this sample.
-     * @return all the data points within this sample */
-    public List<TreatmentStep> getData() {
-        return Collections.unmodifiableList(data);
+    /** Returns all the treatmentSteps points within this sample.
+     * @return all the treatmentSteps points within this sample */
+    public List<TreatmentStep> getTreatmentSteps() {
+        return Collections.unmodifiableList(treatmentSteps);
     }
     
-    /** Returns all the visible (non-hidden) data points within this sample.
-     * @return all the visible (non-hidden) data points within this sample */
+    /** Returns all the visible (non-hidden) treatmentSteps points within this sample.
+     * @return all the visible (non-hidden) treatmentSteps points within this sample */
     public List<TreatmentStep> getVisibleData() {
         List<TreatmentStep> visibleData = new ArrayList<>(getNumData());
-        for (TreatmentStep d: getData()) if (!d.isHidden()) visibleData.add(d);
+        for (TreatmentStep d: getTreatmentSteps()) if (!d.isHidden()) visibleData.add(d);
         return visibleData;
     }
 
-    /** Returns all the selected data points within this sample.
-     * @return all the selected data points within this sample */
+    /** Returns all the selected treatmentSteps points within this sample.
+     * @return all the selected treatmentSteps points within this sample */
     public List<TreatmentStep> getSelectedData() {
         LinkedList<TreatmentStep> selData = new LinkedList<>();
-        for (TreatmentStep d: getData()) if (d.isSelected()) selData.add(d);
+        for (TreatmentStep d: getTreatmentSteps()) if (d.isSelected()) selData.add(d);
         return selData;
     }
     
@@ -345,7 +345,7 @@ public class Sample {
     public boolean isSelectionContiguous() {
         int runEndsSeen = 0;
         boolean thisIsSelected = false, lastWasSelected = false;
-        for (TreatmentStep d: getData()) {
+        for (TreatmentStep d: getTreatmentSteps()) {
             thisIsSelected = d.isSelected();
             if (lastWasSelected && !thisIsSelected) runEndsSeen++;
             lastWasSelected = thisIsSelected;
@@ -354,19 +354,19 @@ public class Sample {
         return (runEndsSeen <= 1);
     }
 
-    /** Returns the number of data points within this sample.
-     * @return the number of data points within this sample */
+    /** Returns the number of treatmentSteps points within this sample.
+     * @return the number of treatmentSteps points within this sample */
     public int getNumData() {
-        return getData().size();
+        return getTreatmentSteps().size();
     }
 
-    /** Returns a specified data point from this sample. 
-     * @param i the index of the requested data point
-     * @return the data point with the selected index, if it exists
-     * @throws IndexOutOfBoundsException if no data point with the selected index exists
+    /** Returns a specified treatmentSteps point from this sample.
+     * @param i the index of the requested treatmentSteps point
+     * @return the treatmentSteps point with the selected index, if it exists
+     * @throws IndexOutOfBoundsException if no treatmentSteps point with the selected index exists
      */
     public TreatmentStep getDatum(int i) {
-        return getData().get(i);
+        return getTreatmentSteps().get(i);
     }
     
     /**
@@ -382,7 +382,7 @@ public class Sample {
      */
     public TreatmentStep getDatumByTreatmentLevel(double level) {
         final double threshold = 1e-6;
-        for (TreatmentStep d: data) {
+        for (TreatmentStep d: treatmentSteps) {
                 if (abs(d.getTreatmentLevel() - level) < threshold) {
                     return d;
                 }
@@ -401,7 +401,7 @@ public class Sample {
      * only the first is returned. If there is no matching TreatmentStep, {@code null}
      * is returned. 
      * 
-     * This method is mainly intended for use with ARM demagnetization data,
+     * This method is mainly intended for use with ARM demagnetization treatmentSteps,
      * which can contain a mixture of "degauss" and "ARM" treatment types.
      * 
      * @param types a set of treatment types
@@ -411,7 +411,7 @@ public class Sample {
     public TreatmentStep getDatumByTreatmentTypeAndLevel(Set<TreatmentType> types,
                                                          double level) {
         final double threshold = 1e-6;
-        for (TreatmentStep d: data) {
+        for (TreatmentStep d: treatmentSteps) {
                 if (abs(d.getTreatmentLevel() - level) < threshold
                     && types.contains(d.getTreatmentType())) {
                     return d;
@@ -427,31 +427,31 @@ public class Sample {
      * @return an array of the treatment levels in this sample
      */
     public double[] getTreatmentLevels() {
-        return data.stream().mapToDouble(d -> d.getTreatmentLevel()).
+        return treatmentSteps.stream().mapToDouble(d -> d.getTreatmentLevel()).
                 sorted().distinct().toArray();
     }
     
     /**
-     * Adds a data point to this sample.
+     * Adds a treatmentSteps point to this sample.
      * 
-     * @param treatmentStep a data point to add to this sample
+     * @param treatmentStep a treatmentSteps point to add to this sample
      */
     public void addDatum(TreatmentStep treatmentStep) {
         touch();
-        if (data.isEmpty()) {
+        if (treatmentSteps.isEmpty()) {
             setSampAz(treatmentStep.getSampAz());
             setSampDip(treatmentStep.getSampDip());
             setFormAz(treatmentStep.getFormAz());
             setFormDip(treatmentStep.getFormDip());
             setMagDev(treatmentStep.getMagDev());
         }
-        data.add(treatmentStep);
+        treatmentSteps.add(treatmentStep);
         if (treatmentStep.hasMagSus()) hasMsData = true;
         treatmentStep.setSample(this);
     }
 
     /**
-     * Sets the orientation corrections for this sample's magnetic moment data.
+     * Sets the orientation corrections for this sample's magnetic moment treatmentSteps.
      * @param sampleAz the sample dip azimuth
      * @param sampleDip the sample dip angle
      * @param formAz the formation dip azimuth
@@ -468,51 +468,51 @@ public class Sample {
         this.setMagDev(magDev);
     }
 
-    /** Reports whether this sample has any magnetic susceptibility data.
-     * @return {@code true} if this sample has any magnetic susceptibility data
+    /** Reports whether this sample has any magnetic susceptibility treatmentSteps.
+     * @return {@code true} if this sample has any magnetic susceptibility treatmentSteps
      */
     public boolean hasMsData() {
         return hasMsData;
     }
 
-    /** Flags all selected data points for inclusion in principal component analysis */
+    /** Flags all selected treatmentSteps points for inclusion in principal component analysis */
     public void useSelectionForPca() {
         touch();
-        for (TreatmentStep d: getData()) d.setInPca(d.isSelected());
+        for (TreatmentStep d: getTreatmentSteps()) d.setInPca(d.isSelected());
     }
     
     /** Reports whether principal component analysis should be anchored for this sample
      * @return {@code true} if principal component analysis should be anchored for this sample */
     public boolean isPcaAnchored() {
-        return data.isEmpty() ? false : data.get(0).isPcaAnchored();
+        return treatmentSteps.isEmpty() ? false : treatmentSteps.get(0).isPcaAnchored();
     }
     
     /** Sets whether principal component analysis should be anchored for this sample
      * @param pcaAnchored {@code true} to anchor principal component analysis for this sample */
     public void setPcaAnchored(boolean pcaAnchored) {
         touch();
-        for (TreatmentStep d: getData()) d.setPcaAnchored(pcaAnchored);
+        for (TreatmentStep d: getTreatmentSteps()) d.setPcaAnchored(pcaAnchored);
     }
     
     /**
      * Performs principal component analysis on a subset of the magnetic moment 
-     * data of this sample.
-     * The data points to use are determined by the result of 
+     * treatmentSteps of this sample.
+     * The treatmentSteps points to use are determined by the result of
      * {@link TreatmentStep#isInPca()}.
      * The results are stored within the sample and may be retrieved with
      * {@link #getPcaAnnotated()}.
-     * @param correction the correction to apply to the magnetic moment data
+     * @param correction the correction to apply to the magnetic moment treatmentSteps
      */
     public void doPca(Correction correction) {
         if (!hasData()) return;
-        // use the first data point's anchoring status for all of them
+        // use the first treatmentSteps point's anchoring status for all of them
         // (a partially anchored PCA makes no sense). This is just
         // belt-and-braces really, since they should be uniform across
         // the sample. Eventually pcaAnchored will be moved entirely
         // from TreatmentStep to its rightful home in Sample and this kind
         // of ugliness will become unnecessary.
         touch();
-        boolean firstDatumAnchored = getData().get(0).isPcaAnchored();
+        boolean firstDatumAnchored = getTreatmentSteps().get(0).isPcaAnchored();
         setPcaAnchored(firstDatumAnchored);
         pca = PcaAnnotated.calculate(this, correction);
     }
@@ -585,10 +585,10 @@ public class Sample {
         }
     }
 
-    /** Flags the selected data points for use in the next great-circle fit. */
+    /** Flags the selected treatmentSteps points for use in the next great-circle fit. */
     public void useSelectionForCircleFit() {
         touch();
-        for (TreatmentStep d: getData()) d.setOnCircle(d.isSelected());
+        for (TreatmentStep d: getTreatmentSteps()) d.setOnCircle(d.isSelected());
     }
 
     /** Returns the current great-circle fit for this sample, if any.
@@ -603,17 +603,17 @@ public class Sample {
      * @return the magnetic moment vectors used for the current great-circle fit
      */
     public List<Vec3> getCirclePoints(Correction correction) {
-        List<Vec3> result = new ArrayList<>(getData().size());
-        for (TreatmentStep d: getData()) {
+        List<Vec3> result = new ArrayList<>(getTreatmentSteps().size());
+        for (TreatmentStep d: getTreatmentSteps()) {
             if (d.isOnCircle()) result.add(d.getMoment(correction));
         }
         return result;
     }
 
     /** Fits a great circle to a subset of the magnetic moment vectors in 
-     * this sample. A data point is used for the fit if 
+     * this sample. A treatmentSteps point is used for the fit if
      * {@link TreatmentStep#isOnCircle()} is true for it.
-     * @param correction the correction to apply to the magnetic moment data
+     * @param correction the correction to apply to the magnetic moment treatmentSteps
      */
     public void fitGreatCircle(Correction correction) {
         touch();
@@ -625,7 +625,7 @@ public class Sample {
     /** Returns the treatment level for the first point used in the great-circle fit. 
      * @return the treatment level for the first point used in the great-circle fit */
     public double getFirstGcStep() {
-        for (TreatmentStep d: data) {
+        for (TreatmentStep d: treatmentSteps) {
             if (d.isOnCircle()) return d.getTreatmentStep();
         }
         return -1;
@@ -635,7 +635,7 @@ public class Sample {
      * @return the treatment level for the last point used in the great-circle fit */
     public double getLastGcStep() {
         double result = -1;
-        for (TreatmentStep d : data) {
+        for (TreatmentStep d : treatmentSteps) {
             if (d.isOnCircle()) result = d.getTreatmentStep();
         }
         return result;
@@ -645,7 +645,7 @@ public class Sample {
      * @return the measurement type of this sample (discrete or continuous)
      */
     public MeasurementType getMeasType() {
-        for (TreatmentStep d: getData())
+        for (TreatmentStep d: getTreatmentSteps())
             if (d.getMeasurementType().isActualMeasurement()) return d.getMeasurementType();
         return MeasurementType.DISCRETE;
     }
@@ -663,12 +663,12 @@ public class Sample {
         nameOrDepth = newNameOrDepth;
         if (getMeasType() == MeasurementType.CONTINUOUS) {
             setDepth(nameOrDepth);
-            for (TreatmentStep d: getData()) {
+            for (TreatmentStep d: getTreatmentSteps()) {
                 d.setDepth(nameOrDepth);
             }
         }
         if (getMeasType() == MeasurementType.DISCRETE) {
-            for (TreatmentStep d: getData()) {
+            for (TreatmentStep d: getTreatmentSteps()) {
                 d.setDiscreteId(nameOrDepth);
             }
         }
@@ -678,19 +678,19 @@ public class Sample {
      * @return the tray slot number for discrete samples
      */
     public int getSlotNumber() {
-        return getData().get(0).getSlotNumber();
+        return getTreatmentSteps().get(0).getSlotNumber();
     }
 
-    /** Returns the run number for the first data point in this sample.
-     * @return the run number for the first data point in this sample */
+    /** Returns the run number for the first treatmentSteps point in this sample.
+     * @return the run number for the first treatmentSteps point in this sample */
     public int getFirstRunNumber() {
-        return getData().get(0).getRunNumber();
+        return getTreatmentSteps().get(0).getRunNumber();
     }
 
-    /** Returns the run number for the last data point in this sample.
-     * @return the run number for the last data point in this sample */
+    /** Returns the run number for the last treatmentSteps point in this sample.
+     * @return the run number for the last treatmentSteps point in this sample */
     public int getLastRunNumber() {
-        return getData().get(getData().size()-1).getRunNumber();
+        return getTreatmentSteps().get(getTreatmentSteps().size()-1).getRunNumber();
     }
 
     /**
@@ -706,7 +706,7 @@ public class Sample {
      */
     public TreatmentStep getDatumByRunNumber(int maxRunNumber) {
         TreatmentStep result = null;
-        for (TreatmentStep d: getData()) {
+        for (TreatmentStep d: getTreatmentSteps()) {
             if (d.getRunNumber() < maxRunNumber) {
                 result = d;
             }
@@ -730,44 +730,44 @@ public class Sample {
         this.isEmptySlot = isEmptySlot;
     }
 
-    /** Unhides all data points within this sample. */
+    /** Unhides all treatmentSteps points within this sample. */
     public void unhideAllPoints() {
         touch();
-        for (TreatmentStep d: getData()) d.setHidden(false);
+        for (TreatmentStep d: getTreatmentSteps()) d.setHidden(false);
     }
 
     /**
-     * Returns the selected data point indices as a bit set. The data points within
+     * Returns the selected treatmentSteps point indices as a bit set. The treatmentSteps points within
      * the sample are ordered, and each bit in the bit set is set to the
-     * selection state of the corresponding data point. This is useful for
+     * selection state of the corresponding treatmentSteps point. This is useful for
      * copying and pasting selection patterns, allowing corresponding
      * points to be selected in multiple samples.
      * 
-     * @return the selected data point indices as a bit set
+     * @return the selected treatmentSteps point indices as a bit set
      * @see #setSelectionBitSet(java.util.BitSet)
      */
     public BitSet getSelectionBitSet() {
-        final BitSet result = new BitSet(data.size());
-        for (int i=0; i<data.size(); i++) {
-            final TreatmentStep treatmentStep = data.get(i);
+        final BitSet result = new BitSet(treatmentSteps.size());
+        for (int i = 0; i< treatmentSteps.size(); i++) {
+            final TreatmentStep treatmentStep = treatmentSteps.get(i);
             result.set(i, treatmentStep.isSelected());
         }
         return result;
     }
     
     /**
-     * Sets the selection state of the sample's data points from a 
-     * supplied bit set. For each index in the bit set, the data point
+     * Sets the selection state of the sample's treatmentSteps points from a
+     * supplied bit set. For each index in the bit set, the treatmentSteps point
      * with the same index within the sample is selected if the bit
      * has a 1 value.
      * 
-     * @param selection a template for the selection state of the data points
+     * @param selection a template for the selection state of the treatmentSteps points
      * @see #getSelectionBitSet()
      */
     public void setSelectionBitSet(BitSet selection) {
         touch();
-        for (int i=0; i<Math.min(selection.size(), data.size()); i++) {
-            final TreatmentStep treatmentStep = data.get(i);
+        for (int i = 0; i<Math.min(selection.size(), treatmentSteps.size()); i++) {
+            final TreatmentStep treatmentStep = treatmentSteps.get(i);
             treatmentStep.setSelected(selection.get(i));
         }
     }
@@ -786,7 +786,7 @@ public class Sample {
     }
 
     /**
-     * Sets the AMS data for this sample using the supplied tensor.
+     * Sets the AMS treatmentSteps for this sample using the supplied tensor.
      * 
      * @param k11 tensor value (1,1)
      * @param k22 tensor value (2,2)
@@ -807,7 +807,7 @@ public class Sample {
         ams = new Tensor(k11, k22, k33, k12, k23, k13, scm, fcm);
     }
 
-    /** Sets the AMS data for the sample using the supplied principal directions.
+    /** Sets the AMS treatmentSteps for the sample using the supplied principal directions.
      * All angles are in degrees.
      * 
      * @param i1 inclination of principal axis 1
@@ -842,7 +842,7 @@ public class Sample {
     }
     
     /**
-     * Returns a specified subset of demagnetization data as strings.
+     * Returns a specified subset of demagnetization treatmentSteps as strings.
      * This method takes a list of {@link TreatmentStepField}s and returns a list
      * of strings. Each string in the list represents one {@link TreatmentStep}
      * in this sample, and consists of a concatenation of string representations
@@ -854,17 +854,17 @@ public class Sample {
      *         each {@link TreatmentStep} in this sample
      */
     public List<String> exportFields(List<TreatmentStepField> fields) {
-        return getData().stream().
+        return getTreatmentSteps().stream().
                 map(d -> d.exportFieldValues(fields, "\t")).
                 collect(Collectors.toList());
     }
 
     /**
-     * Returns a list of Strings representing data pertaining to this sample.
-     * (Note that this only includes sample-level data, not TreatmentStep-level
-     * data such as magnetic moment measurements.)
+     * Returns a list of Strings representing treatmentSteps pertaining to this sample.
+     * (Note that this only includes sample-level treatmentSteps, not TreatmentStep-level
+     * treatmentSteps such as magnetic moment measurements.)
      * 
-     * @return a list of Strings representing data pertaining to this sample
+     * @return a list of Strings representing treatmentSteps pertaining to this sample
      */
     public List<String> toStrings() {
         List<String> result = new ArrayList<>();
@@ -1017,7 +1017,7 @@ public class Sample {
         this.magDev = magDev;
     }
 
-    /** Sets the value of a specified field for each data point in the
+    /** Sets the value of a specified field for each treatmentSteps point in the
      * sample.
      * @param field the field to set
      * @param value the value to which to set the specified field
@@ -1037,7 +1037,7 @@ public class Sample {
                         field.name());
                 break;
         }
-        for (TreatmentStep d: getData()) {
+        for (TreatmentStep d: getTreatmentSteps()) {
             d.setValue(field, value, 1);
         }
     }
@@ -1066,11 +1066,11 @@ public class Sample {
     }
     
     public void truncateData(int items) {
-        data = data.subList(0, items);
+        treatmentSteps = treatmentSteps.subList(0, items);
     }
     
     public void rotateAroundZAxis(double angleDegrees) {
-        getData().forEach((TreatmentStep d) -> {
+        getTreatmentSteps().forEach((TreatmentStep d) -> {
             d.setMoment(d.getMoment().rotZ(Math.toRadians(angleDegrees)));
         });
     }
@@ -1097,28 +1097,28 @@ public class Sample {
      * {@code TreatmentStep} objects, if the sample has any {@code TreatmentStep} objects. If
      * the sample has no {@code TreatmentStep} objects, {@code IllegalStateException}
      * will be thrown. (This limitation is a historical artefact which will be
-     * removed when PuffinPlot's data model is revised to store the discrete
+     * removed when PuffinPlot's treatmentSteps model is revised to store the discrete
      * ID within the {@code Sample} object itself.)
      *
      * @param discreteId the discrete ID to set
      */
     public void setDiscreteId(String discreteId) {
         if (hasData()) {
-            getData().forEach(d -> { d.setDiscreteId(discreteId); });
+            getTreatmentSteps().forEach(d -> { d.setDiscreteId(discreteId); });
         } else {
             throw new IllegalStateException("This sample has no TreatmentStep objects");
         }
     }
     
     /**
-     * Remove specified data from this sample. Any {@code TreatmentStep} in the
+     * Remove specified treatmentSteps from this sample. Any {@code TreatmentStep} in the
      * collection passed to this method will be removed. Any {@code TreatmentStep}
      * in the collection which is not in this Sample will be ignored.
      * 
-     * @param toRemove the data to remove
+     * @param toRemove the treatmentSteps to remove
      */
     public void removeData(Collection<TreatmentStep> toRemove) {
-        toRemove.forEach(d -> data.remove(d));
+        toRemove.forEach(d -> treatmentSteps.remove(d));
     }
 
     /**
@@ -1128,13 +1128,13 @@ public class Sample {
      * duplicates and setting its moment to the mean of the moments of the
      * entire set of duplicates.
      * 
-     * @return the data which were removed
+     * @return the treatmentSteps which were removed
      * 
      */
     public Set<TreatmentStep> mergeDuplicateTreatmentSteps() {
         final Map<TreatmentTypeAndLevel, List<TreatmentStep>> treatmentMap =
                 new HashMap<>();
-        for (TreatmentStep d: this.getData()) {
+        for (TreatmentStep d: this.getTreatmentSteps()) {
             final TreatmentTypeAndLevel key = new TreatmentTypeAndLevel(d);
             if (!treatmentMap.containsKey(key)) {
                 treatmentMap.put(key, new ArrayList<>());
@@ -1156,7 +1156,7 @@ public class Sample {
             return Collections.emptySet();
         }
         final Set<TreatmentStep> toRemove = new HashSet<>(treatmentMap.size());
-        for (TreatmentStep d: this.getData()) {
+        for (TreatmentStep d: this.getTreatmentSteps()) {
             final List<TreatmentStep> duplicates =
                     treatmentMap.get(new TreatmentTypeAndLevel(d));
             if (duplicates.get(0) == d) {
@@ -1170,10 +1170,10 @@ public class Sample {
     }
 
     /**
-     * Merges the demagnetization data of the supplied samples into the
+     * Merges the demagnetization treatmentSteps of the supplied samples into the
      * first sample in the list. Note that the TreatmentStep objects in the
      * subsequent samples are not cloned: their references are copied
-     * directly into the first sample's data list. The subsequent samples
+     * directly into the first sample's treatmentSteps list. The subsequent samples
      * should therefore be discarded after calling this function.
      * 
      * @param samples 
@@ -1184,10 +1184,10 @@ public class Sample {
         }
         final Sample firstSample = samples.get(0);
         for (Sample sample: samples.subList(1, samples.size())) {
-            sample.getData().forEach(d -> firstSample.addDatum(d));
+            sample.getTreatmentSteps().forEach(d -> firstSample.addDatum(d));
         }
         firstSample.mergeDuplicateTreatmentSteps();
-        firstSample.data.sort(new TreatmentStepTreatmentComparator());
+        firstSample.treatmentSteps.sort(new TreatmentStepTreatmentComparator());
     }
     
     private static class TreatmentTypeAndLevel {

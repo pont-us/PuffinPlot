@@ -73,7 +73,7 @@ public class SampleTest {
         for (int i = 0; i < mins.length; i++) {
             simpleSample.selectByTreatmentLevelRange(mins[i], maxs[i]);
 
-            for (TreatmentStep d: simpleSample.getData()) {
+            for (TreatmentStep d: simpleSample.getTreatmentSteps()) {
                 final boolean shouldBeSelected
                         = d.getTreatmentLevel() >= mins[i]
                         && d.getTreatmentLevel() <= maxs[i];
@@ -143,10 +143,10 @@ public class SampleTest {
     }
     
     private boolean doSamplesHaveSameMoments(Sample s0, Sample s1) {
-        if (s0.getData().size() != s1.getData().size()) {
+        if (s0.getTreatmentSteps().size() != s1.getTreatmentSteps().size()) {
             return false;
         }
-        for (int i=0; i < s0.getData().size(); i++) {
+        for (int i = 0; i < s0.getTreatmentSteps().size(); i++) {
             final Vec3 v0 = s0.getDatum(i).getMoment();
             final Vec3 v1 = s1.getDatum(i).getMoment();
             if (!v0.equals(v1, 1e-10)) {
@@ -196,7 +196,7 @@ public class SampleTest {
             sample.addDatum(d);
         }
         sample.setValue(df, String.format(Locale.ENGLISH, "%g", value));
-        assertTrue(sample.getData().stream().allMatch(d ->
+        assertTrue(sample.getTreatmentSteps().stream().allMatch(d ->
                 Math.abs(value - Double.parseDouble(d.getValue(df))) < delta
         ));
     }
@@ -257,7 +257,7 @@ public class SampleTest {
         for (int i=3; i<8; i++) {
             simpleSample.getDatum(i).setSelected(true);
         }
-        assertEquals(simpleSample.getData().subList(3, 8),
+        assertEquals(simpleSample.getTreatmentSteps().subList(3, 8),
                 simpleSample.getSelectedData());
     }
     
@@ -290,10 +290,10 @@ public class SampleTest {
             dataToHide.add(simpleSample.getDatum(i));
         }
         dataToHide.forEach(d -> d.setSelected(true));
-        assertTrue(simpleSample.getData().stream().allMatch(d -> !d.isHidden()));
+        assertTrue(simpleSample.getTreatmentSteps().stream().allMatch(d -> !d.isHidden()));
         simpleSample.hideAndDeselectSelectedPoints();
-        assertTrue(simpleSample.getData().stream().allMatch(d -> !d.isSelected()));
-        assertTrue(simpleSample.getData().stream().allMatch(
+        assertTrue(simpleSample.getTreatmentSteps().stream().allMatch(d -> !d.isSelected()));
+        assertTrue(simpleSample.getTreatmentSteps().stream().allMatch(
                 d -> dataToHide.contains(d) == d.isHidden()));
     }
     
@@ -303,12 +303,12 @@ public class SampleTest {
             simpleSample.getDatum(i).setHidden(true);
         }
         simpleSample.unhideAllPoints();
-        assertTrue(simpleSample.getData().stream().allMatch(d -> !d.isHidden()));
+        assertTrue(simpleSample.getTreatmentSteps().stream().allMatch(d -> !d.isHidden()));
     }
 
     @Test
     public void testInvertMoments() {
-        final List<Vec3> expected = simpleSample.getData().stream().
+        final List<Vec3> expected = simpleSample.getTreatmentSteps().stream().
                 map(d -> d.getMoment().invert()).
                 collect(Collectors.toList());
         simpleSample.invertMoments();
@@ -325,13 +325,13 @@ public class SampleTest {
             simpleSample.getDatum(i).setHidden(true);
         }
         simpleSample.selectVisible();
-        assertTrue(simpleSample.getData().stream().
+        assertTrue(simpleSample.getTreatmentSteps().stream().
                 allMatch(d -> d.isHidden() != d.isSelected()));        
     }
     
     @Test
     public void testClearGreatCircle() {
-        simpleSample.getData().forEach(d -> d.setOnCircle(true));
+        simpleSample.getTreatmentSteps().forEach(d -> d.setOnCircle(true));
         simpleSample.fitGreatCircle(Correction.NONE);
         assertNotNull(simpleSample.getGreatCircle());
         simpleSample.clearGreatCircle();
@@ -340,7 +340,7 @@ public class SampleTest {
     
     @Test
     public void testClearCalculations() {
-        simpleSample.getData().forEach(d -> {
+        simpleSample.getTreatmentSteps().forEach(d -> {
             d.setOnCircle(true);
             d.setInPca(true);
             d.setSelected(true);
@@ -364,7 +364,7 @@ public class SampleTest {
     public void testFlip() {
         for (MeasurementAxis axis: MeasurementAxis.values()) {
             final Sample sample = makeSimpleSample();
-            final List<Vec3> expected = sample.getData().stream().
+            final List<Vec3> expected = sample.getTreatmentSteps().stream().
                     map(d -> d.getMoment().rot180(axis)).
                     collect(Collectors.toList());
             sample.flip(axis);
@@ -386,9 +386,9 @@ public class SampleTest {
     
     @Test
     public void testTruncateData() {
-        final List<TreatmentStep> data = new ArrayList<>(simpleSample.getData());
+        final List<TreatmentStep> data = new ArrayList<>(simpleSample.getTreatmentSteps());
         simpleSample.truncateData(7);
-        assertEquals(data.subList(0, 7), simpleSample.getData());
+        assertEquals(data.subList(0, 7), simpleSample.getTreatmentSteps());
     }
 
     @Test
@@ -627,7 +627,7 @@ public class SampleTest {
     public void testGetVisibleData() {
         simpleSample.getDatum(5).setHidden(true);
         final List<TreatmentStep> expected =
-                new ArrayList<>(simpleSample.getData());
+                new ArrayList<>(simpleSample.getTreatmentSteps());
         expected.remove(5);
         assertEquals(expected, simpleSample.getVisibleData());
     }
@@ -642,7 +642,7 @@ public class SampleTest {
                         mapToObj(i -> simpleSample.getDatum(i)).
                         collect(Collectors.toList());
         simpleSample.removeData(toRemove);
-        assertEquals(shouldRemain, simpleSample.getData());
+        assertEquals(shouldRemain, simpleSample.getTreatmentSteps());
     }
 
     @Test
@@ -660,7 +660,7 @@ public class SampleTest {
         }
         final Vec3 expectedMean = Vec3.mean(vectors);
         sample.mergeDuplicateTreatmentSteps();
-        assertEquals(1, sample.getData().size());
+        assertEquals(1, sample.getTreatmentSteps().size());
         assertTrue(expectedMean.equals(sample.getDatum(0).getMoment()));
     }
     
@@ -668,9 +668,9 @@ public class SampleTest {
     public void testMergeSamplesWithInverseData() {
         final Sample sample0 = makeSimpleSample();
         final Sample sample1 = makeSimpleSample();
-        sample1.getData().forEach(d -> d.invertMoment());
+        sample1.getTreatmentSteps().forEach(d -> d.invertMoment());
         Sample.mergeSamples(Arrays.asList(sample0, sample1));
-        sample0.getData().stream().allMatch(d -> d.getIntensity() < delta);
+        sample0.getTreatmentSteps().stream().allMatch(d -> d.getIntensity() < delta);
     }
     
     @Test
@@ -692,7 +692,7 @@ public class SampleTest {
         Sample.mergeSamples(Arrays.asList(s0, s1));
         assertArrayEquals(
                 new double[] {0, 50, 100, 150, 200, 250},
-                s0.getData().stream().mapToDouble(d -> d.getTemp()).toArray(),
+                s0.getTreatmentSteps().stream().mapToDouble(d -> d.getTemp()).toArray(),
                 delta);
     }
     

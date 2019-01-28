@@ -124,7 +124,7 @@ public class TreatmentWindow extends JFrame implements ActionListener {
         if (event.getSource() == setButton) {
             final TreatmentType treatmentType = treatmentCombo.getTreatmentType();
             for (Sample sample: app.getSelectedSamples()) {
-                for (TreatmentStep treatmentStep : sample.getData()) {
+                for (TreatmentStep treatmentStep : sample.getTreatmentSteps()) {
                     treatmentStep.setTreatmentType(treatmentType);
                 }
             }

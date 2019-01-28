@@ -97,7 +97,7 @@ public class ArmSampleRpiEstimate implements SampleRpiEstimate {
     @Override
     public String toCommaSeparatedString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append(getNrmSample().getData().get(0).getDepth());
+        builder.append(getNrmSample().getTreatmentSteps().get(0).getDepth());
         for (double intensity : getIntensities()) {
             if (intensity != -1) {
                 builder.append(String.format(Locale.ENGLISH, ",%g", intensity));

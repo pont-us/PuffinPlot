@@ -686,9 +686,9 @@ public class Jr6LoaderTest {
             final Sample sample = suite.getSampleByName(sampleName);
             assertNotNull(sample);
             final double[][] expSample = expFile[sampleIndex];
-            assertEquals(expSample.length, sample.getData().size());
+            assertEquals(expSample.length, sample.getTreatmentSteps().size());
             for (int i = 0; i < expSample.length; i++) {
-                final TreatmentStep actualTreatmentStep = sample.getData().get(i);
+                final TreatmentStep actualTreatmentStep = sample.getTreatmentSteps().get(i);
                 final double[] expectedValues = expSample[i];
                 checkOneDatum(expectedValues, actualTreatmentStep,
                         specimenRotation[fileIndex]);

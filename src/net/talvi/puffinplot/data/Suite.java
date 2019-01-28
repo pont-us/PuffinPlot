@@ -296,7 +296,7 @@ public final class Suite implements SampleGroup {
             csvWriter.writeCsv(fields);
 
             for (Sample sample : getSamples()) {
-                for (TreatmentStep treatmentStep : sample.getData()) {
+                for (TreatmentStep treatmentStep : sample.getTreatmentSteps()) {
                     csvWriter.writeCsv(treatmentStep.toStrings());
                 }
             }
@@ -784,7 +784,7 @@ public final class Suite implements SampleGroup {
                         String.format(Locale.ENGLISH, "%.4g", sample.getNrm()),
                         String.format(Locale.ENGLISH, "%.4g",
                                 sample.getMagSusJump()),
-                        sample.getData().size(),
+                        sample.getTreatmentSteps().size(),
                         pca == null ? PcaAnnotated.getEmptyFields() :
                                 pca.toStrings(),
                         circle == null ? GreatCircle.getEmptyFields() :
@@ -1049,7 +1049,7 @@ public final class Suite implements SampleGroup {
     private void setMeasurementType(MeasurementType measurementType) {
         this.measurementType = measurementType;
         for (Sample sample: getSamples()) {
-            for (TreatmentStep treatmentStep : sample.getData()) {
+            for (TreatmentStep treatmentStep : sample.getTreatmentSteps()) {
                 treatmentStep.setMeasurementType(measurementType);
             }
         }
@@ -1463,7 +1463,7 @@ public final class Suite implements SampleGroup {
             final String discreteId = sample.getDiscreteId();
             if (rotations.containsKey(discreteId)) {
                 final double rotationAngle = rotations.get(discreteId);
-                for (TreatmentStep treatmentStep : sample.getData()) {
+                for (TreatmentStep treatmentStep : sample.getTreatmentSteps()) {
                     treatmentStep.setMoment(treatmentStep.getMoment().
                             rotZ(Math.toRadians(rotationAngle)));
                 }
@@ -1846,7 +1846,7 @@ public final class Suite implements SampleGroup {
     public void rescaleMagSus(double factor) {
         setSaved(false);
         for (Sample sample: samples) {
-            for (TreatmentStep treatmentStep : sample.getData()) {
+            for (TreatmentStep treatmentStep : sample.getTreatmentSteps()) {
                 treatmentStep.setMagSus(treatmentStep.getMagSus() * factor);
             }
         }
@@ -1893,7 +1893,7 @@ public final class Suite implements SampleGroup {
     public void removeSamplesByTreatmentType(
             Collection<Sample> removableSamples, TreatmentType treatmentType) {
         final Set<Sample> samplesToRemove = removableSamples.stream().
-                filter(s -> s.getData().stream().
+                filter(s -> s.getTreatmentSteps().stream().
                         anyMatch(d -> d.getTreatmentType() == treatmentType)).
                 collect(Collectors.toSet());
         removeSamples(samplesToRemove);
