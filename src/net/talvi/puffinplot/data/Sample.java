@@ -39,9 +39,9 @@ import static java.lang.Math.abs;
 import static java.lang.Math.toRadians;
 
 /**
- * This class represents a sample on which measurements have been made.
- * It may correspond either to a discrete, physical specimen, or to
- * a particular point on a continuous long core or u-channel sample.
+ * This class represents a sample on which measurements have been made. It may
+ * correspond either to a discrete, physical specimen, or to a particular point
+ * on a continuous long core or u-channel sample.
  */
 public class Sample {
 
@@ -116,8 +116,10 @@ public class Sample {
         }
     }
     
-    /** Clears all calculations for this sample (PCA, MDF, and great-circle
-     * fit) and deselects all treatmentSteps points. */
+    /**
+     * Clears all calculations for this sample (PCA, MDF, and great-circle fit)
+     * and deselects all treatment steps.
+     */
     public void clearCalculations() {
         touch();
         clearPca();
@@ -127,8 +129,11 @@ public class Sample {
         selectNone();
     }
     
-    /** Returns the suite containing this sample.
-     * @return the suite containing this sample */
+    /**
+     * Returns the suite containing this sample.
+     *
+     * @return the suite containing this sample
+     */
     public Suite getSuite() {
         return suite;
     }
@@ -182,12 +187,12 @@ public class Sample {
 
     /**
      * Finds the first jump in magnetic susceptibility in the sample's
-     * demagnetization treatmentSteps. The temperature at which this jump occurs is stored
+     * demagnetization data. The temperature at which this jump occurs is stored
      * within this sample and can be retrieved by the {@code getMagSusJump()}
      * method. A jump is defined as an increase of at least 2.5 times in a
-     * single treatment step. If there is no magnetic susceptibility treatmentSteps, or if
+     * single treatment step. If there is no magnetic susceptibility data, or if
      * no jump occurs, a value of 0 will be stored.
-       * 
+     * 
      * @see #getMagSusJump()
      * 
      */
@@ -221,8 +226,10 @@ public class Sample {
     }
 
     /**
-     * Rotates all magnetic moment treatmentSteps 180 degrees about the specified axis.
-     * @param axis the axis about which to rotate the treatmentSteps
+     * Rotates all magnetic moment data (as stored in treatment steps) 180
+     * degrees about the specified axis.
+     *
+     * @param axis the axis about which to rotate the data
      */
     public void flip(MeasurementAxis axis) {
         touch();
@@ -232,7 +239,7 @@ public class Sample {
     }
     
     /**
-     * Inverts all magnetic moment treatmentSteps.
+     * Inverts all magnetic moment data.
      */
     public void invertMoments() {
         touch();
@@ -241,12 +248,14 @@ public class Sample {
         }
     }
     
-    /** Sets all the selected treatmentSteps points within this sample to be hidden,
-     * so they will not be shown on plots. The points are deselected as
-     * well as being hidden (so after a call to the function no points 
-     * there will be no selected points).
-     * 
-     * @see TreatmentStep#isHidden() */
+    /**
+     * Sets all the selected treatment steps within this sample to be hidden, so
+     * they will not be shown on plots. The points are deselected as well as
+     * being hidden (so after a call to the method no treatment steps will
+     * be selected).
+     *
+     * @see TreatmentStep#isHidden()
+     */
     public void hideAndDeselectSelectedPoints() {
         touch();
         for (TreatmentStep d: getTreatmentSteps()) {
@@ -257,17 +266,22 @@ public class Sample {
         }
     }
     
-    /** Selects all the treatmentSteps points within this sample.
-     * 
-     * @see TreatmentStep#setSelected(boolean) */
+    /**
+     * Selects all the treatment steps within this sample.
+     *
+     * @see TreatmentStep#setSelected(boolean)
+     */
     public void selectAll() {
         touch();
         for (TreatmentStep d : getTreatmentSteps()) d.setSelected(true);
     }
 
-    /** Selects all the visible (non-hidden) treatmentSteps points within this sample.
+    /**
+     * Selects all the visible (non-hidden) treatment steps within this sample.
+     *
      * @see TreatmentStep#setSelected(boolean)
-     * @see TreatmentStep#isHidden() */
+     * @see TreatmentStep#isHidden()
+     */
     public void selectVisible() {
         touch();
         for (TreatmentStep d : getTreatmentSteps()) {
@@ -275,7 +289,9 @@ public class Sample {
         }
     }
 
-    /** De-selects all the treatmentSteps points within this sample.  */
+    /**
+     * De-selects all the treatment steps within this sample.
+     */
     public void selectNone() {
         touch();
         for (TreatmentStep d : getTreatmentSteps()) {
@@ -283,13 +299,13 @@ public class Sample {
         }
     }
     
-    /** Selects all treatmentSteps points within a certain treatment level range.
-     * 
-     * ‘Treatment level’ refers to AF field strength, temperature,
-     * etc. Note that this is distinct from the treatment <i>step</i>,
-     * which is just a non-negative integer used to index successive
-     * treatment rounds.
-     * 
+    /**
+     * Selects all treatment steps within a certain treatment level range.
+     *
+     * ‘Treatment level’ refers to AF field strength, temperature, etc. Note
+     * that this is distinct from the treatment <i>step</i>, which is just a
+     * non-negative integer used to index successive treatment rounds.
+     *
      * Negative and positive infinities can be passed as arguments, with
      * the expected behaviour. Passing NaN as an argument will not throw
      * an exception or produce additional side effects, but the resulting
@@ -308,38 +324,51 @@ public class Sample {
         }
     }
     
-    /** Reports whether this sample contains any treatmentSteps.
-     * @return {@code true} if this sample contains any treatmentSteps */
+    /**
+     * Reports whether this sample contains any treatmentSteps.
+     *
+     * @return {@code true} if this sample contains any treatmentSteps
+     */
     public boolean hasData() {
         return !treatmentSteps.isEmpty();
     }
     
-    /** Returns all the treatmentSteps points within this sample.
-     * @return all the treatmentSteps points within this sample */
+    /**
+     * Returns all the treatment steps within this sample.
+     *
+     * @return all the treatment steps within this sample
+     */
     public List<TreatmentStep> getTreatmentSteps() {
         return Collections.unmodifiableList(treatmentSteps);
     }
     
-    /** Returns all the visible (non-hidden) treatmentSteps points within this sample.
-     * @return all the visible (non-hidden) treatmentSteps points within this sample */
+    /**
+     * Returns all the visible (non-hidden) treatment steps within this sample.
+     *
+     * @return all the visible (non-hidden) treatment steps within this sample
+     */
     public List<TreatmentStep> getVisibleData() {
         List<TreatmentStep> visibleData = new ArrayList<>(getNumData());
         for (TreatmentStep d: getTreatmentSteps()) if (!d.isHidden()) visibleData.add(d);
         return visibleData;
     }
 
-    /** Returns all the selected treatmentSteps points within this sample.
-     * @return all the selected treatmentSteps points within this sample */
+    /**
+     * Returns all the selected treatment steps within this sample.
+     *
+     * @return all the selected treatment steps within this sample
+     */
     public List<TreatmentStep> getSelectedData() {
         LinkedList<TreatmentStep> selData = new LinkedList<>();
         for (TreatmentStep d: getTreatmentSteps()) if (d.isSelected()) selData.add(d);
         return selData;
     }
     
-    /** Returns {@code true} if the selected points are contiguous.
-     * This is the case if there are no unselected points between the
-     * first selected point and the last selected point.
-     * 
+    /**
+     * Returns {@code true} if the selected treatment steps are contiguous. This
+     * is the case if there are no unselected steps between the first selected
+     * point and the last selected step.
+     *
      * @return {@code true} if the selected points are contiguous
      */
     public boolean isSelectionContiguous() {
@@ -354,29 +383,36 @@ public class Sample {
         return (runEndsSeen <= 1);
     }
 
-    /** Returns the number of treatmentSteps points within this sample.
-     * @return the number of treatmentSteps points within this sample */
+    /**
+     * Returns the number of treatment steps within this sample.
+     *
+     * @return the number of treatment steps within this sample
+     */
     public int getNumData() {
         return getTreatmentSteps().size();
     }
 
-    /** Returns a specified treatmentSteps point from this sample.
-     * @param i the index of the requested treatmentSteps point
-     * @return the treatmentSteps point with the selected index, if it exists
-     * @throws IndexOutOfBoundsException if no treatmentSteps point with the selected index exists
+    /**
+     * Returns a specified treatment step from this sample.
+     *
+     * @param i the index of the requested treatment step
+     * @return the treatment step with the selected index, if it exists
+     * @throws IndexOutOfBoundsException if no treatment step with the
+     * selected index exists
      */
     public TreatmentStep getDatum(int i) {
         return getTreatmentSteps().get(i);
     }
     
     /**
-     * Returns the first TreatmentStep in this Sample with the given treatment level.
-     * 
-     * If the Sample contains more than one TreatmentStep at the given level, only
-     * the first is returned. If there is no matching TreatmentStep, {@code null}
-     * is returned. Any treatment levels differing by less than 1e-6 are
-     * considered equal.
-     * 
+     * Returns the first TreatmentStep in this Sample with the given treatment
+     * level.
+     *
+     * If the Sample contains more than one TreatmentStep at the given level,
+     * only the first is returned. If there is no matching TreatmentStep,
+     * {@code null} is returned. Any treatment levels differing by less than
+     * 1e-6 are considered equal.
+     *
      * @param level a treatment level
      * @return the first datum in the sample with the given treatment level
      */
@@ -391,19 +427,20 @@ public class Sample {
     }
     
     /**
-     * Returns a TreatmentStep with a specified treatment type and level. The treatment
-     * type is checked against a supplied set. A datum is considered to match if
-     * its treatment type is in the set and its treatment level is approximately
-     * equal to the specified level. A datum's treatment level is approximately
-     * equal to the specified level if the two differ by less than 1e-6.
+     * Returns a TreatmentStep with a specified treatment type and level. The
+     * treatment type is checked against a supplied set. A step is considered
+     * to match if its treatment type is in the set and its treatment level is
+     * approximately equal to the specified level. A step's treatment level is
+     * approximately equal to the specified level if the two differ by less than
+     * 1e-6.
      *
-     * If the Sample contains more than one TreatmentStep with the given level and type,
-     * only the first is returned. If there is no matching TreatmentStep, {@code null}
-     * is returned. 
-     * 
-     * This method is mainly intended for use with ARM demagnetization treatmentSteps,
+     * If the Sample contains more than one TreatmentStep with the given level
+     * and type, only the first is returned. If there is no matching
+     * TreatmentStep, {@code null} is returned.
+     *
+     * This method is mainly intended for use with ARM demagnetization data,
      * which can contain a mixture of "degauss" and "ARM" treatment types.
-     * 
+     *
      * @param types a set of treatment types
      * @param level a treatment level
      * @return the first datum in the sample with the given treatment level
@@ -420,7 +457,6 @@ public class Sample {
         return null;
     }
     
-    
     /**
      * Returns an array of the treatment levels in this sample.
      * 
@@ -432,9 +468,9 @@ public class Sample {
     }
     
     /**
-     * Adds a treatmentSteps point to this sample.
+     * Adds a treatment step to this sample.
      * 
-     * @param treatmentStep a treatmentSteps point to add to this sample
+     * @param treatmentStep a treatment step to add to this sample
      */
     public void addDatum(TreatmentStep treatmentStep) {
         touch();
@@ -451,7 +487,8 @@ public class Sample {
     }
 
     /**
-     * Sets the orientation corrections for this sample's magnetic moment treatmentSteps.
+     * Sets the orientation corrections for this sample's magnetic moment data.
+     *
      * @param sampleAz the sample dip azimuth
      * @param sampleDip the sample dip angle
      * @param formAz the formation dip azimuth
@@ -468,71 +505,97 @@ public class Sample {
         this.setMagDev(magDev);
     }
 
-    /** Reports whether this sample has any magnetic susceptibility treatmentSteps.
-     * @return {@code true} if this sample has any magnetic susceptibility treatmentSteps
+    /**
+     * Reports whether this sample has any magnetic susceptibility data.
+     *
+     * @return {@code true} if this sample has any magnetic susceptibility data
      */
     public boolean hasMsData() {
         return hasMsData;
     }
 
-    /** Flags all selected treatmentSteps points for inclusion in principal component analysis */
+    /**
+     * Flags all selected treatment steps for inclusion in principal component
+     * analysis.
+     */
     public void useSelectionForPca() {
         touch();
         for (TreatmentStep d: getTreatmentSteps()) d.setInPca(d.isSelected());
     }
     
-    /** Reports whether principal component analysis should be anchored for this sample
-     * @return {@code true} if principal component analysis should be anchored for this sample */
+    /**
+     * Reports whether principal component analysis should be anchored for this
+     * sample.
+     *
+     * @return {@code true} if principal component analysis should be anchored
+     * for this sample
+     */
     public boolean isPcaAnchored() {
         return treatmentSteps.isEmpty() ? false : treatmentSteps.get(0).isPcaAnchored();
     }
     
-    /** Sets whether principal component analysis should be anchored for this sample
-     * @param pcaAnchored {@code true} to anchor principal component analysis for this sample */
+    /**
+     * Sets whether principal component analysis should be anchored for this
+     * sample
+     *
+     * @param pcaAnchored {@code true} to anchor principal component analysis
+     * for this sample
+     */
     public void setPcaAnchored(boolean pcaAnchored) {
         touch();
         for (TreatmentStep d: getTreatmentSteps()) d.setPcaAnchored(pcaAnchored);
     }
     
     /**
-     * Performs principal component analysis on a subset of the magnetic moment 
-     * treatmentSteps of this sample.
-     * The treatmentSteps points to use are determined by the result of
-     * {@link TreatmentStep#isInPca()}.
-     * The results are stored within the sample and may be retrieved with
-     * {@link #getPcaAnnotated()}.
-     * @param correction the correction to apply to the magnetic moment treatmentSteps
+     * Performs principal component analysis on a subset of the magnetic moment
+     * data of this sample. The treatment steps to use are determined by the
+     * result of {@link TreatmentStep#isInPca()}. The results are stored within
+     * the sample and may be retrieved with {@link #getPcaAnnotated()}.
+     *
+     * @param correction the correction to apply to the magnetic moment
+     * treatmentSteps
      */
     public void doPca(Correction correction) {
         if (!hasData()) return;
-        // use the first treatmentSteps point's anchoring status for all of them
-        // (a partially anchored PCA makes no sense). This is just
-        // belt-and-braces really, since they should be uniform across
-        // the sample. Eventually pcaAnchored will be moved entirely
-        // from TreatmentStep to its rightful home in Sample and this kind
-        // of ugliness will become unnecessary.
+        /*
+         * Use the first treatment step's anchoring status for all of them
+         * (a partially anchored PCA makes no sense). This is just
+         * belt-and-braces really, since they should be uniform across the
+         * sample. Eventually pcaAnchored will be moved entirely from
+         * TreatmentStep to its rightful home in Sample and this kind of
+         * ugliness will become unnecessary.
+         */
         touch();
         boolean firstDatumAnchored = getTreatmentSteps().get(0).isPcaAnchored();
         setPcaAnchored(firstDatumAnchored);
         pca = PcaAnnotated.calculate(this, correction);
     }
     
-    /** Returns the annotated results of the last PCA calculation.
-     * @return the annotated results of the last PCA calculation */
+    /**
+     * Returns the annotated results of the last PCA calculation.
+     *
+     * @return the annotated results of the last PCA calculation
+     */
     public PcaAnnotated getPcaAnnotated() {
         return pca;
     }
     
-    /** Returns the results of the last PCA calculation.
-     * Returns null if there is no stored PCA calculation.
-     * @return the results of the last PCA calculation */
+    /**
+     * Returns the results of the last PCA calculation. Returns null if there is
+     * no stored PCA calculation.
+     *
+     * @return the results of the last PCA calculation
+     */
     public PcaValues getPcaValues() {
         return pca == null ? null : pca.getPcaValues();
     }
     
-    /** Returns the results of the last Fisher calculation.
-     * Returns null if there are no stored Fisher statistics.
-     * @return the results of the last Fisher calculation */
+    /**
+     * Returns the results of the last Fisher calculation. Returns null if there
+     * are no stored Fisher statistics.
+     *
+     * @return the results of the last Fisher calculation
+     */
     public FisherValues getFisherValues() {
         return fisherValues;
     }
@@ -585,20 +648,27 @@ public class Sample {
         }
     }
 
-    /** Flags the selected treatmentSteps points for use in the next great-circle fit. */
+    /**
+     * Flags the selected treatment steps for use in the next great-circle fit.
+     */
     public void useSelectionForCircleFit() {
         touch();
         for (TreatmentStep d: getTreatmentSteps()) d.setOnCircle(d.isSelected());
     }
 
-    /** Returns the current great-circle fit for this sample, if any.
+    /**
+     * Returns the current great-circle fit for this sample, if any.
+     *
      * @return the current great-circle fit for this sample, if any
      */
     public GreatCircle getGreatCircle() {
         return greatCircle;
     }
     
-    /** Returns the magnetic moment vectors used for the current great-circle fit.
+    /**
+     * Returns the magnetic moment vectors used for the current great-circle
+     * fit.
+     *
      * @param correction the correction to apply to the magnetic moment vectors
      * @return the magnetic moment vectors used for the current great-circle fit
      */
@@ -610,10 +680,13 @@ public class Sample {
         return result;
     }
 
-    /** Fits a great circle to a subset of the magnetic moment vectors in 
-     * this sample. A treatmentSteps point is used for the fit if
+    /**
+     * Fits a great circle to a subset of the magnetic moment vectors in this
+     * sample. A treatment step is used for the fit if
      * {@link TreatmentStep#isOnCircle()} is true for it.
-     * @param correction the correction to apply to the magnetic moment treatmentSteps
+     *
+     * @param correction the correction to apply to the magnetic moment
+     * treatmentSteps
      */
     public void fitGreatCircle(Correction correction) {
         touch();
@@ -622,8 +695,13 @@ public class Sample {
         greatCircle = GreatCircle.fromBestFit(points);
     }
     
-    /** Returns the treatment level for the first point used in the great-circle fit. 
-     * @return the treatment level for the first point used in the great-circle fit */
+    /**
+     * Returns the treatment level for the first point used in the great-circle
+     * fit.
+     *
+     * @return the treatment level for the first point used in the great-circle
+     * fit
+     */
     public double getFirstGcStep() {
         for (TreatmentStep d: treatmentSteps) {
             if (d.isOnCircle()) return d.getTreatmentStep();
@@ -631,8 +709,13 @@ public class Sample {
         return -1;
     }
 
-    /** Returns the treatment level for the last point used in the great-circle fit. 
-     * @return the treatment level for the last point used in the great-circle fit */
+    /**
+     * Returns the treatment level for the last point used in the great-circle
+     * fit.
+     *
+     * @return the treatment level for the last point used in the great-circle
+     * fit
+     */
     public double getLastGcStep() {
         double result = -1;
         for (TreatmentStep d : treatmentSteps) {
@@ -641,7 +724,9 @@ public class Sample {
         return result;
     }
     
-    /** Returns the measurement type of this sample (discrete or continuous).
+    /**
+     * Returns the measurement type of this sample (discrete or continuous).
+     *
      * @return the measurement type of this sample (discrete or continuous)
      */
     public MeasurementType getMeasType() {
@@ -650,9 +735,11 @@ public class Sample {
         return MeasurementType.DISCRETE;
     }
 
-    /** Returns the sample identifier or depth. For a discrete sample 
-     * this will return the name (identifier) of the sample. For a 
-     * continuous sample it will return a string representation of the depth.
+    /**
+     * Returns the sample identifier or depth. For a discrete sample this will
+     * return the name (identifier) of the sample. For a continuous sample it
+     * will return a string representation of the depth.
+     *
      * @return the sample identifier or depth
      */
     public String getNameOrDepth() {
@@ -674,21 +761,29 @@ public class Sample {
         }
     }
 
-    /** Returns the tray slot number for discrete samples. Not currently used.
+    /**
+     * Returns the tray slot number for discrete samples. Not currently used.
+     *
      * @return the tray slot number for discrete samples
      */
     public int getSlotNumber() {
         return getTreatmentSteps().get(0).getSlotNumber();
     }
 
-    /** Returns the run number for the first treatmentSteps point in this sample.
-     * @return the run number for the first treatmentSteps point in this sample */
+    /**
+     * Returns the run number for the first treatment step in this sample.
+     *
+     * @return the run number for the first treatment step in this sample
+     */
     public int getFirstRunNumber() {
         return getTreatmentSteps().get(0).getRunNumber();
     }
 
-    /** Returns the run number for the last treatmentSteps point in this sample.
-     * @return the run number for the last treatmentSteps point in this sample */
+    /**
+     * Returns the run number for the last treatment step in this sample.
+     *
+     * @return the run number for the last treatment step in this sample
+     */
     public int getLastRunNumber() {
         return getTreatmentSteps().get(getTreatmentSteps().size()-1).getRunNumber();
     }
@@ -721,7 +816,9 @@ public class Sample {
         return isEmptySlot;
     }
 
-    /** Sets whether this sample is an empty slot on the measurement tray.
+    /**
+     * Sets whether this sample is an empty slot on the measurement tray.
+     *
      * @param isEmptySlot {@code true} to declare this sample as an empty slot
      * on the measurement tray
      */
@@ -730,20 +827,22 @@ public class Sample {
         this.isEmptySlot = isEmptySlot;
     }
 
-    /** Unhides all treatmentSteps points within this sample. */
+    /**
+     * Unhides all treatment steps within this sample.
+     */
     public void unhideAllPoints() {
         touch();
         for (TreatmentStep d: getTreatmentSteps()) d.setHidden(false);
     }
 
     /**
-     * Returns the selected treatmentSteps point indices as a bit set. The treatmentSteps points within
-     * the sample are ordered, and each bit in the bit set is set to the
-     * selection state of the corresponding treatmentSteps point. This is useful for
-     * copying and pasting selection patterns, allowing corresponding
-     * points to be selected in multiple samples.
-     * 
-     * @return the selected treatmentSteps point indices as a bit set
+     * Returns the selected treatment step indices as a bit set. The
+     * treatment steps within the sample are ordered, and each bit in the bit
+     * set is set to the selection state of the corresponding treatmentSteps
+     * point. This is useful for copying and pasting selection patterns,
+     * allowing corresponding points to be selected in multiple samples.
+       * 
+     * @return the selected treatment step indices as a bit set
      * @see #setSelectionBitSet(java.util.BitSet)
      */
     public BitSet getSelectionBitSet() {
@@ -756,17 +855,17 @@ public class Sample {
     }
     
     /**
-     * Sets the selection state of the sample's treatmentSteps points from a
-     * supplied bit set. For each index in the bit set, the treatmentSteps point
-     * with the same index within the sample is selected if the bit
-     * has a 1 value.
-     * 
-     * @param selection a template for the selection state of the treatmentSteps points
+     * Sets the selection state of the sample's treatment steps from a supplied
+     * bit set. For each index in the bit set, the treatment step with the
+     * same index within the sample is selected if the bit has a 1 value.
+       * 
+     * @param selection a template for the selection state of the treatment steps
      * @see #getSelectionBitSet()
      */
     public void setSelectionBitSet(BitSet selection) {
         touch();
-        for (int i = 0; i<Math.min(selection.size(), treatmentSteps.size()); i++) {
+        for (int i = 0; i<Math.min(selection.size(), treatmentSteps.size());
+                i++) {
             final TreatmentStep treatmentStep = treatmentSteps.get(i);
             treatmentStep.setSelected(selection.get(i));
         }
@@ -786,7 +885,7 @@ public class Sample {
     }
 
     /**
-     * Sets the AMS treatmentSteps for this sample using the supplied tensor.
+     * Sets the AMS data for this sample using the supplied tensor.
      * 
      * @param k11 tensor value (1,1)
      * @param k22 tensor value (2,2)
@@ -807,9 +906,10 @@ public class Sample {
         ams = new Tensor(k11, k22, k33, k12, k23, k13, scm, fcm);
     }
 
-    /** Sets the AMS treatmentSteps for the sample using the supplied principal directions.
+    /**
+     * Sets the AMS data for the sample using the supplied principal directions.
      * All angles are in degrees.
-     * 
+     *
      * @param i1 inclination of principal axis 1
      * @param d1 declination of principal axis 1
      * @param i2 inclination of principal axis 2
@@ -834,7 +934,9 @@ public class Sample {
        return fc;
     }
 
-    /** Returns this sample's AMS tensor.
+    /**
+     * Returns this sample's AMS tensor.
+     *
      * @return this sample's AMS tensor, or {@code null} if none has been set
      */
     public Tensor getAms() {
@@ -843,11 +945,11 @@ public class Sample {
     
     /**
      * Returns a specified subset of demagnetization treatmentSteps as strings.
-     * This method takes a list of {@link TreatmentStepField}s and returns a list
-     * of strings. Each string in the list represents one {@link TreatmentStep}
-     * in this sample, and consists of a concatenation of string representations
-     * of the requested fields (in the corresponding order), delimited
-     * by tab characters.
+     * This method takes a list of {@link TreatmentStepField}s and returns a
+     * list of strings. Each string in the list represents one
+     * {@link TreatmentStep} in this sample, and consists of a concatenation of
+     * string representations of the requested fields (in the corresponding
+     * order), delimited by tab characters.
      * 
      * @param  fields the fields to export
      * @return a string representation of the requested fields for
@@ -860,11 +962,11 @@ public class Sample {
     }
 
     /**
-     * Returns a list of Strings representing treatmentSteps pertaining to this sample.
-     * (Note that this only includes sample-level treatmentSteps, not TreatmentStep-level
-     * treatmentSteps such as magnetic moment measurements.)
+     * Returns a list of Strings representing data pertaining to this sample.
+     * (Note that this only includes sample-level data, not TreatmentStep-level
+     * data such as magnetic moment measurements.)
      * 
-     * @return a list of Strings representing treatmentSteps pertaining to this sample
+     * @return a list of Strings representing data pertaining to this sample
      */
     public List<String> toStrings() {
         List<String> result = new ArrayList<>();
@@ -886,8 +988,10 @@ public class Sample {
         return result;
     }
     
-    /** Sets some of sample's fields based on a supplied string. Any string
+    /**
+     * Sets some of sample's fields based on a supplied string. Any string
      * produced by {@link #toStrings()} is a valid input for this method.
+     *
      * @param string a string specifying some of the sample's fields
      */
     public void fromString(String string) {
@@ -922,33 +1026,48 @@ public class Sample {
         }
     }
 
-    /** Returns this sample's custom flags.
-     * @return this sample's custom flags */
+    /**
+     * Returns this sample's custom flags.
+     *
+     * @return this sample's custom flags
+     */
     public CustomFields<Boolean> getCustomFlags() {
         return customFlags;
     }
     
-    /** Returns this sample's custom notes.
-     * @return this sample's custom notes */
+    /**
+     * Returns this sample's custom notes.
+     *
+     * @return this sample's custom notes
+     */
     public CustomFields<String> getCustomNotes() {
         return customNotes;
     }
 
-    /** Returns this sample's dip azimuth in degrees. 
-     * @return this sample's dip azimuth in degrees */
+    /**
+     * Returns this sample's dip azimuth in degrees.
+     *
+     * @return this sample's dip azimuth in degrees
+     */
     public double getSampAz() {
         return sampAz;
     }
 
-    /** Sets this sample's dip azimuth in degrees.
-     * @param sampAz this sample's dip azimuth in degrees */
+    /**
+     * Sets this sample's dip azimuth in degrees.
+     *
+     * @param sampAz this sample's dip azimuth in degrees
+     */
     private void setSampAz(double sampAz) {
         touch();
         this.sampAz = sampAz;
     }
 
-    /** Returns this sample's dip angle in degrees. 
-     * @return this sample's dip angle in degrees */
+    /**
+     * Returns this sample's dip angle in degrees.
+     *
+     * @return this sample's dip angle in degrees
+     */
     public double getSampDip() {
         return sampDip;
     }
@@ -958,8 +1077,11 @@ public class Sample {
         this.sampDip = sampDip;
     }
     
-    /** Returns this sample's hade in degrees. 
-     * @return this sample's hade in degrees */
+    /**
+     * Returns this sample's hade in degrees.
+     *
+     * @return this sample's hade in degrees
+     */
     public double getSampHade() {
         return 90 - sampDip;
     }
@@ -969,8 +1091,11 @@ public class Sample {
         this.sampDip = 90 - sampHade;
     }
 
-    /** Returns this sample's formation dip azimuth in degrees.
-     * @return sampAz this sample's formation dip azimuth in degrees */
+    /**
+     * Returns this sample's formation dip azimuth in degrees.
+     *
+     * @return sampAz this sample's formation dip azimuth in degrees
+     */
     public double getFormAz() {
         return formAz;
     }
@@ -980,8 +1105,11 @@ public class Sample {
         this.formAz = formAz;
     }
     
-    /** Returns this sample's formation strike in degrees.
-     * @return sampAz this sample's formation strike in degrees */
+    /**
+     * Returns this sample's formation strike in degrees.
+     *
+     * @return sampAz this sample's formation strike in degrees
+     */
     public double getFormStrike() {
         double strike = formAz - 90;
         if (strike < 0) strike += 360;
@@ -995,8 +1123,11 @@ public class Sample {
         this.formAz = az;
     }
 
-    /** Returns this sample's formation dip angle in degrees.
-     * @return sampAz this sample's formation dip angle in degrees */
+    /**
+     * Returns this sample's formation dip angle in degrees.
+     *
+     * @return sampAz this sample's formation dip angle in degrees
+     */
     public double getFormDip() {
         return formDip;
     }
@@ -1006,8 +1137,11 @@ public class Sample {
         this.formDip = formDip;
     }
 
-    /** Returns the geomagnetic field declination at the sampling site.
-     * @return the geomagnetic field declination at the sampling site */
+    /**
+     * Returns the geomagnetic field declination at the sampling site.
+     *
+     * @return the geomagnetic field declination at the sampling site
+     */
     public double getMagDev() {
         return magDev;
     }
@@ -1017,8 +1151,10 @@ public class Sample {
         this.magDev = magDev;
     }
 
-    /** Sets the value of a specified field for each treatmentSteps point in the
+    /**
+     * Sets the value of a specified field for each treatment step in the
      * sample.
+     *
      * @param field the field to set
      * @param value the value to which to set the specified field
      */
@@ -1076,11 +1212,11 @@ public class Sample {
     }
     
     /**
-     * Returns the discrete ID of this sample, as determined by the 
-     * discrete ID of the first TreatmentStep within the sample. For samples with
-     * continuous measurement type, this is the identifier of the entire
-     * measured core section. If the sample contains no TreatmentStep objects,
-     * this method will return {@code null}.
+     * Returns the discrete ID of this sample, as determined by the discrete ID
+     * of the first TreatmentStep within the sample. For samples with continuous
+     * measurement type, this is the identifier of the entire measured core
+     * section. If the sample contains no TreatmentStep objects, this method
+     * will return {@code null}.
      * 
      * @return discrete sample ID, core section ID, or {@code null}
      */
@@ -1094,11 +1230,12 @@ public class Sample {
 
     /**
      * Sets the discrete ID of this sample by setting the discrete IDs of its
-     * {@code TreatmentStep} objects, if the sample has any {@code TreatmentStep} objects. If
-     * the sample has no {@code TreatmentStep} objects, {@code IllegalStateException}
-     * will be thrown. (This limitation is a historical artefact which will be
-     * removed when PuffinPlot's treatmentSteps model is revised to store the discrete
-     * ID within the {@code Sample} object itself.)
+     * {@code TreatmentStep} objects, if the sample has any
+     * {@code TreatmentStep} objects. If the sample has no {@code TreatmentStep}
+     * objects, {@code IllegalStateException} will be thrown. (This limitation
+     * is a historical artefact which will be removed when PuffinPlot's
+     * data model is revised to store the discrete ID within the
+     * {@code Sample} object itself.)
      *
      * @param discreteId the discrete ID to set
      */
@@ -1111,10 +1248,11 @@ public class Sample {
     }
     
     /**
-     * Remove specified treatmentSteps from this sample. Any {@code TreatmentStep} in the
-     * collection passed to this method will be removed. Any {@code TreatmentStep}
-     * in the collection which is not in this Sample will be ignored.
-     * 
+     * Remove specified treatmentSteps from this sample. Any
+     * {@code TreatmentStep} in the collection passed to this method will be
+     * removed. Any {@code TreatmentStep} in the collection which is not in this
+     * Sample will be ignored.
+       * 
      * @param toRemove the treatmentSteps to remove
      */
     public void removeData(Collection<TreatmentStep> toRemove) {
@@ -1170,11 +1308,11 @@ public class Sample {
     }
 
     /**
-     * Merges the demagnetization treatmentSteps of the supplied samples into the
-     * first sample in the list. Note that the TreatmentStep objects in the
-     * subsequent samples are not cloned: their references are copied
-     * directly into the first sample's treatmentSteps list. The subsequent samples
-     * should therefore be discarded after calling this function.
+     * Merges the demagnetization data of the supplied samples into the first
+     * sample in the list. Note that the TreatmentStep objects in the subsequent
+     * samples are not cloned: their references are copied directly into the
+     * first sample's treatmentSteps list. The subsequent samples should
+     * therefore be discarded after calling this function.
      * 
      * @param samples 
      */
