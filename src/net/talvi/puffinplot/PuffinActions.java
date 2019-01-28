@@ -32,7 +32,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import net.talvi.puffinplot.data.DatumField;
+import net.talvi.puffinplot.data.TreatmentStepField;
 import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
@@ -723,8 +723,8 @@ public class PuffinActions {
             String pathname = app.getSavePath("Export IRM data", null,
                     null);
             app.getSuite().exportToFiles(new File(pathname),
-                    Arrays.asList(new DatumField[] {DatumField.IRM_FIELD,
-                    DatumField.VIRT_MAGNETIZATION}));
+                    Arrays.asList(new TreatmentStepField[] {TreatmentStepField.IRM_FIELD,
+                    TreatmentStepField.VIRT_MAGNETIZATION}));
         }
     };
 

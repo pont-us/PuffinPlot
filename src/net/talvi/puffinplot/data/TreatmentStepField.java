@@ -45,7 +45,7 @@ import net.talvi.puffinplot.data.file.FileFormat;
  * 
  * @author pont
  */
-public enum DatumField {
+public enum TreatmentStepField {
     /* When adding fields here, make sure also to add them to TreatmentStep.getValue()
      * and TreatmentStep.setValue(v).
      */
@@ -147,16 +147,16 @@ public enum DatumField {
     private final String defaultValue;
     private final boolean virtual;
     private final boolean importable;
-    private final static Map<String, DatumField> nameMap = new HashMap<>();
+    private final static Map<String, TreatmentStepField> nameMap = new HashMap<>();
     private static final List<String> realFieldHeadings;
-    private static final List<DatumField> realFields;
+    private static final List<TreatmentStepField> realFields;
     
     static {
-        final List<DatumField> realFieldsTmp =
+        final List<TreatmentStepField> realFieldsTmp =
                 new ArrayList<>(values().length - 1);
         final List<String> realFieldHeadersTmp =
                 new ArrayList<>(values().length - 1);
-        for (DatumField field: values())
+        for (TreatmentStepField field: values())
         {
             nameMap.put(field.getHeading(), field);
             if (!field.isVirtual()) {
@@ -168,9 +168,9 @@ public enum DatumField {
         realFieldHeadings = Collections.unmodifiableList(realFieldHeadersTmp);
     }
 
-    private DatumField(String heading, String niceName,
-            Class type, String defaultValue,
-            boolean importable, boolean virtual) {
+    private TreatmentStepField(String heading, String niceName,
+                               Class type, String defaultValue,
+                               boolean importable, boolean virtual) {
         this.importable = importable;
         this.heading = heading;
         if (niceName == null) {
@@ -191,7 +191,7 @@ public enum DatumField {
      * @return the field whose heading string is the specified string,
      * or {@code null} if no such field exists
      */
-    public static DatumField getByHeading(String heading) {
+    public static TreatmentStepField getByHeading(String heading) {
         return nameMap.get(heading);
     }
 
@@ -212,7 +212,7 @@ public enum DatumField {
     /**
      * Returns this field's default value.
      * 
-     * Currently only used in {@link TreatmentStep#setValue(DatumField, String, double)}.
+     * Currently only used in {@link TreatmentStep#setValue(TreatmentStepField, String, double)}.
      * 
      * @return a string representation of the default value for this field
      */
@@ -233,7 +233,7 @@ public enum DatumField {
      * which may be specified for custom data import. Note that (perhaps
      * counterintuitively) the virtual fields for declination, inclination, 
      * and magnetization <em>are</em> importable, although they cannot
-     * be set by {@link TreatmentStep#setValue(DatumField, String, double)}: they are
+     * be set by {@link TreatmentStep#setValue(TreatmentStepField, String, double)}: they are
      * handled as a special case by {@link FileFormat#readLine(String)}.
      * @return {@code true} if this field is importable
      */
@@ -244,7 +244,7 @@ public enum DatumField {
     /** Returns an unmodifiable list of the real fields.
      * A real field corresponds to an explicitly stored data value.
      * @return an unmodifiable list of the real fields */
-    public static List<DatumField> getRealFields() {
+    public static List<TreatmentStepField> getRealFields() {
         return realFields;
     }
 

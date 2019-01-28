@@ -64,13 +64,13 @@ public class TreatmentStepTest {
     @Test
     public void testSetValueWithBadNumberFormat() {
         final ListHandler handler = ListHandler.createAndAdd();
-        new TreatmentStep().setValue(DatumField.AREA, "not a number", 1);
+        new TreatmentStep().setValue(TreatmentStepField.AREA, "not a number", 1);
         assertTrue(handler.wasOneMessageLogged(Level.WARNING));
     }
     
     @Test(expected = IllegalArgumentException.class)
     public void testSetValueWithNonSettableField() {
-        new TreatmentStep().setValue(DatumField.VIRT_MSJUMP, "1.0", 1);
+        new TreatmentStep().setValue(TreatmentStepField.VIRT_MSJUMP, "1.0", 1);
     }
     
     @Test
@@ -78,33 +78,33 @@ public class TreatmentStepTest {
         final Vec3 vec = Vec3.fromPolarDegrees(12, 34, 56);
         final TreatmentStep treatmentStep = new TreatmentStep(vec);
         assertEquals(vec.getDecDeg(),
-                Double.valueOf(treatmentStep.getValue(DatumField.VIRT_DECLINATION)),
+                Double.valueOf(treatmentStep.getValue(TreatmentStepField.VIRT_DECLINATION)),
                 1e-10);
         assertEquals(vec.getIncDeg(),
-                Double.valueOf(treatmentStep.getValue(DatumField.VIRT_INCLINATION)),
+                Double.valueOf(treatmentStep.getValue(TreatmentStepField.VIRT_INCLINATION)),
                 1e-10);
         assertEquals(vec.mag(),
-                Double.valueOf(treatmentStep.getValue(DatumField.VIRT_MAGNETIZATION)),
+                Double.valueOf(treatmentStep.getValue(TreatmentStepField.VIRT_MAGNETIZATION)),
                 1e-10);
     }
     
     @Test
     public void testSetAndGetValuesDouble() {
-        final List<DatumField> fields = Arrays.asList(
-                DatumField.DEPTH, DatumField.X_MOMENT, DatumField.Y_MOMENT,
-                DatumField.Z_MOMENT, DatumField.MAG_SUS, DatumField.VOLUME,
-                DatumField.AREA, DatumField.SAMPLE_AZ, DatumField.SAMPLE_DIP,
-                DatumField.FORM_AZ, DatumField.FORM_DIP, DatumField.MAG_DEV,
-                DatumField.AF_X, DatumField.AF_Y, DatumField.AF_Z,
-                DatumField.TEMPERATURE, DatumField.IRM_FIELD,
-                DatumField.ARM_FIELD, DatumField.VIRT_SAMPLE_HADE,
-                DatumField.VIRT_FORM_STRIKE
+        final List<TreatmentStepField> fields = Arrays.asList(
+                TreatmentStepField.DEPTH, TreatmentStepField.X_MOMENT, TreatmentStepField.Y_MOMENT,
+                TreatmentStepField.Z_MOMENT, TreatmentStepField.MAG_SUS, TreatmentStepField.VOLUME,
+                TreatmentStepField.AREA, TreatmentStepField.SAMPLE_AZ, TreatmentStepField.SAMPLE_DIP,
+                TreatmentStepField.FORM_AZ, TreatmentStepField.FORM_DIP, TreatmentStepField.MAG_DEV,
+                TreatmentStepField.AF_X, TreatmentStepField.AF_Y, TreatmentStepField.AF_Z,
+                TreatmentStepField.TEMPERATURE, TreatmentStepField.IRM_FIELD,
+                TreatmentStepField.ARM_FIELD, TreatmentStepField.VIRT_SAMPLE_HADE,
+                TreatmentStepField.VIRT_FORM_STRIKE
         );
         
         final double value = 30;
         final String valueString = Double.toString(value);
         final TreatmentStep treatmentStep = new TreatmentStep();
-        for (DatumField field: fields) {
+        for (TreatmentStepField field: fields) {
             treatmentStep.setValue(field, valueString, 1);
             assertEquals(value, Double.parseDouble(treatmentStep.getValue(field)),
                     1e-10);
@@ -447,7 +447,7 @@ public class TreatmentStepTest {
                 return 17;
             }
         });
-        assertEquals("17.0", d.getValue(DatumField.VIRT_MSJUMP));
+        assertEquals("17.0", d.getValue(TreatmentStepField.VIRT_MSJUMP));
     }
     
     @Test

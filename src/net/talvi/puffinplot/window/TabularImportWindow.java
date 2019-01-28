@@ -25,11 +25,9 @@ import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.prefs.Preferences;
 import javax.swing.*;
-import net.talvi.puffinplot.data.DatumField;
-import net.talvi.puffinplot.data.FieldUnit;
-import net.talvi.puffinplot.data.MeasType;
-import net.talvi.puffinplot.data.MomentUnit;
-import net.talvi.puffinplot.data.TreatType;
+
+import net.talvi.puffinplot.data.*;
+import net.talvi.puffinplot.data.TreatmentStepField;
 import net.talvi.puffinplot.data.file.FileFormat;
 
 /**
@@ -241,10 +239,10 @@ public class TabularImportWindow extends JDialog {
      * @return the file format defined by the current settings of this window
      */
     private FileFormat createFileFormat() {
-        final Map<Integer, DatumField> fieldMap =
+        final Map<Integer, TreatmentStepField> fieldMap =
                 new HashMap<>(fieldChoosers.size());
         for (FieldChooser fieldChooser: fieldChoosers) {
-            final DatumField field = fieldChooser.getField();
+            final TreatmentStepField field = fieldChooser.getField();
             if (field != null) {
                 fieldMap.put(fieldChooser.getColumnNumber()-1, field);
             }
@@ -288,7 +286,7 @@ public class TabularImportWindow extends JDialog {
                 FieldChooser fieldChooser = new FieldChooser(i+1);
                 if (columnIterator.hasNext()) {
                     final int column = columnIterator.next();
-                    final DatumField field = initialFormat.getColumnMap().get(column);
+                    final TreatmentStepField field = initialFormat.getColumnMap().get(column);
                     fieldChooser.setContents(column+1, field);
                 }
                 add(fieldChooser);
@@ -304,17 +302,17 @@ public class TabularImportWindow extends JDialog {
         private final JSpinner spinner;
         private final SpinnerNumberModel spinnerModel;
         private static final List<String> fieldStrings;
-        private static final List<DatumField> fields;
+        private static final List<TreatmentStepField> fields;
         private static final String[] emptyStringArray =
                 new String[] {}; // for List.toArray
         
         static {
-            DatumField[] allValues = DatumField.values();
+            TreatmentStepField[] allValues = TreatmentStepField.values();
             fieldStrings = new ArrayList<>(allValues.length+1);
             fields = new ArrayList<>(allValues.length+1);
             fields.add(null);
             fieldStrings.add("[Ignore this column]");
-            for (DatumField field: allValues) {
+            for (TreatmentStepField field: allValues) {
                 if (field.isImportable()) {
                     fields.add(field);
                     fieldStrings.add(field.getNiceName());
@@ -342,11 +340,11 @@ public class TabularImportWindow extends JDialog {
             return spinnerModel.getNumber().intValue();
         }
         
-        public DatumField getField() {
+        public TreatmentStepField getField() {
             return fields.get(fieldBox.getSelectedIndex());
         }
 
-        private void setContents(int column, DatumField field) {
+        private void setContents(int column, TreatmentStepField field) {
             spinnerModel.setValue(column);
             for (int i=0; i<fields.size(); i++) {
                 if (fields.get(i) == field) {

@@ -52,7 +52,7 @@ import net.talvi.puffinplot.Util;
  * defines the position and appearance of a point on one or more
  * of the plots.</p>
  * 
- * @see DatumField
+ * @see TreatmentStepField
  * 
  * @author pont
  */
@@ -630,7 +630,7 @@ public class TreatmentStep {
      * @return a string representation of the value contained in the field
      * @throws NullPointerException if {@code field} is null
      */
-    public String getValue(DatumField field) {
+    public String getValue(TreatmentStepField field) {
         requireNonNull(field, "field must be non-null");
         switch (field) {
         case AF_X: return fmt(afx);
@@ -686,7 +686,7 @@ public class TreatmentStep {
      * 
      * @throws NullPointerException if {@code field} or {@code value} is null
      */
-    public void setValue(DatumField field, String value, double factor) {
+    public void setValue(TreatmentStepField field, String value, double factor) {
         requireNonNull(field, "field must be non-null");
         requireNonNull(value, "value must be non-null");
         touch();
@@ -722,7 +722,7 @@ public class TreatmentStep {
         }
     }
     
-    private void doSetValue(DatumField field, String s, double factor) {
+    private void doSetValue(TreatmentStepField field, String s, double factor) {
         requireNonNull(field, "field must be non-null");
         requireNonNull(s, "value must be non-null");
         double doubleVal = 0;
@@ -799,24 +799,24 @@ public class TreatmentStep {
      * datum objects.
      */
     public static class Reader {
-        private final List<DatumField> fields;
+        private final List<TreatmentStepField> fields;
 
         /**
          * Create a new reader using the supplied header strings.
          * Each header string should correspond to the string representation
-         * of a {@link DatumField} field.
+         * of a {@link TreatmentStepField} field.
          * @param headers list of headers defining the data format
          */
         public Reader(List<String> headers) {
             fields = new ArrayList<>(headers.size());
-            for (String s: headers) fields.add(DatumField.valueOf(s));
+            for (String s: headers) fields.add(TreatmentStepField.valueOf(s));
         }
 
         /**
          * Creates a a datum object using the supplied strings to 
          * populate the data fields. The values in the supplied list of
          * strings must occur in the same order as the corresponding
-         * {@link DatumField}s supplied to the reader's constructor.
+         * {@link TreatmentStepField}s supplied to the reader's constructor.
          * 
          * @param strings string representations of data values
          * @return a datum object containing the supplied values
@@ -833,15 +833,15 @@ public class TreatmentStep {
     /**
      * Produces a list of strings representing the data values within this
      * datum object. The order of the strings corresponds to the order of
-     * the fields in {@link DatumField#realFields}.
+     * the fields in {@link TreatmentStepField#realFields}.
      * 
      * @return  a list of strings representing the data values within this
      * datum
      */
     public List<String> toStrings() {
         List<String> result =
-                new ArrayList<>(DatumField.getRealFields().size());
-        for (DatumField df : DatumField.getRealFields()) {
+                new ArrayList<>(TreatmentStepField.getRealFields().size());
+        for (TreatmentStepField df : TreatmentStepField.getRealFields()) {
             result.add(getValue(df));
         }
         return result;
@@ -856,11 +856,11 @@ public class TreatmentStep {
      * @param delimiter the string which should separate the values
      * @return a string representation of the requested values
      */
-    public String exportFieldValues(Collection<DatumField> fields,
+    public String exportFieldValues(Collection<TreatmentStepField> fields,
             String delimiter) {
         final StringBuilder sb = new StringBuilder();
         boolean first = true;
-        for (DatumField field: fields) {
+        for (TreatmentStepField field: fields) {
             if (!first) sb.append(delimiter);
             sb.append(getValue(field));
             first = false;

@@ -101,11 +101,11 @@ public class UcDavisLoader extends AbstractFileLoader {
                  */
                 d.setMoment(Vec3.fromPolarDegrees(
                         parts.get(fieldMap.get(new ColumnDef(level,
-                                DatumField.VIRT_MAGNETIZATION))),
+                                TreatmentStepField.VIRT_MAGNETIZATION))),
                         parts.get(fieldMap.get(new ColumnDef(level,
-                                DatumField.VIRT_INCLINATION))),
+                                TreatmentStepField.VIRT_INCLINATION))),
                         parts.get(fieldMap.get(new ColumnDef(level,
-                                DatumField.VIRT_DECLINATION)))));
+                                TreatmentStepField.VIRT_DECLINATION)))));
                 d.setTreatType(TreatType.DEGAUSS_XYZ);
                 final double levelTesla = level / 1000.;
                 d.setAfX(levelTesla);
@@ -129,11 +129,11 @@ public class UcDavisLoader extends AbstractFileLoader {
     private static class ColumnDef {
 
         public final Integer treatmentLevel;
-        public final DatumField parameter;
+        public final TreatmentStepField parameter;
         private final static Pattern HEADER_PATTERN
                 = Pattern.compile("([^(]+)[(](\\d+)[)]");
 
-        private ColumnDef(Integer treatmentLevel, DatumField parameter) {
+        private ColumnDef(Integer treatmentLevel, TreatmentStepField parameter) {
             this.treatmentLevel = treatmentLevel;
             this.parameter = parameter;
         }
@@ -144,20 +144,20 @@ public class UcDavisLoader extends AbstractFileLoader {
          * @param s parameter specifier from the UC Davis file
          * @return the parameter type specified by the string
          */
-        private static DatumField stringToField(String s) {
+        private static TreatmentStepField stringToField(String s) {
             switch (s) {
                 case "X":
-                    return DatumField.X_MOMENT;
+                    return TreatmentStepField.X_MOMENT;
                 case "Y":
-                    return DatumField.Y_MOMENT;
+                    return TreatmentStepField.Y_MOMENT;
                 case "Z":
-                    return DatumField.Z_MOMENT;
+                    return TreatmentStepField.Z_MOMENT;
                 case "D":
-                    return DatumField.VIRT_DECLINATION;
+                    return TreatmentStepField.VIRT_DECLINATION;
                 case "I":
-                    return DatumField.VIRT_INCLINATION;
+                    return TreatmentStepField.VIRT_INCLINATION;
                 case "J":
-                    return DatumField.VIRT_MAGNETIZATION;
+                    return TreatmentStepField.VIRT_MAGNETIZATION;
                 default:
                     return null;
             }
@@ -172,7 +172,7 @@ public class UcDavisLoader extends AbstractFileLoader {
         public static ColumnDef fromHeader(String header) {
             final Matcher matcher = HEADER_PATTERN.matcher(header);
             matcher.matches();
-            final DatumField field = stringToField(matcher.group(1));
+            final TreatmentStepField field = stringToField(matcher.group(1));
             return new ColumnDef(Integer.parseInt(matcher.group(2)),
                     field);
         }

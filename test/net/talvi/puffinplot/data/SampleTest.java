@@ -155,19 +155,19 @@ public class SampleTest {
         final String valueString = String.format(Locale.ENGLISH, "%g", value);
         final Sample sample = new Sample("sample1", null);
 
-        sample.setValue(DatumField.SAMPLE_AZ, valueString);
+        sample.setValue(TreatmentStepField.SAMPLE_AZ, valueString);
         assertEquals(value, sample.getSampAz(), delta);
-        sample.setValue(DatumField.SAMPLE_DIP, valueString);
+        sample.setValue(TreatmentStepField.SAMPLE_DIP, valueString);
         assertEquals(value, sample.getSampDip(), delta);
-        sample.setValue(DatumField.VIRT_SAMPLE_HADE, valueString);
+        sample.setValue(TreatmentStepField.VIRT_SAMPLE_HADE, valueString);
         assertEquals(value, sample.getSampHade(), delta);
-        sample.setValue(DatumField.FORM_AZ, valueString);
+        sample.setValue(TreatmentStepField.FORM_AZ, valueString);
         assertEquals(value, sample.getFormAz(), delta);
-        sample.setValue(DatumField.FORM_DIP, valueString);
+        sample.setValue(TreatmentStepField.FORM_DIP, valueString);
         assertEquals(value, sample.getFormDip(), delta);
-        sample.setValue(DatumField.VIRT_FORM_STRIKE, valueString);
+        sample.setValue(TreatmentStepField.VIRT_FORM_STRIKE, valueString);
         assertEquals(value, sample.getFormStrike(), delta);
-        sample.setValue(DatumField.MAG_DEV, valueString);
+        sample.setValue(TreatmentStepField.MAG_DEV, valueString);
         assertEquals(value, sample.getMagDev(), delta);
     }
     
@@ -175,13 +175,13 @@ public class SampleTest {
     public void testSetValueUnhandledField() {
         final ListHandler handler = ListHandler.createAndAdd();
         final Sample sample = new Sample("sample1", null);
-        sample.setValue(DatumField.MAG_SUS, "0");
+        sample.setValue(TreatmentStepField.MAG_SUS, "0");
         assertTrue(handler.wasOneMessageLogged(Level.WARNING));
     }
     
     @Test
     public void testSetValueWithData() {
-        final DatumField df = DatumField.SAMPLE_AZ;
+        final TreatmentStepField df = TreatmentStepField.SAMPLE_AZ;
         final double value = 2.71;
         final Sample sample = new Sample("sample1", null);
         for (int i=0; i<3; i++) {
@@ -489,7 +489,7 @@ public class SampleTest {
     @Test
     public void testSetAndGetFormStrike() {
         for (int strike: new int[] {0, 1, 45, 180, 300, 359}) {
-            simpleSample.setValue(DatumField.VIRT_FORM_STRIKE,
+            simpleSample.setValue(TreatmentStepField.VIRT_FORM_STRIKE,
                     String.format(Locale.ENGLISH, "%d", strike));
             assertEquals(strike, simpleSample.getFormStrike(), delta);
         }

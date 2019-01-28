@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.*;
 import net.talvi.puffinplot.PuffinApp;
-import net.talvi.puffinplot.data.DatumField;
+import net.talvi.puffinplot.data.TreatmentStepField;
 import net.talvi.puffinplot.data.Sample;
 
 /**
@@ -40,20 +40,20 @@ import net.talvi.puffinplot.data.Sample;
  */
 public class EditSampleParametersWindow extends JFrame {
 
-    private final static DatumField[] fields = {
-        DatumField.VOLUME,
-        DatumField.SAMPLE_AZ, DatumField.SAMPLE_DIP, DatumField.VIRT_SAMPLE_HADE,
-        DatumField.FORM_AZ, DatumField.VIRT_FORM_STRIKE, DatumField.FORM_DIP, 
-        DatumField.MAG_DEV
+    private final static TreatmentStepField[] fields = {
+        TreatmentStepField.VOLUME,
+        TreatmentStepField.SAMPLE_AZ, TreatmentStepField.SAMPLE_DIP, TreatmentStepField.VIRT_SAMPLE_HADE,
+        TreatmentStepField.FORM_AZ, TreatmentStepField.VIRT_FORM_STRIKE, TreatmentStepField.FORM_DIP,
+        TreatmentStepField.MAG_DEV
     };
     
     private static final long serialVersionUID = 1L;
     private final JButton cancelButton;
     private final JButton setButton;
-    private final Map<DatumField, JCheckBox> checkBoxMap =
-            new EnumMap<>(DatumField.class);
-    private final Map<DatumField, JTextField> textFieldMap =
-            new EnumMap<>(DatumField.class);
+    private final Map<TreatmentStepField, JCheckBox> checkBoxMap =
+            new EnumMap<>(TreatmentStepField.class);
+    private final Map<TreatmentStepField, JTextField> textFieldMap =
+            new EnumMap<>(TreatmentStepField.class);
     private final ActionListener actionListener;
     private final PuffinApp app;
     
@@ -83,7 +83,7 @@ public class EditSampleParametersWindow extends JFrame {
         JPanel fieldPanel = new JPanel();
         fieldPanel.setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
-        for (DatumField field: fields) {
+        for (TreatmentStepField field: fields) {
             gc.gridwidth = 2;
             gc.anchor = GridBagConstraints.EAST;
             JCheckBox checkBox = new JCheckBox(field.getNiceName());
@@ -133,7 +133,7 @@ public class EditSampleParametersWindow extends JFrame {
             }
             if (event.getSource() == setButton) {
                 final List<Sample> samples = app.getSelectedSamples();
-                for (DatumField field : fields) {
+                for (TreatmentStepField field : fields) {
                     if (checkBoxMap.get(field).isSelected()) {
                         final String value = textFieldMap.get(field).getText();
                         for (Sample s: samples) {

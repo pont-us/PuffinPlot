@@ -841,7 +841,7 @@ public class Sample {
     
     /**
      * Returns a specified subset of demagnetization data as strings.
-     * This method takes a list of {@link DatumField}s and returns a list
+     * This method takes a list of {@link TreatmentStepField}s and returns a list
      * of strings. Each string in the list represents one {@link TreatmentStep}
      * in this sample, and consists of a concatenation of string representations
      * of the requested fields (in the corresponding order), delimited
@@ -851,7 +851,7 @@ public class Sample {
      * @return a string representation of the requested fields for
      *         each {@link TreatmentStep} in this sample
      */
-    public List<String> exportFields(List<DatumField> fields) {       
+    public List<String> exportFields(List<TreatmentStepField> fields) {
         return getData().stream().
                 map(d -> d.exportFieldValues(fields, "\t")).
                 collect(Collectors.toList());
@@ -1020,7 +1020,7 @@ public class Sample {
      * @param field the field to set
      * @param value the value to which to set the specified field
      */
-    public void setValue(DatumField field, String value) {
+    public void setValue(TreatmentStepField field, String value) {
         touch();
         switch (field) {
             case SAMPLE_AZ: setSampAz(parseDouble(value)); break;

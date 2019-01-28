@@ -28,12 +28,12 @@ import static org.junit.Assert.*;
  *
  * @author pont
  */
-public class DatumFieldTest {
+public class TreatmentStepFieldTest {
 
     @Test
     public void testValues() {
-        final DatumField[] result = DatumField.values();
-        final List<DatumField> resultList = Arrays.asList(result);
+        final TreatmentStepField[] result = TreatmentStepField.values();
+        final List<TreatmentStepField> resultList = Arrays.asList(result);
 
         /*
          * There seems little point in exhaustively testing the values array --
@@ -42,25 +42,25 @@ public class DatumFieldTest {
          * is of a reasonable size.
          */
         assertTrue(result.length > 20);
-        assertTrue(resultList.contains(DatumField.AF_X));
-        assertTrue(resultList.contains(DatumField.VOLUME));
-        assertTrue(resultList.contains(DatumField.VIRT_MAGNETIZATION));
+        assertTrue(resultList.contains(TreatmentStepField.AF_X));
+        assertTrue(resultList.contains(TreatmentStepField.VOLUME));
+        assertTrue(resultList.contains(TreatmentStepField.VIRT_MAGNETIZATION));
     }
 
     @Test
     public void testValueOf() {
-        final DatumField[] values = DatumField.values();
-        for (DatumField value : values) {
-            assertEquals(value, DatumField.valueOf(value.toString()));
+        final TreatmentStepField[] values = TreatmentStepField.values();
+        for (TreatmentStepField value : values) {
+            assertEquals(value, TreatmentStepField.valueOf(value.toString()));
         }
     }
 
     @Test
     public void testGetHeadingAndGetByHeading() {
-        final DatumField[] values = DatumField.values();
-        for (DatumField value : values) {
+        final TreatmentStepField[] values = TreatmentStepField.values();
+        for (TreatmentStepField value : values) {
             assertEquals(value,
-                    DatumField.getByHeading(value.getHeading()));
+                    TreatmentStepField.getByHeading(value.getHeading()));
         }
     }
 
@@ -71,8 +71,8 @@ public class DatumFieldTest {
          * non-null and non-empty.
          */
 
-        final DatumField[] values = DatumField.values();
-        for (DatumField value : values) {
+        final TreatmentStepField[] values = TreatmentStepField.values();
+        for (TreatmentStepField value : values) {
             final String result = value.getNiceName();
             assertNotNull(result);
             assertNotEquals("", result);
@@ -85,12 +85,12 @@ public class DatumFieldTest {
          * Here we test that the default value for each field type is a valid
          * string representation of that type.
          */
-        final DatumField[] fields = DatumField.values();
+        final TreatmentStepField[] fields = TreatmentStepField.values();
         final Set<Class> exceptionThrowingTypes = Arrays.stream(new Class[]{
             double.class, int.class, ArmAxis.class, MeasType.class,
             TreatType.class
         }).collect(Collectors.toSet());
-        for (DatumField field : fields) {
+        for (TreatmentStepField field : fields) {
             final String defaultValue = field.getDefaultValue();
             final Class type = field.getType();
             if (exceptionThrowingTypes.contains(type)) {
@@ -116,7 +116,7 @@ public class DatumFieldTest {
                  * returns true for an input of "true" (with any casing) and
                  * "false" otherwise. But there seems no reason to allow values
                  * other than "true" and "false" for the default string
-                 * representations in DatumField.
+                 * representations in TreatmentStepField.
                  */
                 assertTrue("false".equals(defaultValue)
                         || "true".equals(defaultValue));
@@ -130,8 +130,8 @@ public class DatumFieldTest {
 
     @Test
     public void testIsVirtual() {
-        final DatumField[] fields = DatumField.values();
-        for (DatumField field : fields) {
+        final TreatmentStepField[] fields = TreatmentStepField.values();
+        for (TreatmentStepField field : fields) {
             assertEquals(field.isVirtual(),
                     field.toString().startsWith("VIRT_"));
         }
@@ -143,11 +143,11 @@ public class DatumFieldTest {
          * All fields are importable, except for PuffinPlot's own fields and the
          * MS jump temperature.
          */
-        final DatumField[] fields = DatumField.values();
-        for (DatumField field : fields) {
+        final TreatmentStepField[] fields = TreatmentStepField.values();
+        for (TreatmentStepField field : fields) {
             assertEquals(field.isImportable(),
                     !(field.toString().startsWith("PP_")
-                    || field == DatumField.VIRT_MSJUMP));
+                    || field == TreatmentStepField.VIRT_MSJUMP));
         }
     }
 
@@ -158,11 +158,11 @@ public class DatumFieldTest {
          * getRealFields() and the set of all fields for which isVirtual() is
          * true. (This is unfortunately rather verbose in Java.)
          */
-        final Set<DatumField> allFields = Arrays.stream(DatumField.values()).
+        final Set<TreatmentStepField> allFields = Arrays.stream(TreatmentStepField.values()).
                 collect(Collectors.toSet());
-        final Set<DatumField> virtualFields = allFields.stream().
+        final Set<TreatmentStepField> virtualFields = allFields.stream().
                 filter(f -> f.isVirtual()).collect(Collectors.toSet());
-        final Set<DatumField> realFields = DatumField.getRealFields().stream().
+        final Set<TreatmentStepField> realFields = TreatmentStepField.getRealFields().stream().
                 collect(Collectors.toSet());
         // check that virtual and real are disjoint
         assertTrue(realFields.stream().
@@ -170,7 +170,7 @@ public class DatumFieldTest {
         assertTrue(virtualFields.stream().
                 noneMatch(f -> realFields.contains(f)));
         // check that every element is either in virtual or real
-        final Set<DatumField> virtualPlusReal = new HashSet<>();
+        final Set<TreatmentStepField> virtualPlusReal = new HashSet<>();
         virtualPlusReal.addAll(virtualFields);
         virtualPlusReal.addAll(realFields);
         assertEquals(allFields, virtualPlusReal);
@@ -178,9 +178,9 @@ public class DatumFieldTest {
 
     @Test
     public void testGetRealFieldStrings() {
-        final Set<String> actual = DatumField.getRealFieldStrings().stream().
+        final Set<String> actual = TreatmentStepField.getRealFieldStrings().stream().
                 collect(Collectors.toSet());
-        final Set<String> expected = DatumField.getRealFields().stream().
+        final Set<String> expected = TreatmentStepField.getRealFields().stream().
                 map(f -> f.toString()).collect(Collectors.toSet());
         assertEquals(expected, actual);
     }

@@ -28,7 +28,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import net.talvi.puffinplot.data.TreatmentStep;
-import net.talvi.puffinplot.data.DatumField;
+import net.talvi.puffinplot.data.TreatmentStepField;
 
 /**
  * A window which shows all the data for a sample in tabular form.
@@ -94,12 +94,12 @@ public class TableWindow extends JFrame {
 
         @Override
         public int getColumnCount() {
-            return DatumField.values().length - 1;
+            return TreatmentStepField.values().length - 1;
         }
         
         @Override
         public String getColumnName(int c) {
-            return DatumField.values()[c].toString().toLowerCase();
+            return TreatmentStepField.values()[c].toString().toLowerCase();
         }
           
         @Override
@@ -113,14 +113,14 @@ public class TableWindow extends JFrame {
 
         @Override
         public Class<?> getColumnClass(int c) {
-            return DatumField.values()[c].getClass();
+            return TreatmentStepField.values()[c].getClass();
         }
 
         @Override
         public Object getValueAt(int row, int col) {
             try {
                 final TreatmentStep d = params.getSample().getData().get(row);
-                return d.getValue(DatumField.values()[col]);
+                return d.getValue(TreatmentStepField.values()[col]);
             } catch (NullPointerException e) {
                 throw new RuntimeException("row " + row + " col " + col, e);
             }
