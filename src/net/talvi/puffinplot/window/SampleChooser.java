@@ -96,7 +96,7 @@ public class SampleChooser extends JPanel {
         final List<Sample> samples;
         final Suite suite = app.getSuite();
         if (suite == null) return Collections.emptyList();
-        switch (suite.getMeasType()) {
+        switch (suite.getMeasurementType()) {
         case DISCRETE:
             List names = sampleList.getSelectedValuesList();
             samples = new ArrayList<>(names.size());
@@ -169,7 +169,7 @@ public class SampleChooser extends JPanel {
             setVisibility(false, false);
             return;
         }
-        switch (suite.getMeasType()) {
+        switch (suite.getMeasurementType()) {
             case CONTINUOUS:
                 depthSlider.setForSuite(suite);
                 setVisibility(true, false);
@@ -211,7 +211,7 @@ public class SampleChooser extends JPanel {
     public void updateValueFromSuite() {
         final Suite suite = app.getSuite();
         final int index = suite.getCurrentSampleIndex();
-        switch (suite.getMeasType()) {
+        switch (suite.getMeasurementType()) {
             case CONTINUOUS:
                 depthSlider.setValue(index);
                 break;

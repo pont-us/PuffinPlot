@@ -644,10 +644,10 @@ public class Sample {
     /** Returns the measurement type of this sample (discrete or continuous).
      * @return the measurement type of this sample (discrete or continuous)
      */
-    public MeasType getMeasType() {
+    public MeasurementType getMeasType() {
         for (TreatmentStep d: getData())
-            if (d.getMeasType().isActualMeasurement()) return d.getMeasType();
-        return MeasType.DISCRETE;
+            if (d.getMeasurementType().isActualMeasurement()) return d.getMeasurementType();
+        return MeasurementType.DISCRETE;
     }
 
     /** Returns the sample identifier or depth. For a discrete sample 
@@ -661,13 +661,13 @@ public class Sample {
     
     public void setNameOrDepth(String newNameOrDepth) {
         nameOrDepth = newNameOrDepth;
-        if (getMeasType() == MeasType.CONTINUOUS) {
+        if (getMeasType() == MeasurementType.CONTINUOUS) {
             setDepth(nameOrDepth);
             for (TreatmentStep d: getData()) {
                 d.setDepth(nameOrDepth);
             }
         }
-        if (getMeasType() == MeasType.DISCRETE) {
+        if (getMeasType() == MeasurementType.DISCRETE) {
             for (TreatmentStep d: getData()) {
                 d.setDiscreteId(nameOrDepth);
             }

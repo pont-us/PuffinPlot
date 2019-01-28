@@ -34,7 +34,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.border.EmptyBorder;
 
-import net.talvi.puffinplot.data.MeasType;
+import net.talvi.puffinplot.data.MeasurementType;
 import net.talvi.puffinplot.data.TreatType;
 
 /**
@@ -44,7 +44,7 @@ import net.talvi.puffinplot.data.TreatType;
  */
 public class IapdImportDialog extends JDialog {
     
-    private MeasType measType = null;
+    private MeasurementType measurementType = null;
     private TreatType treatType = null;
     private boolean okPressed = false;
         
@@ -70,13 +70,13 @@ public class IapdImportDialog extends JDialog {
         mtPanel.setBorder(BorderFactory.createTitledBorder("Measurement type"));
         final ButtonGroup mtGroup = new ButtonGroup();
         //mtPanel.setAlignmentX((float) 0.0);
-        for (MeasType mt: MeasType.values()) {
+        for (MeasurementType mt: MeasurementType.values()) {
             if (!mt.isActualMeasurement()) {
                 continue;
             }
             final JRadioButton button = new JRadioButton(mt.getNiceName());
             button.setAlignmentX(LEFT_ALIGNMENT);
-            button.setSelected(mt == MeasType.DISCRETE);
+            button.setSelected(mt == MeasurementType.DISCRETE);
             button.putClientProperty(IapdImportDialog.class, mt);
             mtPanel.add(button);
             mtGroup.add(button);
@@ -119,7 +119,7 @@ public class IapdImportDialog extends JDialog {
                 while (mtEn.hasMoreElements()) {
                     AbstractButton ab = mtEn.nextElement();
                     if (ab.isSelected()) {
-                        measType = (MeasType) ab.getClientProperty(IapdImportDialog.class);
+                        measurementType = (MeasurementType) ab.getClientProperty(IapdImportDialog.class);
                     }
                 }
                 final Enumeration<AbstractButton> ttEn = ttGroup.getElements();
@@ -149,8 +149,8 @@ public class IapdImportDialog extends JDialog {
     /**
      * @return the measurement type
      */
-    public MeasType getMeasType() {
-        return measType;
+    public MeasurementType getMeasurementType() {
+        return measurementType;
     }
 
     /**

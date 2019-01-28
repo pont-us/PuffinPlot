@@ -57,7 +57,7 @@ public class CoreSectionTest {
                 final TreatmentStep d = new TreatmentStep((depth+1.)*(100.-demag),
                         depth*50, demag);
                 d.setDepth(depthString);
-                d.setMeasType(MeasType.CONTINUOUS);
+                d.setMeasurementType(MeasurementType.CONTINUOUS);
                 d.setAfX(demag);
                 d.setAfY(demag);
                 d.setAfZ(demag);

@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.FileType;
-import net.talvi.puffinplot.data.MeasType;
+import net.talvi.puffinplot.data.MeasurementType;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.data.TreatType;
@@ -112,7 +112,7 @@ public class IapdLoaderTest {
         
         options = new HashMap<>();
         options.put(TreatType.class, TreatType.DEGAUSS_XYZ);
-        options.put(MeasType.class, MeasType.DISCRETE);
+        options.put(MeasurementType.class, MeasurementType.DISCRETE);
         
         suite = new Suite(getClass().getSimpleName());
     }

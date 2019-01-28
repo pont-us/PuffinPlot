@@ -27,7 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.talvi.puffinplot.data.Correction;
-import net.talvi.puffinplot.data.MeasType;
+import net.talvi.puffinplot.data.MeasurementType;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.data.TreatType;
@@ -671,7 +671,7 @@ public class Jr6LoaderTest {
         final List<TreatmentStep> loadedData = jr6loader.getData();
         assertFalse(loadedData.isEmpty());
         assertTrue(loadedData.stream().
-                allMatch(d -> d.getMeasType() == MeasType.DISCRETE));
+                allMatch(d -> d.getMeasurementType() == MeasurementType.DISCRETE));
 
         final Suite suite = new Suite("test");
         for (TreatmentStep d: loadedData) {

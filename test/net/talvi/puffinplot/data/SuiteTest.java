@@ -133,7 +133,7 @@ public class SuiteTest {
         loadFileDataIntoSuite(puffinFile1, suiteFromFile);
             suiteFromFile.convertDiscreteToContinuous(nameToDepth);
         
-        assertEquals(MeasType.CONTINUOUS, suiteFromFile.getMeasType());
+        assertEquals(MeasurementType.CONTINUOUS, suiteFromFile.getMeasurementType());
         assertNotNull(suiteFromFile.getSampleByName("3.14"));
         assertNotNull(suiteFromFile.getSampleByName("5.67"));
     }
@@ -335,8 +335,8 @@ public class SuiteTest {
                         actualTreatmentStep.getTreatType());
                 assertEquals(expectedTreatmentStep.getIdOrDepth(),
                         actualTreatmentStep.getIdOrDepth());
-                assertEquals(expectedTreatmentStep.getMeasType(),
-                        actualTreatmentStep.getMeasType());
+                assertEquals(expectedTreatmentStep.getMeasurementType(),
+                        actualTreatmentStep.getMeasurementType());
                 assertEquals(expectedTreatmentStep.getAfX(),
                         actualTreatmentStep.getAfX(), 0.0001);
             }
@@ -570,12 +570,12 @@ public class SuiteTest {
     @Test
     public void testReadDirectionalData() {
         try {
-            testReadDirectionalData(MeasType.DISCRETE,
+            testReadDirectionalData(MeasurementType.DISCRETE,
                     "discrete.txt",
                     "SAMPLE1 30 40\nSAMPLE2\t50\t60",
                     new String[] {"SAMPLE1", "SAMPLE2"},
                     new double[][] {{30, 40}, {50, 60}});
-            testReadDirectionalData(MeasType.CONTINUOUS,
+            testReadDirectionalData(MeasurementType.CONTINUOUS,
                     "continuous.txt",
                     "0.1 , 35 , 45\n0.2,55,65",
                     new String[] {"0.1", "0.2"},
@@ -587,7 +587,7 @@ public class SuiteTest {
         }
     }
 
-    private void testReadDirectionalData(final MeasType measType,
+    private void testReadDirectionalData(final MeasurementType measurementType,
             final String filename,
             final String fileContents, final String[] sampleNames,
             final double[][] directions) throws IOException {
@@ -596,7 +596,7 @@ public class SuiteTest {
                 TestUtils.writeStringToTemporaryFile(filename, fileContents,
                 temporaryFolder)));
         assertEquals(sampleNames.length, suite.getSamples().size());
-        assertEquals(measType, suite.getMeasType());
+        assertEquals(measurementType, suite.getMeasurementType());
         for (int i=0; i<sampleNames.length; i++) {
             final Sample sample = suite.getSampleByIndex(i);
             assertTrue(Vec3.fromPolarDegrees(
@@ -650,28 +650,28 @@ public class SuiteTest {
     @Test(expected = NullPointerException.class)
     public void testAddDatumNullMeasType() {
         final TreatmentStep d = new TreatmentStep();
-        d.setMeasType(null);
+        d.setMeasurementType(null);
         syntheticSuite1.addDatum(d);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testAddDatumUnsetMeasType() {
         final TreatmentStep d = new TreatmentStep();
-        d.setMeasType(MeasType.UNSET);
+        d.setMeasurementType(MeasurementType.UNSET);
         syntheticSuite1.addDatum(d);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testAddDatumIncompatibleMeasType() {
         final TreatmentStep d = new TreatmentStep();
-        d.setMeasType(MeasType.DISCRETE);
+        d.setMeasurementType(MeasurementType.DISCRETE);
         syntheticSuite1.addDatum(d);
     }
 
     @Test
     public void testAddDatumUnknownTreatType() {
         final TreatmentStep d = new TreatmentStep();
-        d.setMeasType(MeasType.CONTINUOUS);
+        d.setMeasurementType(MeasurementType.CONTINUOUS);
         d.setDepth("0");
         d.setTreatType(TreatType.UNKNOWN);
         syntheticSuite1.addDatum(d);
@@ -1353,7 +1353,7 @@ public class SuiteTest {
         d.setFormAz(0);
         d.setFormDip(0);
         d.setMagDev(0);
-        d.setMeasType(MeasType.DISCRETE);
+        d.setMeasurementType(MeasurementType.DISCRETE);
         d.setDiscreteId("sample1");
         suite.addDatum(d);
         final Sample sample = suite.getSampleByIndex(0);

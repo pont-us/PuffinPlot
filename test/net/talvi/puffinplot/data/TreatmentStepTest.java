@@ -387,10 +387,10 @@ public class TreatmentStepTest {
     
     @Test
     public void testIgnoreOnLoading() {
-        for (MeasType mt: MeasType.values()) {
+        for (MeasurementType mt: MeasurementType.values()) {
             final TreatmentStep d = new TreatmentStep();
-            d.setMeasType(mt);
-            assertEquals(mt == MeasType.NONE, d.ignoreOnLoading());
+            d.setMeasurementType(mt);
+            assertEquals(mt == MeasurementType.NONE, d.ignoreOnLoading());
         }
     }
 

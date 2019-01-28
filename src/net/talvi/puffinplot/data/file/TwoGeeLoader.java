@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 
 import net.talvi.puffinplot.data.ArmAxis;
 import net.talvi.puffinplot.data.Correction;
-import net.talvi.puffinplot.data.MeasType;
+import net.talvi.puffinplot.data.MeasurementType;
 import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Vec3;
@@ -396,15 +396,15 @@ public class TwoGeeLoader extends AbstractFileLoader {
         // This TreatmentStep will be initialized with a default volume and area.
         final TreatmentStep d = new TreatmentStep();
         
-        final MeasType measType;
+        final MeasurementType measurementType;
         if (fieldExists("Meas. type")) {
-            measType = measTypeFromString(r.getString("Meas. type", "sample/continuous"));
+            measurementType = measTypeFromString(r.getString("Meas. type", "sample/continuous"));
         } else if (fieldExists("Depth")) {
-            measType = MeasType.CONTINUOUS;
+            measurementType = MeasurementType.CONTINUOUS;
         } else if (fieldExists("Position") && !fieldExists("Sample ID")) {
-            measType = MeasType.CONTINUOUS;
+            measurementType = MeasurementType.CONTINUOUS;
         } else {
-            measType = MeasType.DISCRETE;
+            measurementType = MeasurementType.DISCRETE;
         }
         
         // Default values for area and volume are hard-coded in the TreatmentStep
@@ -418,7 +418,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
             // First we divide it by the sample volume in cm^3 to get a
             // magnetization in gauss.
             final Vec3 magnetizationGauss;
-            switch (measType) {
+            switch (measurementType) {
             case CONTINUOUS:
                 if (usePolarMoment) {
                     // Polar moments in 2G files are already corrected for
@@ -447,7 +447,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
         d.setMagSus(r.getDouble("MS corr", d.getMagSus()));
         d.setDiscreteId(r.getString("Sample ID", d.getDiscreteId()));
         if (fieldExists("Depth")) {
-            if (measType == MeasType.DISCRETE) {
+            if (measurementType == MeasurementType.DISCRETE) {
                 final int USER_SPECIFIED_DEPTH = 1;
                 // For a discrete measurement, "Depth" actually contains the
                 // sum of the (meaningless) user-specified data table depth
@@ -471,11 +471,11 @@ public class TwoGeeLoader extends AbstractFileLoader {
         }
         
         // Sometimes, continuous files use "Position" for the depth field
-        if (measType.isContinuous() &&
+        if (measurementType.isContinuous() &&
                 !fieldExists("Depth") && fieldExists("Position")) {
             d.setDepth(r.getString("Position", d.getDepth()));
         }
-        d.setMeasType(measType);
+        d.setMeasurementType(measurementType);
         
         if (fieldExists("Treatment Type"))
             d.setTreatType(treatTypeFromString(r.getString("Treatment Type", "degauss z")));
@@ -523,7 +523,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
              * number.
              */
             int runNumber = r.getInt("Run #", 0);
-            if (measType == MeasType.DISCRETE && d.getSlotNumber() != -1) {
+            if (measurementType == MeasurementType.DISCRETE && d.getSlotNumber() != -1) {
                 runNumber -= d.getSlotNumber();
             }
             d.setRunNumber(runNumber);

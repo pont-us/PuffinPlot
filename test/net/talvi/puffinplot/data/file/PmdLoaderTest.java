@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.talvi.puffinplot.data.MeasType;
+import net.talvi.puffinplot.data.MeasurementType;
 import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Vec3;
@@ -159,7 +159,7 @@ public class PmdLoaderTest {
             assertEquals((expected[0][2] + 90) % 360, d.getFormAz(), 1e-10);
             assertEquals(expected[0][3], d.getFormDip(), 1e-10);
             assertEquals(TREATMENT_TYPES[(int) expVals[0]], d.getTreatType());
-            assertEquals(MeasType.DISCRETE, d.getMeasType());
+            assertEquals(MeasurementType.DISCRETE, d.getMeasurementType());
             assertEquals(expectedStrings[1], d.getIdOrDepth());
             switch (d.getTreatType()) {
                 case DEGAUSS_XYZ:

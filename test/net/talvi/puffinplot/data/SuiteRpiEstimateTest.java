@@ -98,7 +98,7 @@ public class SuiteRpiEstimateTest {
                                            double susceptibility) {
         final TreatmentStep treatmentStep = new TreatmentStep(0, 0, magnetization);
         treatmentStep.setTreatType(treatmentType);
-        treatmentStep.setMeasType(MeasType.CONTINUOUS);
+        treatmentStep.setMeasurementType(MeasurementType.CONTINUOUS);
         treatmentStep.setAfX(afIntensity);
         treatmentStep.setAfY(afIntensity);
         treatmentStep.setAfZ(afIntensity);

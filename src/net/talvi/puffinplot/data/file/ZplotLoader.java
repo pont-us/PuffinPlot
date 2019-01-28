@@ -27,7 +27,7 @@ import java.util.Locale;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
-import net.talvi.puffinplot.data.MeasType;
+import net.talvi.puffinplot.data.MeasurementType;
 import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Vec3;
@@ -49,7 +49,7 @@ public class ZplotLoader extends AbstractFileLoader {
     final private static Pattern delimPattern = Pattern.compile("\\t");
     private File file;
     private String studyType;
-    private MeasType measType = MeasType.UNSET;
+    private MeasurementType measurementType = MeasurementType.UNSET;
 
     static {
         String[] fields = {"^Sample", "^Project", "^Demag.*", "^Declin.*", "^Inclin.*",
@@ -135,18 +135,18 @@ public class ZplotLoader extends AbstractFileLoader {
         final String operation = s.next();
 
         TreatmentStep d = new TreatmentStep(gaussToAm(Vec3.fromPolarDegrees(intens, inc, dec)));
-        if (measType == MeasType.UNSET) {
-         measType = (numberPattern.matcher(depthOrSample).matches())
-                ? MeasType.CONTINUOUS
-                : MeasType.DISCRETE;
+        if (measurementType == MeasurementType.UNSET) {
+         measurementType = (numberPattern.matcher(depthOrSample).matches())
+                ? MeasurementType.CONTINUOUS
+                : MeasurementType.DISCRETE;
         }
-        d.setMeasType(measType);
-        switch (measType) {
+        d.setMeasurementType(measurementType);
+        switch (measurementType) {
         case CONTINUOUS: d.setDepth(depthOrSample);
             break;
         case DISCRETE: d.setDiscreteId(depthOrSample);
             break;
-        default: throw new Error("Unhandled measurement type "+measType);
+        default: throw new Error("Unhandled measurement type "+ measurementType);
         }
 
         d.setTreatType((project.toLowerCase().contains("therm") ||

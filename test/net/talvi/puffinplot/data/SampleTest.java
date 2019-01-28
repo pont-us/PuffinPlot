@@ -205,7 +205,7 @@ public class SampleTest {
     public void testGetDiscreteId() {
         final Sample sample = new Sample("sample1", null);
         final TreatmentStep treatmentStep = new TreatmentStep(Vec3.ORIGIN);
-        treatmentStep.setMeasType(MeasType.CONTINUOUS);
+        treatmentStep.setMeasurementType(MeasurementType.CONTINUOUS);
         final String discreteId = "discrete-id-1";
         treatmentStep.setDiscreteId(discreteId);
         treatmentStep.setSample(sample);
@@ -223,7 +223,7 @@ public class SampleTest {
     public void testSetDiscreteId() {
         final Sample sample = new Sample("sample1", null);
         final TreatmentStep treatmentStep = new TreatmentStep(Vec3.ORIGIN);
-        treatmentStep.setMeasType(MeasType.CONTINUOUS);
+        treatmentStep.setMeasurementType(MeasurementType.CONTINUOUS);
         treatmentStep.setSample(sample);
         sample.addDatum(treatmentStep);
 
@@ -476,20 +476,20 @@ public class SampleTest {
     @Test
     public void testGetMeasType() {
         final Sample sample = new Sample("test", null);
-        assertEquals(MeasType.DISCRETE, sample.getMeasType());
-        addDatumWithMeasurementType(sample, MeasType.NONE);
-        assertEquals(MeasType.DISCRETE, sample.getMeasType());
-        addDatumWithMeasurementType(sample, MeasType.UNKNOWN);
-        assertEquals(MeasType.DISCRETE, sample.getMeasType());
-        addDatumWithMeasurementType(sample, MeasType.UNSET);
-        assertEquals(MeasType.DISCRETE, sample.getMeasType());
-        addDatumWithMeasurementType(sample, MeasType.CONTINUOUS);
-        assertEquals(MeasType.CONTINUOUS, sample.getMeasType());
+        assertEquals(MeasurementType.DISCRETE, sample.getMeasType());
+        addDatumWithMeasurementType(sample, MeasurementType.NONE);
+        assertEquals(MeasurementType.DISCRETE, sample.getMeasType());
+        addDatumWithMeasurementType(sample, MeasurementType.UNKNOWN);
+        assertEquals(MeasurementType.DISCRETE, sample.getMeasType());
+        addDatumWithMeasurementType(sample, MeasurementType.UNSET);
+        assertEquals(MeasurementType.DISCRETE, sample.getMeasType());
+        addDatumWithMeasurementType(sample, MeasurementType.CONTINUOUS);
+        assertEquals(MeasurementType.CONTINUOUS, sample.getMeasType());
     }
     
-    private static void addDatumWithMeasurementType(Sample sample, MeasType mt) {
+    private static void addDatumWithMeasurementType(Sample sample, MeasurementType mt) {
         final TreatmentStep treatmentStep = new TreatmentStep(Vec3.NORTH);
-        treatmentStep.setMeasType(mt);
+        treatmentStep.setMeasurementType(mt);
         sample.addDatum(treatmentStep);
     }
     

@@ -44,7 +44,7 @@ import javax.swing.JViewport;
 import javax.swing.SpinnerNumberModel;
 
 import net.talvi.puffinplot.data.FieldUnit;
-import net.talvi.puffinplot.data.MeasType;
+import net.talvi.puffinplot.data.MeasurementType;
 import net.talvi.puffinplot.data.MomentUnit;
 import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.TreatmentStepField;
@@ -62,7 +62,7 @@ public class TabularImportWindow extends JDialog {
     
     private final List<FieldChooser> fieldChoosers = new ArrayList<>(20);
     private final HeaderLinesPanel headerLinesPanel;
-    private final EnumChooser<MeasType> measTypeChooser;
+    private final EnumChooser<MeasurementType> measTypeChooser;
     private final EnumChooser<TreatType> treatTypeChooser;
     private final EnumChooser<MomentUnit> momentUnitChooser;
     private final EnumChooser<FieldUnit> fieldUnitChooser;
@@ -94,7 +94,7 @@ public class TabularImportWindow extends JDialog {
         firstPanel.add(headerLinesPanel);
         measTypeChooser = new EnumChooser<>("Measurement type",
                 new String[] {"Continuous", "Discrete"},
-                new MeasType[] {MeasType.CONTINUOUS, MeasType.DISCRETE},
+                new MeasurementType[] {MeasurementType.CONTINUOUS, MeasurementType.DISCRETE},
                 initialFormat.getMeasurementType());
         firstPanel.add(measTypeChooser);
         treatTypeChooser = new EnumChooser<>("Treatment type",

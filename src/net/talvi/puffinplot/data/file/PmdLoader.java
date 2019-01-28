@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import net.talvi.puffinplot.data.MeasType;
+import net.talvi.puffinplot.data.MeasurementType;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Vec3;
 
@@ -130,7 +130,7 @@ public class PmdLoader extends AbstractFileLoader {
             }
             final PmdDataLine dataLine = PmdDataLine.read(line);
             final TreatmentStep d = new TreatmentStep(dataLine.moment.divideBy(headerLine.volume));
-            d.setMeasType(MeasType.DISCRETE);
+            d.setMeasurementType(MeasurementType.DISCRETE);
             d.setDiscreteId(headerLine.name);
             d.setSampAz(headerLine.sampleAzimuth);
             d.setSampDip(90 - headerLine.sampleHade);

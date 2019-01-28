@@ -19,7 +19,7 @@ package net.talvi.puffinplot.data.file;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.talvi.puffinplot.data.MeasType;
+import net.talvi.puffinplot.data.MeasurementType;
 import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.Vec3;
 
@@ -27,7 +27,7 @@ class TwoGeeHelper {
 
     private static final Map<String, TreatType> treatTypeMap =
             new HashMap<>();
-    private static final Map<String, MeasType> measTypeMap =
+    private static final Map<String, MeasurementType> measTypeMap =
             new HashMap<>();
 
     private static final String[] treatTypeMappings = {
@@ -51,7 +51,7 @@ class TwoGeeHelper {
         }
         for (int i = 0; i < measTypeMappings.length; i += 2) {
             measTypeMap.put(measTypeMappings[i+1],
-                    MeasType.valueOf(measTypeMappings[i]));
+                    MeasurementType.valueOf(measTypeMappings[i]));
         }
     }
 
@@ -71,9 +71,9 @@ class TwoGeeHelper {
         return t != null ? t : TreatType.UNKNOWN;
     }
 
-    static MeasType measTypeFromString(String measType) {
-        MeasType t = measTypeMap.get(normalizeString(measType));
-        return t != null ? t : MeasType.UNKNOWN;
+    static MeasurementType measTypeFromString(String measType) {
+        MeasurementType t = measTypeMap.get(normalizeString(measType));
+        return t != null ? t : MeasurementType.UNKNOWN;
     }
 
     /**

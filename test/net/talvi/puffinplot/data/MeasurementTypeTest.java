@@ -24,60 +24,60 @@ import static org.junit.Assert.assertEquals;
  *
  * @author pont
  */
-public class MeasTypeTest {
+public class MeasurementTypeTest {
     
     @Test
     public void testValueOf() {
-        for (MeasType mt: MeasType.values()) {
-            assertEquals(mt, MeasType.valueOf(mt.toString()));
+        for (MeasurementType mt: MeasurementType.values()) {
+            assertEquals(mt, MeasurementType.valueOf(mt.toString()));
         }
     }
 
     @Test
     public void testFromString() {
-        assertEquals(MeasType.CONTINUOUS,
-                MeasType.fromString("*** CoNtInUoUs   ***"));
-        assertEquals(MeasType.DISCRETE,
-                MeasType.fromString("Anything works, as long"
+        assertEquals(MeasurementType.CONTINUOUS,
+                MeasurementType.fromString("*** CoNtInUoUs   ***"));
+        assertEquals(MeasurementType.DISCRETE,
+                MeasurementType.fromString("Anything works, as long"
                         + "as the word \"DIScrete\"  is in there"
                         + "somewhere."));
-        assertEquals(MeasType.NONE,
-                MeasType.fromString("NA"));
-        assertEquals(MeasType.UNKNOWN,
-                MeasType.fromString("any old gibberish"));
+        assertEquals(MeasurementType.NONE,
+                MeasurementType.fromString("NA"));
+        assertEquals(MeasurementType.UNKNOWN,
+                MeasurementType.fromString("any old gibberish"));
     }
 
     @Test
     public void testGetColumnHeader() {
-        assertEquals("Sample", MeasType.DISCRETE.getColumnHeader());
-        assertEquals("Depth", MeasType.CONTINUOUS.getColumnHeader());
+        assertEquals("Sample", MeasurementType.DISCRETE.getColumnHeader());
+        assertEquals("Depth", MeasurementType.CONTINUOUS.getColumnHeader());
     }
 
     @Test
     public void testIsActualMeasurement() {
-        for (MeasType mt: MeasType.values()) {
-            assertEquals(mt == MeasType.CONTINUOUS || mt == MeasType.DISCRETE,
+        for (MeasurementType mt: MeasurementType.values()) {
+            assertEquals(mt == MeasurementType.CONTINUOUS || mt == MeasurementType.DISCRETE,
                     mt.isActualMeasurement());
         }
     }
 
     @Test
     public void testIsDiscrete() {
-        for (MeasType mt: MeasType.values()) {
-            assertEquals(mt == MeasType.DISCRETE, mt.isDiscrete());
+        for (MeasurementType mt: MeasurementType.values()) {
+            assertEquals(mt == MeasurementType.DISCRETE, mt.isDiscrete());
         }
     }
 
     @Test
     public void testIsContinuous() {
-        for (MeasType mt: MeasType.values()) {
-            assertEquals(mt == MeasType.CONTINUOUS, mt.isContinuous());
+        for (MeasurementType mt: MeasurementType.values()) {
+            assertEquals(mt == MeasurementType.CONTINUOUS, mt.isContinuous());
         }
     }
 
     @Test
     public void testGetNiceName() {
-        assertEquals("Continuous", MeasType.CONTINUOUS.getNiceName());
+        assertEquals("Continuous", MeasurementType.CONTINUOUS.getNiceName());
     }
     
 }

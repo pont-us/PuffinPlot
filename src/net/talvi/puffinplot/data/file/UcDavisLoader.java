@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import net.talvi.puffinplot.data.MeasType;
+import net.talvi.puffinplot.data.MeasurementType;
 import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.TreatmentStepField;
@@ -114,7 +114,7 @@ public class UcDavisLoader extends AbstractFileLoader {
                 d.setAfX(levelTesla);
                 d.setAfY(levelTesla);
                 d.setAfZ(levelTesla);
-                d.setMeasType(MeasType.CONTINUOUS);
+                d.setMeasurementType(MeasurementType.CONTINUOUS);
                 d.setDepth(partStrings[0]);
                 addDatum(d);
             }

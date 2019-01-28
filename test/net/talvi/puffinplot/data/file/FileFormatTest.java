@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.prefs.Preferences;
 
 import net.talvi.puffinplot.data.FieldUnit;
-import net.talvi.puffinplot.data.MeasType;
+import net.talvi.puffinplot.data.MeasurementType;
 import net.talvi.puffinplot.data.MomentUnit;
 import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.TreatmentStep;
@@ -52,7 +52,7 @@ public class FileFormatTest {
                 5, TreatmentStepField.DISCRETE_ID,
                 6, TreatmentStepField.VOLUME
         );
-        final FileFormat ff = new FileFormat(columnMap, 1, MeasType.DISCRETE,
+        final FileFormat ff = new FileFormat(columnMap, 1, MeasurementType.DISCRETE,
                 TreatType.DEGAUSS_XYZ, " ", false, null, MomentUnit.AM,
                 FieldUnit.MILLITESLA);
         final List<String> lines = Arrays.asList(
@@ -93,7 +93,7 @@ public class FileFormatTest {
                 2, TreatmentStepField.Z_MOMENT,
                 3, TreatmentStepField.VIRT_DECLINATION
         );
-        final FileFormat ff = new FileFormat(columnMap, 1, MeasType.DISCRETE,
+        final FileFormat ff = new FileFormat(columnMap, 1, MeasurementType.DISCRETE,
                 TreatType.DEGAUSS_XYZ, ",", false, Collections.emptyList(),
                 MomentUnit.AM, FieldUnit.MILLITESLA);
         final TreatmentStep treatmentStep = ff.readLine("2,4,6,12");
@@ -119,12 +119,12 @@ public class FileFormatTest {
                 4, TreatmentStepField.Z_MOMENT
         );
         final List<Integer> columnWidths = Arrays.asList(10, 9, 8, 7);
-        FileFormat ff = new FileFormat(columnMap, 3, MeasType.DISCRETE,
+        FileFormat ff = new FileFormat(columnMap, 3, MeasurementType.DISCRETE,
                 TreatType.DEGAUSS_XYZ, " ", true, columnWidths, MomentUnit.AM,
                 FieldUnit.MILLITESLA);
         assertEquals(ff.getColumnMap(), columnMap);
         assertEquals(3, ff.getHeaderLines());
-        assertEquals(MeasType.DISCRETE, ff.getMeasurementType());
+        assertEquals(MeasurementType.DISCRETE, ff.getMeasurementType());
         assertEquals(TreatType.DEGAUSS_XYZ, ff.getTreatmentType());
         assertEquals(" ", ff.getSeparator());
         assertEquals(true, ff.useFixedWidthColumns());
@@ -193,7 +193,7 @@ public class FileFormatTest {
         final FileFormat ff = FileFormat.readFromPrefs(prefsMock);
         assertEquals("10,10,7,7", ff.getColumnWidthsAsString());
         assertEquals(FieldUnit.MILLITESLA, ff.getFieldUnit());
-        assertEquals(MeasType.DISCRETE, ff.getMeasurementType());
+        assertEquals(MeasurementType.DISCRETE, ff.getMeasurementType());
         assertEquals(MomentUnit.AM, ff.getMomentUnit());
         assertEquals(",", ff.getSeparator());
         assertEquals(TreatType.DEGAUSS_XYZ, ff.getTreatmentType());
@@ -222,7 +222,7 @@ public class FileFormatTest {
     
     private static FileFormat makeFormat(Object... colDefs) {
         return new FileFormat(makeColMap(colDefs), 2,
-                MeasType.DISCRETE,
+                MeasurementType.DISCRETE,
                 TreatType.DEGAUSS_XYZ, " ", false, Arrays.asList(6, 7, 8),
                 MomentUnit.AM,
                 FieldUnit.MILLITESLA);        

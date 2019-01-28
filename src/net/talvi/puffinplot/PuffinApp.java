@@ -80,7 +80,7 @@ import net.talvi.puffinplot.data.AmsCalculationType;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.CsvWriter;
 import net.talvi.puffinplot.data.FileType;
-import net.talvi.puffinplot.data.MeasType;
+import net.talvi.puffinplot.data.MeasurementType;
 import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Site;
@@ -599,8 +599,8 @@ public class PuffinApp {
                     }
                     importOptions.put(TreatType.class,
                             iapdDialog.getTreatType());
-                    importOptions.put(MeasType.class,
-                            iapdDialog.getMeasType());
+                    importOptions.put(MeasurementType.class,
+                            iapdDialog.getMeasurementType());
                     break;
             }
             

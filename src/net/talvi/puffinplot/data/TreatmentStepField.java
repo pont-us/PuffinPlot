@@ -65,7 +65,7 @@ public enum TreatmentStepField {
 
     // Lab measurements
     /** the type of the measurement (discrete or continuous) */
-    MEAS_TYPE("Measurement type", "Measurement type", MeasType.class,
+    MEAS_TYPE("Measurement type", "Measurement type", MeasurementType.class,
                 "CONTINUOUS", true, false),
     /** the x component of the magnetic moment measurement */
     X_MOMENT("X moment", null, double.class, "0", true, false),

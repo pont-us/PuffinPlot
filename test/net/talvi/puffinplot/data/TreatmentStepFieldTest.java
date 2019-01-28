@@ -93,7 +93,7 @@ public class TreatmentStepFieldTest {
          */
         final TreatmentStepField[] fields = TreatmentStepField.values();
         final Set<Class> exceptionThrowingTypes = Arrays.stream(new Class[]{
-            double.class, int.class, ArmAxis.class, MeasType.class,
+            double.class, int.class, ArmAxis.class, MeasurementType.class,
             TreatType.class
         }).collect(Collectors.toSet());
         for (TreatmentStepField field : fields) {
@@ -107,8 +107,8 @@ public class TreatmentStepFieldTest {
                         Integer.parseInt(defaultValue);
                     } else if (type == ArmAxis.class) {
                         ArmAxis.valueOf(defaultValue);
-                    } else if (type == MeasType.class) {
-                        MeasType.valueOf(defaultValue);
+                    } else if (type == MeasurementType.class) {
+                        MeasurementType.valueOf(defaultValue);
                     } else {
                         TreatType.valueOf(defaultValue);
                     }

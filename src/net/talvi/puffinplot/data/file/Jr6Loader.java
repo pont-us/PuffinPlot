@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import net.talvi.puffinplot.data.MeasType;
+import net.talvi.puffinplot.data.MeasurementType;
 import net.talvi.puffinplot.data.TreatmentStep;
 
 public class Jr6Loader extends AbstractFileLoader {
@@ -77,7 +77,7 @@ public class Jr6Loader extends AbstractFileLoader {
         d.setSampDip(vectorAndOrientations.sampleDip);
         d.setFormAz(vectorAndOrientations.formationAzimuth);
         d.setFormDip(vectorAndOrientations.formationDip);
-        d.setMeasType(MeasType.DISCRETE);
+        d.setMeasurementType(MeasurementType.DISCRETE);
         d.setDiscreteId(dataLine.getName());
         d.setTreatType(dataLine.getTreatmentType());
         switch (dataLine.getTreatmentType()) {

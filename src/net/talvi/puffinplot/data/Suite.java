@@ -73,7 +73,7 @@ public final class Suite implements SampleGroup {
     private HashMap<Sample, Integer> indicesBySample; // maps sample to index
     private final Map<Integer, Line> dataByLine = new HashMap<>();
     private int currentSampleIndex = -1;
-    private MeasType measType = MeasType.UNSET;
+    private MeasurementType measurementType = MeasurementType.UNSET;
     private String name;
     private List<Sample> emptyTraySamples;
     private SuiteCalcs suiteCalcs;
@@ -357,19 +357,19 @@ public final class Suite implements SampleGroup {
      */
     public void addDatum(TreatmentStep d) {
         Objects.requireNonNull(d);
-        Objects.requireNonNull(d.getMeasType());
-        if (d.getMeasType() == MeasType.UNSET) {
+        Objects.requireNonNull(d.getMeasurementType());
+        if (d.getMeasurementType() == MeasurementType.UNSET) {
             throw new IllegalArgumentException(
                     "Measurement type may not be UNSET");
         }
-        if (measType == MeasType.UNSET) {
-            measType = d.getMeasType();
+        if (measurementType == MeasurementType.UNSET) {
+            measurementType = d.getMeasurementType();
         }
-        if (d.getMeasType() != measType) {
+        if (d.getMeasurementType() != measurementType) {
             throw new IllegalArgumentException(String.format(
                     "Can't add a %s datum to a %s suite.",
-                    d.getMeasType().getNiceName().toLowerCase(),
-                    getMeasType().getNiceName().toLowerCase()));
+                    d.getMeasurementType().getNiceName().toLowerCase(),
+                    getMeasurementType().getNiceName().toLowerCase()));
         }
         if (d.getTreatType() == TreatType.UNKNOWN) {
             hasUnknownTreatType = true;
@@ -598,11 +598,11 @@ public final class Suite implements SampleGroup {
             if (loader != null) {
                 final List<TreatmentStep> loadedData = loader.getData();
                 
-                final Set<MeasType> measTypes = TreatmentStep.measTypes(loadedData);
+                final Set<MeasurementType> measurementTypes = TreatmentStep.measTypes(loadedData);
                 
                 boolean dataIsOk = true;
-                if (measTypes.contains(MeasType.DISCRETE) &&
-                        measTypes.contains((MeasType.CONTINUOUS))) {
+                if (measurementTypes.contains(MeasurementType.DISCRETE) &&
+                        measurementTypes.contains((MeasurementType.CONTINUOUS))) {
                     /*
                      * The loaded file mixes measurement types. This should
                      * never happen in normal circumstances, but it's
@@ -614,19 +614,19 @@ public final class Suite implements SampleGroup {
                         "%s mixes discrete and continuous measurements.\n"
                                 + "Ignoring this file.", file.getName()));
                     
-                } else if (getMeasType().isActualMeasurement() &&
-                        !measTypes.contains(getMeasType())) {
+                } else if (getMeasurementType().isActualMeasurement() &&
+                        !measurementTypes.contains(getMeasurementType())) {
                     
-                    final MeasType loadedType =
-                            measTypes.contains(MeasType.CONTINUOUS) ?
-                            MeasType.CONTINUOUS : MeasType.DISCRETE;
+                    final MeasurementType loadedType =
+                            measurementTypes.contains(MeasurementType.CONTINUOUS) ?
+                            MeasurementType.CONTINUOUS : MeasurementType.DISCRETE;
                     dataIsOk = false;
                     loadWarnings.add(String.format(Locale.ENGLISH,
                             "%s contains %s measurements, \n"
                                     + "but the suite contains %s data.\n"
                                     + "Ignoring this file.", file.getName(),
                                     loadedType.getNiceName().toLowerCase(),
-                                    getMeasType().getNiceName().toLowerCase()
+                                    getMeasurementType().getNiceName().toLowerCase()
                                     ));
                 }
                 
@@ -643,7 +643,7 @@ public final class Suite implements SampleGroup {
             }
             
             if (fileType == FileType.TWOGEE &&
-                    measType.isContinuous() &&
+                    measurementType.isContinuous() &&
                     "1:1:1".equals(sensorLengths.getPreset()) &&
                     !usePolarMoment) {
                 sensorLengthWarning = true;
@@ -660,7 +660,7 @@ public final class Suite implements SampleGroup {
         setCurrentSampleIndex(0);
         if (hasUnknownTreatType)
             loadWarnings.add("One or more treatment types were not recognized.");
-        if (measType.isDiscrete()) {
+        if (measurementType.isDiscrete()) {
             emptyTraySamples = new ArrayList<>();
             int slot = 1;
             while (true) {
@@ -716,12 +716,12 @@ public final class Suite implements SampleGroup {
                 }
             }
         }
-        measType = MeasType.CONTINUOUS;
+        measurementType = MeasurementType.CONTINUOUS;
         for (Sample sample: samples) {
             try {
                 Double.parseDouble(sample.getNameOrDepth());
             } catch (NumberFormatException ex) {
-                measType = MeasType.DISCRETE;
+                measurementType = MeasurementType.DISCRETE;
                 break;
             }
         }
@@ -763,7 +763,7 @@ public final class Suite implements SampleGroup {
             
         try (FileWriter fw = new FileWriter(file);
                 CsvWriter writer = new CsvWriter(fw)) {
-            writer.writeCsv("Suite", measType.getColumnHeader(),
+            writer.writeCsv("Suite", measurementType.getColumnHeader(),
                     "NRM intensity (A/m)",
                     "MS jump temp. (degC)",
                     "Steps",
@@ -920,8 +920,8 @@ public final class Suite implements SampleGroup {
      *
      * @return the measurement type of this suite (discrete or continuous)
      */
-    public MeasType getMeasType() {
-        return measType;
+    public MeasurementType getMeasurementType() {
+        return measurementType;
     }
 
     /**
@@ -980,7 +980,7 @@ public final class Suite implements SampleGroup {
      */
     public List<String> toStrings() {
         List<String> result = new ArrayList<>();
-        result.add("MEASUREMENT_TYPE\t" + getMeasType().name());
+        result.add("MEASUREMENT_TYPE\t" + getMeasurementType().name());
         if (customFlagNames.size()>0) {
             result.add("CUSTOM_FLAG_NAMES\t"+customFlagNames.exportAsString());
         }
@@ -1005,7 +1005,7 @@ public final class Suite implements SampleGroup {
         String[] parts = string.split("\t");
         if (null != parts[0]) switch (parts[0]) {
             case "MEASUREMENT_TYPE":
-                setMeasType(MeasType.valueOf(parts[1]));
+                setMeasurementType(MeasurementType.valueOf(parts[1]));
                 break;
             case "CUSTOM_FLAG_NAMES":
                 customFlagNames = new CustomFlagNames(
@@ -1046,11 +1046,11 @@ public final class Suite implements SampleGroup {
         }
     }
     
-    private void setMeasType(MeasType measType) {
-        this.measType = measType;
+    private void setMeasurementType(MeasurementType measurementType) {
+        this.measurementType = measurementType;
         for (Sample sample: getSamples()) {
             for (TreatmentStep treatmentStep : sample.getData()) {
-                treatmentStep.setMeasType(measType);
+                treatmentStep.setMeasurementType(measurementType);
             }
         }
     }
@@ -1642,7 +1642,7 @@ public final class Suite implements SampleGroup {
      * @return the minimum depth of a sample within the suite
      */
     public double getMinDepth() {
-        if (!getMeasType().isContinuous()) return Double.NaN;
+        if (!getMeasurementType().isContinuous()) return Double.NaN;
         double minimum = Double.POSITIVE_INFINITY;
         for (Sample s: getSamples()) {
             final double depth = s.getDepth();
@@ -1660,7 +1660,7 @@ public final class Suite implements SampleGroup {
      * @return the maximum depth of a sample within the suite
      */
     public double getMaxDepth() {
-        if (!getMeasType().isContinuous()) return Double.NaN;
+        if (!getMeasurementType().isContinuous()) return Double.NaN;
         double maximum = Double.NEGATIVE_INFINITY;
         for (Sample s: getSamples()) {
             final double depth = s.getDepth();
@@ -1933,7 +1933,7 @@ public final class Suite implements SampleGroup {
      */
     public void convertDiscreteToContinuous(Map<String,String> nameToDepth)
             throws MissingSampleNameException {
-        if (getMeasType() != MeasType.DISCRETE) {
+        if (getMeasurementType() != MeasurementType.DISCRETE) {
             throw new IllegalStateException("convertDiscreteToContinuous "
                     + "can only be called on a discrete Suite.");
         }
@@ -1942,7 +1942,7 @@ public final class Suite implements SampleGroup {
                 s -> nameToDepth.containsKey(s.getNameOrDepth()))) {
             throw new MissingSampleNameException("Missing sample name key(s) in nameToDepth");
         }
-        setMeasType(MeasType.CONTINUOUS);
+        setMeasurementType(MeasurementType.CONTINUOUS);
         samplesById = new LinkedHashMap<>();
         for (Sample sample: getSamples()) {
             final String newSampleName = nameToDepth.get(sample.getNameOrDepth());

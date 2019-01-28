@@ -65,7 +65,7 @@ public class TreatmentStep {
             DEFAULT_VOLUME = 10.8; // can be overridden by Volume field in file
 
     private String discreteId = "UNSET";
-    private MeasType measType = MeasType.UNSET;
+    private MeasurementType measurementType = MeasurementType.UNSET;
     private TreatType treatType = TreatType.UNKNOWN;
     private double afx = NaN, afy = NaN, afz = NaN;
     private double temp = NaN;
@@ -197,10 +197,10 @@ public class TreatmentStep {
     public void setMagSus(double v)    { touch(); magSus = v; }
     /** Returns the type of this measurement (discrete or continuous).
      * @return the type of this measurement (discrete or continuous) */
-    public MeasType getMeasType()      { return measType; }
+    public MeasurementType getMeasurementType()      { return measurementType; }
     /** Sets the type of this measurement (discrete or continuous).
      * @param v the type of this measurement (discrete or continuous) */
-    public void setMeasType(MeasType v){ touch(); measType = v; }
+    public void setMeasurementType(MeasurementType v){ touch(); measurementType = v; }
     /** For discrete samples, returns the sample identifier (name).
      * @return for discrete samples, the identifier (name) of the sample */
     public String getDiscreteId()      { return discreteId; }
@@ -365,7 +365,7 @@ public class TreatmentStep {
      * @return sample identifier or depth within core, as appropriate
      */
     public String getIdOrDepth() {
-        return measType == MeasType.CONTINUOUS ? depth : discreteId;
+        return measurementType == MeasurementType.CONTINUOUS ? depth : discreteId;
     }
     
     /** Reports whether this datum has any magnetic susceptibility data. 
@@ -610,7 +610,7 @@ public class TreatmentStep {
      * @return {@code true} if this datum should be ignored when loading a file
      */
     public boolean ignoreOnLoading() {
-        return getMeasType() == MeasType.NONE;
+        return getMeasurementType() == MeasurementType.NONE;
     }
 
     /**
@@ -653,7 +653,7 @@ public class TreatmentStep {
         case ARM_FIELD: return fmt(armField);
         case VOLUME: return fmt(volume);
         case DISCRETE_ID: return discreteId;
-        case MEAS_TYPE: return measType.toString();
+        case MEAS_TYPE: return measurementType.toString();
         case TREATMENT: return treatType.toString();
         case ARM_AXIS: return armAxis.toString();
         case TIMESTAMP: return timestamp;
@@ -757,7 +757,7 @@ public class TreatmentStep {
         case ARM_FIELD: armField = doubleVal; break;
         case VOLUME: volume = doubleVal; break;
         case DISCRETE_ID: discreteId = s; break;
-        case MEAS_TYPE: measType = MeasType.valueOf(s); break;
+        case MEAS_TYPE: measurementType = MeasurementType.valueOf(s); break;
         case TREATMENT: treatType = TreatType.valueOf(s); break;
         case ARM_AXIS: armAxis = ArmAxis.fromString(s); break;
         case TIMESTAMP: timestamp = s; break;
@@ -887,10 +887,10 @@ public class TreatmentStep {
      * @return exactly those measurement types which are present in the
      * suppled data
      */
-    public static Set<MeasType> measTypes(Collection<TreatmentStep> data) {
-        Set<MeasType> result = new HashSet<>(MeasType.values().length);
+    public static Set<MeasurementType> measTypes(Collection<TreatmentStep> data) {
+        Set<MeasurementType> result = new HashSet<>(MeasurementType.values().length);
         for (TreatmentStep d: data) {
-            result.add(d.getMeasType());
+            result.add(d.getMeasurementType());
         }
         return result;
     }

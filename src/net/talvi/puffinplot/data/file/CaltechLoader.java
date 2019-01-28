@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.talvi.puffinplot.data.MeasType;
+import net.talvi.puffinplot.data.MeasurementType;
 import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Vec3;
@@ -212,7 +212,7 @@ public class CaltechLoader extends AbstractFileLoader {
         }
         final TreatmentStep d =
                 new TreatmentStep(gaussToAm(Vec3.fromPolarDegrees(intens, inc, dec)));
-        d.setMeasType(MeasType.DISCRETE);
+        d.setMeasurementType(MeasurementType.DISCRETE);
         
         final String treatment = matcher.group(1);
         if (null != treatment) {

@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
  * 
  * @author pont
  */
-public enum MeasType {
+public enum MeasurementType {
     /** measurement was on a discrete sample */
     DISCRETE("Discrete", "discrete", "Sample"),
     /** measurement was on a continuous long core or u-channel */
@@ -38,7 +38,7 @@ public enum MeasType {
     private final Pattern namePattern;
     private final String niceName;
     
-    private MeasType(String niceName, String namePattern, String columnHeader) {
+    private MeasurementType(String niceName, String namePattern, String columnHeader) {
         this.niceName = niceName;
         this.namePattern = Pattern.compile(namePattern,
                 Pattern.CASE_INSENSITIVE);
@@ -53,8 +53,8 @@ public enum MeasType {
      * @param string a string representation of a measurement type
      * @return the corresponding measurement type
      */
-    public static MeasType fromString(String string) {
-        for (MeasType mt: MeasType.values()) {
+    public static MeasurementType fromString(String string) {
+        for (MeasurementType mt: MeasurementType.values()) {
             if (mt.matches(string)) {
                 return mt;
             }

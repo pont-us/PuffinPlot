@@ -30,7 +30,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import net.talvi.puffinplot.data.Correction;
-import net.talvi.puffinplot.data.MeasType;
+import net.talvi.puffinplot.data.MeasurementType;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.data.TreatType;
@@ -61,7 +61,7 @@ public class TestUtils {
         final Sample sample = new Sample(depthString, null);
         for (int j = 3; j > 0; j--) {
             final TreatmentStep d = new TreatmentStep(direction.times(j));
-            d.setMeasType(MeasType.CONTINUOUS);
+            d.setMeasurementType(MeasurementType.CONTINUOUS);
             d.setInPca(true);
             sample.addDatum(d);
         }
@@ -88,7 +88,7 @@ public class TestUtils {
                 final TreatmentStep d = new TreatmentStep((sampleIndex + 1.0) * (100.0 - demag), sampleIndex * 50, demag);
                 d.setDiscreteId(sampleName);
                 d.setSuite(suite);
-                d.setMeasType(MeasType.DISCRETE);
+                d.setMeasurementType(MeasurementType.DISCRETE);
                 d.setAfX(demag);
                 d.setAfY(demag);
                 d.setAfZ(demag);
@@ -117,7 +117,7 @@ public class TestUtils {
                         depth * 50, demag);
                 d.setDepth(depthString);
                 d.setSuite(suite);
-                d.setMeasType(MeasType.CONTINUOUS);
+                d.setMeasurementType(MeasurementType.CONTINUOUS);
                 d.setAfX(demag);
                 d.setAfY(demag);
                 d.setAfZ(demag);

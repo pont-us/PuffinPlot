@@ -23,7 +23,7 @@ import java.io.LineNumberReader;
 import java.util.LinkedList;
 import java.util.Map;
 
-import net.talvi.puffinplot.data.MeasType;
+import net.talvi.puffinplot.data.MeasurementType;
 import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Vec3;
@@ -45,7 +45,7 @@ public class IapdLoader extends AbstractFileLoader {
      * Valid import option keys are:
      * 
      * {@code TreatType.class}; value must be an instance of {@link TreatType}
-     * {@code MeasType.class}; value must be an instance of {@link MeasType}
+     * {@code MeasurementType.class}; value must be an instance of {@link MeasurementType}
      * 
      * These keys respectively specify the treatment type and measurement
      * type for the data in the file. If they are omitted, defaults will
@@ -99,12 +99,12 @@ public class IapdLoader extends AbstractFileLoader {
 
     private void readFile() throws IOException {
         TreatType treatType = TreatType.DEGAUSS_XYZ;
-        MeasType measType = MeasType.DISCRETE;
+        MeasurementType measurementType = MeasurementType.DISCRETE;
         if (importOptions.containsKey(TreatType.class)) {
             treatType = (TreatType) importOptions.get(TreatType.class);
         }
-        if (importOptions.containsKey(MeasType.class)) {
-            measType = (MeasType) importOptions.get(MeasType.class);
+        if (importOptions.containsKey(MeasurementType.class)) {
+            measurementType = (MeasurementType) importOptions.get(MeasurementType.class);
         }
         
         final String headerLine = reader.readLine();
@@ -173,7 +173,7 @@ public class IapdLoader extends AbstractFileLoader {
             d.setFormDip(headerValues.get(4));
             d.setVolume(headerValues.get(5));
             d.setTreatType(treatType);
-            d.setMeasType(measType);
+            d.setMeasurementType(measurementType);
             final double a95 = fields.get(4);
             if (a95 > a95max) {
                 a95max = a95;

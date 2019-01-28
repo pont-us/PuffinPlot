@@ -20,7 +20,7 @@ import javax.swing.JOptionPane;
 
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.Util;
-import net.talvi.puffinplot.data.MeasType;
+import net.talvi.puffinplot.data.MeasurementType;
 import net.talvi.puffinplot.data.Suite;
 
 /**
@@ -169,7 +169,7 @@ public class AlignDeclinationsDialog extends javax.swing.JDialog {
                     + "as there is no data suite loaded.");
             return false;
         }
-        if (suite.getMeasType() != MeasType.CONTINUOUS) {
+        if (suite.getMeasurementType() != MeasurementType.CONTINUOUS) {
             app.errorDialog("Can't align core sections",
                     "Core section alignment can only be done on continuous "
                             + "suites.");
