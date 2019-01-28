@@ -1208,7 +1208,7 @@ public class SuiteTest {
         /* This will set the sample's sample/formation corrections
          * from those of the treatmentStep.
          */
-        sample.addDatum(treatmentStep);
+        sample.addTreatmentStep(treatmentStep);
         
         syntheticSuite2.importAmsFromAsc(
                 Collections.singletonList(filePath.toFile()),
@@ -1575,7 +1575,7 @@ public class SuiteTest {
             final TreatmentStep d = new TreatmentStep();
             d.setTreatmentType(TreatmentType.THERMAL);
             d.setTemp(step*10);
-            sample.addDatum(d);
+            sample.addTreatmentStep(d);
             expected.add(d);
         }
         suite.mergeDuplicateTreatmentSteps(Collections.singletonList(sample));

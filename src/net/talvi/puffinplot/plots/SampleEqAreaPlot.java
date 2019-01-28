@@ -75,7 +75,7 @@ public class SampleEqAreaPlot extends EqAreaPlot {
         drawAxes();
         boolean first = true;
         Vec3 prev = null;
-        final List<TreatmentStep> visibleData = sample.getVisibleData();
+        final List<TreatmentStep> visibleData = sample.getVisibleTreatmentSteps();
         boolean hasWellFormedData = false;
         for (TreatmentStep d: visibleData) {
             final Vec3 p = d.getMoment(params.getCorrection()).normalize();

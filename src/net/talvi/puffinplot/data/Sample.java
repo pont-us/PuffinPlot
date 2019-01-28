@@ -146,7 +146,7 @@ public class Sample {
      */
     public void calculateMdf() {
         touch();
-        mdf = MedianDestructiveField.calculate(getVisibleData());
+        mdf = MedianDestructiveField.calculate(getVisibleTreatmentSteps());
     }
 
     /**
@@ -329,7 +329,7 @@ public class Sample {
      *
      * @return {@code true} if this sample contains any treatmentSteps
      */
-    public boolean hasData() {
+    public boolean hasTreatmentSteps() {
         return !treatmentSteps.isEmpty();
     }
     
@@ -347,8 +347,8 @@ public class Sample {
      *
      * @return all the visible (non-hidden) treatment steps within this sample
      */
-    public List<TreatmentStep> getVisibleData() {
-        List<TreatmentStep> visibleData = new ArrayList<>(getNumData());
+    public List<TreatmentStep> getVisibleTreatmentSteps() {
+        List<TreatmentStep> visibleData = new ArrayList<>(getNumberOfSteps());
         for (TreatmentStep d: getTreatmentSteps()) if (!d.isHidden()) visibleData.add(d);
         return visibleData;
     }
@@ -358,7 +358,7 @@ public class Sample {
      *
      * @return all the selected treatment steps within this sample
      */
-    public List<TreatmentStep> getSelectedData() {
+    public List<TreatmentStep> getSelectedTreatmentSteps() {
         LinkedList<TreatmentStep> selData = new LinkedList<>();
         for (TreatmentStep d: getTreatmentSteps()) if (d.isSelected()) selData.add(d);
         return selData;
@@ -388,7 +388,7 @@ public class Sample {
      *
      * @return the number of treatment steps within this sample
      */
-    public int getNumData() {
+    public int getNumberOfSteps() {
         return getTreatmentSteps().size();
     }
 
@@ -400,7 +400,7 @@ public class Sample {
      * @throws IndexOutOfBoundsException if no treatment step with the
      * selected index exists
      */
-    public TreatmentStep getDatum(int i) {
+    public TreatmentStep getTreatmentStepByIndex(int i) {
         return getTreatmentSteps().get(i);
     }
     
@@ -416,7 +416,7 @@ public class Sample {
      * @param level a treatment level
      * @return the first datum in the sample with the given treatment level
      */
-    public TreatmentStep getDatumByTreatmentLevel(double level) {
+    public TreatmentStep getTreatmentStepByLevel(double level) {
         final double threshold = 1e-6;
         for (TreatmentStep d: treatmentSteps) {
                 if (abs(d.getTreatmentLevel() - level) < threshold) {
@@ -445,7 +445,7 @@ public class Sample {
      * @param level a treatment level
      * @return the first datum in the sample with the given treatment level
      */
-    public TreatmentStep getDatumByTreatmentTypeAndLevel(Set<TreatmentType> types,
+    public TreatmentStep getTreatmentStepByTypeAndLevel(Set<TreatmentType> types,
                                                          double level) {
         final double threshold = 1e-6;
         for (TreatmentStep d: treatmentSteps) {
@@ -472,7 +472,7 @@ public class Sample {
      * 
      * @param treatmentStep a treatment step to add to this sample
      */
-    public void addDatum(TreatmentStep treatmentStep) {
+    public void addTreatmentStep(TreatmentStep treatmentStep) {
         touch();
         if (treatmentSteps.isEmpty()) {
             setSampAz(treatmentStep.getSampAz());
@@ -556,7 +556,7 @@ public class Sample {
      * treatmentSteps
      */
     public void doPca(Correction correction) {
-        if (!hasData()) return;
+        if (!hasTreatmentSteps()) return;
         /*
          * Use the first treatment step's anchoring status for all of them
          * (a partially anchored PCA makes no sense). This is just
@@ -809,8 +809,11 @@ public class Sample {
         return result;
     }
 
-    /** Reports whether this sample is an empty slot on the measurement tray.
-     * @return {@code true} if this sample is an empty slot on the measurement tray
+    /**
+     * Reports whether this sample is an empty slot on the measurement tray.
+     *
+     * @return {@code true} if this sample is an empty slot on the measurement
+     * tray
      */
     public boolean isEmptySlot() {
         return isEmptySlot;
@@ -1193,7 +1196,7 @@ public class Sample {
      * @param correction the correction to apply to the moment measurements
      */
     public void calculateFisher(Correction correction) {
-        final List<TreatmentStep> selection = getSelectedData();
+        final List<TreatmentStep> selection = getSelectedTreatmentSteps();
         final List<Vec3> directions = new ArrayList<>(selection.size());
         for (TreatmentStep d: selection) {
             directions.add(d.getMoment(correction));
@@ -1221,8 +1224,8 @@ public class Sample {
      * @return discrete sample ID, core section ID, or {@code null}
      */
     public String getDiscreteId() {
-        if (hasData()) {
-            return getDatum(0).getDiscreteId();
+        if (hasTreatmentSteps()) {
+            return getTreatmentStepByIndex(0).getDiscreteId();
         } else {
             return null;
         }
@@ -1240,7 +1243,7 @@ public class Sample {
      * @param discreteId the discrete ID to set
      */
     public void setDiscreteId(String discreteId) {
-        if (hasData()) {
+        if (hasTreatmentSteps()) {
             getTreatmentSteps().forEach(d -> { d.setDiscreteId(discreteId); });
         } else {
             throw new IllegalStateException("This sample has no TreatmentStep objects");
@@ -1322,7 +1325,7 @@ public class Sample {
         }
         final Sample firstSample = samples.get(0);
         for (Sample sample: samples.subList(1, samples.size())) {
-            sample.getTreatmentSteps().forEach(d -> firstSample.addDatum(d));
+            sample.getTreatmentSteps().forEach(d -> firstSample.addTreatmentStep(d));
         }
         firstSample.mergeDuplicateTreatmentSteps();
         firstSample.treatmentSteps.sort(new TreatmentStepTreatmentComparator());

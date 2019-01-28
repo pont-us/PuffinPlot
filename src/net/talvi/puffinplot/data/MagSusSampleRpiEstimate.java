@@ -61,7 +61,7 @@ public class MagSusSampleRpiEstimate implements SampleRpiEstimate {
         final StringBuilder builder = new StringBuilder();
         builder.append(getNrmSample().getTreatmentSteps().get(0).getDepth());
 
-        final TreatmentStep normalizerTreatmentStep = normalizer.getDatum(0);
+        final TreatmentStep normalizerTreatmentStep = normalizer.getTreatmentStepByIndex(0);
         final double normalizerMagSus = normalizerTreatmentStep.getMagSus();
         builder.append(String.format(Locale.ENGLISH, ",%g,%g",
                 getRatio(), normalizerMagSus));

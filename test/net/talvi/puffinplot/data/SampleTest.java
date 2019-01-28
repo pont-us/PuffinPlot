@@ -59,7 +59,7 @@ public class SampleTest {
             d.setAfX(i);
             d.setAfY(i);
             d.setAfZ(i);
-            s.addDatum(d);
+            s.addTreatmentStep(d);
         }
         return s;
     }
@@ -100,7 +100,7 @@ public class SampleTest {
             d.setSampDip(toDegrees(sampDip));
             d.setFormAz(toDegrees(formAz));
             d.setFormDip(toDegrees(formDip));
-            sample.addDatum(d);
+            sample.addTreatmentStep(d);
             sample.setAmsFromTensor(1, 2, 3, 4, 5, 6);
             final Tensor actual = sample.getAms();
             final Tensor expected = new Tensor(1, 2, 3, 4, 5, 6,
@@ -137,7 +137,7 @@ public class SampleTest {
     private Sample makeSampleFromVectors(Vec3[] vectors) {
         final Sample sample = new Sample("test sample", null);
         for (Vec3 vector: vectors) {
-            sample.addDatum(new TreatmentStep(vector));
+            sample.addTreatmentStep(new TreatmentStep(vector));
         }
         return sample;
     }
@@ -147,8 +147,8 @@ public class SampleTest {
             return false;
         }
         for (int i = 0; i < s0.getTreatmentSteps().size(); i++) {
-            final Vec3 v0 = s0.getDatum(i).getMoment();
-            final Vec3 v1 = s1.getDatum(i).getMoment();
+            final Vec3 v0 = s0.getTreatmentStepByIndex(i).getMoment();
+            final Vec3 v1 = s1.getTreatmentStepByIndex(i).getMoment();
             if (!v0.equals(v1, 1e-10)) {
                 return false;
             }
@@ -193,7 +193,7 @@ public class SampleTest {
         final Sample sample = new Sample("sample1", null);
         for (int i=0; i<3; i++) {
             final TreatmentStep d = new TreatmentStep();
-            sample.addDatum(d);
+            sample.addTreatmentStep(d);
         }
         sample.setValue(df, String.format(Locale.ENGLISH, "%g", value));
         assertTrue(sample.getTreatmentSteps().stream().allMatch(d ->
@@ -209,7 +209,7 @@ public class SampleTest {
         final String discreteId = "discrete-id-1";
         treatmentStep.setDiscreteId(discreteId);
         treatmentStep.setSample(sample);
-        sample.addDatum(treatmentStep);
+        sample.addTreatmentStep(treatmentStep);
         assertEquals(discreteId, sample.getDiscreteId());
     }
     
@@ -225,7 +225,7 @@ public class SampleTest {
         final TreatmentStep treatmentStep = new TreatmentStep(Vec3.ORIGIN);
         treatmentStep.setMeasurementType(MeasurementType.CONTINUOUS);
         treatmentStep.setSample(sample);
-        sample.addDatum(treatmentStep);
+        sample.addTreatmentStep(treatmentStep);
 
         final String discreteId = "discrete-id-1";
         sample.setDiscreteId(discreteId);
@@ -243,10 +243,10 @@ public class SampleTest {
     public void testIsSelectionContiguous() {
         assertTrue(simpleSample.isSelectionContiguous());        
         for (int i=3; i<8; i++) {
-            simpleSample.getDatum(i).setSelected(true);
+            simpleSample.getTreatmentStepByIndex(i).setSelected(true);
         }
         assertTrue(simpleSample.isSelectionContiguous());
-        simpleSample.getDatum(5).setSelected(false);
+        simpleSample.getTreatmentStepByIndex(5).setSelected(false);
         assertFalse(simpleSample.isSelectionContiguous());
         simpleSample.selectAll();
         assertTrue(simpleSample.isSelectionContiguous());
@@ -255,10 +255,10 @@ public class SampleTest {
     @Test
     public void testGetSelectedData() {
         for (int i=3; i<8; i++) {
-            simpleSample.getDatum(i).setSelected(true);
+            simpleSample.getTreatmentStepByIndex(i).setSelected(true);
         }
         assertEquals(simpleSample.getTreatmentSteps().subList(3, 8),
-                simpleSample.getSelectedData());
+                simpleSample.getSelectedTreatmentSteps());
     }
     
     @Test
@@ -266,7 +266,7 @@ public class SampleTest {
         final List<Integer> bits = Arrays.asList(1, 3, 6);
         final BitSet expectedBitSet = new BitSet();
         for (Integer i: bits) {
-            simpleSample.getDatum(i).setSelected(true);
+            simpleSample.getTreatmentStepByIndex(i).setSelected(true);
             expectedBitSet.set(i);
         }
         assertEquals(expectedBitSet, simpleSample.getSelectionBitSet());
@@ -278,8 +278,8 @@ public class SampleTest {
         final List<Integer> bitList = Arrays.asList(1, 3, 6);
         bitList.forEach(i -> bitSet.set(i));
         simpleSample.setSelectionBitSet(bitSet);
-        for (int i=0; i<simpleSample.getNumData(); i++) {
-            assertEquals(bitList.contains(i), simpleSample.getDatum(i).isSelected());
+        for (int i=0; i<simpleSample.getNumberOfSteps(); i++) {
+            assertEquals(bitList.contains(i), simpleSample.getTreatmentStepByIndex(i).isSelected());
         }
     }
 
@@ -287,7 +287,7 @@ public class SampleTest {
     public void testHideAndDeselectSelectedPoints() {
         final Set<TreatmentStep> dataToHide = new HashSet<>();
         for (int i = 3; i < 7; i++) {
-            dataToHide.add(simpleSample.getDatum(i));
+            dataToHide.add(simpleSample.getTreatmentStepByIndex(i));
         }
         dataToHide.forEach(d -> d.setSelected(true));
         assertTrue(simpleSample.getTreatmentSteps().stream().allMatch(d -> !d.isHidden()));
@@ -300,7 +300,7 @@ public class SampleTest {
     @Test
     public void testUnhideAllPoints() {
         for (int i = 3; i < 7; i++) {
-            simpleSample.getDatum(i).setHidden(true);
+            simpleSample.getTreatmentStepByIndex(i).setHidden(true);
         }
         simpleSample.unhideAllPoints();
         assertTrue(simpleSample.getTreatmentSteps().stream().allMatch(d -> !d.isHidden()));
@@ -312,9 +312,9 @@ public class SampleTest {
                 map(d -> d.getMoment().invert()).
                 collect(Collectors.toList());
         simpleSample.invertMoments();
-        for (int i=0; i<simpleSample.getNumData(); i++) {
+        for (int i=0; i<simpleSample.getNumberOfSteps(); i++) {
             assertTrue(expected.get(i).equals(
-                    simpleSample.getDatum(i).getMoment(),
+                    simpleSample.getTreatmentStepByIndex(i).getMoment(),
                     delta));
         }
     }
@@ -322,7 +322,7 @@ public class SampleTest {
     @Test
     public void testSelectVisible() {
         for (int i = 3; i < 7; i++) {
-            simpleSample.getDatum(i).setHidden(true);
+            simpleSample.getTreatmentStepByIndex(i).setHidden(true);
         }
         simpleSample.selectVisible();
         assertTrue(simpleSample.getTreatmentSteps().stream().
@@ -368,9 +368,9 @@ public class SampleTest {
                     map(d -> d.getMoment().rot180(axis)).
                     collect(Collectors.toList());
             sample.flip(axis);
-            for (int i = 0; i < sample.getNumData(); i++) {
+            for (int i = 0; i < sample.getNumberOfSteps(); i++) {
                 assertTrue(expected.get(i).equals(
-                        sample.getDatum(i).getMoment(),
+                        sample.getTreatmentStepByIndex(i).getMoment(),
                         delta));
             }
         }
@@ -424,7 +424,7 @@ public class SampleTest {
             d.setTreatmentType(TreatmentType.THERMAL);
             d.setTemp(tempsAndms[i]);
             d.setMagSus(tempsAndms[i+1]);
-            s.addDatum(d);
+            s.addTreatmentStep(d);
         }
         return s;
     }
@@ -438,7 +438,7 @@ public class SampleTest {
     public void testIsPcaAnchored() {
         final TreatmentStep d = new TreatmentStep();
         final Sample s = new Sample("test", null);
-        s.addDatum(d);
+        s.addTreatmentStep(d);
         d.setPcaAnchored(false);
         assertFalse(s.isPcaAnchored());
         d.setPcaAnchored(true);
@@ -455,9 +455,9 @@ public class SampleTest {
     public void testGetNrm() {
         final Sample s = new Sample("test", null);
         final Vec3 nrm = new Vec3(3, 2, 1);
-        s.addDatum(new TreatmentStep(nrm));
-        s.addDatum(new TreatmentStep(nrm.times(0.8)));
-        s.addDatum(new TreatmentStep(nrm.times(0.6)));
+        s.addTreatmentStep(new TreatmentStep(nrm));
+        s.addTreatmentStep(new TreatmentStep(nrm.times(0.8)));
+        s.addTreatmentStep(new TreatmentStep(nrm.times(0.6)));
         assertEquals(nrm.mag(), s.getNrm(), delta);
     }
     
@@ -465,11 +465,11 @@ public class SampleTest {
     public void testHasMsData() {
         final Sample sample = new Sample("test", null);
         assertFalse(sample.hasMsData());
-        sample.addDatum(new TreatmentStep());
+        sample.addTreatmentStep(new TreatmentStep());
         assertFalse(sample.hasMsData());
         final TreatmentStep treatmentStep = new TreatmentStep();
         treatmentStep.setMagSus(1);
-        sample.addDatum(treatmentStep);
+        sample.addTreatmentStep(treatmentStep);
         assertTrue(sample.hasMsData());
     }
     
@@ -490,7 +490,7 @@ public class SampleTest {
     private static void addDatumWithMeasurementType(Sample sample, MeasurementType mt) {
         final TreatmentStep treatmentStep = new TreatmentStep(Vec3.NORTH);
         treatmentStep.setMeasurementType(mt);
-        sample.addDatum(treatmentStep);
+        sample.addTreatmentStep(treatmentStep);
     }
     
     @Test
@@ -534,38 +534,38 @@ public class SampleTest {
     @Test
     public void testGetDatumByTreatmentLevel() {
         assertEquals(5,
-                simpleSample.getDatumByTreatmentLevel(5).getTreatmentLevel(),
+                simpleSample.getTreatmentStepByLevel(5).getTreatmentLevel(),
                 delta);
     }
     
     @Test
     public void testGetDatumByTreatmentLevelWithNoData() {
         final Sample sample = new Sample("test", null);
-        assertNull(sample.getDatumByTreatmentLevel(0));
+        assertNull(sample.getTreatmentStepByLevel(0));
     }
 
     @Test
     public void testGetDatumByTreatmentTypeAndLevel() {
-        final TreatmentStep treatmentStep = simpleSample.getDatumByTreatmentTypeAndLevel(
+        final TreatmentStep treatmentStep = simpleSample.getTreatmentStepByTypeAndLevel(
                 Collections.singleton(TreatmentType.DEGAUSS_XYZ), 5);
         assertEquals(5, treatmentStep.getTreatmentLevel(), delta);
     }
 
     @Test
     public void testGetDatumByTreatmentLevelWithNoMatchingData() {
-        assertNull(simpleSample.getDatumByTreatmentLevel(17));
+        assertNull(simpleSample.getTreatmentStepByLevel(17));
     }
 
     @Test
     public void testGetDatumByTreatmentTypeAndLevelWithNoData() {
         final Sample sample = new Sample("test", null);
-        assertNull(sample.getDatumByTreatmentTypeAndLevel(
+        assertNull(sample.getTreatmentStepByTypeAndLevel(
                 new HashSet(Arrays.asList(TreatmentType.values())), 0));
     }
 
     @Test
     public void testGetDatumByTreatmentTypeAndLevelWithNoMatchingData() {
-        assertNull(simpleSample.getDatumByTreatmentTypeAndLevel(
+        assertNull(simpleSample.getTreatmentStepByTypeAndLevel(
                 Collections.singleton(TreatmentType.THERMAL), 5));
     }
 
@@ -574,7 +574,7 @@ public class SampleTest {
         simpleSample.selectAll();
         simpleSample.calculateFisher(Correction.NONE);
         final Vec3 expected =
-                FisherValues.calculate(simpleSample.getSelectedData().
+                FisherValues.calculate(simpleSample.getSelectedTreatmentSteps().
                         stream().map(d -> d.getMoment()).
                         collect(Collectors.toList())).getMeanDirection();
         assertTrue(expected.equals(simpleSample.getDirection(), delta));
@@ -584,9 +584,9 @@ public class SampleTest {
     public void testGetCirclePoints() {
         final List<Integer> circlePoints = Arrays.asList(2, 3, 6, 7);
         final List<Vec3> expected =
-                circlePoints.stream().map(i -> simpleSample.getDatum(i).
+                circlePoints.stream().map(i -> simpleSample.getTreatmentStepByIndex(i).
                         getMoment()).collect(Collectors.toList());
-        circlePoints.forEach(i -> simpleSample.getDatum(i).setOnCircle(true));
+        circlePoints.forEach(i -> simpleSample.getTreatmentStepByIndex(i).setOnCircle(true));
         final List<Vec3> actual = simpleSample.getCirclePoints(Correction.NONE);
         assertEquals(expected.size(), actual.size());
         for (int i=0; i<expected.size(); i++) {
@@ -596,50 +596,50 @@ public class SampleTest {
     
     @Test
     public void testGetFirstRunNumber() {
-        IntStream.range(0, simpleSample.getNumData()).
-                forEach(i -> simpleSample.getDatum(i).setRunNumber(i+5));
+        IntStream.range(0, simpleSample.getNumberOfSteps()).
+                forEach(i -> simpleSample.getTreatmentStepByIndex(i).setRunNumber(i+5));
         assertEquals(5, simpleSample.getFirstRunNumber());
     }
     
     @Test
     public void testGetLastRunNumber() {
-        IntStream.range(0, simpleSample.getNumData()).
-                forEach(i -> simpleSample.getDatum(i).setRunNumber(i+5));
-        assertEquals(simpleSample.getNumData() + 4,
+        IntStream.range(0, simpleSample.getNumberOfSteps()).
+                forEach(i -> simpleSample.getTreatmentStepByIndex(i).setRunNumber(i+5));
+        assertEquals(simpleSample.getNumberOfSteps() + 4,
                 simpleSample.getLastRunNumber());
     }
     
     @Test
     public void testDatumByRunNumber() {
-        IntStream.range(0, simpleSample.getNumData()).
-                forEach(i -> simpleSample.getDatum(i).setRunNumber(i+5));
-        assertEquals(simpleSample.getDatum(5),
+        IntStream.range(0, simpleSample.getNumberOfSteps()).
+                forEach(i -> simpleSample.getTreatmentStepByIndex(i).setRunNumber(i+5));
+        assertEquals(simpleSample.getTreatmentStepByIndex(5),
                 simpleSample.getDatumByRunNumber(11));
     }
     
     @Test
     public void testGetSlotNumber() {
-        simpleSample.getDatum(0).setSlotNumber(17);
+        simpleSample.getTreatmentStepByIndex(0).setSlotNumber(17);
         assertEquals(17, simpleSample.getSlotNumber());
     }
     
     @Test
     public void testGetVisibleData() {
-        simpleSample.getDatum(5).setHidden(true);
+        simpleSample.getTreatmentStepByIndex(5).setHidden(true);
         final List<TreatmentStep> expected =
                 new ArrayList<>(simpleSample.getTreatmentSteps());
         expected.remove(5);
-        assertEquals(expected, simpleSample.getVisibleData());
+        assertEquals(expected, simpleSample.getVisibleTreatmentSteps());
     }
     
     @Test
     public void testRemoveData() {
         final Set<TreatmentStep> toRemove = Arrays.stream(new int[] {2, 3, 5, 6}).
-                mapToObj(i -> simpleSample.getDatum(i)).
+                mapToObj(i -> simpleSample.getTreatmentStepByIndex(i)).
                 collect(Collectors.toSet());
         final List<TreatmentStep> shouldRemain =
                 Arrays.stream(new int[] {0, 1, 4, 7, 8, 9}).
-                        mapToObj(i -> simpleSample.getDatum(i)).
+                        mapToObj(i -> simpleSample.getTreatmentStepByIndex(i)).
                         collect(Collectors.toList());
         simpleSample.removeData(toRemove);
         assertEquals(shouldRemain, simpleSample.getTreatmentSteps());
@@ -655,13 +655,13 @@ public class SampleTest {
             final TreatmentStep d = new TreatmentStep(vector);
             d.setTreatmentType(TreatmentType.THERMAL);
             d.setTemp(50);
-            sample.addDatum(d);
+            sample.addTreatmentStep(d);
             vectors.add(vector);
         }
         final Vec3 expectedMean = Vec3.mean(vectors);
         sample.mergeDuplicateTreatmentSteps();
         assertEquals(1, sample.getTreatmentSteps().size());
-        assertTrue(expectedMean.equals(sample.getDatum(0).getMoment()));
+        assertTrue(expectedMean.equals(sample.getTreatmentStepByIndex(0).getMoment()));
     }
     
     @Test
@@ -680,14 +680,14 @@ public class SampleTest {
             final TreatmentStep d = new TreatmentStep(10-i, 20-i, 30-i);
             d.setTreatmentType(TreatmentType.THERMAL);
             d.setTemp(i*100);
-            s0.addDatum(d);
+            s0.addTreatmentStep(d);
         }
         final Sample s1 = new Sample("Sample 1", null);
         for (int i=0; i<3; i++) {
             final TreatmentStep d = new TreatmentStep(10-i, 20-i, 30-i);
             d.setTreatmentType(TreatmentType.THERMAL);
             d.setTemp(i*100 + 50);
-            s1.addDatum(d);
+            s1.addTreatmentStep(d);
         }
         Sample.mergeSamples(Arrays.asList(s0, s1));
         assertArrayEquals(
@@ -705,9 +705,9 @@ public class SampleTest {
     public void testMergeSamplesWithOneSample() {
         final Sample expectedSample = makeSimpleSample();
         Sample.mergeSamples(Collections.singletonList(simpleSample));
-        for (int i=0; i<expectedSample.getNumData(); i++) {
-            assertTrue(expectedSample.getDatum(i).getMoment().
-                    equals(simpleSample.getDatum(i).getMoment(), delta));
+        for (int i=0; i<expectedSample.getNumberOfSteps(); i++) {
+            assertTrue(expectedSample.getTreatmentStepByIndex(i).getMoment().
+                    equals(simpleSample.getTreatmentStepByIndex(i).getMoment(), delta));
         }
     }
     

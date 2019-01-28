@@ -176,7 +176,7 @@ public class CoreSectionsTest {
             final TreatmentStep d = new TreatmentStep();
             d.setDepth(depthString);
             d.setDiscreteId(String.format("%d", depth / 10));
-            sample.addDatum(d);
+            sample.addTreatmentStep(d);
             samples.add(sample);
         }
         final CoreSections sections =

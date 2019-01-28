@@ -917,7 +917,7 @@ public class TreatmentStep {
         if (getSample() != null) {
             positionInSample = String.format(Locale.ENGLISH, "%d/%d",
                     getSample().getTreatmentSteps().indexOf(this) + 1,
-                    getSample().getNumData());
+                    getSample().getNumberOfSteps());
         }
         String magSusString = "";
         if (Double.isFinite(getMagSus())) {

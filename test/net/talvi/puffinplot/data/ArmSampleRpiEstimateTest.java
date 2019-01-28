@@ -46,10 +46,10 @@ public class ArmSampleRpiEstimateTest {
         nrmSample = new Sample("NRM sample", null);
         final TreatmentStep nrmTreatmentStep = new TreatmentStep();
         nrmTreatmentStep.setDepth("7");
-        nrmSample.addDatum(nrmTreatmentStep);
+        nrmSample.addTreatmentStep(nrmTreatmentStep);
         armSample = new Sample("ARM sample", null);
         final TreatmentStep armTreatmentStep = new TreatmentStep(1, 2, 2);
-        armSample.addDatum(armTreatmentStep);
+        armSample.addTreatmentStep(armTreatmentStep);
         
         estimate = new ArmSampleRpiEstimate(
                 intensities, nrmSample, armSample, meanRatio, slope, r,

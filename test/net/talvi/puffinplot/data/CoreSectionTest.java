@@ -65,7 +65,7 @@ public class CoreSectionTest {
                 d.setSample(sample);
                 d.setMagSus(depth);
                 d.setDiscreteId(String.format("%d", depth / 3));
-                sample.addDatum(d);
+                sample.addTreatmentStep(d);
             }
             samples.add(sample);
         }
@@ -231,7 +231,7 @@ public class CoreSectionTest {
             for (Vec3 v: new Vec3[] {inputDirs.get(i),
                 inputDirs.get(i).times(0.5)} ) {
                     TreatmentStep d = new TreatmentStep(v);
-                    s.addDatum(d);
+                    s.addTreatmentStep(d);
                     d.setInPca(true);
                     d.setPcaAnchored(true);
                     s.doPca(Correction.NONE);

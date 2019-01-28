@@ -382,7 +382,7 @@ public final class Suite implements SampleGroup {
             samples.add(sample);
         }
         d.setSuite(this);
-        sample.addDatum(d);
+        sample.addTreatmentStep(d);
     }
 
     private List<File> expandDirs(List<File> files) {
@@ -1122,7 +1122,7 @@ public final class Suite implements SampleGroup {
                         sample.setAmsDirections(v[0], v[1], v[2],
                                 v[3], v[4], v[5]);
                     } else {
-                        if (!sample.hasData()) {
+                        if (!sample.hasTreatmentSteps()) {
                             sample.setCorrections(sc.nextDouble(),
                                     sc.nextDouble(), sc.nextDouble(),
                                     sc.nextDouble(), sc.nextDouble());
@@ -1176,7 +1176,7 @@ public final class Suite implements SampleGroup {
                 insertNewSample(sampleName);
             }
             final Sample sample = getSampleByName(sampleName);
-            if (sample.hasData()) {
+            if (sample.hasTreatmentSteps()) {
                 /*
                  * Overwrite sample and formation corrections if appropriate
                  * parameters passed.

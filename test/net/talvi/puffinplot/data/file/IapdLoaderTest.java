@@ -152,7 +152,7 @@ public class IapdLoaderTest {
             final double decRaw = fields[5];
             final double incRaw = fields[6];
             
-            final TreatmentStep d = sample.getDatumByTreatmentLevel(demagLevel);
+            final TreatmentStep d = sample.getTreatmentStepByLevel(demagLevel);
             assertEquals(intensity, d.getIntensity(), 1e-10);
             assertEquals(decSamp, d.getMoment(sampCorr).getDecDeg(), 0.05);
             assertEquals(incSamp, d.getMoment(sampCorr).getIncDeg(), 0.05);

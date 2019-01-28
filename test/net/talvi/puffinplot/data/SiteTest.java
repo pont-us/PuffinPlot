@@ -59,7 +59,7 @@ public class SiteTest {
                 d.setTreatmentType(TreatmentType.DEGAUSS_Z);
                 d.setAfZ(j*10);
                 d.setOnCircle(true);
-                sample.addDatum(d);
+                sample.addTreatmentStep(d);
             }
             sample.fitGreatCircle(Correction.NONE);
         }
@@ -69,7 +69,7 @@ public class SiteTest {
             d.setTreatmentType(TreatmentType.DEGAUSS_Z);
             d.setAfZ(j*10);
             d.setInPca(true);
-            pcaSample.addDatum(d);
+            pcaSample.addTreatmentStep(d);
         }
         pcaSample.doPca(Correction.NONE);
         

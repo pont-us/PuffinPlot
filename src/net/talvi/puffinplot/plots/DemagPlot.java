@@ -92,7 +92,7 @@ public class DemagPlot extends Plot {
             return;
         }
         
-        final List<TreatmentStep> data = sample.getVisibleData();
+        final List<TreatmentStep> data = sample.getVisibleTreatmentSteps();
         if (data.isEmpty()) {
             return;
         }
@@ -121,7 +121,7 @@ public class DemagPlot extends Plot {
         }
 
         final TreatmentType treatmentType =
-                sample.getDatum(sample.getNumData() - 1).getTreatmentType();
+                sample.getTreatmentStepByIndex(sample.getNumberOfSteps() - 1).getTreatmentType();
         final String xAxisLabel;
         double demagRescale = 1;
         if (xBySequence) {

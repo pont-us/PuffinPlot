@@ -107,7 +107,7 @@ public class ArmSampleRpiEstimate implements SampleRpiEstimate {
         }
         builder.append(String.format(Locale.ENGLISH, ",%g,%g,%g,%g,%g",
                 getMeanRatio(), getSlope(), getR(), getrSquared(),
-                normalizer.getDatum(0).getIntensity()));
+                normalizer.getTreatmentStepByIndex(0).getIntensity()));
         builder.append("\n");
         return builder.toString();
     }

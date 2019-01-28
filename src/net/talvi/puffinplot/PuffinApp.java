@@ -426,7 +426,7 @@ public class PuffinApp {
      */
     public void doPcaOnSelection() {
         for (Sample sample: getSelectedSamples()) {
-            if (sample.getSelectedData().size() > 1) {
+            if (sample.getSelectedTreatmentSteps().size() > 1) {
                 sample.useSelectionForPca();
                 sample.doPca(getCorrection());
             }

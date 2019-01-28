@@ -97,7 +97,7 @@ public class DemagTable extends Plot {
         if (data.isEmpty()) return;
 
         final List<String> headers2 = new ArrayList<>(headers);
-        if (sample.getDatum(0).getTreatmentType() == TreatmentType.THERMAL)
+        if (sample.getTreatmentStepByIndex(0).getTreatmentType() == TreatmentType.THERMAL)
             headers2.set(0, "temp.");
         points.add(new TextLinePoint(this, g, 10, null, null, headers2,
                 xSpacing, Color.BLACK));

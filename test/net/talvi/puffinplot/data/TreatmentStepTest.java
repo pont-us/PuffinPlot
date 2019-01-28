@@ -462,8 +462,8 @@ public class TreatmentStepTest {
                 75, 24.1, -23.2, 7.123e-3);
         final TreatmentStep d1 = makeSimpleDatum(TreatmentType.DEGAUSS_XYZ,
                 0.35, 0.0, 3.5, 1.45e-2);
-        sample.addDatum(d0);
-        sample.addDatum(d1);
+        sample.addTreatmentStep(d0);
+        sample.addTreatmentStep(d1);
         d0.setMagSus(1.234);
         assertEquals("Step 1/2 | Heating, 75.0°C | "
                 + "Dec: 24.1° | Inc: −23.2° | Mag: 7.12e−03 A/m | MS: 1.23",
@@ -480,8 +480,8 @@ public class TreatmentStepTest {
                 75, 24.1, -23.2, 7.123e-3);
         final TreatmentStep d1 = makeSimpleDatum(TreatmentType.IRM,
                 0.35, 0.0, 3.5, 1.45e-2);
-        sample.addDatum(d0);
-        sample.addDatum(d1);
+        sample.addTreatmentStep(d0);
+        sample.addTreatmentStep(d1);
         d0.setMagSus(1.234);
         assertEquals("Step 1/2 | No treatment | "
                 + "Dec: 24.1° | Inc: −23.2° | Mag: 7.12e−03 A/m | MS: 1.23",

@@ -63,7 +63,7 @@ public class TestUtils {
             final TreatmentStep d = new TreatmentStep(direction.times(j));
             d.setMeasurementType(MeasurementType.CONTINUOUS);
             d.setInPca(true);
-            sample.addDatum(d);
+            sample.addTreatmentStep(d);
         }
         sample.setDiscreteId(discreteId);
         sample.doPca(Correction.NONE);
@@ -99,7 +99,7 @@ public class TestUtils {
                 d.setSampDip(0);
                 d.setFormAz(0);
                 d.setFormDip(0);
-                sample.addDatum(d);
+                sample.addTreatmentStep(d);
                 suite.addDatum(d);
             }
         }
@@ -124,7 +124,7 @@ public class TestUtils {
                 d.setTreatmentType(TreatmentType.DEGAUSS_XYZ);
                 d.setSample(sample);
                 d.setMagSus(depth);
-                sample.addDatum(d);
+                sample.addTreatmentStep(d);
                 suite.addDatum(d);
             }
         }

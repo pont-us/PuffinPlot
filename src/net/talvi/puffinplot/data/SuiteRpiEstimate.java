@@ -149,7 +149,7 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
                 
                 for (double demagStep: treatmentLevels) {
                     final TreatmentStep nrmStep =
-                            nrmSample.getDatumByTreatmentLevel(demagStep);
+                            nrmSample.getTreatmentStepByLevel(demagStep);
                     /*
                      * We have to treat the first ARM step as a special case,
                      * since its treatment level will correspond to the ARM AF
@@ -158,8 +158,8 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
                      * datum and fetch it by index.
                      */
                     final TreatmentStep armStep = demagStep == 0 ?
-                            armSample.getDatum(0) :
-                            armSample.getDatumByTreatmentTypeAndLevel(
+                            armSample.getTreatmentStepByIndex(0) :
+                            armSample.getTreatmentStepByTypeAndLevel(
                                     demagTreatmentTypes, demagStep);
                     if (nrmStep != null && armStep != null) {
                         final double nrmInt = nrmStep.getIntensity();

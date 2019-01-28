@@ -142,7 +142,7 @@ public class ZPlot extends Plot {
     public void draw(Graphics2D g) {
         final Sample sample = params.getSample();
         if (sample==null) return;
-        final List<TreatmentStep> data = sample.getVisibleData();
+        final List<TreatmentStep> data = sample.getVisibleTreatmentSteps();
         if (data.isEmpty()) return;
         
         clearPoints();

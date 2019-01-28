@@ -40,7 +40,7 @@ public class LineTest {
             }
             for (int i = 0; i < 10; i++) {
                 final TreatmentStep d = new TreatmentStep(10 - i, 20 - i, 30 - i);
-                sample.addDatum(d);
+                sample.addTreatmentStep(d);
                 line.add(d);
             }
         }

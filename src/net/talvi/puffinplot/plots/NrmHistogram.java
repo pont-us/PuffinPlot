@@ -76,7 +76,7 @@ public class NrmHistogram extends Plot {
         Suite suite = sample.getSuite();
         List<Double> nrms = new ArrayList<>(suite.getSamples().size());
         for (Sample s: suite.getSamples()) {
-            if (s.hasData()) {
+            if (s.hasTreatmentSteps()) {
                 nrms.add(s.getNrm());
             }
         }

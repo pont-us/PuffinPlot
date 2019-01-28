@@ -120,8 +120,7 @@ public class UcDavisLoaderTest {
             final String depthString = String.format(Locale.ENGLISH,
                     "%.5f", dataline[0]);
             final double level = dataline[1] / 1000.;
-            final TreatmentStep d = suite.getSampleByName(depthString).
-                    getDatumByTreatmentLevel(level);
+            final TreatmentStep d = suite.getSampleByName(depthString).getTreatmentStepByLevel(level);
             final Vec3 v = d.getMoment();
             //assertEquals(dataline[2], v.x, 1e-9);
             //assertEquals(dataline[3], v.y, 1e-9);

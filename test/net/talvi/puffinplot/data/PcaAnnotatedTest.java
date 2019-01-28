@@ -72,10 +72,10 @@ public class PcaAnnotatedTest {
         final Sample sample = new Sample("test", null);
         for (int i=0; i<vectors.size(); i++) {
             final Vec3 v = vectors.get(i);
-            sample.addDatum(constructDatum(v, i*10, true));
+            sample.addTreatmentStep(constructDatum(v, i*10, true));
             if (insertUnusedValues && i==2) {
-                sample.addDatum(constructDatum(v, i*10, false));
-                sample.addDatum(constructDatum(v, i*10, false));
+                sample.addTreatmentStep(constructDatum(v, i*10, false));
+                sample.addTreatmentStep(constructDatum(v, i*10, false));
             }
         }
         return sample;

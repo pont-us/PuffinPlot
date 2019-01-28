@@ -32,11 +32,11 @@ public class MagSusSampleRpiEstimateTest {
         nrmSample = new Sample("NRM sample", null);
         final TreatmentStep nrmTreatmentStep = new TreatmentStep();
         nrmTreatmentStep.setDepth("7");
-        nrmSample.addDatum(nrmTreatmentStep);
+        nrmSample.addTreatmentStep(nrmTreatmentStep);
         magSusSample = new Sample("MS sample", null);
         final TreatmentStep msTreatmentStep = new TreatmentStep();
         msTreatmentStep.setMagSus(3);
-        magSusSample.addDatum(msTreatmentStep);
+        magSusSample.addTreatmentStep(msTreatmentStep);
         
         estimate = new MagSusSampleRpiEstimate(nrmSample, magSusSample, ratio);
     }

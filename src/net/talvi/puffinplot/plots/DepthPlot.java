@@ -67,7 +67,7 @@ public class DepthPlot extends Plot {
         int numberOfIncs = 0;
         boolean anyData = false;
         for (Sample s: suite.getSamples()) {
-            if (!s.hasData()) continue;
+            if (!s.hasTreatmentSteps()) continue;
             if (s.getDirection() == null) continue;
             if (Double.isNaN(s.getDepth())) continue;
             anyData = true;
@@ -95,7 +95,7 @@ public class DepthPlot extends Plot {
         final double yScale = dim.getHeight() / (upAxis.getLength() + downAxis.getLength());
         
         for (Sample s: suite.getSamples()) {
-            if (!s.hasData()) continue;
+            if (!s.hasTreatmentSteps()) continue;
             if (s.getDirection() == null) continue;
             final double depth = s.getDepth();
             final double inc = s.getDirection().getIncDeg();
