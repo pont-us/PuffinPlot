@@ -30,7 +30,7 @@ import java.util.Comparator;
  * 
  * @author pont
  */
-public class DatumMomentComparator implements Comparator<TreatmentStep> {
+public class TreatmentStepMomentComparator implements Comparator<TreatmentStep> {
 
     private final MeasurementAxis axis;
     private final Correction corr;
@@ -42,7 +42,7 @@ public class DatumMomentComparator implements Comparator<TreatmentStep> {
      * @param axis measurement axis along which to compare moments
      * @param corr correction to apply before comparison
      */
-    public DatumMomentComparator(MeasurementAxis axis, Correction corr) {
+    public TreatmentStepMomentComparator(MeasurementAxis axis, Correction corr) {
         this.axis = axis;
         this.corr = corr;
         // TODO make defensive copy of correction,

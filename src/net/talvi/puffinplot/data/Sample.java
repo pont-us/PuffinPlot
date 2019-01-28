@@ -1185,7 +1185,7 @@ public class Sample {
             sample.getData().forEach(d -> firstSample.addDatum(d));
         }
         firstSample.mergeDuplicateTreatmentSteps();
-        firstSample.data.sort(new DatumTreatmentComparator());
+        firstSample.data.sort(new TreatmentStepTreatmentComparator());
     }
     
     private static class TreatmentTypeAndLevel {

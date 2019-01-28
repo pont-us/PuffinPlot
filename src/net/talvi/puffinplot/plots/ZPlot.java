@@ -65,8 +65,8 @@ public class ZPlot extends Plot {
 
     private static Rectangle2D extent(List<TreatmentStep> sample, Correction c,
                                       MeasurementAxis axis1, MeasurementAxis axis2) {
-        final Comparator<TreatmentStep> xComp = new DatumMomentComparator(axis1, c);
-        final Comparator<TreatmentStep> yComp = new DatumMomentComparator(axis2, c);
+        final Comparator<TreatmentStep> xComp = new TreatmentStepMomentComparator(axis1, c);
+        final Comparator<TreatmentStep> yComp = new TreatmentStepMomentComparator(axis2, c);
         final double xMin = min(sample, xComp).getMoment(c).getComponent(axis1);
         final double xMax = max(sample, xComp).getMoment(c).getComponent(axis1);
         final double yMin = min(sample, yComp).getMoment(c).getComponent(axis2);

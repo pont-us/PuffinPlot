@@ -19,7 +19,7 @@ package net.talvi.puffinplot.data;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class DatumMomentComparatorTest {
+public class TreatmentStepMomentComparatorTest {
     
     @Test
     public void testCompare() {
@@ -37,8 +37,8 @@ public class DatumMomentComparatorTest {
                 compare(new TreatmentStep(2, -9, -7), new TreatmentStep(3, 0, -2)) < 0);
     }
 
-    private static DatumMomentComparator makeComparator(MeasurementAxis axis) {
-        return new DatumMomentComparator(axis, Correction.NONE);
+    private static TreatmentStepMomentComparator makeComparator(MeasurementAxis axis) {
+        return new TreatmentStepMomentComparator(axis, Correction.NONE);
     }
     
 }

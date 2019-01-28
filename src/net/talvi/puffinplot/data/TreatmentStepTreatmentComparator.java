@@ -22,7 +22,7 @@ import java.util.Comparator;
  *
  * @author pont
  */
-public class DatumTreatmentComparator implements Comparator<TreatmentStep> {
+public class TreatmentStepTreatmentComparator implements Comparator<TreatmentStep> {
 
     /**
      *

@@ -25,10 +25,10 @@ import static org.junit.Assert.*;
  *
  * @author pont
  */
-public class DatumTreatmentComparatorTest {
+public class TreatmentStepTreatmentComparatorTest {
 
-    final DatumTreatmentComparator comparator =
-                new DatumTreatmentComparator();
+    final TreatmentStepTreatmentComparator comparator =
+                new TreatmentStepTreatmentComparator();
     
     
     /**
