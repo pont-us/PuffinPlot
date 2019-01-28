@@ -89,18 +89,18 @@ public class SuiteRpiEstimateTest {
 
     }
 
-    private static Datum makeDatum(double magnetization,
-            TreatType treatmentType, double afIntensity,
-            double susceptibility) {
-        final Datum datum = new Datum(0, 0, magnetization);
-        datum.setTreatType(treatmentType);
-        datum.setMeasType(MeasType.CONTINUOUS);
-        datum.setAfX(afIntensity);
-        datum.setAfY(afIntensity);
-        datum.setAfZ(afIntensity);
-        datum.setMagSus(susceptibility);
-        datum.setDepth("0");
-        return datum;
+    private static TreatmentStep makeDatum(double magnetization,
+                                           TreatType treatmentType, double afIntensity,
+                                           double susceptibility) {
+        final TreatmentStep treatmentStep = new TreatmentStep(0, 0, magnetization);
+        treatmentStep.setTreatType(treatmentType);
+        treatmentStep.setMeasType(MeasType.CONTINUOUS);
+        treatmentStep.setAfX(afIntensity);
+        treatmentStep.setAfY(afIntensity);
+        treatmentStep.setAfZ(afIntensity);
+        treatmentStep.setMagSus(susceptibility);
+        treatmentStep.setDepth("0");
+        return treatmentStep;
     }
     
     private void checkWrittenFile(String expected, SuiteRpiEstimate rpis) {

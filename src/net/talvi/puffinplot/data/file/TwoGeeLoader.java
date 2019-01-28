@@ -30,12 +30,10 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-import net.talvi.puffinplot.data.ArmAxis;
-import net.talvi.puffinplot.data.Correction;
-import net.talvi.puffinplot.data.Datum;
-import net.talvi.puffinplot.data.MeasType;
-import net.talvi.puffinplot.data.TreatType;
-import net.talvi.puffinplot.data.Vec3;
+
+import net.talvi.puffinplot.data.*;
+import net.talvi.puffinplot.data.TreatmentStep;
+
 import static net.talvi.puffinplot.data.file.TwoGeeHelper.*;
 
 /**
@@ -121,7 +119,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
         Vec3 trayMoment = null; // only used for TRAY_FIRST and TRAY_NORMAL_IGNORE
         String line;
         while ((line = reader.readLine()) != null) {
-            final Datum d = readDatum(line, reader.getLineNumber());
+            final TreatmentStep d = readDatum(line, reader.getLineNumber());
             // skip lines containing no data at all
             if (d == null || (!d.hasMagSus() && !d.hasMagMoment())) continue;
             // if the first line only is tray data, save it
@@ -138,7 +136,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
                 * to attach it to, and it gets its own datum.
                 */
                 if (data.size()>0) {
-                    final Datum dPrev = data.get(data.size() - 1);
+                    final TreatmentStep dPrev = data.get(data.size() - 1);
                     if (!dPrev.isMagSusOnly()) {
                         dPrev.setMagSus(d.getMagSus());
                     } else {
@@ -148,8 +146,8 @@ public class TwoGeeLoader extends AbstractFileLoader {
                     data.add(d);
                 }
             } else {
-                Datum tray, normal, yflip;
-                Datum combined = null;
+                TreatmentStep tray, normal, yflip;
+                TreatmentStep combined = null;
                 switch (protocol) {
                     case NORMAL:
                         //data.add(d);
@@ -180,7 +178,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
                         normal = readDatum(reader.readLine(), reader.getLineNumber());
                         /* We're using the two-position measurement protocol,
                         * so we will read three lines (tray, normal, y-flipped)
-                        * and synthesize a Datum from them. */
+                        * and synthesize a TreatmentStep from them. */
                         yflip = readDatum(reader.readLine(), reader.getLineNumber());
                         //data.add(combine3(tray, normal, yflip));
                         combined = combine3(tray, normal, yflip);
@@ -210,12 +208,12 @@ public class TwoGeeLoader extends AbstractFileLoader {
 
     /** Subtracts a tray measurement from a sample measurement.
      */
-    private Datum combine2(Datum tray, Datum normal, boolean useTrayData) {
+    private TreatmentStep combine2(TreatmentStep tray, TreatmentStep normal, boolean useTrayData) {
         if (tray == null || normal == null) return null;
         final Vec3 trayV = tray.getMoment(Correction.NONE);
         final Vec3 normV = normal.getMoment(Correction.NONE);
         // The volume correction's already been applied on loading.
-        Datum result = useTrayData ? tray : normal;
+        TreatmentStep result = useTrayData ? tray : normal;
         result.setMoment(normV.minus(trayV));
         return result;
     }
@@ -224,7 +222,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
         return Vec3.mean(Arrays.asList(vectors));
     }
     
-    private Datum combine3(Datum tray, Datum normal, Datum reversed) {
+    private TreatmentStep combine3(TreatmentStep tray, TreatmentStep normal, TreatmentStep reversed) {
         /* We'll keep the rest of the data from the first (tray)
          * measurement, and just poke in the magnetic moment vector
          * calculated from the three readings.
@@ -282,8 +280,8 @@ public class TwoGeeLoader extends AbstractFileLoader {
         sensorLengths = v;
     }
 
-    private Datum readDatum(String line, int lineNumber) {
-        Datum d = null;
+    private TreatmentStep readDatum(String line, int lineNumber) {
+        TreatmentStep d = null;
         if (line == null) {
             addMessage("File ended unexpectedly at line %d -- "
                     + "is 2G Protocol correctly set in Preferences?",
@@ -385,11 +383,11 @@ public class TwoGeeLoader extends AbstractFileLoader {
         return result;
     }
     
-    private Datum lineToDatum(String line, int lineNumber) {
+    private TreatmentStep lineToDatum(String line, int lineNumber) {
         final FieldReader r = new FieldReader(line);
         
-        // This Datum will be initialized with a default volume and area.
-        final Datum d = new Datum();
+        // This TreatmentStep will be initialized with a default volume and area.
+        final TreatmentStep d = new TreatmentStep();
         
         final MeasType measType;
         if (fieldExists("Meas. type")) {
@@ -402,7 +400,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
             measType = MeasType.DISCRETE;
         }
         
-        // Default values for area and volume are hard-coded in the Datum
+        // Default values for area and volume are hard-coded in the TreatmentStep
         // class, and will be used here if nothing is specified in the file.
         d.setArea(r.getDouble("Area", d.getArea()));
         d.setVolume(r.getDouble("Volume", d.getVolume()));

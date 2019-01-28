@@ -50,7 +50,7 @@ public class CoreSectionTest {
             final String depthString = String.format("%d", depth);
             final Sample sample = new Sample(depthString, null);
             for (int demag=0; demag<100; demag += 10) {
-                final Datum d = new Datum((depth+1.)*(100.-demag),
+                final TreatmentStep d = new TreatmentStep((depth+1.)*(100.-demag),
                         depth*50, demag);
                 d.setDepth(depthString);
                 d.setMeasType(MeasType.CONTINUOUS);
@@ -140,7 +140,7 @@ public class CoreSectionTest {
     
     private static List<Vec3> extractDatumDirections(CoreSection section) {
         return section.getSamples().stream().flatMap(s -> s.getData().stream()).
-                map(Datum::getMoment).collect(Collectors.toList());
+                map(TreatmentStep::getMoment).collect(Collectors.toList());
     }
     
     @Test
@@ -226,7 +226,7 @@ public class CoreSectionTest {
             Sample s = new Sample("test" + i, null);
             for (Vec3 v: new Vec3[] {inputDirs.get(i),
                 inputDirs.get(i).times(0.5)} ) {
-                    Datum d = new Datum(v);
+                    TreatmentStep d = new TreatmentStep(v);
                     s.addDatum(d);
                     d.setInPca(true);
                     d.setPcaAnchored(true);

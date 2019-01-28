@@ -27,7 +27,7 @@ import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
-import net.talvi.puffinplot.data.Datum;
+import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.DatumField;
 
 /**
@@ -119,7 +119,7 @@ public class TableWindow extends JFrame {
         @Override
         public Object getValueAt(int row, int col) {
             try {
-                final Datum d = params.getSample().getData().get(row);
+                final TreatmentStep d = params.getSample().getData().get(row);
                 return d.getValue(DatumField.values()[col]);
             } catch (NullPointerException e) {
                 throw new RuntimeException("row " + row + " col " + col, e);

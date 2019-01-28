@@ -28,13 +28,9 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-import net.talvi.puffinplot.data.Correction;
-import net.talvi.puffinplot.data.Datum;
-import net.talvi.puffinplot.data.MeasType;
-import net.talvi.puffinplot.data.Sample;
-import net.talvi.puffinplot.data.Suite;
-import net.talvi.puffinplot.data.TreatType;
-import net.talvi.puffinplot.data.Vec3;
+
+import net.talvi.puffinplot.data.*;
+import net.talvi.puffinplot.data.TreatmentStep;
 import org.junit.rules.TemporaryFolder;
 
 /**
@@ -59,7 +55,7 @@ public class TestUtils {
         final String depthString = String.format("%f", depth);
         final Sample sample = new Sample(depthString, null);
         for (int j = 3; j > 0; j--) {
-            final Datum d = new Datum(direction.times(j));
+            final TreatmentStep d = new TreatmentStep(direction.times(j));
             d.setMeasType(MeasType.CONTINUOUS);
             d.setInPca(true);
             sample.addDatum(d);
@@ -84,7 +80,7 @@ public class TestUtils {
             final String sampleName = String.format("SAMPLE_%d", sampleIndex);
             final Sample sample = new Sample(sampleName, suite);
             for (int demag = 0; demag < 100; demag += 10) {
-                final Datum d = new Datum((sampleIndex + 1.0) * (100.0 - demag), sampleIndex * 50, demag);
+                final TreatmentStep d = new TreatmentStep((sampleIndex + 1.0) * (100.0 - demag), sampleIndex * 50, demag);
                 d.setDiscreteId(sampleName);
                 d.setSuite(suite);
                 d.setMeasType(MeasType.DISCRETE);
@@ -112,7 +108,7 @@ public class TestUtils {
             final String depthString = String.format("%d", depth);
             final Sample sample = new Sample(depthString, suite);
             for (int demag = 0; demag < 100; demag += 10) {
-                final Datum d = new Datum((depth + 1.0) * (100.0 - demag),
+                final TreatmentStep d = new TreatmentStep((depth + 1.0) * (100.0 - demag),
                         depth * 50, demag);
                 d.setDepth(depthString);
                 d.setSuite(suite);

@@ -63,10 +63,10 @@ public class ZPlot extends Plot {
         this.prefs = prefs;
     }
 
-    private static Rectangle2D extent(List<Datum> sample, Correction c,
-            MeasurementAxis axis1, MeasurementAxis axis2) {
-        final Comparator<Datum> xComp = new DatumMomentComparator(axis1, c);
-        final Comparator<Datum> yComp = new DatumMomentComparator(axis2, c);
+    private static Rectangle2D extent(List<TreatmentStep> sample, Correction c,
+                                      MeasurementAxis axis1, MeasurementAxis axis2) {
+        final Comparator<TreatmentStep> xComp = new DatumMomentComparator(axis1, c);
+        final Comparator<TreatmentStep> yComp = new DatumMomentComparator(axis2, c);
         final double xMin = min(sample, xComp).getMoment(c).getComponent(axis1);
         final double xMax = max(sample, xComp).getMoment(c).getComponent(axis1);
         final double yMin = min(sample, yComp).getMoment(c).getComponent(axis2);
@@ -134,7 +134,7 @@ public class ZPlot extends Plot {
     public void draw(Graphics2D g) {
         final Sample sample = params.getSample();
         if (sample==null) return;
-        final List<Datum> data = sample.getVisibleData();
+        final List<TreatmentStep> data = sample.getVisibleData();
         if (data.isEmpty()) return;
         
         clearPoints();
@@ -177,7 +177,7 @@ public class ZPlot extends Plot {
 
         
         boolean first = true;
-        for (Datum d: data) {
+        for (TreatmentStep d: data) {
             final Vec3 v = d.getMoment(correction);
             // Plot the point in the horizontal plane
             final double x = xOffset + v.getComponent(hProjXax) * scale;
@@ -191,7 +191,7 @@ public class ZPlot extends Plot {
         }
         
         first = true;
-        for (Datum d: data) {
+        for (TreatmentStep d: data) {
             Vec3 v = d.getMoment(correction);
             // Now plot the point in the vertical plane
             final double x = xOffset + v.getComponent(vProjXax) * scale;

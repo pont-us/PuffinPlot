@@ -22,7 +22,7 @@ import java.util.Comparator;
  *
  * @author pont
  */
-public class DatumTreatmentComparator implements Comparator<Datum> {
+public class DatumTreatmentComparator implements Comparator<TreatmentStep> {
 
     /**
      *
@@ -31,7 +31,7 @@ public class DatumTreatmentComparator implements Comparator<Datum> {
      * @return
      */
     @Override
-    public int compare(Datum d0, Datum d1) {
+    public int compare(TreatmentStep d0, TreatmentStep d1) {
         if (d0.getTreatType() != d1.getTreatType()) {
             return 0;
         }

@@ -30,7 +30,7 @@ import java.util.Comparator;
  * 
  * @author pont
  */
-public class DatumMomentComparator implements Comparator<Datum> {
+public class DatumMomentComparator implements Comparator<TreatmentStep> {
 
     private final MeasurementAxis axis;
     private final Correction corr;
@@ -53,17 +53,17 @@ public class DatumMomentComparator implements Comparator<Datum> {
      * Compares the magnetic moments of the supplied datum objects
      * using the criteria specified in the constructor.
      * 
-     * @param datum1 the first datum to be compared
-     * @param datum2 the second datum to be compared
+     * @param treatmentStep1 the first datum to be compared
+     * @param treatmentStep2 the second datum to be compared
      * @return the result of the comparison (less than 0, 0, or greater
      * than 0, according as the value from the first datum is less than,
      * equal to, or greater than the corresponding value from the second datum)
      * @see java.lang.Double#compare(double, double) 
      */
     @Override
-    public int compare(Datum datum1, Datum datum2) {
+    public int compare(TreatmentStep treatmentStep1, TreatmentStep treatmentStep2) {
         // TODO ensure that the moment is non-null.
-        return Double.compare(datum1.getMoment(corr).getComponent(axis),
-                datum2.getMoment(corr).getComponent(axis));
+        return Double.compare(treatmentStep1.getMoment(corr).getComponent(axis),
+                treatmentStep2.getMoment(corr).getComponent(axis));
     }
 }

@@ -19,7 +19,7 @@ package net.talvi.puffinplot.plots;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Point2D;
-import net.talvi.puffinplot.data.Datum;
+import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Sample;
 
 interface PlotPoint {
@@ -29,7 +29,7 @@ interface PlotPoint {
     void drawWithPossibleLine(Graphics2D g, PlotPoint prev,
             boolean annotate);
 
-    Datum getDatum();
+    TreatmentStep getTreatmentStep();
     
     Sample getSample();
 

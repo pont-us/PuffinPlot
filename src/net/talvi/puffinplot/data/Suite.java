@@ -268,8 +268,8 @@ public final class Suite implements SampleGroup {
             csvWriter.writeCsv(fields);
 
             for (Sample sample : getSamples()) {
-                for (Datum datum : sample.getData()) {
-                    csvWriter.writeCsv(datum.toStrings());
+                for (TreatmentStep treatmentStep : sample.getData()) {
+                    csvWriter.writeCsv(treatmentStep.toStrings());
                 }
             }
             // csvWriter.close();
@@ -327,7 +327,7 @@ public final class Suite implements SampleGroup {
      * of is invalid (i.e. it is null, UNSET, or incompatible with this suite's
      * measurement type)
      */
-    public void addDatum(Datum d) {
+    public void addDatum(TreatmentStep d) {
         Objects.requireNonNull(d);
         Objects.requireNonNull(d.getMeasType());
         if (d.getMeasType() == MeasType.UNSET) {
@@ -498,7 +498,7 @@ public final class Suite implements SampleGroup {
         loadWarnings.clear();
         
         files = expandDirs(files);
-        final ArrayList<Datum> tempDataList = new ArrayList<>();
+        final ArrayList<TreatmentStep> tempDataList = new ArrayList<>();
         List<String> puffinLines = Collections.emptyList();
         boolean sensorLengthWarning = false;
         /* If fileType is PUFFINPLOT_NEW, originalFileType can
@@ -568,9 +568,9 @@ public final class Suite implements SampleGroup {
             }
             
             if (loader != null) {
-                final List<Datum> loadedData = loader.getData();
+                final List<TreatmentStep> loadedData = loader.getData();
                 
-                final Set<MeasType> measTypes = Datum.measTypes(loadedData);
+                final Set<MeasType> measTypes = TreatmentStep.measTypes(loadedData);
                 
                 boolean dataIsOk = true;
                 if (measTypes.contains(MeasType.DISCRETE) &&
@@ -605,7 +605,7 @@ public final class Suite implements SampleGroup {
                 if (dataIsOk) {
                     tempDataList.ensureCapacity(tempDataList.size() +
                             loadedData.size());
-                    for (Datum d: loadedData) {
+                    for (TreatmentStep d: loadedData) {
                         // TODO: check for matching measurement type here
                         if (!d.ignoreOnLoading()) addDatum(d);
                     }
@@ -1021,8 +1021,8 @@ public final class Suite implements SampleGroup {
     private void setMeasType(MeasType measType) {
         this.measType = measType;
         for (Sample sample: getSamples()) {
-            for (Datum datum: sample.getData()) {
-                datum.setMeasType(measType);
+            for (TreatmentStep treatmentStep : sample.getData()) {
+                treatmentStep.setMeasType(measType);
             }
         }
     }
@@ -1271,7 +1271,7 @@ public final class Suite implements SampleGroup {
                     /*
                      * We create a sample here if returned sample is null, to
                      * deal with suites which have samples with no associated
-                     * Datum lines.
+                     * TreatmentStep lines.
                      */
                     if (sample == null) {
                         sample = new Sample(sampleId, this);
@@ -1435,8 +1435,8 @@ public final class Suite implements SampleGroup {
             final String discreteId = sample.getDiscreteId();
             if (rotations.containsKey(discreteId)) {
                 final double rotationAngle = rotations.get(discreteId);
-                for (Datum datum: sample.getData()) {
-                    datum.setMoment(datum.getMoment().
+                for (TreatmentStep treatmentStep : sample.getData()) {
+                    treatmentStep.setMoment(treatmentStep.getMoment().
                             rotZ(Math.toRadians(rotationAngle)));
                 }
             }
@@ -1456,10 +1456,10 @@ public final class Suite implements SampleGroup {
     }
     
     /**
-     * Within each of the supplied samples, merges any Datum objects
+     * Within each of the supplied samples, merges any TreatmentStep objects
      * which have the same treatment type and treatment level.
      *
-     * @param samplesToMerge samples containing the Datum objects to merge
+     * @param samplesToMerge samples containing the TreatmentStep objects to merge
      * (where possible)
      */
     public void mergeDuplicateTreatmentSteps(
@@ -1818,8 +1818,8 @@ public final class Suite implements SampleGroup {
     public void rescaleMagSus(double factor) {
         setSaved(false);
         for (Sample sample: samples) {
-            for (Datum datum: sample.getData()) {
-                datum.setMagSus(datum.getMagSus() * factor);
+            for (TreatmentStep treatmentStep : sample.getData()) {
+                treatmentStep.setMagSus(treatmentStep.getMagSus() * factor);
             }
         }
     }

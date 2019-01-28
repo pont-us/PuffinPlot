@@ -24,13 +24,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.Util;
-import net.talvi.puffinplot.data.Datum;
-import net.talvi.puffinplot.data.DatumField;
-import net.talvi.puffinplot.data.FieldUnit;
-import net.talvi.puffinplot.data.MeasType;
-import net.talvi.puffinplot.data.MomentUnit;
-import net.talvi.puffinplot.data.TreatType;
-import net.talvi.puffinplot.data.Vec3;
+import net.talvi.puffinplot.data.*;
+import net.talvi.puffinplot.data.TreatmentStep;
 
 /**
  * This class represents an ASCII-based file format with one row per
@@ -98,22 +93,22 @@ public final class FileFormat {
     }
     
     /**
-     * Creates a {@link Datum} from a line formatted according to this format.
+     * Creates a {@link TreatmentStep} from a line formatted according to this format.
      * 
      * @param line a line formatted according this this format
      * @return the datum defined by the supplied line
      */
-    public Datum readLine(String line) {
+    public TreatmentStep readLine(String line) {
         final String[] fieldStrings = splitLine(line);
-        final Datum datum = new Datum();
-        datum.setMeasType(measurementType);
-        datum.setTreatType(treatmentType);
-        datum.setDepth("0");
-        datum.setDiscreteId("UNKNOWN");
-        datum.setSampAz(0);
-        datum.setSampDip(90);
-        datum.setFormAz(0);
-        datum.setFormDip(0);
+        final TreatmentStep treatmentStep = new TreatmentStep();
+        treatmentStep.setMeasType(measurementType);
+        treatmentStep.setTreatType(treatmentType);
+        treatmentStep.setDepth("0");
+        treatmentStep.setDiscreteId("UNKNOWN");
+        treatmentStep.setSampAz(0);
+        treatmentStep.setSampDip(90);
+        treatmentStep.setFormAz(0);
+        treatmentStep.setFormDip(0);
         double dec = Double.NaN, inc = Double.NaN, intensity = Double.NaN;
         for (int i=0; i<fieldStrings.length; i++) {
             if (!columnMap.containsKey(i)) continue;
@@ -145,30 +140,30 @@ public final class FileFormat {
                     inc = Util.parseDoubleSafely(valueString);
                     break;
                 default:
-                    datum.setValue(fieldType, fieldStrings[i], scale);
+                    treatmentStep.setValue(fieldType, fieldStrings[i], scale);
             }
         }
         if (!(Double.isNaN(dec) || Double.isNaN(inc))) {
             if (Double.isNaN(intensity)) {
                 intensity = 1;
             }
-            datum.setMoment(Vec3.fromPolarDegrees(intensity, inc, dec));
+            treatmentStep.setMoment(Vec3.fromPolarDegrees(intensity, inc, dec));
         }
         if (specifiesVolume) {
-            datum.setMoment(datum.getMoment().divideBy(datum.getVolume()));
+            treatmentStep.setMoment(treatmentStep.getMoment().divideBy(treatmentStep.getVolume()));
         }
-        return datum;
+        return treatmentStep;
     }
     
     /**
      * Reds a list of lines in this format and produces the corresponding
-     * {@link Datum}s.
+     * {@link TreatmentStep}s.
      * 
      * @param lines a list of lines in this format
      * @return the data defined by the lines (in the same order)
      */
-    public List<Datum> readLines(List<String> lines) {
-        final List<Datum> data = new ArrayList<>(lines.size() - headerLines);
+    public List<TreatmentStep> readLines(List<String> lines) {
+        final List<TreatmentStep> data = new ArrayList<>(lines.size() - headerLines);
         for (int i=headerLines; i<lines.size(); i++) {
             data.add(readLine(lines.get(i)));
         }

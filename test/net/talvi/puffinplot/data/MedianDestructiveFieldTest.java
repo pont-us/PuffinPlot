@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import net.talvi.puffinplot.TestUtils;
-import net.talvi.puffinplot.Util;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -89,7 +88,7 @@ public class MedianDestructiveFieldTest {
         
     }
 
-    private static void testCalculate(List<Datum> input, double[] output) {
+    private static void testCalculate(List<TreatmentStep> input, double[] output) {
         final MedianDestructiveField mdf =
                 MedianDestructiveField.calculate(input);
         
@@ -102,8 +101,8 @@ public class MedianDestructiveFieldTest {
         }
     }
 
-    private static List<Datum> makeData(double[][] levelsAndIntensities) {
-        final List<Datum> data = new ArrayList<>(levelsAndIntensities.length);
+    private static List<TreatmentStep> makeData(double[][] levelsAndIntensities) {
+        final List<TreatmentStep> data = new ArrayList<>(levelsAndIntensities.length);
         for (double[] levelAndIntensity: levelsAndIntensities) {
             assert(levelAndIntensity.length == 2);
             data.add(makeDatum(levelAndIntensity[0], levelAndIntensity[1]));
@@ -111,8 +110,8 @@ public class MedianDestructiveFieldTest {
         return data;
     }
 
-    private static Datum makeDatum(double treatmentLevel, double intensity) {
-        final Datum d = new Datum(intensity, 0, 0);
+    private static TreatmentStep makeDatum(double treatmentLevel, double intensity) {
+        final TreatmentStep d = new TreatmentStep(intensity, 0, 0);
         d.setTreatType(TreatType.DEGAUSS_XYZ);
         d.setAfX(treatmentLevel);
         d.setAfY(treatmentLevel);

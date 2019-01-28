@@ -26,7 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.talvi.puffinplot.data.Datum;
+import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.Vec3;
@@ -137,7 +137,7 @@ public class PmdLoaderTest {
                 TestFileLocator.class.getResourceAsStream(filenameAndData[0]);
         final PmdLoader pmdLoader =
                 new PmdLoader(stream, Collections.emptyMap(), filenameAndData[0]);
-        final List<Datum> loadedData = pmdLoader.getData();
+        final List<TreatmentStep> loadedData = pmdLoader.getData();
         if (!pmdLoader.messages.isEmpty()){
             System.out.println(pmdLoader.messages);
         }
@@ -145,11 +145,11 @@ public class PmdLoaderTest {
     }
     
     private void checkData(double[][] expected, String[] expectedStrings,
-            List<Datum> actual) {
+            List<TreatmentStep> actual) {
         assertEquals(expected.length-1, actual.size());
         for (int i=0; i<actual.size(); i++) {
             final double[] expVals = expected[i+1];
-            final Datum d = actual.get(i);
+            final TreatmentStep d = actual.get(i);
             assertEquals(new Vec3(expVals[2], expVals[3], expVals[4]).
                     divideBy(expected[0][4]), d.getMoment());
             assertEquals(expected[0][0], d.getSampAz(), 1e-10);

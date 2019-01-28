@@ -16,7 +16,7 @@
  */
 package net.talvi.puffinplot.window;
 
-import net.talvi.puffinplot.data.Datum;
+import net.talvi.puffinplot.data.TreatmentStep;
 
 /**
  * A listener for changes in the current datum (i.e. treatment step).
@@ -35,5 +35,5 @@ public interface CurrentDatumListener {
      * pointer, or {@code null} if there is no datum-related point under the
      * mouse pointer.
      */
-    public void datumChanged(Datum d);
+    public void datumChanged(TreatmentStep d);
 }

@@ -27,7 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.talvi.puffinplot.data.Datum;
+import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.Vec3;
@@ -149,7 +149,7 @@ public class CaltechLoader extends AbstractFileLoader {
              */
             while ((line = subReader.readLine()) != null) {
                 if (line.trim().isEmpty()) continue;
-                final Datum d = lineToDatum(line);
+                final TreatmentStep d = lineToDatum(line);
                 if (d != null) {
                     d.setDiscreteId(sampleName);
                     //d.setSampAz((coreStrike + 90) % 360);
@@ -164,7 +164,7 @@ public class CaltechLoader extends AbstractFileLoader {
         }
     }
 
-    private Datum lineToDatum(String pmagLine) {
+    private TreatmentStep lineToDatum(String pmagLine) {
 
         final Matcher matcher = pattern.matcher(pmagLine);
         matcher.find();
@@ -208,8 +208,8 @@ public class CaltechLoader extends AbstractFileLoader {
                         new Object[] {demagLevelString, file.getName()});
             }
         }
-        final Datum d =
-                new Datum(gaussToAm(Vec3.fromPolarDegrees(intens, inc, dec)));
+        final TreatmentStep d =
+                new TreatmentStep(gaussToAm(Vec3.fromPolarDegrees(intens, inc, dec)));
         d.setMeasType(MeasType.DISCRETE);
         
         final String treatment = matcher.group(1);

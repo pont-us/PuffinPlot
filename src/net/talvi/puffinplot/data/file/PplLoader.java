@@ -28,7 +28,8 @@ import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.talvi.puffinplot.data.Correction;
-import net.talvi.puffinplot.data.Datum;
+import net.talvi.puffinplot.data.TreatmentStep;
+
 import java.util.regex.Pattern;
 import static net.talvi.puffinplot.data.file.TwoGeeHelper.*;
 import static java.lang.Double.isNaN;
@@ -46,7 +47,7 @@ public class PplLoader extends AbstractFileLoader {
     private static final Pattern puffinHeader =
             Pattern.compile("^PuffinPlot file. Version (\\d+)");
     private LineNumberReader reader;
-    private Datum.Reader datumReader;
+    private TreatmentStep.Reader datumReader;
     private int treatmentField;
     private int version;
     private List<String> extraLines = Collections.emptyList();
@@ -85,7 +86,7 @@ public class PplLoader extends AbstractFileLoader {
             }
             List<String> headers = Arrays.asList(headerLine.split("\t"));
             treatmentField = headers.indexOf("TREATMENT");
-            datumReader = new Datum.Reader(headers);
+            datumReader = new TreatmentStep.Reader(headers);
             readFile();
         } catch (IOException | MalformedFileException e) {
             addMessage(e.getMessage());
@@ -106,13 +107,13 @@ public class PplLoader extends AbstractFileLoader {
             if (version==2) {
                 // Ppl 2 files still use the 2G strings for treatment types,
                 // so we munge it into a suitable input for TreatType.valueOf
-                // before passing it to the Datum reader.
+                // before passing it to the TreatmentStep reader.
                 values.set(treatmentField, treatTypeFromString(values.get
                         (treatmentField)).toString());
                 // Fortunately, measurement type strings happen to carry
                 // across so we don't need to munge them.
             }
-            Datum d = null;
+            TreatmentStep d = null;
             try {
                 d = datumReader.fromStrings(values);
             } catch (NumberFormatException e) {

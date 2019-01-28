@@ -27,7 +27,7 @@ import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.List;
-import net.talvi.puffinplot.data.Datum;
+import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Sample;
 
 /**
@@ -38,7 +38,7 @@ import net.talvi.puffinplot.data.Sample;
 class TextLinePoint implements PlotPoint {
 
     private final Plot plot;
-    private final Datum datum;
+    private final TreatmentStep treatmentStep;
     private final Sample sample;
     private final double yPos;
     private final List<Double> xSpacing;
@@ -47,11 +47,11 @@ class TextLinePoint implements PlotPoint {
     private final double xMin;
     private final Color colour;
 
-    public TextLinePoint(Plot plot, Graphics2D g, double yOffset, Datum d,
+    public TextLinePoint(Plot plot, Graphics2D g, double yOffset, TreatmentStep d,
             Sample sample, List<String> values, List<Double> xSpacing,
             Color colour) {
         this.plot = plot;
-        this.datum = d;
+        this.treatmentStep = d;
         this.sample = sample;
         this.yPos = yOffset + plot.getDimensions().getMinY();
         this.xSpacing = xSpacing;
@@ -83,11 +83,11 @@ class TextLinePoint implements PlotPoint {
     @Override
     public void draw(Graphics2D g) {
         g.setColor(colour);
-        if (datum != null) {
-            if (datum.isSelected()) {
+        if (treatmentStep != null) {
+            if (treatmentStep.isSelected()) {
                 plot.writeString(g, "*", (float) xMin, (float) yPos);
             }
-            if (datum.isHidden()) {
+            if (treatmentStep.isHidden()) {
                 plot.writeString(g, "-", (float) xMin, (float) yPos);
             }
         }
@@ -120,8 +120,8 @@ class TextLinePoint implements PlotPoint {
     }
 
     @Override
-    public Datum getDatum() {
-        return datum;
+    public TreatmentStep getTreatmentStep() {
+        return treatmentStep;
     }
     
     @Override

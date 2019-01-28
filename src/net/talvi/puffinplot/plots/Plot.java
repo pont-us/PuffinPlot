@@ -34,7 +34,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
-import net.talvi.puffinplot.data.Datum;
+import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
@@ -364,8 +364,8 @@ public abstract class Plot
      * point to this one.
      * @return the point which was created
      */
-    protected PlotPoint addPoint(Datum d, Point2D p, boolean filled,
-            boolean special, boolean line) {
+    protected PlotPoint addPoint(TreatmentStep d, Point2D p, boolean filled,
+                                 boolean special, boolean line) {
         final ShapePoint pp = ShapePoint.build(this, p).datum(d).
                 filled(filled).lineToHere(line).special(special).
                 build();
@@ -525,7 +525,7 @@ public abstract class Plot
         }
         final boolean sloppy = e.isShiftDown();
         for (PlotPoint p : points) {
-            final Datum d = p.getDatum();
+            final TreatmentStep d = p.getTreatmentStep();
             if (d != null && !d.isHidden()) {
             if (sloppy) {
                 if (p.isNear(position, SLOPPY_SELECTION_RADIUS_IN_UNITS * getUnitSize())) {
@@ -552,9 +552,9 @@ public abstract class Plot
      * @param position a position
      * @return the datum whose point is at the position, if any -- otherwise null
      */
-    public Datum getDatumForPosition(java.awt.geom.Point2D position) {
+    public TreatmentStep getDatumForPosition(java.awt.geom.Point2D position) {
         for (PlotPoint p: points) {
-            final Datum d = p.getDatum();
+            final TreatmentStep d = p.getTreatmentStep();
             if (d != null && !d.isHidden() && p.getShape().contains(position)) {
                 return d;
             }
@@ -570,10 +570,10 @@ public abstract class Plot
      */
     public void selectByRectangle(Rectangle2D rectangle, boolean state) {
         for (PlotPoint point: points) {
-            if (point.getDatum() != null && 
-                    !point.getDatum().isHidden() &&
+            if (point.getTreatmentStep() != null &&
+                    !point.getTreatmentStep().isHidden() &&
                     point.getShape().intersects(rectangle)) {
-                point.getDatum().setSelected(state);
+                point.getTreatmentStep().setSelected(state);
             }
         }
     }

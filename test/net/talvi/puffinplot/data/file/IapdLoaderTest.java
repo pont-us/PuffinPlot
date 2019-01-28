@@ -24,13 +24,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.talvi.puffinplot.data.Correction;
-import net.talvi.puffinplot.data.Datum;
-import net.talvi.puffinplot.data.FileType;
-import net.talvi.puffinplot.data.MeasType;
-import net.talvi.puffinplot.data.Sample;
-import net.talvi.puffinplot.data.Suite;
-import net.talvi.puffinplot.data.TreatType;
+
+import net.talvi.puffinplot.data.*;
+import net.talvi.puffinplot.data.TreatmentStep;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -148,7 +144,7 @@ public class IapdLoaderTest {
             final double decRaw = fields[5];
             final double incRaw = fields[6];
             
-            final Datum d = sample.getDatumByTreatmentLevel(demagLevel);
+            final TreatmentStep d = sample.getDatumByTreatmentLevel(demagLevel);
             assertEquals(intensity, d.getIntensity(), 1e-10);
             assertEquals(decSamp, d.getMoment(sampCorr).getDecDeg(), 0.05);
             assertEquals(incSamp, d.getMoment(sampCorr).getIncDeg(), 0.05);

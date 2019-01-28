@@ -23,7 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
 import net.talvi.puffinplot.PuffinApp;
-import net.talvi.puffinplot.data.Datum;
+import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.TreatType;
 
@@ -115,8 +115,8 @@ public class TreatmentWindow extends JFrame implements ActionListener {
         if (event.getSource() == setButton) {
             final TreatType treatType = treatmentCombo.getTreatmentType();
             for (Sample sample: app.getSelectedSamples()) {
-                for (Datum datum: sample.getData()) {
-                    datum.setTreatType(treatType);
+                for (TreatmentStep treatmentStep : sample.getData()) {
+                    treatmentStep.setTreatType(treatType);
                 }
             }
             setVisible(false);

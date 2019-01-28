@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import net.talvi.puffinplot.data.Datum;
+import net.talvi.puffinplot.data.TreatmentStep;
 
 /**
  * An abstract implementation of the {@link FileLoader} interface.
@@ -31,18 +31,18 @@ import net.talvi.puffinplot.data.Datum;
 abstract class AbstractFileLoader implements FileLoader {
 
     protected List<String> messages = new LinkedList<>();
-    protected List<Datum> data = new ArrayList<>();;
+    protected List<TreatmentStep> data = new ArrayList<>();;
 
     protected void addMessage(String message, Object... args) {
         messages.add(String.format(message, args));
     }
 
-    protected void addDatum(Datum d) {
+    protected void addDatum(TreatmentStep d) {
         data.add(d);
     }
 
     @Override
-    public List<Datum> getData() {
+    public List<TreatmentStep> getData() {
         return data;
     }
 

@@ -25,12 +25,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.talvi.puffinplot.data.Correction;
-import net.talvi.puffinplot.data.Datum;
-import net.talvi.puffinplot.data.MeasType;
-import net.talvi.puffinplot.data.Sample;
-import net.talvi.puffinplot.data.Suite;
-import net.talvi.puffinplot.data.TreatType;
+
+import net.talvi.puffinplot.data.*;
+import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.file.testdata.TestFileLocator;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -662,13 +659,13 @@ public class Jr6LoaderTest {
                 TestFileLocator.class.getResourceAsStream(filename);
         
         final Jr6Loader jr6loader = new Jr6Loader(stream, filename);
-        final List<Datum> loadedData = jr6loader.getData();
+        final List<TreatmentStep> loadedData = jr6loader.getData();
         assertFalse(loadedData.isEmpty());
         assertTrue(loadedData.stream().
                 allMatch(d -> d.getMeasType() == MeasType.DISCRETE));
 
         final Suite suite = new Suite("test");
-        for (Datum d: loadedData) {
+        for (TreatmentStep d: loadedData) {
             suite.addDatum(d);
         }
         
@@ -682,49 +679,49 @@ public class Jr6LoaderTest {
             final double[][] expSample = expFile[sampleIndex];
             assertEquals(expSample.length, sample.getData().size());
             for (int i = 0; i < expSample.length; i++) {
-                final Datum actualDatum = sample.getData().get(i);
+                final TreatmentStep actualTreatmentStep = sample.getData().get(i);
                 final double[] expectedValues = expSample[i];
-                checkOneDatum(expectedValues, actualDatum,
+                checkOneDatum(expectedValues, actualTreatmentStep,
                         specimenRotation[fileIndex]);
             }
         }
     }
 
     private void checkOneDatum(final double[] expectedValues,
-            final Datum actualDatum, double rotation) {
+                               final TreatmentStep actualTreatmentStep, double rotation) {
         assertEquals(treatmentTypes[(int) expectedValues[0]],
-                actualDatum.getTreatType());
+                actualTreatmentStep.getTreatType());
         
         final double expectedTreatmentLevel =
                 treatmentTypes[(int) expectedValues[0]].involvesAf() ?
                 expectedValues[1] / 1000 : expectedValues[1];
         assertEquals(expectedTreatmentLevel,
-                actualDatum.getTreatmentLevel(), 1e-10);
+                actualTreatmentStep.getTreatmentLevel(), 1e-10);
         /*
          * See JavaDoc for specimenRotation for an explanation of the rotZ
          * deployed in the declination check here.
          */
         assertEquals(expectedValues[3],
-                actualDatum.getMoment().
+                actualTreatmentStep.getMoment().
                         rotZ(Math.toRadians(rotation)).getDecDeg(), 0.1);
         assertEquals(expectedValues[4],
-                actualDatum.getMoment().getIncDeg(), 0.1);
+                actualTreatmentStep.getMoment().getIncDeg(), 0.1);
         if (expectedValues[5] != 999) {
             assertEquals(expectedValues[5],
-                    actualDatum.getMoment(sampleCorrection).getDecDeg(), 0.1);
+                    actualTreatmentStep.getMoment(sampleCorrection).getDecDeg(), 0.1);
         }
         if (expectedValues[6] != 999) {
             assertEquals(expectedValues[6],
-                    actualDatum.getMoment(sampleCorrection).getIncDeg(), 0.1);
+                    actualTreatmentStep.getMoment(sampleCorrection).getIncDeg(), 0.1);
         }
         if (expectedValues[7] != 999) {
             assertEquals(expectedValues[7],
-                    actualDatum.getMoment(formationCorrection).getDecDeg(),
+                    actualTreatmentStep.getMoment(formationCorrection).getDecDeg(),
                     0.1);
         }
         if (expectedValues[8] != 999) {
             assertEquals(expectedValues[8],
-                    actualDatum.getMoment(formationCorrection).getIncDeg(),
+                    actualTreatmentStep.getMoment(formationCorrection).getIncDeg(),
                     0.1);
         }
     }

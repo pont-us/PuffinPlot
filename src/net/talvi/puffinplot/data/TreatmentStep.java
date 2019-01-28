@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 import net.talvi.puffinplot.Util;
 
 /**
- * <p>Datum is the fundamental data class of PuffinPlot. It represents the
+ * <p>TreatmentStep is the fundamental data class of PuffinPlot. It represents the
  * state of a sample at a particular point during the stepwise demagnetization
  * process. The essential item of data is the demagnetization vector
  * representing a particular magnetometer measurement. A large number of
@@ -44,11 +44,11 @@ import net.talvi.puffinplot.Util;
  * than demagnetization-step-level data, and may be moved to {@link Sample}
  * in a later version of PuffinPlot.</p>
  * 
- * <p>Datum is a mutable container class which is intended to be instantiated
+ * <p>TreatmentStep is a mutable container class which is intended to be instantiated
  * with no or very little data. Most of the fields can be set after
  * instantiation using setter methods.</p>
  * 
- * <p>In terms of PuffinPlot's user interface, a Datum often
+ * <p>In terms of PuffinPlot's user interface, a TreatmentStep often
  * defines the position and appearance of a point on one or more
  * of the plots.</p>
  * 
@@ -56,7 +56,7 @@ import net.talvi.puffinplot.Util;
  * 
  * @author pont
  */
-public class Datum {
+public class TreatmentStep {
     private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
     private static final double
             DEFAULT_AREA = 4.0, // can be overridden by Area field in file
@@ -96,7 +96,7 @@ public class Datum {
      * @param y y component of the magnetization vector
      * @param z z component of the magnetization vector
      */
-    public Datum(double x, double y, double z) {
+    public TreatmentStep(double x, double y, double z) {
         moment = new Vec3(x, y, z);
     }
     
@@ -104,14 +104,14 @@ public class Datum {
      * Creates a datum with a supplied magnetization vector.
      * @param vector the magnetization vector
      */
-    public Datum(Vec3 vector) {
+    public TreatmentStep(Vec3 vector) {
         moment = vector; // v is immutable so it's OK not to copy it
     }
 
     /**
      * Creates a datum with no data. The moment is set to zero.
      */
-    public Datum() {
+    public TreatmentStep() {
         moment = Vec3.ORIGIN;
     }
 
@@ -544,10 +544,10 @@ public class Datum {
      * @return the highest treatment level for any of the supplied datum objects
      * @throws NullPointerException if {@code data} is null
      */
-    public static double maxTreatmentLevel(List<Datum> data) {
+    public static double maxTreatmentLevel(List<TreatmentStep> data) {
         requireNonNull(data, "data must be non-null");
         double max = 0;
-        for (Datum d: data) {
+        for (TreatmentStep d: data) {
             double level = d.getTreatmentLevel();
             if (level > max) max = level;
         }
@@ -563,10 +563,10 @@ public class Datum {
      * for any of the supplied datum objects
      * @throws NullPointerException if {@code data} is null
      */
-    public static double maxIntensity(List<Datum> data) {
+    public static double maxIntensity(List<TreatmentStep> data) {
         requireNonNull(data, "data must be non-null");
         double max = 0;
-        for (Datum d: data) {
+        for (TreatmentStep d: data) {
             double i = d.getIntensity();
             if (i > max) max = i;
         }
@@ -581,10 +581,10 @@ public class Datum {
      * @return the highest magnetic susceptibility for any of the supplied datum objects
      * @throws NullPointerException if {@code data} is null
      */
-    public static double maxMagSus(List<Datum> data) {
+    public static double maxMagSus(List<TreatmentStep> data) {
         requireNonNull(data, "data must be non-null");
         double max = 0;
-        for (Datum d: data) {
+        for (TreatmentStep d: data) {
             double level = d.getMagSus();
             if (!Double.isNaN(level) && level > max) max = level;
         }
@@ -821,8 +821,8 @@ public class Datum {
          * @param strings string representations of data values
          * @return a datum object containing the supplied values
          */
-        public Datum fromStrings(List<String> strings) {
-            final Datum d = new Datum(Vec3.ORIGIN);
+        public TreatmentStep fromStrings(List<String> strings) {
+            final TreatmentStep d = new TreatmentStep(Vec3.ORIGIN);
             for (int i=0; i<strings.size(); i++) {
                 d.setValue(fields.get(i), strings.get(i), 1.);
             }
@@ -881,13 +881,13 @@ public class Datum {
      * Returns a set of all the measurement types of the supplied data.
      * 
      * 
-     * @param data a collection of Datum objects
+     * @param data a collection of TreatmentStep objects
      * @return exactly those measurement types which are present in the
      * suppled data
      */
-    public static Set<MeasType> measTypes(Collection<Datum> data) {
+    public static Set<MeasType> measTypes(Collection<TreatmentStep> data) {
         Set<MeasType> result = new HashSet<>(MeasType.values().length);
-        for (Datum d: data) {
+        for (TreatmentStep d: data) {
             result.add(d.getMeasType());
         }
         return result;
@@ -900,7 +900,7 @@ public class Datum {
      * @param data data from which to calculate the mean magnetization vector;
      *   must be non-null and non-empty
      */
-    public void setMomentToMean(List<Datum> data) {
+    public void setMomentToMean(List<TreatmentStep> data) {
         Objects.requireNonNull(data);
         if (data.isEmpty()) {
             throw new IllegalArgumentException("Empty list passed to"

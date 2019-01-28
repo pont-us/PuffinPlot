@@ -47,7 +47,7 @@ public class SampleTest {
     private static Sample makeSimpleSample() {
         final Sample s = new Sample("Test sample", null);
         for (int i=0; i<10; i++) {
-            final Datum d = new Datum(10-i, 20-i, 30-i);
+            final TreatmentStep d = new TreatmentStep(10-i, 20-i, 30-i);
             d.setTreatType(TreatType.DEGAUSS_XYZ);
             d.setAfX(i);
             d.setAfY(i);
@@ -66,7 +66,7 @@ public class SampleTest {
         for (int i = 0; i < mins.length; i++) {
             simpleSample.selectByTreatmentLevelRange(mins[i], maxs[i]);
 
-            for (Datum d: simpleSample.getData()) {
+            for (TreatmentStep d: simpleSample.getData()) {
                 final boolean shouldBeSelected
                         = d.getTreatmentLevel() >= mins[i]
                         && d.getTreatmentLevel() <= maxs[i];
@@ -88,7 +88,7 @@ public class SampleTest {
             final double sampDip = rnd.nextDouble()*2*Math.PI-Math.PI;
             final double formAz = rnd.nextDouble()*2*Math.PI;
             final double formDip = rnd.nextDouble()*2*Math.PI-Math.PI;
-            final Datum d = new Datum();
+            final TreatmentStep d = new TreatmentStep();
             d.setSampAz(toDegrees(sampAz));
             d.setSampDip(toDegrees(sampDip));
             d.setFormAz(toDegrees(formAz));
@@ -130,7 +130,7 @@ public class SampleTest {
     private Sample makeSampleFromVectors(Vec3[] vectors) {
         final Sample sample = new Sample("test sample", null);
         for (Vec3 vector: vectors) {
-            sample.addDatum(new Datum(vector));
+            sample.addDatum(new TreatmentStep(vector));
         }
         return sample;
     }
@@ -185,7 +185,7 @@ public class SampleTest {
         final double value = 2.71;
         final Sample sample = new Sample("sample1", null);
         for (int i=0; i<3; i++) {
-            final Datum d = new Datum();
+            final TreatmentStep d = new TreatmentStep();
             sample.addDatum(d);
         }
         sample.setValue(df, String.format(Locale.ENGLISH, "%g", value));
@@ -197,12 +197,12 @@ public class SampleTest {
     @Test
     public void testGetDiscreteId() {
         final Sample sample = new Sample("sample1", null);
-        final Datum datum = new Datum(Vec3.ORIGIN);
-        datum.setMeasType(MeasType.CONTINUOUS);
+        final TreatmentStep treatmentStep = new TreatmentStep(Vec3.ORIGIN);
+        treatmentStep.setMeasType(MeasType.CONTINUOUS);
         final String discreteId = "discrete-id-1";
-        datum.setDiscreteId(discreteId);
-        datum.setSample(sample);
-        sample.addDatum(datum);
+        treatmentStep.setDiscreteId(discreteId);
+        treatmentStep.setSample(sample);
+        sample.addDatum(treatmentStep);
         assertEquals(discreteId, sample.getDiscreteId());
     }
     
@@ -215,10 +215,10 @@ public class SampleTest {
     @Test
     public void testSetDiscreteId() {
         final Sample sample = new Sample("sample1", null);
-        final Datum datum = new Datum(Vec3.ORIGIN);
-        datum.setMeasType(MeasType.CONTINUOUS);
-        datum.setSample(sample);
-        sample.addDatum(datum);
+        final TreatmentStep treatmentStep = new TreatmentStep(Vec3.ORIGIN);
+        treatmentStep.setMeasType(MeasType.CONTINUOUS);
+        treatmentStep.setSample(sample);
+        sample.addDatum(treatmentStep);
 
         final String discreteId = "discrete-id-1";
         sample.setDiscreteId(discreteId);
@@ -278,7 +278,7 @@ public class SampleTest {
 
     @Test
     public void testHideAndDeselectSelectedPoints() {
-        final Set<Datum> dataToHide = new HashSet<>();
+        final Set<TreatmentStep> dataToHide = new HashSet<>();
         for (int i = 3; i < 7; i++) {
             dataToHide.add(simpleSample.getDatum(i));
         }
@@ -379,7 +379,7 @@ public class SampleTest {
     
     @Test
     public void testTruncateData() {
-        final List<Datum> data = new ArrayList<>(simpleSample.getData());
+        final List<TreatmentStep> data = new ArrayList<>(simpleSample.getData());
         simpleSample.truncateData(7);
         assertEquals(data.subList(0, 7), simpleSample.getData());
     }
@@ -413,7 +413,7 @@ public class SampleTest {
     private static Sample makeThermalMagSusSample(double... tempsAndms) {
         final Sample s = new Sample("test", null);
         for (int i=0; i<tempsAndms.length; i+=2) {
-            final Datum d = new Datum();
+            final TreatmentStep d = new TreatmentStep();
             d.setTreatType(TreatType.THERMAL);
             d.setTemp(tempsAndms[i]);
             d.setMagSus(tempsAndms[i+1]);
@@ -429,7 +429,7 @@ public class SampleTest {
     
     @Test
     public void testIsPcaAnchored() {
-        final Datum d = new Datum();
+        final TreatmentStep d = new TreatmentStep();
         final Sample s = new Sample("test", null);
         s.addDatum(d);
         d.setPcaAnchored(false);
@@ -448,9 +448,9 @@ public class SampleTest {
     public void testGetNrm() {
         final Sample s = new Sample("test", null);
         final Vec3 nrm = new Vec3(3, 2, 1);
-        s.addDatum(new Datum(nrm));
-        s.addDatum(new Datum(nrm.times(0.8)));
-        s.addDatum(new Datum(nrm.times(0.6)));
+        s.addDatum(new TreatmentStep(nrm));
+        s.addDatum(new TreatmentStep(nrm.times(0.8)));
+        s.addDatum(new TreatmentStep(nrm.times(0.6)));
         assertEquals(nrm.mag(), s.getNrm(), delta);
     }
     
@@ -458,11 +458,11 @@ public class SampleTest {
     public void testHasMsData() {
         final Sample sample = new Sample("test", null);
         assertFalse(sample.hasMsData());
-        sample.addDatum(new Datum());
+        sample.addDatum(new TreatmentStep());
         assertFalse(sample.hasMsData());
-        final Datum datum = new Datum();
-        datum.setMagSus(1);
-        sample.addDatum(datum);
+        final TreatmentStep treatmentStep = new TreatmentStep();
+        treatmentStep.setMagSus(1);
+        sample.addDatum(treatmentStep);
         assertTrue(sample.hasMsData());
     }
     
@@ -481,9 +481,9 @@ public class SampleTest {
     }
     
     private static void addDatumWithMeasurementType(Sample sample, MeasType mt) {
-        final Datum datum = new Datum(Vec3.NORTH);
-        datum.setMeasType(mt);
-        sample.addDatum(datum);
+        final TreatmentStep treatmentStep = new TreatmentStep(Vec3.NORTH);
+        treatmentStep.setMeasType(mt);
+        sample.addDatum(treatmentStep);
     }
     
     @Test
@@ -539,9 +539,9 @@ public class SampleTest {
 
     @Test
     public void testGetDatumByTreatmentTypeAndLevel() {
-        final Datum datum = simpleSample.getDatumByTreatmentTypeAndLevel(
+        final TreatmentStep treatmentStep = simpleSample.getDatumByTreatmentTypeAndLevel(
                 Collections.singleton(TreatType.DEGAUSS_XYZ), 5);
-        assertEquals(5, datum.getTreatmentLevel(), delta);
+        assertEquals(5, treatmentStep.getTreatmentLevel(), delta);
     }
 
     @Test
@@ -619,7 +619,7 @@ public class SampleTest {
     @Test
     public void testGetVisibleData() {
         simpleSample.getDatum(5).setHidden(true);
-        final List<Datum> expected =
+        final List<TreatmentStep> expected =
                 new ArrayList<>(simpleSample.getData());
         expected.remove(5);
         assertEquals(expected, simpleSample.getVisibleData());
@@ -627,10 +627,10 @@ public class SampleTest {
     
     @Test
     public void testRemoveData() {
-        final Set<Datum> toRemove = Arrays.stream(new int[] {2, 3, 5, 6}).
+        final Set<TreatmentStep> toRemove = Arrays.stream(new int[] {2, 3, 5, 6}).
                 mapToObj(i -> simpleSample.getDatum(i)).
                 collect(Collectors.toSet());
-        final List<Datum> shouldRemain =
+        final List<TreatmentStep> shouldRemain =
                 Arrays.stream(new int[] {0, 1, 4, 7, 8, 9}).
                         mapToObj(i -> simpleSample.getDatum(i)).
                         collect(Collectors.toList());
@@ -645,7 +645,7 @@ public class SampleTest {
         final Random rnd = new Random(77);
         for (int step=0; step<3; step++) {
             final Vec3 vector = TestUtils.randomVector(rnd, 1);
-            final Datum d = new Datum(vector);
+            final TreatmentStep d = new TreatmentStep(vector);
             d.setTreatType(TreatType.THERMAL);
             d.setTemp(50);
             sample.addDatum(d);
@@ -670,14 +670,14 @@ public class SampleTest {
     public void testMergeSamplesWithOverlappingData() {
         final Sample s0 = new Sample("Sample 0", null);
         for (int i=0; i<3; i++) {
-            final Datum d = new Datum(10-i, 20-i, 30-i);
+            final TreatmentStep d = new TreatmentStep(10-i, 20-i, 30-i);
             d.setTreatType(TreatType.THERMAL);
             d.setTemp(i*100);
             s0.addDatum(d);
         }
         final Sample s1 = new Sample("Sample 1", null);
         for (int i=0; i<3; i++) {
-            final Datum d = new Datum(10-i, 20-i, 30-i);
+            final TreatmentStep d = new TreatmentStep(10-i, 20-i, 30-i);
             d.setTreatType(TreatType.THERMAL);
             d.setTemp(i*100 + 50);
             s1.addDatum(d);

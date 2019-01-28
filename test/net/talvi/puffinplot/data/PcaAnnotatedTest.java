@@ -77,13 +77,13 @@ public class PcaAnnotatedTest {
         return sample;
     }
 
-    private Datum constructDatum(final Vec3 v, double afz, boolean inPca) {
-        final Datum datum = new Datum(v);
-        datum.setInPca(inPca);
-        datum.setPcaAnchored(false);
-        datum.setTreatType(TreatType.DEGAUSS_Z);
-        datum.setAfZ(afz);
-        return datum;
+    private TreatmentStep constructDatum(final Vec3 v, double afz, boolean inPca) {
+        final TreatmentStep treatmentStep = new TreatmentStep(v);
+        treatmentStep.setInPca(inPca);
+        treatmentStep.setPcaAnchored(false);
+        treatmentStep.setTreatType(TreatType.DEGAUSS_Z);
+        treatmentStep.setAfZ(afz);
+        return treatmentStep;
     }
     
     @Test

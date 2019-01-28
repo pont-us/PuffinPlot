@@ -33,8 +33,8 @@ import java.util.Set;
 public class Line {
 
     private final int lineNumber;
-    private final Set<Datum> data;
-    // private Datum emptySlot;
+    private final Set<TreatmentStep> data;
+    // private TreatmentStep emptySlot;
 
     /** Creates a new Line with the specified line number. 
      * @param lineNumber the line number in the original data file
@@ -44,23 +44,23 @@ public class Line {
         data = new HashSet<>();
     }
 
-    /** Associates a Datum with this line. This indicates that the line number
+    /** Associates a TreatmentStep with this line. This indicates that the line number
      * which was passed to this Line's constructor is the same as the line
-     * number on which the Datum occurred in the file from which it was read.
-     * @param datum a datum to be associated with this line
+     * number on which the TreatmentStep occurred in the file from which it was read.
+     * @param treatmentStep a treatmentStep to be associated with this line
      */
-    public void add(Datum datum) {
-        data.add(datum);
+    public void add(TreatmentStep treatmentStep) {
+        data.add(treatmentStep);
     }
 
-    /** Returns the first Datum associated with this line which was a measurement
-     * of an empty tray slot, not an actual sample. Returns null if no such Datum
+    /** Returns the first TreatmentStep associated with this line which was a measurement
+     * of an empty tray slot, not an actual sample. Returns null if no such TreatmentStep
      * exists.
-     * @return the first Datum associated with this line which was a measurement
+     * @return the first TreatmentStep associated with this line which was a measurement
      * of an empty tray slot
      */
-    public Datum getEmptySlot() {
-        for (Datum d: data) {
+    public TreatmentStep getEmptySlot() {
+        for (TreatmentStep d: data) {
             if (d.getSample().isEmptySlot()) return d;
         }
         return null;

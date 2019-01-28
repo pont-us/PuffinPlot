@@ -58,7 +58,7 @@ public class PcaAnnotated {
     /**
      * Performs principal component analysis (PCA) on the specified sample.
      * Points to use for PCA are determined using the 
-     * {@link Datum#isInPca()} method. The starting and ending treatment
+     * {@link TreatmentStep#isInPca()} method. The starting and ending treatment
      * steps are stored, as is a flag indicating whether the treatment
      * step were contiguous.
      * 
@@ -67,13 +67,13 @@ public class PcaAnnotated {
      * @return results of principal component analysis
      */
     public static PcaAnnotated calculate(Sample sample, Correction correction) {
-        final List<Datum> rawData = sample.getVisibleData();
+        final List<TreatmentStep> rawData = sample.getVisibleData();
         final List<Vec3> points = new ArrayList<>(rawData.size());
-        final List<Datum> data = new ArrayList<>(rawData.size());
+        final List<TreatmentStep> data = new ArrayList<>(rawData.size());
         
         int runEndsSeen = 0;
         boolean thisIsPca = false, lastWasPca = false;
-        for (Datum d: rawData) {
+        for (TreatmentStep d: rawData) {
             thisIsPca = d.isInPca();
             if (thisIsPca) {
                 points.add(d.getMoment(correction));

@@ -17,7 +17,7 @@
 package net.talvi.puffinplot.data.file;
 
 import java.util.List;
-import net.talvi.puffinplot.data.Datum;
+import net.talvi.puffinplot.data.TreatmentStep;
 
 /**
  * An interface for classes which read data from files on disk into PuffinPlot's
@@ -30,7 +30,7 @@ public interface FileLoader {
     /** Returns the data points read from the file.
      * @return the data points read from the file
      */
-    public List<Datum> getData();
+    public List<TreatmentStep> getData();
     
     /** Returns any messages produced during the loading process. 
      * @return any messages produced during the loading process

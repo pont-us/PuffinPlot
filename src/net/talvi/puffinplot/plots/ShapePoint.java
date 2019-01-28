@@ -26,7 +26,7 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import static java.lang.Math.sqrt;
-import net.talvi.puffinplot.data.Datum;
+import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Sample;
 
 /**
@@ -39,7 +39,7 @@ class ShapePoint implements PlotPoint {
 
     private final Shape shape;
     private final Shape highlight;
-    private final Datum datum;
+    private final TreatmentStep treatmentStep;
     private final boolean filled;
     private final boolean lineToHere;
     private final boolean special;
@@ -79,7 +79,7 @@ class ShapePoint implements PlotPoint {
     public static class Builder {
         private final Point2D centre;
         private final Plot plot;
-        private Datum datum = null;
+        private TreatmentStep treatmentStep = null;
         private boolean filled = false;
         private boolean lineToHere = false;
         private boolean special = false;
@@ -91,8 +91,8 @@ class ShapePoint implements PlotPoint {
             this.centre = centre;
         }
         
-        public Builder datum(Datum datum) {
-            this.datum = datum;
+        public Builder datum(TreatmentStep treatmentStep) {
+            this.treatmentStep = treatmentStep;
             return this;
         }
         
@@ -154,7 +154,7 @@ class ShapePoint implements PlotPoint {
         this.plot= b.plot;
         double s = b.size * b.plot.getUnitSize();
         this.centre = b.centre;
-        this.datum = b.datum;
+        this.treatmentStep = b.treatmentStep;
         this.filled = b.filled;
         this.lineToHere = b.lineToHere;
         this.special = b.special;
@@ -210,8 +210,8 @@ class ShapePoint implements PlotPoint {
     @Override
     public void draw(Graphics2D g) {
         g.setStroke(plot.getStroke());
-        if (datum != null) {
-            g.setColor(getDatum().isSelected() ? Color.RED : Color.BLACK);
+        if (treatmentStep != null) {
+            g.setColor(getTreatmentStep().isSelected() ? Color.RED : Color.BLACK);
         }
 
         g.draw(shape);
@@ -231,17 +231,17 @@ class ShapePoint implements PlotPoint {
         if (lineToHere && prev != null) {
             g.draw(new Line2D.Double(prev.getCentre(), centre));
         }
-        if (annotate && datum != null) {
+        if (annotate && treatmentStep != null) {
             double pad = plot.getFontSize() / 3;
-            final String label = datum.getFormattedTreatmentLevel();
+            final String label = treatmentStep.getFormattedTreatmentLevel();
             plot.putText(g, label, centre.getX(), centre.getY(), getLabelPos(),
                     0, pad);
         }
     }
 
     @Override
-    public Datum getDatum() {
-        return datum;
+    public TreatmentStep getTreatmentStep() {
+        return treatmentStep;
     }
     
     /* For the present, only TextLinePoints can have samples. */

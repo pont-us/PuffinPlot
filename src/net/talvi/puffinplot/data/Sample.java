@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
  */
 public class Sample {
 
-    private List<Datum> data;
+    private List<TreatmentStep> data;
     private Site site;
     private String nameOrDepth;
     private double depth;
@@ -98,7 +98,7 @@ public class Sample {
     public void clearPca() {
         touch();
         pca = null;
-        for (Datum d: getData()) {
+        for (TreatmentStep d: getData()) {
             d.setInPca(false);
         }
     }
@@ -109,7 +109,7 @@ public class Sample {
     public void clearGreatCircle() {
         touch();
         greatCircle = null;
-        for (Datum d: getData()) {
+        for (TreatmentStep d: getData()) {
             d.setOnCircle(false);
         }
     }
@@ -194,7 +194,7 @@ public class Sample {
         final double limit = 2.5;
         double msj = 0;
         double prevMagSus = 1e200;
-        for (Datum d: data) {
+        for (TreatmentStep d: data) {
             double magSus = d.getMagSus();
             if (!Double.isNaN(magSus)) {
                 if (magSus > prevMagSus * limit) {
@@ -224,7 +224,7 @@ public class Sample {
      */
     public void flip(MeasurementAxis axis) {
         touch();
-        for (Datum d: getData()) {
+        for (TreatmentStep d: getData()) {
             d.rot180(axis);
         }
     }
@@ -234,7 +234,7 @@ public class Sample {
      */
     public void invertMoments() {
         touch();
-        for (Datum d: getData()) {
+        for (TreatmentStep d: getData()) {
             d.invertMoment();
         }
     }
@@ -244,10 +244,10 @@ public class Sample {
      * well as being hidden (so after a call to the function no points 
      * there will be no selected points).
      * 
-     * @see Datum#isHidden() */
+     * @see TreatmentStep#isHidden() */
     public void hideAndDeselectSelectedPoints() {
         touch();
-        for (Datum d: getData()) {
+        for (TreatmentStep d: getData()) {
             if (d.isSelected()) {
                 d.setSelected(false);
                 d.setHidden(true);
@@ -257,18 +257,18 @@ public class Sample {
     
     /** Selects all the data points within this sample.
      * 
-     * @see Datum#setSelected(boolean) */
+     * @see TreatmentStep#setSelected(boolean) */
     public void selectAll() {
         touch();
-        for (Datum d : getData()) d.setSelected(true);
+        for (TreatmentStep d : getData()) d.setSelected(true);
     }
 
     /** Selects all the visible (non-hidden) data points within this sample.
-     * @see Datum#setSelected(boolean)
-     * @see Datum#isHidden() */
+     * @see TreatmentStep#setSelected(boolean)
+     * @see TreatmentStep#isHidden() */
     public void selectVisible() {
         touch();
-        for (Datum d : getData()) {
+        for (TreatmentStep d : getData()) {
             if (!d.isHidden()) d.setSelected(true);
         }
     }
@@ -276,7 +276,7 @@ public class Sample {
     /** De-selects all the data points within this sample.  */
     public void selectNone() {
         touch();
-        for (Datum d : getData()) {
+        for (TreatmentStep d : getData()) {
             d.setSelected(false);
         }
     }
@@ -297,10 +297,10 @@ public class Sample {
      * @param min minimum treatment intensity
      * @param max maximum treatment intensity
      * 
-     * @see Datum#getTreatmentLevel()
+     * @see TreatmentStep#getTreatmentLevel()
      */
     public void selectByTreatmentLevelRange(double min, double max) {
-        for (Datum d: getData()) {
+        for (TreatmentStep d: getData()) {
             final double level = d.getTreatmentLevel();
             d.setSelected(min <= level && level <= max);
         }
@@ -314,23 +314,23 @@ public class Sample {
     
     /** Returns all the data points within this sample.
      * @return all the data points within this sample */
-    public List<Datum> getData() {
+    public List<TreatmentStep> getData() {
         return Collections.unmodifiableList(data);
     }
     
     /** Returns all the visible (non-hidden) data points within this sample.
      * @return all the visible (non-hidden) data points within this sample */
-    public List<Datum> getVisibleData() {
-        List<Datum> visibleData = new ArrayList<>(getNumData());
-        for (Datum d: getData()) if (!d.isHidden()) visibleData.add(d);
+    public List<TreatmentStep> getVisibleData() {
+        List<TreatmentStep> visibleData = new ArrayList<>(getNumData());
+        for (TreatmentStep d: getData()) if (!d.isHidden()) visibleData.add(d);
         return visibleData;
     }
 
     /** Returns all the selected data points within this sample.
      * @return all the selected data points within this sample */
-    public List<Datum> getSelectedData() {
-        LinkedList<Datum> selData = new LinkedList<>();
-        for (Datum d: getData()) if (d.isSelected()) selData.add(d);
+    public List<TreatmentStep> getSelectedData() {
+        LinkedList<TreatmentStep> selData = new LinkedList<>();
+        for (TreatmentStep d: getData()) if (d.isSelected()) selData.add(d);
         return selData;
     }
     
@@ -343,7 +343,7 @@ public class Sample {
     public boolean isSelectionContiguous() {
         int runEndsSeen = 0;
         boolean thisIsSelected = false, lastWasSelected = false;
-        for (Datum d: getData()) {
+        for (TreatmentStep d: getData()) {
             thisIsSelected = d.isSelected();
             if (lastWasSelected && !thisIsSelected) runEndsSeen++;
             lastWasSelected = thisIsSelected;
@@ -363,24 +363,24 @@ public class Sample {
      * @return the data point with the selected index, if it exists
      * @throws IndexOutOfBoundsException if no data point with the selected index exists
      */
-    public Datum getDatum(int i) {
+    public TreatmentStep getDatum(int i) {
         return getData().get(i);
     }
     
     /**
-     * Returns the first Datum in this Sample with the given treatment level.
+     * Returns the first TreatmentStep in this Sample with the given treatment level.
      * 
-     * If the Sample contains more than one Datum at the given level, only
-     * the first is returned. If there is no matching Datum, {@code null}
+     * If the Sample contains more than one TreatmentStep at the given level, only
+     * the first is returned. If there is no matching TreatmentStep, {@code null}
      * is returned. Any treatment levels differing by less than 1e-6 are
      * considered equal.
      * 
      * @param level a treatment level
      * @return the first datum in the sample with the given treatment level
      */
-    public Datum getDatumByTreatmentLevel(double level) {
+    public TreatmentStep getDatumByTreatmentLevel(double level) {
         final double threshold = 1e-6;
-        for (Datum d: data) {
+        for (TreatmentStep d: data) {
                 if (abs(d.getTreatmentLevel() - level) < threshold) {
                     return d;
                 }
@@ -389,14 +389,14 @@ public class Sample {
     }
     
     /**
-     * Returns a Datum with a specified treatment type and level. The treatment
+     * Returns a TreatmentStep with a specified treatment type and level. The treatment
      * type is checked against a supplied set. A datum is considered to match if
      * its treatment type is in the set and its treatment level is approximately
      * equal to the specified level. A datum's treatment level is approximately
      * equal to the specified level if the two differ by less than 1e-6.
      *
-     * If the Sample contains more than one Datum with the given level and type,
-     * only the first is returned. If there is no matching Datum, {@code null}
+     * If the Sample contains more than one TreatmentStep with the given level and type,
+     * only the first is returned. If there is no matching TreatmentStep, {@code null}
      * is returned. 
      * 
      * This method is mainly intended for use with ARM demagnetization data,
@@ -406,10 +406,10 @@ public class Sample {
      * @param level a treatment level
      * @return the first datum in the sample with the given treatment level
      */
-    public Datum getDatumByTreatmentTypeAndLevel(Set<TreatType> types,
-            double level) {
+    public TreatmentStep getDatumByTreatmentTypeAndLevel(Set<TreatType> types,
+                                                         double level) {
         final double threshold = 1e-6;
-        for (Datum d: data) {
+        for (TreatmentStep d: data) {
                 if (abs(d.getTreatmentLevel() - level) < threshold
                     && types.contains(d.getTreatType())) {
                     return d;
@@ -432,20 +432,20 @@ public class Sample {
     /**
      * Adds a data point to this sample.
      * 
-     * @param datum a data point to add to this sample
+     * @param treatmentStep a data point to add to this sample
      */
-    public void addDatum(Datum datum) {
+    public void addDatum(TreatmentStep treatmentStep) {
         touch();
         if (data.isEmpty()) {
-            setSampAz(datum.getSampAz());
-            setSampDip(datum.getSampDip());
-            setFormAz(datum.getFormAz());
-            setFormDip(datum.getFormDip());
-            setMagDev(datum.getMagDev());
+            setSampAz(treatmentStep.getSampAz());
+            setSampDip(treatmentStep.getSampDip());
+            setFormAz(treatmentStep.getFormAz());
+            setFormDip(treatmentStep.getFormDip());
+            setMagDev(treatmentStep.getMagDev());
         }
-        data.add(datum);
-        if (datum.hasMagSus()) hasMsData = true;
-        datum.setSample(this);
+        data.add(treatmentStep);
+        if (treatmentStep.hasMagSus()) hasMsData = true;
+        treatmentStep.setSample(this);
     }
 
     /**
@@ -476,7 +476,7 @@ public class Sample {
     /** Flags all selected data points for inclusion in principal component analysis */
     public void useSelectionForPca() {
         touch();
-        for (Datum d: getData()) d.setInPca(d.isSelected());
+        for (TreatmentStep d: getData()) d.setInPca(d.isSelected());
     }
     
     /** Reports whether principal component analysis should be anchored for this sample
@@ -489,14 +489,14 @@ public class Sample {
      * @param pcaAnchored {@code true} to anchor principal component analysis for this sample */
     public void setPcaAnchored(boolean pcaAnchored) {
         touch();
-        for (Datum d: getData()) d.setPcaAnchored(pcaAnchored);
+        for (TreatmentStep d: getData()) d.setPcaAnchored(pcaAnchored);
     }
     
     /**
      * Performs principal component analysis on a subset of the magnetic moment 
      * data of this sample.
      * The data points to use are determined by the result of 
-     * {@link Datum#isInPca()}.
+     * {@link TreatmentStep#isInPca()}.
      * The results are stored within the sample and may be retrieved with
      * {@link #getPcaAnnotated()}.
      * @param correction the correction to apply to the magnetic moment data
@@ -507,7 +507,7 @@ public class Sample {
         // (a partially anchored PCA makes no sense). This is just
         // belt-and-braces really, since they should be uniform across
         // the sample. Eventually pcaAnchored will be moved entirely
-        // from Datum to its rightful home in Sample and this kind
+        // from TreatmentStep to its rightful home in Sample and this kind
         // of ugliness will become unnecessary.
         touch();
         boolean firstDatumAnchored = getData().get(0).isPcaAnchored();
@@ -586,7 +586,7 @@ public class Sample {
     /** Flags the selected data points for use in the next great-circle fit. */
     public void useSelectionForCircleFit() {
         touch();
-        for (Datum d: getData()) d.setOnCircle(d.isSelected());
+        for (TreatmentStep d: getData()) d.setOnCircle(d.isSelected());
     }
 
     /** Returns the current great-circle fit for this sample, if any.
@@ -602,7 +602,7 @@ public class Sample {
      */
     public List<Vec3> getCirclePoints(Correction correction) {
         List<Vec3> result = new ArrayList<>(getData().size());
-        for (Datum d: getData()) {
+        for (TreatmentStep d: getData()) {
             if (d.isOnCircle()) result.add(d.getMoment(correction));
         }
         return result;
@@ -610,7 +610,7 @@ public class Sample {
 
     /** Fits a great circle to a subset of the magnetic moment vectors in 
      * this sample. A data point is used for the fit if 
-     * {@link Datum#isOnCircle()} is true for it.
+     * {@link TreatmentStep#isOnCircle()} is true for it.
      * @param correction the correction to apply to the magnetic moment data
      */
     public void fitGreatCircle(Correction correction) {
@@ -623,7 +623,7 @@ public class Sample {
     /** Returns the treatment level for the first point used in the great-circle fit. 
      * @return the treatment level for the first point used in the great-circle fit */
     public double getFirstGcStep() {
-        for (Datum d: data) {
+        for (TreatmentStep d: data) {
             if (d.isOnCircle()) return d.getTreatmentStep();
         }
         return -1;
@@ -633,7 +633,7 @@ public class Sample {
      * @return the treatment level for the last point used in the great-circle fit */
     public double getLastGcStep() {
         double result = -1;
-        for (Datum d : data) {
+        for (TreatmentStep d : data) {
             if (d.isOnCircle()) result = d.getTreatmentStep();
         }
         return result;
@@ -643,7 +643,7 @@ public class Sample {
      * @return the measurement type of this sample (discrete or continuous)
      */
     public MeasType getMeasType() {
-        for (Datum d: getData())
+        for (TreatmentStep d: getData())
             if (d.getMeasType().isActualMeasurement()) return d.getMeasType();
         return MeasType.DISCRETE;
     }
@@ -661,12 +661,12 @@ public class Sample {
         nameOrDepth = newNameOrDepth;
         if (getMeasType() == MeasType.CONTINUOUS) {
             setDepth(nameOrDepth);
-            for (Datum d: getData()) {
+            for (TreatmentStep d: getData()) {
                 d.setDepth(nameOrDepth);
             }
         }
         if (getMeasType() == MeasType.DISCRETE) {
-            for (Datum d: getData()) {
+            for (TreatmentStep d: getData()) {
                 d.setDiscreteId(nameOrDepth);
             }
         }
@@ -698,13 +698,13 @@ public class Sample {
      *
      * @param maxRunNumber the run number against which to compare
      *   run numbers associated with this sample 
-     * @return the Datum in this sample which has the highest
+     * @return the TreatmentStep in this sample which has the highest
      * run number smaller than the supplied run number, or null if
-     * this sample contains no such Datum.
+     * this sample contains no such TreatmentStep.
      */
-    public Datum getDatumByRunNumber(int maxRunNumber) {
-        Datum result = null;
-        for (Datum d: getData()) {
+    public TreatmentStep getDatumByRunNumber(int maxRunNumber) {
+        TreatmentStep result = null;
+        for (TreatmentStep d: getData()) {
             if (d.getRunNumber() < maxRunNumber) {
                 result = d;
             }
@@ -731,7 +731,7 @@ public class Sample {
     /** Unhides all data points within this sample. */
     public void unhideAllPoints() {
         touch();
-        for (Datum d: getData()) d.setHidden(false);
+        for (TreatmentStep d: getData()) d.setHidden(false);
     }
 
     /**
@@ -747,8 +747,8 @@ public class Sample {
     public BitSet getSelectionBitSet() {
         final BitSet result = new BitSet(data.size());
         for (int i=0; i<data.size(); i++) {
-            final Datum datum = data.get(i);
-            result.set(i, datum.isSelected());
+            final TreatmentStep treatmentStep = data.get(i);
+            result.set(i, treatmentStep.isSelected());
         }
         return result;
     }
@@ -765,8 +765,8 @@ public class Sample {
     public void setSelectionBitSet(BitSet selection) {
         touch();
         for (int i=0; i<Math.min(selection.size(), data.size()); i++) {
-            final Datum datum = data.get(i);
-            datum.setSelected(selection.get(i));
+            final TreatmentStep treatmentStep = data.get(i);
+            treatmentStep.setSelected(selection.get(i));
         }
     }
 
@@ -842,14 +842,14 @@ public class Sample {
     /**
      * Returns a specified subset of demagnetization data as strings.
      * This method takes a list of {@link DatumField}s and returns a list
-     * of strings. Each string in the list represents one {@link Datum}
+     * of strings. Each string in the list represents one {@link TreatmentStep}
      * in this sample, and consists of a concatenation of string representations
      * of the requested fields (in the corresponding order), delimited
      * by tab characters.
      * 
      * @param  fields the fields to export
      * @return a string representation of the requested fields for
-     *         each {@link Datum} in this sample
+     *         each {@link TreatmentStep} in this sample
      */
     public List<String> exportFields(List<DatumField> fields) {       
         return getData().stream().
@@ -859,7 +859,7 @@ public class Sample {
 
     /**
      * Returns a list of Strings representing data pertaining to this sample.
-     * (Note that this only includes sample-level data, not Datum-level
+     * (Note that this only includes sample-level data, not TreatmentStep-level
      * data such as magnetic moment measurements.)
      * 
      * @return a list of Strings representing data pertaining to this sample
@@ -1031,11 +1031,11 @@ public class Sample {
             case VIRT_FORM_STRIKE: setFormStrike(parseDouble(value)); break;
             case MAG_DEV: setMagDev(parseDouble(value)); break;
             default:
-                logger.log(Level.WARNING, "Unhandled Datum field: {0}",
+                logger.log(Level.WARNING, "Unhandled TreatmentStep field: {0}",
                         field.name());
                 break;
         }
-        for (Datum d: getData()) {
+        for (TreatmentStep d: getData()) {
             d.setValue(field, value, 1);
         }
     }
@@ -1055,9 +1055,9 @@ public class Sample {
      * @param correction the correction to apply to the moment measurements
      */
     public void calculateFisher(Correction correction) {
-        final List<Datum> selection = getSelectedData();
+        final List<TreatmentStep> selection = getSelectedData();
         final List<Vec3> directions = new ArrayList<>(selection.size());
-        for (Datum d: selection) {
+        for (TreatmentStep d: selection) {
             directions.add(d.getMoment(correction));
         }
         fisherValues = FisherValues.calculate(directions);
@@ -1068,16 +1068,16 @@ public class Sample {
     }
     
     public void rotateAroundZAxis(double angleDegrees) {
-        getData().forEach((Datum d) -> {
+        getData().forEach((TreatmentStep d) -> {
             d.setMoment(d.getMoment().rotZ(Math.toRadians(angleDegrees)));
         });
     }
     
     /**
      * Returns the discrete ID of this sample, as determined by the 
-     * discrete ID of the first Datum within the sample. For samples with
+     * discrete ID of the first TreatmentStep within the sample. For samples with
      * continuous measurement type, this is the identifier of the entire
-     * measured core section. If the sample contains no Datum objects,
+     * measured core section. If the sample contains no TreatmentStep objects,
      * this method will return {@code null}.
      * 
      * @return discrete sample ID, core section ID, or {@code null}
@@ -1092,8 +1092,8 @@ public class Sample {
 
     /**
      * Sets the discrete ID of this sample by setting the discrete IDs of its
-     * {@code Datum} objects, if the sample has any {@code Datum} objects. If
-     * the sample has no {@code Datum} objects, {@code IllegalStateException}
+     * {@code TreatmentStep} objects, if the sample has any {@code TreatmentStep} objects. If
+     * the sample has no {@code TreatmentStep} objects, {@code IllegalStateException}
      * will be thrown. (This limitation is a historical artefact which will be
      * removed when PuffinPlot's data model is revised to store the discrete
      * ID within the {@code Sample} object itself.)
@@ -1104,18 +1104,18 @@ public class Sample {
         if (hasData()) {
             getData().forEach(d -> { d.setDiscreteId(discreteId); });
         } else {
-            throw new IllegalStateException("This sample has no Datum objects");
+            throw new IllegalStateException("This sample has no TreatmentStep objects");
         }
     }
     
     /**
-     * Remove specified data from this sample. Any {@code Datum} in the
-     * collection passed to this method will be removed. Any {@code Datum}
+     * Remove specified data from this sample. Any {@code TreatmentStep} in the
+     * collection passed to this method will be removed. Any {@code TreatmentStep}
      * in the collection which is not in this Sample will be ignored.
      * 
      * @param toRemove the data to remove
      */
-    public void removeData(Collection<Datum> toRemove) {
+    public void removeData(Collection<TreatmentStep> toRemove) {
         toRemove.forEach(d -> data.remove(d));
     }
 
@@ -1129,10 +1129,10 @@ public class Sample {
      * @return the data which were removed
      * 
      */
-    public Set<Datum> mergeDuplicateTreatmentSteps() {
-        final Map<TreatmentTypeAndLevel, List<Datum>> treatmentMap =
+    public Set<TreatmentStep> mergeDuplicateTreatmentSteps() {
+        final Map<TreatmentTypeAndLevel, List<TreatmentStep>> treatmentMap =
                 new HashMap<>();
-        for (Datum d: this.getData()) {
+        for (TreatmentStep d: this.getData()) {
             final TreatmentTypeAndLevel key = new TreatmentTypeAndLevel(d);
             if (!treatmentMap.containsKey(key)) {
                 treatmentMap.put(key, new ArrayList<>());
@@ -1144,7 +1144,7 @@ public class Sample {
          * needlessly creating a new object.
          */
         boolean anyMergables = false;
-        for (List<Datum> ds: treatmentMap.values()) {
+        for (List<TreatmentStep> ds: treatmentMap.values()) {
             if (ds.size() > 1) {
                 anyMergables = true;
                 break;
@@ -1153,9 +1153,9 @@ public class Sample {
         if (!anyMergables) {
             return Collections.emptySet();
         }
-        final Set<Datum> toRemove = new HashSet<>(treatmentMap.size());
-        for (Datum d: this.getData()) {
-            final List<Datum> duplicates =
+        final Set<TreatmentStep> toRemove = new HashSet<>(treatmentMap.size());
+        for (TreatmentStep d: this.getData()) {
+            final List<TreatmentStep> duplicates =
                     treatmentMap.get(new TreatmentTypeAndLevel(d));
             if (duplicates.get(0) == d) {
                 d.setMomentToMean(duplicates);
@@ -1169,7 +1169,7 @@ public class Sample {
 
     /**
      * Merges the demagnetization data of the supplied samples into the
-     * first sample in the list. Note that the Datum objects in the
+     * first sample in the list. Note that the TreatmentStep objects in the
      * subsequent samples are not cloned: their references are copied
      * directly into the first sample's data list. The subsequent samples
      * should therefore be discarded after calling this function.
@@ -1192,9 +1192,9 @@ public class Sample {
         private final TreatType treatType;
         private final Double treatStep;
         
-        public TreatmentTypeAndLevel(Datum datum) {
-            this.treatType = datum.getTreatType();
-            this.treatStep = datum.getTreatmentStep();
+        public TreatmentTypeAndLevel(TreatmentStep treatmentStep) {
+            this.treatType = treatmentStep.getTreatType();
+            this.treatStep = treatmentStep.getTreatmentStep();
         }
         
         @Override

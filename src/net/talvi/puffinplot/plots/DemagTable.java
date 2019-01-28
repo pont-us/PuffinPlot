@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.prefs.Preferences;
 import net.talvi.puffinplot.Util;
-import net.talvi.puffinplot.data.Datum;
+import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.Vec3;
@@ -91,7 +91,7 @@ public class DemagTable extends Plot {
 
         final Sample sample = params.getSample();
         if (sample==null) return;
-        final List<Datum> data = sample.getData();
+        final List<TreatmentStep> data = sample.getData();
         if (data.isEmpty()) return;
 
         final List<String> headers2 = new ArrayList<>(headers);
@@ -99,7 +99,7 @@ public class DemagTable extends Plot {
             headers2.set(0, "temp.");
         points.add(new TextLinePoint(this, g, 10, null, null, headers2,
                 xSpacing, Color.BLACK));
-        final boolean useSequence = (Datum.maxTreatmentLevel(data) == 0);
+        final boolean useSequence = (TreatmentStep.maxTreatmentLevel(data) == 0);
         int sequence = 1;
         float yPos = 2 * ySpacing;
         final DecimalFormat angleFormat = 
@@ -108,7 +108,7 @@ public class DemagTable extends Plot {
                 new DecimalFormat("0.00E00", Util.getDecimalFormatSymbols());
         final DecimalFormat magSusFormat =
                 new DecimalFormat("0.0E00", Util.getDecimalFormatSymbols());
-        for (Datum d: data) {
+        for (TreatmentStep d: data) {
             if (yPos > getDimensions().getHeight()) {
                 break;
             }

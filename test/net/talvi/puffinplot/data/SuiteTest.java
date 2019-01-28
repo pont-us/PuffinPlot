@@ -316,20 +316,20 @@ public class SuiteTest {
                 loadedSuite.getSamples().iterator();
         for (Sample expectedSample: syntheticSuite1.getSamples()) {
             final Sample actualSample = actualSamples.next();
-            final Iterator<Datum> actualData =
+            final Iterator<TreatmentStep> actualData =
                     actualSample.getData().iterator();
-            for (Datum expectedDatum: expectedSample.getData()) {
-                final Datum actualDatum = actualData.next();
-                assertEquals(expectedDatum.getMoment(),
-                        actualDatum.getMoment());
-                assertEquals(expectedDatum.getTreatType(),
-                        actualDatum.getTreatType());
-                assertEquals(expectedDatum.getIdOrDepth(),
-                        actualDatum.getIdOrDepth());
-                assertEquals(expectedDatum.getMeasType(),
-                        actualDatum.getMeasType());
-                assertEquals(expectedDatum.getAfX(),
-                        actualDatum.getAfX(), 0.0001);
+            for (TreatmentStep expectedTreatmentStep : expectedSample.getData()) {
+                final TreatmentStep actualTreatmentStep = actualData.next();
+                assertEquals(expectedTreatmentStep.getMoment(),
+                        actualTreatmentStep.getMoment());
+                assertEquals(expectedTreatmentStep.getTreatType(),
+                        actualTreatmentStep.getTreatType());
+                assertEquals(expectedTreatmentStep.getIdOrDepth(),
+                        actualTreatmentStep.getIdOrDepth());
+                assertEquals(expectedTreatmentStep.getMeasType(),
+                        actualTreatmentStep.getMeasType());
+                assertEquals(expectedTreatmentStep.getAfX(),
+                        actualTreatmentStep.getAfX(), 0.0001);
             }
         }
         assertEquals(customFlags,
@@ -640,28 +640,28 @@ public class SuiteTest {
 
     @Test(expected = NullPointerException.class)
     public void testAddDatumNullMeasType() {
-        final Datum d = new Datum();
+        final TreatmentStep d = new TreatmentStep();
         d.setMeasType(null);
         syntheticSuite1.addDatum(d);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testAddDatumUnsetMeasType() {
-        final Datum d = new Datum();
+        final TreatmentStep d = new TreatmentStep();
         d.setMeasType(MeasType.UNSET);
         syntheticSuite1.addDatum(d);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testAddDatumIncompatibleMeasType() {
-        final Datum d = new Datum();
+        final TreatmentStep d = new TreatmentStep();
         d.setMeasType(MeasType.DISCRETE);
         syntheticSuite1.addDatum(d);
     }
 
     @Test
     public void testAddDatumUnknownTreatType() {
-        final Datum d = new Datum();
+        final TreatmentStep d = new TreatmentStep();
         d.setMeasType(MeasType.CONTINUOUS);
         d.setDepth("0");
         d.setTreatType(TreatType.UNKNOWN);
@@ -888,7 +888,7 @@ public class SuiteTest {
         syntheticSuite1.rescaleMagSus(2);
         assertFalse(syntheticSuite1.isSaved());
         for (Sample sample: syntheticSuite1.getSamples()) {
-            for (Datum d: sample.getData()) {
+            for (TreatmentStep d: sample.getData()) {
                 assertEquals(Double.parseDouble(d.getDepth())*2,
                         d.getMagSus(), 1e-10);
             }
@@ -942,9 +942,9 @@ public class SuiteTest {
 
     private static void setUpSiteCalculations(Suite suite) {
         for (Sample sample: suite.getSamples()) {
-            for (Datum datum: sample.getData()) {
-                datum.setInPca(true);
-                datum.setOnCircle(true);
+            for (TreatmentStep treatmentStep : sample.getData()) {
+                treatmentStep.setInPca(true);
+                treatmentStep.setOnCircle(true);
             }
             sample.doPca(Correction.NONE);
             sample.fitGreatCircle(Correction.NONE);
@@ -1186,20 +1186,20 @@ public class SuiteTest {
         
         /*
          * To exercise some more code paths, we now import again to the same
-         * (existing) sample, after adding a Datum with orientation parameters
+         * (existing) sample, after adding a TreatmentStep with orientation parameters
          * to it. This time we specify magnetic rather than geographic north
          * (although in this case it's the same anyway).
          */
-        final Datum datum = new Datum();
-        datum.setSampAz(0);
-        datum.setSampDip(90);
-        datum.setFormAz(0);
-        datum.setFormDip(0);
+        final TreatmentStep treatmentStep = new TreatmentStep();
+        treatmentStep.setSampAz(0);
+        treatmentStep.setSampDip(90);
+        treatmentStep.setFormAz(0);
+        treatmentStep.setFormDip(0);
         
         /* This will set the sample's sample/formation corrections
-         * from those of the datum.
+         * from those of the treatmentStep.
          */
-        sample.addDatum(datum);
+        sample.addDatum(treatmentStep);
         
         syntheticSuite2.importAmsFromAsc(
                 Collections.singletonList(filePath.toFile()),
@@ -1338,7 +1338,7 @@ public class SuiteTest {
                 "sample1 42 98 23 211 39 321\n",
                 temporaryFolder);
         final Suite suite = new Suite("SuiteTest");
-        final Datum d = new Datum(Vec3.NORTH);
+        final TreatmentStep d = new TreatmentStep(Vec3.NORTH);
         d.setSampAz(0);
         d.setSampDip(90);
         d.setFormAz(0);
@@ -1369,9 +1369,9 @@ public class SuiteTest {
                     Paths.get(temporaryFolder.getRoot().getCanonicalPath(),
                             sample.getNameOrDepth()));
             final Iterator<String> lineIterator = lines.iterator();
-            final Iterator<Datum> datumIterator = sample.getData().iterator();
+            final Iterator<TreatmentStep> datumIterator = sample.getData().iterator();
             while (datumIterator.hasNext()) {
-                final Datum datum = datumIterator.next();
+                final TreatmentStep treatmentStep = datumIterator.next();
                 final String line = lineIterator.next();
                 final Scanner scanner = new Scanner(line);
                 scanner.useLocale(Locale.ENGLISH);
@@ -1379,8 +1379,8 @@ public class SuiteTest {
                 final Vec3 actualMoment =
                         new Vec3(scanner.nextDouble(), scanner.nextDouble(),
                         scanner.nextDouble());
-                assertTrue(datum.getMoment().equals(actualMoment, 1e-10));
-                assertEquals(datum.getAfX(), actualAfx, 1e-10);
+                assertTrue(treatmentStep.getMoment().equals(actualMoment, 1e-10));
+                assertEquals(treatmentStep.getAfX(), actualAfx, 1e-10);
             }
         }
     }
@@ -1473,7 +1473,7 @@ public class SuiteTest {
         final Function<Suite, List<Vec3>> extractDirections =
                 suite -> suite.getSamples().stream().
                         flatMap(sample -> sample.getData().stream()).
-                        map(Datum::getMoment).collect(Collectors.toList());
+                        map(TreatmentStep::getMoment).collect(Collectors.toList());
         
         final List<Vec3>originalDirections =
                 extractDirections.apply(syntheticSuite1);
@@ -1561,9 +1561,9 @@ public class SuiteTest {
         final Suite suite = new Suite("test");
         final Sample sample = new Sample("sample0", suite);
         suite.addSample(sample, "sample0");
-        final List<Datum> expected = new ArrayList<>();
+        final List<TreatmentStep> expected = new ArrayList<>();
         for (int step=0; step<3; step++) {
-            final Datum d = new Datum();
+            final TreatmentStep d = new TreatmentStep();
             d.setTreatType(TreatType.THERMAL);
             d.setTemp(step*10);
             sample.addDatum(d);

@@ -27,7 +27,7 @@ import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
 import java.util.prefs.Preferences;
-import net.talvi.puffinplot.data.Datum;
+import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.window.GraphDisplay;
@@ -110,7 +110,7 @@ public class TernaryPlot extends Plot {
         double h = dims.getWidth() * (sqrt(3)/2);
         Sample sample = params.getSample();
         if (sample==null) return;
-        for (Datum d: sample.getData()) {
+        for (TreatmentStep d: sample.getData()) {
             Vec3 v = d.getMoment(params.getCorrection());
             addPoint(d, projectThreeValues(v.x, v.y, v.z,
                     dims.getMinX(), dims.getMaxY(), h), false, false, true);

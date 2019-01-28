@@ -23,7 +23,7 @@ import java.util.Locale;
 
 /**
  * <p>This class calculates and stores the median destructive field (MDF) for 
- * a set of {@link Datum} objects. This is the AF field required to
+ * a set of {@link TreatmentStep} objects. This is the AF field required to
  * reduce the magnetic moment of a sample to half of its original
  * value. Despite the name of the class, it will calculate a 
  * ‘median destructive’ value for any quantifiable treatment type, so
@@ -74,13 +74,13 @@ public class MedianDestructiveField {
      * @return the treatment level at which the sample retains half
      * of its original magnetic moment
      */
-    public static MedianDestructiveField calculate(List<Datum> data) {
+    public static MedianDestructiveField calculate(List<TreatmentStep> data) {
         if (data.size() < 2) return null;
         final double initialIntensity = data.get(0).getIntensity();
         final double halfIntensity = initialIntensity / 2;
         boolean halfIntReached = false;
         int i = 1;
-        Datum d;
+        TreatmentStep d;
         do {
             d = data.get(i);
             i++;
@@ -88,7 +88,7 @@ public class MedianDestructiveField {
         if (d.getIntensity() <= halfIntensity) {
             halfIntReached = true;
         }
-        final Datum dPrev = data.get(i-2); // i can't be <=1 at this point
+        final TreatmentStep dPrev = data.get(i-2); // i can't be <=1 at this point
         final double demagLevel = interpolate(dPrev.getTreatmentLevel(),
                 d.getTreatmentLevel(), d.getIntensity(),
                 dPrev.getIntensity(), halfIntensity);

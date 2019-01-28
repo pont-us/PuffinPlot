@@ -31,11 +31,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import net.talvi.puffinplot.data.Datum;
-import net.talvi.puffinplot.data.DatumField;
-import net.talvi.puffinplot.data.MeasType;
-import net.talvi.puffinplot.data.TreatType;
-import net.talvi.puffinplot.data.Vec3;
+
+import net.talvi.puffinplot.data.*;
+import net.talvi.puffinplot.data.TreatmentStep;
 
 /**
  * Loader for the old UC Davis format. This format has only one line per
@@ -89,7 +87,7 @@ public class UcDavisLoader extends AbstractFileLoader {
              * pair.
              */
             for (Integer level : levels) {
-                final Datum d = new Datum();
+                final TreatmentStep d = new TreatmentStep();
 
                 /**
                  * The file contains both Cartesian and polar data, for each

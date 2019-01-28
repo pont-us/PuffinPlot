@@ -22,13 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.prefs.Preferences;
-import net.talvi.puffinplot.data.Datum;
-import net.talvi.puffinplot.data.DatumField;
-import net.talvi.puffinplot.data.FieldUnit;
-import net.talvi.puffinplot.data.MeasType;
-import net.talvi.puffinplot.data.MomentUnit;
-import net.talvi.puffinplot.data.TreatType;
-import net.talvi.puffinplot.data.Vec3;
+
+import net.talvi.puffinplot.data.*;
+import net.talvi.puffinplot.data.TreatmentStep;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.mockito.Mockito;
@@ -57,7 +53,7 @@ public class FileFormatTest {
                 "\"2\" 20 -0.00287221566495697 0.00511191141997228 0.000325813297524727 \"ch005\" 7\n",
                 "\"3\" 40 -0.0025011710899289 0.00491686732397584 -0.000243530541458016 \"ch005\" 7"
                 );
-        final List<Datum> data = ff.readLines(lines);
+        final List<TreatmentStep> data = ff.readLines(lines);
         checkData(data, new double[][] {
             {0, -0.000154145985711346, 0.00111303493792548, 0.0000614355017155996, 7, 0, 90, 0, 0},
             {0.020, -0.000410316523565281, 0.00073027305999604, 0.0000465447567892467, 7, 0, 90, 0, 0},
@@ -65,19 +61,19 @@ public class FileFormatTest {
         });
     }
     
-    private static void checkData(List<Datum> data, double[][] d) {
+    private static void checkData(List<TreatmentStep> data, double[][] d) {
         for (int i=0; i<data.size(); i++) {
             double[] expected = d[i];
-            final Datum datum = data.get(i);
-            assertEquals(expected[0], datum.getTreatmentLevel(), delta);
-            assertEquals(expected[1], datum.getMoment().x, delta);
-            assertEquals(expected[2], datum.getMoment().y, delta);
-            assertEquals(expected[3], datum.getMoment().z, delta);
-            assertEquals(expected[4], datum.getVolume(), delta);
-            assertEquals(expected[5], datum.getSampAz(), delta);
-            assertEquals(expected[6], datum.getSampDip(), delta);
-            assertEquals(expected[7], datum.getFormAz(), delta);
-            assertEquals(expected[8], datum.getFormDip(), delta);
+            final TreatmentStep treatmentStep = data.get(i);
+            assertEquals(expected[0], treatmentStep.getTreatmentLevel(), delta);
+            assertEquals(expected[1], treatmentStep.getMoment().x, delta);
+            assertEquals(expected[2], treatmentStep.getMoment().y, delta);
+            assertEquals(expected[3], treatmentStep.getMoment().z, delta);
+            assertEquals(expected[4], treatmentStep.getVolume(), delta);
+            assertEquals(expected[5], treatmentStep.getSampAz(), delta);
+            assertEquals(expected[6], treatmentStep.getSampDip(), delta);
+            assertEquals(expected[7], treatmentStep.getFormAz(), delta);
+            assertEquals(expected[8], treatmentStep.getFormDip(), delta);
         }
     }
         
@@ -92,8 +88,8 @@ public class FileFormatTest {
         final FileFormat ff = new FileFormat(columnMap, 1, MeasType.DISCRETE,
                 TreatType.DEGAUSS_XYZ, ",", false, Collections.emptyList(),
                 MomentUnit.AM, FieldUnit.MILLITESLA);
-        final Datum datum = ff.readLine("2,4,6,12");
-        assertTrue(new Vec3(2,4,6).equals(datum.getMoment()));
+        final TreatmentStep treatmentStep = ff.readLine("2,4,6,12");
+        assertTrue(new Vec3(2,4,6).equals(treatmentStep.getMoment()));
     }
     
     @Test

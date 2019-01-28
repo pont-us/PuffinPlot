@@ -24,9 +24,9 @@ import java.util.Map;
 import net.talvi.puffinplot.data.file.FileFormat;
 
 /**
- * <p>This enum represents a field in the {@link Datum} class which is associated
+ * <p>This enum represents a field in the {@link TreatmentStep} class which is associated
  * with a measurement or other value. It is used to address data values
- * from {@link Datum} in a uniform way, for example when loading or saving
+ * from {@link TreatmentStep} in a uniform way, for example when loading or saving
  * data.</p>
  * 
  * <p>Each field has a <i>heading</i>, a string representation intended
@@ -41,13 +41,13 @@ import net.talvi.puffinplot.data.file.FileFormat;
  * The distinction is useful when storing data to a file, since virtual fields
  * do not need to be stored.</p>
  * 
- * @see Datum
+ * @see TreatmentStep
  * 
  * @author pont
  */
 public enum DatumField {
-    /* When adding fields here, make sure also to add them to Datum.getValue()
-     * and Datum.setValue(v).
+    /* When adding fields here, make sure also to add them to TreatmentStep.getValue()
+     * and TreatmentStep.setValue(v).
      */
 
     // Identifiers
@@ -212,7 +212,7 @@ public enum DatumField {
     /**
      * Returns this field's default value.
      * 
-     * Currently only used in {@link Datum#setValue(DatumField, String, double)}.
+     * Currently only used in {@link TreatmentStep#setValue(DatumField, String, double)}.
      * 
      * @return a string representation of the default value for this field
      */
@@ -233,7 +233,7 @@ public enum DatumField {
      * which may be specified for custom data import. Note that (perhaps
      * counterintuitively) the virtual fields for declination, inclination, 
      * and magnetization <em>are</em> importable, although they cannot
-     * be set by {@link Datum#setValue(DatumField, String, double)}: they are
+     * be set by {@link TreatmentStep#setValue(DatumField, String, double)}: they are
      * handled as a special case by {@link FileFormat#readLine(String)}.
      * @return {@code true} if this field is importable
      */

@@ -24,7 +24,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.List;
 import java.util.Locale;
 import java.util.prefs.Preferences;
-import net.talvi.puffinplot.data.Datum;
+import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.MedianDestructiveField;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.TreatType;
@@ -91,7 +91,7 @@ public class DemagPlot extends Plot {
             return;
         }
         
-        final List<Datum> data = sample.getVisibleData();
+        final List<TreatmentStep> data = sample.getVisibleData();
         if (data.isEmpty()) {
             return;
         }
@@ -99,8 +99,8 @@ public class DemagPlot extends Plot {
         final Rectangle2D dim = cropRectangle(getDimensions(),
                 320, 100, 50, 290);
         g.setColor(Color.BLACK);
-        double maxDemag = Datum.maxTreatmentLevel(data);
-        double maxIntens = Datum.maxIntensity(data);
+        double maxDemag = TreatmentStep.maxTreatmentLevel(data);
+        double maxIntens = TreatmentStep.maxIntensity(data);
 
         /*
          * If all the measurements have the same demag level, we'll just plot
@@ -160,7 +160,7 @@ public class DemagPlot extends Plot {
                 true, false, false);
         
         int i = 0;
-        for (Datum d: data) {
+        for (TreatmentStep d: data) {
             final double demagLevel = d.getTreatmentLevel() * demagRescale;
             final double xPos = dim.getMinX() +
                     (xBySequence ? (i + 1) : demagLevel) * xScale;
@@ -186,7 +186,7 @@ public class DemagPlot extends Plot {
                     new Point2D.Double(dim.getMaxX() + 10, dim.getMaxY()),
                     false, false, false);
             final AxisParameters msAxisParams =
-                    new AxisParameters(Datum.maxMagSus(data),
+                    new AxisParameters(TreatmentStep.maxMagSus(data),
                     Direction.UP).withNumberEachTick();
             msAxisParams.label = "Mag. sus. (S.I.)";
             msAxisParams.farSide = true;
@@ -195,7 +195,7 @@ public class DemagPlot extends Plot {
             msAxis.draw(g, msScale, (int) dim.getMaxX(), (int) dim.getMaxY());
             i = 0;
             boolean first = true;
-            for (Datum d: data) {
+            for (TreatmentStep d: data) {
                 final double demagLevel = d.getTreatmentLevel() * demagRescale;
                 final double xPos = dim.getMinX() +
                     (xBySequence ? (i + 1) : demagLevel) * xScale;

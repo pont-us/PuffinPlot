@@ -25,7 +25,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.talvi.puffinplot.data.Datum;
+import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.FileType;
 import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.data.Vec3;
@@ -117,7 +117,7 @@ public class UcDavisLoaderTest {
             final String depthString = String.format(Locale.ENGLISH,
                     "%.5f", dataline[0]);
             final double level = dataline[1] / 1000.;
-            final Datum d = suite.getSampleByName(depthString).
+            final TreatmentStep d = suite.getSampleByName(depthString).
                     getDatumByTreatmentLevel(level);
             final Vec3 v = d.getMoment();
             //assertEquals(dataline[2], v.x, 1e-9);

@@ -24,17 +24,17 @@ public class DatumMomentComparatorTest {
     @Test
     public void testCompare() {
         assertTrue(makeComparator(MeasurementAxis.X).
-                compare(new Datum(2, 9, 7), new Datum(1, 0, -2)) > 0);
+                compare(new TreatmentStep(2, 9, 7), new TreatmentStep(1, 0, -2)) > 0);
         assertTrue(makeComparator(MeasurementAxis.X).
-                compare(new Datum(2, 9, 7), new Datum(3, 0, -2)) < 0);
+                compare(new TreatmentStep(2, 9, 7), new TreatmentStep(3, 0, -2)) < 0);
         assertTrue(makeComparator(MeasurementAxis.Y).
-                compare(new Datum(2, 9, 7), new Datum(1, 0, -2)) > 0);
+                compare(new TreatmentStep(2, 9, 7), new TreatmentStep(1, 0, -2)) > 0);
         assertTrue(makeComparator(MeasurementAxis.Y).
-                compare(new Datum(2, -9, 7), new Datum(3, 0, -2)) < 0);
+                compare(new TreatmentStep(2, -9, 7), new TreatmentStep(3, 0, -2)) < 0);
         assertTrue(makeComparator(MeasurementAxis.Z).
-                compare(new Datum(2, 9, 7), new Datum(1, 0, -2)) > 0);
+                compare(new TreatmentStep(2, 9, 7), new TreatmentStep(1, 0, -2)) > 0);
         assertTrue(makeComparator(MeasurementAxis.Z).
-                compare(new Datum(2, -9, -7), new Datum(3, 0, -2)) < 0);
+                compare(new TreatmentStep(2, -9, -7), new TreatmentStep(3, 0, -2)) < 0);
     }
 
     private static DatumMomentComparator makeComparator(MeasurementAxis axis) {

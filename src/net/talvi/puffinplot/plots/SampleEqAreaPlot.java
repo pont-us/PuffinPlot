@@ -19,7 +19,7 @@ package net.talvi.puffinplot.plots;
 import java.awt.Graphics2D;
 import java.util.List;
 import java.util.prefs.Preferences;
-import net.talvi.puffinplot.data.Datum;
+import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.GreatCircle;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Vec3;
@@ -74,9 +74,9 @@ public class SampleEqAreaPlot extends EqAreaPlot {
         drawAxes();
         boolean first = true;
         Vec3 prev = null;
-        final List<Datum> visibleData = sample.getVisibleData();
+        final List<TreatmentStep> visibleData = sample.getVisibleData();
         boolean hasWellFormedData = false;
-        for (Datum d: visibleData) {
+        for (TreatmentStep d: visibleData) {
             final Vec3 p = d.getMoment(params.getCorrection()).normalize();
             if (p.isWellFormed()) {
                 hasWellFormedData = true;

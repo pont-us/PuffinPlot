@@ -147,7 +147,7 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
                 final List<Double> ratios = new ArrayList<>(nLevels);
                 
                 for (double demagStep: treatmentLevels) {
-                    final Datum nrmStep =
+                    final TreatmentStep nrmStep =
                             nrmSample.getDatumByTreatmentLevel(demagStep);
                     /*
                      * We have to treat the first ARM step as a special case,
@@ -156,7 +156,7 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
                      * which is 0. We assume that this will just be the first
                      * datum and fetch it by index.
                      */
-                    final Datum armStep = demagStep == 0 ?
+                    final TreatmentStep armStep = demagStep == 0 ?
                             armSample.getDatum(0) :
                             armSample.getDatumByTreatmentTypeAndLevel(
                                     demagTreatTypes, demagStep);

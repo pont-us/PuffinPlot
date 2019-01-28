@@ -26,7 +26,7 @@ import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import net.talvi.puffinplot.data.Datum;
+import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.MeasType;
 
 public class Jr6Loader extends AbstractFileLoader {
@@ -67,11 +67,11 @@ public class Jr6Loader extends AbstractFileLoader {
         }
     }
 
-    private Datum makeDatum(Jr6DataLine dataLine) {
+    private TreatmentStep makeDatum(Jr6DataLine dataLine) {
 
         final VectorAndOrientations vectorAndOrientations = dataLine.
                 getOrientationParameters().convertToPuffinPlotConvention(dataLine.getVectorAndOrientations());
-        final Datum d = new Datum(vectorAndOrientations.vector);
+        final TreatmentStep d = new TreatmentStep(vectorAndOrientations.vector);
         d.setSampAz(vectorAndOrientations.sampleAzimuth);
         d.setSampDip(vectorAndOrientations.sampleDip);
         d.setFormAz(vectorAndOrientations.formationAzimuth);

@@ -24,11 +24,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import net.talvi.puffinplot.data.Correction;
-import net.talvi.puffinplot.data.Datum;
-import net.talvi.puffinplot.data.PcaValues;
-import net.talvi.puffinplot.data.TreatType;
-import net.talvi.puffinplot.data.Vec3;
+
+import net.talvi.puffinplot.data.*;
+import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.file.testdata.TestFileLocator;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -103,7 +101,7 @@ public class CaltechLoaderTest {
         final CaltechLoader loader =
                 new CaltechLoader(tempPath.resolve(samFileName).toFile());
         
-        final List<Datum> data = loader.getData();
+        final List<TreatmentStep> data = loader.getData();
         final Correction correction =
                 new Correction(false, false, Correction.Rotation.SAMPLE, false);
 
@@ -114,7 +112,7 @@ public class CaltechLoaderTest {
          */
         for (int i=0; i<sampleNames.length; i++) {
             final String sampleName = sampleNames[i];
-            final List<Datum> sampleData = data.stream().
+            final List<TreatmentStep> sampleData = data.stream().
                     filter(d -> sampleName.equals(d.getIdOrDepth())).
                     collect(Collectors.toList());
             final List<Vec3> sampleDirs = sampleData.stream().

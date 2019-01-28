@@ -21,7 +21,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.util.LinkedList;
-import net.talvi.puffinplot.data.Datum;
+import net.talvi.puffinplot.data.TreatmentStep;
 import java.util.Map;
 import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.TreatType;
@@ -138,7 +138,7 @@ public class IapdLoader extends AbstractFileLoader {
         boolean success = true;
         final double[] defaults = {0, 0, 0, 0, 0, 0, 0};
         while ((line = reader.readLine()) != null) {
-            final Datum d = new Datum();
+            final TreatmentStep d = new TreatmentStep();
             final String[] parts = line.trim().split(" +");
             
             final ParsedDoubles fields = ParsedDoubles.parse(parts, defaults, 0);

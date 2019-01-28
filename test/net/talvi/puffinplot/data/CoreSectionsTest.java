@@ -18,20 +18,15 @@ package net.talvi.puffinplot.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import net.talvi.puffinplot.TestUtils;
-import net.talvi.puffinplot.data.CoreSection.End;
-import net.talvi.puffinplot.data.CoreSection;
 
-import static net.talvi.puffinplot.data.CoreSection.End;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
-import org.mockito.Mockito;
 
 public class CoreSectionsTest {
 
@@ -174,7 +169,7 @@ public class CoreSectionsTest {
         for (int depth=0; depth<30; depth++) {
             final String depthString = String.format("%d", depth);
             final Sample sample = new Sample(depthString, null);
-            final Datum d = new Datum();
+            final TreatmentStep d = new TreatmentStep();
             d.setDepth(depthString);
             d.setDiscreteId(String.format("%d", depth / 10));
             sample.addDatum(d);

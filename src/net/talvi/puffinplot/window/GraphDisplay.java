@@ -42,7 +42,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
-import net.talvi.puffinplot.data.Datum;
+import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.plots.Plot;
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.freehep.graphicsio.svg.SVGGraphics2D;
@@ -297,7 +297,7 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         private static final int LEFT=1, TOP=2, RIGHT=4, BOTTOM=8, ALLSIDES=15;
         private int sides;
         private Point2D currentDragPoint;
-        private Datum previousDatum;
+        private TreatmentStep previousTreatmentStep;
         private int currentButton;
         
         /**
@@ -431,22 +431,22 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         @Override
         public void mouseMoved(MouseEvent e) {
             final Point2D currentMovePoint = e.getPoint();
-            Datum currentDatum = null;
+            TreatmentStep currentTreatmentStep = null;
             for (Plot plot: getPlots()) {
                 if (!plot.isVisible()) continue;
-                final Datum d = plot.getDatumForPosition(currentMovePoint);
+                final TreatmentStep d = plot.getDatumForPosition(currentMovePoint);
                 if (d != null) {
-                    currentDatum = d;
+                    currentTreatmentStep = d;
                     break;
                 }
             }
-            if (currentDatum == previousDatum) {
+            if (currentTreatmentStep == previousTreatmentStep) {
                 return;
             }
             for (CurrentDatumListener listener: currentDatumListeners) {
-                listener.datumChanged(currentDatum);
+                listener.datumChanged(currentTreatmentStep);
             }
-            previousDatum = currentDatum;
+            previousTreatmentStep = currentTreatmentStep;
         }
 
         /**

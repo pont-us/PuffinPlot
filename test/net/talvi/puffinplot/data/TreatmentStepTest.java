@@ -34,57 +34,57 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
 
-public class DatumTest {
+public class TreatmentStepTest {
     
-    private Datum defaultDatum;
+    private TreatmentStep defaultTreatmentStep;
     private static final double delta = 1e-10;
     
     @Before
     public void setUp() {
-        defaultDatum = new Datum();
+        defaultTreatmentStep = new TreatmentStep();
     }
     
     @Test
     public void testThreeArgumentConstructor() {
-        final Datum d = new Datum(1, 2, 3);
+        final TreatmentStep d = new TreatmentStep(1, 2, 3);
         assertEquals(new Vec3(1, 2, 3), d.getMoment());
     }
     
     @Test
     public void testOneArgumentConstructor() {
         final Vec3 v = new Vec3(3, 2, 1);
-        assertEquals(v, new Datum(v).getMoment());
+        assertEquals(v, new TreatmentStep(v).getMoment());
     }
     
     @Test
     public void testZeroArgumentConstructor() {
-        assertEquals(Vec3.ORIGIN, defaultDatum.getMoment());
+        assertEquals(Vec3.ORIGIN, defaultTreatmentStep.getMoment());
     }
     
     @Test
     public void testSetValueWithBadNumberFormat() {
         final ListHandler handler = ListHandler.createAndAdd();
-        new Datum().setValue(DatumField.AREA, "not a number", 1);
+        new TreatmentStep().setValue(DatumField.AREA, "not a number", 1);
         assertTrue(handler.wasOneMessageLogged(Level.WARNING));
     }
     
     @Test(expected = IllegalArgumentException.class)
     public void testSetValueWithNonSettableField() {
-        new Datum().setValue(DatumField.VIRT_MSJUMP, "1.0", 1);
+        new TreatmentStep().setValue(DatumField.VIRT_MSJUMP, "1.0", 1);
     }
     
     @Test
     public void testGetVirtualFields() {
         final Vec3 vec = Vec3.fromPolarDegrees(12, 34, 56);
-        final Datum datum = new Datum(vec);
+        final TreatmentStep treatmentStep = new TreatmentStep(vec);
         assertEquals(vec.getDecDeg(),
-                Double.valueOf(datum.getValue(DatumField.VIRT_DECLINATION)),
+                Double.valueOf(treatmentStep.getValue(DatumField.VIRT_DECLINATION)),
                 1e-10);
         assertEquals(vec.getIncDeg(),
-                Double.valueOf(datum.getValue(DatumField.VIRT_INCLINATION)),
+                Double.valueOf(treatmentStep.getValue(DatumField.VIRT_INCLINATION)),
                 1e-10);
         assertEquals(vec.mag(),
-                Double.valueOf(datum.getValue(DatumField.VIRT_MAGNETIZATION)),
+                Double.valueOf(treatmentStep.getValue(DatumField.VIRT_MAGNETIZATION)),
                 1e-10);
     }
     
@@ -103,61 +103,61 @@ public class DatumTest {
         
         final double value = 30;
         final String valueString = Double.toString(value);
-        final Datum datum = new Datum();
+        final TreatmentStep treatmentStep = new TreatmentStep();
         for (DatumField field: fields) {
-            datum.setValue(field, valueString, 1);
-            assertEquals(value, Double.parseDouble(datum.getValue(field)),
+            treatmentStep.setValue(field, valueString, 1);
+            assertEquals(value, Double.parseDouble(treatmentStep.getValue(field)),
                     1e-10);
         }
     }
     
     @Test
     public void testHasMagMoment() {
-        final Datum datum = new Datum(null);
-        assertFalse(datum.hasMagMoment());
-        datum.setMoment(Vec3.EAST);
-        assertTrue(datum.hasMagMoment());
+        final TreatmentStep treatmentStep = new TreatmentStep(null);
+        assertFalse(treatmentStep.hasMagMoment());
+        treatmentStep.setMoment(Vec3.EAST);
+        assertTrue(treatmentStep.hasMagMoment());
     }
     
     @Test
     public void testToggleSel() {
-        assertFalse(defaultDatum.isSelected());
-        defaultDatum.toggleSel();
-        assertTrue(defaultDatum.isSelected());
-        defaultDatum.toggleSel();
-        assertFalse(defaultDatum.isSelected());        
+        assertFalse(defaultTreatmentStep.isSelected());
+        defaultTreatmentStep.toggleSel();
+        assertTrue(defaultTreatmentStep.isSelected());
+        defaultTreatmentStep.toggleSel();
+        assertFalse(defaultTreatmentStep.isSelected());
     }
     
     @Test
     public void testInvertMoment() {
-        final Datum datum = new Datum(Vec3.NORTH);
-        datum.invertMoment();
-        assertEquals(Vec3.NORTH.invert(), datum.getMoment());
+        final TreatmentStep treatmentStep = new TreatmentStep(Vec3.NORTH);
+        treatmentStep.invertMoment();
+        assertEquals(Vec3.NORTH.invert(), treatmentStep.getMoment());
     }
     
     @Test
     public void testRot180() {
-        final Datum datum = new Datum(Vec3.NORTH);
-        datum.rot180(MeasurementAxis.X); // should do nothing
-        assertEquals(Vec3.NORTH, datum.getMoment());
-        datum.rot180(MeasurementAxis.Z);
-        assertEquals(Vec3.NORTH.invert(), datum.getMoment());
-        datum.setMoment(Vec3.DOWN);
-        datum.rot180(MeasurementAxis.X);
-        assertEquals(Vec3.DOWN.invert(), datum.getMoment());
+        final TreatmentStep treatmentStep = new TreatmentStep(Vec3.NORTH);
+        treatmentStep.rot180(MeasurementAxis.X); // should do nothing
+        assertEquals(Vec3.NORTH, treatmentStep.getMoment());
+        treatmentStep.rot180(MeasurementAxis.Z);
+        assertEquals(Vec3.NORTH.invert(), treatmentStep.getMoment());
+        treatmentStep.setMoment(Vec3.DOWN);
+        treatmentStep.rot180(MeasurementAxis.X);
+        assertEquals(Vec3.DOWN.invert(), treatmentStep.getMoment());
     }
     
     @Test
     public void testSetAndGetSuite() {
-        assertEquals(null, defaultDatum.getSuite());
+        assertEquals(null, defaultTreatmentStep.getSuite());
         final Suite suite = new Suite("test");
-        defaultDatum.setSuite(suite);
-        assertEquals(suite, defaultDatum.getSuite());
+        defaultTreatmentStep.setSuite(suite);
+        assertEquals(suite, defaultTreatmentStep.getSuite());
     }
     
     @Test
     public void testGetFormattedTreatmentLevelThermal() {
-        final Datum thermal = new Datum();
+        final TreatmentStep thermal = new TreatmentStep();
         thermal.setTreatType(TreatType.THERMAL);
         thermal.setTemp(70);
         assertEquals("70", thermal.getFormattedTreatmentLevel());
@@ -165,7 +165,7 @@ public class DatumTest {
 
     @Test
     public void testGetFormattedTreatmentLevelAf() {
-        final Datum af = new Datum();
+        final TreatmentStep af = new TreatmentStep();
         af.setTreatType(TreatType.DEGAUSS_Z);
         af.setAfZ(0.6);
         assertEquals("600", af.getFormattedTreatmentLevel());
@@ -173,45 +173,45 @@ public class DatumTest {
 
     @Test
     public void testMaxTreatmentLevel() {
-        final List<Datum> data = new ArrayList<>();
+        final List<TreatmentStep> data = new ArrayList<>();
         for (double tl: new double[] {20, 80, 50}) {
-            final Datum datum = new Datum();
-            datum.setTreatType(TreatType.THERMAL);
-            datum.setTemp(tl);
-            data.add(datum);
+            final TreatmentStep treatmentStep = new TreatmentStep();
+            treatmentStep.setTreatType(TreatType.THERMAL);
+            treatmentStep.setTemp(tl);
+            data.add(treatmentStep);
         }
-        assertEquals(80, Datum.maxTreatmentLevel(data), delta);
+        assertEquals(80, TreatmentStep.maxTreatmentLevel(data), delta);
     }
 
     @Test
     public void testMaxIntensity() {
-        final List<Datum> data = new ArrayList<>();
+        final List<TreatmentStep> data = new ArrayList<>();
         for (double intensity: new double[] {3, 1, 4, 1, 5, 9, 2, 6}) {
-            final Datum datum = new Datum(intensity, 0, 0);
-            data.add(datum);
+            final TreatmentStep treatmentStep = new TreatmentStep(intensity, 0, 0);
+            data.add(treatmentStep);
         }
-        assertEquals(9, Datum.maxIntensity(data), delta);
+        assertEquals(9, TreatmentStep.maxIntensity(data), delta);
     }
 
     @Test
     public void testMaxMagSus() {
-        final List<Datum> data = new ArrayList<>();
+        final List<TreatmentStep> data = new ArrayList<>();
         for (double magSus:
                 new double[] {3, 1, 4, 1, 5, Double.NaN, 9, 2, 6, 5}) {
-            final Datum datum = new Datum();
-            datum.setMagSus(magSus);
-            data.add(datum);
+            final TreatmentStep treatmentStep = new TreatmentStep();
+            treatmentStep.setMagSus(magSus);
+            data.add(treatmentStep);
         }
-        assertEquals(9, Datum.maxMagSus(data), delta);
+        assertEquals(9, TreatmentStep.maxMagSus(data), delta);
     }
     
     @Test
     public void testIsMagSusOnly() {
-        final Datum withMoment = new Datum(1, 2, 3);
+        final TreatmentStep withMoment = new TreatmentStep(1, 2, 3);
         assertFalse(withMoment.isMagSusOnly());
         withMoment.setMagSus(7);
         assertFalse(withMoment.isMagSusOnly());
-        final Datum noMoment = new Datum(null);
+        final TreatmentStep noMoment = new TreatmentStep(null);
         assertFalse(noMoment.isMagSusOnly());
         noMoment.setMagSus(7);
         assertTrue(noMoment.isMagSusOnly());
@@ -219,7 +219,7 @@ public class DatumTest {
     
     @Test
     public void testSetAndGetArmField() {
-        final Datum d = new Datum();
+        final TreatmentStep d = new TreatmentStep();
         final double armField = 77;
         d.setArmField(armField);
         assertEquals(armField, d.getArmField(), delta);
@@ -227,7 +227,7 @@ public class DatumTest {
     
     @Test
     public void testSetAndGetArmAxis() {
-        final Datum d = new Datum();
+        final TreatmentStep d = new TreatmentStep();
         for (ArmAxis axis: ArmAxis.values()) {
             d.setArmAxis(axis);
             assertEquals(axis, d.getArmAxis());
@@ -236,32 +236,32 @@ public class DatumTest {
     
     @Test
     public void testGetTreatmentStepArm() {
-        testGetTreatmentStep(TreatType.ARM, Datum::setAfZ);
+        testGetTreatmentStep(TreatType.ARM, TreatmentStep::setAfZ);
     }
     
     @Test
     public void testGetTreatmentStepDegaussXyz() {
-        testGetTreatmentStep(TreatType.DEGAUSS_XYZ, Datum::setAfZ);
+        testGetTreatmentStep(TreatType.DEGAUSS_XYZ, TreatmentStep::setAfZ);
     }
     
     @Test
     public void testGetTreatmentStepDegaussZ() {
-        testGetTreatmentStep(TreatType.DEGAUSS_Z, Datum::setAfZ);
+        testGetTreatmentStep(TreatType.DEGAUSS_Z, TreatmentStep::setAfZ);
     }
     
     @Test
     public void testGetTreatmentStepIRM() {
-        testGetTreatmentStep(TreatType.IRM, Datum::setIrmField);
+        testGetTreatmentStep(TreatType.IRM, TreatmentStep::setIrmField);
     }
     
     @Test
     public void testGetTreatmentStepThermal() {
-        testGetTreatmentStep(TreatType.THERMAL, Datum::setTemp);
+        testGetTreatmentStep(TreatType.THERMAL, TreatmentStep::setTemp);
     }
     
     private static void testGetTreatmentStep(TreatType type,
-            ObjDoubleConsumer<Datum> setValue) {
-        final Datum d = new Datum();
+            ObjDoubleConsumer<TreatmentStep> setValue) {
+        final TreatmentStep d = new TreatmentStep();
         for (double value: new double[] {0, 0.01, 17, 529}) {
             d.setTreatType(type);
             setValue.accept(d, value);
@@ -271,119 +271,119 @@ public class DatumTest {
     
     @Test
     public void testSetAndGetSampAz() {
-        testDoubleSetterAndGetter(Datum::setSampAz, Datum::getSampAz);
+        testDoubleSetterAndGetter(TreatmentStep::setSampAz, TreatmentStep::getSampAz);
     }
     
     @Test
     public void testSetAndGetSampDip() {
-        testDoubleSetterAndGetter(Datum::setSampDip, Datum::getSampDip);
+        testDoubleSetterAndGetter(TreatmentStep::setSampDip, TreatmentStep::getSampDip);
     }
     
     @Test
     public void testSetAndGetSampHade() {
-        testDoubleSetterAndGetter(Datum::setSampHade, Datum::getSampHade);
+        testDoubleSetterAndGetter(TreatmentStep::setSampHade, TreatmentStep::getSampHade);
     }
     
     @Test
     public void testSetAndGetAfX() {
-        testDoubleSetterAndGetter(Datum::setAfX, Datum::getAfX);
+        testDoubleSetterAndGetter(TreatmentStep::setAfX, TreatmentStep::getAfX);
     }
     
     @Test
     public void testSetAndGetAfY() {
-        testDoubleSetterAndGetter(Datum::setAfY, Datum::getAfY);
+        testDoubleSetterAndGetter(TreatmentStep::setAfY, TreatmentStep::getAfY);
     }
     
     @Test
     public void testSetAndGetAfZ() {
-        testDoubleSetterAndGetter(Datum::setAfZ, Datum::getAfZ);
+        testDoubleSetterAndGetter(TreatmentStep::setAfZ, TreatmentStep::getAfZ);
     }
     
     @Test
     public void testSetAndGetArea() {
-        testDoubleSetterAndGetter(Datum::setArea, Datum::getArea);
+        testDoubleSetterAndGetter(TreatmentStep::setArea, TreatmentStep::getArea);
     }
     
     @Test
     public void testSetAndGetMagSus() {
-        testDoubleSetterAndGetter(Datum::setMagSus, Datum::getMagSus);
+        testDoubleSetterAndGetter(TreatmentStep::setMagSus, TreatmentStep::getMagSus);
     }
     
     @Test
     public void testSetAndGetVolume() {
-        testDoubleSetterAndGetter(Datum::setVolume, Datum::getVolume);
+        testDoubleSetterAndGetter(TreatmentStep::setVolume, TreatmentStep::getVolume);
     }
 
     @Test
     public void testSetAndGetFormAz() {
-        testDoubleSetterAndGetter(Datum::setFormAz, Datum::getFormAz);
+        testDoubleSetterAndGetter(TreatmentStep::setFormAz, TreatmentStep::getFormAz);
     }
     
     @Test
     public void testSetAndGetFormDip() {
-        testDoubleSetterAndGetter(Datum::setFormDip, Datum::getFormDip);
+        testDoubleSetterAndGetter(TreatmentStep::setFormDip, TreatmentStep::getFormDip);
     }
     
     @Test
     public void testSetAndGetFormStrike() {
-        testDoubleSetterAndGetter(Datum::setFormStrike, Datum::getFormStrike);
+        testDoubleSetterAndGetter(TreatmentStep::setFormStrike, TreatmentStep::getFormStrike);
     }
     
     @Test
     public void testSetAndGetXDrift() {
-        testDoubleSetterAndGetter(Datum::setXDrift, Datum::getXDrift);
+        testDoubleSetterAndGetter(TreatmentStep::setXDrift, TreatmentStep::getXDrift);
     }
     
     @Test
     public void testSetAndGetYDrift() {
-        testDoubleSetterAndGetter(Datum::setYDrift, Datum::getYDrift);
+        testDoubleSetterAndGetter(TreatmentStep::setYDrift, TreatmentStep::getYDrift);
     }
     
     @Test
     public void testSetAndGetZDrift() {
-        testDoubleSetterAndGetter(Datum::setZDrift, Datum::getZDrift);
+        testDoubleSetterAndGetter(TreatmentStep::setZDrift, TreatmentStep::getZDrift);
     }
     
-    private void testDoubleSetterAndGetter(ObjDoubleConsumer<Datum> setter,
-            ToDoubleFunction<Datum> getter) {
+    private void testDoubleSetterAndGetter(ObjDoubleConsumer<TreatmentStep> setter,
+            ToDoubleFunction<TreatmentStep> getter) {
         final Suite suite = new Suite("test");
-        final Datum datum = new Datum();
-        datum.setSuite(suite);
+        final TreatmentStep treatmentStep = new TreatmentStep();
+        treatmentStep.setSuite(suite);
         for (double value: new double[] {0, 0.01, 10.01, 17, 129, 280}) {
             suite.setSaved(true);
-            setter.accept(datum, value);
+            setter.accept(treatmentStep, value);
             assertFalse(suite.isSaved());
-            assertEquals(value, getter.applyAsDouble(datum), delta);
+            assertEquals(value, getter.applyAsDouble(treatmentStep), delta);
         }
     }
     
     @Test
     public void testSetAndGetRunNumber() {
-        testIntSetterAndGetter(Datum::setRunNumber, Datum::getRunNumber);
+        testIntSetterAndGetter(TreatmentStep::setRunNumber, TreatmentStep::getRunNumber);
     }
     
     @Test
     public void testSetAndGetSlotNumber() {
-        testIntSetterAndGetter(Datum::setSlotNumber, Datum::getSlotNumber);
+        testIntSetterAndGetter(TreatmentStep::setSlotNumber, TreatmentStep::getSlotNumber);
     }
     
-    private void testIntSetterAndGetter(ObjIntConsumer<Datum> setter,
-            ToIntFunction<Datum> getter) {
+    private void testIntSetterAndGetter(ObjIntConsumer<TreatmentStep> setter,
+            ToIntFunction<TreatmentStep> getter) {
         final Suite suite = new Suite("test");
-        final Datum datum = new Datum();
-        datum.setSuite(suite);
+        final TreatmentStep treatmentStep = new TreatmentStep();
+        treatmentStep.setSuite(suite);
         for (int value: new int[] {-1, 0, 5, 10, 12, 9997}) {
             suite.setSaved(true);
-            setter.accept(datum, value);
+            setter.accept(treatmentStep, value);
             assertFalse(suite.isSaved());
-            assertEquals(value, getter.applyAsInt(datum), delta);
+            assertEquals(value, getter.applyAsInt(treatmentStep), delta);
         }
     }
     
     @Test
     public void testIgnoreOnLoading() {
         for (MeasType mt: MeasType.values()) {
-            final Datum d = new Datum();
+            final TreatmentStep d = new TreatmentStep();
             d.setMeasType(mt);
             assertEquals(mt == MeasType.NONE, d.ignoreOnLoading());
         }
@@ -391,7 +391,7 @@ public class DatumTest {
 
     @Test
     public void testSetAndGetLine() {
-        final Datum d = new Datum();
+        final TreatmentStep d = new TreatmentStep();
         final Line line = new Line(17);
         d.setLine(line);
         assertSame(line, d.getLine());
@@ -399,7 +399,7 @@ public class DatumTest {
 
     @Test
     public void testSetAndGetTimestamp() {
-        final Datum d = new Datum();
+        final TreatmentStep d = new TreatmentStep();
         final String timestamp = "An arbitrary string";
         d.setTimestamp(timestamp);
         assertEquals(timestamp, d.getTimestamp());
@@ -407,23 +407,23 @@ public class DatumTest {
     
     @Test(expected = NullPointerException.class)
     public void testSetMomentToMeanNull() {
-        new Datum().setMomentToMean(null);
+        new TreatmentStep().setMomentToMean(null);
     }
     
     @Test(expected = IllegalArgumentException.class)
     public void testSetMomentToMeanEmpty() {
-        new Datum().setMomentToMean(Collections.emptyList());
+        new TreatmentStep().setMomentToMean(Collections.emptyList());
     }
     
     @Test
     public void testSetMomentToMean() {
-        final Datum target = new Datum();
+        final TreatmentStep target = new TreatmentStep();
         final Random rnd = new Random(83);
         for (int nVectors = 1; nVectors < 10; nVectors++) {
             final List<Vec3> vectors = IntStream.range(0, nVectors).
                     mapToObj(i -> TestUtils.randomVector(rnd, 1)).
                     collect(Collectors.toList());
-            final List<Datum> data = vectors.stream().map(v -> new Datum(v)).
+            final List<TreatmentStep> data = vectors.stream().map(v -> new TreatmentStep(v)).
                     collect(Collectors.toList());
             target.setMomentToMean(data);
             assertTrue(Vec3.mean(vectors).equals(target.getMoment(), delta));
@@ -432,7 +432,7 @@ public class DatumTest {
         
     @Test
     public void testGetTreatmentLevelIrm() {
-        final Datum d = new Datum();
+        final TreatmentStep d = new TreatmentStep();
         d.setTreatType(TreatType.IRM);
         d.setIrmField(0.7);
         assertEquals(0.7, d.getTreatmentLevel(), delta);
@@ -440,7 +440,7 @@ public class DatumTest {
     
     @Test
     public void testGetValueMsJump() {
-        final Datum d = new Datum();
+        final TreatmentStep d = new TreatmentStep();
         d.setSample(new Sample("test", null) {
             @Override
             public double getMagSusJump() {
@@ -453,9 +453,9 @@ public class DatumTest {
     @Test
     public void testToSummaryStringThermalAndDegauss() {
         final Sample sample = new Sample("test", null);
-        final Datum d0 = makeSimpleDatum(TreatType.THERMAL,
+        final TreatmentStep d0 = makeSimpleDatum(TreatType.THERMAL,
                 75, 24.1, -23.2, 7.123e-3);
-        final Datum d1 = makeSimpleDatum(TreatType.DEGAUSS_XYZ,
+        final TreatmentStep d1 = makeSimpleDatum(TreatType.DEGAUSS_XYZ,
                 0.35, 0.0, 3.5, 1.45e-2);
         sample.addDatum(d0);
         sample.addDatum(d1);
@@ -471,9 +471,9 @@ public class DatumTest {
     @Test
     public void testToSummaryStringNoneAndIrm() {
         final Sample sample = new Sample("test", null);
-        final Datum d0 = makeSimpleDatum(TreatType.NONE,
+        final TreatmentStep d0 = makeSimpleDatum(TreatType.NONE,
                 75, 24.1, -23.2, 7.123e-3);
-        final Datum d1 = makeSimpleDatum(TreatType.IRM,
+        final TreatmentStep d1 = makeSimpleDatum(TreatType.IRM,
                 0.35, 0.0, 3.5, 1.45e-2);
         sample.addDatum(d0);
         sample.addDatum(d1);
@@ -486,9 +486,9 @@ public class DatumTest {
                 d1.toSummaryString());
     }
     
-    private static Datum makeSimpleDatum(TreatType treatType,
-            double level, double dec, double inc, double moment) {
-        final Datum d = new Datum();
+    private static TreatmentStep makeSimpleDatum(TreatType treatType,
+                                                 double level, double dec, double inc, double moment) {
+        final TreatmentStep d = new TreatmentStep();
         d.setTreatType(treatType);
         switch (treatType) {
             case NONE:

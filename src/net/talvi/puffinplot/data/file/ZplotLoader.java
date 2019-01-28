@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 import java.util.regex.Pattern;
-import net.talvi.puffinplot.data.Datum;
+import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.TreatType;
 import net.talvi.puffinplot.data.Vec3;
@@ -114,12 +114,12 @@ public class ZplotLoader extends AbstractFileLoader {
         }
         String line;
         while ((line = reader.readLine()) != null) {
-            Datum d = lineToDatum(line);
+            TreatmentStep d = lineToDatum(line);
             if (d != null) data.add(d);
         }
     }
 
-    private Datum lineToDatum(String zPlotLine) {
+    private TreatmentStep lineToDatum(String zPlotLine) {
         Scanner s = new Scanner(zPlotLine);
         s.useLocale(Locale.ENGLISH); // don't want to be using commas as decimal separators...
         s.useDelimiter(delimPattern);
@@ -131,7 +131,7 @@ public class ZplotLoader extends AbstractFileLoader {
         final double intens = s.nextDouble();
         final String operation = s.next();
 
-        Datum d = new Datum(gaussToAm(Vec3.fromPolarDegrees(intens, inc, dec)));
+        TreatmentStep d = new TreatmentStep(gaussToAm(Vec3.fromPolarDegrees(intens, inc, dec)));
         if (measType == MeasType.UNSET) {
          measType = (numberPattern.matcher(depthOrSample).matches())
                 ? MeasType.CONTINUOUS

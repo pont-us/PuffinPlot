@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import net.talvi.puffinplot.data.Datum;
+import net.talvi.puffinplot.data.TreatmentStep;
 import static java.lang.Math.toRadians;
 import net.talvi.puffinplot.data.MeasType;
 import net.talvi.puffinplot.data.Vec3;
@@ -127,7 +127,7 @@ public class PmdLoader extends AbstractFileLoader {
                 break;
             }
             final PmdDataLine dataLine = PmdDataLine.read(line);
-            final Datum d = new Datum(dataLine.moment.divideBy(headerLine.volume));
+            final TreatmentStep d = new TreatmentStep(dataLine.moment.divideBy(headerLine.volume));
             d.setMeasType(MeasType.DISCRETE);
             d.setDiscreteId(headerLine.name);
             d.setSampAz(headerLine.sampleAzimuth);

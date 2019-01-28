@@ -37,7 +37,7 @@ public class LineTest {
                 emptySlotSample = sample;
             }
             for (int i = 0; i < 10; i++) {
-                final Datum d = new Datum(10 - i, 20 - i, 30 - i);
+                final TreatmentStep d = new TreatmentStep(10 - i, 20 - i, 30 - i);
                 sample.addDatum(d);
                 line.add(d);
             }
