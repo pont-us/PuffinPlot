@@ -66,7 +66,7 @@ public class TreatmentStep {
 
     private String discreteId = "UNSET";
     private MeasurementType measurementType = MeasurementType.UNSET;
-    private TreatType treatType = TreatType.UNKNOWN;
+    private TreatmentType treatmentType = TreatmentType.UNKNOWN;
     private double afx = NaN, afy = NaN, afz = NaN;
     private double temp = NaN;
     private double magSus = NaN;
@@ -209,10 +209,10 @@ public class TreatmentStep {
     public void setDiscreteId(String v){ touch(); discreteId = v; }
     /** Returns the treatment applied before this measurement (AF, thermal, etc.).
      * @return the treatment applied before this measurement (AF, thermal, etc.) */
-    public TreatType getTreatType()    { return treatType; }
+    public TreatmentType getTreatmentType()    { return treatmentType; }
     /** Sets the treatment applied before this measurement (AF, thermal, etc.).
      * @param v the treatment applied before this measurement (AF, thermal, etc.) */
-    public void setTreatType(TreatType v) { touch(); treatType = v; }
+    public void setTreatmentType(TreatmentType v) { touch(); treatmentType = v; }
     /** For AF or ARM treatment, returns the AF field strength in the x axis.
      * @return for AF or ARM treatment, the AF field strength in the x axis */
     public double getAfX()             { return afx; }
@@ -495,7 +495,7 @@ public class TreatmentStep {
      * @return the treatment level
      */
     public double getTreatmentLevel() {
-        switch (treatType) {
+        switch (treatmentType) {
         case NONE: return 0;
         case DEGAUSS_XYZ:
             // This is a bit ill-defined: in general, of course, we can't
@@ -528,7 +528,7 @@ public class TreatmentStep {
      * @return a string representing the treatment level
      */
     public String getFormattedTreatmentLevel() {
-        if (getTreatType().getUnit().equals("T")) {
+        if (getTreatmentType().getUnit().equals("T")) {
             // magnetic treatment -- turn T into mT
             return String.format(Locale.ENGLISH, "%.0f",
                     getTreatmentLevel() * 1000);
@@ -654,7 +654,7 @@ public class TreatmentStep {
         case VOLUME: return fmt(volume);
         case DISCRETE_ID: return discreteId;
         case MEAS_TYPE: return measurementType.toString();
-        case TREATMENT: return treatType.toString();
+        case TREATMENT: return treatmentType.toString();
         case ARM_AXIS: return armAxis.toString();
         case TIMESTAMP: return timestamp;
         case RUN_NUMBER: return Integer.toString(runNumber);
@@ -758,7 +758,7 @@ public class TreatmentStep {
         case VOLUME: volume = doubleVal; break;
         case DISCRETE_ID: discreteId = s; break;
         case MEAS_TYPE: measurementType = MeasurementType.valueOf(s); break;
-        case TREATMENT: treatType = TreatType.valueOf(s); break;
+        case TREATMENT: treatmentType = TreatmentType.valueOf(s); break;
         case ARM_AXIS: armAxis = ArmAxis.fromString(s); break;
         case TIMESTAMP: timestamp = s; break;
         case SLOT_NUMBER: slotNumber = intVal; break;
@@ -779,7 +779,7 @@ public class TreatmentStep {
      * @return the value of the treatment step for this datum
      */
     public double getTreatmentStep() {
-        switch (getTreatType()) {
+        switch (getTreatmentType()) {
             case ARM:
             case DEGAUSS_XYZ:
             case DEGAUSS_Z:
@@ -929,7 +929,7 @@ public class TreatmentStep {
         final DecimalFormat intensityFormat =
                 new DecimalFormat("0.00E00", Util.getDecimalFormatSymbols());
         String treatmentLevel = "???";
-        switch (getTreatType()) {
+        switch (getTreatmentType()) {
             case NONE:
                 treatmentLevel = "";
                 break;
@@ -945,7 +945,7 @@ public class TreatmentStep {
         
         return String.format("Step %s | %s%s | Dec: %s° | Inc: %s° | Mag: %s A/m%s",
                 positionInSample,
-                getTreatType().getNiceName(), treatmentLevel,
+                getTreatmentType().getNiceName(), treatmentLevel,
                 angleFormat.format(getMoment().getDecDeg()),
                 angleFormat.format(getMoment().getIncDeg()),
                 intensityFormat.format(getMoment().mag()),

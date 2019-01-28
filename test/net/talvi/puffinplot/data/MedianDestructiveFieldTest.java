@@ -116,7 +116,7 @@ public class MedianDestructiveFieldTest {
 
     private static TreatmentStep makeDatum(double treatmentLevel, double intensity) {
         final TreatmentStep d = new TreatmentStep(intensity, 0, 0);
-        d.setTreatType(TreatType.DEGAUSS_XYZ);
+        d.setTreatmentType(TreatmentType.DEGAUSS_XYZ);
         d.setAfX(treatmentLevel);
         d.setAfY(treatmentLevel);
         d.setAfZ(treatmentLevel);

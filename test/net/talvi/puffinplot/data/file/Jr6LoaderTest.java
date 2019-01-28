@@ -30,7 +30,7 @@ import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.MeasurementType;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
-import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.file.testdata.TestFileLocator;
 import org.junit.Rule;
@@ -642,10 +642,10 @@ public class Jr6LoaderTest {
      *  Treatment types are assigned an integer code to allow them
      *  to be stored in the double array of expected values.
      */
-    private final TreatType[] treatmentTypes = {
-        /* 0 */ TreatType.NONE,
-        /* 1 */ TreatType.THERMAL,
-        /* 2 */ TreatType.DEGAUSS_XYZ
+    private final TreatmentType[] treatmentTypes = {
+        /* 0 */ TreatmentType.NONE,
+        /* 1 */ TreatmentType.THERMAL,
+        /* 2 */ TreatmentType.DEGAUSS_XYZ
     };
 
     private final Correction sampleCorrection = new Correction(false, false,
@@ -699,7 +699,7 @@ public class Jr6LoaderTest {
     private void checkOneDatum(final double[] expectedValues,
                                final TreatmentStep actualTreatmentStep, double rotation) {
         assertEquals(treatmentTypes[(int) expectedValues[0]],
-                actualTreatmentStep.getTreatType());
+                actualTreatmentStep.getTreatmentType());
         
         final double expectedTreatmentLevel =
                 treatmentTypes[(int) expectedValues[0]].involvesAf() ?

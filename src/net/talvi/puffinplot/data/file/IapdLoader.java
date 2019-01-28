@@ -24,7 +24,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import net.talvi.puffinplot.data.MeasurementType;
-import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Vec3;
 
@@ -44,7 +44,7 @@ public class IapdLoader extends AbstractFileLoader {
      * 
      * Valid import option keys are:
      * 
-     * {@code TreatType.class}; value must be an instance of {@link TreatType}
+     * {@code TreatmentType.class}; value must be an instance of {@link TreatmentType}
      * {@code MeasurementType.class}; value must be an instance of {@link MeasurementType}
      * 
      * These keys respectively specify the treatment type and measurement
@@ -98,10 +98,10 @@ public class IapdLoader extends AbstractFileLoader {
     }
 
     private void readFile() throws IOException {
-        TreatType treatType = TreatType.DEGAUSS_XYZ;
+        TreatmentType treatmentType = TreatmentType.DEGAUSS_XYZ;
         MeasurementType measurementType = MeasurementType.DISCRETE;
-        if (importOptions.containsKey(TreatType.class)) {
-            treatType = (TreatType) importOptions.get(TreatType.class);
+        if (importOptions.containsKey(TreatmentType.class)) {
+            treatmentType = (TreatmentType) importOptions.get(TreatmentType.class);
         }
         if (importOptions.containsKey(MeasurementType.class)) {
             measurementType = (MeasurementType) importOptions.get(MeasurementType.class);
@@ -146,7 +146,7 @@ public class IapdLoader extends AbstractFileLoader {
             success = success && fields.success;
             final double treatmentLevel = fields.get(0);
             
-            switch (treatType) {
+            switch (treatmentType) {
                 case THERMAL:
                     d.setTemp(treatmentLevel);
                     break;
@@ -172,7 +172,7 @@ public class IapdLoader extends AbstractFileLoader {
             d.setFormAz(headerValues.get(3));
             d.setFormDip(headerValues.get(4));
             d.setVolume(headerValues.get(5));
-            d.setTreatType(treatType);
+            d.setTreatmentType(treatmentType);
             d.setMeasurementType(measurementType);
             final double a95 = fields.get(4);
             if (a95 > a95max) {

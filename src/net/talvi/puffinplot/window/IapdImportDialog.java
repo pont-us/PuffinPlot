@@ -35,7 +35,7 @@ import javax.swing.JRadioButton;
 import javax.swing.border.EmptyBorder;
 
 import net.talvi.puffinplot.data.MeasurementType;
-import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.TreatmentType;
 
 /**
  * Lets the user select options for IAPD file import.
@@ -45,7 +45,7 @@ import net.talvi.puffinplot.data.TreatType;
 public class IapdImportDialog extends JDialog {
     
     private MeasurementType measurementType = null;
-    private TreatType treatType = null;
+    private TreatmentType treatmentType = null;
     private boolean okPressed = false;
         
     /**
@@ -86,12 +86,12 @@ public class IapdImportDialog extends JDialog {
         ttPanel.setBorder(BorderFactory.createTitledBorder("Treatment type"));
 
         final ButtonGroup ttGroup = new ButtonGroup();
-        for (TreatType tt: TreatType.values()) {
-            if (tt == TreatType.UNKNOWN || tt == TreatType.NONE) {
+        for (TreatmentType tt: TreatmentType.values()) {
+            if (tt == TreatmentType.UNKNOWN || tt == TreatmentType.NONE) {
                 continue;
             }
             final JRadioButton button = new JRadioButton(tt.getNiceName());
-            button.setSelected(tt == TreatType.DEGAUSS_XYZ);
+            button.setSelected(tt == TreatmentType.DEGAUSS_XYZ);
             button.putClientProperty(IapdImportDialog.class, tt);
             ttPanel.add(button);
             ttGroup.add(button);
@@ -126,7 +126,7 @@ public class IapdImportDialog extends JDialog {
                 while (ttEn.hasMoreElements()) {
                     AbstractButton ab = ttEn.nextElement();
                     if (ab.isSelected()) {
-                        treatType = (TreatType) ab.getClientProperty(IapdImportDialog.class);
+                        treatmentType = (TreatmentType) ab.getClientProperty(IapdImportDialog.class);
                     }
                 }
                 setVisible(false);
@@ -156,8 +156,8 @@ public class IapdImportDialog extends JDialog {
     /**
      * @return the treatment type
      */
-    public TreatType getTreatType() {
-        return treatType;
+    public TreatmentType getTreatmentType() {
+        return treatmentType;
     }
 
     /**

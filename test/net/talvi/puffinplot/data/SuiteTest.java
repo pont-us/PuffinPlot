@@ -331,8 +331,8 @@ public class SuiteTest {
                 final TreatmentStep actualTreatmentStep = actualData.next();
                 assertEquals(expectedTreatmentStep.getMoment(),
                         actualTreatmentStep.getMoment());
-                assertEquals(expectedTreatmentStep.getTreatType(),
-                        actualTreatmentStep.getTreatType());
+                assertEquals(expectedTreatmentStep.getTreatmentType(),
+                        actualTreatmentStep.getTreatmentType());
                 assertEquals(expectedTreatmentStep.getIdOrDepth(),
                         actualTreatmentStep.getIdOrDepth());
                 assertEquals(expectedTreatmentStep.getMeasurementType(),
@@ -673,7 +673,7 @@ public class SuiteTest {
         final TreatmentStep d = new TreatmentStep();
         d.setMeasurementType(MeasurementType.CONTINUOUS);
         d.setDepth("0");
-        d.setTreatType(TreatType.UNKNOWN);
+        d.setTreatmentType(TreatmentType.UNKNOWN);
         syntheticSuite1.addDatum(d);
     }
 
@@ -1136,9 +1136,9 @@ public class SuiteTest {
                         map(i -> syntheticSuite1.getSampleByIndex(i)).
                         collect(Collectors.toSet());
         samplesToRemove.stream().flatMap(s -> s.getData().stream()).
-                forEach(d -> d.setTreatType(TreatType.DEGAUSS_Z));
+                forEach(d -> d.setTreatmentType(TreatmentType.DEGAUSS_Z));
         syntheticSuite1.removeSamplesByTreatmentType(
-                syntheticSuite1.getSamples(), TreatType.DEGAUSS_Z);
+                syntheticSuite1.getSamples(), TreatmentType.DEGAUSS_Z);
         final Set remainingSampleSet = new HashSet(syntheticSuite1.getSamples());
         assertTrue(initialSampleSet.containsAll(remainingSampleSet));
         assertTrue(initialSampleSet.containsAll(samplesToRemove));
@@ -1573,7 +1573,7 @@ public class SuiteTest {
         final List<TreatmentStep> expected = new ArrayList<>();
         for (int step=0; step<3; step++) {
             final TreatmentStep d = new TreatmentStep();
-            d.setTreatType(TreatType.THERMAL);
+            d.setTreatmentType(TreatmentType.THERMAL);
             d.setTemp(step*10);
             sample.addDatum(d);
             expected.add(d);

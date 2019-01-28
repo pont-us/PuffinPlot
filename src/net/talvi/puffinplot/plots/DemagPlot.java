@@ -27,7 +27,7 @@ import java.util.prefs.Preferences;
 
 import net.talvi.puffinplot.data.MedianDestructiveField;
 import net.talvi.puffinplot.data.Sample;
-import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.plots.PlotAxis.AxisParameters;
 import net.talvi.puffinplot.window.GraphDisplay;
@@ -120,20 +120,20 @@ public class DemagPlot extends Plot {
             maxIntens = 1;
         }
 
-        final TreatType treatType =
-                sample.getDatum(sample.getNumData() - 1).getTreatType();
+        final TreatmentType treatmentType =
+                sample.getDatum(sample.getNumData() - 1).getTreatmentType();
         final String xAxisLabel;
         double demagRescale = 1;
         if (xBySequence) {
             xAxisLabel = "Measurement number";
         } else {
-            String unit = treatType.getUnit();
-            if (treatType.involvesAf()) {
+            String unit = treatmentType.getUnit();
+            if (treatmentType.involvesAf()) {
                 unit = "m" + unit;
                 demagRescale = 1000;
             }
             xAxisLabel = String.format(Locale.ENGLISH,
-                    "%s (%s)", treatType.getAxisLabel(), unit);
+                    "%s (%s)", treatmentType.getAxisLabel(), unit);
         }
         
         final AxisParameters xAxisParams = 

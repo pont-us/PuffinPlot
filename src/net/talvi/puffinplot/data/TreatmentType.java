@@ -21,7 +21,7 @@ package net.talvi.puffinplot.data;
  * and heating.
  * @author pont
  */
-public enum TreatType {
+public enum TreatmentType {
     /** no treatment applied */
     NONE("No treatment", "", ""),
     /** static alternating-field treatment along three orthogonal axes */
@@ -45,7 +45,7 @@ public enum TreatType {
     // Unit name for the applied `thing'
     private final String unit;
 
-    private TreatType(String name, String treatment, String unit) {
+    private TreatmentType(String name, String treatment, String unit) {
         this.name = name;
         this.treatment = treatment;
         this.unit = unit;

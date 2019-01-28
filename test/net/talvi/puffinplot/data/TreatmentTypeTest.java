@@ -35,26 +35,26 @@ import static org.junit.Assert.fail;
  *
  * @author pont
  */
-public class TreatTypeTest {
+public class TreatmentTypeTest {
 
     /**
-     * Tests that the possible values of TreatType are as expected.
+     * Tests that the possible values of TreatmentType are as expected.
      */
     @Test
     public void testValues() {
-        TreatType[] expResult = {TreatType.NONE, TreatType.DEGAUSS_XYZ,
-            TreatType.DEGAUSS_Z, TreatType.ARM, TreatType.IRM,
-            TreatType.THERMAL, TreatType.UNKNOWN};
-        TreatType[] result = TreatType.values();
+        TreatmentType[] expResult = {TreatmentType.NONE, TreatmentType.DEGAUSS_XYZ,
+            TreatmentType.DEGAUSS_Z, TreatmentType.ARM, TreatmentType.IRM,
+            TreatmentType.THERMAL, TreatmentType.UNKNOWN};
+        TreatmentType[] result = TreatmentType.values();
         Assert.assertArrayEquals(expResult, result);
     }
 
     /**
-     * Tests the {@link TreatType#getAxisLabel()} method.
+     * Tests the {@link TreatmentType#getAxisLabel()} method.
      */
     @Test
     public void testGetAxisLabel() {
-        for (TreatType t: TreatType.values()) {
+        for (TreatmentType t: TreatmentType.values()) {
             String label = t.getAxisLabel();
             switch (t) {
             case NONE: assertEquals("", label);
@@ -79,13 +79,13 @@ public class TreatTypeTest {
     
     @Test
     public void testIncludesAf() {
-        for (TreatType treatType: TreatType.values()) {
-            if (treatType == TreatType.DEGAUSS_XYZ ||
-                treatType == TreatType.DEGAUSS_Z ||
-                    treatType == TreatType.ARM) {
-                assertTrue(treatType.involvesAf());
+        for (TreatmentType treatmentType : TreatmentType.values()) {
+            if (treatmentType == TreatmentType.DEGAUSS_XYZ ||
+                treatmentType == TreatmentType.DEGAUSS_Z ||
+                    treatmentType == TreatmentType.ARM) {
+                assertTrue(treatmentType.involvesAf());
             } else {
-                assertFalse(treatType.involvesAf());
+                assertFalse(treatmentType.involvesAf());
             }
         }
     }
@@ -98,7 +98,7 @@ public class TreatTypeTest {
          */
         
         final Collection<String> niceNames =
-                Arrays.stream(TreatType.values()).map(tt -> tt.getNiceName()).
+                Arrays.stream(TreatmentType.values()).map(tt -> tt.getNiceName()).
                         collect(Collectors.toList());
         final Set<String> duplicates = niceNames.stream().
                 filter(name -> Collections.frequency(niceNames, name) > 1).
@@ -110,12 +110,12 @@ public class TreatTypeTest {
     
     @Test
     public void testGetUnit() {
-        for (TreatType treatType: TreatType.values()) {
-            if (treatType.involvesAf() || treatType==TreatType.IRM) {
-                assertEquals("T", treatType.getUnit());
+        for (TreatmentType treatmentType : TreatmentType.values()) {
+            if (treatmentType.involvesAf() || treatmentType == TreatmentType.IRM) {
+                assertEquals("T", treatmentType.getUnit());
             }
-            if (treatType == TreatType.THERMAL) {
-                assertEquals("°C", treatType.getUnit());
+            if (treatmentType == TreatmentType.THERMAL) {
+                assertEquals("°C", treatmentType.getUnit());
             }
         }
     }

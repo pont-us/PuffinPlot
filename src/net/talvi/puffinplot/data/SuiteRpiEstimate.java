@@ -131,11 +131,11 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
          * demagnetization.
          *
          * With Java 9, the ugly initialization below will be replaceable with a
-         * simple Set.of(TreatType.DEGAUSS_XYZ, TreatType.DEGAUSS_Z).
+         * simple Set.of(TreatmentType.DEGAUSS_XYZ, TreatmentType.DEGAUSS_Z).
          */
-        final Set<TreatType> demagTreatTypes =
+        final Set<TreatmentType> demagTreatmentTypes =
                 Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
-                        TreatType.DEGAUSS_XYZ, TreatType.DEGAUSS_Z)));
+                        TreatmentType.DEGAUSS_XYZ, TreatmentType.DEGAUSS_Z)));
         
         final List<ArmSampleRpiEstimate> rpis =
                 new ArrayList<>(nrmSuite.getNumSamples());
@@ -160,7 +160,7 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
                     final TreatmentStep armStep = demagStep == 0 ?
                             armSample.getDatum(0) :
                             armSample.getDatumByTreatmentTypeAndLevel(
-                                    demagTreatTypes, demagStep);
+                                    demagTreatmentTypes, demagStep);
                     if (nrmStep != null && armStep != null) {
                         final double nrmInt = nrmStep.getIntensity();
                         final double armInt = armStep.getIntensity();

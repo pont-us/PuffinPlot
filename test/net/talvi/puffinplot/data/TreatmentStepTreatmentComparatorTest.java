@@ -40,10 +40,10 @@ public class TreatmentStepTreatmentComparatorTest {
     @Test
     public void testCompareDifferentTreatmentTypes() {
         final TreatmentStep d0 = new TreatmentStep();
-        d0.setTreatType(TreatType.DEGAUSS_Z);
+        d0.setTreatmentType(TreatmentType.DEGAUSS_Z);
         d0.setAfZ(100);
         final TreatmentStep d1 = new TreatmentStep();
-        d1.setTreatType(TreatType.THERMAL);
+        d1.setTreatmentType(TreatmentType.THERMAL);
         d1.setTemp(50);
         assertEquals(0, comparator.compare(d0, d1));
         assertEquals(0, comparator.compare(d1, d0));
@@ -54,7 +54,7 @@ public class TreatmentStepTreatmentComparatorTest {
         final List<TreatmentStep> data = new ArrayList<>(3);
         for (int i=0; i<3; i++) {
             final TreatmentStep d = new TreatmentStep();
-            d.setTreatType(TreatType.THERMAL);
+            d.setTreatmentType(TreatmentType.THERMAL);
             d.setTemp(i*100);
             data.add(d);
         }

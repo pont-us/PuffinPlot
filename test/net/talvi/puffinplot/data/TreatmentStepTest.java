@@ -163,7 +163,7 @@ public class TreatmentStepTest {
     @Test
     public void testGetFormattedTreatmentLevelThermal() {
         final TreatmentStep thermal = new TreatmentStep();
-        thermal.setTreatType(TreatType.THERMAL);
+        thermal.setTreatmentType(TreatmentType.THERMAL);
         thermal.setTemp(70);
         assertEquals("70", thermal.getFormattedTreatmentLevel());
     }
@@ -171,7 +171,7 @@ public class TreatmentStepTest {
     @Test
     public void testGetFormattedTreatmentLevelAf() {
         final TreatmentStep af = new TreatmentStep();
-        af.setTreatType(TreatType.DEGAUSS_Z);
+        af.setTreatmentType(TreatmentType.DEGAUSS_Z);
         af.setAfZ(0.6);
         assertEquals("600", af.getFormattedTreatmentLevel());
     }
@@ -181,7 +181,7 @@ public class TreatmentStepTest {
         final List<TreatmentStep> data = new ArrayList<>();
         for (double tl: new double[] {20, 80, 50}) {
             final TreatmentStep treatmentStep = new TreatmentStep();
-            treatmentStep.setTreatType(TreatType.THERMAL);
+            treatmentStep.setTreatmentType(TreatmentType.THERMAL);
             treatmentStep.setTemp(tl);
             data.add(treatmentStep);
         }
@@ -241,34 +241,34 @@ public class TreatmentStepTest {
     
     @Test
     public void testGetTreatmentStepArm() {
-        testGetTreatmentStep(TreatType.ARM, TreatmentStep::setAfZ);
+        testGetTreatmentStep(TreatmentType.ARM, TreatmentStep::setAfZ);
     }
     
     @Test
     public void testGetTreatmentStepDegaussXyz() {
-        testGetTreatmentStep(TreatType.DEGAUSS_XYZ, TreatmentStep::setAfZ);
+        testGetTreatmentStep(TreatmentType.DEGAUSS_XYZ, TreatmentStep::setAfZ);
     }
     
     @Test
     public void testGetTreatmentStepDegaussZ() {
-        testGetTreatmentStep(TreatType.DEGAUSS_Z, TreatmentStep::setAfZ);
+        testGetTreatmentStep(TreatmentType.DEGAUSS_Z, TreatmentStep::setAfZ);
     }
     
     @Test
     public void testGetTreatmentStepIRM() {
-        testGetTreatmentStep(TreatType.IRM, TreatmentStep::setIrmField);
+        testGetTreatmentStep(TreatmentType.IRM, TreatmentStep::setIrmField);
     }
     
     @Test
     public void testGetTreatmentStepThermal() {
-        testGetTreatmentStep(TreatType.THERMAL, TreatmentStep::setTemp);
+        testGetTreatmentStep(TreatmentType.THERMAL, TreatmentStep::setTemp);
     }
     
-    private static void testGetTreatmentStep(TreatType type,
-            ObjDoubleConsumer<TreatmentStep> setValue) {
+    private static void testGetTreatmentStep(TreatmentType type,
+                                             ObjDoubleConsumer<TreatmentStep> setValue) {
         final TreatmentStep d = new TreatmentStep();
         for (double value: new double[] {0, 0.01, 17, 529}) {
-            d.setTreatType(type);
+            d.setTreatmentType(type);
             setValue.accept(d, value);
             assertEquals(value, d.getTreatmentStep(), delta);
         }
@@ -438,7 +438,7 @@ public class TreatmentStepTest {
     @Test
     public void testGetTreatmentLevelIrm() {
         final TreatmentStep d = new TreatmentStep();
-        d.setTreatType(TreatType.IRM);
+        d.setTreatmentType(TreatmentType.IRM);
         d.setIrmField(0.7);
         assertEquals(0.7, d.getTreatmentLevel(), delta);
     }
@@ -458,9 +458,9 @@ public class TreatmentStepTest {
     @Test
     public void testToSummaryStringThermalAndDegauss() {
         final Sample sample = new Sample("test", null);
-        final TreatmentStep d0 = makeSimpleDatum(TreatType.THERMAL,
+        final TreatmentStep d0 = makeSimpleDatum(TreatmentType.THERMAL,
                 75, 24.1, -23.2, 7.123e-3);
-        final TreatmentStep d1 = makeSimpleDatum(TreatType.DEGAUSS_XYZ,
+        final TreatmentStep d1 = makeSimpleDatum(TreatmentType.DEGAUSS_XYZ,
                 0.35, 0.0, 3.5, 1.45e-2);
         sample.addDatum(d0);
         sample.addDatum(d1);
@@ -476,9 +476,9 @@ public class TreatmentStepTest {
     @Test
     public void testToSummaryStringNoneAndIrm() {
         final Sample sample = new Sample("test", null);
-        final TreatmentStep d0 = makeSimpleDatum(TreatType.NONE,
+        final TreatmentStep d0 = makeSimpleDatum(TreatmentType.NONE,
                 75, 24.1, -23.2, 7.123e-3);
-        final TreatmentStep d1 = makeSimpleDatum(TreatType.IRM,
+        final TreatmentStep d1 = makeSimpleDatum(TreatmentType.IRM,
                 0.35, 0.0, 3.5, 1.45e-2);
         sample.addDatum(d0);
         sample.addDatum(d1);
@@ -491,11 +491,11 @@ public class TreatmentStepTest {
                 d1.toSummaryString());
     }
     
-    private static TreatmentStep makeSimpleDatum(TreatType treatType,
+    private static TreatmentStep makeSimpleDatum(TreatmentType treatmentType,
                                                  double level, double dec, double inc, double moment) {
         final TreatmentStep d = new TreatmentStep();
-        d.setTreatType(treatType);
-        switch (treatType) {
+        d.setTreatmentType(treatmentType);
+        switch (treatmentType) {
             case NONE:
             case UNKNOWN:
                 break;
@@ -513,7 +513,7 @@ public class TreatmentStepTest {
                 d.setAfZ(level);
                 break;
             default:
-                throw new Error("Unhandled treatment type "+treatType);
+                throw new Error("Unhandled treatment type "+ treatmentType);
                 
         }
         d.setMoment(Vec3.fromPolarDegrees(moment, inc, dec));

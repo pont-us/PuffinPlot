@@ -28,7 +28,7 @@ import net.talvi.puffinplot.Util;
 import net.talvi.puffinplot.data.FieldUnit;
 import net.talvi.puffinplot.data.MeasurementType;
 import net.talvi.puffinplot.data.MomentUnit;
-import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.TreatmentStepField;
 import net.talvi.puffinplot.data.Vec3;
@@ -43,7 +43,7 @@ import net.talvi.puffinplot.data.Vec3;
 public final class FileFormat {
     
     private final MeasurementType measurementType;
-    private final TreatType treatmentType;
+    private final TreatmentType treatmentType;
     private final Map<Integer, TreatmentStepField> columnMap;
     private final int headerLines;
     private final String separator;
@@ -69,7 +69,7 @@ public final class FileFormat {
      * @param fieldUnit units in which magnetic field strength is expressed
      */
     public FileFormat(Map<Integer, TreatmentStepField> columnMap, int headerLines,
-                      MeasurementType measurementType, TreatType treatmentType,
+                      MeasurementType measurementType, TreatmentType treatmentType,
                       String separator, boolean useFixedWidthColumns,
                       List<Integer> columnWidths, MomentUnit momentUnit, FieldUnit fieldUnit) {
         this.columnMap = new HashMap<>(columnMap);
@@ -108,7 +108,7 @@ public final class FileFormat {
         final String[] fieldStrings = splitLine(line);
         final TreatmentStep treatmentStep = new TreatmentStep();
         treatmentStep.setMeasurementType(measurementType);
-        treatmentStep.setTreatType(treatmentType);
+        treatmentStep.setTreatmentType(treatmentType);
         treatmentStep.setDepth("0");
         treatmentStep.setDiscreteId("UNKNOWN");
         treatmentStep.setSampAz(0);
@@ -251,8 +251,8 @@ public final class FileFormat {
         final int headerLines = prefs.getInt(pp+".headerLines", 0);
         final MeasurementType measurementType =
                 MeasurementType.valueOf(prefs.get(pp+".measType", "CONTINUOUS"));
-        final TreatType treatType =
-                TreatType.valueOf(prefs.get(pp+".treatType", "DEGAUSS_XYZ"));
+        final TreatmentType treatmentType =
+                TreatmentType.valueOf(prefs.get(pp+".treatType", "DEGAUSS_XYZ"));
         final boolean useFixedWidth = prefs.getBoolean(pp+".useFixedWidth", false);
         final List<Integer> columnWidths =
                 convertStringToColumnWidths(prefs.get(pp+".columnWidths", ""));
@@ -271,7 +271,7 @@ public final class FileFormat {
                 MomentUnit.valueOf(prefs.get(pp+".momentUnit", "AM"));
         final FieldUnit fieldUnit =
                 FieldUnit.valueOf(prefs.get(pp+".fieldUnit", "TESLA"));
-        return new FileFormat(columnMap, headerLines, measurementType, treatType,
+        return new FileFormat(columnMap, headerLines, measurementType, treatmentType,
                 separator, useFixedWidth, columnWidths, momentUnit, fieldUnit);
     }
 
@@ -285,7 +285,7 @@ public final class FileFormat {
     /**
      * @return the treatment type for the file
      */
-    public TreatType getTreatmentType() {
+    public TreatmentType getTreatmentType() {
         return treatmentType;
     }
 

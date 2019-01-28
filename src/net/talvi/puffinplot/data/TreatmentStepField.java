@@ -94,7 +94,7 @@ public enum TreatmentStepField {
 
     // Treatments
     /** the type of treatment applied before measurement (thermal, AF, etc.)*/
-    TREATMENT("Treatment type", null, TreatType.class,
+    TREATMENT("Treatment type", null, TreatmentType.class,
                 "DEGAUSS_XYZ", true, false),
     /** for treatments involving AF, the AF x-axis field strength in Tesla */
     AF_X("AF X field", null, double.class, "0", true, false),

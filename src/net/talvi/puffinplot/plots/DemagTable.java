@@ -27,7 +27,7 @@ import java.util.prefs.Preferences;
 
 import net.talvi.puffinplot.Util;
 import net.talvi.puffinplot.data.Sample;
-import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.window.GraphDisplay;
@@ -97,7 +97,7 @@ public class DemagTable extends Plot {
         if (data.isEmpty()) return;
 
         final List<String> headers2 = new ArrayList<>(headers);
-        if (sample.getDatum(0).getTreatType() == TreatType.THERMAL)
+        if (sample.getDatum(0).getTreatmentType() == TreatmentType.THERMAL)
             headers2.set(0, "temp.");
         points.add(new TextLinePoint(this, g, 10, null, null, headers2,
                 xSpacing, Color.BLACK));

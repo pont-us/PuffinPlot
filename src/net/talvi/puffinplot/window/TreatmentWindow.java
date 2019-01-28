@@ -33,7 +33,7 @@ import javax.swing.SwingConstants;
 
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.Sample;
-import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.TreatmentStep;
 
 /**
@@ -53,13 +53,13 @@ public class TreatmentWindow extends JFrame implements ActionListener {
         
         public TreatmentCombo() {
             super();
-            for (TreatType t: TreatType.values()) {
+            for (TreatmentType t: TreatmentType.values()) {
                 addItem(t.getNiceName());
             }
         }
         
-        public TreatType getTreatmentType() {
-            return TreatType.values()[getSelectedIndex()];
+        public TreatmentType getTreatmentType() {
+            return TreatmentType.values()[getSelectedIndex()];
         }
         
     }
@@ -122,10 +122,10 @@ public class TreatmentWindow extends JFrame implements ActionListener {
         if (event.getSource() == cancelButton)
             setVisible(false);
         if (event.getSource() == setButton) {
-            final TreatType treatType = treatmentCombo.getTreatmentType();
+            final TreatmentType treatmentType = treatmentCombo.getTreatmentType();
             for (Sample sample: app.getSelectedSamples()) {
                 for (TreatmentStep treatmentStep : sample.getData()) {
-                    treatmentStep.setTreatType(treatType);
+                    treatmentStep.setTreatmentType(treatmentType);
                 }
             }
             setVisible(false);

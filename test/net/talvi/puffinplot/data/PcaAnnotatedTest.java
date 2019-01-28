@@ -85,7 +85,7 @@ public class PcaAnnotatedTest {
         final TreatmentStep treatmentStep = new TreatmentStep(v);
         treatmentStep.setInPca(inPca);
         treatmentStep.setPcaAnchored(false);
-        treatmentStep.setTreatType(TreatType.DEGAUSS_Z);
+        treatmentStep.setTreatmentType(TreatmentType.DEGAUSS_Z);
         treatmentStep.setAfZ(afz);
         return treatmentStep;
     }

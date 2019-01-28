@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.PcaValues;
-import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.data.file.testdata.TestFileLocator;
@@ -58,8 +58,8 @@ public class CaltechLoaderTest {
                     {13.0,  60.6, 11.7}},
                 new double[] {
                     0, .025, .050, .100, .150, .200, .300, .400, .600, .800},
-                TreatType.DEGAUSS_XYZ,
-                TreatType.DEGAUSS_XYZ,
+                TreatmentType.DEGAUSS_XYZ,
+                TreatmentType.DEGAUSS_XYZ,
                 10);
     }
     
@@ -74,16 +74,16 @@ public class CaltechLoaderTest {
                     0, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300,
                     325, 350, 375, 400, 425, 450, 475, 500, 525, 550, 560,
                     560, 570, 575, 577, 579},
-                TreatType.NONE,
-                TreatType.THERMAL,
+                TreatmentType.NONE,
+                TreatmentType.THERMAL,
                 28);
     }
 
     private void testReadFile(String samFileName,
             String[] dataFileNames, String[] sampleNames,
             double[][] pcaDirs, double[] demagLevels,
-            TreatType firstTreatmentType,
-            TreatType subsequentTreatmentType,
+            TreatmentType firstTreatmentType,
+            TreatmentType subsequentTreatmentType,
             int nDataPerSample) throws IOException {
         final Path tempPath = temporaryFolder.getRoot().toPath();
         
@@ -128,9 +128,9 @@ public class CaltechLoaderTest {
             assertEquals(expected[0], pca.getDirection().getDecDeg(), 0.1);
             assertEquals(expected[1], pca.getDirection().getIncDeg(), 0.1);
             assertEquals(expected[2], pca.getMad3(), 0.1);
-            assertEquals(firstTreatmentType, sampleData.get(0).getTreatType());
+            assertEquals(firstTreatmentType, sampleData.get(0).getTreatmentType());
             assertTrue(sampleData.stream().skip(1).
-                allMatch(d -> d.getTreatType() == subsequentTreatmentType));
+                allMatch(d -> d.getTreatmentType() == subsequentTreatmentType));
             assertEquals(nDataPerSample, sampleData.size());
         }
         

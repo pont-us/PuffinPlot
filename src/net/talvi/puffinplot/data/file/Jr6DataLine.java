@@ -20,7 +20,7 @@ import java.util.function.IntFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.Vec3;
 
 /**
@@ -40,7 +40,7 @@ class Jr6DataLine {
     private final static Pattern regexPattern = Pattern.compile(fullRegexString);
 
     private final String name;
-    private final TreatType treatmentType;
+    private final TreatmentType treatmentType;
     private final int treatmentLevel;
     private final Vec3 magnetization;
     private final int azimuth;
@@ -74,16 +74,16 @@ class Jr6DataLine {
                 matcher.group(15), matcher.group(16));
     }
     
-    private static TreatType readTreatmentType(String treatmentField) {
+    private static TreatmentType readTreatmentType(String treatmentField) {
         switch (treatmentField.substring(0, 1)) {
             case "N":
-                return TreatType.NONE;
+                return TreatmentType.NONE;
             case "T":
-                return TreatType.THERMAL;
+                return TreatmentType.THERMAL;
             case "A":
-                return TreatType.DEGAUSS_XYZ;
+                return TreatmentType.DEGAUSS_XYZ;
             case "M":
-                return TreatType.ARM;
+                return TreatmentType.ARM;
             default:
                 throw new IllegalArgumentException("Unknown treatment code \""
                         + treatmentField.substring(0, 1) + "\"");
@@ -120,7 +120,7 @@ class Jr6DataLine {
         return name;
     }
 
-    public TreatType getTreatmentType() {
+    public TreatmentType getTreatmentType() {
         return treatmentType;
     }
 

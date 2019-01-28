@@ -16,7 +16,7 @@
  */
 package net.talvi.puffinplot.data.file;
 
-import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.TreatmentType;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -26,43 +26,43 @@ public class PmdDataLineTest {
     
     @Test
     public void testRead() {
-        assertEquals(new PmdDataLine(TreatType.DEGAUSS_XYZ, 40, new double[] {
+        assertEquals(new PmdDataLine(TreatmentType.DEGAUSS_XYZ, 40, new double[] {
             4.76E-06, -6.15E-06, -3.90E-06,
             7.91E-01, 241.1, -39.4, 241.1, -39.4,  0.0}, "1"),
                 PmdDataLine.read("M040  4.76E-06 -6.15E-06 -3.90E-06  "
                         + "7.91E-01 241.1 -39.4 241.1 -39.4  0.0 1"));
         
-        assertEquals(new PmdDataLine(TreatType.NONE, 0, new double[] {
+        assertEquals(new PmdDataLine(TreatmentType.NONE, 0, new double[] {
             -2.02E-07, 1.86E-07, 4.50E-07,
             4.79E-02, 351.9, 56.6, 115.9, 35.5, 1.4}, ""),
                 PmdDataLine.read("NRM  -2.02E-07  1.86E-07  4.50E-07  "
                         + "4.79E-02 351.9  56.6 115.9  35.5  1.4 "));
         
-        assertEquals(new PmdDataLine(TreatType.THERMAL, 580, new double[] {
+        assertEquals(new PmdDataLine(TreatmentType.THERMAL, 580, new double[] {
             -2.15E-08, -5.73E-09,  1.01E-08,
             2.22E-03, 177.5,  70.8, 150.1,  -5.9,  3.8}, "< 50%"),
                 PmdDataLine.read("T580 -2.15E-08 -5.73E-09  1.01E-08  "
                         + "2.22E-03 177.5  70.8 150.1  -5.9  3.8 < 50%"));
         
-        assertEquals(new PmdDataLine(TreatType.DEGAUSS_XYZ, 004, new double[] {
+        assertEquals(new PmdDataLine(TreatmentType.DEGAUSS_XYZ, 004, new double[] {
             -6.20E-06, +3.48E-06, +1.17E-05,
             +1.24E+00,  53.0,  62.0,  53.0,  62.0,  0.4}, " cryoSlug"),
                 PmdDataLine.read("H004 -6.20E-06 +3.48E-06 +1.17E-05 "
                         + "+1.24E+00  53.0  62.0  53.0  62.0  0.4  cryoSlug"));
         
-        assertEquals(new PmdDataLine(TreatType.DEGAUSS_XYZ, 5, new double[] {
+        assertEquals(new PmdDataLine(TreatmentType.DEGAUSS_XYZ, 5, new double[] {
             2.85E-08, -6.82E-08,  7.35E-08,
             2.08E-02, 254.5,   8.9, 254.5,   8.9,  0.0}, "JR5-2"),
                 PmdDataLine.read("5MT   2.85E-08 -6.82E-08  7.35E-08  "
                         + "2.08E-02 254.5   8.9 254.5   8.9  0.0 JR5-2"));
         
-        assertEquals(new PmdDataLine(TreatType.DEGAUSS_XYZ, 90, new double[] {
+        assertEquals(new PmdDataLine(TreatmentType.DEGAUSS_XYZ, 90, new double[] {
             2.53E-09, -5.26E-09,  6.20E-09,
             1.70E-03, 257.4,   8.5, 257.4,   8.5,  0.0}, "JR5-2"),
                 PmdDataLine.read("90MT  2.53E-09 -5.26E-09  6.20E-09  "
                         + "1.70E-03 257.4   8.5 257.4   8.5  0.0 JR5-2"));
         
-        assertEquals(new PmdDataLine(TreatType.DEGAUSS_XYZ, 100, new double[] {
+        assertEquals(new PmdDataLine(TreatmentType.DEGAUSS_XYZ, 100, new double[] {
             1.75E-09, -5.21E-09,  5.46E-09,
             1.55E-03, 252.7,  11.2, 252.7,  11.2,  0.0}, "JR5-2"),
                 PmdDataLine.read("100M  1.75E-09 -5.21E-09  5.46E-09  "
@@ -95,15 +95,15 @@ public class PmdDataLineTest {
     @Test
     public void testEqualsAndHash() {
         final PmdDataLine pdl0 =
-                new PmdDataLine(TreatType.DEGAUSS_XYZ, 90, new double[] {
+                new PmdDataLine(TreatmentType.DEGAUSS_XYZ, 90, new double[] {
             2.53E-09, -5.26E-09,  6.20E-09,
             1.70E-03, 257.4,   8.5, 257.4,   8.5,  0.0}, "JR5-2");
         final PmdDataLine pdl1 =
-                new PmdDataLine(TreatType.DEGAUSS_XYZ, 90, new double[] {
+                new PmdDataLine(TreatmentType.DEGAUSS_XYZ, 90, new double[] {
             2.53E-09, -5.26E-09,  6.20E-09,
             1.70E-03, 257.4,   8.5, 257.4,   8.5,  0.0}, "JR5-2");
         final PmdDataLine pdl2 =
-                new PmdDataLine(TreatType.DEGAUSS_XYZ, 40, new double[] {
+                new PmdDataLine(TreatmentType.DEGAUSS_XYZ, 40, new double[] {
             4.76E-06, -6.15E-06, -3.90E-06,
             7.91E-01, 241.1, -39.4, 241.1, -39.4,  0.0}, "1");
         assertEquals(pdl0, pdl0);

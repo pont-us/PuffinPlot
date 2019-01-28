@@ -109,7 +109,7 @@ public class PplLoader extends AbstractFileLoader {
             List<String> values = Arrays.asList(line.split("\t"));
             if (version==2) {
                 // Ppl 2 files still use the 2G strings for treatment types,
-                // so we munge it into a suitable input for TreatType.valueOf
+                // so we munge it into a suitable input for TreatmentType.valueOf
                 // before passing it to the TreatmentStep reader.
                 values.set(treatmentField, treatTypeFromString(values.get
                         (treatmentField)).toString());

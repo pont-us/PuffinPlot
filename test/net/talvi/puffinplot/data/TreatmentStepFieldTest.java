@@ -94,7 +94,7 @@ public class TreatmentStepFieldTest {
         final TreatmentStepField[] fields = TreatmentStepField.values();
         final Set<Class> exceptionThrowingTypes = Arrays.stream(new Class[]{
             double.class, int.class, ArmAxis.class, MeasurementType.class,
-            TreatType.class
+            TreatmentType.class
         }).collect(Collectors.toSet());
         for (TreatmentStepField field : fields) {
             final String defaultValue = field.getDefaultValue();
@@ -110,7 +110,7 @@ public class TreatmentStepFieldTest {
                     } else if (type == MeasurementType.class) {
                         MeasurementType.valueOf(defaultValue);
                     } else {
-                        TreatType.valueOf(defaultValue);
+                        TreatmentType.valueOf(defaultValue);
                     }
                 } catch (IllegalArgumentException ex) {
                     fail(String.format("Invalid default value \"%s\" for %s",

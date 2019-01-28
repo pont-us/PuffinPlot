@@ -61,7 +61,7 @@ public class CoreSectionTest {
                 d.setAfX(demag);
                 d.setAfY(demag);
                 d.setAfZ(demag);
-                d.setTreatType(TreatType.DEGAUSS_XYZ);
+                d.setTreatmentType(TreatmentType.DEGAUSS_XYZ);
                 d.setSample(sample);
                 d.setMagSus(depth);
                 d.setDiscreteId(String.format("%d", depth / 3));

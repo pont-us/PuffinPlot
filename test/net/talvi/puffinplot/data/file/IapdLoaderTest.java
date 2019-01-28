@@ -30,7 +30,7 @@ import net.talvi.puffinplot.data.FileType;
 import net.talvi.puffinplot.data.MeasurementType;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
-import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.TreatmentStep;
 import org.junit.After;
 import org.junit.Before;
@@ -111,7 +111,7 @@ public class IapdLoaderTest {
         }
         
         options = new HashMap<>();
-        options.put(TreatType.class, TreatType.DEGAUSS_XYZ);
+        options.put(TreatmentType.class, TreatmentType.DEGAUSS_XYZ);
         options.put(MeasurementType.class, MeasurementType.DISCRETE);
         
         suite = new Suite(getClass().getSimpleName());

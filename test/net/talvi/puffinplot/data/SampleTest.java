@@ -55,7 +55,7 @@ public class SampleTest {
         final Sample s = new Sample("Test sample", null);
         for (int i=0; i<10; i++) {
             final TreatmentStep d = new TreatmentStep(10-i, 20-i, 30-i);
-            d.setTreatType(TreatType.DEGAUSS_XYZ);
+            d.setTreatmentType(TreatmentType.DEGAUSS_XYZ);
             d.setAfX(i);
             d.setAfY(i);
             d.setAfZ(i);
@@ -421,7 +421,7 @@ public class SampleTest {
         final Sample s = new Sample("test", null);
         for (int i=0; i<tempsAndms.length; i+=2) {
             final TreatmentStep d = new TreatmentStep();
-            d.setTreatType(TreatType.THERMAL);
+            d.setTreatmentType(TreatmentType.THERMAL);
             d.setTemp(tempsAndms[i]);
             d.setMagSus(tempsAndms[i+1]);
             s.addDatum(d);
@@ -547,7 +547,7 @@ public class SampleTest {
     @Test
     public void testGetDatumByTreatmentTypeAndLevel() {
         final TreatmentStep treatmentStep = simpleSample.getDatumByTreatmentTypeAndLevel(
-                Collections.singleton(TreatType.DEGAUSS_XYZ), 5);
+                Collections.singleton(TreatmentType.DEGAUSS_XYZ), 5);
         assertEquals(5, treatmentStep.getTreatmentLevel(), delta);
     }
 
@@ -560,13 +560,13 @@ public class SampleTest {
     public void testGetDatumByTreatmentTypeAndLevelWithNoData() {
         final Sample sample = new Sample("test", null);
         assertNull(sample.getDatumByTreatmentTypeAndLevel(
-                new HashSet(Arrays.asList(TreatType.values())), 0));
+                new HashSet(Arrays.asList(TreatmentType.values())), 0));
     }
 
     @Test
     public void testGetDatumByTreatmentTypeAndLevelWithNoMatchingData() {
         assertNull(simpleSample.getDatumByTreatmentTypeAndLevel(
-                Collections.singleton(TreatType.THERMAL), 5));
+                Collections.singleton(TreatmentType.THERMAL), 5));
     }
 
     @Test
@@ -653,7 +653,7 @@ public class SampleTest {
         for (int step=0; step<3; step++) {
             final Vec3 vector = TestUtils.randomVector(rnd, 1);
             final TreatmentStep d = new TreatmentStep(vector);
-            d.setTreatType(TreatType.THERMAL);
+            d.setTreatmentType(TreatmentType.THERMAL);
             d.setTemp(50);
             sample.addDatum(d);
             vectors.add(vector);
@@ -678,14 +678,14 @@ public class SampleTest {
         final Sample s0 = new Sample("Sample 0", null);
         for (int i=0; i<3; i++) {
             final TreatmentStep d = new TreatmentStep(10-i, 20-i, 30-i);
-            d.setTreatType(TreatType.THERMAL);
+            d.setTreatmentType(TreatmentType.THERMAL);
             d.setTemp(i*100);
             s0.addDatum(d);
         }
         final Sample s1 = new Sample("Sample 1", null);
         for (int i=0; i<3; i++) {
             final TreatmentStep d = new TreatmentStep(10-i, 20-i, 30-i);
-            d.setTreatType(TreatType.THERMAL);
+            d.setTreatmentType(TreatmentType.THERMAL);
             d.setTemp(i*100 + 50);
             s1.addDatum(d);
         }

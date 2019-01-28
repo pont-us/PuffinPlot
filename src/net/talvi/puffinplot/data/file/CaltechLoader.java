@@ -29,7 +29,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.talvi.puffinplot.data.MeasurementType;
-import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Vec3;
 
@@ -218,20 +218,20 @@ public class CaltechLoader extends AbstractFileLoader {
         if (null != treatment) {
             switch (treatment) {
                 case "NR":
-                    d.setTreatType(TreatType.NONE);
+                    d.setTreatmentType(TreatmentType.NONE);
                     break;
                 case "AF":
-                    d.setTreatType(TreatType.DEGAUSS_XYZ);
+                    d.setTreatmentType(TreatmentType.DEGAUSS_XYZ);
                     d.setAfX(demagLevel / 1000.0);
                     d.setAfY(demagLevel / 1000.0);
                     d.setAfZ(demagLevel / 1000.0);
                     break;
                 case "TT":
-                    d.setTreatType(TreatType.THERMAL);
+                    d.setTreatmentType(TreatmentType.THERMAL);
                     d.setTemp(demagLevel);
                     break;
                 default:
-                    d.setTreatType(TreatType.UNKNOWN);
+                    d.setTreatmentType(TreatmentType.UNKNOWN);
                     break;
         }
         }

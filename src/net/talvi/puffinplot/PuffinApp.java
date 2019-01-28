@@ -87,7 +87,7 @@ import net.talvi.puffinplot.data.Site;
 import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.data.SuiteCalcs;
 import net.talvi.puffinplot.data.SuiteRpiEstimate;
-import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.file.FileFormat;
 import net.talvi.puffinplot.plots.SampleClickListener;
 import net.talvi.puffinplot.window.AboutBox;
@@ -597,8 +597,8 @@ public class PuffinApp {
                     if (!iapdDialog.wasOkPressed()) {
                         return;
                     }
-                    importOptions.put(TreatType.class,
-                            iapdDialog.getTreatType());
+                    importOptions.put(TreatmentType.class,
+                            iapdDialog.getTreatmentType());
                     importOptions.put(MeasurementType.class,
                             iapdDialog.getMeasurementType());
                     break;

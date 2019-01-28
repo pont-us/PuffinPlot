@@ -79,7 +79,7 @@ public class Jr6Loader extends AbstractFileLoader {
         d.setFormDip(vectorAndOrientations.formationDip);
         d.setMeasurementType(MeasurementType.DISCRETE);
         d.setDiscreteId(dataLine.getName());
-        d.setTreatType(dataLine.getTreatmentType());
+        d.setTreatmentType(dataLine.getTreatmentType());
         switch (dataLine.getTreatmentType()) {
             case THERMAL:
                 d.setTemp(dataLine.getTreatmentLevel());

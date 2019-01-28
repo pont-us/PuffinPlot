@@ -37,7 +37,7 @@ import net.talvi.puffinplot.data.AmsCalculationType;
 import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
-import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.TreatmentStepField;
 import net.talvi.puffinplot.window.AlignDeclinationsDialog;
 import net.talvi.puffinplot.window.CiteWindow;
@@ -1188,7 +1188,7 @@ public class PuffinActions {
             panel.add(label);
             panel.add(Box.createVerticalStrut(8));
             final JComboBox comboBox = 
-                    new JComboBox(Arrays.stream(TreatType.values()).
+                    new JComboBox(Arrays.stream(TreatmentType.values()).
                     map(tt -> tt.getNiceName()).toArray());
             panel.add(comboBox);
             final int option = JOptionPane.showConfirmDialog(
@@ -1199,7 +1199,7 @@ public class PuffinActions {
             if (option == JOptionPane.OK_OPTION) {
                 app.getSuite().removeSamplesByTreatmentType(
                         app.getSelectedSamples(),
-                        TreatType.values()[comboBox.getSelectedIndex()]
+                        TreatmentType.values()[comboBox.getSelectedIndex()]
                 );
                 app.getMainWindow().suitesChanged();
             }

@@ -33,7 +33,7 @@ import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.MeasurementType;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
-import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Vec3;
 import org.junit.rules.TemporaryFolder;
@@ -92,7 +92,7 @@ public class TestUtils {
                 d.setAfX(demag);
                 d.setAfY(demag);
                 d.setAfZ(demag);
-                d.setTreatType(TreatType.DEGAUSS_XYZ);
+                d.setTreatmentType(TreatmentType.DEGAUSS_XYZ);
                 d.setSample(sample);
                 d.setMagSus(sampleIndex);
                 d.setSampAz(0);
@@ -121,7 +121,7 @@ public class TestUtils {
                 d.setAfX(demag);
                 d.setAfY(demag);
                 d.setAfZ(demag);
-                d.setTreatType(TreatType.DEGAUSS_XYZ);
+                d.setTreatmentType(TreatmentType.DEGAUSS_XYZ);
                 d.setSample(sample);
                 d.setMagSus(depth);
                 sample.addDatum(d);

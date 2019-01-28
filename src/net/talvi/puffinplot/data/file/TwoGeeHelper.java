@@ -20,12 +20,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.talvi.puffinplot.data.MeasurementType;
-import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.Vec3;
 
 class TwoGeeHelper {
 
-    private static final Map<String, TreatType> treatTypeMap =
+    private static final Map<String, TreatmentType> treatTypeMap =
             new HashMap<>();
     private static final Map<String, MeasurementType> measTypeMap =
             new HashMap<>();
@@ -47,7 +47,7 @@ class TwoGeeHelper {
     static {
         for (int i=0; i<treatTypeMappings.length; i+=2) {
             treatTypeMap.put(treatTypeMappings[i+1],
-                    TreatType.valueOf(treatTypeMappings[i]));
+                    TreatmentType.valueOf(treatTypeMappings[i]));
         }
         for (int i = 0; i < measTypeMappings.length; i += 2) {
             measTypeMap.put(measTypeMappings[i+1],
@@ -66,9 +66,9 @@ class TwoGeeHelper {
         return s;
     }
 
-    static TreatType treatTypeFromString(String treatType) {
-        TreatType t = treatTypeMap.get(normalizeString(treatType));
-        return t != null ? t : TreatType.UNKNOWN;
+    static TreatmentType treatTypeFromString(String treatType) {
+        TreatmentType t = treatTypeMap.get(normalizeString(treatType));
+        return t != null ? t : TreatmentType.UNKNOWN;
     }
 
     static MeasurementType measTypeFromString(String measType) {

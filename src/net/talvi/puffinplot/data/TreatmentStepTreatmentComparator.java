@@ -32,7 +32,7 @@ public class TreatmentStepTreatmentComparator implements Comparator<TreatmentSte
      */
     @Override
     public int compare(TreatmentStep d0, TreatmentStep d1) {
-        if (d0.getTreatType() != d1.getTreatType()) {
+        if (d0.getTreatmentType() != d1.getTreatmentType()) {
             return 0;
         }
         return Double.compare(d0.getTreatmentLevel(), d1.getTreatmentLevel());

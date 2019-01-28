@@ -28,7 +28,7 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import net.talvi.puffinplot.data.MeasurementType;
-import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Vec3;
 
@@ -149,11 +149,11 @@ public class ZplotLoader extends AbstractFileLoader {
         default: throw new Error("Unhandled measurement type "+ measurementType);
         }
 
-        d.setTreatType((project.toLowerCase().contains("therm") ||
+        d.setTreatmentType((project.toLowerCase().contains("therm") ||
                 operation.toLowerCase().contains("therm") ||
                 studyType.toLowerCase().contains("therm"))
-            ? TreatType.THERMAL : TreatType.DEGAUSS_XYZ);
-        switch (d.getTreatType()) {
+            ? TreatmentType.THERMAL : TreatmentType.DEGAUSS_XYZ);
+        switch (d.getTreatmentType()) {
         case DEGAUSS_XYZ:
             d.setAfX(oerstedToTesla(demag));
             d.setAfY(oerstedToTesla(demag));
@@ -162,7 +162,7 @@ public class ZplotLoader extends AbstractFileLoader {
         case THERMAL:
             d.setTemp(demag);
             break;
-        default: throw new Error("Unhandled treatment type "+d.getTreatType());
+        default: throw new Error("Unhandled treatment type "+d.getTreatmentType());
         }
         return d;
     }

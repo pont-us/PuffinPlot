@@ -408,12 +408,12 @@ public class Sample {
      * @param level a treatment level
      * @return the first datum in the sample with the given treatment level
      */
-    public TreatmentStep getDatumByTreatmentTypeAndLevel(Set<TreatType> types,
+    public TreatmentStep getDatumByTreatmentTypeAndLevel(Set<TreatmentType> types,
                                                          double level) {
         final double threshold = 1e-6;
         for (TreatmentStep d: data) {
                 if (abs(d.getTreatmentLevel() - level) < threshold
-                    && types.contains(d.getTreatType())) {
+                    && types.contains(d.getTreatmentType())) {
                     return d;
                 }
         }
@@ -1191,17 +1191,17 @@ public class Sample {
     }
     
     private static class TreatmentTypeAndLevel {
-        private final TreatType treatType;
+        private final TreatmentType treatmentType;
         private final Double treatStep;
         
         public TreatmentTypeAndLevel(TreatmentStep treatmentStep) {
-            this.treatType = treatmentStep.getTreatType();
+            this.treatmentType = treatmentStep.getTreatmentType();
             this.treatStep = treatmentStep.getTreatmentStep();
         }
         
         @Override
         public int hashCode() {
-            return treatType.hashCode() ^ treatStep.hashCode();
+            return treatmentType.hashCode() ^ treatStep.hashCode();
         }
 
         @Override
@@ -1213,7 +1213,7 @@ public class Sample {
                 return false;
             }
             final TreatmentTypeAndLevel other = (TreatmentTypeAndLevel) obj;
-            if (this.treatType != other.treatType) {
+            if (this.treatmentType != other.treatmentType) {
                 return false;
             }
             if (!Objects.equals(this.treatStep, other.treatStep)) {

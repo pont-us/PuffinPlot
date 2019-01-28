@@ -371,7 +371,7 @@ public final class Suite implements SampleGroup {
                     d.getMeasurementType().getNiceName().toLowerCase(),
                     getMeasurementType().getNiceName().toLowerCase()));
         }
-        if (d.getTreatType() == TreatType.UNKNOWN) {
+        if (d.getTreatmentType() == TreatmentType.UNKNOWN) {
             hasUnknownTreatType = true;
         }
         final String datumName = d.getIdOrDepth();
@@ -1887,14 +1887,14 @@ public final class Suite implements SampleGroup {
      * 
      * @param removableSamples samples to consider for removal (must be 
      *   within this suite)
-     * @param treatType the treatment type that selects which samples
+     * @param treatmentType the treatment type that selects which samples
      *   should be removed.
      */
     public void removeSamplesByTreatmentType(
-            Collection<Sample> removableSamples, TreatType treatType) {
+            Collection<Sample> removableSamples, TreatmentType treatmentType) {
         final Set<Sample> samplesToRemove = removableSamples.stream().
                 filter(s -> s.getData().stream().
-                        anyMatch(d -> d.getTreatType() == treatType)).
+                        anyMatch(d -> d.getTreatmentType() == treatmentType)).
                 collect(Collectors.toSet());
         removeSamples(samplesToRemove);
     }

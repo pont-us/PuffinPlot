@@ -16,7 +16,7 @@
  */
 package net.talvi.puffinplot.data.file;
 
-import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.Vec3;
 import org.junit.Test;
 
@@ -36,7 +36,7 @@ public class Jr6DataLineTest {
         
         final Jr6DataLine line = Jr6DataLine.read(string);
         assertEquals("BC0101A1", line.getName());
-        assertEquals(TreatType.NONE, line.getTreatmentType());
+        assertEquals(TreatmentType.NONE, line.getTreatmentType());
         assertEquals(0, line.getTreatmentLevel());
         assertTrue(new Vec3(0.08e-2, -1.45e-2, -0.46e-2).equals(
                 line.getMagnetization(), 1e-10));
@@ -66,7 +66,7 @@ public class Jr6DataLineTest {
                 + " 107  88  11  12  13  14 12  0 12  0   1";
         final Jr6DataLine line = Jr6DataLine.read(string);
         assertEquals("BC0101A1", line.getName());
-        assertEquals(TreatType.ARM, line.getTreatmentType());
+        assertEquals(TreatmentType.ARM, line.getTreatmentType());
         assertEquals(50, line.getTreatmentLevel());
         assertTrue(new Vec3(0.08e-2, -1.45e-2, -0.46e-2).equals(
                 line.getMagnetization(), 1e-10));

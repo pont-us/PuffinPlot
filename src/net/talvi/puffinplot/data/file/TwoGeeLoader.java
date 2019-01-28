@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
 import net.talvi.puffinplot.data.ArmAxis;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.MeasurementType;
-import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Vec3;
 
@@ -478,13 +478,13 @@ public class TwoGeeLoader extends AbstractFileLoader {
         d.setMeasurementType(measurementType);
         
         if (fieldExists("Treatment Type"))
-            d.setTreatType(treatTypeFromString(r.getString("Treatment Type", "degauss z")));
-        else if (fieldExistsAndIsValid("ARM Gauss", r)) d.setTreatType(TreatType.ARM);
-        else if (fieldExistsAndIsValid("IRM Gauss", r)) d.setTreatType(TreatType.IRM);
-        else if (fieldExistsAndIsValid("AF X", r)) d.setTreatType(TreatType.DEGAUSS_XYZ);
-        else if (fieldExistsAndIsValid("AF Z", r)) d.setTreatType(TreatType.DEGAUSS_Z);
-        else if (fieldExistsAndIsValid("Temp C", r)) d.setTreatType(TreatType.THERMAL);
-        else d.setTreatType(TreatType.DEGAUSS_Z);
+            d.setTreatmentType(treatTypeFromString(r.getString("Treatment Type", "degauss z")));
+        else if (fieldExistsAndIsValid("ARM Gauss", r)) d.setTreatmentType(TreatmentType.ARM);
+        else if (fieldExistsAndIsValid("IRM Gauss", r)) d.setTreatmentType(TreatmentType.IRM);
+        else if (fieldExistsAndIsValid("AF X", r)) d.setTreatmentType(TreatmentType.DEGAUSS_XYZ);
+        else if (fieldExistsAndIsValid("AF Z", r)) d.setTreatmentType(TreatmentType.DEGAUSS_Z);
+        else if (fieldExistsAndIsValid("Temp C", r)) d.setTreatmentType(TreatmentType.THERMAL);
+        else d.setTreatmentType(TreatmentType.DEGAUSS_Z);
         
         if (r.hasDouble("AF X")) {
             d.setAfX(oerstedToTesla(r.getDouble("AF X", Double.NaN)));

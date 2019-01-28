@@ -28,7 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.talvi.puffinplot.data.MeasurementType;
-import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.data.file.testdata.TestFileLocator;
@@ -46,8 +46,8 @@ import static org.junit.Assert.fail;
  */
 public class PmdLoaderTest {
     
-    private final static TreatType[] TREATMENT_TYPES =
-        {TreatType.NONE, TreatType.DEGAUSS_XYZ, TreatType.THERMAL};
+    private final static TreatmentType[] TREATMENT_TYPES =
+        {TreatmentType.NONE, TreatmentType.DEGAUSS_XYZ, TreatmentType.THERMAL};
     private final static String[][] FILENAMES_AND_DATA = {
         {"CO-17E.PMD", "CO-17E"},
         {"IPG_AF.PMD", "26a"},
@@ -158,10 +158,10 @@ public class PmdLoaderTest {
             assertEquals(90 - expected[0][1], d.getSampDip(), 1e-10);
             assertEquals((expected[0][2] + 90) % 360, d.getFormAz(), 1e-10);
             assertEquals(expected[0][3], d.getFormDip(), 1e-10);
-            assertEquals(TREATMENT_TYPES[(int) expVals[0]], d.getTreatType());
+            assertEquals(TREATMENT_TYPES[(int) expVals[0]], d.getTreatmentType());
             assertEquals(MeasurementType.DISCRETE, d.getMeasurementType());
             assertEquals(expectedStrings[1], d.getIdOrDepth());
-            switch (d.getTreatType()) {
+            switch (d.getTreatmentType()) {
                 case DEGAUSS_XYZ:
                     assertEquals(expVals[1], d.getAfX()*1000, 1e-10);
                     break;

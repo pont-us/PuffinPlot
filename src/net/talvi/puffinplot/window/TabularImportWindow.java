@@ -46,7 +46,7 @@ import javax.swing.SpinnerNumberModel;
 import net.talvi.puffinplot.data.FieldUnit;
 import net.talvi.puffinplot.data.MeasurementType;
 import net.talvi.puffinplot.data.MomentUnit;
-import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.TreatmentStepField;
 import net.talvi.puffinplot.data.file.FileFormat;
 
@@ -63,7 +63,7 @@ public class TabularImportWindow extends JDialog {
     private final List<FieldChooser> fieldChoosers = new ArrayList<>(20);
     private final HeaderLinesPanel headerLinesPanel;
     private final EnumChooser<MeasurementType> measTypeChooser;
-    private final EnumChooser<TreatType> treatTypeChooser;
+    private final EnumChooser<TreatmentType> treatTypeChooser;
     private final EnumChooser<MomentUnit> momentUnitChooser;
     private final EnumChooser<FieldUnit> fieldUnitChooser;
     private final FileFormat initialFormat;
@@ -99,8 +99,8 @@ public class TabularImportWindow extends JDialog {
         firstPanel.add(measTypeChooser);
         treatTypeChooser = new EnumChooser<>("Treatment type",
                 "Thermal#AF (3-axis)#AF (z-axis)#IRM#ARM".split("#"),
-                new TreatType[] {TreatType.THERMAL, TreatType.DEGAUSS_XYZ,
-                TreatType.DEGAUSS_Z, TreatType.IRM, TreatType.ARM},
+                new TreatmentType[] {TreatmentType.THERMAL, TreatmentType.DEGAUSS_XYZ,
+                TreatmentType.DEGAUSS_Z, TreatmentType.IRM, TreatmentType.ARM},
                 initialFormat.getTreatmentType());
         firstPanel.add(treatTypeChooser);
         momentUnitChooser = new EnumChooser<>("Unit for magnetic moment",

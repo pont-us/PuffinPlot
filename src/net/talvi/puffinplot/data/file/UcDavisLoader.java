@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import net.talvi.puffinplot.data.MeasurementType;
-import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.TreatmentStepField;
 import net.talvi.puffinplot.data.Vec3;
@@ -109,7 +109,7 @@ public class UcDavisLoader extends AbstractFileLoader {
                                 TreatmentStepField.VIRT_INCLINATION))),
                         parts.get(fieldMap.get(new ColumnDef(level,
                                 TreatmentStepField.VIRT_DECLINATION)))));
-                d.setTreatType(TreatType.DEGAUSS_XYZ);
+                d.setTreatmentType(TreatmentType.DEGAUSS_XYZ);
                 final double levelTesla = level / 1000.;
                 d.setAfX(levelTesla);
                 d.setAfY(levelTesla);

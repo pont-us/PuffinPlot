@@ -136,8 +136,8 @@ public class PmdLoader extends AbstractFileLoader {
             d.setSampDip(90 - headerLine.sampleHade);
             d.setFormAz((headerLine.formationStrike + 90) % 360);
             d.setFormDip(headerLine.formationDip);
-            d.setTreatType(dataLine.treatmentType);
-            switch (d.getTreatType()) {
+            d.setTreatmentType(dataLine.treatmentType);
+            switch (d.getTreatmentType()) {
                 case DEGAUSS_XYZ:
                     d.setAfX(dataLine.treatmentLevel/1000.);
                     d.setAfY(dataLine.treatmentLevel/1000.);

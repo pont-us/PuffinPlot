@@ -20,7 +20,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.talvi.puffinplot.data.TreatType;
+import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.Vec3;
 
 /**
@@ -37,7 +37,7 @@ class PmdDataLine {
             NUM_REGEX_1, NUM_REGEX_1, NUM_REGEX_1, NUM_REGEX_1,
             NUM_REGEX_2, NUM_REGEX_3, NUM_REGEX_2, NUM_REGEX_3);
     private static final Pattern LINE_REGEX = Pattern.compile(LINE_REGEX_STRING);
-    public final TreatType treatmentType;
+    public final TreatmentType treatmentType;
     public final int treatmentLevel;
     public final Vec3 moment;
     public final double magnetization;
@@ -66,29 +66,29 @@ class PmdDataLine {
         private static final Pattern REGEX_3 =
                 Pattern.compile("(\\d{1,3})[░°]C {0,2}");
 
-        public final TreatType type;
+        public final TreatmentType type;
         public final int level;
         
-        public PmdTreatment(TreatType type, int level) {
+        public PmdTreatment(TreatmentType type, int level) {
             this.type = type;
             this.level = level;
         }
         
         public static PmdTreatment parse(String s) {
             if ("NRM  ".equals(s)) {
-                return new PmdTreatment(TreatType.NONE, 0);
+                return new PmdTreatment(TreatmentType.NONE, 0);
             }
             final Matcher matcher1 = REGEX_1.matcher(s);
             if (matcher1.matches()) {
                 final String typeCode = matcher1.group(1);
-                TreatType type;
+                TreatmentType type;
                 switch (typeCode) {
                     case "H":
                     case "M":
-                        type = TreatType.DEGAUSS_XYZ;
+                        type = TreatmentType.DEGAUSS_XYZ;
                         break;
                     case "T":
-                        type = TreatType.THERMAL;
+                        type = TreatmentType.THERMAL;
                         break;
                     default:
                         throw new IllegalArgumentException();
@@ -98,20 +98,20 @@ class PmdDataLine {
             }
             final Matcher matcher2 = REGEX_2.matcher(s);
             if (matcher2.matches()) {
-                return new PmdTreatment(TreatType.DEGAUSS_XYZ,
+                return new PmdTreatment(TreatmentType.DEGAUSS_XYZ,
                         Integer.parseInt(matcher2.group(1)));
             }
             final Matcher matcher3 = REGEX_3.matcher(s);
             if (matcher3.matches()) {
-                return new PmdTreatment(TreatType.THERMAL,
+                return new PmdTreatment(TreatmentType.THERMAL,
                         Integer.parseInt(matcher3.group(1)));                
             }
             throw new IllegalArgumentException();
         }
     }
     
-    public PmdDataLine(TreatType treatmentType, int treatmentLevel,
-            double[] d, String comment) {
+    public PmdDataLine(TreatmentType treatmentType, int treatmentLevel,
+                       double[] d, String comment) {
         this.treatmentType = treatmentType;
         this.treatmentLevel = treatmentLevel;
         this.moment = new Vec3(d[0], d[1], d[2]);
