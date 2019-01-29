@@ -22,12 +22,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.MeasurementType;
@@ -190,6 +193,10 @@ public class TestUtils {
         Files.write(filePath, fileContents.getBytes(),
                 StandardOpenOption.CREATE);
         return filePath.toFile();
+    }
+    
+    public static <E> Set<E> setOf(E... items) {
+        return Arrays.asList(items).stream().collect(Collectors.toSet());
     }
 
 }

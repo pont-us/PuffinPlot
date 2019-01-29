@@ -36,26 +36,26 @@ import static java.lang.Math.toRadians;
 import static java.util.Objects.requireNonNull;
 
 /**
- * <p>TreatmentStep is the fundamental data class of PuffinPlot. It represents the
- * state of a sample at a particular point during the stepwise demagnetization
- * process. The essential item of data is the demagnetization vector
- * representing a particular magnetometer measurement. A large number of
- * other fields give additional data about demagnetization procedures,
- * other measurements, and sample characteristics. Some of these fields
- * (such as the sample orientation) are in fact sample-level data rather
- * than demagnetization-step-level data, and may be moved to {@link Sample}
- * in a later version of PuffinPlot.</p>
- * 
- * <p>TreatmentStep is a mutable container class which is intended to be instantiated
- * with no or very little data. Most of the fields can be set after
- * instantiation using setter methods.</p>
- * 
- * <p>In terms of PuffinPlot's user interface, a TreatmentStep often
- * defines the position and appearance of a point on one or more
- * of the plots.</p>
- * 
+ * TreatmentStep is the fundamental data class of PuffinPlot. It represents a
+ * particular treatment step (e.g. heating or alternating-field demagnetization)
+ * applied to a sample, along with the state of the sample (e.g. its magnetic
+ * moment) after that step. The essential item of data is the magnetic moment
+ * vector, usually representing a particular magnetometer measurement. A large
+ * number of other fields give additional data about demagnetization procedures,
+ * other measurements, and sample characteristics. Some of these fields (such as
+ * the sample orientation) are in fact sample-level data rather than
+ * demagnetization-step-level data, and may be moved to {@link Sample} in a
+ * later version of PuffinPlot.
+ * <p>
+ * TreatmentStep is a mutable container class which is intended to be
+ * instantiated with no or very little data. Most of the fields can be set after
+ * instantiation using setter methods.
+ * <p>
+ * In terms of PuffinPlot's user interface, a TreatmentStep often defines the
+ * position and appearance of a point on one or more of the plots.
+ *
  * @see TreatmentStepField
- * 
+ *
  * @author pont
  */
 public class TreatmentStep {
@@ -94,6 +94,7 @@ public class TreatmentStep {
 
     /**
      * Creates a datum with a specified magnetization vector.
+     *
      * @param x x component of the magnetization vector
      * @param y y component of the magnetization vector
      * @param z z component of the magnetization vector
@@ -104,6 +105,7 @@ public class TreatmentStep {
     
     /**
      * Creates a datum with a supplied magnetization vector.
+     *
      * @param vector the magnetization vector
      */
     public TreatmentStep(Vec3 vector) {
@@ -328,9 +330,10 @@ public class TreatmentStep {
         return 90 - sampDip;
     }
     
-    /** Sets the sample hade for this datum.
-     * Since the hade is the complement of the dip,
-     * this will of course change the sample's dip.
+    /**
+     * Sets the sample hade for this datum. Since the hade is the complement of
+     * the dip, this will of course change the sample's dip.
+     *
      * @param hadeDeg the hade to set, in degrees
      */
     public void setSampHade(double hadeDeg) {
@@ -338,7 +341,9 @@ public class TreatmentStep {
         sampDip = 90 - hadeDeg;
     }
     
-    /** Returns the formation strike for this datum. 
+    /**
+     * Returns the formation strike for this datum.
+     *
      * @return the formation strike, in degrees
      */
     public double getFormStrike() {
@@ -347,8 +352,10 @@ public class TreatmentStep {
         return strike;
     }
     
-    /** Sets the formation strike for this datum.
-     * This will of course also set the formation dip azimuth.
+    /**
+     * Sets the formation strike for this datum. This will of course also set
+     * the formation dip azimuth.
+     *
      * @param strikeDeg the formation strike, in degrees
      */
     public void setFormStrike(double strikeDeg) {
@@ -357,36 +364,43 @@ public class TreatmentStep {
         if (az > 360) az -= 360;
         formAz = az;
     }
-    
-    /** Returns sample identifier or measurement depth.
-     * If the measurement is discrete, returns the sample identifier;
-     * if the measurement is continuous, returns a string representation
-     * of the measurement's depth within the core.
+
+    /**
+     * Returns sample identifier or measurement depth. If the measurement is
+     * discrete, returns the sample identifier; if the measurement is
+     * continuous, returns a string representation of the measurement's depth
+     * within the core.
+     *
      * @return sample identifier or depth within core, as appropriate
      */
     public String getIdOrDepth() {
         return measurementType == MeasurementType.CONTINUOUS ? depth : discreteId;
     }
     
-    /** Reports whether this datum has any magnetic susceptibility data. 
-     * @return {@code true} if there is magnetic susceptibility data
-     * in this datum
+    /**
+     * Reports whether this datum has any magnetic susceptibility data.
+     *
+     * @return {@code true} if there is magnetic susceptibility data in this
+     * datum
      */
     public boolean hasMagSus() {
         return !Double.isNaN(magSus);
     }
 
-    /** Reports whether this datum has magnetic susceptibility but not
-     * magnetic moment data.
-     * 
-     * @return {@code true} if this datum contains magnetic susceptibility
-     * data and does not contain magnetic moment data
+    /**
+     * Reports whether this datum has magnetic susceptibility but not magnetic
+     * moment data.
+     *
+     * @return {@code true} if this datum contains magnetic susceptibility data
+     * and does not contain magnetic moment data
      */
     public boolean isMagSusOnly() {
-        // Q. But what if we have a measurement of exactly zero?
-        // A. 1. You never have a measurement of exactly zero.
-        // A. 2. It still wouldn't have reference equality with ORIGIN,
-        //       since it would have been separately instantiated.
+        /*
+         * Q. But what if we have a measurement of exactly zero?
+         * A. 1. You never have a measurement of exactly zero.
+         * A. 2. It still wouldn't have reference equality with ORIGIN,
+         *       since it would have been separately instantiated.
+         */
         return (moment == null || moment == Vec3.ORIGIN) && hasMagSus();
     }
 
@@ -399,15 +413,14 @@ public class TreatmentStep {
     }
 
     /**
-     * <p>Strictly speaking, the name is not quite accurate:
-     * we do not deal with magnetic
-     * moment (which would be in Am<sup>2</sup>) but in magnetic dipole moment
-     * per unit volume (in A/m). But
-     * {@code getMagneticDipoleMomentPerUnitVolumeInAm} would be an inconveniently
-     * long method name.</p>
-     * 
-     * @return the magnetic dipole moment
-     * per unit volume in A/m */
+     * Strictly speaking, the name is not quite accurate: we do not deal with
+     * magnetic moment (which would be in Am<sup>2</sup>) but in magnetic dipole
+     * moment per unit volume (in A/m). But
+     * {@code getMagneticDipoleMomentPerUnitVolumeInAm} would be an
+     * inconveniently long method name.
+     *
+     * @return the magnetic dipole moment per unit volume in A/m
+     */
     public Vec3 getMoment() { return moment; }
     
     /**
@@ -418,15 +431,15 @@ public class TreatmentStep {
     public void setMoment(Vec3 v)      { touch(); moment = v; }
 
     /**
-     * Returns the measured magnetic dipole moment per unit volume, as
-     * modified by the supplied correction. The correction may specify that
-     * the moment should be rotated to correct for sample and/or formation
-     * orientation. It also allows the specification of tray and empty-slot
-     * corrections, but these are not presently implemented here. (Tray
-     * corrections are applied when loading a file, and empty-slot 
-     * corrections are unimplemented.)
-     * 
-     * @param correction the corrections to apply to the magnetic moment measurement
+     * Returns the measured magnetic dipole moment per unit volume, as modified
+     * by the supplied correction. The correction may specify that the moment
+     * should be rotated to correct for sample and/or formation orientation. It
+     * also allows the specification of tray and empty-slot corrections, but
+     * these are not presently implemented here. (Tray corrections are applied
+     * when loading a file, and empty-slot corrections are unimplemented.)
+     *
+     * @param correction the corrections to apply to the magnetic moment
+     * measurement
      * @return the corrected magnetic dipole moment per unit volume in A/m
      */
     public Vec3 getMoment(Correction correction) {
@@ -454,8 +467,9 @@ public class TreatmentStep {
     }
     
     /**
-     *  Rotates magnetic moment data 180 degrees about the specified axis.
-     *  @param axis the axis about which to perform the rotation
+     * Rotates magnetic moment data 180 degrees about the specified axis.
+     *
+     * @param axis the axis about which to perform the rotation
      */
     public void rot180(MeasurementAxis axis) {
         touch();
@@ -472,25 +486,26 @@ public class TreatmentStep {
     }
     
     /**
-     * Toggles the datum's selection state. {@code datum.toggleSel()}
-     * is functionally equivalent to {@code datum.setSelected(!datum.isSelected()}.
+     * Toggles the datum's selection state. {@code datum.toggleSelected()}
+     * is functionally equivalent to
+     * {@code datum.setSelected(!datum.isSelected()}.
      */
-    public void toggleSel() {
+    public void toggleSelected() {
         touch();
         setSelected(!isSelected());
     }
 
     /**
-     * <p>Returns a numerical representation of the intensity of the treatment
+     * Returns a numerical representation of the intensity of the treatment
      * which was applied immediately before this measurement. The interpretation
      * of the number depends on the treatment type. For thermal treatment, it
      * is a temperature in degrees Celsius. For magnetic treatments
      * (AF demagnetization, ARM, IRM) it returns the magnetic field. As 
      * is conventional, the magnetic field is returned as the equivalent 
-     * magnetic induction in units of Tesla.</p>
-     * 
-     * <p>For ARM treatment, this method returns the strength of the
-     * alternating field rather than the DC bias field.</p>
+     * magnetic induction in units of Tesla.
+     * <p>
+     * For ARM treatment, this method returns the strength of the
+     * alternating field rather than the DC bias field.
      * 
      * @return the treatment level
      */
@@ -498,15 +513,17 @@ public class TreatmentStep {
         switch (treatmentType) {
         case NONE: return 0;
         case DEGAUSS_XYZ:
-            // This is a bit ill-defined: in general, of course, we can't
-            // collapse a three-dimensional treatment into a single value.
-            // We assume that the same treatment has been applied on each
-            // axis, and that zero values are due to lazy construction of
-            // the input file. (The exception is if all the values are 
-            // zero, in which case we assume that it's an actual zero-level
-            // treatment.) The logic below should handle NaN values cleanly,
-            // but negative values will come out as zero. So far I've never
-            // seen a file with negative AF treatment values.
+            /*
+             * This is a bit ill-defined: in general, of course, we can't
+             * collapse a three-dimensional treatment into a single value. We
+             * assume that the same treatment has been applied on each axis, and
+             * that zero values are due to lazy construction of the input file.
+             * (The exception is if all the values are zero, in which case we
+             * assume that it's an actual zero-level treatment.) The logic below
+             * should handle NaN values cleanly, but negative values will come
+             * out as zero. So far I've never seen a file with negative AF
+             * treatment values.
+             */
             if (afx>0) return afx;
             if (afy>0) return afy;
             if (afz>0) return afz;
@@ -551,7 +568,9 @@ public class TreatmentStep {
         double max = 0;
         for (TreatmentStep d: data) {
             double level = d.getTreatmentLevel();
-            if (level > max) max = level;
+            if (level > max) {
+                max = level;
+            }
         }
         return max;
     }
@@ -570,7 +589,9 @@ public class TreatmentStep {
         double max = 0;
         for (TreatmentStep d: data) {
             double i = d.getIntensity();
-            if (i > max) max = i;
+            if (i > max) {
+                max = i;
+            }
         }
         return max;
     }
@@ -578,23 +599,28 @@ public class TreatmentStep {
     /**
      * Returns the maximum magnetic susceptibility within the supplied group of
      * datum objects.
-     * 
+     *
      * @param data a list of datum objects; must be non-null
-     * @return the highest magnetic susceptibility for any of the supplied datum objects
+     * @return the highest magnetic susceptibility for any of the supplied datum
+     * objects
      * @throws NullPointerException if {@code data} is null
      */
     public static double maxMagSus(List<TreatmentStep> data) {
         requireNonNull(data, "data must be non-null");
         double max = 0;
-        for (TreatmentStep d: data) {
-            double level = d.getMagSus();
-            if (!Double.isNaN(level) && level > max) max = level;
+        for (TreatmentStep step: data) {
+            final double level = step.getMagSus();
+            if (!Double.isNaN(level) && level > max) {
+                max = level;
+            }
         }
         return max;
     }
 
     /**
-     * Returns the magnitude of the magnetic dipole moment per unit volume in A/m.
+     * Returns the magnitude of the magnetic dipole moment per unit volume in
+     * A/m.
+     *
      * @return magnitude of magnetic dipole moment per unit volume in A/m
      */
     public double getIntensity() {
@@ -880,35 +906,34 @@ public class TreatmentStep {
     }
     
     /**
-     * Returns a set of all the measurement types of the supplied data.
+     * Returns a set of all the measurement types of the supplied
+     * treatment steps.
      * 
-     * 
-     * @param data a collection of TreatmentStep objects
-     * @return exactly those measurement types which are present in the
-     * suppled data
+     * @param steps a collection of treatment steps
+     * @return exactly those measurement types which are used by the
+     * supplied treatment steps
      */
-    public static Set<MeasurementType> measTypes(Collection<TreatmentStep> data) {
-        Set<MeasurementType> result = new HashSet<>(MeasurementType.values().length);
-        for (TreatmentStep d: data) {
-            result.add(d.getMeasurementType());
-        }
-        return result;
+    public static Set<MeasurementType> collectMeasurementTypes(
+            Collection<TreatmentStep> steps) {
+        return steps.stream().map(step -> step.getMeasurementType()).
+                collect(Collectors.toSet());
     }
 
     /**
      * Sets the magnetization vector of this datum to the mean of the
      * magnetization vectors of {@code data}.
      *
-     * @param data data from which to calculate the mean magnetization vector;
-     *   must be non-null and non-empty
+     * @param treatmentSteps steps from which to calculate the mean
+     * magnetization vector; must be non-null and non-empty
      */
-    public void setMomentToMean(List<TreatmentStep> data) {
-        Objects.requireNonNull(data);
-        if (data.isEmpty()) {
+    public void setMomentToMean(List<TreatmentStep> treatmentSteps) {
+        Objects.requireNonNull(treatmentSteps);
+        if (treatmentSteps.isEmpty()) {
             throw new IllegalArgumentException("Empty list passed to"
                     + "setMomentToMean.");
         }
-        setMoment(Vec3.mean(data.stream().map(d -> d.getMoment()).
+        setMoment(Vec3.mean(treatmentSteps.stream().
+                map(step -> step.getMoment()).
                 collect(Collectors.toList())));
     }
 
@@ -928,22 +953,26 @@ public class TreatmentStep {
                 new DecimalFormat("0.0;-0.0", Util.getDecimalFormatSymbols());
         final DecimalFormat intensityFormat =
                 new DecimalFormat("0.00E00", Util.getDecimalFormatSymbols());
-        String treatmentLevel = "???";
+        String treatmentLevel;
         switch (getTreatmentType()) {
             case NONE:
                 treatmentLevel = "";
                 break;
             case THERMAL:
-                treatmentLevel = String.format(Locale.ENGLISH, ", %.1f°C", getTemp());
+                treatmentLevel = String.format(Locale.ENGLISH, ", %.1f°C",
+                        getTemp());
                 break;
             case IRM:
-                treatmentLevel = String.format(Locale.ENGLISH, ", %.0f mT", getIrmField()*1000);
+                treatmentLevel = String.format(Locale.ENGLISH, ", %.0f mT",
+                        getIrmField()*1000);
                 break;
             default:
-                treatmentLevel = String.format(Locale.ENGLISH, ", %.0f mT", getAfZ()*1000);
+                treatmentLevel = String.format(Locale.ENGLISH, ", %.0f mT",
+                        getAfZ()*1000);
         }
         
-        return String.format("Step %s | %s%s | Dec: %s° | Inc: %s° | Mag: %s A/m%s",
+        return String.format("Step %s | %s%s | Dec: %s° | Inc: %s° |"
+                + " Mag: %s A/m%s",
                 positionInSample,
                 getTreatmentType().getNiceName(), treatmentLevel,
                 angleFormat.format(getMoment().getDecDeg()),
@@ -952,5 +981,4 @@ public class TreatmentStep {
                 magSusString
                 );
     }
-
 }

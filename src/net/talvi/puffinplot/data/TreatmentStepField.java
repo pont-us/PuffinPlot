@@ -25,30 +25,30 @@ import java.util.Map;
 import net.talvi.puffinplot.data.file.FileFormat;
 
 /**
- * <p>This enum represents a field in the {@link TreatmentStep} class which is associated
- * with a measurement or other value. It is used to address data values
- * from {@link TreatmentStep} in a uniform way, for example when loading or saving
- * data.</p>
- * 
- * <p>Each field has a <i>heading</i>, a string representation intended
- * for use when reading or writing data from to to a file, and 
- * a <i>nice name</i>, a string representation intended to be displayed
- * to the user. In practice these are currently identical for all
- * existing fields, but this should not be relied upon.</p>
- * 
- * <p>Fields are classed as either ‘real’ (corresponding to an actual
- * stored item of data) or ‘virtual’ (corresponding to data which is
- * not explicitly stored but can be calculated on-the-fly from other data).
- * The distinction is useful when storing data to a file, since virtual fields
- * do not need to be stored.</p>
- * 
+ * This enum represents a data field in the {@link TreatmentStep} class which is
+ * associated with a measurement or other value. It is used to address data
+ * values from {@link TreatmentStep} in a uniform way, for example when loading
+ * or saving data.
+ * <p>
+ * Each field has a <i>heading</i>, a string representation intended for use
+ * when reading or writing data from to to a file, and a <i>nice name</i>, a
+ * string representation intended to be displayed to the user. In practice these
+ * are currently identical for all existing fields, but this should not be
+ * relied upon.
+ * <p>
+ * Fields are classed as either ‘real’ (corresponding to an actual stored item
+ * of data) or ‘virtual’ (corresponding to data which is not explicitly stored
+ * but can be calculated on-the-fly from other data). The distinction is useful
+ * when storing data to a file, since virtual fields do not need to be stored.
+ *
  * @see TreatmentStep
- * 
+ *
  * @author pont
  */
 public enum TreatmentStepField {
-    /* When adding fields here, make sure also to add them to TreatmentStep.getValue()
-     * and TreatmentStep.setValue(v).
+    /*
+     * When adding fields here, make sure also to add them to
+     * TreatmentStep.getValue() and TreatmentStep.setValue(v).
      */
 
     // Identifiers
@@ -129,7 +129,8 @@ public enum TreatmentStepField {
 
     // Virtual parameters
     // These are not explicitly stored, but are calculated when required
-    /** the intensity of the magnetic dipole moment per unit volume (‘magnetization’) */
+    /** the intensity of the magnetic dipole moment per unit volume
+     * (‘magnetization’) */
     VIRT_MAGNETIZATION("Magnetization", null, double.class, "0", true, true),
     /** declination of magnetization vector (degrees) */
     VIRT_DECLINATION("Declination", null, double.class, "0", true, true),
@@ -148,7 +149,8 @@ public enum TreatmentStepField {
     private final String defaultValue;
     private final boolean virtual;
     private final boolean importable;
-    private final static Map<String, TreatmentStepField> nameMap = new HashMap<>();
+    private final static Map<String, TreatmentStepField> nameMap =
+            new HashMap<>();
     private static final List<String> realFieldHeadings;
     private static final List<TreatmentStepField> realFields;
     
@@ -185,12 +187,12 @@ public enum TreatmentStepField {
     }
 
     /**
-     * Returns the field whose heading string is the specified string,
-     * or {@code null} if no such field exists.
-     * 
+     * Returns the field whose heading string is the specified string, or
+     * {@code null} if no such field exists.
+     *
      * @param heading a heading string for a field
-     * @return the field whose heading string is the specified string,
-     * or {@code null} if no such field exists
+     * @return the field whose heading string is the specified string, or
+     * {@code null} if no such field exists
      */
     public static TreatmentStepField getByHeading(String heading) {
         return nameMap.get(heading);
@@ -203,8 +205,12 @@ public enum TreatmentStepField {
         return heading;
     }
     
-    /** Returns this field's ‘nice name’ (string representation for display to user)
-     * @return this field's ‘nice name’ (string representation for display to user)
+    /**
+     * Returns this field's ‘nice name’ (string representation for display to
+     * user)
+     *
+     * @return this field's ‘nice name’ (string representation for display to
+     * user)
      */
     public String getNiceName() {
         return niceName;
@@ -213,7 +219,8 @@ public enum TreatmentStepField {
     /**
      * Returns this field's default value.
      * 
-     * Currently only used in {@link TreatmentStep#setValue(TreatmentStepField, String, double)}.
+     * Currently only used in
+     * {@link TreatmentStep#setValue(TreatmentStepField, String, double)}.
      * 
      * @return a string representation of the default value for this field
      */
@@ -221,9 +228,11 @@ public enum TreatmentStepField {
         return defaultValue;
     }
 
-    /** Reports whether this field is virtual. Virtual fields have no corresponding
-     * explicitly stored data value. Their values are calculated on-the-fly
-     * from other fields.
+    /**
+     * Reports whether this field is virtual. Virtual fields have no
+     * corresponding explicitly stored data value. Their values are calculated
+     * on-the-fly from other fields.
+     *
      * @return {@code true} if this field is virtual
      */
     public boolean isVirtual() {
@@ -242,25 +251,30 @@ public enum TreatmentStepField {
         return importable;
     }
 
-    /** Returns an unmodifiable list of the real fields.
-     * A real field corresponds to an explicitly stored data value.
-     * @return an unmodifiable list of the real fields */
+    /**
+     * Returns an unmodifiable list of the real fields. A real field corresponds
+     * to an explicitly stored data value.
+     *
+     * @return an unmodifiable list of the real fields
+     */
     public static List<TreatmentStepField> getRealFields() {
         return realFields;
     }
 
-    /** Returns an unmodifiable list of the string representations of
-     * the real fields.
-     * A real field corresponds to an explicitly stored data value.
-     * 
-     * @return an unmodifiable list of the string representations of the
-     * real fields */
+    /**
+     * Returns an unmodifiable list of the string representations of the real
+     * fields. A real field corresponds to an explicitly stored data value.
+     *
+     * @return an unmodifiable list of the string representations of the real
+     * fields
+     */
     public static List<String> getRealFieldStrings() {
         return realFieldHeadings;
     }
 
-    /** Returns the type of this field (double, String, etc.).
-     * 
+    /**
+     * Returns the type of this field (double, String, etc.).
+     *
      * @return a Class object representing the field's data type
      */
     public Class getType() {

@@ -545,7 +545,7 @@ public abstract class Plot
                 }
                 } else {
                     if (p.getShape().contains(position)) {
-                        d.toggleSel();
+                        d.toggleSelected();
                     }
             }
             } else /* no datum associated with point; check for a sample */ {

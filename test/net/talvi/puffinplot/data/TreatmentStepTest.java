@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.function.ObjDoubleConsumer;
 import java.util.function.ObjIntConsumer;
 import java.util.function.ToDoubleFunction;
@@ -96,13 +97,25 @@ public class TreatmentStepTest {
     @Test
     public void testSetAndGetValuesDouble() {
         final List<TreatmentStepField> fields = Arrays.asList(
-                TreatmentStepField.DEPTH, TreatmentStepField.X_MOMENT, TreatmentStepField.Y_MOMENT,
-                TreatmentStepField.Z_MOMENT, TreatmentStepField.MAG_SUS, TreatmentStepField.VOLUME,
-                TreatmentStepField.AREA, TreatmentStepField.SAMPLE_AZ, TreatmentStepField.SAMPLE_DIP,
-                TreatmentStepField.FORM_AZ, TreatmentStepField.FORM_DIP, TreatmentStepField.MAG_DEV,
-                TreatmentStepField.AF_X, TreatmentStepField.AF_Y, TreatmentStepField.AF_Z,
-                TreatmentStepField.TEMPERATURE, TreatmentStepField.IRM_FIELD,
-                TreatmentStepField.ARM_FIELD, TreatmentStepField.VIRT_SAMPLE_HADE,
+                TreatmentStepField.DEPTH,
+                TreatmentStepField.X_MOMENT,
+                TreatmentStepField.Y_MOMENT,
+                TreatmentStepField.Z_MOMENT,
+                TreatmentStepField.MAG_SUS,
+                TreatmentStepField.VOLUME,
+                TreatmentStepField.AREA,
+                TreatmentStepField.SAMPLE_AZ,
+                TreatmentStepField.SAMPLE_DIP,
+                TreatmentStepField.FORM_AZ,
+                TreatmentStepField.FORM_DIP,
+                TreatmentStepField.MAG_DEV,
+                TreatmentStepField.AF_X,
+                TreatmentStepField.AF_Y,
+                TreatmentStepField.AF_Z,
+                TreatmentStepField.TEMPERATURE,
+                TreatmentStepField.IRM_FIELD,
+                TreatmentStepField.ARM_FIELD,
+                TreatmentStepField.VIRT_SAMPLE_HADE,
                 TreatmentStepField.VIRT_FORM_STRIKE
         );
         
@@ -127,9 +140,9 @@ public class TreatmentStepTest {
     @Test
     public void testToggleSel() {
         assertFalse(defaultTreatmentStep.isSelected());
-        defaultTreatmentStep.toggleSel();
+        defaultTreatmentStep.toggleSelected();
         assertTrue(defaultTreatmentStep.isSelected());
-        defaultTreatmentStep.toggleSel();
+        defaultTreatmentStep.toggleSelected();
         assertFalse(defaultTreatmentStep.isSelected());
     }
     
@@ -491,8 +504,65 @@ public class TreatmentStepTest {
                 d1.toSummaryString());
     }
     
+    @Test
+    public void testCollectMeasurementTypesEmptyList() {
+        assertEquals(Collections.emptySet(),
+                TreatmentStep.collectMeasurementTypes(Collections.emptyList()));
+    }
+    
+    @Test
+    public void testCollectMeasurementTypesSingle() {
+        for (MeasurementType mType: MeasurementType.values()) {
+            assertEquals(Collections.singleton(mType),
+                    collectMeasurementTypesFromSteps(mType, mType, mType));
+        }
+    }
+    
+    @Test
+    public void testCollectMeasurementTypesMixed1() {
+        assertEquals(
+                TestUtils.setOf(
+                        MeasurementType.CONTINUOUS,
+                        MeasurementType.DISCRETE,
+                        MeasurementType.UNKNOWN),
+                collectMeasurementTypesFromSteps(
+                        MeasurementType.CONTINUOUS,
+                        MeasurementType.CONTINUOUS,
+                        MeasurementType.DISCRETE,
+                        MeasurementType.CONTINUOUS,
+                        MeasurementType.UNKNOWN,
+                        MeasurementType.UNKNOWN)
+        );
+    }
+    
+    @Test
+    public void testCollectMeasurementTypesMixed2() {
+        assertEquals(
+                TestUtils.setOf(
+                        MeasurementType.DISCRETE,
+                        MeasurementType.UNSET),
+                collectMeasurementTypesFromSteps(
+                        MeasurementType.DISCRETE,
+                        MeasurementType.DISCRETE,
+                        MeasurementType.UNSET,
+                        MeasurementType.DISCRETE,
+                        MeasurementType.DISCRETE)
+        );
+    }
+
+    private Set<MeasurementType> collectMeasurementTypesFromSteps(
+            MeasurementType... mt) {
+        final List<TreatmentStep> tsList = new ArrayList<>(mt.length);
+        for (int i=0; i<mt.length; i++) {
+            final TreatmentStep ts = new TreatmentStep();
+            ts.setMeasurementType(mt[i]);
+            tsList.add(ts);
+        }
+        return TreatmentStep.collectMeasurementTypes(tsList);
+    }
+    
     private static TreatmentStep makeSimpleDatum(TreatmentType treatmentType,
-                                                 double level, double dec, double inc, double moment) {
+            double level, double dec, double inc, double moment) {
         final TreatmentStep d = new TreatmentStep();
         d.setTreatmentType(treatmentType);
         switch (treatmentType) {

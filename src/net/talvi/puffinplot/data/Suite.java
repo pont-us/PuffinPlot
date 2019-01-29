@@ -29,7 +29,6 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -152,21 +151,21 @@ public final class Suite implements SampleGroup {
         }
         final List<Vec3> sampleVgps = new ArrayList<>(selSamples.size());
         for (Sample sample: selSamples) {
-                if (sample.getSite() != null &&
-                        sample.getSite().getLocation() != null &&
-                        sample.getDirection() != null &&
-                        sample.getDirection().isWellFormed()) {
-                    final double alpha95 = 0; // arbitrary
-                    sampleVgps.add(VGP.calculate(sample.getDirection(),
-                            alpha95, sample.getSite().getLocation()).getLocation().toVec3());
-                }
+            if (sample.getSite() != null &&
+                    sample.getSite().getLocation() != null &&
+                    sample.getDirection() != null &&
+                    sample.getDirection().isWellFormed()) {
+                final double alpha95 = 0; // arbitrary
+                sampleVgps.add(VGP.calculate(sample.getDirection(), alpha95,
+                        sample.getSite().getLocation()).getLocation().toVec3());
+            }
         }
         final List<Vec3> siteVgps = new ArrayList<>(selSamples.size());
         for (Site site: selSites) {
             if (site.getVgp() != null) {
                 siteVgps.add(site.getVgp().getLocation().toVec3());
-                }
             }
+        }
         
         return new SuiteCalcs(
                 SuiteCalcs.Means.calculate(siteDirs),
@@ -252,7 +251,9 @@ public final class Suite implements SampleGroup {
     public List<FisherValues> getSiteFishers() {
         List<FisherValues> result = new ArrayList<>(getSites().size());
         for (Site site: getSites()) {
-            if (site.getFisherValues() != null) result.add(site.getFisherValues());
+            if (site.getFisherValues() != null) {
+                result.add(site.getFisherValues());
+            }
         }
         return result;
     }
@@ -396,14 +397,15 @@ public final class Suite implements SampleGroup {
         return result;
     }
 
-    /** Performs calculations for each sample in this suite. For each sample,
-     * PCA and a great-circle fit are done, provided in each case that
-     * the sample contains data points which are flagged to be used for the
-     * calculation in question. The magnetic susceptibility jump temperature
-     * is also calculated.
-     * 
-     * @param correction the correction to apply to the magnetic moment
-     * data when performing the calculations
+    /**
+     * Performs calculations for each sample in this suite. For each sample, PCA
+     * and a great-circle fit are done, provided in each case that the sample
+     * contains data points which are flagged to be used for the calculation in
+     * question. The magnetic susceptibility jump temperature is also
+     * calculated.
+     *
+     * @param correction the correction to apply to the magnetic moment data
+     * when performing the calculations
      */
     public void doSampleCalculations(Correction correction) {
         setSaved(false);
@@ -462,13 +464,12 @@ public final class Suite implements SampleGroup {
     
     /**
      * Convenience method for reading PuffinPlot files.
-     * 
-     * This method is a wrapper for the fully specified method
-     * {@code ReadFiles(List<File>, SensorLengths, TwoGeeLoader.Protocol, boolean,
-     * FileType, FileFormat, Map<Object,Object>)} which provides
-     * defaults for all the arguments except for the list of
-     * file names. The filetype is set to PUFFINPLOT_NEW.
-     * 
+     *
+     * This method is a wrapper for the fully specified method 
+     * {@code ReadFiles(List<File>, SensorLengths, TwoGeeLoader.Protocol, boolean, FileType, FileFormat, Map<Object,Object>)}
+     * which provides defaults for all the arguments except for the list of file
+     * names. The filetype is set to PUFFINPLOT_NEW.
+       * 
      * @param files files to read
      * @throws IOException if an exception occurs during file reading
      */
@@ -514,14 +515,16 @@ public final class Suite implements SampleGroup {
             }
         }
         
-        /* Remember whether the suite was initially empty -- this is needed
-         * to correctly set the saved state later.
+        /*
+         * Remember whether the suite was initially empty -- this is needed to
+         * correctly set the saved state later.
          */
         final boolean wasEmpty = isEmpty();
         
-        /* Clear any existing load warnings: if we're appending data to
-         * a suite with existing data, it may contain warnings from a previous
-         * readFiles call.
+        /*
+         * Clear any existing load warnings: if we're appending data to a suite
+         * with existing data, it may contain warnings from a previous readFiles
+         * call.
          */
         loadWarnings.clear();
         
@@ -529,8 +532,9 @@ public final class Suite implements SampleGroup {
         final ArrayList<TreatmentStep> tempDataList = new ArrayList<>();
         List<String> puffinLines = Collections.emptyList();
         boolean sensorLengthWarning = false;
-        /* If fileType is PUFFINPLOT_NEW, originalFileType can
-         * be overwritten by value specified in file.
+        /*
+         * If fileType is PUFFINPLOT_NEW, originalFileType can be overwritten by
+         * value specified in file.
          */
         originalFileType = fileType;
         
@@ -598,11 +602,12 @@ public final class Suite implements SampleGroup {
             if (loader != null) {
                 final List<TreatmentStep> loadedData = loader.getData();
                 
-                final Set<MeasurementType> measurementTypes = TreatmentStep.measTypes(loadedData);
+                final Set<MeasurementType> measTypes =
+                        TreatmentStep.collectMeasurementTypes(loadedData);
                 
                 boolean dataIsOk = true;
-                if (measurementTypes.contains(MeasurementType.DISCRETE) &&
-                        measurementTypes.contains((MeasurementType.CONTINUOUS))) {
+                if (measTypes.contains(MeasurementType.DISCRETE) &&
+                        measTypes.contains((MeasurementType.CONTINUOUS))) {
                     /*
                      * The loaded file mixes measurement types. This should
                      * never happen in normal circumstances, but it's
@@ -615,19 +620,20 @@ public final class Suite implements SampleGroup {
                                 + "Ignoring this file.", file.getName()));
                     
                 } else if (getMeasurementType().isActualMeasurement() &&
-                        !measurementTypes.contains(getMeasurementType())) {
+                        !measTypes.contains(getMeasurementType())) {
                     
                     final MeasurementType loadedType =
-                            measurementTypes.contains(MeasurementType.CONTINUOUS) ?
-                            MeasurementType.CONTINUOUS : MeasurementType.DISCRETE;
+                            measTypes.contains(MeasurementType.CONTINUOUS) ?
+                            MeasurementType.CONTINUOUS :
+                            MeasurementType.DISCRETE;
                     dataIsOk = false;
                     loadWarnings.add(String.format(Locale.ENGLISH,
                             "%s contains %s measurements, \n"
                                     + "but the suite contains %s data.\n"
                                     + "Ignoring this file.", file.getName(),
                                     loadedType.getNiceName().toLowerCase(),
-                                    getMeasurementType().getNiceName().toLowerCase()
-                                    ));
+                                    getMeasurementType().getNiceName().
+                                            toLowerCase()));
                 }
                 
                 if (dataIsOk) {
@@ -659,7 +665,8 @@ public final class Suite implements SampleGroup {
         
         setCurrentSampleIndex(0);
         if (hasUnknownTreatType)
-            loadWarnings.add("One or more treatment types were not recognized.");
+            loadWarnings.add(
+                    "One or more treatment types were not recognized.");
         if (measurementType.isDiscrete()) {
             emptyTraySamples = new ArrayList<>();
             int slot = 1;
@@ -673,8 +680,9 @@ public final class Suite implements SampleGroup {
         processPuffinLines(puffinLines);
         updateReverseIndex();
         
-        /* A suite isn't considered "unsaved" if it was empty before this
-         * file was loaded.
+        /*
+         * A suite isn't considered "unsaved" if it was empty before this file
+         * was loaded.
          */
         setSaved(wasEmpty);
     }
@@ -836,7 +844,8 @@ public final class Suite implements SampleGroup {
                 final List<String> vgpCsv = (site.getVgp()== null)
                         ? VGP.getEmptyFields()
                         : site.getVgp().toStrings();                
-                writer.writeCsv(site, Integer.toString(site.getSamples().size()),
+                writer.writeCsv(site,
+                        Integer.toString(site.getSamples().size()),
                         fisherCsv, gcCsv, gcCsv2, locCsv, vgpCsv);
             }
         } catch (IOException ex) {
@@ -958,24 +967,31 @@ public final class Suite implements SampleGroup {
         }
     }
 
-    /** Returns the index of a specified sample within this suite.
+    /**
+     * Returns the index of a specified sample within this suite.
+     *
      * @param sample a sample in the suite
-     * @return the index of the sample, or {@code -1} if not in this suite */
+     * @return the index of the sample, or {@code -1} if not in this suite
+     */
     public int getIndexBySample(Sample sample) {
         final Integer index =  indicesBySample.get(sample);
         return index==null ? -1 : index;
     }
     
-    /** Returns the name of this suite. 
-     * @return the name of this suite */
+    /**
+     * Returns the name of this suite.
+     *
+     * @return the name of this suite
+     */
     @Override
     public String toString() {
         return getName();
     }
 
-    /** Returns strings representing data about this suite.
-     * Note that this does not include data at the level of sites,
-     * samples, or treatment steps.
+    /**
+     * Returns strings representing data about this suite. Note that this does
+     * not include data at the level of sites, samples, or treatment steps.
+     *
      * @return strings representing data about this suite
      */
     public List<String> toStrings() {
@@ -988,7 +1004,8 @@ public final class Suite implements SampleGroup {
             result.add("CUSTOM_NOTE_NAMES\t"+customNoteNames.exportAsString());
         }
         result.add("CREATION_DATE\t" + iso8601format.format(creationDate));
-        result.add("MODIFICATION_DATE\t" + iso8601format.format(modificationDate));
+        result.add("MODIFICATION_DATE\t" +
+                iso8601format.format(modificationDate));
         if (originalFileType != null) {
             result.add("ORIGINAL_FILE_TYPE\t" + originalFileType.name());
         }
@@ -997,8 +1014,10 @@ public final class Suite implements SampleGroup {
         return result;
     }
 
-    /** Sets suite data from a string. The string must be in the format
-     * of one of the strings produced by the {@link #toStrings()} method.
+    /**
+     * Sets suite data from a string. The string must be in the format of one of
+     * the strings produced by the {@link #toStrings()} method.
+     *
      * @param string a string from which to read suite data
      */
     public void fromString(String string) {
@@ -1103,7 +1122,6 @@ public final class Suite implements SampleGroup {
             throws IOException {
         setSaved(false);
         BufferedReader reader = null;
-        // directions = false;
         for (File file: files) {
             try {
                 reader = new BufferedReader(new FileReader(file));
@@ -1471,12 +1489,35 @@ public final class Suite implements SampleGroup {
         }
     }
     
+    /**
+     * Align the declinations of core sections in this suite. It is assumed
+     * that the suite is continuous; the discrete IDs of samples are
+     * interpreted as core section identifiers.
+     * 
+     * @param topDeclination the declination to which to align the topmost
+     *     sample(s)
+     * @param margin the number of samples to average at the end of each
+     *     section to determine the declination
+     * 
+     * @see CoreSections#alignSections(double, int)
+     */
     public void alignSectionDeclinations(double topDeclination, int margin) {
         final CoreSections coreSections =
                 CoreSections.fromSampleListByDiscreteId(getSamples());
         coreSections.alignSections(topDeclination, margin);
     }
     
+    /**
+     * Report whether samples near the ends of core sections have an
+     * associated direction, e.g. a sample direction calculated by PCA.
+     * 
+     * @param margin the number of samples to regard as being "near" the
+     *     end of a core section
+     * @return {@code true} if and only if all samples near the end of
+     *     a core section have an associated direction
+     * 
+     * @see CoreSections#areSectionEndDirectionsDefined(int) 
+     */
     public boolean areSectionEndDirectionsDefined(int margin) {
         final CoreSections coreSections =
                 CoreSections.fromSampleListByDiscreteId(getSamples());
@@ -1487,8 +1528,8 @@ public final class Suite implements SampleGroup {
      * Within each of the supplied samples, merges any TreatmentStep objects
      * which have the same treatment type and treatment level.
      *
-     * @param samplesToMerge samples containing the TreatmentStep objects to merge
-     * (where possible)
+     * @param samplesToMerge samples containing the TreatmentStep objects to
+     * merge (where possible)
      */
     public void mergeDuplicateTreatmentSteps(
             Collection<Sample> samplesToMerge) {
@@ -1567,7 +1608,9 @@ public final class Suite implements SampleGroup {
         @Override
         public void swapAdjacent(int position) {
             super.swapAdjacent(position);
-            for (Sample s: getSamples()) s.getCustomNotes().swapAdjacent(position);
+            for (Sample s: getSamples()) {
+                s.getCustomNotes().swapAdjacent(position);
+            }
         }
     }
     
@@ -1672,7 +1715,11 @@ public final class Suite implements SampleGroup {
     }
     
     /**
-     * Clears sites for this suite.
+     * Clears sites for specified samples within this suite. The site for
+     * each specified sample will be set to {@code null}, and any sites with
+     * no associated samples will be removed from this suite's list of sites.
+     * 
+     * @param samples samples for which to clear sites
      */
     public void clearSites(Collection<Sample> samples) {
         setSaved(false);
@@ -1856,12 +1903,8 @@ public final class Suite implements SampleGroup {
      * Sorts this suite's samples in ascending order of depth
      */
     public void sortSamplesByDepth() {
-        Collections.sort(samples, new Comparator<Sample>() {
-            @Override
-            public int compare(Sample arg0, Sample arg1) {
-                return Double.compare(arg0.getDepth(), arg1.getDepth());
-            }
-        });
+        Collections.sort(samples, (Sample arg0, Sample arg1) ->
+                Double.compare(arg0.getDepth(), arg1.getDepth()));
         updateReverseIndex();
     }
     
@@ -1940,12 +1983,14 @@ public final class Suite implements SampleGroup {
         Objects.requireNonNull(nameToDepth, "nameToDepth must be non-null");
         if (!getSamples().stream().allMatch(
                 s -> nameToDepth.containsKey(s.getNameOrDepth()))) {
-            throw new MissingSampleNameException("Missing sample name key(s) in nameToDepth");
+            throw new MissingSampleNameException(
+                    "Missing sample name key(s) in nameToDepth");
         }
         setMeasurementType(MeasurementType.CONTINUOUS);
         samplesById = new LinkedHashMap<>();
         for (Sample sample: getSamples()) {
-            final String newSampleName = nameToDepth.get(sample.getNameOrDepth());
+            final String newSampleName =
+                    nameToDepth.get(sample.getNameOrDepth());
             sample.setNameOrDepth(newSampleName);
             samplesById.put(newSampleName, sample);
         }
@@ -2011,5 +2056,4 @@ public final class Suite implements SampleGroup {
     public void removeSavedListener(SavedListener savedListener) {
         savedListenerSet.remove(savedListener);
     }
-    
 }
