@@ -62,21 +62,26 @@ public class Vec3 {
     /** a unit vector pointing down */
     public static final Vec3 DOWN = new Vec3(0,0,1);
     
-    /** Creates a vector with the specified components. 
+    /**
+     * Creates a vector with the specified components.
+     *
      * @param x the x component of the new vector
      * @param y the y component of the new vector
-     * @param z the z component of the new vector */
+     * @param z the z component of the new vector
+     */
     public Vec3(double x, double y, double z) {
         this.x = x;
         this.y = y;
         this.z = z;
     }
 
-    /** Returns a new vector equal to this vector with the specified
-     * angle added to the declination.
+    /**
+     * Returns a new vector equal to this vector with the specified angle added
+     * to the declination.
+     *
      * @param angle the angle in radians to add to the declination
-     * @return a new vector equal to this vector with the specified
-     * angle added to the declination
+     * @return a new vector equal to this vector with the specified angle added
+     * to the declination
      */
     public Vec3 addDecRad(double angle) {
         final double[][] matrix =
@@ -86,11 +91,13 @@ public class Vec3 {
         return transform(matrix);
     }
     
-    /** Returns a new vector equal to this vector with the specified
-     * angle added to the inclination.
+    /**
+     * Returns a new vector equal to this vector with the specified angle added
+     * to the inclination.
+     *
      * @param angle the angle in radians to add to the inclination
-     * @return a new vector equal to this vector with the specified
-     * angle added to the inclination
+     * @return a new vector equal to this vector with the specified angle added
+     * to the inclination
      */
     public Vec3 addIncRad(double angle) {
         final double sini = -sin(angle);
@@ -107,12 +114,11 @@ public class Vec3 {
     }
     
     /**
-     * Rotates the vector by 180 degrees about the specified axis.
-     * Since x is up in magnetometer co-ordinates, specifying the x axis 
-     * corrects the data for a specimen placed in the magnetometer back-to-front.
-     * If an axis other than X, Y, or Z is specified, the original vector
-     * is returned.
-     * 
+     * Rotates the vector by 180 degrees about the specified axis. Since x is up
+     * in magnetometer co-ordinates, specifying the x axis corrects the data for
+     * a specimen placed in the magnetometer back-to-front. If an axis other
+     * than X, Y, or Z is specified, the original vector is returned.
+     *
      * @param axis the axis about which to rotate
      * @return a new vector equal to this vector rotated 180&deg; about the
      * specified axis
@@ -145,7 +151,8 @@ public class Vec3 {
             throw new IllegalArgumentException("v1 is not well-formed.");
         }
         if ((v0.z>0 && v1.z>0) || (v0.z<0 && v1.z<0)) {
-            throw new IllegalArgumentException("Vectors must be in opposite hemispheres.");
+            throw new IllegalArgumentException(
+                    "Vectors must be in opposite hemispheres.");
         }
         if (v0.z == 0) {
             return v0;
@@ -154,21 +161,26 @@ public class Vec3 {
             return v1;
         }
         
-        // We're now guaranteed that v0 and v1 are well-formed, non-horizontal,
-        // and in opposite hemispheres.
+        /*
+         * We're now guaranteed that v0 and v1 are finite, non-horizontal, and
+         * in opposite hemispheres.
+         */
         
         // Special case: v0 and v1 both vertical
         if (v0.x==0 && v0.y==0 && v1.x==0 && v1.y==0) {
-            // Any point on z=0 is a valid solution, so we have to
-            // make an arbitrary choice -- (1, 0, 0) is probably the most
-            // obvious.
+            /*
+             * Any point on z=0 is a valid solution, so we have to make an
+             * arbitrary choice -- (1, 0, 0) is probably the most obvious.
+             */
             return new Vec3(1, 0, 0);
         }
         
         // Special case: v0 and v1 diametrically opposite
         if (v0.plus(v1).equals(Vec3.ORIGIN)) {
-            // Two possible solutions, so we must choose one arbitrarily.
-            // We return the one on v0's side.
+            /*
+             * Two possible solutions, so we must choose one arbitrarily. We
+             * return the one on v0's side.
+             */
             return new Vec3(v0.x, v0.y, 0).normalize();
         }
         
@@ -180,17 +192,18 @@ public class Vec3 {
         return v;
     }
 
-    /** Returns true if and only if the supplied vector is in the same (upper/lower)
-     * hemisphere as this one.
-     * 
+    /**
+     * Returns true if and only if the supplied vector is in the same
+     * (upper/lower) hemisphere as this one.
+     *
      * Currently, the dividing place between the hemispheres (i.e. the plane
      * defined by z=0) is treated as distinct from either hemisphere: that is,
-     * v1.sameHemisphere(v2) is true for any two points in this plane,
-     * but false if either point is anywhere outside this plane.
-     * 
+     * v1.sameHemisphere(v2) is true for any two points in this plane, but false
+     * if either point is anywhere outside this plane.
+     *
      * @param v a non-null, finite vector
-     * @return {@code true} if and only if the supplied vector is in the same (upper/lower)
-     * hemisphere as this one.
+     * @return {@code true} if and only if the supplied vector is in the same
+     * (upper/lower) hemisphere as this one.
      * @throws IllegalArgumentException if {@code v} is not finite
      * @throws NullPointerException if {@code v} is null
      */
@@ -202,13 +215,12 @@ public class Vec3 {
     /**
      * Given a list of points, return a list of lists containing the same points
      * plus possible extras. Each sublist of the returned list is guaranteed
-     * only to contain points in one hemisphere. Where the original list
-     * crosses the equator, an extra point is interpolated exactly on the
-     * equator.
+     * only to contain points in one hemisphere. Where the original list crosses
+     * the equator, an extra point is interpolated exactly on the equator.
      *
      * @param vs a list of vectors specifying directions
-     * @return a list of lists of vectors which in sequence define the same path as
-     * {@code vs}; none of the sub-lists crosses the equator
+     * @return a list of lists of vectors which in sequence define the same path
+     * as {@code vs}; none of the sub-lists crosses the equator
      */
     public static List<List<Vec3>> interpolateEquatorPoints(List<Vec3> vs) {
         // TODO require unit vectors, or normalize input?
@@ -253,7 +265,8 @@ public class Vec3 {
      * @throws IllegalArgumentException if any of the arguments are outside the
      * specified ranges
      */
-    public static List<Vec3> spherInterpolate(Vec3 v0, Vec3 v1, double stepSize) {
+    public static List<Vec3> spherInterpolate(
+            Vec3 v0, Vec3 v1, double stepSize) {
         requireNonNullFiniteAndNonZero(v0, "v0");
         requireNonNullFiniteAndNonZero(v1, "v1");
         if (!Double.isFinite(stepSize) || stepSize <= 0 || stepSize >= 2*PI) {
@@ -266,17 +279,18 @@ public class Vec3 {
         final Vec3 v1n = v1.normalize();
 
         double dotProduct = v0n.dot(v1n);
-        /* Floating-point rounding errors can produce "normalized" vectors
-         * with a length slightly greater than 1, and in very unlucky cases
-         * a dot product of two normalized vectors which is >1. This
-         * then produces a NaN for the arc cosine, which in turn can
-         * cause Graphics2D.draw(Path2D) to hang if it propagates into
-         * a Path2D. (Perhaps related to
-         * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4587651 ,
-         * but that one reports a crash rather than a hang.) In any case we need
-         * to do the check below to guard against this very rare case.
-         * These cases correspond to parallel or antiparallel vectors,
-         * which need to be treated specially in any case.
+        /*
+         * Floating-point rounding errors can produce "normalized" vectors with
+         * a length slightly greater than 1, and in very unlucky cases a dot
+         * product of two normalized vectors which is >1. This then produces a
+         * NaN for the arc cosine, which in turn can cause
+         * Graphics2D.draw(Path2D) to hang if it propagates into a Path2D.
+         * (Perhaps related to
+         * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4587651 , but that
+         * one reports a crash rather than a hang.) In any case we need to do
+         * the check below to guard against this very rare case. These cases
+         * correspond to parallel or antiparallel vectors, which need to be
+         * treated specially in any case.
          */
         if (dotProduct >= 1) {
             // Parallel vectors: we're done.
@@ -285,14 +299,18 @@ public class Vec3 {
         if (dotProduct <= -1) {
             // Antiparallel vectors: we need to pick an arbitrary direction.
             if (Math.abs(v0.dot(Vec3.NORTH)) < 0.99) {
-                // If vectors aren't parallel to north, interpolate through
-                // north.
+                /*
+                 * If vectors aren't parallel to north, interpolate through
+                 * north.
+                 */
                 return concatenateWithoutCentre(
                         spherInterpolate(v0, Vec3.NORTH, stepSize),
                         spherInterpolate(Vec3.NORTH, v1, stepSize));
             } else {
-                // If vectors *are* parallel to north, it's safe to interpolate
-                // through east.
+                /*
+                 * If vectors *are* parallel to north, it's safe to interpolate
+                 * through east.
+                 */
                 return concatenateWithoutCentre(
                         spherInterpolate(v0, Vec3.EAST, stepSize),
                         spherInterpolate(Vec3.EAST, v1, stepSize));
@@ -314,9 +332,11 @@ public class Vec3 {
             result.add(thisVec);
         }
         
-        // I think that adding v1n is actually duplicating the last point.
-        // TODO: update unit test to catch duplicated last point,
-        // remove "result.add(v1n)", and check that nothing broke.
+        /*
+         * I think that adding v1n is actually duplicating the last point.
+         * TODO: update unit test to catch duplicated last point, remove
+         * "result.add(v1n)", and check that nothing broke.
+         */
         result.add(v1n);
         return result;
     }
@@ -326,7 +346,8 @@ public class Vec3 {
         if (v.equals(ORIGIN)) {
             throw new IllegalArgumentException(String.format(
                     "%s must be non-zero", name));
-        }    }
+        }
+    }
 
     private static void requireNonNullAndFinite(Vec3 v, String name) {
         Objects.requireNonNull(v, name+" must be non-null");
@@ -339,7 +360,7 @@ public class Vec3 {
     private static List<Vec3> concatenateWithoutCentre(List<Vec3> list0,
             List<Vec3> list1) {
         final List<Vec3> combined =
-                new ArrayList<Vec3>(list0.size() + list1.size() - 1);
+                new ArrayList<>(list0.size() + list1.size() - 1);
         combined.addAll(list0);
         combined.addAll(list1.subList(1, list1.size()));
         return combined;
@@ -364,7 +385,6 @@ public class Vec3 {
      *                 in the range (0, 2*PI)
      * @return a list of points defining a great-circle arc between {@code v0}
      * and {@code v1}, passing as close as possible to {@code onPath}
-     * 
      */
     public static List<Vec3> spherInterpDir(Vec3 v0, Vec3 v1, Vec3 onPath,
             double stepSize) {
@@ -382,8 +402,10 @@ public class Vec3 {
             return Collections.singletonList(v0);
         }
         if (v0.equals(v1.invert())) {
-            // Start and end are opposite: we can pass straight through
-            // the "onPath" point.
+            /*
+             * Start and end are opposite: we can pass straight through the
+             * "onPath" point.
+             */
             if (v0.equals(onPath) || v1.equals(onPath)) {
                 // Any hemicircle will do.
                 return spherInterpolate(v0, v1, stepSize);
@@ -399,9 +421,11 @@ public class Vec3 {
             return spherInterpolate(v0, v1, stepSize);
         } else {
             final List<Vec3> a = spherInterpolate(v0, v1.invert(), stepSize);
-            final List<Vec3> b = spherInterpolate(v1.invert(), v0.invert(), stepSize);
+            final List<Vec3> b =
+                    spherInterpolate(v1.invert(), v0.invert(), stepSize);
             final List<Vec3> c = spherInterpolate(v0.invert(), v1, stepSize);
-            final List<Vec3> result = new ArrayList<>(a.size() + b.size() + c.size());
+            final List<Vec3> result =
+                    new ArrayList<>(a.size() + b.size() + c.size());
             result.addAll(a);
             result.addAll(b);
             result.addAll(c);
@@ -409,9 +433,12 @@ public class Vec3 {
         }
     }
 
-    /** Rotates this vector about the y axis.
+    /**
+     * Rotates this vector about the y axis.
+     *
      * @param angle an angle in radians
-     * @return a new vector equal to this vector rotated {@code angle} radians about the y axis
+     * @return a new vector equal to this vector rotated {@code angle} radians
+     * about the y axis
      */
     public Vec3 rotY(double angle) {
         final double[][] m =
@@ -421,9 +448,12 @@ public class Vec3 {
         return transform(m);
     }
     
-    /** Rotates this vector about the z axis.
+    /**
+     * Rotates this vector about the z axis.
+     *
      * @param angle an angle in radians
-     * @return a new vector equal to this vector rotated {@code angle} radians about the z axis
+     * @return a new vector equal to this vector rotated {@code angle} radians
+     * about the z axis
      */
     public Vec3 rotZ(double angle) {
         final double[][] m =
@@ -433,7 +463,9 @@ public class Vec3 {
         return transform(m);
     }
 
-    /** Returns a matrix to correct a vector for a given sample orientation. 
+    /**
+     * Returns a matrix to correct a vector for a given sample orientation.
+     *
      * @param az the sample dip azimuth in radians
      * @param dip the sample dip angle in radians
      * @return a matrix to transform vectors from sample co-ordinates to
@@ -447,24 +479,27 @@ public class Vec3 {
         return matrix;
     }
 
-    /** Applies a sample correction to this vector.
-     * This transforms the data from sample (laboratory) co-ordinates to 
-     * geographic (field) co-ordinates.
+    /**
+     * Applies a sample correction to this vector. This transforms the data from
+     * sample (laboratory) co-ordinates to geographic (field) co-ordinates.
+     *
      * @param az the sample dip azimuth in radians
      * @param dip the sample dip angle in radians
-     * @return this vector, transformed from sample co-ordinates to geographic co-ordinates
+     * @return this vector, transformed from sample co-ordinates to geographic
+     * co-ordinates
      */
     public Vec3 correctSample(double az, double dip) {
         return transform(Vec3.getSampleCorrectionMatrix(az, dip));
     }
     
-    /** Applies a sample correction to this vector.
-     * This transforms the data from geographic (field) co-ordinates to 
-     * tectonic (pre-tilting) co-ordinates.
+    /**
+     * Applies a sample correction to this vector. This transforms the data from
+     * geographic (field) co-ordinates to tectonic (pre-tilting) co-ordinates.
+     *
      * @param az the formation dip azimuth in radians
      * @param dip the formation dip angle in radians
-     * @return this vector, transformed from geographic co-ordinates to 
-     * tectonic co-ordinates
+     * @return this vector, transformed from geographic co-ordinates to tectonic
+     * co-ordinates
      */
     public Vec3 correctForm(double az, double dip) {
     /*
@@ -541,9 +576,11 @@ public class Vec3 {
                 // This vector is already pointing down: no rotation needed.
                 result = v;
             } else {
-                // This vector is pointing up. There are an infinite number
-                // of 180-degree rotations which would point it down.
-                // We arbitrarily pick a rotation around the x axis.
+                /*
+                 * This vector is pointing up. There are an infinite number of
+                 * 180-degree rotations which would point it down. We
+                 * arbitrarily pick a rotation around the x axis.
+                 */
                 result = v.rot180(MeasurementAxis.X);
             }
         } else {
@@ -557,7 +594,9 @@ public class Vec3 {
         return transform(Vec3.getPlaneCorrectionMatrix(sd, sa, cd, ca));
     }
 
-    /** Returns a matrix to correct a vector for a given formation orientation.
+    /**
+     * Returns a matrix to correct a vector for a given formation orientation.
+     *
      * @param az the formation dip azimuth in radians
      * @param dip the formation dip angle in radians
      * @return a matrix to transform vectors from geographic co-ordinates to
@@ -577,9 +616,12 @@ public class Vec3 {
         return matrix;
     }
 
-    /** Multiplies this vector by a supplied matrix. 
+    /**
+     * Multiplies this vector by a supplied matrix.
+     *
      * @param matrix a three-by-three matrix
-     * @return the product of this vector and the supplied matrix */
+     * @return the product of this vector and the supplied matrix
+     */
     public Vec3 transform(double[][] matrix) {
         final double[][] m = matrix;
         return new Vec3(
@@ -618,14 +660,19 @@ public class Vec3 {
         }
     }
 
-    /** Normalizes this vector. 
-     * @return a unit vector with the same direction as this vector */
+    /**
+     * Normalizes this vector.
+     *
+     * @return a unit vector with the same direction as this vector
+     */
     public Vec3 normalize() {
         final double m = mag();
         return new Vec3(x / m, y / m, z / m);
     }
 
-    /** Returns a specified component of this vector. 
+    /**
+     * Returns a specified component of this vector.
+     *
      * @param component the component to return
      * @return the value of the specified component
      */
@@ -638,45 +685,60 @@ public class Vec3 {
             case MINUSY: return -y;
             case MINUSZ: return -z;
             case H: return sqrt(x*x+y*y);
-            /* We don't expect that the default case will ever be reached,
-             * but it's required to keep the compiler happy and may be
-             * useful if MeasurementAxis is later expanded.
+            /*
+             * We don't expect that the default case will ever be reached, but
+             * it's required to keep the compiler happy and may be useful if
+             * MeasurementAxis is later expanded.
              */
-            default: throw new IllegalArgumentException("invalid axis "+component);
+            default:
+                throw new IllegalArgumentException("invalid axis "+component);
         }
     }
 
-    /** Returns the magnitude of this vector.
-     * @return the magnitude of this vector */
+    /**
+     * Returns the magnitude of this vector.
+     *
+     * @return the magnitude of this vector
+     */
     public double mag() {
         return sqrt(x * x + y * y + z * z);
     }
 
-    /** Adds this vector and another vector.
+    /**
+     * Adds this vector and another vector.
+     *
      * @param v a vector
-     * @return a vector equal to the sum of this vector and {@code v} */
+     * @return a vector equal to the sum of this vector and {@code v}
+     */
     public Vec3 plus(Vec3 v) {
         return new Vec3(x + v.x, y + v.y, z + v.z);
     }
 
-    /** Subtracts another vector from this vector.
+    /**
+     * Subtracts another vector from this vector.
+     *
      * @param v a vector
-     * @return a vector equal to this vector minus {@code v} */
+     * @return a vector equal to this vector minus {@code v}
+     */
     public Vec3 minus(Vec3 v) {
         return new Vec3(x - v.x, y - v.y, z - v.z);
     }
 
-    /** Multiplies this vector by a scalar value. 
+    /**
+     * Multiplies this vector by a scalar value.
+     *
      * @param a a number
-     * @return a vector equal to this vector multiplied by {@code a} */
+     * @return a vector equal to this vector multiplied by {@code a}
+     */
     public Vec3 times(double a) {
         return new Vec3(x * a, y * a, z * a);
     }
 
-    /** Multiplies the components of this vector individually
-     * by the corresponding components of another vector.
-     * Note that this is neither the dot product nor the cross product, and
-     * is seldom used.
+    /**
+     * Multiplies the components of this vector individually by the
+     * corresponding components of another vector. Note that this is neither the
+     * dot product nor the cross product, and is seldom used.
+     *
      * @param v a vector
      * @return a vector with the elements {@code (this.x*v.x,
      * this.y*v.y, this.z*v.z)}
@@ -685,7 +747,9 @@ public class Vec3 {
         return new Vec3(x * v.x, y * v.y, z * v.z);
     }
 
-    /** Divides this vector by a scalar value.
+    /**
+     * Divides this vector by a scalar value.
+     *
      * @param a a number
      * @return a vector equal to this vector divided by {@code a}
      */
@@ -693,8 +757,10 @@ public class Vec3 {
         return new Vec3(x / a, y / a, z / a);
     }
 
-    /** Divides the components of this vector individually
-     * by the corresponding components of another vector.
+    /**
+     * Divides the components of this vector individually by the corresponding
+     * components of another vector.
+     *
      * @param v a vector
      * @return a vector with the elements {@code (this.x/v.x,
      * this.y/v.y, this.z/v.z)}
@@ -703,7 +769,9 @@ public class Vec3 {
         return new Vec3(x / v.x, y / v.y, z / v.z);
     }
 
-    /** Returns the dot product of this vector and another vector. 
+    /**
+     * Returns the dot product of this vector and another vector.
+     *
      * @param v a vector
      * @return the dot product of this vector and {@code v}
      */
@@ -711,7 +779,9 @@ public class Vec3 {
         return (x * v.x + y * v.y + z * v.z);
     }
 
-    /** Returns the cross product of this vector and another vector. 
+    /**
+     * Returns the cross product of this vector and another vector.
+     *
      * @param v a vector
      * @return the cross product of this vector and {@code v}
      */
@@ -719,18 +789,22 @@ public class Vec3 {
         return new Vec3(y*v.z - z*v.y, z*v.x - x*v.z, x*v.y - y*v.x);
     }
 
-    /** Returns the inverse of this vector. This is produced by
-     * negating each component.
-     * 
+    /**
+     * Returns the inverse of this vector. This is produced by negating each
+     * component.
+     *
      * @return the inverse of this vector
      */
     public Vec3 invert() {
         return new Vec3(-x, -y, -z);
     }
 
-    /** Returns the orientation tensor of this vector.
-     * The orientation tensor is defined in 
-     * Scheidegger (1965).
+    /**
+     * Returns the orientation tensor of this vector. The orientation tensor is
+     * defined in Scheidegger, A E. (1965). On the statistics of the orientation
+     * of bedding planes, grain axes, and similar sedimentological data. <i>US
+     * Geological Survey Professional Paper</i>, 525, pp. 164–167
+     *
      * @return the orientation tensor of this vector
      */
     public Matrix oTensor() {
@@ -739,8 +813,9 @@ public class Vec3 {
             {z * x, z * y, z * z}});
     }
 
-    /** Returns the signed angle between this vector and another vector.
-     * 
+    /**
+     * Returns the signed angle between this vector and another vector.
+     *
      * @param v a vector
      * @return the angle between this vector and {@code v}, in radians
      */
@@ -760,8 +835,9 @@ public class Vec3 {
         return asin(magnitude) * signum(sign);
     }
 
-    /** Creates a vector from a polar specification in degrees.
-     * 
+    /**
+     * Creates a vector from a polar specification in degrees.
+     *
      * @param mag magnitude for the new vector
      * @param inc inclination for the new vector, in degrees
      * @param dec declination for the new vector, in degrees
@@ -771,7 +847,9 @@ public class Vec3 {
         return Vec3.fromPolarRadians(mag, toRadians(inc), toRadians(dec));
     }
 
-    /** Creates a vector from a polar specification in radians.
+    /**
+     * Creates a vector from a polar specification in radians.
+     *
      * @param mag magnitude for the new vector
      * @param inc inclination for the new vector, in radians
      * @param dec declination for the new vector, in radians
@@ -783,14 +861,17 @@ public class Vec3 {
                 mag * sin(inc));
     }
 
-    /** Returns this vector's inclination in radians.
-     * @return this vector's inclination in radians */
+    /**
+     * Returns this vector's inclination in radians.
+     *
+     * @return this vector's inclination in radians
+     */
     public double getIncRad() {
         return atan2(z, sqrt(x*x + y*y));
     }
 
     /**
-     * <p>Returns this vector's declination in radians.</p>
+     * Returns this vector's declination in radians.
      * 
      * @return this vector's declination in radians
      */
@@ -819,20 +900,29 @@ public class Vec3 {
         return theta;
     }
 
-    /** Returns this vector's inclination in degrees.
-     * @return this vector's inclination in degrees */
+    /**
+     * Returns this vector's inclination in degrees.
+     *
+     * @return this vector's inclination in degrees
+     */
     public double getIncDeg() {
         return toDegrees(getIncRad());
     }
 
-    /** Returns this vector's declination in degrees.
-     * @return this vector's declination in degrees */
+    /**
+     * Returns this vector's declination in degrees.
+     *
+     * @return this vector's declination in degrees
+     */
     public double getDecDeg() {
         return toDegrees(getDecRad());
     }
     
-    /** Returns the strike of the plane normal to this vector
-     * @return the strike of the plane normal to this vector, in degrees */
+    /**
+     * Returns the strike of the plane normal to this vector
+     *
+     * @return the strike of the plane normal to this vector, in degrees
+     */
     public double getStrikeDeg() {
         double decDeg = getDecDeg();
         // Ensure we have the declination of the *upward* vector 
@@ -843,8 +933,11 @@ public class Vec3 {
         return strike;
     }
 
-    /** Returns the strike of the plane normal this vector
-     * @return the strike of the plane normal this vector, in degrees */
+    /**
+     * Returns the strike of the plane normal this vector
+     *
+     * @return the strike of the plane normal this vector, in degrees
+     */
     public double getDipDeg() {
         double incDeg = getIncDeg();
         // Ensure we have an upward (negative) inclination
@@ -852,9 +945,12 @@ public class Vec3 {
         return incDeg + 90;
     }
 
-    /** Returns the sum of a specified collection of vectors. 
+    /**
+     * Returns the sum of a specified collection of vectors.
+     *
      * @param vectors a collections of vectors
-     * @return the sum of the supplied vectors */
+     * @return the sum of the supplied vectors
+     */
     public static Vec3 sum(Collection<Vec3> vectors) {
         double xs = 0, ys = 0, zs = 0;
         for (Vec3 p: vectors) {
@@ -865,8 +961,9 @@ public class Vec3 {
         return new Vec3(xs, ys, zs);
     }
 
-    /** Returns the mean direction of a collection of unit vectors.
-     * 
+    /**
+     * Returns the mean direction of a collection of unit vectors.
+     *
      * @param points a collection of unit vectors
      * @return a unit vector representing the mean direction of {@code points}
      */
@@ -875,7 +972,9 @@ public class Vec3 {
     }
     
     
-    /** Returns the mean of a collection of vectors. 
+    /**
+     * Returns the mean of a collection of vectors.
+     *
      * @param vectors a collections of vectors
      * @return the mean vector of the supplied vectors
      */
@@ -891,33 +990,46 @@ public class Vec3 {
         return new Vec3(xs / i, ys / i, zs / i);
     }
 
-    /** Sets the x component of this vector.
+    /**
+     * Sets the x component of this vector.
+     *
      * @param newX the new value for the x component
-     * @return a vector with the specified x component, and with 
-     * the other components taken from this vector */
+     * @return a vector with the specified x component, and with the other
+     * components taken from this vector
+     */
     public Vec3 setX(double newX) {
         return new Vec3(newX, y, z);
     }
 
-    /** Sets the y component of this vector.
+    /**
+     * Sets the y component of this vector.
+     *
      * @param newY the new value for the y component
-     * @return a vector with the specified y component, and with 
-     * the other components taken from this vector */
+     * @return a vector with the specified y component, and with the other
+     * components taken from this vector
+     */
     public Vec3 setY(double newY) {
         return new Vec3(x, newY, z);
     }
     
-    /** Sets the z component of this vector.
+    /**
+     * Sets the z component of this vector.
+     *
      * @param newZ the new value for the z component
-     * @return a vector with the specified z component, and with 
-     * the other components taken from this vector */
+     * @return a vector with the specified z component, and with the other
+     * components taken from this vector
+     */
     public Vec3 setZ(double newZ) {
         return new Vec3(x, y, newZ);
     }
 
-    /** Returns a list of vectors defining a small circle around this vector's direction. 
+    /**
+     * Returns a list of vectors defining a small circle around this vector's
+     * direction.
+     *
      * @param radiusDegrees the radius of the desired circle, in degrees
-     * @return a list of vectors defining a small circle around this vector's direction
+     * @return a list of vectors defining a small circle around this vector's
+     * direction
      */
     public List<Vec3> makeSmallCircle(double radiusDegrees) {
         final List<Vec3> result = new ArrayList<>();
@@ -932,8 +1044,10 @@ public class Vec3 {
         return result;
     }
 
-    /** Returns a list of points outlining the confidence ellipse for
-     * a supplied set of Kent statistical parameters.
+    /**
+     * Returns a list of points outlining the confidence ellipse for a supplied
+     * set of Kent statistical parameters.
+     *
      * @param kentParams a set of Kent parameters
      * @return the confidence ellipse of the supplied parameters
      */
@@ -941,23 +1055,32 @@ public class Vec3 {
         final double eta = kentParams.getEtaMag();
         final double zeta = kentParams.getZetaMag();
         final List<Vec3> vs = new ArrayList<>(1000);
-        // We create each ellipse point at the top (?) of the unit
-        // sphere, then rotate it into position.
+        /*
+         * We create each ellipse point at the top (?) of the unit sphere, then
+         * rotate it into position.
+         */
 
-        // ed and ei tell us which way the ellipse is pointing.
-        // (zd and zi are orthogonal so we'll ignore them.)
+        /*
+         * ed and ei tell us which way the ellipse is pointing. (zd and zi are
+         * orthogonal so we'll ignore them.)
+         */
         final Vec3 centre = kentParams.getMean();
         final Vec3 etaDir = kentParams.getEtaDir();
         // calculate the direction of the eta axis
         final Vec3 etaDirTop =
                 etaDir.rotZ(-centre.getDecRad()).rotY(centre.getIncRad()-PI/2.).
                 rotZ(centre.getDecRad());
-
-        final double stepSize = 1e-4; // unprojected minimum step size (radians)
-        final double stepLimit = 1e-2; // skip projected steps smaller than this...
-        final double thetaLimit = 2*PI/50.; // ... unless unprojected step larger than this
-        Vec3 vPrev = null; // the last projected vector we created
-        double thetaPrev = -100; // the last theta at which we created a vector
+        
+        // unprojected minimum step size (radians)
+        final double stepSize = 1e-4;
+        // skip projected steps smaller than this...
+        final double stepLimit = 1e-2;
+        // ... unless unprojected step larger than this
+        final double thetaLimit = 2*PI/50.;
+        // the last projected vector we created
+        Vec3 vPrev = null;
+        // the last theta at which we created a vector
+        double thetaPrev = -100;
 
         for (double theta=0; theta<2*PI; theta += stepSize) {
             final double a = eta*sin(theta);
@@ -1007,14 +1130,18 @@ public class Vec3 {
         return result;
     }
 
-    /** Returns a string representation of this vector. 
-     * @return a string representation of this vector */
+    /**
+     * Returns a string representation of this vector.
+     *
+     * @return a string representation of this vector
+     */
     @Override
     public String toString() {
         return String.format(Locale.ENGLISH, "%.2f %.2f %.2f", x, y, z);
     }
     
-    /** Checks that this vector contains no NaN or infinite values.
+    /**
+     * Checks that this vector contains no NaN or infinite values.
      *
      * @return true iff this vector contains no NaN or infinite values
      */
@@ -1039,9 +1166,12 @@ public class Vec3 {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 79 * hash + (int) (Double.doubleToLongBits(this.x) ^ (Double.doubleToLongBits(this.x) >>> 32));
-        hash = 79 * hash + (int) (Double.doubleToLongBits(this.y) ^ (Double.doubleToLongBits(this.y) >>> 32));
-        hash = 79 * hash + (int) (Double.doubleToLongBits(this.z) ^ (Double.doubleToLongBits(this.z) >>> 32));
+        hash = 79 * hash + (int) (Double.doubleToLongBits(this.x) ^
+                (Double.doubleToLongBits(this.x) >>> 32));
+        hash = 79 * hash + (int) (Double.doubleToLongBits(this.y) ^
+                (Double.doubleToLongBits(this.y) >>> 32));
+        hash = 79 * hash + (int) (Double.doubleToLongBits(this.z) ^
+                (Double.doubleToLongBits(this.z) >>> 32));
         return hash;
     }
     
@@ -1057,18 +1187,17 @@ public class Vec3 {
     
     /**
      * Compares vectors for equality to a specified precision.
-     * 
-     * Compares this vector with another one, returning {@code true}
-     * if they are sufficiently close. "Sufficiently close" is defined
-     * by a supplied precision parameter: for the method to return
-     * {@code true}, the distance between the vectors must be less
-     * than {@code precision * max(m1, m2)} where {@code m1} and
-     * {@code m2} are the lengths of the two vectors.
-     * 
+     *
+     * Compares this vector with another one, returning {@code true} if they are
+     * sufficiently close. "Sufficiently close" is defined by a supplied
+     * precision parameter: for the method to return {@code true}, the distance
+     * between the vectors must be less than {@code precision * max(m1, m2)}
+     * where {@code m1} and {@code m2} are the lengths of the two vectors.
+     *
      * @param v the vector with which to compare this one
      * @param precision the precision parameter for the comparison
-     * @return {@code true} iff the vectors are equal to within the
-     * specified precision
+     * @return {@code true} iff the vectors are equal to within the specified
+     * precision
      */
     public boolean equals(Vec3 v, double precision) {
         final double mag0 = mag();
