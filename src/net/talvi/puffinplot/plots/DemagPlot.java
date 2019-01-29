@@ -182,7 +182,7 @@ public class DemagPlot extends Plot {
                     xPos, yPos));
         }
 
-        if (sample.hasMsData()) {
+        if (sample.hasMagSusData()) {
             addPoint(null,
                     new Point2D.Double(dim.getMaxX() + 10, dim.getMaxY()),
                     false, false, false);

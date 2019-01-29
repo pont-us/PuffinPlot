@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -37,6 +36,7 @@ import Jama.Matrix;
 import static java.lang.Double.parseDouble;
 import static java.lang.Math.abs;
 import static java.lang.Math.toRadians;
+import java.util.function.Consumer;
 
 /**
  * This class represents a sample on which measurements have been made. It may
@@ -64,12 +64,13 @@ public class Sample {
     private double magDev = Double.NaN;
     private FisherValues fisherValues;
     private Vec3 importedDirection = null;
-    private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
+    private static final Logger LOGGER =
+            Logger.getLogger("net.talvi.puffinplot");
 
     /**
-     * Creates a new sample. For discrete samples, the supplied name can
-     * take any form; for long core samples, it should be a string representation
-     * of a number giving the depth.
+     * Creates a new sample. For discrete samples, the supplied name can take
+     * any form; for long core samples, it should be a string representation of
+     * a number giving the depth.
      * 
      * @param name sample identifier or numerical depth
      * @param suite the treatmentSteps suite of which this sample is a part
@@ -83,13 +84,22 @@ public class Sample {
         this.customNotes = new CustomFields<>();
     }
 
-    final public void setDepth(String newDepth) {
+    /**
+     * Set the depth of this sample. If the supplied string is not
+     * interpretable as a number, it will be ignored.
+     * 
+     * @param newDepth a string representing a number to use as the
+     * depth of this sample
+     */
+    public final void setDepth(String newDepth) {
         double depthTmp = Double.NaN;
         try {
             depthTmp = Double.parseDouble(newDepth);
         } catch (NumberFormatException ex) {
-            // Nothing to do here: if it's not valid it's probably just
-            // a discrete sample.
+            /*
+             * Nothing to do here: if it's not valid it's probably just a
+             * discrete sample.
+             */
         }
         this.depth = depthTmp;
     }
@@ -100,9 +110,7 @@ public class Sample {
     public void clearPca() {
         touch();
         pca = null;
-        for (TreatmentStep d: getTreatmentSteps()) {
-            d.setInPca(false);
-        }
+        forEachTreatmentStep(step -> step.setInPca(false));
     }
     
     /**
@@ -111,9 +119,7 @@ public class Sample {
     public void clearGreatCircle() {
         touch();
         greatCircle = null;
-        for (TreatmentStep d: getTreatmentSteps()) {
-            d.setOnCircle(false);
-        }
+        forEachTreatmentStep(step -> step.setOnCircle(false));
     }
     
     /**
@@ -181,8 +187,11 @@ public class Sample {
      * @return the intensity of the sample's natural remanent magnetization
      */
     public double getNrm() {
-        if (treatmentSteps.isEmpty()) return Double.NaN;
-        return treatmentSteps.get(0).getIntensity();
+        if (treatmentSteps.isEmpty()) {
+            return Double.NaN;
+        } else {
+            return treatmentSteps.get(0).getIntensity();
+        }
     }
 
     /**
@@ -233,9 +242,7 @@ public class Sample {
      */
     public void flip(MeasurementAxis axis) {
         touch();
-        for (TreatmentStep d: getTreatmentSteps()) {
-            d.rot180(axis);
-        }
+        forEachTreatmentStep(step -> step.rot180(axis));
     }
     
     /**
@@ -243,9 +250,7 @@ public class Sample {
      */
     public void invertMoments() {
         touch();
-        for (TreatmentStep d: getTreatmentSteps()) {
-            d.invertMoment();
-        }
+        forEachTreatmentStep(TreatmentStep::invertMoment);
     }
     
     /**
@@ -258,10 +263,10 @@ public class Sample {
      */
     public void hideAndDeselectSelectedPoints() {
         touch();
-        for (TreatmentStep d: getTreatmentSteps()) {
-            if (d.isSelected()) {
-                d.setSelected(false);
-                d.setHidden(true);
+        for (TreatmentStep step: getTreatmentSteps()) {
+            if (step.isSelected()) {
+                step.setSelected(false);
+                step.setHidden(true);
             }
         }
     }
@@ -273,7 +278,7 @@ public class Sample {
      */
     public void selectAll() {
         touch();
-        for (TreatmentStep d : getTreatmentSteps()) d.setSelected(true);
+        forEachTreatmentStep(step -> step.setSelected(true));
     }
 
     /**
@@ -294,9 +299,7 @@ public class Sample {
      */
     public void selectNone() {
         touch();
-        for (TreatmentStep d : getTreatmentSteps()) {
-            d.setSelected(false);
-        }
+        forEachTreatmentStep(step -> step.setSelected(false));
     }
     
     /**
@@ -348,9 +351,8 @@ public class Sample {
      * @return all the visible (non-hidden) treatment steps within this sample
      */
     public List<TreatmentStep> getVisibleTreatmentSteps() {
-        List<TreatmentStep> visibleData = new ArrayList<>(getNumberOfSteps());
-        for (TreatmentStep d: getTreatmentSteps()) if (!d.isHidden()) visibleData.add(d);
-        return visibleData;
+        return getTreatmentSteps().stream().filter(step -> !step.isHidden()).
+                collect(Collectors.toList());
     }
 
     /**
@@ -359,9 +361,8 @@ public class Sample {
      * @return all the selected treatment steps within this sample
      */
     public List<TreatmentStep> getSelectedTreatmentSteps() {
-        LinkedList<TreatmentStep> selData = new LinkedList<>();
-        for (TreatmentStep d: getTreatmentSteps()) if (d.isSelected()) selData.add(d);
-        return selData;
+        return getTreatmentSteps().stream().filter(step -> step.isSelected()).
+                collect(Collectors.toList());
     }
     
     /**
@@ -374,8 +375,8 @@ public class Sample {
     public boolean isSelectionContiguous() {
         int runEndsSeen = 0;
         boolean thisIsSelected = false, lastWasSelected = false;
-        for (TreatmentStep d: getTreatmentSteps()) {
-            thisIsSelected = d.isSelected();
+        for (TreatmentStep step: getTreatmentSteps()) {
+            thisIsSelected = step.isSelected();
             if (lastWasSelected && !thisIsSelected) runEndsSeen++;
             lastWasSelected = thisIsSelected;
         }
@@ -418,10 +419,10 @@ public class Sample {
      */
     public TreatmentStep getTreatmentStepByLevel(double level) {
         final double threshold = 1e-6;
-        for (TreatmentStep d: treatmentSteps) {
-                if (abs(d.getTreatmentLevel() - level) < threshold) {
-                    return d;
-                }
+        for (TreatmentStep step: treatmentSteps) {
+            if (abs(step.getTreatmentLevel() - level) < threshold) {
+                return step;
+            }
         }
         return null;
     }
@@ -445,14 +446,14 @@ public class Sample {
      * @param level a treatment level
      * @return the first datum in the sample with the given treatment level
      */
-    public TreatmentStep getTreatmentStepByTypeAndLevel(Set<TreatmentType> types,
-                                                         double level) {
+    public TreatmentStep getTreatmentStepByTypeAndLevel(
+            Set<TreatmentType> types, double level) {
         final double threshold = 1e-6;
-        for (TreatmentStep d: treatmentSteps) {
-                if (abs(d.getTreatmentLevel() - level) < threshold
-                    && types.contains(d.getTreatmentType())) {
-                    return d;
-                }
+        for (TreatmentStep step: treatmentSteps) {
+            if (abs(step.getTreatmentLevel() - level) < threshold
+                    && types.contains(step.getTreatmentType())) {
+                return step;
+            }
         }
         return null;
     }
@@ -510,7 +511,7 @@ public class Sample {
      *
      * @return {@code true} if this sample has any magnetic susceptibility data
      */
-    public boolean hasMsData() {
+    public boolean hasMagSusData() {
         return hasMsData;
     }
 
@@ -520,7 +521,7 @@ public class Sample {
      */
     public void useSelectionForPca() {
         touch();
-        for (TreatmentStep d: getTreatmentSteps()) d.setInPca(d.isSelected());
+        forEachTreatmentStep(step -> step.setInPca(step.isSelected()));
     }
     
     /**
@@ -531,7 +532,8 @@ public class Sample {
      * for this sample
      */
     public boolean isPcaAnchored() {
-        return treatmentSteps.isEmpty() ? false : treatmentSteps.get(0).isPcaAnchored();
+        return getTreatmentSteps().isEmpty() ? false :
+                getTreatmentSteps().get(0).isPcaAnchored();
     }
     
     /**
@@ -543,7 +545,7 @@ public class Sample {
      */
     public void setPcaAnchored(boolean pcaAnchored) {
         touch();
-        for (TreatmentStep d: getTreatmentSteps()) d.setPcaAnchored(pcaAnchored);
+        forEachTreatmentStep(step -> step.setPcaAnchored(pcaAnchored));
     }
     
     /**
@@ -556,7 +558,9 @@ public class Sample {
      * treatmentSteps
      */
     public void doPca(Correction correction) {
-        if (!hasTreatmentSteps()) return;
+        if (!hasTreatmentSteps()) {
+            return;
+        }
         /*
          * Use the first treatment step's anchoring status for all of them
          * (a partially anchored PCA makes no sense). This is just
@@ -653,7 +657,7 @@ public class Sample {
      */
     public void useSelectionForCircleFit() {
         touch();
-        for (TreatmentStep d: getTreatmentSteps()) d.setOnCircle(d.isSelected());
+        forEachTreatmentStep(step -> step.setOnCircle(step.isSelected()));
     }
 
     /**
@@ -673,9 +677,9 @@ public class Sample {
      * @return the magnetic moment vectors used for the current great-circle fit
      */
     public List<Vec3> getCirclePoints(Correction correction) {
-        List<Vec3> result = new ArrayList<>(getTreatmentSteps().size());
-        for (TreatmentStep d: getTreatmentSteps()) {
-            if (d.isOnCircle()) result.add(d.getMoment(correction));
+        final List<Vec3> result = new ArrayList<>(getTreatmentSteps().size());
+        for (TreatmentStep step: getTreatmentSteps()) {
+            if (step.isOnCircle()) result.add(step.getMoment(correction));
         }
         return result;
     }
@@ -703,8 +707,10 @@ public class Sample {
      * fit
      */
     public double getFirstGcStep() {
-        for (TreatmentStep d: treatmentSteps) {
-            if (d.isOnCircle()) return d.getTreatmentStep();
+        for (TreatmentStep step: treatmentSteps) {
+            if (step.isOnCircle()) {
+                return step.getTreatmentStep();
+            }
         }
         return -1;
     }
@@ -718,8 +724,10 @@ public class Sample {
      */
     public double getLastGcStep() {
         double result = -1;
-        for (TreatmentStep d : treatmentSteps) {
-            if (d.isOnCircle()) result = d.getTreatmentStep();
+        for (TreatmentStep step: treatmentSteps) {
+            if (step.isOnCircle()) {
+                result = step.getTreatmentStep();
+            }
         }
         return result;
     }
@@ -729,9 +737,12 @@ public class Sample {
      *
      * @return the measurement type of this sample (discrete or continuous)
      */
-    public MeasurementType getMeasType() {
-        for (TreatmentStep d: getTreatmentSteps())
-            if (d.getMeasurementType().isActualMeasurement()) return d.getMeasurementType();
+    public MeasurementType getMeasurementType() {
+        for (TreatmentStep step: getTreatmentSteps()) {
+            if (step.getMeasurementType().isActualMeasurement()) {
+                return step.getMeasurementType();
+            }
+        }
         return MeasurementType.DISCRETE;
     }
 
@@ -746,18 +757,22 @@ public class Sample {
         return nameOrDepth;
     }
     
+    /**
+     * Set the identifier of a sample. If the sample is discrete, its name is
+     * set to the supplied identifier. If the sample is continuous, the sample's
+     * depth is set to the supplied identifier, which is assumed to be a valid
+     * string representation of a floating-point number.
+       * 
+     * @param newNameOrDepth
+     */
     public void setNameOrDepth(String newNameOrDepth) {
         nameOrDepth = newNameOrDepth;
-        if (getMeasType() == MeasurementType.CONTINUOUS) {
+        if (getMeasurementType() == MeasurementType.CONTINUOUS) {
             setDepth(nameOrDepth);
-            for (TreatmentStep d: getTreatmentSteps()) {
-                d.setDepth(nameOrDepth);
-            }
+            forEachTreatmentStep(step -> step.setDepth(nameOrDepth));
         }
-        if (getMeasType() == MeasurementType.DISCRETE) {
-            for (TreatmentStep d: getTreatmentSteps()) {
-                d.setDiscreteId(nameOrDepth);
-            }
+        if (getMeasurementType() == MeasurementType.DISCRETE) {
+            forEachTreatmentStep(step -> step.setDiscreteId(nameOrDepth));
         }
     }
 
@@ -785,7 +800,8 @@ public class Sample {
      * @return the run number for the last treatment step in this sample
      */
     public int getLastRunNumber() {
-        return getTreatmentSteps().get(getTreatmentSteps().size()-1).getRunNumber();
+        return getTreatmentSteps().get(getTreatmentSteps().size()-1).
+                getRunNumber();
     }
 
     /**
@@ -801,9 +817,9 @@ public class Sample {
      */
     public TreatmentStep getDatumByRunNumber(int maxRunNumber) {
         TreatmentStep result = null;
-        for (TreatmentStep d: getTreatmentSteps()) {
-            if (d.getRunNumber() < maxRunNumber) {
-                result = d;
+        for (TreatmentStep step: getTreatmentSteps()) {
+            if (step.getRunNumber() < maxRunNumber) {
+                result = step;
             }
         }
         return result;
@@ -835,7 +851,7 @@ public class Sample {
      */
     public void unhideAllPoints() {
         touch();
-        for (TreatmentStep d: getTreatmentSteps()) d.setHidden(false);
+        forEachTreatmentStep(step -> step.setHidden(false));
     }
 
     /**
@@ -859,10 +875,11 @@ public class Sample {
     
     /**
      * Sets the selection state of the sample's treatment steps from a supplied
-     * bit set. For each index in the bit set, the treatment step with the
-     * same index within the sample is selected if the bit has a 1 value.
-       * 
-     * @param selection a template for the selection state of the treatment steps
+     * bit set. For each index in the bit set, the treatment step with the same
+     * index within the sample is selected if the bit has a 1 value.
+     *
+     * @param selection a template for the selection state of the treatment
+     * steps
      * @see #getSelectionBitSet()
      */
     public void setSelectionBitSet(BitSet selection) {
@@ -1023,7 +1040,7 @@ public class Sample {
                 importedDirection = Vec3.fromPolarDegrees(1., inc, dec);
                 break;
             default:
-                logger.log(Level.WARNING, "Sample field {0} not recognized.",
+                LOGGER.log(Level.WARNING, "Sample field {0} not recognized.",
                         parts[0]);
                 break;
         }
@@ -1172,7 +1189,7 @@ public class Sample {
             case VIRT_FORM_STRIKE: setFormStrike(parseDouble(value)); break;
             case MAG_DEV: setMagDev(parseDouble(value)); break;
             default:
-                logger.log(Level.WARNING, "Unhandled TreatmentStep field: {0}",
+                LOGGER.log(Level.WARNING, "Unhandled TreatmentStep field: {0}",
                         field.name());
                 break;
         }
@@ -1187,7 +1204,9 @@ public class Sample {
      * the suite has been saved since the last modification. 
      */
     public void touch() {
-        if (suite != null) suite.setSaved(false);
+        if (suite != null) {
+            suite.setSaved(false);
+        }
     }
 
     /**
@@ -1198,20 +1217,33 @@ public class Sample {
     public void calculateFisher(Correction correction) {
         final List<TreatmentStep> selection = getSelectedTreatmentSteps();
         final List<Vec3> directions = new ArrayList<>(selection.size());
-        for (TreatmentStep d: selection) {
-            directions.add(d.getMoment(correction));
+        for (TreatmentStep step: selection) {
+            directions.add(step.getMoment(correction));
         }
         fisherValues = FisherValues.calculate(directions);
     }
     
-    public void truncateData(int items) {
+    /**
+     * Truncates the list of treatment steps to a specified number of
+     * entries.
+     * 
+     * @param items the number of treatment steps to retain; the first
+     * {@code items} steps will be kept, and the rest deleted.
+     */
+    public void truncateTreatmentSteps(int items) {
         treatmentSteps = treatmentSteps.subList(0, items);
     }
     
+    /**
+     * Rotate all the magnetic moment vectors of this sample about the
+     * z axis.
+     *
+     * @param angleDegrees the angle (in degrees) by which to rotate the
+     * magnetic moments
+     */
     public void rotateAroundZAxis(double angleDegrees) {
-        getTreatmentSteps().forEach((TreatmentStep d) -> {
-            d.setMoment(d.getMoment().rotZ(Math.toRadians(angleDegrees)));
-        });
+        forEachTreatmentStep(step -> step.setMoment(
+                step.getMoment().rotZ(Math.toRadians(angleDegrees))));
     }
     
     /**
@@ -1244,9 +1276,10 @@ public class Sample {
      */
     public void setDiscreteId(String discreteId) {
         if (hasTreatmentSteps()) {
-            getTreatmentSteps().forEach(d -> { d.setDiscreteId(discreteId); });
+            forEachTreatmentStep(step -> step.setDiscreteId(discreteId));
         } else {
-            throw new IllegalStateException("This sample has no TreatmentStep objects");
+            throw new IllegalStateException(
+                    "This sample has no treatment steps.");
         }
     }
     
@@ -1255,7 +1288,7 @@ public class Sample {
      * {@code TreatmentStep} in the collection passed to this method will be
      * removed. Any {@code TreatmentStep} in the collection which is not in this
      * Sample will be ignored.
-       * 
+     * 
      * @param toRemove the treatmentSteps to remove
      */
     public void removeData(Collection<TreatmentStep> toRemove) {
@@ -1275,20 +1308,20 @@ public class Sample {
     public Set<TreatmentStep> mergeDuplicateTreatmentSteps() {
         final Map<TreatmentTypeAndLevel, List<TreatmentStep>> treatmentMap =
                 new HashMap<>();
-        for (TreatmentStep d: this.getTreatmentSteps()) {
-            final TreatmentTypeAndLevel key = new TreatmentTypeAndLevel(d);
+        for (TreatmentStep step: this.getTreatmentSteps()) {
+            final TreatmentTypeAndLevel key = new TreatmentTypeAndLevel(step);
             if (!treatmentMap.containsKey(key)) {
                 treatmentMap.put(key, new ArrayList<>());
             }
-            treatmentMap.get(key).add(d);
+            treatmentMap.get(key).add(step);
         }
         /*
          * First check if any merging needs to be done at all, to avoid
          * needlessly creating a new object.
          */
         boolean anyMergables = false;
-        for (List<TreatmentStep> ds: treatmentMap.values()) {
-            if (ds.size() > 1) {
+        for (List<TreatmentStep> steps: treatmentMap.values()) {
+            if (steps.size() > 1) {
                 anyMergables = true;
                 break;
             }
@@ -1297,13 +1330,13 @@ public class Sample {
             return Collections.emptySet();
         }
         final Set<TreatmentStep> toRemove = new HashSet<>(treatmentMap.size());
-        for (TreatmentStep d: this.getTreatmentSteps()) {
+        for (TreatmentStep step: this.getTreatmentSteps()) {
             final List<TreatmentStep> duplicates =
-                    treatmentMap.get(new TreatmentTypeAndLevel(d));
-            if (duplicates.get(0) == d) {
-                d.setMomentToMean(duplicates);
+                    treatmentMap.get(new TreatmentTypeAndLevel(step));
+            if (duplicates.get(0) == step) {
+                step.setMomentToMean(duplicates);
             } else {
-                toRemove.add(d);
+                toRemove.add(step);
             }
         }
         this.removeData(toRemove);
@@ -1325,7 +1358,8 @@ public class Sample {
         }
         final Sample firstSample = samples.get(0);
         for (Sample sample: samples.subList(1, samples.size())) {
-            sample.getTreatmentSteps().forEach(d -> firstSample.addTreatmentStep(d));
+            sample.getTreatmentSteps().
+                    forEach(step -> firstSample.addTreatmentStep(step));
         }
         firstSample.mergeDuplicateTreatmentSteps();
         firstSample.treatmentSteps.sort(new TreatmentStepTreatmentComparator());
@@ -1333,16 +1367,16 @@ public class Sample {
     
     private static class TreatmentTypeAndLevel {
         private final TreatmentType treatmentType;
-        private final Double treatStep;
+        private final Double treatmentLevel;
         
         public TreatmentTypeAndLevel(TreatmentStep treatmentStep) {
             this.treatmentType = treatmentStep.getTreatmentType();
-            this.treatStep = treatmentStep.getTreatmentStep();
+            this.treatmentLevel = treatmentStep.getTreatmentStep();
         }
         
         @Override
         public int hashCode() {
-            return treatmentType.hashCode() ^ treatStep.hashCode();
+            return treatmentType.hashCode() ^ treatmentLevel.hashCode();
         }
 
         @Override
@@ -1357,10 +1391,14 @@ public class Sample {
             if (this.treatmentType != other.treatmentType) {
                 return false;
             }
-            if (!Objects.equals(this.treatStep, other.treatStep)) {
+            if (!Objects.equals(this.treatmentLevel, other.treatmentLevel)) {
                 return false;
             }
             return true;
         }
+    }
+    
+    private void forEachTreatmentStep(Consumer<TreatmentStep> f) {
+        getTreatmentSteps().forEach(f);
     }
 }

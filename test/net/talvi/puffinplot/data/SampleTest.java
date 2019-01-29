@@ -253,7 +253,7 @@ public class SampleTest {
     }
     
     @Test
-    public void testGetSelectedData() {
+    public void testGetSelectedTreatmentSteps() {
         for (int i=3; i<8; i++) {
             simpleSample.getTreatmentStepByIndex(i).setSelected(true);
         }
@@ -385,9 +385,9 @@ public class SampleTest {
     }
     
     @Test
-    public void testTruncateData() {
+    public void testTruncateTreatmentSteps() {
         final List<TreatmentStep> data = new ArrayList<>(simpleSample.getTreatmentSteps());
-        simpleSample.truncateData(7);
+        simpleSample.truncateTreatmentSteps(7);
         assertEquals(data.subList(0, 7), simpleSample.getTreatmentSteps());
     }
 
@@ -462,29 +462,29 @@ public class SampleTest {
     }
     
     @Test
-    public void testHasMsData() {
+    public void testHasMagSusData() {
         final Sample sample = new Sample("test", null);
-        assertFalse(sample.hasMsData());
+        assertFalse(sample.hasMagSusData());
         sample.addTreatmentStep(new TreatmentStep());
-        assertFalse(sample.hasMsData());
+        assertFalse(sample.hasMagSusData());
         final TreatmentStep treatmentStep = new TreatmentStep();
         treatmentStep.setMagSus(1);
         sample.addTreatmentStep(treatmentStep);
-        assertTrue(sample.hasMsData());
+        assertTrue(sample.hasMagSusData());
     }
     
     @Test
-    public void testGetMeasType() {
+    public void testGetMeasurementType() {
         final Sample sample = new Sample("test", null);
-        assertEquals(MeasurementType.DISCRETE, sample.getMeasType());
+        assertEquals(MeasurementType.DISCRETE, sample.getMeasurementType());
         addDatumWithMeasurementType(sample, MeasurementType.NONE);
-        assertEquals(MeasurementType.DISCRETE, sample.getMeasType());
+        assertEquals(MeasurementType.DISCRETE, sample.getMeasurementType());
         addDatumWithMeasurementType(sample, MeasurementType.UNKNOWN);
-        assertEquals(MeasurementType.DISCRETE, sample.getMeasType());
+        assertEquals(MeasurementType.DISCRETE, sample.getMeasurementType());
         addDatumWithMeasurementType(sample, MeasurementType.UNSET);
-        assertEquals(MeasurementType.DISCRETE, sample.getMeasType());
+        assertEquals(MeasurementType.DISCRETE, sample.getMeasurementType());
         addDatumWithMeasurementType(sample, MeasurementType.CONTINUOUS);
-        assertEquals(MeasurementType.CONTINUOUS, sample.getMeasType());
+        assertEquals(MeasurementType.CONTINUOUS, sample.getMeasurementType());
     }
     
     private static void addDatumWithMeasurementType(Sample sample, MeasurementType mt) {
@@ -624,7 +624,7 @@ public class SampleTest {
     }
     
     @Test
-    public void testGetVisibleData() {
+    public void testGetVisibleTreatmentSteps() {
         simpleSample.getTreatmentStepByIndex(5).setHidden(true);
         final List<TreatmentStep> expected =
                 new ArrayList<>(simpleSample.getTreatmentSteps());

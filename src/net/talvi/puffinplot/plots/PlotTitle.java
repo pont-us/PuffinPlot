@@ -70,7 +70,7 @@ public class PlotTitle extends Plot {
         g.setFont(biggerFont);
         final int minX = (int) getDimensions().getMinX(); 
         final int minY = (int) getDimensions().getMinY();
-        final boolean discrete = sample.getMeasType().isDiscrete();
+        final boolean discrete = sample.getMeasurementType().isDiscrete();
         g.drawString((discrete ? "Sample: " : "Depth: ")
                 + sample.getNameOrDepth(),
                 minX, minY + 16);

@@ -41,6 +41,10 @@ Scripting
 -   The user-defined great circle validity check now uses Javascript
     rather than Python. In practice, this only means a slight change
     in syntax.
+-   Some classes and methods in the PuffinPlot API have been renamed to be
+    clearer and more descriptive. This has no effect on users who only
+    use the graphical interface, but scripts written for older
+    PuffinPlot versions may have to be updated to work with the new API.
 
 User interface
 --------------
