@@ -48,23 +48,32 @@ public abstract class EqAreaPlot extends Plot {
     private static final int decTickStep = 10;
     private static final int incTickNum = 9;
     
-    /** The graphics object to which to draw the plot.
-     *  It is set by {@link #updatePlotDimensions(Graphics2D)}. */
+    /**
+     * The graphics object to which to draw the plot. It is set by
+     * {@link #updatePlotDimensions(Graphics2D)}.
+     */
     protected Graphics2D g;
     
-    /** The x co-ordinate of the projection's origin.
-     *  It is set by {@link #updatePlotDimensions(Graphics2D)}. */
+    /**
+     * The x co-ordinate of the projection's origin. It is set by
+     * {@link #updatePlotDimensions(Graphics2D)}.
+     */
     protected int xo;
     
-    /** The y co-ordinate of the projection's origin.
-     *  It is set by {@link #updatePlotDimensions(Graphics2D)}. */
+    /**
+     * The y co-ordinate of the projection's origin. It is set by
+     * {@link #updatePlotDimensions(Graphics2D)}.
+     */
     protected int yo;
     
-    /** The radius of the projection.
-     *  It is set by {@link #updatePlotDimensions(Graphics2D)}. */
+    /**
+     * The radius of the projection. It is set by
+     * {@link #updatePlotDimensions(Graphics2D)}.
+     */
     protected int radius;
     
-    /** The preferences governing various options for this plot.
+    /**
+     * The preferences governing various options for this plot.
      */
     protected Preferences prefs;
     
@@ -81,10 +90,10 @@ public abstract class EqAreaPlot extends Plot {
     }
     
     /**
-     * Sets the fields {@link #g}, {@link #radius}, {@link #xo},
-     * and {@link #yo} according to the supplied argument and the
-     * current plot dimensions.
-     * This method should be called before redrawing the plot.
+     * Sets the fields {@link #g}, {@link #radius}, {@link #xo}, and {@link #yo}
+     * according to the supplied argument and the current plot dimensions. This
+     * method should be called before redrawing the plot.
+     *
      * @param g the field {@link #g} will be set to this value
      */
     protected void updatePlotDimensions(Graphics2D g) {
@@ -95,11 +104,11 @@ public abstract class EqAreaPlot extends Plot {
         yo = (int) dims.getCenterY();
     }
     
-    /** Draws the axes of the plot. */
+    /**
+     * Draws the axes of the plot.
+     */
     protected void drawAxes() {
         g.setStroke(getStroke());
-        //g.setColor(Color.WHITE);
-        //g.fillArc(xo - radius, yo - radius, radius * 2, radius * 2, 0, 360);
         g.setColor(Color.BLACK);
         g.drawArc(xo - radius, yo - radius, radius * 2, radius * 2, 0, 360);
         final double r = radius;
@@ -113,13 +122,16 @@ public abstract class EqAreaPlot extends Plot {
 
         final double l = getTickLength() / 2.0;
         for (int i = 0; i < incTickNum; i++) {
-            Point2D p =  project(Vec3.fromPolarDegrees(1., 90 - i * (90./(double)incTickNum), 90.));
+            final Point2D p =  project(Vec3.fromPolarDegrees(
+                    1., 90 - i * (90./(double)incTickNum), 90.));
             double x = p.getX();
             g.draw(new Line2D.Double(x, yo - l, x, yo + l));
         }
         g.draw(new Line2D.Double(xo - l, yo, xo + l, yo));
-        if (prefs != null && prefs.getBoolean("plots.labelEqualAreaPlots", false)) {
-            g.drawString(getShortName(), (float) (xo + radius/2), (float) (yo + radius));
+        if (prefs != null &&
+                prefs.getBoolean("plots.labelEqualAreaPlots", false)) {
+            g.drawString(getShortName(),
+                    (float) (xo + radius/2), (float) (yo + radius));
         }
     }
 
@@ -136,7 +148,7 @@ public abstract class EqAreaPlot extends Plot {
         for (Vec3 v : vectors) {
             assert(v != null);
             // g.setStroke(new BasicStroke(getUnitSize() * (1-(float)v.z) *20.0f));
-            Point2D p = project(v);
+            final Point2D p = project(v);
             assert(!Double.isNaN(p.getX()));
             assert(!Double.isNaN(p.getY()));
             final double x = p.getX();
@@ -154,14 +166,16 @@ public abstract class EqAreaPlot extends Plot {
     }
 
     /**
-     * Project and cache line segments.
-     * Assumes all segments in same hemisphere.
+     * Project and cache line segments. Assumes all segments in same hemisphere.
+     *
      * @param vs vectors to project
      * @param cache line cache in which to store projected vector path
      */
      protected void projectLineSegments(List<Vec3> vs, LineCache cache) {
-         // determine whether we're in upper hemisphere, ignoring
-         // z co-ordinates very close to zero. 
+         /*
+          * determine whether we're in upper hemisphere, ignoring z co-ordinates
+          * very close to zero.
+          */
          boolean upperHemisph = true;
          for (Vec3 v: vs) {
              if (v.z > 1e-10) {
@@ -207,8 +221,10 @@ public abstract class EqAreaPlot extends Plot {
         return projectLineSegments(Vec3.spherInterpolate(v0, v1, 0.05));
     }
     
-    /** Draws the projection of a specified great-circle segment.
-     * The shorter of the two possible paths will be drawn.
+    /**
+     * Draws the projection of a specified great-circle segment. The shorter of
+     * the two possible paths will be drawn.
+     *
      * @param v0 one end of a great-circle segment
      * @param v1 the other end of a great-circle segment
      */
@@ -216,9 +232,11 @@ public abstract class EqAreaPlot extends Plot {
         drawLineSegments(Vec3.spherInterpolate(v0, v1, 0.05));
     }
 
-    /** Draws the projection of a specified great-circle segment.
-     * Of the two possible paths, the one passing closer
-     * to the supplied vector {@code dir} will be drawn.
+    /**
+     * Draws the projection of a specified great-circle segment. Of the two
+     * possible paths, the one passing closer to the supplied vector {@code dir}
+     * will be drawn.
+     *
      * @param v0 one end of a great-circle segment
      * @param v1 the other end of a great-circle segment
      * @param dir vector used to choose which path to draw
@@ -243,21 +261,22 @@ public abstract class EqAreaPlot extends Plot {
    }
 
     /**
-     * Projects the direction of a three-dimensional vector into plot co-ordinates.
-     * The supplied vector must be well-formed (i.e. its components must
-     * be finite numbers rather than NaN or infinite values).
-     * 
+     * Projects the direction of a three-dimensional vector into plot
+     * co-ordinates. The supplied vector must be well-formed (i.e. its
+     * components must be finite numbers rather than NaN or infinite values).
+       * 
      * @param v a well-formed vector
      * @return the projection of the supplied vector onto this plot
      */
     protected Point2D.Double project(Vec3 v) {
-        /* Need to convert from declination (running clockwise from
-         * Y axis) to plot co-ordinates (running anticlockwise from X axis).
-         * First we flip the x-axis so that we're going anticlockwise
-         * (let x' = x, y' = -y). Then we perform a 90˚ anticlockwise rotation
-         * (let x'' = -y' = y, y'' = x' = x). Finally, we flip the y axis
-         * to take account of AWT Y-coordinates running top-to-bottom rather
-         * than bottom-to-top (let x''' = x'' = y, y''' = -y'' = -x).
+        /*
+         * Need to convert from declination (running clockwise from Y axis) to
+         * plot co-ordinates (running anticlockwise from X axis). First we flip
+         * the x-axis so that we're going anticlockwise (let x' = x, y' = -y).
+         * Then we perform a 90˚ anticlockwise rotation (let x'' = -y' = y, y''
+         * = x' = x). Finally, we flip the y axis to take account of AWT
+         * Y-coordinates running top-to-bottom rather than bottom-to-top (let
+         * x''' = x'' = y, y''' = -y'' = -x).
          */
         assert(v.isWellFormed());
         final double h2 = v.x * v.x + v.y * v.y;
@@ -270,9 +289,10 @@ public abstract class EqAreaPlot extends Plot {
     }
 
     /**
-     * Returns a short, human-readable name for this plot.
-     * This is used to label the plots on the graph display during
-     * normal use. (The "nice name" is used when resizing/moving.)
+     * Returns a short, human-readable name for this plot. This is used to label
+     * the plots on the graph display during normal use. (The "nice name" is
+     * used when resizing/moving.)
+     *
      * @return a short, human-readable name for this plot
      */
     public abstract String getShortName();

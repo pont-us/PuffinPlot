@@ -106,8 +106,9 @@ public abstract class Plot
             "suite_table false 636 76 297 91 " +
             "depth false 50 50 300 200 ";
 
-    /** Creates a plot with the supplied parameters.
-     * 
+    /**
+     * Creates a plot with the supplied parameters.
+     *
      * @param parent the graph display containing the plot
      * @param params the parameters of the plot
      * @param prefs the preferences containing the plot configuration
@@ -126,7 +127,7 @@ public abstract class Plot
             logger.log(Level.WARNING, "Error parsing plot size", e);
             // safe to continue, default will be set below
         }
-        // We may have a sizes string in the prefs but without this specific plot
+        // We may have a sizes string in prefs, but without this specific plot.
         if (dimensions==null) {
             setDimensionsFromPrefsString(DEFAULT_PLOT_POSITIONS);
         }
@@ -165,79 +166,111 @@ public abstract class Plot
         }
     }
     
-    /** Returns the dimensions of this plot. 
-     * @return the dimensions of this plot */
+    /**
+     * Returns the dimensions of this plot.
+     *
+     * @return the dimensions of this plot
+     */
     public Rectangle2D getDimensions() {
         return dimensions;
     }
 
-    /** Sets the dimensions of this plot. 
-     * @param dimensions dimensions the new dimensions of this plot */
+    /**
+     * Sets the dimensions of this plot.
+     *
+     * @param dimensions dimensions the new dimensions of this plot
+     */
     public void setDimensions(Rectangle2D dimensions) {
         this.dimensions = dimensions;
     }
     
-    /** Determines whether the points should be labelled.
-     * This method is used by {@code Plot}'s drawing routines.
-     * As defined in {@code Plot}, this method always returns
-     * {@code false}. Plots which
-     * use labelled points should override it.
+    /**
+     * Determines whether the points should be labelled. This method is used by
+     * {@code Plot}'s drawing routines. As defined in {@code Plot}, this method
+     * always returns {@code false}. Plots which use labelled points should
+     * override it.
+     *
      * @return {@code true} if this plot's points should be labelled
      */
     public boolean areTreatmentStepsLabelled() {
         return false;
     }
 
-    /** Resets the plot's dimensions to the default,
-     * as defined in {@link #DEFAULT_PLOT_POSITIONS}. */
+    /**
+     * Resets the plot's dimensions to the default, as defined in
+     * {@link #DEFAULT_PLOT_POSITIONS}.
+     */
     public void setDimensionsToDefault() {
         setDimensionsFromPrefsString(DEFAULT_PLOT_POSITIONS);
     }
 
-    /** Returns the size of the margin displayed when resizing the plot. 
-     * @return the size of the margin displayed when resizing the plot */
+    /**
+     * Returns the size of the margin displayed when resizing the plot.
+     *
+     * @return the size of the margin displayed when resizing the plot
+     */
     public int getMargin() {
         return 24;
     }
 
-    /** Returns the default solid stroke style.
-     * @return the default solid stroke style. */
+    /**
+     * Returns the default solid stroke style.
+     *
+     * @return the default solid stroke style.
+     */
     public Stroke getStroke() {
         return stroke;
     }
     
-    /** Returns the default dashed stroke style.
-     * @return the default dashed stroke style. */
+    /**
+     * Returns the default dashed stroke style.
+     *
+     * @return the default dashed stroke style.
+     */
     public Stroke getDashedStroke() {
         return dashedStroke;
     }
 
-    /** Returns the size of a plot unit in Java 2D units.
-     * @return the size of a plot unit in Java 2D units */
+    /**
+     * Returns the size of a plot unit in Java 2D units.
+     *
+     * @return the size of a plot unit in Java 2D units
+     */
     public final float getUnitSize() {
         return unitSize;
     }
 
-    /** Returns the standard length of an axis tick in plot units. 
-     * @return the standard length of an axis tick in plot units */
+    /**
+     * Returns the standard length of an axis tick in plot units.
+     *
+     * @return the standard length of an axis tick in plot units
+     */
     public float getTickLength() {
         return TICK_LENGTH_IN_UNITS * getUnitSize();
     }
 
-    /** Returns the standard font size in plot units.
-     * @return the standard font size in plot units. */
+    /**
+     * Returns the standard font size in plot units.
+     *
+     * @return the standard font size in plot units.
+     */
     public final float getFontSize() {
         return FONT_SIZE_IN_UNITS * getUnitSize();
     }
 
-    /** Returns this plot's standard text attributes. 
-     * @return this plot's standard text attributes */
+    /**
+     * Returns this plot's standard text attributes.
+     *
+     * @return this plot's standard text attributes
+     */
     public Map<? extends Attribute,?> getTextAttributes() {
         return Collections.unmodifiableMap(attributeMap);
     }
 
-    /** Applies this plot's standard text attributes to an attributed string.
-     * @param as the string to which to apply this plot's standard text 
+    /**
+     * Applies this plot's standard text attributes to an attributed string.
+     *
+     * @param as the string to which to apply this plot's standard text
      * attributes
      */
     public void applyTextAttributes(AttributedString as) {
@@ -246,8 +279,10 @@ public abstract class Plot
         }
     }
 
-    /** Writes a text string onto this plot. 
-     * @param g the graphics object to which to write the 
+    /**
+     * Writes a text string onto this plot.
+     *
+     * @param g the graphics object to which to write the
      * @param text the text to write
      * @param x the x co-ordinate of the text
      * @param y the y co-ordinate of the text
@@ -258,42 +293,50 @@ public abstract class Plot
         }
     }
 
-    /** Writes an attributed text string onto this plot. 
-     * @param g the graphics object to which to write the 
+    /**
+     * Writes an attributed text string onto this plot.
+     *
+     * @param g the graphics object to which to write the
      * @param as the text to write
      * @param x the x co-ordinate of the text
      * @param y the y co-ordinate of the text
      */
-    protected void writeString(Graphics2D g, AttributedString as, float x, float y) {
+    protected void writeString(Graphics2D g, AttributedString as,
+            float x, float y) {
         applyTextAttributes(as);
-        // Don't use TextLayout.draw, since it draw with a GlyphVector
-        // and we'd get shapes rather than text in SVG export etc.
+        /*
+         * Don't use TextLayout.draw, since it draw with a GlyphVector and we'd
+         * get shapes rather than text in SVG export etc.
+         */
         g.drawString(as.getIterator(), x, y);
     }
 
     /**
      * Returns an attributed string representing a number in scientific
-     * notation. By default a notation of the form "12 &times; 10<sup>34</sup>."
+     * notation. By default a notation of the form
+     * "1.2 &times; 10<sup>34</sup>."
      * is produced; if the rendering hints of the supplied graphics object
      * contain the key {@link PuffinRenderingHints#KEY_E_NOTATION}, a notation
-     * of the form "12E34." is produced instead.
+     * of the form "1.2E34." is produced instead.
      *
      * @param significand the significand of the number
      * @param exponent the exponent of the number
      * @param g a graphics context
-     * @return an attributed string representing the number in scientific notation
+     * @return an attributed string representing the number in scientific
+     * notation
      */
-    protected AttributedString timesTenToThe(String significand, String exponent, Graphics2D g) {
-        if (!g.getRenderingHints().containsKey(PuffinRenderingHints.KEY_E_NOTATION)) {
+    protected AttributedString timesTenToThe(String significand,
+            String exponent, Graphics2D g) {
+        if (!g.getRenderingHints().
+                containsKey(PuffinRenderingHints.KEY_E_NOTATION)) {
             String text = significand;
             // 00D7 is the multiplication sign
             if (exponent.startsWith("-")) {
                 exponent = "\u2212" + exponent.substring(1); // minus sign
-                //exponent = "\u2013" + exponent.substring(1); // en dash
             }
             text += " \u00D710" + exponent;
             
-            AttributedString as = new AttributedString(text);
+            final AttributedString as = new AttributedString(text);
             as.addAttribute(SUPERSCRIPT, SUPERSCRIPT_SUPER,
                     text.length() - exponent.length(), text.length());
             
@@ -305,7 +348,8 @@ public abstract class Plot
 
     /**
      * Returns an attributed string representing a number in scientific
-     * notation. See {@link #timesTenToThe(java.lang.String, java.lang.String, java.awt.Graphics2D)}
+     * notation. See
+     * {@link #timesTenToThe(java.lang.String, java.lang.String, java.awt.Graphics2D)}
      * for details of the notation produced.
      * 
      * @see #timesTenToThe(java.lang.String, java.lang.String, java.awt.Graphics2D) 
@@ -313,14 +357,17 @@ public abstract class Plot
      * @param significand the significand of the number
      * @param exponent the exponent of the number
      * @param g a graphics context
-     * @return an attributed string representing the number in scientific notation
+     * @return an attributed string representing the number in scientific
+     * notation
      */
     protected AttributedString timesTenToThe(String significand, int exponent,
             Graphics2D g) {
         return timesTenToThe(significand, Integer.toString(exponent), g);
     }
 
-    /** Returns a cropped version of a specified rectangle. 
+    /**
+     * Returns a cropped version of a specified rectangle.
+     *
      * @param r a rectangle
      * @param left the amount to crop at the left
      * @param right the amount to crop at the right
@@ -338,10 +385,11 @@ public abstract class Plot
                 r.getHeight() - (top + bottom) * u);
     }
 
-    /** Returns a string representation of this plot's dimensions.
-     * The string is in the same format as the {@code plotSizes} 
-     * Preferences entry from which the plot reads its initial
-     * dimensions.
+    /**
+     * Returns a string representation of this plot's dimensions. The string is
+     * in the same format as the {@code plotSizes} Preferences entry from which
+     * the plot reads its initial dimensions.
+     *
      * @return a string representation of this plot's dimensions
      */
     public String getDimensionsAsString() {
@@ -354,8 +402,11 @@ public abstract class Plot
                 r.getWidth(), r.getHeight());
     }
 
-    /** Draws the points in this plot's internal buffer. 
-     * @param g the graphics object to which to draw the points */
+    /**
+     * Draws the points in this plot's internal buffer.
+     *
+     * @param g the graphics object to which to draw the points
+     */
     protected void drawPoints(Graphics2D g) {
         g.setStroke(getStroke());
         PlotPoint prev = null;
@@ -384,17 +435,22 @@ public abstract class Plot
         points.add(pp);
         final int nPoints = points.size();
         if (nPoints > 1) {
-            PlotPoint prevPoint = points.get(nPoints - 2);
-            Point2D centre = prevPoint.getCentre();
-            List<Point2D> others = new ArrayList<>(2);
+            final PlotPoint prevPoint = points.get(nPoints - 2);
+            final Point2D centre = prevPoint.getCentre();
+            final List<Point2D> others = new ArrayList<>(2);
             others.add(points.get(nPoints - 1).getCentre());
-            if (nPoints>2) others.add(points.get(nPoints - 3).getCentre());
-            ((ShapePoint)prevPoint).setLabelPos(Direction.safeDirection(centre, others));
+            if (nPoints>2) {
+                others.add(points.get(nPoints - 3).getCentre());
+            }
+            ((ShapePoint)prevPoint).
+                    setLabelPos(Direction.safeDirection(centre, others));
         }
         return pp;
     }
     
-    /** Clear this plot's internal buffer of points. */
+    /**
+     * Clear this plot's internal buffer of points.
+     */
     protected void clearPoints() {
         points.clear();
     }
@@ -423,42 +479,45 @@ public abstract class Plot
         AffineTransform initialTransform = g.getTransform();
         applyTextAttributes(text);
 
-        /* The obvious thing to do might be to calculate the bounding box
-         * for unrotated text, then rotate the bounding box if required.
-         * Unfortunately this is unreliable, since it turns out that
-         * orientation can affect text layout. On Linux 64-bit OpenJDK 1.7.0_25,
-         * vertical text is set closer than horizontal. So the bounding box
-         * must be determined by actually creating a TextLayout for a 
-         * rotated FontRenderContext. 
+        /*
+         * The obvious thing to do might be to calculate the bounding box for
+         * unrotated text, then rotate the bounding box if required.
+         * Unfortunately this is unreliable, since it turns out that orientation
+         * can affect text layout. On Linux 64-bit OpenJDK 1.7.0_25, vertical
+         * text is set closer than horizontal. So the bounding box must be
+         * determined by actually creating a TextLayout for a rotated
+         * FontRenderContext.
          */
         g.rotate(θ);
-        final TextLayout layout = new TextLayout(text.getIterator(), g.getFontRenderContext());
+        final TextLayout layout =
+                new TextLayout(text.getIterator(), g.getFontRenderContext());
         final Rectangle2D transformedBounds = layout.getBounds();
         g.setTransform(initialTransform);
 
-        /* We now back-rotate the transformed bounding box to use in
-         * calculations requiring the untransformed bounds. 
+        /*
+         * We now back-rotate the transformed bounding box to use in
+         * calculations requiring the untransformed bounds.
          */
         final Rectangle2D bounds = AffineTransform.getRotateInstance(-θ).
                 createTransformedShape(transformedBounds).getBounds2D();
 
-        /* Translate the co-ordinate system to the "target" point. This isn't
-         * quite where we want it yet: we need to (1) offset in the chosen 
-         * direction, and (2) centre the text relative to the offset point.
-         * Part (1) could be combined with this translate operation (though
-         * I think it's conceptually clearer to separate them), but it's
-         * easier to do part (2) after we've rotated into the text's 
-         * co-ordinate system.
+        /*
+         * Translate the co-ordinate system to the "target" point. This isn't
+         * quite where we want it yet: we need to (1) offset in the chosen
+         * direction, and (2) centre the text relative to the offset point. Part
+         * (1) could be combined with this translate operation (though I think
+         * it's conceptually clearer to separate them), but it's easier to do
+         * part (2) after we've rotated into the text's co-ordinate system.
          */
         g.translate(x, y);
         
-        /* Translate the target point to the "offset" point: this is the
-         * point above, below, left, or right of the target point which 
-         * actually defines the text's location. The offset is measured 
-         * from the edge of the text, not its centre, hence the 
-         * additional half-width or half-height offset in the same direction.
-         * Note that we're still working in the unrotated co-ordinate system
-         * here.
+        /*
+         * Translate the target point to the "offset" point: this is the point
+         * above, below, left, or right of the target point which actually
+         * defines the text's location. The offset is measured from the edge of
+         * the text, not its centre, hence the additional half-width or
+         * half-height offset in the same direction. Note that we're still
+         * working in the unrotated co-ordinate system here.
          */
         final double halfWidth = bounds.getWidth()/2;
         final double halfHeight = bounds.getHeight()/2;
@@ -477,13 +536,15 @@ public abstract class Plot
             break;
         }
         
-        /* Having moved to the offset point, we now rotate from the 
-         * graph's orientation to the text's orientation (which may of
-         * course be the same).
+        /*
+         * Having moved to the offset point, we now rotate from the graph's
+         * orientation to the text's orientation (which may of course be the
+         * same).
          */
         g.rotate(θ);
         
-        /* We have to do some more translation now, in the text's rotated
+        /*
+         * We have to do some more translation now, in the text's rotated
          * coordinate system. The offset point is the desired location of the
          * centre of the text, but drawString wants the location of the bottom
          * left corner so we move the text half its width to the left and half
@@ -492,17 +553,22 @@ public abstract class Plot
         g.translate(-transformedBounds.getWidth()/2,
                 transformedBounds.getHeight()/2);
         
-        /* Finally we have to account for the fact that the origin of the
-         * TextLayout from which the bounds were calculated is not at (0,0).
-         * (See TextLayout docs.) 
+        /*
+         * Finally we have to account for the fact that the origin of the
+         * TextLayout from which the bounds were calculated is not at (0, 0).
+         * (See TextLayout docs.)
          */
         g.translate(-transformedBounds.getMinX(), -transformedBounds.getMaxY());
 
-        /* We don't use layout.draw, since that will draw the text as a glyph
-         * vector, which won't be exported as text in SVG, PDF, etc. */
+        /*
+         * We don't use layout.draw, since that will draw the text as a glyph
+         * vector, which won't be exported as text in SVG, PDF, etc.
+         */
         g.drawString(text.getIterator(), 0, 0);
         
-        /* Finally, we restore the initial co-ordinate system. */
+        /*
+         * Finally, we restore the initial co-ordinate system.
+         */
         g.setTransform(initialTransform);
     }
     
@@ -519,15 +585,16 @@ public abstract class Plot
      */
     public void putText(Graphics2D g, String textString, double x,
             double y, Direction dir, double θ, double padding) {
-        AttributedString text = new AttributedString(textString);
+        final AttributedString text = new AttributedString(textString);
         putText(g, text, x, y, dir, θ, padding);
     }
 
     
-    /** Handles a mouse click event on the plot. If the click was on 
-     * a plotted point, the associated datum (if any) will have its
-     * selection state toggled.
-     * 
+    /**
+     * Handles a mouse click event on the plot. If the click was on a plotted
+     * point, the associated datum (if any) will have its selection state
+     * toggled.
+     *
      * @param position the position of the click
      * @param e the event associated with the click
      */
@@ -536,19 +603,21 @@ public abstract class Plot
             return;
         }
         final boolean sloppy = e.isShiftDown();
-        for (PlotPoint p : points) {
-            final TreatmentStep d = p.getTreatmentStep();
-            if (d != null && !d.isHidden()) {
-            if (sloppy) {
-                if (p.isNear(position, SLOPPY_SELECTION_RADIUS_IN_UNITS * getUnitSize())) {
-                    d.setSelected(e.getButton() == MouseEvent.BUTTON1);
-                }
+        for (PlotPoint p: points) {
+            final TreatmentStep step = p.getTreatmentStep();
+            if (step != null && !step.isHidden()) {
+                if (sloppy) {
+                    if (p.isNear(position,
+                            SLOPPY_SELECTION_RADIUS_IN_UNITS * getUnitSize())) {
+                        step.setSelected(e.getButton() == MouseEvent.BUTTON1);
+                    }
                 } else {
                     if (p.getShape().contains(position)) {
-                        d.toggleSelected();
+                        step.toggleSelected();
                     }
-            }
-            } else /* no datum associated with point; check for a sample */ {
+                }
+            } else {
+                // no treatment step associated with point; check for a sample
                 final Sample sample = p.getSample();
                 if (sample != null && p.getShape().contains(position)) {
                     fireSampleClickNotification(sample);
@@ -562,7 +631,7 @@ public abstract class Plot
      * or null if no such datum exists.
      * 
      * @param position a position
-     * @return the datum whose point is at the position, if any -- otherwise null
+     * @return the datum whose point is at the position, if any; otherwise null
      */
     public TreatmentStep getDatumForPosition(java.awt.geom.Point2D position) {
         for (PlotPoint p: points) {
@@ -574,9 +643,11 @@ public abstract class Plot
         return null;
     }
 
-    /** Sets selection state for data points in a rectangle.
-     * Only visible points (i.e. those for which {@code isHidden()} is 
-     * {@code false}) are affected by this method.
+    /**
+     * Sets selection state for data points in a rectangle. Only visible points
+     * (i.e. those for which {@code isHidden()} is {@code false}) are affected
+     * by this method.
+     *
      * @param rectangle a rectangle defining which points should be selected
      * @param state {@code true} to select points, {@code false} to deselect
      */
@@ -590,29 +661,44 @@ public abstract class Plot
         }
     }
 
-    /** Returns an internal name for this plot.
-     * @return an internal name for this plot */
+    /**
+     * Returns an internal name for this plot.
+     *
+     * @return an internal name for this plot
+     */
     public abstract String getName();
 
-    /** Returns a user-friendly name for this plot.
-     * @return  a user-friendly name for this plot */
+    /**
+     * Returns a user-friendly name for this plot.
+     *
+     * @return a user-friendly name for this plot
+     */
     public String getNiceName() {
         return getName();
     }
     
-    /** Draws this plot.
-     * @param g the graphics object onto which to draw this plot */
+    /**
+     * Draws this plot.
+     *
+     * @param g the graphics object onto which to draw this plot
+     */
     public abstract void draw(Graphics2D g);
 
-    /** Reports whether this plot is visible. 
-     * @return {@code true} if this plot is visible; {@code false} if it is hidden
+    /**
+     * Reports whether this plot is visible.
+     *
+     * @return {@code true} if this plot is visible; {@code false} if it is
+     * hidden
      */
     public boolean isVisible() {
         return visible;
     }
 
-    /** Sets whether this plot should be drawn. 
-     * @param visible {@code true} to draw this plot; {@code false} not to draw it
+    /**
+     * Sets whether this plot should be drawn.
+     *
+     * @param visible {@code true} to draw this plot; {@code false} not to draw
+     * it
      */
     public void setVisible(boolean visible) {
         this.visible = visible;
@@ -623,7 +709,8 @@ public abstract class Plot
      * on a plot element representing a sample, the
      * {@link SampleClickListener#sampleClicked(net.talvi.puffinplot.data.Sample)}
      * method of the supplied listener will be invoked. The listener can be
-     * removed using the {@link Plot#removeSampleClickListener(net.talvi.puffinplot.plots.SampleClickListener)}
+     * removed using the
+     * {@link Plot#removeSampleClickListener(net.talvi.puffinplot.plots.SampleClickListener)}
      * method.
      * 
      * @see SampleClickListener
