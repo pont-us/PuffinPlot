@@ -43,25 +43,29 @@ import static net.talvi.puffinplot.data.file.TwoGeeHelper.oerstedToTesla;
 public class ZplotLoader extends AbstractFileLoader {
 
     private LineNumberReader reader;
-    final private static List<Pattern> HEADERS;
-    final private static Pattern numberPattern  = Pattern.compile("\\d+(\\.\\d+)?");
-    final private static Pattern whitespace = Pattern.compile("\\s+");
-    final private static Pattern delimPattern = Pattern.compile("\\t");
     private File file;
     private String studyType;
     private MeasurementType measurementType = MeasurementType.UNSET;
 
+    private static final List<Pattern> HEADERS;
+    private static final Pattern NUMBER_PATTERN =
+            Pattern.compile("\\d+(\\.\\d+)?");
+    private static final Pattern WHITESPACE = Pattern.compile("\\s+");
+    private static final Pattern DELIMITER_PATTERN = Pattern.compile("\\t");
+    
     static {
-        String[] fields = {"^Sample", "^Project", "^Demag.*", "^Declin.*", "^Inclin.*",
-            "^Intens.*", "^Operation|^Depth"};
-        List<Pattern> fieldPatterns = new ArrayList<>(fields.length);
-        for (String field : fields) {
+        final String[] fields = {"^Sample", "^Project", "^Demag.*",
+            "^Declin.*", "^Inclin.*", "^Intens.*", "^Operation|^Depth"};
+        final List<Pattern> fieldPatterns = new ArrayList<>(fields.length);
+        for (String field: fields) {
             fieldPatterns.add(Pattern.compile(field));
         }
         HEADERS = fieldPatterns;
     }
     
-    /** Creates a new Zplot loader to read a specified file. 
+    /**
+     * Creates a new Zplot loader to read a specified file.
+     *
      * @param file the Zplot file to read
      */
     public ZplotLoader(File file) {
@@ -71,7 +75,7 @@ public class ZplotLoader extends AbstractFileLoader {
             reader = new LineNumberReader(new FileReader(file));
             readFile();
         } catch (IOException e) {
-
+            // TODO rethrow here?
         }
     }
 
@@ -86,8 +90,11 @@ public class ZplotLoader extends AbstractFileLoader {
             addMessage("Ignoring unrecognized file %s", file.getName());
             return;
         }
+        
         // skip ancestor file, date, user name, project
-        for (int i = 0; i < 4; i++) reader.readLine();
+        for (int i = 0; i < 4; i++) {
+            reader.readLine();
+        }
 
         // read the study type from the last header line
         studyType = reader.readLine();
@@ -97,11 +104,12 @@ public class ZplotLoader extends AbstractFileLoader {
             headerLine = reader.readLine();
         } while (headerLine != null && !headerLine.startsWith("Sample"));
         if (headerLine == null) {
-            addMessage("Couldn't find header line in ZPlot file %s: ignoring it",
+            addMessage("Couldn't find header line in ZPlot file %s: "
+                    + "skipping this file",
                     file.getName());
             return;
         }
-        String[] headers = whitespace.split(headerLine);
+        final String[] headers = WHITESPACE.split(headerLine);
 
         if (headers.length < 7 || headers.length > 8) {
             addMessage("Wrong number of header fields in Zplot file %s: " +
@@ -117,53 +125,64 @@ public class ZplotLoader extends AbstractFileLoader {
         }
         String line;
         while ((line = reader.readLine()) != null) {
-            TreatmentStep d = lineToDatum(line);
-            if (d != null) data.add(d);
+            TreatmentStep step = lineToDatum(line);
+            if (step != null) {
+                data.add(step);
+            }
         }
     }
 
     private TreatmentStep lineToDatum(String zPlotLine) {
-        Scanner s = new Scanner(zPlotLine);
-        s.useLocale(Locale.ENGLISH); // don't want to be using commas as decimal separators...
-        s.useDelimiter(delimPattern);
-        final String depthOrSample = s.next();
-        final String project = s.next();
-        final double demag = s.nextDouble();
-        final double dec = s.nextDouble();
-        final double inc = s.nextDouble();
-        final double intens = s.nextDouble();
-        final String operation = s.next();
+        final Scanner scanner = new Scanner(zPlotLine);
+        scanner.useLocale(Locale.ENGLISH); // ensure "." as decimal separator
+        scanner.useDelimiter(DELIMITER_PATTERN);
+        final String depthOrSample = scanner.next();
+        final String project = scanner.next();
+        final double demag = scanner.nextDouble();
+        final double dec = scanner.nextDouble();
+        final double inc = scanner.nextDouble();
+        final double intensity = scanner.nextDouble();
+        final String operation = scanner.next();
 
-        TreatmentStep d = new TreatmentStep(gaussToAm(Vec3.fromPolarDegrees(intens, inc, dec)));
+        final TreatmentStep step = new TreatmentStep(
+                gaussToAm(Vec3.fromPolarDegrees(intensity, inc, dec)));
         if (measurementType == MeasurementType.UNSET) {
-         measurementType = (numberPattern.matcher(depthOrSample).matches())
-                ? MeasurementType.CONTINUOUS
-                : MeasurementType.DISCRETE;
+            measurementType =
+                    (NUMBER_PATTERN.matcher(depthOrSample).matches())
+                    ? MeasurementType.CONTINUOUS
+                    : MeasurementType.DISCRETE;
         }
-        d.setMeasurementType(measurementType);
+        step.setMeasurementType(measurementType);
         switch (measurementType) {
-        case CONTINUOUS: d.setDepth(depthOrSample);
-            break;
-        case DISCRETE: d.setDiscreteId(depthOrSample);
-            break;
-        default: throw new Error("Unhandled measurement type "+ measurementType);
+            case CONTINUOUS:
+                step.setDepth(depthOrSample);
+                break;
+            case DISCRETE:
+                step.setDiscreteId(depthOrSample);
+                break;
+            default:
+                throw new Error("Unhandled measurement type "+ measurementType);
         }
 
-        d.setTreatmentType((project.toLowerCase().contains("therm") ||
-                operation.toLowerCase().contains("therm") ||
-                studyType.toLowerCase().contains("therm"))
-            ? TreatmentType.THERMAL : TreatmentType.DEGAUSS_XYZ);
-        switch (d.getTreatmentType()) {
-        case DEGAUSS_XYZ:
-            d.setAfX(oerstedToTesla(demag));
-            d.setAfY(oerstedToTesla(demag));
-            d.setAfZ(oerstedToTesla(demag));
-            break;
-        case THERMAL:
-            d.setTemp(demag);
-            break;
-        default: throw new Error("Unhandled treatment type "+d.getTreatmentType());
+        step.setTreatmentType(
+                (project.toLowerCase().contains("therm") ||
+                        operation.toLowerCase().contains("therm") ||
+                        studyType.toLowerCase().contains("therm")) ?
+                        TreatmentType.THERMAL :
+                        TreatmentType.DEGAUSS_XYZ);
+        switch (step.getTreatmentType()) {
+            case DEGAUSS_XYZ:
+                step.setAfX(oerstedToTesla(demag));
+                step.setAfY(oerstedToTesla(demag));
+                step.setAfZ(oerstedToTesla(demag));
+                break;
+            case THERMAL:
+                step.setTemp(demag);
+                break;
+            default:
+                throw new Error("Unhandled treatment type " +
+                        step.getTreatmentType());
         }
-        return d;
+        return step;
     }
 }
