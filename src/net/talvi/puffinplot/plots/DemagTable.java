@@ -22,86 +22,91 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
-import java.util.prefs.Preferences;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import net.talvi.puffinplot.Util;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Vec3;
-import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 
-import static java.lang.String.format;
-
 /**
- * A table showing some of the demagnetization data.
- * At present the columns are: treatment step,
- * declination, inclination, intensity, magnetic susceptibility.
+ * A table showing some of the demagnetization data. At present the columns are:
+ * treatment step, declination, inclination, intensity, magnetic susceptibility.
  * In the future they may become configurable.
  * 
  * @author pont
  */
 public class DemagTable extends Plot {
 
-    private final double us = getUnitSize();
-    private final List<Double> xSpacing =
-            Arrays.asList(360*us, 450*us, 450*us, 660*us, 580*us);
-    private final int ySpacing = (int) (120 * getUnitSize());
-    private final List<String> headers = 
-            Arrays.asList(new String[] {"demag.", "dec.", "inc.", "int.", "m.s."});
+    private final List<String> headers = Arrays.asList(
+            new String[] {"demag.", "dec.", "inc.", "int.", "m.s."});
     
-    /** Creates a data table with the supplied parameters
-     * 
-     * @param parent the graph display containing the table
+    /**
+     * Creates a data table with the supplied parameters
+     *
      * @param params the parameters of the table
-     * @param prefs the preferences containing the table configuration
      */
     public DemagTable(PlotParams params) {
         super(params);
     }
 
-    /** Returns the internal plot name for this table. 
-     * @return the internal plot name for this table */
+    /**
+     * Returns the internal plot name for this table.
+     *
+     * @return the internal plot name for this table
+     */
     @Override
     public String getName() {
         return "datatable";
     }
 
-    /** Returns the user-friendly plot name for this table. 
-     * @return the user-friendly plot name for this table */
+    /**
+     * Returns the user-friendly plot name for this table.
+     *
+     * @return the user-friendly plot name for this table
+     */
     @Override
     public String getNiceName() {
         return "Data table";
     }
 
-    private static String fmt(String format, double value) {
-        final String withHyphens = format(Locale.ENGLISH, format,
-                value);
-        return withHyphens;
-        // return withHyphens.replace('-', '\u2212');
-        // Need to ensure that minus signs work in all exported graphics
-        // before using them here.
-    }
-    
-    /** Draws the table. 
-     * @param g the graphics object to which to draw the table */
+    /**
+     * Draws the table.
+     *
+     * @param graphics the graphics object to which to draw the table
+     */
     @Override
-    public void draw(Graphics2D g) {
+    public void draw(Graphics2D graphics) {
         clearPoints();
 
         final Sample sample = params.getSample();
-        if (sample==null) return;
-        final List<TreatmentStep> data = sample.getTreatmentSteps();
-        if (data.isEmpty()) return;
+        if (sample==null) {
+            return;
+        }
+        
+        final List<TreatmentStep> steps = sample.getTreatmentSteps();
+        if (steps.isEmpty()) {
+            return;
+        }
 
         final List<String> headers2 = new ArrayList<>(headers);
-        if (sample.getTreatmentStepByIndex(0).getTreatmentType() == TreatmentType.THERMAL)
+        if (sample.getTreatmentStepByIndex(0).getTreatmentType() ==
+                TreatmentType.THERMAL) {
             headers2.set(0, "temp.");
-        points.add(new TextLinePoint(this, g, 10, null, null, headers2,
+        }
+        
+        final double unitSize = getUnitSize();
+        final List<Double> xSpacing = Stream.of(360., 450., 450., 660., 580.).
+                map(x -> x*unitSize).collect(Collectors.toList());
+        final int ySpacing = (int) (120 * unitSize);
+        
+        points.add(new TextLinePoint(this, graphics, 10, null, null, headers2,
                 xSpacing, Color.BLACK));
-        final boolean useSequence = (TreatmentStep.maxTreatmentLevel(data) == 0);
+        final boolean useSequence =
+                (TreatmentStep.maxTreatmentLevel(steps) == 0);
         int sequence = 1;
         float yPos = 2 * ySpacing;
         final DecimalFormat angleFormat = 
@@ -110,17 +115,17 @@ public class DemagTable extends Plot {
                 new DecimalFormat("0.00E00", Util.getDecimalFormatSymbols());
         final DecimalFormat magSusFormat =
                 new DecimalFormat("0.0E00", Util.getDecimalFormatSymbols());
-        for (TreatmentStep d: data) {
+        for (TreatmentStep step: steps) {
             if (yPos > getDimensions().getHeight()) {
                 break;
             }
             final List<String> values = new ArrayList<>(4);
-            final Vec3 p = d.getMoment(params.getCorrection());
+            final Vec3 moment = step.getMoment(params.getCorrection());
             final String demag = useSequence ? Integer.toString(sequence)
-                    : d.getFormattedTreatmentLevel();
+                    : step.getFormattedTreatmentLevel();
             values.add(demag);
-            values.add(angleFormat.format(p.getDecDeg()));
-            values.add(angleFormat.format(p.getIncDeg()));
+            values.add(angleFormat.format(moment.getDecDeg()));
+            values.add(angleFormat.format(moment.getIncDeg()));
             /*
              * Don't use .1g, it tickles a bug in Java (#6469160) which throws
              * an ArrayFormatException (at least in Sun Java 5 & 6). Update:
@@ -128,15 +133,15 @@ public class DemagTable extends Plot {
              * http://bugs.java.com/view_bug.do?bug_id=6469160 . No reason to
              * change the format at the moment, though.
              */
-            values.add(intensityFormat.format(p.mag()));
-            values.add(Double.isNaN(d.getMagSus()) ? "—" :
-                       magSusFormat.format(d.getMagSus()));
-            points.add(new TextLinePoint(this, g, yPos, d, null, values,
-                    xSpacing, Color.BLACK));
+            values.add(intensityFormat.format(moment.mag()));
+            values.add(Double.isNaN(step.getMagSus()) ? "—" :
+                       magSusFormat.format(step.getMagSus()));
+            points.add(new TextLinePoint(this, graphics, yPos, step, null,
+                    values, xSpacing, Color.BLACK));
             yPos += ySpacing;
             sequence++;
         }
-        g.setColor(Color.BLACK);
-        drawPoints(g);
+        graphics.setColor(Color.BLACK);
+        drawPoints(graphics);
     }
 }
