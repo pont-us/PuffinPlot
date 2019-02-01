@@ -74,8 +74,8 @@ public class ZplotLoader extends AbstractFileLoader {
         try {
             reader = new LineNumberReader(new FileReader(file));
             readFile();
-        } catch (IOException e) {
-            // TODO rethrow here?
+        } catch (IOException expection) {
+            addMessage(expection.getMessage());
         }
     }
 
