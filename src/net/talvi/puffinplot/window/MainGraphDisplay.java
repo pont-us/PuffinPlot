@@ -30,8 +30,7 @@ import java.util.prefs.Preferences;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.Util;
 import net.talvi.puffinplot.data.Sample;
-import net.talvi.puffinplot.plots.Plot;
-import net.talvi.puffinplot.plots.ZPlot;
+import net.talvi.puffinplot.plots.*;
 
 /**
  * A graph display which can show multiple plots. This is the display
@@ -45,18 +44,24 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
     // samplesForPrinting is only non-null during printing.
     private List<Sample> samplesForPrinting = null;
     private int printPageIndex = -1;
-    private final static String[] plotNames = {"SampleEqAreaPlot", "ZPlot",
-        "DemagPlot", "DemagTable", "SampleParamsLegend",
-        "PlotTitle", "SiteParamsLegend",
-        "AmsPlot", "TernaryPlot", "SiteEqAreaPlot", "SuiteEqAreaPlot",
-        "SampleParamsTable", "SiteParamsTable", "NrmHistogram",
-        "VgpTable", "SuiteParamsTable",
-        "DepthPlot"
+    private static final Class[] plotClasses = {
+        SampleEqAreaPlot.class, ZPlot.class, DemagPlot.class, DemagTable.class,
+        SampleParamsLegend.class, PlotTitle.class, SiteParamsLegend.class,
+        AmsPlot.class, TernaryPlot.class, SiteEqAreaPlot.class,
+        SuiteEqAreaPlot.class, SampleParamsTable.class, SiteParamsTable.class,
+        NrmHistogram.class, VgpTable.class, SuiteParamsTable.class,
+        DepthPlot.class
     };
+
     private final PlotParams params;
     private final PuffinApp app;
 
-    MainGraphDisplay(final PuffinApp app) {
+    /**
+     * Create a new main graph display for a given PuffinPlot application.
+     *
+     * @param app the application for which to create the display
+     */
+    public MainGraphDisplay(final PuffinApp app) {
         super();
         this.app = app;
         params = app.getPlotParams();
@@ -75,32 +80,35 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
     }
 
     private void createPlots() {
-        final Preferences pref = app.getPrefs().getPrefs();
+        final Preferences preferences = app.getPrefs().getPrefs();
         try {
-            for (String plotName : plotNames) {
-                plots.put(plotName,
-                        (Plot) Class.forName("net.talvi.puffinplot.plots." + plotName).
-                        getConstructor(GraphDisplay.class, PlotParams.class, Preferences.class).
-                        newInstance(this, params, pref));
+            for (Class plotClass: plotClasses) {
+                plots.put(plotClass,
+                        (Plot) plotClass.getConstructor(GraphDisplay.class,
+                                PlotParams.class, Preferences.class).
+                                newInstance(this, params, preferences));
             }
-        } catch (ClassNotFoundException | NoSuchMethodException |
-                SecurityException | InstantiationException |
-                IllegalAccessException | IllegalArgumentException |
-                InvocationTargetException ex) {
+        } catch (NoSuchMethodException | SecurityException |
+                InstantiationException | IllegalAccessException |
+                IllegalArgumentException | InvocationTargetException ex) {
             throw new Error(ex);
         }
-        // The legend will always be drawn after the Zplot (as required),
-        // since LinkedHashMap guarantees iteration in order of insertion.
-        plots.put("ZplotLegend", ((ZPlot) plots.get("ZPlot")).getLegend());
+        /*
+         * The legend will always be drawn after the Zplot (as required), since
+         * LinkedHashMap guarantees iteration in order of insertion.
+         */
+        plots.put(ZPlot.ZplotLegend.class,
+                ((ZPlot) plots.get(ZPlot.class)).getLegend());
     }
 
-    /** Prints this graph display.
-     * 
+    /**
+     * Prints this graph display.
+     *
      * @param graphics the graphics object to which to draw the display
      * @param pf the page format
      * @param pageIndex the page number
-     * @return {@link #PAGE_EXISTS} if the page number is valid,
-     * otherwise {@link #NO_SUCH_PAGE}
+     * @return {@link #PAGE_EXISTS} if the page number is valid, otherwise
+     * {@link #NO_SUCH_PAGE}
      * @throws PrinterException if a printing error occurred
      */
     @Override
@@ -118,10 +126,11 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
         final Graphics2D g2 = (Graphics2D) graphics;
 
         if (Util.runningOnOsX()) {
-            /* Superscripts don't print properly on OS X (at least not
-             * on Java 7 or Java 8u25), so we set a rendering hint that
-             * tells the plotting code to fall back to E notation.
-             * See bug 698def95-724d-44fb-9088-d3d7192e98ef .
+            /*
+             * Superscripts don't print properly on OS X (at least not on Java 7
+             * or Java 8u25), so we set a rendering hint that tells the plotting
+             * code to fall back to E notation. See bug
+             * 698def95-724d-44fb-9088-d3d7192e98ef .
              */
             final RenderingHints rh = g2.getRenderingHints();
             rh.put(PuffinRenderingHints.KEY_E_NOTATION, Boolean.TRUE);
@@ -133,14 +142,14 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
     }
     
     /**
-     * Writes a requested page of the current suite to a given
-     * graphics context. Intended for use when exporting multi-page
-     * PDF. Uses a similar model to Java printing, sans {@code PageFormat}.
-     * 
+     * Writes a requested page of the current suite to a given graphics context.
+     * Intended for use when exporting multi-page PDF. Uses a similar model to
+     * Java printing, sans {@code PageFormat}.
+     *
      * @param g2 graphics context
      * @param pageIndex the page to output
-     * @return {@code true} if this is the highest-numbered page in the printable range;
-     *  {@code false} otherwise
+     * @return {@code true} if this is the highest-numbered page in the
+     * printable range; {@code false} otherwise
      */
     public boolean printPdfPage(Graphics2D g2, int pageIndex) {
         if (samplesForPrinting == null) {
@@ -163,10 +172,22 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
         }
     }
     
+    /**
+     * Report whether printing is currently in progress.
+     * 
+     * @return {@code true} if printing is in progress, {@code false} otherwise
+     */
     public boolean isPrintingInProgress() {
         return samplesForPrinting != null;
     }
     
+    /**
+     * If printing is in progress, return the sample which is currently being
+     * printed. If printing is not in progress, the return value of this
+     * method is not defined.
+     * 
+     * @return the sample currently being printed, if printing is in progress
+     */
     public Sample getCurrentlyPrintingSample() {
         return samplesForPrinting.get(printPageIndex);
     }

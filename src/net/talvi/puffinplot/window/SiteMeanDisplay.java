@@ -50,7 +50,7 @@ public class SiteMeanDisplay extends GraphDisplay implements Printable {
         final Plot plot = new SiteEqAreaPlot(this, params,
                 new Rectangle2D.Double(20, 20, 560, 560), prefs);
         plot.setVisible(true);
-        plots.put(plot.getName(), plot);
+        plots.put(plot.getClass(), plot);
     }
 
     /**

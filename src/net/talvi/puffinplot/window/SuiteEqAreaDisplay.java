@@ -39,8 +39,11 @@ import net.talvi.puffinplot.plots.SeparateSuiteEaPlot;
 public class SuiteEqAreaDisplay extends GraphDisplay implements Printable {
     private static final long serialVersionUID = 1L;
 
-    /** Creates a new suite equal-area graph display
-     * @param prefs preferences for plot
+    /**
+     * Creates a new suite equal-area graph display
+     *
+     * @param params parameters for the plot
+     * @param prefs preferences for the plot
      */
     public SuiteEqAreaDisplay(PlotParams params, Preferences prefs) {
         super();
@@ -51,7 +54,7 @@ public class SuiteEqAreaDisplay extends GraphDisplay implements Printable {
                 null, params, new Rectangle2D.Double(20, 20, 560, 560),
                 prefs);
         plot.setVisible(true);
-        plots.put(plot.getName(), plot);
+        plots.put(plot.getClass(), plot);
     }
 
     /** Prints this graph display.

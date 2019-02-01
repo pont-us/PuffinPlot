@@ -90,6 +90,9 @@ import net.talvi.puffinplot.data.SuiteRpiEstimate;
 import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.file.FileFormat;
 import net.talvi.puffinplot.plots.SampleClickListener;
+import net.talvi.puffinplot.plots.SampleParamsTable;
+import net.talvi.puffinplot.plots.SiteParamsTable;
+import net.talvi.puffinplot.plots.VgpTable;
 import net.talvi.puffinplot.window.AboutBox;
 import net.talvi.puffinplot.window.CustomFieldEditor;
 import net.talvi.puffinplot.window.FiletypeDialog;
@@ -233,10 +236,11 @@ public class PuffinApp {
 
         tableWindow = new TableWindow(plotParams);
         suiteEqAreaWindow = new SuiteEqAreaWindow(this);
-        siteEqAreaWindow = new SiteMeanWindow(plotParams,
-                prefs.getPrefs());
-        // NB main window must be instantiated last, as
-        // the Window menu references the other windows
+        siteEqAreaWindow = new SiteMeanWindow(plotParams, prefs.getPrefs());
+        /*
+         * NB: main window must be instantiated last, as the Window menu
+         * references the other windows.
+         */
         mainWindow = MainWindow.getInstance(this);
         mainGraphDisplay = mainWindow.getGraphDisplay();
         setApplicationIcon();
@@ -244,8 +248,10 @@ public class PuffinApp {
                 prefs.getPrefs().get("correction", "false false NONE false"));
         setCorrection(corr);
         mainWindow.getControlPanel().setCorrection(corr);
-        // prefs window needs the graph list from MainGraphDisplay from MainWindow
-        // prefs window also needs the correction.
+        /*
+         * The PrefsWindow needs the graph list from MainGraphDisplay from
+         * MainWindow, and the correction.
+         */
         prefsWindow = new PrefsWindow(this);
         if (runningOnOsX()) {
             createAppleEventHandler();
@@ -256,11 +262,11 @@ public class PuffinApp {
 
         final SampleClickListener scListener =
                 new PuffinAppSampleClickListener();
-        mainGraphDisplay.getPlotByClassName("SampleParamsTable").
+        mainGraphDisplay.getPlotByClass(SampleParamsTable.class).
                 addSampleClickListener(scListener);
-        mainGraphDisplay.getPlotByClassName("SiteParamsTable").
+        mainGraphDisplay.getPlotByClass(SiteParamsTable.class).
                 addSampleClickListener(scListener);
-        mainGraphDisplay.getPlotByClassName("VgpTable").
+        mainGraphDisplay.getPlotByClass(VgpTable.class).
                 addSampleClickListener(scListener);
         mainWindow.getMainMenuBar().updateRecentFiles();
         LOGGER.info("PuffinApp instantiation complete.");
@@ -569,7 +575,7 @@ public class PuffinApp {
             } else {
                 final FiletypeDialog ft = new FiletypeDialog(getMainWindow());
                 ft.setVisible(true);
-                fileType = ft.getFileType();
+                fileType = ft.getSelectedFileType();
             }
             
             if (fileType == null) {

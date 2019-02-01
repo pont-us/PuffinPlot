@@ -76,7 +76,7 @@ public abstract class GraphDisplay extends JPanel implements Printable {
     /**
      * A map from internal plot names to the plots themselves.
      */
-    protected Map<String,Plot> plots;
+    protected Map<Class, Plot> plots;
 
     /**
      * A transformation applied to the graphics before painting them, intended
@@ -138,7 +138,9 @@ public abstract class GraphDisplay extends JPanel implements Printable {
     public List<Plot> getVisiblePlots() {
         final Collection<Plot> ps = getPlots();
         final List<Plot> result = new ArrayList<>(ps.size());
-        for (Plot p: ps) if (p.isVisible()) result.add(p);
+        for (Plot p: ps) {
+            if (p.isVisible()) result.add(p);
+        }
         return result;
     }
 
@@ -157,8 +159,8 @@ public abstract class GraphDisplay extends JPanel implements Printable {
      * @param name the name of a subclass of {@code Plot}
      * @return the plot with the given class, or {@code null} if there is none
      */
-    public Plot getPlotByClassName(String name) {
-        return plots.get(name);
+    public Plot getPlotByClass(Class plotClass) {
+        return plots.get(plotClass);
     }
 
     /**
