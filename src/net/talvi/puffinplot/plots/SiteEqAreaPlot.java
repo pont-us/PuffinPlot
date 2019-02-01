@@ -71,9 +71,8 @@ public class SiteEqAreaPlot extends EqAreaPlot {
      * @param dimensions the initial dimensions of the plot
      * @param prefs the preferences containing the plot configuration
      */
-    public SiteEqAreaPlot(GraphDisplay parent, PlotParams params,
-            Rectangle2D dimensions, Preferences prefs) {
-        super(parent, params, prefs);
+    public SiteEqAreaPlot(PlotParams params, Rectangle2D dimensions) {
+        super(params);
         this.dimensions = dimensions;
     }
 
@@ -83,9 +82,8 @@ public class SiteEqAreaPlot extends EqAreaPlot {
      * @param params the parameters of the plot
      * @param prefs the preferences containing the plot configuration
      */
-    public SiteEqAreaPlot(GraphDisplay parent, PlotParams params,
-            Preferences prefs) {
-        super(parent, params, prefs);
+    public SiteEqAreaPlot(PlotParams params) {
+        super(params);
     }
     
     @Override

@@ -52,10 +52,9 @@ public class DemagPlot extends Plot {
      * @param params the parameters of the plot
      * @param prefs the preferences containing the plot configuration
      */
-    public DemagPlot(GraphDisplay parent, PlotParams params,
-            Preferences prefs) {
-        super(parent, params, prefs);
-        this.prefs = prefs;
+    public DemagPlot(PlotParams params) {
+        super(params);
+        this.prefs = params.getPreferences();
     }
 
     /**

@@ -59,8 +59,8 @@ public class TernaryPlot extends Plot {
      * @param params the parameters of the plot
      * @param prefs the preferences containing the plot configuration
      */
-    public TernaryPlot(GraphDisplay parent, PlotParams params, Preferences prefs) {
-        super(parent, params, prefs);
+    public TernaryPlot(PlotParams params) {
+        super(params);
     }
 
     private void drawAxes(Graphics2D g) {

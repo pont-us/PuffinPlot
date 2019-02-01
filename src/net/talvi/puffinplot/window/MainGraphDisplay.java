@@ -84,9 +84,9 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
         try {
             for (Class plotClass: plotClasses) {
                 plots.put(plotClass,
-                        (Plot) plotClass.getConstructor(GraphDisplay.class,
-                                PlotParams.class, Preferences.class).
-                                newInstance(this, params, preferences));
+                        (Plot) plotClass.getConstructor(
+                                PlotParams.class).
+                                newInstance(params));
             }
         } catch (NoSuchMethodException | SecurityException |
                 InstantiationException | IllegalAccessException |

@@ -47,9 +47,8 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
      * @param params the parameters of the plot
      * @param prefs the preferences containing the plot configuration
      */
-    public SuiteEqAreaPlot(GraphDisplay parent, PlotParams params,
-            Preferences prefs) {
-        super(parent, params, prefs);
+    public SuiteEqAreaPlot(PlotParams params) {
+        super(params);
     }
 
     @Override

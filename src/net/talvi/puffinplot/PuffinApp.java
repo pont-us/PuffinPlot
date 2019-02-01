@@ -110,6 +110,7 @@ import net.talvi.puffinplot.window.TabularImportWindow;
 import org.freehep.graphicsbase.util.UserProperties;
 
 import static net.talvi.puffinplot.Util.runningOnOsX;
+import net.talvi.puffinplot.window.GraphDisplay;
 
 /**
  * Instantiating {@code PuffinApp} starts the PuffinPlot desktop application. It
@@ -232,6 +233,17 @@ public class PuffinApp {
             public List<Sample> getAllSamplesInSelectedSites() {
                 return PuffinApp.this.getAllSamplesInSelectedSites();
             }
+            
+            @Override
+            public Preferences getPreferences() {
+                return PuffinApp.this.getPrefs().getPrefs();
+            }
+            
+            @Override
+            public float getUnitSize() {
+                return 0.12f;
+            }
+            
         };
 
         tableWindow = new TableWindow(plotParams);

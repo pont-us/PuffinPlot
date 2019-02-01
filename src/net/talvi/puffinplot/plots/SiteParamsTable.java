@@ -60,10 +60,9 @@ public class SiteParamsTable extends Plot {
      * @param params the parameters of the plot
      * @param prefs the preferences containing the plot configuration
      */
-    public SiteParamsTable(GraphDisplay parent, PlotParams params,
-            Preferences prefs) {
-        super(parent, params, prefs);
-        this.prefs = prefs;
+    public SiteParamsTable(PlotParams params) {
+        super(params);
+        this.prefs = params.getPreferences();
     }
     
     @Override

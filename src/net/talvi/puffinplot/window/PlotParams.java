@@ -17,6 +17,7 @@
 package net.talvi.puffinplot.window;
 
 import java.util.List;
+import java.util.prefs.Preferences;
 
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.MeasurementAxis;
@@ -45,7 +46,6 @@ public interface PlotParams {
      * @return the sample to plot
      */
     public Sample getSample();
-    
     
     /**
      * @return a list of the currently selected samples. May be empty,
@@ -80,5 +80,9 @@ public interface PlotParams {
      * but not null)
      */
     public List<Sample> getAllSamplesInSelectedSites();
+    
+    public Preferences getPreferences();
+    
+    public float getUnitSize();
 
 }

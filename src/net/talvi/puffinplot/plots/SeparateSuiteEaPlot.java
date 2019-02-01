@@ -61,9 +61,8 @@ public class SeparateSuiteEaPlot extends EqAreaPlot {
      * @param dimensions the dimensions of this plot
      * @param prefs the preferences containing the plot configuration
      */
-    public SeparateSuiteEaPlot(GraphDisplay parent, PlotParams params,
-            Rectangle2D dimensions, Preferences prefs) {
-        super(parent, params, prefs);
+    public SeparateSuiteEaPlot(PlotParams params, Rectangle2D dimensions) {
+        super(params);
         this.dimensions = dimensions;
     }
 

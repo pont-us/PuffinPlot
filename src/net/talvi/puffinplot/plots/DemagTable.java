@@ -58,8 +58,8 @@ public class DemagTable extends Plot {
      * @param params the parameters of the table
      * @param prefs the preferences containing the table configuration
      */
-    public DemagTable(GraphDisplay parent, PlotParams params, Preferences prefs) {
-        super(parent, params, prefs);
+    public DemagTable(PlotParams params) {
+        super(params);
     }
 
     /** Returns the internal plot name for this table. 

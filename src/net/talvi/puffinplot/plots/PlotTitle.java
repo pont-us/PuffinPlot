@@ -39,8 +39,8 @@ public class PlotTitle extends Plot {
      * @param params the parameters of the plot title
      * @param prefs the preferences containing the plot title configuration
      */
-    public PlotTitle(GraphDisplay parent, PlotParams params, Preferences prefs) {
-        super(parent, params, prefs);
+    public PlotTitle(PlotParams params) {
+        super(params);
     }
     
     @Override

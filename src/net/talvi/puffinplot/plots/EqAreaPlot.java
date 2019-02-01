@@ -84,9 +84,9 @@ public abstract class EqAreaPlot extends Plot {
      * @param params the plot parameters
      * @param prefs the preferences containing the plot configuration
      */
-    protected EqAreaPlot(GraphDisplay parent, PlotParams params, Preferences prefs) {
-        super(parent, params, prefs);
-        this.prefs = prefs;
+    protected EqAreaPlot(PlotParams params) {
+        super(params);
+        this.prefs = params.getPreferences();
     }
     
     /**

@@ -71,9 +71,9 @@ public abstract class Plot
     protected Rectangle2D dimensions;
     /** the data points displayed by the plot */
     List<PlotPoint> points = new LinkedList<>();
-    private static final float UNIT_SCALE = 0.0001f;
-    private final Stroke stroke, dashedStroke;
-    private final float unitSize;
+    private Stroke stroke, dashedStroke;
+    private float unitSize;
+    private String fontFamily;
     private static final float LINE_WIDTH_IN_UNITS = 8.0f;
     private static final float TICK_LENGTH_IN_UNITS = 48.0f;
     private static final float FONT_SIZE_IN_UNITS = 120.0f;
@@ -113,10 +113,11 @@ public abstract class Plot
      * @param params the parameters of the plot
      * @param prefs the preferences containing the plot configuration
      */
-    public Plot(GraphDisplay parent, PlotParams params, Preferences prefs) {
+    public Plot(PlotParams params) {
         this.params = params;
         String sizesString = DEFAULT_PLOT_POSITIONS;
-        String fontFamily = "Arial";
+        fontFamily = "Arial";
+        final Preferences prefs = params.getPreferences();
         if (prefs != null) {
             sizesString = prefs.get("plotSizes", DEFAULT_PLOT_POSITIONS);
             fontFamily = prefs.get("plots.fontFamily", "Arial");
@@ -131,17 +132,14 @@ public abstract class Plot
         if (dimensions==null) {
             setDimensionsFromPrefsString(DEFAULT_PLOT_POSITIONS);
         }
-        float maxDim = 800;
-        // TODO fix this; parent should never be null (see FisherEqAreaPlot).
-        if (parent != null) {
-            Dimension dims = parent.getMaximumSize();
-            maxDim = (float) Math.max(dims.getWidth(), dims.getHeight());
-        }
-        unitSize = maxDim * UNIT_SCALE;
+        unitSizeChanged();
+    }
+    
+    private void unitSizeChanged() {
+        unitSize = params.getUnitSize();
         stroke = new BasicStroke(getUnitSize() * LINE_WIDTH_IN_UNITS);
         dashedStroke = new BasicStroke(getUnitSize() * LINE_WIDTH_IN_UNITS,
                 0, 0, 1, new float[]{2, 2}, 0);
-        
         attributeMap.put(TextAttribute.FAMILY, fontFamily);
         attributeMap.put(TextAttribute.SIZE, getFontSize());
     }

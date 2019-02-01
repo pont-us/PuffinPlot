@@ -51,8 +51,8 @@ public class SuiteEqAreaDisplay extends GraphDisplay implements Printable {
         zoomTransform = AffineTransform.getScaleInstance(1.0, 1.0);
         setPreferredSize(new Dimension(600, 600));
         final Plot plot = new SeparateSuiteEaPlot(
-                null, params, new Rectangle2D.Double(20, 20, 560, 560),
-                prefs);
+                params, new Rectangle2D.Double(20, 20, 560, 560)
+                );
         plot.setVisible(true);
         plots.put(plot.getClass(), plot);
     }

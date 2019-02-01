@@ -41,8 +41,8 @@ public class DepthPlot extends Plot {
      * @param params the parameters of the plot
      * @param prefs the preferences containing the plot configuration
      */
-    public DepthPlot(GraphDisplay parent, PlotParams params, Preferences prefs) {
-        super(parent, params, prefs);
+    public DepthPlot(PlotParams params) {
+        super(params);
         this.prefs = prefs;
     }
     

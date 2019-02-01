@@ -59,10 +59,9 @@ public class SampleParamsTable extends Plot {
      * @param params the parameters of the plot
      * @param prefs the preferences containing the plot configuration
      */
-    public SampleParamsTable(GraphDisplay parent, PlotParams params,
-            Preferences prefs) {
-        super(parent, params, prefs);
-        this.prefs = prefs;
+    public SampleParamsTable(PlotParams params) {
+        super(params);
+        this.prefs = params.getPreferences();
         angleFormat = new DecimalFormat("##0.0", Util.getDecimalFormatSymbols());
     }
     

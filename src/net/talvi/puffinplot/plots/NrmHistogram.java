@@ -46,9 +46,9 @@ public class NrmHistogram extends Plot {
      * @param params the parameters of the plot
      * @param prefs the preferences containing the plot configuration
      */
-    public NrmHistogram(GraphDisplay parent, PlotParams params, Preferences prefs) {
-        super(parent, params, prefs);
-        this.prefs = prefs;
+    public NrmHistogram(PlotParams params) {
+        super(params);
+        this.prefs = params.getPreferences();
     }
     
     /** Returns this plot's internal name.

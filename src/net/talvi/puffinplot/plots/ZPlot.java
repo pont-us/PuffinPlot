@@ -65,10 +65,10 @@ public class ZPlot extends Plot {
      * @param params the parameters of the plot
      * @param prefs the preferences containing the plot configuration
      */
-    public ZPlot(GraphDisplay parent, PlotParams params, Preferences prefs) {
-        super(parent, params, prefs);
-        legend = new ZplotLegend(parent, params, prefs);
-        this.prefs = prefs;
+    public ZPlot(PlotParams params) {
+        super(params);
+        legend = new ZplotLegend(params);
+        this.prefs = params.getPreferences();
     }
 
     private static Rectangle2D extent(List<TreatmentStep> sample, Correction c,
@@ -325,9 +325,8 @@ public class ZPlot extends Plot {
          * @param params the parameters of the legend
          * @param prefs the preferences containing the legend configuration
          */
-        private ZplotLegend(GraphDisplay parent, PlotParams params,
-                Preferences prefs) {
-            super(parent, params, prefs);
+        private ZplotLegend(PlotParams params) {
+            super(params);
         }
 
         @Override
