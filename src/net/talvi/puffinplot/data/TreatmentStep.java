@@ -19,8 +19,6 @@ package net.talvi.puffinplot.data;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -59,7 +57,8 @@ import static java.util.Objects.requireNonNull;
  * @author pont
  */
 public class TreatmentStep {
-    private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
+    private static final Logger logger =
+            Logger.getLogger("net.talvi.puffinplot");
     private static final double
             DEFAULT_AREA = 4.0, // can be overridden by Area field in file
             DEFAULT_VOLUME = 10.8; // can be overridden by Volume field in file
@@ -90,7 +89,6 @@ public class TreatmentStep {
     private boolean hidden = false;
     private Sample sample;
     private Suite suite;
-    private LinkedHashMap<String, String> h;
 
     /**
      * Creates a datum with a specified magnetization vector.
@@ -119,210 +117,655 @@ public class TreatmentStep {
         moment = Vec3.ORIGIN;
     }
 
-    /** Reports whether this datum is selected.
-     * @return {@code true} if this datum is selected */
-    public boolean isSelected()        { return selected; }
-    /** Sets the selection state of this datum.
-     * @param v {@code true} to select this datum, {@code false} to deselect */
-    public void setSelected(boolean v) { touch(); selected = v; }
-    /** Returns the sample's dip azimuth.
-     * @return the sample's dip azimuth in degrees */
-    public double getSampAz()          { return sampAz; }
-    /** Sets the sample's dip azimuth.
-     * @param v the sample dip azimuth to set, in degrees */
-    public void setSampAz(double v)    { touch(); sampAz = v; }
-    /** Returns the sample's dip angle.
-     * @return the sample's dip angle, in degrees */
-    public double getSampDip()         { return sampDip; }
-    /** Sets the sample's dip angle.
-     * @param v the sample dip angle to set, in degrees */
-    public void setSampDip(double v)   { touch(); sampDip = v; }
-    /** Returns the formation dip azimuth.
-     * @return the formation dip azimuth in degrees */
-    public double getFormAz()          { return formAz; }
-    /** Sets the formation dip azimuth.
-     * @param v the formation dip azimuth to set, in degrees */
-    public void setFormAz(double v)    { touch(); formAz = v; }
-    /** Returns the formation dip angle.
-     * @return the formation dip angle, in degrees */
-    public double getFormDip()         { return formDip; }
-    /** Sets the formation dip angle.
-     * @param v the formation dip angle to set, in degrees */
-    public void setFormDip(double v)   { touch(); formDip = v; }
-    /** Returns the local geomagnetic field declination for the sampling site.
-     * @return the local geomagnetic field declination, in degrees */
-    public double getMagDev()          { return magDev; }
-    /** Sets the local geomagnetic field declination for the sampling site.
-     * @param v the local geomagnetic field declination to set, in degrees */
-    public void setMagDev(double v)    { touch(); magDev = v; }
-    /** Reports whether PCA fits for this point should be anchored.
-     * @return {@code true} if PCA fits to this point should be anchored */
-    public boolean isPcaAnchored()     { return pcaAnchored; }
-    /** Sets whether PCA fits for this point should be anchored.
-     * @param v {@code true} to set PCA fits for this point to be anchored */
-    public void setPcaAnchored(boolean v) { touch(); pcaAnchored = v; }
-    /** Returns the measurement's data-file line. Not currently used.
-     * @return the data-file line for this measurement; not currently used */
-    public Line getLine()              { return line; }
-    /** Sets the measurement's data-file line. Not currently used.
-     * @param v the data-file line to set for this measurement; not currently used */
-    public void setLine(Line v)        { touch(); line = v; }
-    /** Returns the sample of which this measurement was made.
-     * @return the sample on which this measurement was made */
-    public Sample getSample()          { return sample; }
-    /** Sets the sample on which this measurement was made.
-     * @param v the sample on which this measurement was made */
-    public void setSample(Sample v)    { touch(); sample = v; }
-    /** Reports whether this datum should be hidden on plots.
-     * @return {@code true} if this datum should not be displayed on plots */
-    public boolean isHidden()          { return hidden; }
-    /** Sets whether this datum should be hidden on plots.
-     * @param v {@code true} if this datum should not be displayed on plots */
-    public void setHidden(boolean v)   { touch(); hidden = v; }
-    /** For continuous measurements, returns the depth of this measurement within the core.
-     * @return for continuous measurements, the depth of this measurement within the core */
-    public String getDepth()           { return depth; }
-    /** For continuous measurements, sets the depth of this measurement within the core.
-     * @param v for continuous measurements, the depth of this measurement within the core */
-    public void setDepth(String v)     {
+    /**
+     * Reports whether this datum is selected.
+     *
+     * @return {@code true} if this datum is selected
+     */
+    public boolean isSelected() {
+        return selected;
+    }
+
+    /**
+     * Sets the selection state of this datum.
+     *
+     * @param v {@code true} to select this datum, {@code false} to deselect
+     */
+    public void setSelected(boolean v) {
+        touch();
+        selected = v;
+    }
+
+    /**
+     * Returns the sample's dip azimuth.
+     *
+     * @return the sample's dip azimuth in degrees
+     */
+    public double getSampAz() {
+        return sampAz;
+    }
+
+    /**
+     * Sets the sample's dip azimuth.
+     *
+     * @param v the sample dip azimuth to set, in degrees
+     */
+    public void setSampAz(double v) {
+        touch();
+        sampAz = v;
+    }
+
+    /**
+     * Returns the sample's dip angle.
+     *
+     * @return the sample's dip angle, in degrees
+     */
+    public double getSampDip() {
+        return sampDip;
+    }
+
+    /**
+     * Sets the sample's dip angle.
+     *
+     * @param v the sample dip angle to set, in degrees
+     */
+    public void setSampDip(double v) {
+        touch();
+        sampDip = v;
+    }
+
+    /**
+     * Returns the formation dip azimuth.
+     *
+     * @return the formation dip azimuth in degrees
+     */
+    public double getFormAz() {
+        return formAz;
+    }
+
+    /**
+     * Sets the formation dip azimuth.
+     *
+     * @param v the formation dip azimuth to set, in degrees
+     */
+    public void setFormAz(double v) {
+        touch();
+        formAz = v;
+    }
+
+    /**
+     * Returns the formation dip angle.
+     *
+     * @return the formation dip angle, in degrees
+     */
+    public double getFormDip() {
+        return formDip;
+    }
+
+    /**
+     * Sets the formation dip angle.
+     *
+     * @param v the formation dip angle to set, in degrees
+     */
+    public void setFormDip(double v) {
+        touch();
+        formDip = v;
+    }
+
+    /**
+     * Returns the local geomagnetic field declination for the sampling site.
+     *
+     * @return the local geomagnetic field declination, in degrees
+     */
+    public double getMagDev() {
+        return magDev;
+    }
+
+    /**
+     * Sets the local geomagnetic field declination for the sampling site.
+     *
+     * @param v the local geomagnetic field declination to set, in degrees
+     */
+    public void setMagDev(double v) {
+        touch();
+        magDev = v;
+    }
+
+    /**
+     * Reports whether PCA fits for this point should be anchored.
+     *
+     * @return {@code true} if PCA fits to this point should be anchored
+     */
+    public boolean isPcaAnchored() {
+        return pcaAnchored;
+    }
+
+    /**
+     * Sets whether PCA fits for this point should be anchored.
+     *
+     * @param v {@code true} to set PCA fits for this point to be anchored
+     */
+    public void setPcaAnchored(boolean v) {
+        touch();
+        pcaAnchored = v;
+    }
+
+    /**
+     * Returns the measurement's data-file line. Not currently used.
+     *
+     * @return the data-file line for this measurement; not currently used
+     */
+    public Line getLine() {
+        return line;
+    }
+
+    /**
+     * Sets the measurement's data-file line. Not currently used.
+     *
+     * @param v the data-file line to set for this measurement; not currently
+     * used
+     */
+    public void setLine(Line v) {
+        touch();
+        line = v;
+    }
+
+    /**
+     * Returns the sample of which this measurement was made.
+     *
+     * @return the sample on which this measurement was made
+     */
+    public Sample getSample() {
+        return sample;
+    }
+
+    /**
+     * Sets the sample on which this measurement was made.
+     *
+     * @param v the sample on which this measurement was made
+     */
+    public void setSample(Sample v) {
+        touch();
+        sample = v;
+    }
+
+    /**
+     * Reports whether this datum should be hidden on plots.
+     *
+     * @return {@code true} if this datum should not be displayed on plots
+     */
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    /**
+     * Sets whether this datum should be hidden on plots.
+     *
+     * @param v {@code true} if this datum should not be displayed on plots
+     */
+    public void setHidden(boolean v) {
+        touch();
+        hidden = v;
+    }
+
+    /**
+     * For continuous measurements, returns the depth of this measurement within
+     * the core.
+     *
+     * @return for continuous measurements, the depth of this measurement within
+     * the core
+     */
+    public String getDepth() {
+        return depth;
+    }
+
+    /**
+     * For continuous measurements, sets the depth of this measurement within
+     * the core.
+     *
+     * @param v for continuous measurements, the depth of this measurement
+     * within the core
+     */
+    public void setDepth(String v) {
         touch();
         depth = v;
         if (sample != null) {
             sample.setDepth(depth);
         }
     }
-    /** Returns the magnetic susceptibility of the sample at this stage of treatment
-     * @return the magnetic susceptibility of the sample at this stage of treatment */
-    public double getMagSus()          { return magSus; }
-    /** Sets the magnetic susceptibility of the sample at this stage of treatment.
-     * @param v the magnetic susceptibility of the sample at this stage of treatment */
-    public void setMagSus(double v)    { touch(); magSus = v; }
-    /** Returns the type of this measurement (discrete or continuous).
-     * @return the type of this measurement (discrete or continuous) */
-    public MeasurementType getMeasurementType()      { return measurementType; }
-    /** Sets the type of this measurement (discrete or continuous).
-     * @param v the type of this measurement (discrete or continuous) */
-    public void setMeasurementType(MeasurementType v){ touch(); measurementType = v; }
-    /** For discrete samples, returns the sample identifier (name).
-     * @return for discrete samples, the identifier (name) of the sample */
-    public String getDiscreteId()      { return discreteId; }
-    /** For discrete samples, sets the sample identifier (name).
-     * @param v for discrete samples, the identifier (name) of the sample */
-    public void setDiscreteId(String v){ touch(); discreteId = v; }
-    /** Returns the treatment applied before this measurement (AF, thermal, etc.).
-     * @return the treatment applied before this measurement (AF, thermal, etc.) */
-    public TreatmentType getTreatmentType()    { return treatmentType; }
-    /** Sets the treatment applied before this measurement (AF, thermal, etc.).
-     * @param v the treatment applied before this measurement (AF, thermal, etc.) */
-    public void setTreatmentType(TreatmentType v) { touch(); treatmentType = v; }
-    /** For AF or ARM treatment, returns the AF field strength in the x axis.
-     * @return for AF or ARM treatment, the AF field strength in the x axis */
-    public double getAfX()             { return afx; }
-    /** For AF or ARM treatment, sets the AF field strength in the x axis.
-     * @param v for AF or ARM treatment, the AF field strength in the x axis*/
-    public void setAfX(double v)       { touch(); afx = v; }
-    /** For AF or ARM treatment, returns the AF field strength in the y axis.
-     * @return for AF or ARM treatment, the AF field strength in the y axis */
-    public double getAfY()             { return afy; }
-    /** For AF or ARM treatment, sets the AF field strength in the y axis.
-     * @param v for AF or ARM treatment, the AF field strength in the y axis*/
-    public void setAfY(double v)       { touch(); afy = v; }
-    /** For AF or ARM treatment, returns the AF field strength in the z axis.
-     * @return for AF or ARM treatment, the AF field strength in the z axis */
-    public double getAfZ()             { return afz; }
-    /** For AF or ARM treatment, sets the AF field strength in the z axis.
-     * @param v for AF or ARM treatment, the AF field strength in the z axis*/
-    public void setAfZ(double v)       { touch(); afz = v; }
-    /** For IRM treatment, returns the IRM field strength.
-     * @return for IRM treatment, the IRM field strength */
-    public double getIrmField()        { return irmField; }
-    /** For IRM treatment, sets the IRM field strength.
-     * @param v for IRM treatment, the IRM field strength */
-    public void setIrmField(double v)  { touch(); irmField = v; }
-    /** For ARM treatment, returns the ARM bias field strength.
-     * @return for ARM treatment, the ARM bias field strength */
-    public double getArmField()        { return armField; }
-    /** For ARM treatment, sets the ARM bias field strength.
-     * @param v for ARM treatment, the ARM bias field strength */
-    public void setArmField(double v)  { touch(); armField = v; }
-    /** For ARM treatment, returns the axis of the ARM field.
-     * @return for ARM treatment, the axis of the ARM field */
-    public ArmAxis getArmAxis()        { return armAxis; }
-    /** For ARM treatment, sets the axis of the ARM field.
-     * @param v for ARM treatment, the axis of the ARM field */
-    public void setArmAxis(ArmAxis v)  { touch(); armAxis = v; }
-    /** For thermal treatment, returns the temperature in degrees Celsius.
-     * @return for thermal treatment, the temperature in degrees Celsius */
-    public double getTemp()            { return temp; }
-    /** For thermal treatment, sets the temperature in degrees Celsius.
-     * @param v for thermal treatment, the temperature in degrees Celsius*/
-    public void setTemp(double v)      { touch(); temp = v; }
-    /** For continuous measurements, returns the cross-sectional area of the core.
-     * @return the cross-sectional area of the core */
-    public double getArea()            { return area; }
-    /** For continuous measurements, sets the cross-sectional area of the core.
-     * @param v the cross-sectional area of the core */
-    public void setArea(double v)      { touch(); area = v; }
-    /** For discrete measurements, returns the volume of the sample.
-     * @return for discrete measurements, the volume of the sample */
-    public double getVolume()          { return volume; }
-    /** For discrete measurements, sets the volume of the sample.
-     * @param v for discrete measurements, the volume of the sample */
-    public void setVolume(double v)    { touch(); volume = v; }
-    /** Returns the number of the machine run during which this measurement was made.
-     * @return the number of the machine run during which this measurement was made */
-    public int getRunNumber()          { return runNumber; }
-    /** Sets the number of the machine run during which this measurement was made.
-     * @param v the number of the machine run during which this measurement was made */
-    public void setRunNumber(int v)    { touch(); runNumber = v; }
-    /** Returns the timestamp of this measurement.
-     * @return the timestamp of this measurement */
-    public String getTimestamp()       { return timestamp; }
-    /** Sets the timestamp of this measurement.
-     * @param v the timestamp of this measurement */
-    public void setTimestamp(String v) { touch(); timestamp = v; }
-    /** Returns the x drift correction value.
-     * @return the x drift correction value */    
-    public double getXDrift()          { return xDrift; }
-    /** Sets the x drift correction value.
-     * @param v the x drift correction value */    
-    public void setXDrift(double v)    { touch(); xDrift = v; }
-    /** Returns the y drift correction value.
-     * @return the y drift correction value */    
-    public double getYDrift()          { return yDrift; }
-    /** Sets the y drift correction value.
-     * @param v the y drift correction value */    
-    public void setYDrift(double v)    { touch(); yDrift = v; }
-    /** Returns the z drift correction value.
-     * @return the z drift correction value */    
-    public double getZDrift()          { return zDrift; }
-    /** Sets the z drift correction value.
-     * @param v the z drift correction value */    
-    public void setZDrift(double v)    { touch(); zDrift = v; }
-    /** Returns the number of the measurement tray slot in which the sample was measured.
-     * @return the number of the measurement tray slot in which the sample was measured */    
-    public int getSlotNumber()         { return slotNumber; }
-    /** Sets the number of the measurement tray slot in which the sample was measured.
-     * @param v the number of the measurement tray slot in which the sample was measured */
-    public void setSlotNumber(int v)   { touch(); slotNumber = v; }
-    /** Returns the data suite containing this measurement.
-     * @return the data suite containing this measurement */
-    public Suite getSuite()            { return suite; }
-    /** Sets the data suite containing this measurement.
-     * @param v the data suite containing this measurement */
-    public void setSuite(Suite v)      { touch(); suite = v; }
-    /** Reports whether this measurement is used for a great-circle fit.
-     * @return {@code true} if this measurement is used for a great-circle fit */
-    public boolean isOnCircle()        { return onCircle; }
-    /** Sets whether this measurement is to be used for a great-circle fit.
-     * @param v {@code true} to use this measurement for a great-circle fit */
-    public void setOnCircle(boolean v) { touch(); onCircle = v; }
-    /** Reports whether this measurement is used for a PCA fit.
-     * @return {@code true} if this measurement is used for a PCA fit */
-    public boolean isInPca()           { return inPca; }
-    /** Sets whether this measurement is to be used for a PCA fit.
-     * @param v {@code true} to use this measurement for a PCA fit */
-    public void setInPca(boolean v)    { touch(); inPca = v; }
+
+    /**
+     * Returns the magnetic susceptibility of the sample at this stage of
+     * treatment
+     *
+     * @return the magnetic susceptibility of the sample at this stage of
+     * treatment
+     */
+    public double getMagSus() {
+        return magSus;
+    }
+
+    /**
+     * Sets the magnetic susceptibility of the sample at this stage of
+     * treatment.
+     *
+     * @param v the magnetic susceptibility of the sample at this stage of
+     * treatment
+     */
+    public void setMagSus(double v) {
+        touch();
+        magSus = v;
+    }
+
+    /**
+     * Returns the type of this measurement (discrete or continuous).
+     *
+     * @return the type of this measurement (discrete or continuous)
+     */
+    public MeasurementType getMeasurementType() {
+        return measurementType;
+    }
+
+    /**
+     * Sets the type of this measurement (discrete or continuous).
+     *
+     * @param v the type of this measurement (discrete or continuous)
+     */
+    public void setMeasurementType(MeasurementType v) {
+        touch();
+        measurementType = v;
+    }
+
+    /**
+     * For discrete samples, returns the sample identifier (name).
+     *
+     * @return for discrete samples, the identifier (name) of the sample
+     */
+    public String getDiscreteId() {
+        return discreteId;
+    }
+
+    /**
+     * For discrete samples, sets the sample identifier (name).
+     *
+     * @param v for discrete samples, the identifier (name) of the sample
+     */
+    public void setDiscreteId(String v) {
+        touch();
+        discreteId = v;
+    }
+
+    /**
+     * Returns the treatment applied before this measurement (AF, thermal,
+     * etc.).
+     *
+     * @return the treatment applied before this measurement (AF, thermal, etc.)
+     */
+    public TreatmentType getTreatmentType() {
+        return treatmentType;
+    }
+
+    /**
+     * Sets the treatment applied before this measurement (AF, thermal, etc.).
+     *
+     * @param v the treatment applied before this measurement (AF, thermal,
+     * etc.)
+     */
+    public void setTreatmentType(TreatmentType v) {
+        touch();
+        treatmentType = v;
+    }
+
+    /**
+     * For AF or ARM treatment, returns the AF field strength in the x axis.
+     *
+     * @return for AF or ARM treatment, the AF field strength in the x axis
+     */
+    public double getAfX() {
+        return afx;
+    }
+
+    /**
+     * For AF or ARM treatment, sets the AF field strength in the x axis.
+     *
+     * @param v for AF or ARM treatment, the AF field strength in the x axis
+     */
+    public void setAfX(double v) {
+        touch();
+        afx = v;
+    }
+
+    /**
+     * For AF or ARM treatment, returns the AF field strength in the y axis.
+     *
+     * @return for AF or ARM treatment, the AF field strength in the y axis
+     */
+    public double getAfY() {
+        return afy;
+    }
+
+    /**
+     * For AF or ARM treatment, sets the AF field strength in the y axis.
+     *
+     * @param v for AF or ARM treatment, the AF field strength in the y axis
+     */
+    public void setAfY(double v) {
+        touch();
+        afy = v;
+    }
+
+    /**
+     * For AF or ARM treatment, returns the AF field strength in the z axis.
+     *
+     * @return for AF or ARM treatment, the AF field strength in the z axis
+     */
+    public double getAfZ() {
+        return afz;
+    }
+
+    /**
+     * For AF or ARM treatment, sets the AF field strength in the z axis.
+     *
+     * @param v for AF or ARM treatment, the AF field strength in the z axis
+     */
+    public void setAfZ(double v) {
+        touch();
+        afz = v;
+    }
+
+    /**
+     * For IRM treatment, returns the IRM field strength.
+     *
+     * @return for IRM treatment, the IRM field strength
+     */
+    public double getIrmField() {
+        return irmField;
+    }
+
+    /**
+     * For IRM treatment, sets the IRM field strength.
+     *
+     * @param v for IRM treatment, the IRM field strength
+     */
+    public void setIrmField(double v) {
+        touch();
+        irmField = v;
+    }
+
+    /**
+     * For ARM treatment, returns the ARM bias field strength.
+     *
+     * @return for ARM treatment, the ARM bias field strength
+     */
+    public double getArmField() {
+        return armField;
+    }
+
+    /**
+     * For ARM treatment, sets the ARM bias field strength.
+     *
+     * @param v for ARM treatment, the ARM bias field strength
+     */
+    public void setArmField(double v) {
+        touch();
+        armField = v;
+    }
+
+    /**
+     * For ARM treatment, returns the axis of the ARM field.
+     *
+     * @return for ARM treatment, the axis of the ARM field
+     */
+    public ArmAxis getArmAxis() {
+        return armAxis;
+    }
+
+    /**
+     * For ARM treatment, sets the axis of the ARM field.
+     *
+     * @param v for ARM treatment, the axis of the ARM field
+     */
+    public void setArmAxis(ArmAxis v) {
+        touch();
+        armAxis = v;
+    }
+
+    /**
+     * For thermal treatment, returns the temperature in degrees Celsius.
+     *
+     * @return for thermal treatment, the temperature in degrees Celsius
+     */
+    public double getTemp() {
+        return temp;
+    }
+
+    /**
+     * For thermal treatment, sets the temperature in degrees Celsius.
+     *
+     * @param v for thermal treatment, the temperature in degrees Celsius
+     */
+    public void setTemp(double v) {
+        touch();
+        temp = v;
+    }
+
+    /**
+     * For continuous measurements, returns the cross-sectional area of the
+     * core.
+     *
+     * @return the cross-sectional area of the core
+     */
+    public double getArea() {
+        return area;
+    }
+
+    /**
+     * For continuous measurements, sets the cross-sectional area of the core.
+     *
+     * @param v the cross-sectional area of the core
+     */
+    public void setArea(double v) {
+        touch();
+        area = v;
+    }
+
+    /**
+     * For discrete measurements, returns the volume of the sample.
+     *
+     * @return for discrete measurements, the volume of the sample
+     */
+    public double getVolume() {
+        return volume;
+    }
+
+    /**
+     * For discrete measurements, sets the volume of the sample.
+     *
+     * @param v for discrete measurements, the volume of the sample
+     */
+    public void setVolume(double v) {
+        touch();
+        volume = v;
+    }
+
+    /**
+     * Returns the number of the machine run during which this measurement was
+     * made.
+     *
+     * @return the number of the machine run during which this measurement was
+     * made
+     */
+    public int getRunNumber() {
+        return runNumber;
+    }
+
+    /**
+     * Sets the number of the machine run during which this measurement was
+     * made.
+     *
+     * @param v the number of the machine run during which this measurement was
+     * made
+     */
+    public void setRunNumber(int v) {
+        touch();
+        runNumber = v;
+    }
+
+    /**
+     * Returns the timestamp of this measurement.
+     *
+     * @return the timestamp of this measurement
+     */
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    /**
+     * Sets the timestamp of this measurement.
+     *
+     * @param v the timestamp of this measurement
+     */
+    public void setTimestamp(String v) {
+        touch();
+        timestamp = v;
+    }
+
+    /**
+     * Returns the x drift correction value.
+     *
+     * @return the x drift correction value
+     */
+    public double getXDrift() {
+        return xDrift;
+    }
+
+    /**
+     * Sets the x drift correction value.
+     *
+     * @param v the x drift correction value
+     */
+    public void setXDrift(double v) {
+        touch();
+        xDrift = v;
+    }
+
+    /**
+     * Returns the y drift correction value.
+     *
+     * @return the y drift correction value
+     */
+    public double getYDrift() {
+        return yDrift;
+    }
+
+    /**
+     * Sets the y drift correction value.
+     *
+     * @param v the y drift correction value
+     */
+    public void setYDrift(double v) {
+        touch();
+        yDrift = v;
+    }
+
+    /**
+     * Returns the z drift correction value.
+     *
+     * @return the z drift correction value
+     */
+    public double getZDrift() {
+        return zDrift;
+    }
+
+    /**
+     * Sets the z drift correction value.
+     *
+     * @param v the z drift correction value
+     */
+    public void setZDrift(double v) {
+        touch();
+        zDrift = v;
+    }
+
+    /**
+     * Returns the number of the measurement tray slot in which the sample was
+     * measured.
+     *
+     * @return the number of the measurement tray slot in which the sample was
+     * measured
+     */
+    public int getSlotNumber() {
+        return slotNumber;
+    }
+
+    /**
+     * Sets the number of the measurement tray slot in which the sample was
+     * measured.
+     *
+     * @param v the number of the measurement tray slot in which the sample was
+     * measured
+     */
+    public void setSlotNumber(int v) {
+        touch();
+        slotNumber = v;
+    }
+
+    /**
+     * Returns the data suite containing this measurement.
+     *
+     * @return the data suite containing this measurement
+     */
+    public Suite getSuite() {
+        return suite;
+    }
+
+    /**
+     * Sets the data suite containing this measurement.
+     *
+     * @param v the data suite containing this measurement
+     */
+    public void setSuite(Suite v) {
+        touch();
+        suite = v;
+    }
+
+    /**
+     * Reports whether this measurement is used for a great-circle fit.
+     *
+     * @return {@code true} if this measurement is used for a great-circle fit
+     */
+    public boolean isOnCircle() {
+        return onCircle;
+    }
+
+    /**
+     * Sets whether this measurement is to be used for a great-circle fit.
+     *
+     * @param v {@code true} to use this measurement for a great-circle fit
+     */
+    public void setOnCircle(boolean v) {
+        touch();
+        onCircle = v;
+    }
+
+    /**
+     * Reports whether this measurement is used for a PCA fit.
+     *
+     * @return {@code true} if this measurement is used for a PCA fit
+     */
+    public boolean isInPca() {
+        return inPca;
+    }
+
+    /**
+     * Sets whether this measurement is to be used for a PCA fit.
+     *
+     * @param v {@code true} to use this measurement for a PCA fit
+     */
+    public void setInPca(boolean v) {
+        touch();
+        inPca = v;
+    }
     
     /** Returns the sample hade for this datum.
      * @return the sample's hade, in degrees */
@@ -374,7 +817,8 @@ public class TreatmentStep {
      * @return sample identifier or depth within core, as appropriate
      */
     public String getIdOrDepth() {
-        return measurementType == MeasurementType.CONTINUOUS ? depth : discreteId;
+        return measurementType == MeasurementType.CONTINUOUS ?
+                depth : discreteId;
     }
     
     /**
@@ -714,7 +1158,8 @@ public class TreatmentStep {
      * 
      * @throws NullPointerException if {@code field} or {@code value} is null
      */
-    public void setValue(TreatmentStepField field, String value, double factor) {
+    public void setValue(TreatmentStepField field, String value,
+            double factor) {
         requireNonNull(field, "field must be non-null");
         requireNonNull(value, "value must be non-null");
         touch();
@@ -937,6 +1382,14 @@ public class TreatmentStep {
                 collect(Collectors.toList())));
     }
 
+    /**
+     * Produce a string summarizing the most important characteristics of this
+     * treatment step: step number, treatment type and level, moment vector (as
+     * declination, inclination, and intensity), and magnetic susceptibility.
+     * This string is intended for display on PuffinPlot's status bar.
+     * 
+     * @return a string summarizing the characteristics of this treatment step
+     */
     public String toSummaryString() {
         String positionInSample = "No sample";
         if (getSample() != null) {
