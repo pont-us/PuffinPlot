@@ -24,9 +24,11 @@ import java.awt.event.KeyEvent;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 
 import net.talvi.puffinplot.data.FileType;
@@ -42,7 +44,7 @@ import static java.awt.event.KeyEvent.getExtendedKeyCodeForChar;
  */
 public class FiletypeDialog extends JDialog {
     
-    private FileType fileType = null;
+    private FileType selectedFileType = null;
     
     /**
      * Creates a new FiletypeDialog.
@@ -51,50 +53,79 @@ public class FiletypeDialog extends JDialog {
      */
     public FiletypeDialog(Frame owner) {
         super(owner, "Select filetype", true);
-        JPanel cp = new JPanel();
-        cp.setLayout(new BoxLayout(cp, BoxLayout.Y_AXIS));
-        cp.setBorder(new EmptyBorder(8,8,8,8));
-        final JLabel jLabel = new JLabel("Please select the type of the file.");
-        jLabel.setAlignmentX(CENTER_ALIGNMENT);
-        cp.add(jLabel);
-        cp.add(Box.createRigidArea((new Dimension(0, 16))));
         
-        for (final FileType ft: FileType.values()) {
-            if (ft != FileType.UNKNOWN) {
-                final JButton button = new JButton(ft.getNiceName());
+        final JPanel contentPane = new JPanel();
+        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
+        contentPane.setBorder(new EmptyBorder(8,8,8,8));
+        final JLabel introText =
+                new JLabel("Please select the type of the file.");
+        introText.setAlignmentX(CENTER_ALIGNMENT);
+        contentPane.add(introText);
+        contentPane.add(Box.createRigidArea((new Dimension(0, 16))));
+        
+        for (final FileType buttonFileType: FileType.values()) {
+            if (buttonFileType != FileType.UNKNOWN) {
+                final JButton button =
+                        new JButton(buttonFileType.getNiceName());
                 button.setAlignmentX(Component.CENTER_ALIGNMENT);
-                button.setMnemonic(getExtendedKeyCodeForChar(ft.getShortcut()));
-                button.addActionListener((ActionEvent e) -> {
-                    fileType = ft;
+                makeButtonShortcuts(button, 
+                        buttonFileType.getShortcut());
+                button.addActionListener(event -> {
+                    selectedFileType = buttonFileType;
                     setVisible(false);
                     dispose();
                 });
-                cp.add(button);
-                cp.add(Box.createRigidArea((new Dimension(0, 8))));
+                contentPane.add(button);
+                contentPane.add(Box.createRigidArea((new Dimension(0, 8))));
             }
         }
         
-        cp.add(Box.createRigidArea((new Dimension(0, 16))));
+        contentPane.add(Box.createRigidArea((new Dimension(0, 16))));
+        
         final JButton cancelButton = new JButton("Cancel");
-        cancelButton.addActionListener((ActionEvent e) -> {
-            fileType = null;
+        cancelButton.addActionListener(event -> {
+            selectedFileType = null;
             setVisible(false);
             dispose();
         });
         cancelButton.setAlignmentX(CENTER_ALIGNMENT);
-        cancelButton.setMnemonic(KeyEvent.VK_ESCAPE);
-        cp.add(cancelButton);
-        setContentPane(cp);
+        makeButtonShortcuts(cancelButton, 'n');
+        // Add escape key as an additional shortcut for the Cancel button.
+        getRootPane().registerKeyboardAction(
+                event -> cancelButton.doClick(),
+                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                JComponent.WHEN_IN_FOCUSED_WINDOW);
+        contentPane.add(cancelButton);
+        
+        setContentPane(contentPane);
         pack();
         setLocationRelativeTo(owner);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
 
     /**
-     * @return the fileType selected by the user
+     * Create two keyboard shortcuts for a button: one for a keypress with
+     * alt held down, the other without.
+     * 
+     * @param button the button for which to create the shortcuts
+     * @param character the character corresponding to the shortcut key
      */
-    public FileType getFileType() {
-        return fileType;
+    private void makeButtonShortcuts(final JButton button,
+            final int character) {
+        final int keyCode = getExtendedKeyCodeForChar(character);
+        // Create the "alt" shortcut
+        button.setMnemonic(keyCode);
+        // Create the "plain" shortcut
+        getRootPane().registerKeyboardAction(
+                event -> button.doClick(),
+                KeyStroke.getKeyStroke(keyCode, 0),
+                JComponent.WHEN_IN_FOCUSED_WINDOW);
     }
-    
+
+    /**
+     * @return the selectedFileType selected by the user
+     */
+    public FileType getSelectedFileType() {
+        return selectedFileType;
+    }
 }
