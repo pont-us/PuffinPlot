@@ -76,7 +76,9 @@ public class PrefsWindow extends JFrame {
     private final static Dimension prefDim = new Dimension(100, 30);
     
     /**
-     * Creates a new preferences window.
+     * Creates a new preferences window for a supplied PuffinPlot application.
+     * 
+     * @param app the PuffinPlot application associated with this window
      */
     public PrefsWindow(PuffinApp app) {
         super("Preferences");
@@ -93,7 +95,8 @@ public class PrefsWindow extends JFrame {
         final JPanel loadingPanel = new JPanel(false);
         loadingPanel.setLayout(new GridBagLayout());
         final JPanel squidPanel = new JPanel(new GridBagLayout());
-        squidPanel.setBorder(BorderFactory.createTitledBorder("SQUID sensor lengths"));
+        squidPanel.setBorder(
+                BorderFactory.createTitledBorder("SQUID sensor lengths"));
         final String[] labels = {"x", "y", "z"};
         final List<String> lengths = prefs.getSensorLengths().getLengths();
         final JLabel presetsLabel = new JLabel("Presets");
@@ -151,7 +154,8 @@ public class PrefsWindow extends JFrame {
         gbc2.gridwidth = 1;
         gbc2.weightx = 0.25;
         gbc2.anchor = GridBagConstraints.LINE_END;
-        final TwoGeeLoader.Protocol[] protocolValues = TwoGeeLoader.Protocol.values();
+        final TwoGeeLoader.Protocol[] protocolValues =
+                TwoGeeLoader.Protocol.values();
         final String[] protocolStrings = new String[protocolValues.length];
         for (int i=0; i<protocolValues.length; i++) {
             protocolStrings[i] = protocolValues[i].name();
@@ -165,7 +169,6 @@ public class PrefsWindow extends JFrame {
         final JLabel plotsLabel = new JLabel("<html><b>Visible plots</b></html>");
         plotsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         plotsLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        //redBorder(plotsLabel);
         plotsPanel.add(Box.createRigidArea((new Dimension(0,8))));
         plotsPanel.add(plotsLabel);
         plotsPanel.add(Box.createRigidArea((new Dimension(0,8))));
@@ -207,36 +210,41 @@ public class PrefsWindow extends JFrame {
         miscPanel.add(makeLabelledPrefTextField("Font",
                 "plots.fontFamily", "Arial"));
         miscPanel.add(makeLabelledPrefComboBox("Look and feel",
-                "lookandfeel", new String[] {"Default", "Native", "Metal", "Nimbus"},
-                "Default", "PuffinPlot's appearance (changes take effect on restart)"));
+                "lookandfeel",
+                new String[] {"Default", "Native", "Metal", "Nimbus"},
+                "Default",
+                "PuffinPlot's appearance (changes take effect on restart)"));
         miscPanel.add(makeLabelledPrefTextField("GC validity",
                 "data.greatcircles.validityExpr", "true"));
         miscPanel.add(makeLabelledPrefComboBox("Zplot PCA display",
-                "plots.zplotPcaDisplay", new String[] {"Full", "Long", "Short", "None"},
+                "plots.zplotPcaDisplay",
+                new String[] {"Full", "Long", "Short", "None"},
                 "Long", "How PCA lines are shown on the Zijderveld plot"));
         miscPanel.add(makeLabelledPrefComboBox("Sample orientation",
                 "display.sampleOrientation",
                 new String[] {"Azimuth/Dip", "Azimuth/Hade"},
-                "Azimuth/Dip", "The parameters used to represent sample orientation"));
+                "Azimuth/Dip",
+                "The parameters used to represent sample orientation"));
         miscPanel.add(makeLabelledPrefComboBox("Formation orientation",
                 "display.formationOrientation",
                 new String[] {"Dip azimuth/Dip", "Strike/Dip"},
-                "Azimuth/Dip", "The parameters used to represent formation orientation"));
+                "Azimuth/Dip",
+                "The parameters used to represent formation orientation"));
         miscPanel.add(Box.createVerticalGlue());
 
-        tp.addTab("2G import", null, loadingPanel, "Settings for reading 2G data files");
+        tp.addTab("2G import", null, loadingPanel,
+                "Settings for reading 2G data files");
         tp.addTab("Plots", null, plotsPanel, "Select which plots are shown");
         tp.addTab("Misc.", null, miscPanel, "Miscellaneous settings");
 
         final JButton closeButton = new JButton("Close");
-        closeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // window closing event isn't triggered by a setVisible(false),
-                // so we have to update the SensorLengths here.
-                applySettings();
-                setVisible(false);
-            }
+        closeButton.addActionListener(event -> {
+            /*
+             * window closing event isn't triggered by a setVisible(false),
+             * so we have to update the SensorLengths here.
+             */
+            applySettings();
+            setVisible(false);
         });
         addWindowListener(new WindowAdapter() {
             @Override
@@ -275,7 +283,8 @@ public class PrefsWindow extends JFrame {
                         ActionEvent.ACTION_PERFORMED, null));
             }
         });
-        button.setToolTipText((String) action.getValue(Action.SHORT_DESCRIPTION));
+        button.setToolTipText(
+                (String) action.getValue(Action.SHORT_DESCRIPTION));
         button.setMaximumSize(new Dimension(300, 50));
         return button;
     }
@@ -314,7 +323,6 @@ public class PrefsWindow extends JFrame {
         final JPanel panel = new JPanel(false);
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
         panel.add(Box.createRigidArea((new Dimension(100, 0))));
-        //redBorder(checkBox);
         checkBox.setMaximumSize(new Dimension(800, 50));
         checkBox.setPreferredSize(prefDim);
         panel.add(checkBox);
@@ -330,7 +338,6 @@ public class PrefsWindow extends JFrame {
         label.setPreferredSize(prefDim);
         label.setMaximumSize(new Dimension(400, 50));
         label.setHorizontalAlignment(JLabel.RIGHT);
-        //redBorder(label);
         panel.add(label);
         panel.add(Box.createRigidArea((new Dimension(8,0))));
         final JComboBox box = new PrefsComboBox(pref, values, defaultValue);
@@ -346,8 +353,12 @@ public class PrefsWindow extends JFrame {
         presetsBox.applySettings();
         prefs.set2gProtocol(TwoGeeLoader.Protocol.valueOf(
                 prefs.getPrefs().get("measurementProtocol", "NORMAL")));
-        for (PlotBox plotBox: plotBoxes) plotBox.applySetting();
-        for (PrefTextField prefBox: prefTextFields) prefBox.storeValue();
+        for (PlotBox plotBox: plotBoxes) {
+            plotBox.applySetting();
+        }
+        for (PrefTextField prefBox: prefTextFields) {
+            prefBox.storeValue();
+        }
         try {
             prefs.getPrefs().flush();
         } catch (BackingStoreException ex) {
@@ -362,6 +373,7 @@ public class PrefsWindow extends JFrame {
         private static final long serialVersionUID = 1L;
         private final Plot plot;
         private final JCheckBox checkBox;
+        
         public PlotBox(Plot plot) {
             super();
             setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -395,12 +407,9 @@ public class PrefsWindow extends JFrame {
         public PrefsCheckBox(String label, final String key,
             boolean defaultValue) {
             super(label, prefs.getPrefs().getBoolean(key, defaultValue));
-            addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent e) {
-                    prefs.getPrefs().putBoolean(key, isSelected());
-                }
-            });
+            addItemListener(event ->
+                prefs.getPrefs().putBoolean(key, isSelected())
+            );
         }
     }
     

@@ -32,7 +32,6 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 import net.talvi.puffinplot.PuffinApp;
 
@@ -43,7 +42,7 @@ import net.talvi.puffinplot.PuffinApp;
  */
 public class CiteWindow extends JFrame {
 
-    private static final String risText = 
+    private static final String RIS_TEXT = 
             "TY  - JOUR\n" +
             "T1  - PuffinPlot: A versatile, user-friendly program for paleomagnetic analysis\n" +
             "A1  - Lurcock, P. C.\n" +
@@ -67,7 +66,7 @@ public class CiteWindow extends JFrame {
             "DO  - 10.1029/2012GC004098\n" +
             "PB  - AGU\n";
     
-    private static final String bibTexText =
+    private static final String BIBTEX_TEXT =
             "@article{lurcock2012puffinplot,\n" +
             "  author = {Lurcock, P. C. and Wilson, G. S.},\n" +
             "  title = {PuffinPlot: A versatile, user-friendly program for paleomagnetic\n" +
@@ -115,22 +114,26 @@ public class CiteWindow extends JFrame {
     public CiteWindow(final PuffinApp app) {
         setMinimumSize(new Dimension(400, 200));
         setPreferredSize(new java.awt.Dimension(600, 400));
+        
         final JPanel contentPane = new JPanel();
         setContentPane(contentPane);
         contentPane.setBorder(new EmptyBorder(12, 12, 12, 12));
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
         
         final JLabel heading = new JLabel("How to cite PuffinPlot");
-        heading.setFont(heading.getFont().deriveFont(heading.getFont().getSize() + 8f));
+        heading.setFont(heading.getFont().
+                deriveFont(heading.getFont().getSize() + 8f));
         heading.setHorizontalAlignment(SwingConstants.CENTER);
         heading.setAlignmentX(CENTER_ALIGNMENT);
         contentPane.add(heading);
-        final JLabel label1 = new JLabel(""
-                + "<html><p>If you make use of PuffinPlot in published "
-                + "work, please cite the PuffinPlot paper:</p></html>");
-        label1.setBorder(new EmptyBorder(12, 0, 12, 0));
-        label1.setAlignmentX(CENTER_ALIGNMENT);
-        contentPane.add(label1);
+        
+        final JLabel introLabel = new JLabel("<html><p>If you make use of "
+                + "PuffinPlot in published work, please cite the "
+                + "PuffinPlot paper:</p></html>");
+        introLabel.setBorder(new EmptyBorder(12, 0, 12, 0));
+        introLabel.setAlignmentX(CENTER_ALIGNMENT);
+        contentPane.add(introLabel);
+        
         /*
          * From http://www.coderanch.com/t/338648/GUI/java/Multiple-lines-JLabel
          * ‘One bit of caution if you use word wrap: I've noticed that
@@ -153,33 +156,29 @@ public class CiteWindow extends JFrame {
                 + "http://doi.org/10.1029/2012GC004098</a>"
                 + "</html>");
         citePane.setPreferredSize(null);
-        
-        citePane.addHyperlinkListener(new HyperlinkListener() {
-            @Override
-            public void hyperlinkUpdate(HyperlinkEvent e) {
-                if (HyperlinkEvent.EventType.ACTIVATED == e.getEventType()) {
-                    app.openWebPage(e.getURL().toString());
-                }
+        citePane.addHyperlinkListener(event -> {
+            if (HyperlinkEvent.EventType.ACTIVATED == event.getEventType()) {
+                app.openWebPage(event.getURL().toString());
             }
         });
 
         final JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setHorizontalScrollBarPolicy(
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setViewportView(citePane);
         scrollPane.setAlignmentX(CENTER_ALIGNMENT);
         contentPane.add(scrollPane);
 
         final JButton onlinePaperButton = new JButton();
-        onlinePaperButton.setText("Click here to locate the PuffinPlot paper online.");
+        onlinePaperButton.setText(
+                "Click here to locate the PuffinPlot paper online.");
         onlinePaperButton.setAlignmentX(CENTER_ALIGNMENT);
-        onlinePaperButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                app.openWebPage("http://doi.org/10.1029/2012GC004098");
-            }});
+        onlinePaperButton.addActionListener(event ->
+            app.openWebPage("http://doi.org/10.1029/2012GC004098")
+        );
         contentPane.add(onlinePaperButton);
-        
         contentPane.add(Box.createVerticalGlue());
+        
         final JLabel label2 = new JLabel();
         label2.setAlignmentX(CENTER_ALIGNMENT);
         label2.setText("<html><p>"
@@ -191,25 +190,23 @@ public class CiteWindow extends JFrame {
         contentPane.add(label2);
 
         final JPanel buttonPanel = new JPanel();
-        buttonPanel.add(new CiteButton("RIS", risText));
-        buttonPanel.add(new CiteButton("BibTeX", bibTexText));
+        buttonPanel.add(new CiteButton("RIS", RIS_TEXT));
+        buttonPanel.add(new CiteButton("BibTeX", BIBTEX_TEXT));
         buttonPanel.setAlignmentX(CENTER_ALIGNMENT);
         contentPane.add(buttonPanel);
         
         final JButton closeButton = new JButton();
         closeButton.setText("Close this window");
         closeButton.setAlignmentX(CENTER_ALIGNMENT);
-        closeButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                setVisible(false);
-            }
-        });
+        closeButton.addActionListener(event -> setVisible(false));
         contentPane.add(closeButton);
         
         pack();
-        // Centre over main window. Must be done after pack() -- see
-        // http://stackoverflow.com/questions/3480102 .
+        
+        /*
+         * Centre over main window. Must be done after pack() -- see
+         * http://stackoverflow.com/questions/3480102 .
+         */
         setLocationRelativeTo(app.getMainWindow());
     }
     
@@ -218,13 +215,10 @@ public class CiteWindow extends JFrame {
             super("Copy "+type+" data to clipboard");
             final Clipboard clipboard = 
                     Toolkit.getDefaultToolkit().getSystemClipboard();
-            addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            addActionListener(event -> {
                 final StringSelection sel = new StringSelection(data);
                 clipboard.setContents(sel, sel);
-            }
-        });
+            });
         }
     }
 }
