@@ -30,15 +30,13 @@ import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.plots.PlotAxis.AxisParameters;
-import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 
 /**
- * Demagnetization plot. This is a simple biplot with demagnetization
- * step on the x axis and magnetic moment intensity on the y axis.
- * When magnetic susceptibility data is available, it is also overlaid
- * on the plot.
- * 
+ * Demagnetization plot. This is a simple biplot with demagnetization step on
+ * the x axis and magnetic moment intensity on the y axis. When magnetic
+ * susceptibility data is available, it is also overlaid on the plot.
+ *
  * @author pont
  */
 public class DemagPlot extends Plot {
@@ -48,9 +46,7 @@ public class DemagPlot extends Plot {
     /**
      * Creates a demagnetization plot with the supplied parameters
      *
-     * @param parent the graph display containing the plot
      * @param params the parameters of the plot
-     * @param prefs the preferences containing the plot configuration
      */
     public DemagPlot(PlotParams params) {
         super(params);
@@ -120,7 +116,8 @@ public class DemagPlot extends Plot {
         }
 
         final TreatmentType treatmentType =
-                sample.getTreatmentStepByIndex(sample.getNumberOfSteps() - 1).getTreatmentType();
+                sample.getTreatmentStepByIndex(sample.getNumberOfSteps() - 1).
+                        getTreatmentType();
         final String xAxisLabel;
         double demagRescale = 1;
         if (xBySequence) {
@@ -160,12 +157,12 @@ public class DemagPlot extends Plot {
                 true, false, false);
         
         int i = 0;
-        for (TreatmentStep d: data) {
-            final double demagLevel = d.getTreatmentLevel() * demagRescale;
+        for (TreatmentStep step: data) {
+            final double demagLevel = step.getTreatmentLevel() * demagRescale;
             final double xPos = dim.getMinX() +
                     (xBySequence ? (i + 1) : demagLevel) * xScale;
-            addPoint(d, new Point2D.Double(xPos,
-                    dim.getMaxY() - d.getIntensity() * yScale),
+            addPoint(step, new Point2D.Double(xPos,
+                    dim.getMaxY() - step.getIntensity() * yScale),
                     true, false, i>0);
             i++;
         }
@@ -195,16 +192,17 @@ public class DemagPlot extends Plot {
             msAxis.draw(g, msScale, (int) dim.getMaxX(), (int) dim.getMaxY());
             i = 0;
             boolean first = true;
-            for (TreatmentStep d: data) {
-                final double demagLevel = d.getTreatmentLevel() * demagRescale;
+            for (TreatmentStep step: data) {
+                final double demagLevel =
+                        step.getTreatmentLevel() * demagRescale;
                 final double xPos = dim.getMinX() +
                     (xBySequence ? (i + 1) : demagLevel) * xScale;
-                double magSus = d.getMagSus();
+                double magSus = step.getMagSus();
                 if (magSus < 0) {
                     magSus = 0;
                 }
-                if (d.hasMagSus()) {
-                    addPoint(d, new Point2D.Double(xPos,
+                if (step.hasMagSus()) {
+                    addPoint(step, new Point2D.Double(xPos,
                             dim.getMaxY() - magSus * msScale),
                             false, false, !first);
                     first = false;

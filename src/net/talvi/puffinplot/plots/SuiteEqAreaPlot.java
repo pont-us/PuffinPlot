@@ -20,7 +20,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.util.List;
-import java.util.prefs.Preferences;
 
 import net.talvi.puffinplot.data.FisherParams;
 import net.talvi.puffinplot.data.Sample;
@@ -28,24 +27,21 @@ import net.talvi.puffinplot.data.Site;
 import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.data.SuiteCalcs;
 import net.talvi.puffinplot.data.Vec3;
-import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 
 /**
- * An equal-area plot data for an entire suite.
- * This plot displays site means calculated using Fisher statistics
- * or great-circle intersections, and overall Fisher means of the
- * site means themselves. If there are site means in both hemispheres,
- * a separate mean is shown for each hemisphere. If no sites are defined,
- * sample PCA directions are used instead.
+ * An equal-area plot data for an entire suite. This plot displays site means
+ * calculated using Fisher statistics or great-circle intersections, and overall
+ * Fisher means of the site means themselves. If there are site means in both
+ * hemispheres, a separate mean is shown for each hemisphere. If no sites are
+ * defined, sample PCA directions are used instead.
  */
 public class SuiteEqAreaPlot extends EqAreaPlot {
 
-    /** Creates a suite equal area plot with the supplied parameters.
-     * 
-     * @param parent the graph display containing the plot
+    /**
+     * Creates a suite equal area plot with the supplied parameters.
+     *
      * @param params the parameters of the plot
-     * @param prefs the preferences containing the plot configuration
      */
     public SuiteEqAreaPlot(PlotParams params) {
         super(params);
@@ -66,60 +62,28 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
         return "Suite";
     }
 
-    private void drawFisher(FisherParams fv) {
-        if (fv==null) return;
-        final Vec3 mean = fv.getMeanDirection();
-        if (fv.isA95Valid() && fv.getA95() > 0) {
-            drawLineSegments(mean.makeSmallCircle(fv.getA95()));
-        }
-        final PlotPoint meanPoint = 
-                ShapePoint.build(this, project(mean)).
-                circle().build();
-        meanPoint.draw(g);
-    }
-    
-    private void drawSiteA95(FisherParams fv) {
-        if (fv==null) return;
-        if (fv.isA95Valid() && fv.getA95() > 0) {
-            g.setColor(Color.BLUE);
-            drawLineSegments(fv.getMeanDirection().makeSmallCircle(fv.getA95()));
-        }
-    }
-
-    private void drawMeans(SuiteCalcs.Means means) {
-        if (means.getUpper() != null && means.getLower() != null) {
-            drawFisher(means.getUpper());
-            drawFisher(means.getLower());
-        } else {
-            drawFisher(means.getAll());
-        }
-    }
-
-    private void writePointLabel(String s, PlotPoint point) {
-        if (prefs != null &&
-                prefs.getBoolean("plots.labelPointsInSuitePlots", false)) {
-            final Point2D centre = point.getCentre();
-            putText(g, s, centre.getX(), centre.getY(),
-                    Direction.RIGHT,
-                    0, 6);
-        }
-    }
-
     @Override
     public void draw(Graphics2D g) {
         updatePlotDimensions(g);
         clearPoints();
         drawAxes();
+
         final Sample selectedSample = params.getSample();
+        if (selectedSample==null) {
+            return;
+        }
+
+        final Suite suite = selectedSample.getSuite();
+        if (suite==null) {
+            return;
+        }
+
+        final List<Site> sites = suite.getSites();
+        final SuiteCalcs suiteCalcs = suite.getSuiteMeans();
         final Color highlightColour = (prefs != null &&
                 prefs.getBoolean("plots.highlightCurrentSample", false)) ?
                 Color.RED : Color.BLACK;
         
-        if (selectedSample==null) return;
-        final Suite suite = selectedSample.getSuite();
-        if (suite==null) return;
-        List<Site> sites = suite.getSites();
-        final SuiteCalcs suiteCalcs = suite.getSuiteMeans();
         if (sites == null || sites.isEmpty()) {
             // If there are no sites, we plot sample directions.
             for (Sample sample: suite.getSamples()) {
@@ -142,7 +106,8 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
             for (Site site: sites) {
                 final FisherParams siteMean = site.getFisherParams();
                 if (siteMean != null) {
-                    if (prefs.getBoolean("plots.showSiteA95sOnSuitePlot", false)) {
+                    if (prefs.getBoolean(
+                            "plots.showSiteA95sOnSuitePlot", false)) {
                         drawSiteA95(siteMean);
                     }
                     final Vec3 dir = siteMean.getMeanDirection();
@@ -160,5 +125,49 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
             }
         }
         drawPoints(g);
+    }
+
+    private void drawMeans(SuiteCalcs.Means means) {
+        if (means.getUpper() != null && means.getLower() != null) {
+            drawFisher(means.getUpper());
+            drawFisher(means.getLower());
+        } else {
+            drawFisher(means.getAll());
+        }
+    }
+
+    private void drawFisher(FisherParams fisher) {
+        if (fisher==null) {
+            return;
+        }
+        final Vec3 mean = fisher.getMeanDirection();
+        if (fisher.isA95Valid() && fisher.getA95() > 0) {
+            drawLineSegments(mean.makeSmallCircle(fisher.getA95()));
+        }
+        final PlotPoint meanPoint = 
+                ShapePoint.build(this, project(mean)).
+                circle().build();
+        meanPoint.draw(g);
+    }
+    
+    private void drawSiteA95(FisherParams fisher) {
+        if (fisher==null) {
+            return;
+        }
+        if (fisher.isA95Valid() && fisher.getA95() > 0) {
+            g.setColor(Color.BLUE);
+            drawLineSegments(
+                    fisher.getMeanDirection().makeSmallCircle(fisher.getA95()));
+        }
+    }
+
+    private void writePointLabel(String s, PlotPoint point) {
+        if (prefs != null &&
+                prefs.getBoolean("plots.labelPointsInSuitePlots", false)) {
+            final Point2D centre = point.getCentre();
+            putText(g, s, centre.getX(), centre.getY(),
+                    Direction.RIGHT,
+                    0, 6);
+        }
     }
 }
