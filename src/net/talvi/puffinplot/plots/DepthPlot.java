@@ -16,34 +16,32 @@
  */
 package net.talvi.puffinplot.plots;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.prefs.Preferences;
 
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.plots.PlotAxis.AxisParameters;
-import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 
 /**
+ * A simple x/y plot for the entire suite with depth on the x axis and a sample
+ * parameter on the y axis. Currently a very basic implementation with
+ * inclination hard-coded as the parameter.
  *
  * @author pont
  */
 public class DepthPlot extends Plot {
 
-    private Preferences prefs;
-    
-    /** Creates a depth plot with the supplied parameters
-     * 
-     * @param parent the graph display containing the plot
+    /**
+     * Creates a depth plot with the supplied parameters
+     *
      * @param params the parameters of the plot
-     * @param prefs the preferences containing the plot configuration
      */
     public DepthPlot(PlotParams params) {
         super(params);
-        this.prefs = prefs;
     }
     
     @Override
@@ -52,10 +50,12 @@ public class DepthPlot extends Plot {
     }
 
     @Override
-    public void draw(Graphics2D g) {
+    public void draw(Graphics2D graphics) {
         clearPoints();
         final Sample currentSample = params.getSample();
-        if (currentSample == null) return;
+        if (currentSample == null) {
+            return;
+        }
         final Suite suite = currentSample.getSuite();
         
         final AxisParameters xAxisParams = 
@@ -66,20 +66,33 @@ public class DepthPlot extends Plot {
         double minInc = 0, maxInc = 0, totalInc = 0;
         int numberOfIncs = 0;
         boolean anyData = false;
-        for (Sample s: suite.getSamples()) {
-            if (!s.hasTreatmentSteps()) continue;
-            if (s.getDirection() == null) continue;
-            if (Double.isNaN(s.getDepth())) continue;
+        for (Sample sample: suite.getSamples()) {
+            if (!sample.hasTreatmentSteps()) {
+                continue;
+            }
+            if (sample.getDirection() == null) {
+                continue;
+            }
+            if (Double.isNaN(sample.getDepth())) {
+                continue;
+            }
             anyData = true;
-            final double inc = s.getDirection().getIncDeg();
-            if (inc < minInc) minInc = inc;
-            if (inc > maxInc) maxInc = inc;
+            final double inc = sample.getDirection().getIncDeg();
+            if (inc < minInc) {
+                minInc = inc;
+            }
+            if (inc > maxInc) {
+                maxInc = inc;
+            }
             if (inc > 30) {
                 totalInc += inc;
                 numberOfIncs++;
             }
         }
-        if (!anyData) return;
+        
+        if (!anyData) {
+            return;
+        }
         
         final AxisParameters upAxisParams = 
                 new AxisParameters(maxInc, Direction.UP).
@@ -90,27 +103,40 @@ public class DepthPlot extends Plot {
         final PlotAxis upAxis = new PlotAxis(upAxisParams, this);
         final PlotAxis downAxis = new PlotAxis(downAxisParams, this);
         
-        final Rectangle2D dim = cropRectangle(getDimensions(), 320, 100, 50, 290);
-        double xScale = dim.getWidth() / xAxis.getLength();
-        final double yScale = dim.getHeight() / (upAxis.getLength() + downAxis.getLength());
+        final Rectangle2D dim =
+                cropRectangle(getDimensions(), 320, 100, 50, 290);
+        final double xScale = dim.getWidth() / xAxis.getLength();
+        final double yScale =
+                dim.getHeight() / (upAxis.getLength() + downAxis.getLength());
         
-        for (Sample s: suite.getSamples()) {
-            if (!s.hasTreatmentSteps()) continue;
-            if (s.getDirection() == null) continue;
-            final double depth = s.getDepth();
-            final double inc = s.getDirection().getIncDeg();
+        for (Sample sample: suite.getSamples()) {
+            if (!sample.hasTreatmentSteps()) {
+                continue;
+            }
+            if (sample.getDirection() == null) {
+                continue;
+            }
+            final double depth = sample.getDepth();
+            final double inc = sample.getDirection().getIncDeg();
             final double xPos = dim.getMinX() + depth * xScale;
-            final double yPos = dim.getMaxY() - downAxis.getLength() - inc * yScale;
-            final Point2D p = new Point2D.Double(xPos, yPos);
-            final boolean highlight = (s == currentSample);
-            addPoint(null, p, highlight, highlight, true);
+            final double yPos =
+                    dim.getMaxY() - downAxis.getLength() - inc * yScale;
+            final Point2D point = new Point2D.Double(xPos, yPos);
+            final boolean highlight = (sample == currentSample);
+            addPoint(null, point, highlight, highlight, true);
         }
         
-        upAxis.draw(g, yScale, (int)dim.getMinX(), (int)(dim.getMaxY() - downAxis.getLength()));
-        downAxis.draw(g, yScale, (int)dim.getMinX(), (int)(dim.getMaxY() - downAxis.getLength()));
-        xAxis.draw(g, xScale, (int)dim.getMinX(), (int)(dim.getMaxY() - downAxis.getLength()));
-        drawPoints(g);
+        graphics.setColor(Color.BLACK);
+        upAxis.draw(graphics, yScale, (int)dim.getMinX(),
+                (int)(dim.getMaxY() - downAxis.getLength()));
+        downAxis.draw(graphics, yScale, (int)dim.getMinX(),
+                (int)(dim.getMaxY() - downAxis.getLength()));
+        xAxis.draw(graphics, xScale, (int)dim.getMinX(),
+                (int)(dim.getMaxY() - downAxis.getLength()));
+        drawPoints(graphics);
         
-        writeString(g, String.format("%f", totalInc / numberOfIncs), (float) getDimensions().getMinX(), (float) getDimensions().getMinY());
+        writeString(graphics, String.format("%f", totalInc / numberOfIncs),
+                (float) getDimensions().getMinX(),
+                (float) getDimensions().getMinY());
     }
 }

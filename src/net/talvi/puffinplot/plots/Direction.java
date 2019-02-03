@@ -32,13 +32,21 @@ import static java.lang.Math.abs;
  */
 public enum Direction {
     
-    /** right or east */
+    /**
+     * right or east
+     */
     RIGHT("R", "E", 0),
-    /** up or north */
+    /**
+     * up or north
+     */
     UP("U", "N", 1),
-    /** left or west */
+    /**
+     * left or west
+     */
     LEFT("L", "W", 2),
-    /** down or south */
+    /**
+     * down or south
+     */
     DOWN("D", "S", 3);
     
     private final String letter;
@@ -46,8 +54,8 @@ public enum Direction {
     private final int position;
     private static final Direction[] ordering = new Direction[4];
     static {
-        for (Direction d : values())
-            ordering[d.position] = d;
+        for (Direction direction : values())
+            ordering[direction.position] = direction;
     }
 
     private Direction(String letter, String compassDir, int position) {
@@ -57,18 +65,20 @@ public enum Direction {
     }
 
     /**
-     * @return true iff direction is left or right
+     * @return {@code true} if and only if this direction is left or right
      */
     boolean isHorizontal() {
         return (position % 2) == 0;
     }
 
     /**
-     * Determines a suitable position for a label for an axis with this direction.
-     * 
+     * Determines a suitable position for a label for an axis with this
+     * direction.
+     *
      * @param farSide true iff the label should be placed on the non-standard
      * side (right or above rather than left or below)
-     * @return a direction indicating the position of the label relative to the axis
+     * @return a direction indicating the position of the label relative to the
+     * axis
      */
     Direction labelPos(boolean farSide) {
         final Direction d = this.isHorizontal() ? DOWN : LEFT;
@@ -76,7 +86,8 @@ public enum Direction {
     }
 
     /**
-     * @return a direction corresponding to a 90-degree anticlockwise rotation of this direction
+     * @return a direction corresponding to a 90-degree anticlockwise rotation
+     * of this direction
      */
     Direction rotAcw90() {
         return ordering[(position + 1) % 4];
@@ -90,14 +101,16 @@ public enum Direction {
     }
 
     /**
-     * @return the rotation in radians for a label applied to an axis in this direction
+     * @return the rotation in radians for a label applied to an axis in this
+     * direction
      */
     double labelRot() {
         return this.isHorizontal() ? 0 : -Math.PI / 2;
     }
 
     /**
-     * @return a one-letter string (N, S, E, W) corresponding to this direction's compass point
+     * @return a one-letter string (N, S, E, W) corresponding to this
+     * direction's compass point
      */
     public String getCompassDir() {
         return compassDir;
@@ -111,40 +124,44 @@ public enum Direction {
     }
     
     /**
-     * Given a "central" point and a collection of "peripheral"
-     * points, safeDirection attempts to find a quadrant containing
-     * no peripheral points. It is intended for use with label placement:
-     * if safeDirection is called with a point's two (joined) neighbours
-     * as the "others", it will return a direction where a label can
-     * be placed without overlapping the line. While this method can
-     * be called with any number of "others", a good solution cannot be
-     * guaranteed when more than two other points are provided.
-     * 
+     * Given a "central" point and a collection of "peripheral" points,
+     * safeDirection attempts to find a quadrant containing no peripheral
+     * points. It is intended for use with label placement: if safeDirection is
+     * called with a point's two (joined) neighbours as the "others", it will
+     * return a direction where a label can be placed without overlapping the
+     * line. While this method can be called with any number of "others", a good
+     * solution cannot be guaranteed when more than two other points are
+     * provided.
+     *
      * @param centre a central point
      * @param others other points
      * @return the direction of a quadrant (as seen from the central point)
      * which, if possible, contains none of the other points
      */
-    
-    public static Direction safeDirection(Point2D centre,
+     public static Direction safeDirection(Point2D centre,
             Collection<Point2D> others) {
-        // Start with full sets of directions and pare them off when
-        // we find points in their quadrants.
-        // The directions in smallSet represent vacant hemiplanes, not
-        // vacant quadrants. If others.size()>1, smallSet may end up empty,
-        // but if it is non-empty it should contain an "optimal" vacant
-        // direction.
+         /*
+          * Start with full sets of directions and pare them off when we find
+          * points in their quadrants. The directions in smallSet represent
+          * vacant hemiplanes, not vacant quadrants. If others.size()>1,
+          * smallSet may end up empty, but if it is non-empty it should contain
+          * an "optimal" vacant direction.
+          */
         final EnumSet<Direction> smallSet = EnumSet.allOf(Direction.class);
-        // bigSet is the fallback, used when smallSet is empty.
-        // It represents vacant quadrants.
+         /*
+          * bigSet is the fallback, used when smallSet is empty. It represents
+          * vacant quadrants.
+          */
         final EnumSet<Direction> bigSet = EnumSet.allOf(Direction.class);
         
         for (Point2D p: others) {
             final double x = p.getX() - centre.getX();
             final double y = p.getY() - centre.getY();
-            // hz records whether the h-offset is greater than the v-offset.
-            // If it is, we know that p must lie in the L or R quadrant.
-            // If not, it must lie in the T or B quadrant.
+            /*
+             * hz records whether the h-offset is greater than the v-offset. If
+             * it is, we know that p must lie in the L or R quadrant. If not, it
+             * must lie in the T or B quadrant.
+             */
             boolean hz = (abs(x) > abs(y));
             if (x < 0) {
                 smallSet.remove(LEFT);
@@ -169,8 +186,10 @@ public enum Direction {
             // If not hemiplane, return a vacant quadrant
             return bigSet.iterator().next();
         } else {
-            // If no good solution exists, just put the label to the
-            // right of the point.
+            /*
+             * If no good solution exists, just put the label to the right of
+             * the point.
+             */
             return RIGHT;
         }
     }

@@ -24,17 +24,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A container class to collect Path2D objects for cached plotting.
- * This class is designed to work with equal area plots, which frequently
- * need to draw paths that can be computationally expensive to project
- * on-the-fly. An equal-area plot can contain both solid and dashed lines,
- * representing points in the upper and lower hemispheres respectively.
- * This class holds two separate collections of Path2D objects,
- * one of which contains paths to be plotted with solid lines, and the 
- * other paths to be plotted with dashed lines. Collecting the paths in
- * this way makes it more convenient to cache them for re-plotting when
- * the data has not changed.
- * 
+ * A container class to collect Path2D objects for cached plotting. This class
+ * is designed to work with equal area plots, which frequently need to draw
+ * paths that can be computationally expensive to project on-the-fly. An
+ * equal-area plot can contain both solid and dashed lines, representing points
+ * in the upper and lower hemispheres respectively. This class holds two
+ * separate collections of Path2D objects, one of which contains paths to be
+ * plotted with solid lines, and the other paths to be plotted with dashed
+ * lines. Collecting the paths in this way makes it more convenient to cache
+ * them for re-plotting when the data has not changed.
+ *
  * @author pont
  */
 public class LineCache {
@@ -59,9 +58,10 @@ public class LineCache {
     
     /**
      * Adds a path to this cache.
-     * 
+     *
      * @param path the path to add
-     * @param solid {@code true} to add to the solid paths, {@code false} to add to the dashed paths
+     * @param solid {@code true} to add to the solid paths, {@code false} to add
+     * to the dashed paths
      */
     public void addPath(Path2D path, boolean solid) {
         (solid ? solidPaths : dashedPaths).add(path);

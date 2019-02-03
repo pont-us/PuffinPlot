@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.prefs.Preferences;
 
 import net.talvi.puffinplot.data.Vec3;
-import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 
 import static java.lang.Math.abs;
@@ -37,11 +36,10 @@ import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
 
 /**
- * An abstract superclass for Lambert azimuthal equal-area plots.
- * It provides various facilities to simplify the drawing of an
- * equal-area plot, including projection of the data points and drawing
- * of the axes.
- * 
+ * An abstract superclass for Lambert azimuthal equal-area plots. It provides
+ * various facilities to simplify the drawing of an equal-area plot, including
+ * projection of the data points and drawing of the axes.
+ *
  * @author pont
  */
 public abstract class EqAreaPlot extends Plot {
@@ -80,13 +78,11 @@ public abstract class EqAreaPlot extends Plot {
     /**
      * Creates a new equal-area plot with the supplies parameters.
      * 
-     * @param parent the graph display containing the plot
-     * @param params the plot parameters
-     * @param prefs the preferences containing the plot configuration
+     * @param parameters the plot parameters
      */
-    protected EqAreaPlot(PlotParams params) {
-        super(params);
-        this.prefs = params.getPreferences();
+    protected EqAreaPlot(PlotParams parameters) {
+        super(parameters);
+        this.prefs = parameters.getPreferences();
     }
     
     /**
