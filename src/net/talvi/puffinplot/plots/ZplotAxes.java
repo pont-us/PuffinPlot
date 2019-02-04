@@ -30,8 +30,7 @@ import static net.talvi.puffinplot.plots.Direction.UP;
 
 class ZplotAxes {
 
-    private final static Direction[] directions =
-            new Direction[] { RIGHT, DOWN, LEFT, UP };
+    private final static Direction[] directions = {RIGHT, DOWN, LEFT, UP};
     private final double scale;
     private final double xOffset, yOffset;
     private final PlotAxis[] axes;
@@ -40,15 +39,17 @@ class ZplotAxes {
             MeasurementAxis vVs, MeasurementAxis[] hprojAxes, Plot plot) {
         super();
 
-        Rectangle2D.Double extDataArea = new Rectangle2D.Double();
+        final Rectangle2D.Double extDataArea = new Rectangle2D.Double();
         
-        // We copy the data area into an extended data area, which will be
-        // grown to include the origin and the full extents of the axes.
+        /*
+         * We copy the data area into an extended data area, which will be grown
+         * to include the origin and the full extents of the axes.
+         */
         extDataArea.setRect(dataArea);
         extDataArea.add(new Point2D.Double(0,0));
         
-        // Get the axis lengths
-        double[] lengths = new double[] {
+        // Get the axis lengths.
+        final double[] lengths = new double[] {
             extDataArea.getMaxX(),
             -extDataArea.getMinY(),
             -extDataArea.getMinX(),
@@ -56,27 +57,35 @@ class ZplotAxes {
         };
 
         
-        // Generate the correct labels for the axes
+        // Generate the correct labels for the axes.
         final String[] labels = new String[4];
         for (int i=0; i<4; i++) {
-            final Direction dir = directions[i];
+            final Direction direction = directions[i];
             
-            // Look up the horizontal label
-            final String hprojLabel = hprojAxes[i].getDirection().getCompassDir();
+            // Look up the horizontal label.
+            final String hprojLabel =
+                    hprojAxes[i].getDirection().getCompassDir();
             String vprojLabel = null;
             
-            // Determine the vertical label
-            if (dir.isHorizontal()) {
-                // horizontal axis depends on the current projection
+            // Determine the vertical label.
+            if (direction.isHorizontal()) {
+                // The horizontal axis depends on the current projection.
                 switch (vVs) {
-                    case X: vprojLabel = dir.rotAcw90().getCompassDir(); break;
-                    case Y: vprojLabel = dir.getCompassDir(); break;
-                    case H: vprojLabel = "H"; break;
-                    default: throw new Error("No such axis "+vVs.name());
+                    case X:
+                        vprojLabel = direction.rotAcw90().getCompassDir();
+                        break;
+                    case Y:
+                        vprojLabel = direction.getCompassDir();
+                        break;
+                    case H:
+                        vprojLabel = "H";
+                        break;
+                    default:
+                        throw new Error("No such axis " + vVs.name());
                 }
             } else {
-                // vertical axis is invariant: set up or down as appropriate
-                vprojLabel = dir.getLetter();
+                // Vertical axis is invariant: set up or down as appropriate.
+                vprojLabel = direction.getLetter();
             }
             
             if (hprojLabel.equals(vprojLabel)) {
@@ -86,7 +95,7 @@ class ZplotAxes {
             }
         }
         
-        PlotAxis.AxisParameters[] aps = new PlotAxis.AxisParameters[4];
+        final PlotAxis.AxisParameters[] aps = new PlotAxis.AxisParameters[4];
 
         for (int i=0; i<4; i++) {
             aps[i] = new PlotAxis.AxisParameters(lengths[i], directions[i]).
@@ -101,8 +110,10 @@ class ZplotAxes {
         
         double xScale = plotArea.getWidth() / extDataArea.getWidth();
         double yScale = plotArea.getHeight() / extDataArea.getHeight();
-        // we want to keep the plot square, so we use the smaller
-        // scaling factor for both directions
+        /*
+         * We want to keep the plot square, so we use the smaller scaling factor
+         * for both directions.
+         */
         scale = Math.min(xScale, yScale);
         
         xOffset = plotArea.getMinX() - extDataArea.getMinX() * scale;
@@ -114,8 +125,10 @@ class ZplotAxes {
     }
 
     public int getMagnitude() {
-        // Magnitudes should all be equal, so it doesn't matter
-        // which axis we use here.
+        /*
+         * Magnitudes should all be equal, so it doesn't matter which axis we
+         * use here.
+         */
         return axes[0].getMagnitude();
     }
     
@@ -128,9 +141,11 @@ class ZplotAxes {
                 (int) ((axes[1].getLength() + axes[3].getLength()) * scale));
     }
     
-    public void draw(Graphics2D g) {
-        for (PlotAxis a: axes) a.draw(g, scale, (int)getXOffset(),
-                (int) (getYOffset()) );
+    public void draw(Graphics2D graphics) {
+        for (PlotAxis axis: axes) {
+            axis.draw(graphics, scale,
+                    (int) getXOffset(), (int) (getYOffset()));
+        }
     }
 
     public double getXOffset() {

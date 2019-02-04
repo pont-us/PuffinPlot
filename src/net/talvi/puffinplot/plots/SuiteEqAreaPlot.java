@@ -63,8 +63,8 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
     }
 
     @Override
-    public void draw(Graphics2D g) {
-        updatePlotDimensions(g);
+    public void draw(Graphics2D graphics) {
+        updatePlotDimensions(graphics);
         clearPoints();
         drawAxes();
 
@@ -91,10 +91,10 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
                 if (dir != null) {
                     final PlotPoint p = ShapePoint.build(this, project(dir)).
                             filled(dir.z>0).build();
-                    g.setColor(sample == selectedSample ?
+                    graphics.setColor(sample == selectedSample ?
                             highlightColour : Color.BLACK);
-                    p.draw(g);
-                    g.setColor(Color.BLACK);
+                    p.draw(graphics);
+                    graphics.setColor(Color.BLACK);
                     writePointLabel(sample.getNameOrDepth(), p);
                 }
             }
@@ -113,10 +113,10 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
                     final Vec3 dir = siteMean.getMeanDirection();
                     final PlotPoint p = ShapePoint.build(this, project(dir)).
                             filled(dir.z>0).build();
-                    g.setColor(site == selectedSample.getSite() ?
+                    graphics.setColor(site == selectedSample.getSite() ?
                             highlightColour : Color.BLACK);
-                    p.draw(g);
-                    g.setColor(Color.BLACK);
+                    p.draw(graphics);
+                    graphics.setColor(Color.BLACK);
                     writePointLabel(site.getName(), p);
                 }
             }
@@ -124,7 +124,7 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
                 drawMeans(suiteCalcs.getDirsBySite());
             }
         }
-        drawPoints(g);
+        drawPoints(graphics);
     }
 
     private void drawMeans(SuiteCalcs.Means means) {
@@ -147,7 +147,7 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
         final PlotPoint meanPoint = 
                 ShapePoint.build(this, project(mean)).
                 circle().build();
-        meanPoint.draw(g);
+        meanPoint.draw(cachedGraphics);
     }
     
     private void drawSiteA95(FisherParams fisher) {
@@ -155,7 +155,7 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
             return;
         }
         if (fisher.isA95Valid() && fisher.getA95() > 0) {
-            g.setColor(Color.BLUE);
+            cachedGraphics.setColor(Color.BLUE);
             drawLineSegments(
                     fisher.getMeanDirection().makeSmallCircle(fisher.getA95()));
         }
@@ -165,7 +165,7 @@ public class SuiteEqAreaPlot extends EqAreaPlot {
         if (prefs != null &&
                 prefs.getBoolean("plots.labelPointsInSuitePlots", false)) {
             final Point2D centre = point.getCentre();
-            putText(g, s, centre.getX(), centre.getY(),
+            putText(cachedGraphics, s, centre.getX(), centre.getY(),
                     Direction.RIGHT,
                     0, 6);
         }

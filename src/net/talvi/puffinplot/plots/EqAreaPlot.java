@@ -47,10 +47,13 @@ public abstract class EqAreaPlot extends Plot {
     private static final int incTickNum = 9;
     
     /**
-     * The graphics object to which to draw the plot. It is set by
-     * {@link #updatePlotDimensions(Graphics2D)}.
+     * The graphics object to which the plot is currently being drawn. It is set
+     * by {@link #updatePlotDimensions(Graphics2D)} at the start of the drawing
+     * process, and is then available as a convenience to both EqAreaPlot and
+     * its subclasses, as an alternative to explicitly passing the current
+     * Graphics object around.
      */
-    protected Graphics2D g;
+    protected Graphics2D cachedGraphics;
     
     /**
      * The x co-ordinate of the projection's origin. It is set by
@@ -86,15 +89,15 @@ public abstract class EqAreaPlot extends Plot {
     }
     
     /**
-     * Sets the fields {@link #g}, {@link #radius}, {@link #xo}, and {@link #yo}
+     * Sets the fields {@link #cachedGraphics}, {@link #radius}, {@link #xo}, and {@link #yo}
      * according to the supplied argument and the current plot dimensions. This
      * method should be called before redrawing the plot.
      *
-     * @param g the field {@link #g} will be set to this value
+     * @param g the field {@link #cachedGraphics} will be set to this value
      */
     protected void updatePlotDimensions(Graphics2D g) {
         final Rectangle2D dims = getDimensions();
-        this.g = g;
+        this.cachedGraphics = g;
         radius = (int) (min(dims.getWidth(), dims.getHeight()) / 2);
         xo = (int) dims.getCenterX();
         yo = (int) dims.getCenterY();
@@ -104,14 +107,14 @@ public abstract class EqAreaPlot extends Plot {
      * Draws the axes of the plot.
      */
     protected void drawAxes() {
-        g.setStroke(getStroke());
-        g.setColor(Color.BLACK);
-        g.drawArc(xo - radius, yo - radius, radius * 2, radius * 2, 0, 360);
+        cachedGraphics.setStroke(getStroke());
+        cachedGraphics.setColor(Color.BLACK);
+        cachedGraphics.drawArc(xo - radius, yo - radius, radius * 2, radius * 2, 0, 360);
         final double r = radius;
         for (int theta = 0; theta < 360; theta += decTickStep) {
             final double x = cos(toRadians(theta));
             final double y = sin(toRadians(theta));
-            g.draw(new Line2D.Double(xo + x * r, yo + y * r,
+            cachedGraphics.draw(new Line2D.Double(xo + x * r, yo + y * r,
                     xo + x * (r - getTickLength()),
                     yo + y * (r - getTickLength())));
         }
@@ -121,12 +124,12 @@ public abstract class EqAreaPlot extends Plot {
             final Point2D p =  project(Vec3.fromPolarDegrees(
                     1., 90 - i * (90./(double)incTickNum), 90.));
             double x = p.getX();
-            g.draw(new Line2D.Double(x, yo - l, x, yo + l));
+            cachedGraphics.draw(new Line2D.Double(x, yo - l, x, yo + l));
         }
-        g.draw(new Line2D.Double(xo - l, yo, xo + l, yo));
+        cachedGraphics.draw(new Line2D.Double(xo - l, yo, xo + l, yo));
         if (prefs != null &&
                 prefs.getBoolean("plots.labelEqualAreaPlots", false)) {
-            g.drawString(getShortName(),
+            cachedGraphics.drawString(getShortName(),
                     (float) (xo + radius/2), (float) (yo + radius));
         }
     }
@@ -143,7 +146,7 @@ public abstract class EqAreaPlot extends Plot {
         boolean first = true;
         for (Vec3 v : vectors) {
             assert(v != null);
-            // g.setStroke(new BasicStroke(getUnitSize() * (1-(float)v.z) *20.0f));
+            // cachedGraphics.setStroke(new BasicStroke(getUnitSize() * (1-(float)v.z) *20.0f));
             final Point2D p = project(v);
             assert(!Double.isNaN(p.getX()));
             assert(!Double.isNaN(p.getY()));
@@ -203,7 +206,7 @@ public abstract class EqAreaPlot extends Plot {
      */
     protected void drawLineSegments(List<Vec3> vs) {
         final LineCache lineCache = projectLineSegments(vs);
-        lineCache.draw(g);
+        lineCache.draw(cachedGraphics);
     }
     
     /**

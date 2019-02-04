@@ -59,8 +59,8 @@ public class SampleEqAreaPlot extends EqAreaPlot {
     }
 
     @Override
-    public void draw(Graphics2D g) {
-        updatePlotDimensions(g);
+    public void draw(Graphics2D graphics) {
+        updatePlotDimensions(graphics);
         clearPoints();
         final Sample sample = params.getSample();
         if (sample == null) {
@@ -94,25 +94,25 @@ public class SampleEqAreaPlot extends EqAreaPlot {
             final Vec3 pole = sample.getGreatCircle().getPole();
             drawGreatCircle(pole, true);
             ShapePoint.build(this, project(pole)).filled(pole.z>0).
-                    triangle().build().draw(g);
+                    triangle().build().draw(graphics);
         }
         if (sample.getPcaValues() != null) {
             final Vec3 dir = sample.getPcaValues().getDirection();
             ShapePoint.build(this, project(dir)).scale(1.5).
-                    filled(dir.z>0).circle().build().draw(g);
+                    filled(dir.z>0).circle().build().draw(graphics);
         }
         if (sample.getFisherValues() != null) {
             final Vec3 dir = sample.getFisherValues().getMeanDirection();
             ShapePoint.build(this, project(dir)).scale(1.5).
-                    filled(dir.z>0).diamond().build().draw(g);
+                    filled(dir.z>0).diamond().build().draw(graphics);
         }
         if (sample.getImportedDirection() != null) {
             final Vec3 dir = sample.getImportedDirection();
             ShapePoint.build(this, project(dir)).scale(1.5).
-                    filled(dir.z>0).triangle().build().draw(g);
+                    filled(dir.z>0).triangle().build().draw(graphics);
         }
 
-        drawPoints(g);
+        drawPoints(graphics);
     }
 
     @Override

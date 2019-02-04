@@ -450,17 +450,16 @@ public abstract class Plot
     }
     
     /**
-     * Write some text on this plot. The text is positioned relative to
-     * a specified point. The parameter {@code dir} controls whether the
-     * text should be offset up, down, left, or right of the point.
-     * In the axis perpendicular to the offset direction, the text is
-     * centred, so for example if the text is placed below the specified
-     * point, it will also be centred horizontally relative to the point.
-     * An angle of rotation can also be specified for the text; note that
-     * at present only rotations of 0 (horizontal, rightward) and pi/2 (vertical,
-     * upward) have been tested.
-     * 
-     * @param g the graphics context
+     * Write some text on this plot. The text is positioned relative to a
+     * specified point. The parameter {@code dir} controls whether the text
+     * should be offset up, down, left, or right of the point. In the axis
+     * perpendicular to the offset direction, the text is centred, so for
+     * example if the text is placed below the specified point, it will also be
+     * centred horizontally relative to the point. An angle of rotation can also
+     * be specified for the text; note that at present only rotations of 0
+     * (horizontal, rightward) and pi/2 (vertical, upward) have been tested.
+     *
+     * @param graphics the graphics context
      * @param text the text to write
      * @param x the x position of the text
      * @param y the y position of the text
@@ -468,9 +467,9 @@ public abstract class Plot
      * @param θ the rotation of the text, in radians (0 = horizontal)
      * @param padding the distance between the text and the given position
      */
-    public void putText(Graphics2D g, AttributedString text, double x,
+    public void putText(Graphics2D graphics, AttributedString text, double x,
             double y, Direction dir, double θ, double padding) {
-        AffineTransform initialTransform = g.getTransform();
+        AffineTransform initialTransform = graphics.getTransform();
         applyTextAttributes(text);
 
         /*
@@ -482,11 +481,12 @@ public abstract class Plot
          * determined by actually creating a TextLayout for a rotated
          * FontRenderContext.
          */
-        g.rotate(θ);
+        graphics.rotate(θ);
         final TextLayout layout =
-                new TextLayout(text.getIterator(), g.getFontRenderContext());
+                new TextLayout(text.getIterator(),
+                        graphics.getFontRenderContext());
         final Rectangle2D transformedBounds = layout.getBounds();
-        g.setTransform(initialTransform);
+        graphics.setTransform(initialTransform);
 
         /*
          * We now back-rotate the transformed bounding box to use in
@@ -503,7 +503,7 @@ public abstract class Plot
          * it's conceptually clearer to separate them), but it's easier to do
          * part (2) after we've rotated into the text's co-ordinate system.
          */
-        g.translate(x, y);
+        graphics.translate(x, y);
         
         /*
          * Translate the target point to the "offset" point: this is the point
@@ -517,16 +517,16 @@ public abstract class Plot
         final double halfHeight = bounds.getHeight()/2;
         switch (dir) {
         case RIGHT:
-            g.translate(padding + halfWidth, 0);
+            graphics.translate(padding + halfWidth, 0);
             break;
         case DOWN:
-            g.translate(0, padding + halfHeight);
+            graphics.translate(0, padding + halfHeight);
             break;
         case LEFT:
-            g.translate(-padding - halfWidth, 0);
+            graphics.translate(-padding - halfWidth, 0);
             break;
         case UP:
-            g.translate(0, -padding - halfHeight);
+            graphics.translate(0, -padding - halfHeight);
             break;
         }
         
@@ -535,7 +535,7 @@ public abstract class Plot
          * orientation to the text's orientation (which may of course be the
          * same).
          */
-        g.rotate(θ);
+        graphics.rotate(θ);
         
         /*
          * We have to do some more translation now, in the text's rotated
@@ -544,7 +544,7 @@ public abstract class Plot
          * left corner so we move the text half its width to the left and half
          * its height down.
          */
-        g.translate(-transformedBounds.getWidth()/2,
+        graphics.translate(-transformedBounds.getWidth()/2,
                 transformedBounds.getHeight()/2);
         
         /*
@@ -552,18 +552,19 @@ public abstract class Plot
          * TextLayout from which the bounds were calculated is not at (0, 0).
          * (See TextLayout docs.)
          */
-        g.translate(-transformedBounds.getMinX(), -transformedBounds.getMaxY());
+        graphics.translate(-transformedBounds.getMinX(),
+                -transformedBounds.getMaxY());
 
         /*
          * We don't use layout.draw, since that will draw the text as a glyph
          * vector, which won't be exported as text in SVG, PDF, etc.
          */
-        g.drawString(text.getIterator(), 0, 0);
+        graphics.drawString(text.getIterator(), 0, 0);
         
         /*
          * Finally, we restore the initial co-ordinate system.
          */
-        g.setTransform(initialTransform);
+        graphics.setTransform(initialTransform);
     }
     
     /**
@@ -675,9 +676,9 @@ public abstract class Plot
     /**
      * Draws this plot.
      *
-     * @param g the graphics object onto which to draw this plot
+     * @param graphics the graphics object onto which to draw this plot
      */
-    public abstract void draw(Graphics2D g);
+    public abstract void draw(Graphics2D graphics);
 
     /**
      * Reports whether this plot is visible.

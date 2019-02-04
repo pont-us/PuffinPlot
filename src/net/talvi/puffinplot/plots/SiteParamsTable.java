@@ -32,7 +32,6 @@ import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Site;
 import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.data.Vec3;
-import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 
 /**
@@ -54,11 +53,10 @@ public class SiteParamsTable extends Plot {
                 "inc.", "a95", "R", "type"});
     private final Preferences prefs;
     
-    /** Creates a site parameter table with the supplied parameters.
-     * 
-     * @param parent the graph display containing the plot
+    /**
+     * Creates a site parameter table with the supplied parameters.
+     *
      * @param params the parameters of the plot
-     * @param prefs the preferences containing the plot configuration
      */
     public SiteParamsTable(PlotParams params) {
         super(params);
@@ -80,15 +78,20 @@ public class SiteParamsTable extends Plot {
     }
 
     @Override
-    public void draw(Graphics2D g) {
+    public void draw(Graphics2D graphics) {
         clearPoints();
         final Sample sample = params.getSample();
-        if (sample==null) return;
+        if (sample==null) {
+            return;
+        }
         final Suite suite = sample.getSuite();
-        if (suite==null) return;
+        if (suite==null) {
+            return;
+        }
         final List<Site> sites = suite.getSites();
         
-        points.add(new TextLinePoint(this, g, 10, null, null, headers, xSpacing, Color.BLACK));
+        points.add(new TextLinePoint(this, graphics, 10, null, null,
+                headers, xSpacing, Color.BLACK));
 
         final Color highlightColour = (prefs != null &&
                 prefs.getBoolean("plots.highlightCurrentSample", false)) ?
@@ -96,12 +99,15 @@ public class SiteParamsTable extends Plot {
         final int columns = headers.size();
         float yPos = 2 * ySpacing;
         for (Site site: sites) {
-            if (yPos > getDimensions().getHeight()) break;
+            if (yPos > getDimensions().getHeight()) {
+                break;
+            }
             final List<String> values = new ArrayList<>(columns);
             values.addAll(Collections.nCopies(columns, "--"));
             values.set(0, site.toString());
             values.set(1, fmt("%d", site.getSamples().size()));
-            if (site.getGreatCircles() != null && site.getGreatCircles().isValid()) {
+            if (site.getGreatCircles() != null &&
+                    site.getGreatCircles().isValid()) {
                 final GreatCircles gcs = site.getGreatCircles();
                 values.set(2, fmt("%d", gcs.getM()));
                 values.set(3, fmt("%d", gcs.getN()));
@@ -124,15 +130,18 @@ public class SiteParamsTable extends Plot {
             } 
             
             Sample firstSample = null;
-            List<Sample> siteSamples = site.getSamples();
-            if (!siteSamples.isEmpty()) firstSample = siteSamples.get(0);
-            points.add(new TextLinePoint(this, g, yPos, null, firstSample,
-                    values, xSpacing, site == params.getSample().getSite()?
-                    highlightColour : Color.BLACK));
+            final List<Sample> siteSamples = site.getSamples();
+            if (!siteSamples.isEmpty()) {
+                firstSample = siteSamples.get(0);
+            }
+            points.add(new TextLinePoint(this, graphics, yPos, null,
+                    firstSample, values, xSpacing,
+                    site == params.getSample().getSite() ?
+                            highlightColour : Color.BLACK));
             yPos += ySpacing;
         }
-        g.setColor(Color.BLACK);
-        drawPoints(g);
+        graphics.setColor(Color.BLACK);
+        drawPoints(graphics);
     }
     
 }

@@ -35,7 +35,6 @@ import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.TreatmentStepMomentComparator;
 import net.talvi.puffinplot.data.Vec3;
-import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 
 import static java.lang.Math.atan;
@@ -46,11 +45,10 @@ import static java.util.Collections.min;
 
 /**
  * A Zijderveld plot for a sample's demagnetization data. The vertical
- * projection can be set to show east vs. up or north vs. up,
- * and can also be set for a modified Zijderveld plot, where each data
- * point is projected onto the vertical plane containing the origin and
- * itself.
- * 
+ * projection can be set to show east vs. up or north vs. up, and can also be
+ * set for a modified Zijderveld plot, where each data point is projected onto
+ * the vertical plane containing the origin and itself.
+ *
  * @author pont
  */
 public class ZPlot extends Plot {
@@ -59,11 +57,10 @@ public class ZPlot extends Plot {
     private final ZplotLegend legend;
     private final Preferences prefs;
 
-    /** Creates a Zijderveld plot with the supplied parameters.
-     * 
-     * @param parent the graph display containing the plot
+    /**
+     * Creates a Zijderveld plot with the supplied parameters.
+     *
      * @param params the parameters of the plot
-     * @param prefs the preferences containing the plot configuration
      */
     public ZPlot(PlotParams params) {
         super(params);
@@ -72,9 +69,11 @@ public class ZPlot extends Plot {
     }
 
     private static Rectangle2D extent(List<TreatmentStep> sample, Correction c,
-                                      MeasurementAxis axis1, MeasurementAxis axis2) {
-        final Comparator<TreatmentStep> xComp = new TreatmentStepMomentComparator(axis1, c);
-        final Comparator<TreatmentStep> yComp = new TreatmentStepMomentComparator(axis2, c);
+            MeasurementAxis axis1, MeasurementAxis axis2) {
+        final Comparator<TreatmentStep> xComp =
+                new TreatmentStepMomentComparator(axis1, c);
+        final Comparator<TreatmentStep> yComp =
+                new TreatmentStepMomentComparator(axis2, c);
         final double xMin = min(sample, xComp).getMoment(c).getComponent(axis1);
         final double xMax = max(sample, xComp).getMoment(c).getComponent(axis1);
         final double yMin = min(sample, yComp).getMoment(c).getComponent(axis2);
@@ -97,12 +96,14 @@ public class ZPlot extends Plot {
     private void drawPcaLine(Graphics2D g, double x, double y,
             double angleRad, Color colour, Rectangle2D clip,
             double scale) {
-        /* Line clipping is done ‘manually’. The previous implementation just
-         used g.setClip(axes.getBounds()) (saving and restoring the previous
-         clip rectangle), but this caused problems, chiefly that the lines
-         would appear at full length in SVG and PDF exports. Unfortunately
-         there seems to be no appropriate clipping function in the Java
-         libraries, so I have added a clipping routine to the Util class. */
+        /*
+         * Line clipping is done ‘manually’. The previous implementation just
+         * used g.setClip(axes.getBounds()) (saving and restoring the previous
+         * clip rectangle), but this caused problems, chiefly that the lines
+         * would appear at full length in SVG and PDF exports. Unfortunately
+         * there seems to be no appropriate clipping function in the Java
+         * libraries, so I have added a clipping routine to the Util class.
+         */
         
         // SAFE_LENGTH is intended always to reach the edges of the plot.
         if (clip == null) return;
@@ -113,10 +114,12 @@ public class ZPlot extends Plot {
         g.setColor(colour);
         final Line2D line = Util.clipLineToRectangle(
                 new Line2D.Double(x-dx, y+dy, x+dx, y-dy), clip);
-        // If the clipping rectangle is null, or the line does not 
-        // intersect the rectangle, the clipped line will be null.
-        // Util.scaleLine will handle this gracefully but Graphics2D
-        // may not, so we check for a null line here.
+        /*
+         * If the clipping rectangle is null, or the line does not intersect the
+         * rectangle, the clipped line will be null. Util.scaleLine will handle
+         * this gracefully but Graphics2D may not, so we check for a null line
+         * here.
+         */
         if (line != null) {
             g.draw(Util.scaleLine(line, scale));
         }
@@ -139,11 +142,15 @@ public class ZPlot extends Plot {
     }
 
     @Override
-    public void draw(Graphics2D g) {
+    public void draw(Graphics2D graphics) {
         final Sample sample = params.getSample();
-        if (sample==null) return;
-        final List<TreatmentStep> data = sample.getVisibleTreatmentSteps();
-        if (data.isEmpty()) return;
+        if (sample==null) {
+            return;
+        }
+        final List<TreatmentStep> steps = sample.getVisibleTreatmentSteps();
+        if (steps.isEmpty()) {
+            return;
+        }
         
         clearPoints();
         final Correction correction = params.getCorrection();
@@ -152,13 +159,11 @@ public class ZPlot extends Plot {
         final MeasurementAxis hProjYax = params.getHprojYaxis();
         
         final Rectangle2D extent1 =
-                extent(data, correction, hProjXax, hProjYax);
+                extent(steps, correction, hProjXax, hProjYax);
         final Rectangle2D extent2 =
-                extent(data, correction, vProjXax, MeasurementAxis.MINUSZ);
-
-        final Rectangle2D dimensions =
+                extent(steps, correction, vProjXax, MeasurementAxis.MINUSZ);
+        final Rectangle2D axisDimensions =
                 cropRectangle(getDimensions(), 250, 250, 200, 200);
-
                 
         final MeasurementAxis[] hProjAxes = {
             hProjXax,
@@ -167,46 +172,49 @@ public class ZPlot extends Plot {
             hProjYax
         };
         
-        axes = new ZplotAxes(extent1.createUnion(extent2), dimensions, vProjXax,
-                hProjAxes, this);
+        axes = new ZplotAxes(extent1.createUnion(extent2), axisDimensions,
+                vProjXax, hProjAxes, this);
         
-        g.setColor(Color.BLACK);
-        g.setStroke(getStroke());
-        axes.draw(g);
+        graphics.setColor(Color.BLACK);
+        graphics.setStroke(getStroke());
+        axes.draw(graphics);
 
         final double scale = axes.getScale();
         final double xOffset = axes.getXOffset();
         final double yOffset = axes.getYOffset();
         
-        // We keep track of the points used for the PCA calculation in 
-        // order to calculate the length for the short-format PCA fit line.
-        final List<Point2D> pcaPointsH = new ArrayList<>(data.size()+1);
-        final List<Point2D> pcaPointsV = new ArrayList<>(data.size()+1);
+        /*
+         * We keep track of the points used for the PCA calculation in order to
+         * calculate the length for the short-format PCA fit line.
+         */
+        final List<Point2D> pcaPointsH = new ArrayList<>(steps.size()+1);
+        final List<Point2D> pcaPointsV = new ArrayList<>(steps.size()+1);
 
         
         boolean first = true;
-        for (TreatmentStep d: data) {
-            final Vec3 v = d.getMoment(correction);
+        for (TreatmentStep step: steps) {
+            final Vec3 v = step.getMoment(correction);
             // Plot the point in the horizontal plane
             final double x = xOffset + v.getComponent(hProjXax) * scale;
             final double y = yOffset - v.getComponent(hProjYax) * scale;
             final Point2D point = new Point2D.Double(x, y);
-            addPoint(d, point, true, first, !first);
-            if (d.isInPca()) {
+            addPoint(step, point, true, first, !first);
+            if (step.isInPca()) {
                 pcaPointsH.add(point);
             }
             first = false;
         }
         
         first = true;
-        for (TreatmentStep d: data) {
-            Vec3 v = d.getMoment(correction);
-            // Now plot the point in the vertical plane
+        for (TreatmentStep step: steps) {
+            Vec3 v = step.getMoment(correction);
+            // Now plot the point in the vertical plane.
             final double x = xOffset + v.getComponent(vProjXax) * scale;
-            final double y = yOffset - v.getComponent(MeasurementAxis.MINUSZ) * scale;
+            final double y =
+                    yOffset - v.getComponent(MeasurementAxis.MINUSZ) * scale;
             final Point2D point = new Point2D.Double(x, y);
-            addPoint(d, point, false, first, !first);
-            if (d.isInPca()) {
+            addPoint(step, point, false, first, !first);
+            if (step.isInPca()) {
                 pcaPointsV.add(point);
             }
             first = false;
@@ -217,11 +225,16 @@ public class ZPlot extends Plot {
         final double lineScale = "Long".equals(pcaStyle) ? 0.9 : 1.0;
         if (pca != null && !"None".equals(pcaStyle)) {
             if (pca.isAnchored()) {
-                final Point2D origin = new Point2D.Double(axes.getXOffset(), axes.getYOffset());
+                final Point2D origin = new Point2D.Double(axes.getXOffset(),
+                        axes.getYOffset());
                 pcaPointsH.add(origin);
                 pcaPointsV.add(origin);
             }
-            Rectangle2D clipRectangle = axes.getBounds(); // if "Short" will overwrite
+            /*
+             * If the PCA line style is "Short", this clip rectangle will be
+             * overwritten.
+             */
+            Rectangle2D clipRectangle = axes.getBounds();
             
             final double incRad = pca.getDirection().getIncRad();
             final double decRad = pca.getDirection().getDecRad();
@@ -231,17 +244,20 @@ public class ZPlot extends Plot {
                 clipRectangle = Util.envelope(pcaPointsH);
             }
             
-            drawPcaLine(g, xOffset + x1, yOffset + y1,
+            drawPcaLine(graphics, xOffset + x1, yOffset + y1,
                     transformDeclination(decRad, hProjAxes),
                     Color.BLUE, clipRectangle, lineScale);
             
             final double x2 = pca.getOrigin().getComponent(vProjXax) * scale;
-            final double y2 = - pca.getOrigin().getComponent(MeasurementAxis.MINUSZ) * scale;
+            final double y2 = -pca.getOrigin().
+                    getComponent(MeasurementAxis.MINUSZ) * scale;
             double incCorr = 0;
 
             switch (vProjXax) {
-                // We don't necessarily want the actual line of inclination; we
-                // want the projection of that line onto the appropriate plane.
+                /*
+                 * We don't necessarily want the actual line of inclination; we
+                 * want the projection of that line onto the appropriate plane.
+                 */
                 case X:
                     incCorr = atan(sin(incRad) / (cos(incRad) * cos(decRad)));
                     break;
@@ -249,21 +265,23 @@ public class ZPlot extends Plot {
                     incCorr = atan(sin(incRad) / (cos(incRad) * sin(decRad)));
                     break;
             }
-            if (vProjXax == MeasurementAxis.X || vProjXax == MeasurementAxis.Y) {
-                /* If we're plotting vertical projections vs. `H', there's
-                 * no meaningful way to display the vertical component of the
-                 * PCA: the projection plane is changing with every point
-                 * so there is no meaningful plane onto which the PCA line
-                 * can be projected.
+            if (vProjXax == MeasurementAxis.X ||
+                    vProjXax == MeasurementAxis.Y) {
+                /*
+                 * If we're plotting vertical projections vs. `H', there's no
+                 * meaningful way to display the vertical component of the PCA:
+                 * the projection plane is changing with every point so there is
+                 * no meaningful plane onto which the PCA line can be projected.
                  */
                 if ("Short".equals(pcaStyle)) {
                     clipRectangle = Util.envelope(pcaPointsV);
                 }
-                drawPcaLine(g, xOffset + x2, yOffset + y2, Math.PI/2 + incCorr,
+                drawPcaLine(graphics, xOffset + x2, yOffset + y2,
+                        Math.PI/2 + incCorr,
                         Color.BLUE, clipRectangle, lineScale);
             }
         }
-        drawPoints(g);
+        drawPoints(graphics);
     }
 
     /**
@@ -280,9 +298,10 @@ public class ZPlot extends Plot {
     private double transformDeclination(double dec, MeasurementAxis[] axes) {
         assert(axes.length == 4);
 
-        // First, find the North (==MeasurementAxis.X) axis,
-        // so we can add an offset to plot the
-        // declination relative to it.
+        /*
+         * First, find the North (==MeasurementAxis.X) axis, so we can add an
+         * offset to plot the declination relative to it.
+         */
         final int northIndex =
                 java.util.Arrays.asList(axes).indexOf(MeasurementAxis.X);
         
@@ -291,8 +310,10 @@ public class ZPlot extends Plot {
             return Double.NaN;
         }
         
-        // Now try to find an East (==MeasurementAxis.Y) axis adjacent
-        // to the North axis.
+        /*
+         * Now try to find an East (==MeasurementAxis.Y) axis adjacent to the
+         * North axis.
+         */
         int direction = 0;
         if (axes[(northIndex+3)%4] == MeasurementAxis.Y) {
             direction = -1; // East axis anticlockwise of North axis
@@ -302,25 +323,31 @@ public class ZPlot extends Plot {
             return Double.NaN;
         }
         
-        // When calculating the final angle we need to add 1 to the north
-        // index since the axes array starts with the right (positive-X)
-        // axis.
-        
+        /*
+         * When calculating the final angle we need to add 1 to the north index
+         * since the axes array starts with the right (positive-X) axis.
+         */
         return ((Math.PI/2)*(northIndex+1) + direction*dec) % (2*Math.PI);
     }
     
-    /** Returns the legend for this plot. 
-     * @return the legend for this plot */
+    /**
+     * Returns the legend for this plot.
+     *
+     * @return the legend for this plot
+     */
     public ZplotLegend getLegend() {
         return legend;
     }
 
-    /** A legend for a Zijderveld plot. It shows the units for the
-     * axes, and gives a key for the filled and unfilled points. */
+    /**
+     * A legend for a Zijderveld plot. It shows the units for the axes, and
+     * gives a key for the filled and unfilled points.
+     */
     public class ZplotLegend extends Plot {
 
-        /** Creates a legend for the Zijderveld plot containing this class.
-         * 
+        /**
+         * Creates a legend for the Zijderveld plot containing this class.
+         *
          * @param parent the graph display containing the legend
          * @param params the parameters of the legend
          * @param prefs the preferences containing the legend configuration
@@ -345,27 +372,32 @@ public class ZPlot extends Plot {
         }
 
         @Override
-        public void draw(Graphics2D g) {
+        public void draw(Graphics2D graphics) {
             final Rectangle2D dims = getDimensions();
             clearPoints();
-            final double xOrig = dims.getMinX() + getMargin() + getUnitSize() * 50;
+            final double xOrig =
+                    dims.getMinX() + getMargin() + getUnitSize() * 50;
             final double yOrig = dims.getMinY() + getMargin();
             final double textOffs = 25 * getUnitSize();
             final double lineOffs = 150 * getUnitSize();
 
-            g.setColor(Color.BLACK);
-            addPoint(null, new Point2D.Double(xOrig, yOrig), false, false, false);
-            addPoint(null, new Point2D.Double(xOrig, yOrig + lineOffs), true, false, false);
-            writeString(g, "vertical", (float) xOrig + 50 * getUnitSize(),
+            graphics.setColor(Color.BLACK);
+            addPoint(null, new Point2D.Double(xOrig, yOrig),
+                    false, false, false);
+            addPoint(null, new Point2D.Double(xOrig, yOrig + lineOffs),
+                    true, false, false);
+            writeString(graphics, "vertical",
+                    (float) xOrig + 50 * getUnitSize(),
                     (float) (yOrig + textOffs));
-            writeString(g, "horizontal", (float) (xOrig + 50 * getUnitSize()),
+            writeString(graphics, "horizontal",
+                    (float) (xOrig + 50 * getUnitSize()),
                     (float) (yOrig + lineOffs + textOffs));
             final AttributedString units = axes != null
-                    ? timesTenToThe("Units: A/m", axes.getMagnitude(), g)
-                    : timesTenToThe("Units: A/m", "?", g);
-            writeString(g, units, (float) xOrig,
+                    ? timesTenToThe("Units: A/m", axes.getMagnitude(), graphics)
+                    : timesTenToThe("Units: A/m", "?", graphics);
+            writeString(graphics, units, (float) xOrig,
                     (float) (yOrig + 2 * lineOffs + textOffs));
-            drawPoints(g);
+            drawPoints(graphics);
         }
     }
 }

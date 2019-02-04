@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.prefs.Preferences;
 
 import net.talvi.puffinplot.data.FisherValues;
 import net.talvi.puffinplot.data.GreatCircle;
@@ -32,17 +31,14 @@ import net.talvi.puffinplot.data.GreatCircles;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Site;
 import net.talvi.puffinplot.data.Vec3;
-import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 
 /**
- * An equal-area plot showing data for a site. For each sample
- * at the site, this plot shows the best-fitting great circle
- * (if it has been calculated) and PCA direction (if it 
- * has been calculated). The plot also shows the site mean 
- * direction as calculated by Fisher statistics or by great-circle
- * analysis.
- * 
+ * An equal-area plot showing data for a site. For each sample at the site, this
+ * plot shows the best-fitting great circle (if it has been calculated) and PCA
+ * direction (if it has been calculated). The plot also shows the site mean
+ * direction as calculated by Fisher statistics or by great-circle analysis.
+ *
  * @author pont
  */
 public class SiteEqAreaPlot extends EqAreaPlot {
@@ -66,10 +62,8 @@ public class SiteEqAreaPlot extends EqAreaPlot {
     
     /** Creates a site equal area plot with the supplied parameters.
      * 
-     * @param parent the graph display containing the plot
      * @param params the parameters of the plot
      * @param dimensions the initial dimensions of the plot
-     * @param prefs the preferences containing the plot configuration
      */
     public SiteEqAreaPlot(PlotParams params, Rectangle2D dimensions) {
         super(params);
@@ -78,9 +72,7 @@ public class SiteEqAreaPlot extends EqAreaPlot {
 
     /** Creates a site equal area plot with the supplied parameters.
      * 
-     * @param parent the graph display containing the plot
      * @param params the parameters of the plot
-     * @param prefs the preferences containing the plot configuration
      */
     public SiteEqAreaPlot(PlotParams params) {
         super(params);
@@ -118,39 +110,45 @@ public class SiteEqAreaPlot extends EqAreaPlot {
         for (GreatCircle circle: circles.getCircles()) {
             final Vec3 pole = circle.getPole();
             assert(pole.isWellFormed());
-            g.setColor(circle == currentGc ? getHighlightColour() : Color.BLACK);
-            final Vec3 segmentStart = pole.nearestOnCircle(circle.getPoints().get(0));
+            cachedGraphics.setColor(
+                    circle == currentGc ? getHighlightColour() : Color.BLACK);
+            final Vec3 segmentStart =
+                    pole.nearestOnCircle(circle.getPoints().get(0));
             final Vec3 segmentEnd = pole.nearestOnCircle(meanDir);
             drawGreatCircleSegment(segmentStart,
                     segmentEnd,circle.lastPoint());
             for (Vec3 p: circle.getPoints()) {
                 ShapePoint.build(this, project(p)).
-                        scale(0.8).filled(p.z>=0).build().draw(g);
+                        scale(0.8).filled(p.z>=0).build().draw(cachedGraphics);
                 //addPoint(null, project(p), p.z>=0, false, false);
-                final LineCache lineCache = projectGreatCircleSegment(p, pole.nearestOnCircle(p));
-                lineCache.draw(g);
+                final LineCache lineCache =
+                        projectGreatCircleSegment(p, pole.nearestOnCircle(p));
+                lineCache.draw(cachedGraphics);
             }
             final Vec3 nearestPoint = pole.nearestOnCircle(meanDir);
             final double thisRadius = Math.abs(meanDir.angleTo(nearestPoint));
             if (thisRadius > maxRadius) maxRadius = thisRadius;
             if (true || !gcCache.containsKey(circle)) {
-                final LineCache lineCache = projectGreatCircleSegment(meanDir, nearestPoint);
+                final LineCache lineCache =
+                        projectGreatCircleSegment(meanDir, nearestPoint);
                 gcCache.put(circle, lineCache);
             }
-            gcCache.get(circle).draw(g);
+            gcCache.get(circle).draw(cachedGraphics);
             ShapePoint.build(this, project(pole)).filled(pole.z>0).
-                    triangle().build().draw(g);
-            g.setColor(Color.BLACK);
+                    triangle().build().draw(cachedGraphics);
+            cachedGraphics.setColor(Color.BLACK);
         }
         
         final PlotPoint meanPoint = ShapePoint.build(this, project(meanDir)).
                 circle().scale(1.5).filled(meanDir.z>0).build();
-        meanPoint.draw(g);
+        meanPoint.draw(cachedGraphics);
         if (!(Double.isNaN(circles.getA95()) ||
                 Double.isInfinite(circles.getA95()))) {
             if (circles != gcsCache) {
-                final List<Vec3> smallCircle = meanDir.makeSmallCircle(circles.getA95());
-                final List<List<Vec3>> segments =  Vec3.interpolateEquatorPoints(smallCircle);
+                final List<Vec3> smallCircle =
+                        meanDir.makeSmallCircle(circles.getA95());
+                final List<List<Vec3>> segments =
+                        Vec3.interpolateEquatorPoints(smallCircle);
                 drawLineSegments(smallCircle);
                 gcsLineCache = new LineCache(getStroke(), getDashedStroke());
                 for (List<Vec3> part: segments) {
@@ -158,26 +156,27 @@ public class SiteEqAreaPlot extends EqAreaPlot {
                 }
                 gcsCache = circles;
             }
-            gcsLineCache.draw(g);
+            gcsLineCache.draw(cachedGraphics);
 
         }
         final List<String> strings = circles.toStrings();
-        writeString(g, strings.get(3)+"/"+strings.get(4), xo-radius, yo-radius);
+        writeString(cachedGraphics, strings.get(3) + "/" + strings.get(4),
+                xo - radius, yo - radius);
     }
     
     private void writeSampleLabel(Sample s, PlotPoint point) {
         if (prefs != null &&
                 prefs.getBoolean("plots.labelSamplesInSitePlots", false)) {
             final Point2D centre = point.getCentre();
-            putText(g, s.getNameOrDepth(), centre.getX(), centre.getY(),
-                    Direction.RIGHT,
+            putText(cachedGraphics, s.getNameOrDepth(),
+                    centre.getX(), centre.getY(), Direction.RIGHT,
                     0, 6);
         }
     }
     
     private void drawPcas(Site site) {
         final List<Sample> samples = site.getSamples();
-        if (samples==null || samples.isEmpty()) {
+        if (samples == null || samples.isEmpty()) {
             return;
         }
         
@@ -189,10 +188,10 @@ public class SiteEqAreaPlot extends EqAreaPlot {
                 final PlotPoint point =
                         ShapePoint.build(this, project(v)).
                         diamond().filled(v.z>0).build();
-                g.setColor(sample == params.getSample() ?
+                cachedGraphics.setColor(sample == params.getSample() ?
                         getHighlightColour() : Color.BLACK);
-                point.draw(g);
-                g.setColor(Color.BLACK);
+                point.draw(cachedGraphics);
+                cachedGraphics.setColor(Color.BLACK);
                 writeSampleLabel(sample, point);
             }
         }
@@ -200,8 +199,10 @@ public class SiteEqAreaPlot extends EqAreaPlot {
             return;
         }
         if (site.getGreatCircles() != null) {
-            // If there's a GC calculation, it takes precedence over
-            // a mean of PCAs, sample Fisher means, or imported directions.
+            /*
+             * If there's a GC calculation, it takes precedence over a mean of
+             * PCAs, sample Fisher means, or imported directions.
+             */
             return;
         }
         final FisherValues fisherMean = site.getFisherValues();
@@ -212,39 +213,41 @@ public class SiteEqAreaPlot extends EqAreaPlot {
         final PlotPoint meanPoint =
                 ShapePoint.build(this, project(meanDir)).
                 circle().scale(1.5).filled(meanDir.z>0).build();
-        g.setColor(Color.BLACK);
-        meanPoint.draw(g);
+        cachedGraphics.setColor(Color.BLACK);
+        meanPoint.draw(cachedGraphics);
         if (fisherMean.getN() > 1) {
             if (fisherMean != fisherCache) {
                 fisherLineCache = new LineCache(getStroke(), getDashedStroke());
                 if (fisherMean.isA95Valid()) {
-                    final List<Vec3> smallCircle = meanDir.makeSmallCircle(fisherMean.getA95());
-                    final List<List<Vec3>> segments =  Vec3.interpolateEquatorPoints(smallCircle);
+                    final List<Vec3> smallCircle =
+                            meanDir.makeSmallCircle(fisherMean.getA95());
+                    final List<List<Vec3>> segments =
+                            Vec3.interpolateEquatorPoints(smallCircle);
                     for (List<Vec3> part: segments) {
                         projectLineSegments(part, fisherLineCache);
                     }
                 }
                 fisherCache = fisherMean;
             }
-            fisherLineCache.draw(g);
+            fisherLineCache.draw(cachedGraphics);
         }
     }
 
     @Override
-    public void draw(Graphics2D g) {
-        updatePlotDimensions(g);
+    public void draw(Graphics2D graphics) {
+        updatePlotDimensions(graphics);
         drawAxes();
         clearPoints();
         final Sample sample = params.getSample();
         if (sample==null) return;
         final Site site = sample.getSite();
         if (site == null) {
-            writeString(g, "No sites defined.", xo-40, yo-20);
+            writeString(graphics, "No sites defined.", xo - 40, yo - 20);
             return;
         }
         drawGreatCircles(site);
         drawPcas(site);
-        drawPoints(g);
+        drawPoints(graphics);
     }
     
     @Override

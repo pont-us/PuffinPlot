@@ -30,7 +30,6 @@ import net.talvi.puffinplot.data.FisherValues;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.data.SuiteCalcs;
-import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 
 /**
@@ -40,17 +39,17 @@ public class SuiteParamsTable extends Plot {
 
     private final double us = getUnitSize();
     private final List<Double> xSpacing =
-            Arrays.asList(600*us, 400*us, 400*us, 400*us, 400*us, 350*us, 550*us);
+            Arrays.asList(600*us, 400*us, 400*us, 400*us,
+                    400*us, 350*us, 550*us);
     private final int ySpacing = (int) (120 * getUnitSize());
     private final List<String> headers = 
-            Arrays.asList(new String[] {"Param", "dec/φ", "inc/λ", "α95", "k", "N", "R"});
+            Arrays.asList(new String[] {"Param", "dec/φ", "inc/λ", "α95",
+                "k", "N", "R"});
     private final Preferences prefs;
     
     /** Creates a suite parameter table with the supplied parameters.
      * 
-     * @param parent the graph display containing the plot
      * @param params the parameters of the plot
-     * @param prefs the preferences containing the plot configuration
      */
     public SuiteParamsTable(PlotParams params) {
         super(params);
@@ -91,7 +90,8 @@ public class SuiteParamsTable extends Plot {
         final SuiteCalcs suiteCalcs = suite.getSuiteMeans();
         if (suiteCalcs==null) return;
         
-        points.add(new TextLinePoint(this, g, 10, null, null, headers, xSpacing, Color.BLACK));
+        points.add(new TextLinePoint(this, g, 10, null, null, headers,
+                xSpacing, Color.BLACK));
 
         final int columns = headers.size();
         float yPos = 2 * ySpacing;
@@ -100,9 +100,13 @@ public class SuiteParamsTable extends Plot {
             for (int grouping=0; grouping<2; grouping++) {
                 final SuiteCalcs.Means means;
                 if (type==0 /* direction */) {
-                    means = grouping==0 ? suiteCalcs.getDirsBySite() : suiteCalcs.getDirsBySample();
+                    means = grouping==0 ?
+                            suiteCalcs.getDirsBySite() :
+                            suiteCalcs.getDirsBySample();
                 } else /* VGP */ {
-                    means = grouping==0 ? suiteCalcs.getVgpsBySite() : suiteCalcs.getVgpsBySample();
+                    means = grouping==0 ?
+                            suiteCalcs.getVgpsBySite() :
+                            suiteCalcs.getVgpsBySample();
                 }
                 final List<String> values = new ArrayList<>(columns);
                 values.addAll(Collections.nCopies(columns, "--"));

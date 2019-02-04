@@ -21,12 +21,10 @@ import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.prefs.Preferences;
 
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Vec3;
-import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 
 import static java.lang.Math.abs;
@@ -36,18 +34,17 @@ import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
 
 /**
- * An experimental ternary plot for a sample's magnetic moment data.
- * Each point on the plot represents a magnetic moment measurement.
- * Each of the ternary plot's axes corresponds to one of the three
- * magnetic moment measurement axes (x, y, and z). A path on the plot
- * thus shows how the relative intensities of the three orthogonal
- * magnetization components vary during treatment. For a normal 
- * palaeomagnetic study, this is unlikely to be useful. It is 
- * designed for use with Lowrie's (1990) technique of thermal
- * demagnetization of a composite triaxial IRM. In this case the
- * three axes of the graph represent three different coercivity
- * components, and the path of points for a sample represents
- * the relative response of those components to thermal demagnetization.
+ * An experimental ternary plot for a sample's magnetic moment data. Each point
+ * on the plot represents a magnetic moment measurement. Each of the ternary
+ * plot's axes corresponds to one of the three magnetic moment measurement axes
+ * (x, y, and z). A path on the plot thus shows how the relative intensities of
+ * the three orthogonal magnetization components vary during treatment. For a
+ * normal palaeomagnetic study, this is unlikely to be useful. It is designed
+ * for use with Lowrie's (1990) technique of thermal demagnetization of a
+ * composite triaxial IRM. In this case the three axes of the graph represent
+ * three different coercivity components, and the path of points for a sample
+ * represents the relative response of those components to thermal
+ * demagnetization.
  *
  * @author pont
  */
@@ -55,9 +52,7 @@ public class TernaryPlot extends Plot {
 
     /** Creates a ternary plot with the supplied parameters.
      * 
-     * @param parent the graph display containing the plot
      * @param params the parameters of the plot
-     * @param prefs the preferences containing the plot configuration
      */
     public TernaryPlot(PlotParams params) {
         super(params);

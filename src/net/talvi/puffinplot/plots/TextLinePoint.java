@@ -32,7 +32,7 @@ import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.TreatmentStep;
 
 /**
- * <p>A ‘data point’ which actually consists of a line of text.</p>
+ * A ‘data point’ which actually consists of a line of text.
  * 
  * @author pont
  */
@@ -48,11 +48,12 @@ class TextLinePoint implements PlotPoint {
     private final double xMin;
     private final Color colour;
 
-    public TextLinePoint(Plot plot, Graphics2D g, double yOffset, TreatmentStep d,
+    public TextLinePoint(Plot plot, Graphics2D graphics, double yOffset,
+            TreatmentStep step,
             Sample sample, List<String> values, List<Double> xSpacing,
             Color colour) {
         this.plot = plot;
-        this.treatmentStep = d;
+        this.treatmentStep = step;
         this.sample = sample;
         this.yPos = yOffset + plot.getDimensions().getMinY();
         this.xSpacing = xSpacing;
@@ -60,7 +61,7 @@ class TextLinePoint implements PlotPoint {
         this.colour = colour;
         double xPos = 10;
         xMin = plot.getDimensions().getMinX();
-        final FontMetrics metrics = g.getFontMetrics();
+        final FontMetrics metrics = graphics.getFontMetrics();
         for (int i=0; i<values.size(); i++) {
             final String s = values.get(i);
             final double space = xSpacing.get(i);
@@ -69,7 +70,8 @@ class TextLinePoint implements PlotPoint {
             final AttributedCharacterIterator ai = as.getIterator();
             strings.add(ai);
             final double x = xMin + xPos;
-            final Rectangle2D b = metrics.getStringBounds(ai, 0, s.length(), g);
+            final Rectangle2D b =
+                    metrics.getStringBounds(ai, 0, s.length(), graphics);
             final Rectangle2D b2 = new Rectangle2D.Double(b.getMinX() + x,
                     b.getMinY() + yPos, b.getWidth(), b.getHeight());
             if (bbox == null) {
@@ -100,10 +102,9 @@ class TextLinePoint implements PlotPoint {
              * Note: TextLayout is more accurate than
              * FontMetrics::getStringBounds, since the latter uses a plain
              * (non-attributed) character iterator -- see e.g.
-             * https://stackoverflow.com/a/24019384/6947739 . There's still
-             * a one-pixel horizontal offset between negative and
-             * non-negative numbers; so far I've found no possible remedy for
-             * this.
+             * https://stackoverflow.com/a/24019384/6947739 . There's still a
+             * one-pixel horizontal offset between negative and non-negative
+             * numbers; so far I've found no possible remedy for this.
              */
             final TextLayout tl = new TextLayout(s, g.getFontRenderContext());
             final Rectangle2D bounds = tl.getBounds();
