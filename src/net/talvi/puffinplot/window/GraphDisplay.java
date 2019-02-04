@@ -56,14 +56,12 @@ import org.freehep.util.UserProperties;
 import org.w3c.dom.DOMImplementation;
 
 /**
- * A graphical UI component which lays out and draws one or more plots.
- * It may allow the user to resize and rearrange the plots,
- * and provides facilities to export the display to a 
- * file and to print it via the standard Java printing interface.
- * This is an abstract superclass which cannot be instantiated
- * directly; concrete subclasses must implement the {@code print}
- * method.
- * 
+ * A graphical UI component which lays out and draws one or more plots. It may
+ * allow the user to resize and rearrange the plots, and provides facilities to
+ * export the display to a file and to print it via the standard Java printing
+ * interface. This is an abstract superclass which cannot be instantiated
+ * directly; concrete subclasses must implement the {@code print} method.
+ *
  * @author pont
  */
 public abstract class GraphDisplay extends JPanel implements Printable {
@@ -92,16 +90,18 @@ public abstract class GraphDisplay extends JPanel implements Printable {
             AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .2f);
     private static final AlphaComposite STRONG_COMPOSITE =
             AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .8f);
-    private final List<CurrentDatumListener> currentDatumListeners = 
-            new LinkedList<>();
+    private final List<CurrentTreatmentStepListener>
+            currentTreatmentStepListeners = new LinkedList<>();
          
     GraphDisplay() {
         setPreferredSize(new Dimension(1200, 800));
         setMaximumSize(getPreferredSize());
         zoomTransform = AffineTransform.getScaleInstance(1.0, 1.0);
         setLayout(null);
-        // LinkedHashMap because ZplotLegend has to be drawn after Zplot,
-        // since it must read the order of magnitude from the axes.
+        /*
+         * LinkedHashMap because ZplotLegend has to be drawn after Zplot, since
+         * it must read the order of magnitude from the axes.
+         */
         plots = new LinkedHashMap<>();
         setOpaque(true);
         setBackground(Color.WHITE);
@@ -120,14 +120,14 @@ public abstract class GraphDisplay extends JPanel implements Printable {
      * and positions
      */
     public String getPlotSizeString() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder();
         for (Plot plot: plots.values()) {
-            sb.append(plot.getName());
-            sb.append(" ");
-            sb.append(plot.getDimensionsAsString());
-            sb.append(" ");
+            stringBuilder.append(plot.getName());
+            stringBuilder.append(" ");
+            stringBuilder.append(plot.getDimensionsAsString());
+            stringBuilder.append(" ");
         }
-        return sb.toString();
+        return stringBuilder.toString();
     }
 
     /**
@@ -136,10 +136,10 @@ public abstract class GraphDisplay extends JPanel implements Printable {
      * @return a list of the plots which are currently visible
      */
     public List<Plot> getVisiblePlots() {
-        final Collection<Plot> ps = getPlots();
-        final List<Plot> result = new ArrayList<>(ps.size());
-        for (Plot p: ps) {
-            if (p.isVisible()) result.add(p);
+        final Collection<Plot> allPlots = getPlots();
+        final List<Plot> result = new ArrayList<>(allPlots.size());
+        for (Plot plot: allPlots) {
+            if (plot.isVisible()) result.add(plot);
         }
         return result;
     }
@@ -156,7 +156,6 @@ public abstract class GraphDisplay extends JPanel implements Printable {
     /**
      * Returns the plot with a specified class name.
      * 
-     * @param name the name of a subclass of {@code Plot}
      * @return the plot with the given class, or {@code null} if there is none
      */
     public Plot getPlotByClass(Class plotClass) {
@@ -170,8 +169,8 @@ public abstract class GraphDisplay extends JPanel implements Printable {
      */
     @Override
     public void paint(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g;
-        AffineTransform savedTransform = g2.getTransform();
+        final Graphics2D g2 = (Graphics2D) g;
+        final AffineTransform savedTransform = g2.getTransform();
         g2.transform(zoomTransform);
         super.paint(g2); // draws background and any components
         g2.setRenderingHints(PuffinRenderingHints.getInstance());
@@ -181,10 +180,10 @@ public abstract class GraphDisplay extends JPanel implements Printable {
 
         if (!isDragPlotMode()) {
             if (draggingSelection) {
-                Rectangle2D r = new Rectangle2D.Double();
+                final Rectangle2D r = new Rectangle2D.Double();
                 r.setFrameFromDiagonal(mouseListener.startPoint,
                         mouseListener.currentDragPoint);
-                Rectangle2D rUnzoomed = new Rectangle2D.Double();
+                final Rectangle2D rUnzoomed = new Rectangle2D.Double();
                 rUnzoomed.setFrameFromDiagonal(
                         getAntiZoom().transform(mouseListener.startPoint, null),
                         getAntiZoom().transform(mouseListener.currentDragPoint,
@@ -202,10 +201,12 @@ public abstract class GraphDisplay extends JPanel implements Printable {
                 g2.setComposite(STRONG_COMPOSITE);
                 g2.draw(r);
             } else {
-                for (Plot plot: visiblePlots) plot.draw(g2);
+                for (Plot plot: visiblePlots) {
+                    plot.draw(g2);
+                }
             }
         } else {
-            for (Plot plot : visiblePlots) {
+            for (Plot plot: visiblePlots) {
                 float fontSize = plot.getFontSize() * 1.5f;
                 int margin = plot.getMargin();
                 g2.setPaint(Color.ORANGE);
@@ -286,7 +287,9 @@ public abstract class GraphDisplay extends JPanel implements Printable {
      * Resets each plot's size and position to their defaults.
      */
     public void resetLayout() {
-        for (Plot plot: plots.values()) plot.setDimensionsToDefault();
+        for (Plot plot: plots.values()) {
+            plot.setDimensionsToDefault();
+        }
         repaint();
     }
 
@@ -338,7 +341,7 @@ public abstract class GraphDisplay extends JPanel implements Printable {
         private void updateDraggingPlot() {
              // When plots overlap, pick the smallest.
             double smallestSize = Double.MAX_VALUE;
-            for (Plot plot : getVisiblePlots()) {
+            for (Plot plot: getVisiblePlots()) {
                 Rectangle2D dims = plot.getDimensions();
                 if (dims.contains(startPoint)) {
                     double size = dims.getWidth() * dims.getHeight();
@@ -351,15 +354,25 @@ public abstract class GraphDisplay extends JPanel implements Printable {
             if (getDraggingPlot() != null) {
                 oldDims =
                         (Rectangle2D) getDraggingPlot().getDimensions().clone();
-                double relX = (startPoint.getX() - oldDims.getMinX());
-                double relY = (startPoint.getY() - oldDims.getMinY());
+                final double relX = (startPoint.getX() - oldDims.getMinX());
+                final double relY = (startPoint.getY() - oldDims.getMinY());
                 int sidesTmp = 0;
-                double margin = getDraggingPlot().getMargin();
-                if (relX < margin) sidesTmp |= LEFT;
-                if (relX > oldDims.getWidth() - margin) sidesTmp |= RIGHT;
-                if (relY < margin) sidesTmp |= TOP;
-                if (relY > oldDims.getHeight() - margin) sidesTmp |= BOTTOM;
-                if (sidesTmp==0) sidesTmp = ALLSIDES;
+                final double margin = getDraggingPlot().getMargin();
+                if (relX < margin) {
+                    sidesTmp |= LEFT;
+                }
+                if (relX > oldDims.getWidth() - margin) {
+                    sidesTmp |= RIGHT;
+                }
+                if (relY < margin) {
+                    sidesTmp |= TOP;
+                }
+                if (relY > oldDims.getHeight() - margin) {
+                    sidesTmp |= BOTTOM;
+                }
+                if (sidesTmp == 0) {
+                    sidesTmp = ALLSIDES;
+                }
                 sides = sidesTmp;
             }
         }
@@ -374,7 +387,9 @@ public abstract class GraphDisplay extends JPanel implements Printable {
             draggee = null;
             startPoint = currentDragPoint = 
                     getAntiZoom().transform(e.getPoint(), null);
-            if (isDragPlotMode()) updateDraggingPlot();
+            if (isDragPlotMode()) {
+                updateDraggingPlot();
+            }
             else draggingSelection = true;
             currentButton = e.getButton();
         }
@@ -386,32 +401,42 @@ public abstract class GraphDisplay extends JPanel implements Printable {
          */
         @Override
         public void mouseDragged(MouseEvent e) {
-            Point2D thisPoint = getAntiZoom().transform(e.getPoint(), null);
+            final Point2D thisPoint =
+                    getAntiZoom().transform(e.getPoint(), null);
             if (isDragPlotMode() && getDraggingPlot() != null) {
-                double dx = thisPoint.getX() - startPoint.getX();
-                double dy = thisPoint.getY() - startPoint.getY();
+                final double dx = thisPoint.getX() - startPoint.getX();
+                final double dy = thisPoint.getY() - startPoint.getY();
                 double x0 = oldDims.getMinX();
                 double x1 = oldDims.getMaxX();
                 double y0 = oldDims.getMinY();
                 double y1 = oldDims.getMaxY();
-                if ((sides & LEFT)!=0) x0+=dx;
-                if ((sides & TOP)!=0) y0+=dy;
-                if ((sides & RIGHT)!=0) x1+=dx;
-                if ((sides & BOTTOM)!=0) y1+=dy;
                 
-                double dragMargin = getDraggingPlot().getMargin();
+                if ((sides & LEFT) != 0) {
+                    x0 += dx;
+                }
+                if ((sides & TOP) != 0) {
+                    y0 += dy;
+                }
+                if ((sides & RIGHT) != 0) {
+                    x1 += dx;
+                }
+                if ((sides & BOTTOM) != 0) {
+                    y1 += dy;
+                }
+                
+                final double dragMargin = getDraggingPlot().getMargin();
                 // Check for minimum dimensions
-                if (x1-x0 < 3*dragMargin) {
+                if (x1 - x0 < 3 * dragMargin) {
                     x0 = getDraggingPlot().getDimensions().getMinX();
                     x1 = getDraggingPlot().getDimensions().getMaxX();
-                } 
-                if (y1-y0 < 3*dragMargin) {
+                }
+                if (y1 - y0 < 3 * dragMargin) {
                     y0 = getDraggingPlot().getDimensions().getMinY();
                     y1 = getDraggingPlot().getDimensions().getMaxY();
                 }
-                Rectangle2D newDims =
+                final Rectangle2D newDimensions =
                         new Rectangle2D.Double(x0, y0, x1 - x0, y1 - y0);
-                getDraggingPlot().setDimensions(newDims);
+                getDraggingPlot().setDimensions(newDimensions);
                 repaint();
             } else {
                 currentDragPoint = thisPoint;
@@ -441,24 +466,29 @@ public abstract class GraphDisplay extends JPanel implements Printable {
             final Point2D currentMovePoint = e.getPoint();
             TreatmentStep currentTreatmentStep = null;
             for (Plot plot: getPlots()) {
-                if (!plot.isVisible()) continue;
-                final TreatmentStep d = plot.getDatumForPosition(currentMovePoint);
-                if (d != null) {
-                    currentTreatmentStep = d;
+                if (!plot.isVisible()) {
+                    continue;
+                }
+                final TreatmentStep step =
+                        plot.getDatumForPosition(currentMovePoint);
+                if (step != null) {
+                    currentTreatmentStep = step;
                     break;
                 }
             }
             if (currentTreatmentStep == previousTreatmentStep) {
                 return;
             }
-            for (CurrentDatumListener listener: currentDatumListeners) {
-                listener.datumChanged(currentTreatmentStep);
+            for (CurrentTreatmentStepListener listener:
+                    currentTreatmentStepListeners) {
+                listener.treatmentStepChanged(currentTreatmentStep);
             }
             previousTreatmentStep = currentTreatmentStep;
         }
 
         /**
          * Returns the currently depressed mouse button.
+         *
          * @return the currently depressed mouse button.
          */
         public int getCurrentButton() {
@@ -544,29 +574,28 @@ public abstract class GraphDisplay extends JPanel implements Printable {
     }
     
     /**
-     * Add a listener for changes to the current datum (i.e. the datum
-     * related to the point under the mouse pointer). A listener can
-     * be added multiple times, and will in that case be called multiple
-     * times.
-     * 
+     * Add a listener for changes to the current datum (i.e. the datum related
+     * to the point under the mouse pointer). A listener can be added multiple
+     * times, and will in that case be called multiple times.
+     *
      * @param listener the datum change listener to add
      */
-    public void addCurrentDatumListener(CurrentDatumListener listener) {
-        currentDatumListeners.add(listener);
+    public void addCurrentDatumListener(CurrentTreatmentStepListener listener) {
+        currentTreatmentStepListeners.add(listener);
     }
     
     /**
-     * Remove a datum change listener. If the specified listener has
-     * not been added, nothing will happen and no exception will be
-     * thrown. If the same listener has been added multiple times and
-     * there are multiple instances of it in the list of listeners,
-     * this method will only remove the first instance. This method
-     * can be called repeatedly to remove multiple instances of the
-     * same listener.
-     * 
+     * Remove a datum change listener. If the specified listener has not been
+     * added, nothing will happen and no exception will be thrown. If the same
+     * listener has been added multiple times and there are multiple instances
+     * of it in the list of listeners, this method will only remove the first
+     * instance. This method can be called repeatedly to remove multiple
+     * instances of the same listener.
+     *
      * @param listener the datum change listener to remove
      */
-    public void removeCurrentDatumListener(CurrentDatumListener listener) {
-        currentDatumListeners.remove(listener);
+    public void removeCurrentDatumListener(
+            CurrentTreatmentStepListener listener) {
+        currentTreatmentStepListeners.remove(listener);
     }
 }

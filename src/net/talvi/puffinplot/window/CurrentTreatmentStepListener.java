@@ -19,21 +19,20 @@ package net.talvi.puffinplot.window;
 import net.talvi.puffinplot.data.TreatmentStep;
 
 /**
- * A listener for changes in the current datum (i.e. treatment step).
- * "Current" in this context means the one over which the mouse pointer
- * is hovering.
- * 
+ * A listener for changes in the current treatment step. "Current" in this
+ * context means the one over which the mouse pointer is hovering.
+ *
  * @author pont
  */
-public interface CurrentDatumListener {
+public interface CurrentTreatmentStepListener {
     
     /**
-     * Called when the current datum changes, generally as a result of
+     * Called when the current treatment step changes, generally as a result of
      * the mouse pointer moving.
-     * 
-     * @param d the datum represented by the point currently under the mouse
-     * pointer, or {@code null} if there is no datum-related point under the
-     * mouse pointer.
+     *
+     * @param d the treatment step represented by the point currently under the
+     * mouse pointer, or {@code null} if there is no treatment-step-related
+     * point under the mouse pointer.
      */
-    public void datumChanged(TreatmentStep d);
+    public void treatmentStepChanged(TreatmentStep d);
 }

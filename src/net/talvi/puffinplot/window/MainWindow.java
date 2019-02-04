@@ -40,11 +40,10 @@ import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.Sample;
 
 /**
- * The main window of the PuffinPlot application. The window is chiefly
- * occupied by {@link MainGraphDisplay}, which shows a configurable 
- * selection of plots. Various controls and information panels are arranged
- * around the edges.
- * 
+ * The main window of the PuffinPlot application. The window is chiefly occupied
+ * by {@link MainGraphDisplay}, which shows a configurable selection of plots.
+ * Various controls and information panels are arranged around the edges.
+ * * 
  * @see MainGraphDisplay
  * @see MainMenuBar
  * @see ControlPanel
@@ -115,10 +114,10 @@ public final class MainWindow extends JFrame {
         mainPanel.add(splitPane);
         splitPane.setVisible(false);
         
-        final Container cp = getContentPane();
-        cp.setLayout(new BoxLayout(cp, BoxLayout.Y_AXIS));
-        cp.add(controlPanel);
-        cp.add(mainPanel);
+        final Container contentPane = getContentPane();
+        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
+        contentPane.add(controlPanel);
+        contentPane.add(mainPanel);
         setMaximumSize(scrollPane.getMaximumSize());
         
         setTransferHandler(handler);
@@ -145,6 +144,7 @@ public final class MainWindow extends JFrame {
 
     /**
      * Returns this window's sample chooser.
+     *
      * @return this window's sample chooser
      */
     public SampleChooser getSampleChooser() {
@@ -152,8 +152,8 @@ public final class MainWindow extends JFrame {
     }
     
     /**
-     * Updates this window's sample data panel. This forces the display
-     * to reflect any changes in the current data.
+     * Updates this window's sample data panel. This forces the display to
+     * reflect any changes in the current data.
      */
     public void updateSampleDataPanel() {
         splitPane.setDividerSize(sampleDataPanel.isVisible() ? 
@@ -162,12 +162,10 @@ public final class MainWindow extends JFrame {
     }
     
     /**
-     * Informs this window that the list of currently loaded data suites
-     * has changed.
-     * This method should also be called when the name of a suite changes,
-     * and when samples are added to or removed from the current suite.
-     * Calling this method allows this window to update its display
-     * accordingly.
+     * Informs this window that the list of currently loaded data suites has
+     * changed. This method should also be called when the name of a suite
+     * changes, and when samples are added to or removed from the current suite.
+     * Calling this method allows this window to update its display accordingly.
      */
     public void suitesChanged() {
         sampleChooser.updateSuite();
@@ -179,9 +177,8 @@ public final class MainWindow extends JFrame {
     }
 
     /**
-     * Informs this window that the current sample has changed.
-     * Calling this method allows this window to update its display
-     * accordingly.
+     * Informs this window that the current sample has changed. Calling this
+     * method allows this window to update its display accordingly.
      */
     public void sampleChanged() {
         getControlPanel().updateSample();
@@ -194,6 +191,7 @@ public final class MainWindow extends JFrame {
     
     /**
      * Returns this window's menu bar.
+     *
      * @return this window's menu bar
      */
     public MainMenuBar getMainMenuBar() {
@@ -202,6 +200,7 @@ public final class MainWindow extends JFrame {
 
     /**
      * Returns this window's graph display.
+     *
      * @return this window's graph display
      */
     public MainGraphDisplay getGraphDisplay() {
@@ -210,6 +209,7 @@ public final class MainWindow extends JFrame {
 
     /**
      * Returns the control panel for the plots displayed in this window.
+     *
      * @return the control panel for the plots displayed in this window
      */
     public ControlPanel getControlPanel() {
@@ -231,9 +231,9 @@ public final class MainWindow extends JFrame {
             final Transferable transferable = trSupp.getTransferable();
 
             try {
-                List<File> files =
-                    (List<File>)transferable.getTransferData(DataFlavor.javaFileListFlavor);
-
+                final List<File> files = (List<File>)
+                        transferable.getTransferData(
+                                DataFlavor.javaFileListFlavor);
                 app.openFiles(files, true);
                 
             } catch (UnsupportedFlavorException | IOException e) {
