@@ -471,9 +471,9 @@ public class TreatmentStepTest {
     @Test
     public void testToSummaryStringThermalAndDegauss() {
         final Sample sample = new Sample("test", null);
-        final TreatmentStep d0 = makeSimpleDatum(TreatmentType.THERMAL,
+        final TreatmentStep d0 = makeSimpleTreatmentStep(TreatmentType.THERMAL,
                 75, 24.1, -23.2, 7.123e-3);
-        final TreatmentStep d1 = makeSimpleDatum(TreatmentType.DEGAUSS_XYZ,
+        final TreatmentStep d1 = makeSimpleTreatmentStep(TreatmentType.DEGAUSS_XYZ,
                 0.35, 0.0, 3.5, 1.45e-2);
         sample.addTreatmentStep(d0);
         sample.addTreatmentStep(d1);
@@ -489,9 +489,9 @@ public class TreatmentStepTest {
     @Test
     public void testToSummaryStringNoneAndIrm() {
         final Sample sample = new Sample("test", null);
-        final TreatmentStep d0 = makeSimpleDatum(TreatmentType.NONE,
+        final TreatmentStep d0 = makeSimpleTreatmentStep(TreatmentType.NONE,
                 75, 24.1, -23.2, 7.123e-3);
-        final TreatmentStep d1 = makeSimpleDatum(TreatmentType.IRM,
+        final TreatmentStep d1 = makeSimpleTreatmentStep(TreatmentType.IRM,
                 0.35, 0.0, 3.5, 1.45e-2);
         sample.addTreatmentStep(d0);
         sample.addTreatmentStep(d1);
@@ -561,32 +561,33 @@ public class TreatmentStepTest {
         return TreatmentStep.collectMeasurementTypes(tsList);
     }
     
-    private static TreatmentStep makeSimpleDatum(TreatmentType treatmentType,
+    private static TreatmentStep makeSimpleTreatmentStep(
+            TreatmentType treatmentType,
             double level, double dec, double inc, double moment) {
-        final TreatmentStep d = new TreatmentStep();
-        d.setTreatmentType(treatmentType);
+        final TreatmentStep step = new TreatmentStep();
+        step.setTreatmentType(treatmentType);
         switch (treatmentType) {
             case NONE:
             case UNKNOWN:
                 break;
             case THERMAL:
-                d.setTemp(level);
+                step.setTemp(level);
                 break;
             case IRM:
-                d.setIrmField(level);
+                step.setIrmField(level);
                 break;
             case DEGAUSS_XYZ:
-                d.setAfX(level);
-                d.setAfY(level);
+                step.setAfX(level);
+                step.setAfY(level);
                 // fall-through intentional
             case DEGAUSS_Z:
-                d.setAfZ(level);
+                step.setAfZ(level);
                 break;
             default:
                 throw new Error("Unhandled treatment type "+ treatmentType);
                 
         }
-        d.setMoment(Vec3.fromPolarDegrees(moment, inc, dec));
-        return d;
+        step.setMoment(Vec3.fromPolarDegrees(moment, inc, dec));
+        return step;
     }
 }

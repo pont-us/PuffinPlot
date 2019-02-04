@@ -470,7 +470,7 @@ public abstract class GraphDisplay extends JPanel implements Printable {
                     continue;
                 }
                 final TreatmentStep step =
-                        plot.getDatumForPosition(currentMovePoint);
+                        plot.getTreatmentStepForPosition(currentMovePoint);
                 if (step != null) {
                     currentTreatmentStep = step;
                     break;
@@ -580,7 +580,8 @@ public abstract class GraphDisplay extends JPanel implements Printable {
      *
      * @param listener the datum change listener to add
      */
-    public void addCurrentDatumListener(CurrentTreatmentStepListener listener) {
+    public void addCurrentTreatmentStepListener(
+            CurrentTreatmentStepListener listener) {
         currentTreatmentStepListeners.add(listener);
     }
     
@@ -594,7 +595,7 @@ public abstract class GraphDisplay extends JPanel implements Printable {
      *
      * @param listener the datum change listener to remove
      */
-    public void removeCurrentDatumListener(
+    public void removeCurrentTreatmentStepListener(
             CurrentTreatmentStepListener listener) {
         currentTreatmentStepListeners.remove(listener);
     }

@@ -1,5 +1,5 @@
 /* This file is part of PuffinPlot, a program for palaeomagnetic
- * data plotting and analysis. Copyright 2012-2019 Pontus Lurcock.
+ * treatmentSteps plotting and analysis. Copyright 2012-2019 Pontus Lurcock.
  *
  * PuffinPlot is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,12 +44,11 @@ import static net.talvi.puffinplot.data.file.TwoGeeHelper.oerstedToTesla;
 import static net.talvi.puffinplot.data.file.TwoGeeHelper.treatTypeFromString;
 
 /**
- * A loader for data files produced by the Long Core software supplied
- * with 2G Enterprises magnetometers.
- * 
+ * A loader for the DAT files produced by the Long Core software supplied with
+ * 2G Enterprises magnetometers.
+ *
  * @author pont
  */
-
 public class TwoGeeLoader extends AbstractFileLoader {
 
     private static final Logger LOGGER =
@@ -86,11 +85,14 @@ public class TwoGeeLoader extends AbstractFileLoader {
     
     /**
      * Creates a new 2G loader using the supplied parameters.
-     * 
+     *
      * @param file the file to read
-     * @param protocol the measurement protocol which was used to create the data
-     * @param sensorLengths the effective sensor lengths (only used for long core data)
-     * @param usePolarMoment read magnetic moment from dec/inc/intensity, not x/y/z
+     * @param protocol the measurement protocol which was used to create the
+     * treatmentSteps
+     * @param sensorLengths the effective sensor lengths (only used for long
+     * core treatmentSteps)
+     * @param usePolarMoment read magnetic moment from dec/inc/intensity, not
+     * x/y/z
      */
     public TwoGeeLoader(File file, Protocol protocol, Vec3 sensorLengths,
             boolean usePolarMoment) {
@@ -122,35 +124,40 @@ public class TwoGeeLoader extends AbstractFileLoader {
             for (int i=0; i<fieldNames.length; i++)
                 fields.put(fieldNames[i], i);
         }
-        data = new LinkedList<>();
+        treatmentSteps = new LinkedList<>();
         Vec3 trayMoment = null; // only used for TRAY_FIRST and TRAY_NORMAL_IGNORE
         String line;
         while ((line = reader.readLine()) != null) {
-            final TreatmentStep d = readDatum(line, reader.getLineNumber());
-            // skip lines containing no data at all
-            if (d == null || (!d.hasMagSus() && !d.hasMagMoment())) continue;
-            // if the first line only is tray data, save it
-            if (protocol == Protocol.TRAY_FIRST && reader.getLineNumber() == 2) {
-                trayMoment = d.getMoment(Correction.NONE);
+            final TreatmentStep step =
+                    readTreatmentStep(line, reader.getLineNumber());
+            // skip lines containing no treatmentSteps at all
+            if (step == null || (!step.hasMagSus() && !step.hasMagMoment())) {
                 continue;
             }
-            if (d.isMagSusOnly()) {
-                /* The only way we can tie a mag. sus. value to a
-                * treatment step is by assuming it comes after
-                * the associated magnetic moment measurement.
-                * If the first line is MS only, or if the previous
-                * datum is also MS only, then there's no moment measurement
-                * to attach it to, and it gets its own datum.
-                */
-                if (data.size()>0) {
-                    final TreatmentStep dPrev = data.get(data.size() - 1);
-                    if (!dPrev.isMagSusOnly()) {
-                        dPrev.setMagSus(d.getMagSus());
+            // if the first line only is tray treatmentSteps, save it
+            if (protocol == Protocol.TRAY_FIRST &&
+                    reader.getLineNumber() == 2) {
+                trayMoment = step.getMoment(Correction.NONE);
+                continue;
+            }
+            if (step.isMagSusOnly()) {
+                /*
+                 * The only way we can tie a mag. sus. value to a treatment step
+                 * is by assuming it comes after the associated magnetic moment
+                 * measurement. If the first line is MS only, or if the previous
+                 * datum is also MS only, then there's no moment measurement to
+                 * attach it to, and it gets its own datum.
+                 */
+                if (treatmentSteps.size()>0) {
+                    final TreatmentStep previousStep =
+                            treatmentSteps.get(treatmentSteps.size() - 1);
+                    if (!previousStep.isMagSusOnly()) {
+                        previousStep.setMagSus(step.getMagSus());
                     } else {
-                        data.add(d);
+                        treatmentSteps.add(step);
                     }
                 } else {
-                    data.add(d);
+                    treatmentSteps.add(step);
                 }
             } else {
                 TreatmentStep tray, normal, yflip;
@@ -158,51 +165,61 @@ public class TwoGeeLoader extends AbstractFileLoader {
                 switch (protocol) {
                     case NORMAL:
                         //data.add(d);
-                        combined = d;
+                        combined = step;
                         break;
                     case TRAY_NORMAL:
-                        tray = d;
-                        normal = readDatum(reader.readLine(), reader.getLineNumber());
+                        tray = step;
+                        normal = readTreatmentStep(reader.readLine(),
+                                reader.getLineNumber());
                         //data.add(combine2(tray, normal, true));
                         combined = combine2(tray, normal, true);
                         break;
                     case TRAY_NORMAL_IGNORE:
-                        tray = d;
-                        normal = readDatum(reader.readLine(), reader.getLineNumber());
-                        if (trayMoment == null) trayMoment = tray.getMoment(Correction.NONE);
-                        normal.setMoment(normal.getMoment(Correction.NONE).minus(trayMoment));
+                        tray = step;
+                        normal = readTreatmentStep(reader.readLine(),
+                                reader.getLineNumber());
+                        if (trayMoment == null) {
+                            trayMoment = tray.getMoment(Correction.NONE);
+                        }
+                        normal.setMoment(normal.getMoment(Correction.NONE).
+                                minus(trayMoment));
                         //data.add(normal);
                         combined = normal;
                         break;
                     case NORMAL_TRAY:
-                        normal = d;
-                        tray = readDatum(reader.readLine(), reader.getLineNumber());
+                        normal = step;
+                        tray = readTreatmentStep(reader.readLine(),
+                                reader.getLineNumber());
                         //data.add(combine2(tray, normal, false));
                         combined = combine2(tray, normal, false);
                         break;
                     case TRAY_NORMAL_YFLIP:
-                        tray = d;
-                        normal = readDatum(reader.readLine(), reader.getLineNumber());
-                        /* We're using the two-position measurement protocol,
-                        * so we will read three lines (tray, normal, y-flipped)
-                        * and synthesize a TreatmentStep from them. */
-                        yflip = readDatum(reader.readLine(), reader.getLineNumber());
+                        tray = step;
+                        normal = readTreatmentStep(reader.readLine(),
+                                reader.getLineNumber());
+                        /*
+                         * We're using the two-position measurement protocol, so
+                         * we will read three lines (tray, normal, y-flipped)
+                         * and synthesize a TreatmentStep from them.
+                         */
+                        yflip = readTreatmentStep(reader.readLine(),
+                                reader.getLineNumber());
                         //data.add(combine3(tray, normal, yflip));
                         combined = combine3(tray, normal, yflip);
                         break;
                     case TRAY_FIRST:
                         // can't use combine2 as we want the rest of the
-                        // data from d, not the tray measurement
-                        final Vec3 normV = d.getMoment(Correction.NONE);
-                        d.setMoment(normV.minus(trayMoment));
-                        // data.add(d);
-                        combined = d;
+                        // treatmentSteps from d, not the tray measurement
+                        final Vec3 normV = step.getMoment(Correction.NONE);
+                        step.setMoment(normV.minus(trayMoment));
+                        // treatmentSteps.add(d);
+                        combined = step;
                         break;
                 }
                 if (combined == null) {
                     break;
                 } else {
-                    data.add(combined);
+                    treatmentSteps.add(combined);
                 }
             }
             if (messages.size() > MAX_WARNINGS) {
@@ -213,9 +230,11 @@ public class TwoGeeLoader extends AbstractFileLoader {
         correlateFields();
     }
 
-    /** Subtracts a tray measurement from a sample measurement.
+    /**
+     * Subtracts a tray measurement from a sample measurement.
      */
-    private TreatmentStep combine2(TreatmentStep tray, TreatmentStep normal, boolean useTrayData) {
+    private TreatmentStep combine2(TreatmentStep tray, TreatmentStep normal,
+            boolean useTrayData) {
         if (tray == null || normal == null) return null;
         final Vec3 trayV = tray.getMoment(Correction.NONE);
         final Vec3 normV = normal.getMoment(Correction.NONE);
@@ -229,10 +248,12 @@ public class TwoGeeLoader extends AbstractFileLoader {
         return Vec3.mean(Arrays.asList(vectors));
     }
     
-    private TreatmentStep combine3(TreatmentStep tray, TreatmentStep normal, TreatmentStep reversed) {
-        /* We'll keep the rest of the data from the first (tray)
-         * measurement, and just poke in the magnetic moment vector
-         * calculated from the three readings.
+    private TreatmentStep combine3(TreatmentStep tray, TreatmentStep normal,
+            TreatmentStep reversed) {
+        /*
+         * We'll keep the rest of the treatmentSteps from the first (tray)
+         * measurement, and just poke in the magnetic moment vector calculated
+         * from the three readings.
          */
         if (tray==null || normal==null || reversed==null) return null;
         final Vec3 trayV = tray.getMoment(Correction.NONE);
@@ -287,23 +308,23 @@ public class TwoGeeLoader extends AbstractFileLoader {
         sensorLengths = v;
     }
 
-    private TreatmentStep readDatum(String line, int lineNumber) {
-        TreatmentStep d = null;
+    private TreatmentStep readTreatmentStep(String line, int lineNumber) {
+        TreatmentStep step = null;
         if (line == null) {
             addMessage("File ended unexpectedly at line %d -- "
                     + "is 2G Protocol correctly set in Preferences?",
                     lineNumber);
             return null;
-            //throw new IllegalArgumentException("null line in readDatum");
+            //throw new IllegalArgumentException("null line in readTreatmentStep");
         }
         if (EMPTY_LINE.matcher(line).matches()) return null;
         try {
-            d = lineToDatum(line, lineNumber);
+            step = lineToTreatmentStep(line, lineNumber);
         } catch (IllegalArgumentException e) {
             addMessage("%s at line %d in file %s -- ignoring this line.",
                     e.getMessage(), lineNumber, file.getName());
         }
-        return d;
+        return step;
     }
 
     private boolean fieldExists(String name) {
@@ -325,13 +346,20 @@ public class TwoGeeLoader extends AbstractFileLoader {
             }
             String v = values[fields.get(name)];
             // catch the common case without using an expensive exception
-            if ("NA".equals(v)) return Double.NaN;
-            try { return Double.parseDouble(v); }
-            catch (NumberFormatException e) { return Double.NaN; }
+            if ("NA".equals(v)) {
+                return Double.NaN;
+            }
+            try {
+                return Double.parseDouble(v);
+            } catch (NumberFormatException e) {
+                return Double.NaN;
+            }
         }
 
         private boolean hasDouble(String name) {
-            if (!fieldExists(name)) return false;
+            if (!fieldExists(name)) {
+                return false;
+            }
             try {
                 Double.parseDouble(values[fields.get(name)]);
                 return true;
@@ -390,15 +418,16 @@ public class TwoGeeLoader extends AbstractFileLoader {
         return result;
     }
     
-    private TreatmentStep lineToDatum(String line, int lineNumber) {
+    private TreatmentStep lineToTreatmentStep(String line, int lineNumber) {
         final FieldReader r = new FieldReader(line);
         
         // This TreatmentStep will be initialized with a default volume and area.
-        final TreatmentStep d = new TreatmentStep();
+        final TreatmentStep step = new TreatmentStep();
         
         final MeasurementType measurementType;
         if (fieldExists("Meas. type")) {
-            measurementType = measTypeFromString(r.getString("Meas. type", "sample/continuous"));
+            measurementType =measTypeFromString(
+                    r.getString("Meas. type", "sample/continuous"));
         } else if (fieldExists("Depth")) {
             measurementType = MeasurementType.CONTINUOUS;
         } else if (fieldExists("Position") && !fieldExists("Sample ID")) {
@@ -409,8 +438,8 @@ public class TwoGeeLoader extends AbstractFileLoader {
         
         // Default values for area and volume are hard-coded in the TreatmentStep
         // class, and will be used here if nothing is specified in the file.
-        d.setArea(r.getDouble("Area", d.getArea()));
-        d.setVolume(r.getDouble("Volume", d.getVolume()));
+        step.setArea(r.getDouble("Area", step.getArea()));
+        step.setVolume(r.getDouble("Volume", step.getVolume()));
         
         final Vec3 momentGaussCm3 = readMagnetizationVector(r);
         if (momentGaussCm3 != null) {
@@ -426,113 +455,127 @@ public class TwoGeeLoader extends AbstractFileLoader {
                     magnetizationGauss = momentGaussCm3;
                 } else {
                     magnetizationGauss = momentGaussCm3.
-                            divideBy(sensorLengths.times(d.getArea()));
+                            divideBy(sensorLengths.times(step.getArea()));
                 }
                 break;
             case DISCRETE:
-                magnetizationGauss = momentGaussCm3.divideBy(d.getVolume());
+                magnetizationGauss = momentGaussCm3.divideBy(step.getVolume());
                 break;
             default:
                 magnetizationGauss = Vec3.ORIGIN;
             }
-            // To avoid unpleasant 4pi factors, we follow common
-            // palaeomagnetic practice and don't convert the cgs
-            // magnetization to an SI magnetization (which would be
-            // in Tesla). Instead we convert it to an equivalent
-            // magnetic dipole moment per unit volume, expressed
-            // in A/m.
+            /*
+             * To avoid unpleasant 4pi factors, we follow common palaeomagnetic
+             * practice and don't convert the cgs magnetization to an SI
+             * magnetization (which would be in Tesla). Instead we convert it to
+             * an equivalent magnetic dipole moment per unit volume, expressed
+             * in A/m.
+             */
             Vec3 momentPerUnitVolumeAm = gaussToAm(magnetizationGauss);
-            d.setMoment(momentPerUnitVolumeAm);
+            step.setMoment(momentPerUnitVolumeAm);
         }
-        d.setMagSus(r.getDouble("MS corr", d.getMagSus()));
-        d.setDiscreteId(r.getString("Sample ID", d.getDiscreteId()));
+        step.setMagSus(r.getDouble("MS corr", step.getMagSus()));
+        step.setDiscreteId(r.getString("Sample ID", step.getDiscreteId()));
         if (fieldExists("Depth")) {
             if (measurementType == MeasurementType.DISCRETE) {
                 final int USER_SPECIFIED_DEPTH = 1;
-                // For a discrete measurement, "Depth" actually contains the
-                // sum of the (meaningless) user-specified data table depth
-                // field and the slot number.
-                // We assume that the data table depth field was set to 1
-                // (TODO: make this configurable) and use this depth value
-                // to set the slot number.
-                String depthString = r.getString("Depth", d.getDepth());
-                // The depth value is represented as a float (it has
-                // a trailing .0 even if integral); if the depth field
-                // in the data table were a non-integral value, this
-                // presumably would also be one. Since I just want the
-                // slot number and can't think of a case where a non-
-                // integral depth would be useful in a discrete file,
-                // I'm going to discard the fractional part here.
+                /*
+                 * For a discrete measurement, "Depth" actually contains the sum
+                 * of the (meaningless) user-specified treatmentSteps table
+                 * depth field and the slot number. We assume that the
+                 * treatmentSteps table depth field was set to 1 (TODO: make
+                 * this configurable) and use this depth value to set the slot
+                 * number.
+                 */
+                String depthString = r.getString("Depth", step.getDepth());
+                /*
+                 * The depth value is represented as a float (it has a trailing
+                 * .0 even if integral); if the depth field in the
+                 * treatmentSteps table were a non-integral value, this
+                 * presumably would also be one. Since I just want the slot
+                 * number and can't think of a case where a non- integral depth
+                 * would be useful in a discrete file, I'm going to discard the
+                 * fractional part here.
+                 */
                 int depth = (int) Double.parseDouble(depthString);
-                d.setSlotNumber(depth - USER_SPECIFIED_DEPTH);
+                step.setSlotNumber(depth - USER_SPECIFIED_DEPTH);
             } else /* assume continuous measurement */ {
-                d.setDepth(r.getString("Depth", d.getDepth()));
+                step.setDepth(r.getString("Depth", step.getDepth()));
             }
         }
         
         // Sometimes, continuous files use "Position" for the depth field
         if (measurementType.isContinuous() &&
                 !fieldExists("Depth") && fieldExists("Position")) {
-            d.setDepth(r.getString("Position", d.getDepth()));
+            step.setDepth(r.getString("Position", step.getDepth()));
         }
-        d.setMeasurementType(measurementType);
+        step.setMeasurementType(measurementType);
         
         if (fieldExists("Treatment Type"))
-            d.setTreatmentType(treatTypeFromString(r.getString("Treatment Type", "degauss z")));
-        else if (fieldExistsAndIsValid("ARM Gauss", r)) d.setTreatmentType(TreatmentType.ARM);
-        else if (fieldExistsAndIsValid("IRM Gauss", r)) d.setTreatmentType(TreatmentType.IRM);
-        else if (fieldExistsAndIsValid("AF X", r)) d.setTreatmentType(TreatmentType.DEGAUSS_XYZ);
-        else if (fieldExistsAndIsValid("AF Z", r)) d.setTreatmentType(TreatmentType.DEGAUSS_Z);
-        else if (fieldExistsAndIsValid("Temp C", r)) d.setTreatmentType(TreatmentType.THERMAL);
-        else d.setTreatmentType(TreatmentType.DEGAUSS_Z);
+            step.setTreatmentType(treatTypeFromString(
+                    r.getString("Treatment Type", "degauss z")));
+        else if (fieldExistsAndIsValid("ARM Gauss", r))
+            step.setTreatmentType(TreatmentType.ARM);
+        else if (fieldExistsAndIsValid("IRM Gauss", r))
+            step.setTreatmentType(TreatmentType.IRM);
+        else if (fieldExistsAndIsValid("AF X", r))
+            step.setTreatmentType(TreatmentType.DEGAUSS_XYZ);
+        else if (fieldExistsAndIsValid("AF Z", r))
+            step.setTreatmentType(TreatmentType.DEGAUSS_Z);
+        else if (fieldExistsAndIsValid("Temp C", r))
+            step.setTreatmentType(TreatmentType.THERMAL);
+        else step.setTreatmentType(TreatmentType.DEGAUSS_Z);
         
         if (r.hasDouble("AF X")) {
-            d.setAfX(oerstedToTesla(r.getDouble("AF X", Double.NaN)));
+            step.setAfX(oerstedToTesla(r.getDouble("AF X", Double.NaN)));
         }
         if (r.hasDouble("AF Y")) {
-            d.setAfY(oerstedToTesla(r.getDouble("AF Y", Double.NaN)));
+            step.setAfY(oerstedToTesla(r.getDouble("AF Y", Double.NaN)));
         }
         if (r.hasDouble("AF Z")) {
-            d.setAfZ(oerstedToTesla(r.getDouble("AF Z", Double.NaN)));
+            step.setAfZ(oerstedToTesla(r.getDouble("AF Z", Double.NaN)));
         }
         if (r.hasDouble("IRM Gauss")) {
             // Yes, they say Gauss, but I think they mean Oersted.
-            d.setIrmField(oerstedToTesla(r.getDouble("IRM Gauss", Double.NaN)));
+            step.setIrmField(
+                    oerstedToTesla(r.getDouble("IRM Gauss", Double.NaN)));
         }
         if (r.hasDouble("ARM Gauss")) {
             // Yes, they say Gauss, but I think they mean Oersted.
-            d.setIrmField(oerstedToTesla(r.getDouble("ARM Gauss", Double.NaN)));
+            step.setIrmField(
+                    oerstedToTesla(r.getDouble("ARM Gauss", Double.NaN)));
         }
-        d.setArmAxis(ArmAxis.fromString(r.getString("ARM axis", "UNKNOWN")));
+        step.setArmAxis(ArmAxis.fromString(r.getString("ARM axis", "UNKNOWN")));
         // TODO better default ARM axis
-        d.setTemp(r.getDouble("Temp C", d.getTemp()));
-        d.setArmField(r.getDouble("ARM Gauss", d.getArmField()));
-        d.setSampAz(r.getDouble("Sample Azimiuth", d.getSampAz())); // sic
-        d.setSampDip(r.getDouble("Sample Dip", d.getSampDip()));
-        d.setFormAz(r.getDouble("Formation Dip Azimuth", d.getFormAz()));
-        d.setFormDip(r.getDouble("Formation Dip", d.getFormDip()));
-        d.setMagDev(r.getDouble("Mag Dev", d.getMagDev()));
+        step.setTemp(r.getDouble("Temp C", step.getTemp()));
+        step.setArmField(r.getDouble("ARM Gauss", step.getArmField()));
+        step.setSampAz(r.getDouble("Sample Azimiuth", step.getSampAz())); // sic
+        step.setSampDip(r.getDouble("Sample Dip", step.getSampDip()));
+        step.setFormAz(r.getDouble("Formation Dip Azimuth", step.getFormAz()));
+        step.setFormDip(r.getDouble("Formation Dip", step.getFormDip()));
+        step.setMagDev(r.getDouble("Mag Dev", step.getMagDev()));
         if (fieldExists("Run #")) {
-            /* 2G discrete files don't store the run number; they store the
-             * sum of the run number and the slot number in the run number
-             * field. The slot number is not explicitly stored; fortunately,
-             * for discrete samples, the depth field contains the slot 
-             * number plus (I think) whatever number was entered for "depth"
-             * in the sample data table. So provided that this field is
-             * always given the same value, we can produce a corrected run
-             * number.
+            /*
+             * 2G discrete files don't store the run number; they store the sum
+             * of the run number and the slot number in the run number field.
+             * The slot number is not explicitly stored; fortunately, for
+             * discrete samples, the depth field contains the slot number plus
+             * (I think) whatever number was entered for "depth" in the sample
+             * treatmentSteps table. So provided that this field is always given
+             * the same value, we can produce a corrected run number.
              */
             int runNumber = r.getInt("Run #", 0);
-            if (measurementType == MeasurementType.DISCRETE && d.getSlotNumber() != -1) {
-                runNumber -= d.getSlotNumber();
+            if (measurementType == MeasurementType.DISCRETE &&
+                    step.getSlotNumber() != -1) {
+                runNumber -= step.getSlotNumber();
             }
-            d.setRunNumber(runNumber);
+            step.setRunNumber(runNumber);
         }
         if (fieldExists("Sample Timestamp"))
-            d.setTimestamp(r.getString("Sample Timestamp", "UNKNOWN"));
-        d.setXDrift(r.getDouble("X drift", d.getXDrift()));
-        d.setYDrift(r.getDouble("Y drift", d.getYDrift()));
-        d.setZDrift(r.getDouble("Z drift", d.getZDrift()));
-        return d;
+            step.setTimestamp(r.getString("Sample Timestamp", "UNKNOWN"));
+        step.setXDrift(r.getDouble("X drift", step.getXDrift()));
+        step.setYDrift(r.getDouble("Y drift", step.getYDrift()));
+        step.setZDrift(r.getDouble("Z drift", step.getZDrift()));
+        return step;
     }
 }

@@ -106,7 +106,7 @@ public class CaltechLoaderTest {
         final CaltechLoader loader =
                 new CaltechLoader(tempPath.resolve(samFileName).toFile());
         
-        final List<TreatmentStep> data = loader.getData();
+        final List<TreatmentStep> data = loader.getTreatmentSteps();
         final Correction correction =
                 new Correction(false, false, Correction.Rotation.SAMPLE, false);
 

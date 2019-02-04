@@ -1,5 +1,5 @@
 /* This file is part of PuffinPlot, a program for palaeomagnetic
- * data plotting and analysis. Copyright 2012-2019 Pontus Lurcock.
+ * treatmentSteps plotting and analysis. Copyright 2012-2019 Pontus Lurcock.
  *
  * PuffinPlot is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,35 +64,38 @@ public class Jr6Loader extends AbstractFileLoader {
     private void processLines(List<String> lines) {
         for (String line: lines) {
             final Jr6DataLine dataLine = Jr6DataLine.read(line);
-            addDatum(makeDatum(dataLine));
+            addTreatmentStep(makeTreatmentStep(dataLine));
         }
     }
 
-    private TreatmentStep makeDatum(Jr6DataLine dataLine) {
+    private TreatmentStep makeTreatmentStep(Jr6DataLine dataLine) {
 
-        final VectorAndOrientations vectorAndOrientations = dataLine.
-                getOrientationParameters().convertToPuffinPlotConvention(dataLine.getVectorAndOrientations());
-        final TreatmentStep d = new TreatmentStep(vectorAndOrientations.vector);
-        d.setSampAz(vectorAndOrientations.sampleAzimuth);
-        d.setSampDip(vectorAndOrientations.sampleDip);
-        d.setFormAz(vectorAndOrientations.formationAzimuth);
-        d.setFormDip(vectorAndOrientations.formationDip);
-        d.setMeasurementType(MeasurementType.DISCRETE);
-        d.setDiscreteId(dataLine.getName());
-        d.setTreatmentType(dataLine.getTreatmentType());
+        final VectorAndOrientations vectorAndOrientations =
+                dataLine.getOrientationParameters().
+                        convertToPuffinPlotConvention(
+                                dataLine.getVectorAndOrientations());
+        final TreatmentStep step =
+                new TreatmentStep(vectorAndOrientations.vector);
+        step.setSampAz(vectorAndOrientations.sampleAzimuth);
+        step.setSampDip(vectorAndOrientations.sampleDip);
+        step.setFormAz(vectorAndOrientations.formationAzimuth);
+        step.setFormDip(vectorAndOrientations.formationDip);
+        step.setMeasurementType(MeasurementType.DISCRETE);
+        step.setDiscreteId(dataLine.getName());
+        step.setTreatmentType(dataLine.getTreatmentType());
         switch (dataLine.getTreatmentType()) {
             case THERMAL:
-                d.setTemp(dataLine.getTreatmentLevel());
+                step.setTemp(dataLine.getTreatmentLevel());
                 break;
             case DEGAUSS_XYZ:
             case ARM:
-                d.setAfX(dataLine.getTreatmentLevel() / 1000.);
-                d.setAfY(dataLine.getTreatmentLevel() / 1000.);
+                step.setAfX(dataLine.getTreatmentLevel() / 1000.);
+                step.setAfY(dataLine.getTreatmentLevel() / 1000.);
             case DEGAUSS_Z:
-                d.setAfZ(dataLine.getTreatmentLevel() / 1000.);
+                step.setAfZ(dataLine.getTreatmentLevel() / 1000.);
                 break;
         }
-        return d;
+        return step;
     }
 
 }

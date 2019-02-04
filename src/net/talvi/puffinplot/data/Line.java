@@ -20,14 +20,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * <p>A container class holding all the data within a suite from a
+ * A container class holding all the data within a suite from a
  * particular line number of their respective files. Intended to be
  * used as a proxy for run number. We can't use the actual run number,
  * because the Long Core software adds the position number to it for
  * discrete samples. We can't correct for that because it can't write
- * the position number to the DAT file.</p>
- * 
- * <p>This class is not currently used.</p>
+ * the position number to the DAT file.
+ * <p>
+ * This class is not currently used.
  */
 
 public class Line {
@@ -36,7 +36,9 @@ public class Line {
     private final Set<TreatmentStep> data;
     // private TreatmentStep emptySlot;
 
-    /** Creates a new Line with the specified line number. 
+    /**
+     * Creates a new Line with the specified line number.
+     *
      * @param lineNumber the line number in the original data file
      */
     public Line(int lineNumber) {
@@ -44,24 +46,31 @@ public class Line {
         data = new HashSet<>();
     }
 
-    /** Associates a TreatmentStep with this line. This indicates that the line number
-     * which was passed to this Line's constructor is the same as the line
-     * number on which the TreatmentStep occurred in the file from which it was read.
+    /**
+     * Associates a TreatmentStep with this line. This indicates that the line
+     * number which was passed to this Line's constructor is the same as the
+     * line number on which the TreatmentStep occurred in the file from which it
+     * was read.
+     *
      * @param treatmentStep a treatmentStep to be associated with this line
      */
     public void add(TreatmentStep treatmentStep) {
         data.add(treatmentStep);
     }
 
-    /** Returns the first TreatmentStep associated with this line which was a measurement
-     * of an empty tray slot, not an actual sample. Returns null if no such TreatmentStep
-     * exists.
-     * @return the first TreatmentStep associated with this line which was a measurement
-     * of an empty tray slot
+    /**
+     * Returns the first TreatmentStep associated with this line which was a
+     * measurement of an empty tray slot, not an actual sample. Returns null if
+     * no such TreatmentStep exists.
+     *
+     * @return the first TreatmentStep associated with this line which was a
+     * measurement of an empty tray slot
      */
     public TreatmentStep getEmptySlot() {
-        for (TreatmentStep d: data) {
-            if (d.getSample().isEmptySlot()) return d;
+        for (TreatmentStep step: data) {
+            if (step.getSample().isEmptySlot()) {
+                return step;
+            }
         }
         return null;
     }

@@ -69,29 +69,32 @@ public class MedianDestructiveField {
      * value for the supplied data. If there are fewer than two treatment
      * steps in the supplied list, {@code null} will be returned.
      * 
-     * @param data a list of data representing successive demagnetization
+     * @param steps a list of data representing successive demagnetization
      * steps for a single sample
      * @return the treatment level at which the sample retains half
      * of its original magnetic moment
      */
-    public static MedianDestructiveField calculate(List<TreatmentStep> data) {
-        if (data.size() < 2) return null;
-        final double initialIntensity = data.get(0).getIntensity();
+    public static MedianDestructiveField calculate(List<TreatmentStep> steps) {
+        if (steps.size() < 2) {
+            return null;
+        }
+        final double initialIntensity = steps.get(0).getIntensity();
         final double halfIntensity = initialIntensity / 2;
         boolean halfIntReached = false;
         int i = 1;
-        TreatmentStep d;
+        TreatmentStep step;
         do {
-            d = data.get(i);
+            step = steps.get(i);
             i++;
-        } while (i < data.size() && d.getIntensity() > halfIntensity);
-        if (d.getIntensity() <= halfIntensity) {
+        } while (i < steps.size() && step.getIntensity() > halfIntensity);
+        if (step.getIntensity() <= halfIntensity) {
             halfIntReached = true;
         }
-        final TreatmentStep dPrev = data.get(i-2); // i can't be <=1 at this point
-        final double demagLevel = interpolate(dPrev.getTreatmentLevel(),
-                d.getTreatmentLevel(), d.getIntensity(),
-                dPrev.getIntensity(), halfIntensity);
+        // i can't be <=1 at this point, so we're safe doing get(i-2)
+        final TreatmentStep previousStep = steps.get(i-2);
+        final double demagLevel = interpolate(previousStep.getTreatmentLevel(),
+                step.getTreatmentLevel(), step.getIntensity(),
+                previousStep.getIntensity(), halfIntensity);
         return new MedianDestructiveField(demagLevel, halfIntensity,
                 halfIntReached);
     }

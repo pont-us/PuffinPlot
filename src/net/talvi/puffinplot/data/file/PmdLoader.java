@@ -1,5 +1,5 @@
 /* This file is part of PuffinPlot, a program for palaeomagnetic
- * data plotting and analysis. Copyright 2012-2019 Pontus Lurcock.
+ * treatmentSteps plotting and analysis. Copyright 2012-2019 Pontus Lurcock.
  *
  * PuffinPlot is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,8 +61,8 @@ public class PmdLoader extends AbstractFileLoader {
     }
     
     /**
-     * Create a new PmdLoader containing the data from the supplied input
-     * stream.
+     * Create a new PmdLoader containing the treatmentSteps from the supplied input
+ stream.
      * 
      * @param inputStream the input stream from which to read the PMD file
      * @param importOptions import options (currently not used)
@@ -164,14 +164,14 @@ public class PmdLoader extends AbstractFileLoader {
                     dataLine.formationCorrectedInclination, 0.3);
             checkConsistency(location, d.getIntensity(), dataLine.magnetization, 
                     Math.max(d.getIntensity(), dataLine.magnetization)/100);
-            addDatum(d);
+            addTreatmentStep(d);
         }
     }
     
     private void checkConsistency(String location, double expected,
             double actual, double tolerance) {
         /* PMD files converted from JR6 files by Remasoft 3 don't always
-         * include all the polar data, so identify these by their
+         * include all the polar treatmentSteps, so identify these by their
          * first-line comment and skip the consistency checks for them.
          */
         if (!"JR6 file".equals(firstLineComment) &&

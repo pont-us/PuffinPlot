@@ -668,14 +668,14 @@ public class Jr6LoaderTest {
                 TestFileLocator.class.getResourceAsStream(filename);
         
         final Jr6Loader jr6loader = new Jr6Loader(stream, filename);
-        final List<TreatmentStep> loadedData = jr6loader.getData();
+        final List<TreatmentStep> loadedData = jr6loader.getTreatmentSteps();
         assertFalse(loadedData.isEmpty());
         assertTrue(loadedData.stream().
                 allMatch(d -> d.getMeasurementType() == MeasurementType.DISCRETE));
 
         final Suite suite = new Suite("test");
         for (TreatmentStep d: loadedData) {
-            suite.addDatum(d);
+            suite.addTreatmentStep(d);
         }
         
         final double[][][] expFile = expected[fileIndex];
@@ -688,16 +688,17 @@ public class Jr6LoaderTest {
             final double[][] expSample = expFile[sampleIndex];
             assertEquals(expSample.length, sample.getTreatmentSteps().size());
             for (int i = 0; i < expSample.length; i++) {
-                final TreatmentStep actualTreatmentStep = sample.getTreatmentSteps().get(i);
+                final TreatmentStep actualTreatmentStep =
+                        sample.getTreatmentSteps().get(i);
                 final double[] expectedValues = expSample[i];
-                checkOneDatum(expectedValues, actualTreatmentStep,
+                checkOneTreatmentStep(expectedValues, actualTreatmentStep,
                         specimenRotation[fileIndex]);
             }
         }
     }
 
-    private void checkOneDatum(final double[] expectedValues,
-                               final TreatmentStep actualTreatmentStep, double rotation) {
+    private void checkOneTreatmentStep(final double[] expectedValues,
+            final TreatmentStep actualTreatmentStep, double rotation) {
         assertEquals(treatmentTypes[(int) expectedValues[0]],
                 actualTreatmentStep.getTreatmentType());
         
@@ -744,7 +745,7 @@ public class Jr6LoaderTest {
         final Jr6Loader jr6Loader = Jr6Loader.readFile(
                 new File("/12233e64-2cf3-11e8-9643-2316aaca3cc2"),
                 Collections.emptyMap());
-        assertEquals(0, jr6Loader.getData().size());
+        assertEquals(0, jr6Loader.getTreatmentSteps().size());
         assertTrue(jr6Loader.getMessages().size() > 0);
     }
     
@@ -755,7 +756,7 @@ public class Jr6LoaderTest {
           * from it.
           */ 
         final Jr6Loader jr6Loader = new Jr6Loader(new PipedInputStream(), "test");
-        assertEquals(0, jr6Loader.getData().size());
+        assertEquals(0, jr6Loader.getTreatmentSteps().size());
         assertTrue(jr6Loader.getMessages().size() > 0);        
     }
     

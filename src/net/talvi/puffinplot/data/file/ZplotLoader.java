@@ -1,5 +1,5 @@
 /* This file is part of PuffinPlot, a program for palaeomagnetic
- * data plotting and analysis. Copyright 2012-2019 Pontus Lurcock.
+ * treatmentSteps plotting and analysis. Copyright 2012-2019 Pontus Lurcock.
  *
  * PuffinPlot is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +70,7 @@ public class ZplotLoader extends AbstractFileLoader {
      */
     public ZplotLoader(File file) {
         this.file = file;
-        data = new LinkedList<>();
+        treatmentSteps = new LinkedList<>();
         try {
             reader = new LineNumberReader(new FileReader(file));
             readFile();
@@ -125,14 +125,14 @@ public class ZplotLoader extends AbstractFileLoader {
         }
         String line;
         while ((line = reader.readLine()) != null) {
-            TreatmentStep step = lineToDatum(line);
+            TreatmentStep step = lineToTreatmentStep(line);
             if (step != null) {
-                data.add(step);
+                treatmentSteps.add(step);
             }
         }
     }
 
-    private TreatmentStep lineToDatum(String zPlotLine) {
+    private TreatmentStep lineToTreatmentStep(String zPlotLine) {
         final Scanner scanner = new Scanner(zPlotLine);
         scanner.useLocale(Locale.ENGLISH); // ensure "." as decimal separator
         scanner.useDelimiter(DELIMITER_PATTERN);

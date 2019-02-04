@@ -138,7 +138,7 @@ public class PplLoader extends AbstractFileLoader {
                 if (!isNaN(d.getArmField()))
                     d.setArmField(oerstedToTesla(d.getArmField()));
             }
-            addDatum(d);
+            addTreatmentStep(d);
         }
         if (line != null) {
             extraLines = new ArrayList<>();

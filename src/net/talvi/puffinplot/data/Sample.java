@@ -210,11 +210,11 @@ public class Sample {
         final double limit = 2.5;
         double msj = 0;
         double prevMagSus = 1e200;
-        for (TreatmentStep d: treatmentSteps) {
-            double magSus = d.getMagSus();
+        for (TreatmentStep step: treatmentSteps) {
+            double magSus = step.getMagSus();
             if (!Double.isNaN(magSus)) {
                 if (magSus > prevMagSus * limit) {
-                    msj = d.getTemp();
+                    msj = step.getTemp();
                     break;
                 }
                 prevMagSus = magSus;
@@ -289,8 +289,10 @@ public class Sample {
      */
     public void selectVisible() {
         touch();
-        for (TreatmentStep d : getTreatmentSteps()) {
-            if (!d.isHidden()) d.setSelected(true);
+        for (TreatmentStep step: getTreatmentSteps()) {
+            if (!step.isHidden()) {
+                step.setSelected(true);
+            }
         }
     }
 
@@ -321,9 +323,9 @@ public class Sample {
      * @see TreatmentStep#getTreatmentLevel()
      */
     public void selectByTreatmentLevelRange(double min, double max) {
-        for (TreatmentStep d: getTreatmentSteps()) {
-            final double level = d.getTreatmentLevel();
-            d.setSelected(min <= level && level <= max);
+        for (TreatmentStep step: getTreatmentSteps()) {
+            final double level = step.getTreatmentLevel();
+            step.setSelected(min <= level && level <= max);
         }
     }
     
@@ -570,8 +572,8 @@ public class Sample {
          * ugliness will become unnecessary.
          */
         touch();
-        boolean firstDatumAnchored = getTreatmentSteps().get(0).isPcaAnchored();
-        setPcaAnchored(firstDatumAnchored);
+        boolean firstStepAnchored = getTreatmentSteps().get(0).isPcaAnchored();
+        setPcaAnchored(firstStepAnchored);
         pca = PcaAnnotated.calculate(this, correction);
     }
     
@@ -805,17 +807,17 @@ public class Sample {
     }
 
     /**
-     * Returns the datum with the highest run number which is less
-     * than the supplied run number. Intended to be used in applying
-     * tray corrections. Not currently used.
+     * Returns the datum with the highest run number which is less than the
+     * supplied run number. Intended to be used in applying tray corrections.
+     * Not currently used.
      *
-     * @param maxRunNumber the run number against which to compare
-     *   run numbers associated with this sample 
-     * @return the TreatmentStep in this sample which has the highest
-     * run number smaller than the supplied run number, or null if
-     * this sample contains no such TreatmentStep.
+     * @param maxRunNumber the run number against which to compare run numbers
+     * associated with this sample
+     * @return the TreatmentStep in this sample which has the highest run number
+     * smaller than the supplied run number, or null if this sample contains no
+     * such TreatmentStep.
      */
-    public TreatmentStep getDatumByRunNumber(int maxRunNumber) {
+    public TreatmentStep getTreatmentStepByRunNumber(int maxRunNumber) {
         TreatmentStep result = null;
         for (TreatmentStep step: getTreatmentSteps()) {
             if (step.getRunNumber() < maxRunNumber) {

@@ -72,16 +72,17 @@ public class PcaAnnotatedTest {
         final Sample sample = new Sample("test", null);
         for (int i=0; i<vectors.size(); i++) {
             final Vec3 v = vectors.get(i);
-            sample.addTreatmentStep(constructDatum(v, i*10, true));
+            sample.addTreatmentStep(constructTreatmentStep(v, i*10, true));
             if (insertUnusedValues && i==2) {
-                sample.addTreatmentStep(constructDatum(v, i*10, false));
-                sample.addTreatmentStep(constructDatum(v, i*10, false));
+                sample.addTreatmentStep(constructTreatmentStep(v, i*10, false));
+                sample.addTreatmentStep(constructTreatmentStep(v, i*10, false));
             }
         }
         return sample;
     }
 
-    private TreatmentStep constructDatum(final Vec3 v, double afz, boolean inPca) {
+    private TreatmentStep constructTreatmentStep(
+            final Vec3 v, double afz, boolean inPca) {
         final TreatmentStep treatmentStep = new TreatmentStep(v);
         treatmentStep.setInPca(inPca);
         treatmentStep.setPcaAnchored(false);

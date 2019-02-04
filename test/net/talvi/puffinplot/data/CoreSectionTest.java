@@ -101,10 +101,10 @@ public class CoreSectionTest {
     
     @Test
     public void testRotateDeclinations() {
-        final List<Vec3> initialDirections = extractDatumDirections(section);
+        final List<Vec3> initialDirections = extractTreatmentStepDirections(section);
         final double angle = 35;
         section.rotateDeclinations(angle);
-        final List<Vec3> rotatedDirections = extractDatumDirections(section);
+        final List<Vec3> rotatedDirections = extractTreatmentStepDirections(section);
         for (int i=0; i<initialDirections.size(); i++) {
             final double expectedDeclination = (initialDirections.
                     get(i).getDecDeg() + angle + 360) % 360;
@@ -142,8 +142,10 @@ public class CoreSectionTest {
                 sampleList.size()), actual);
     }
     
-    private static List<Vec3> extractDatumDirections(CoreSection section) {
-        return section.getSamples().stream().flatMap(s -> s.getTreatmentSteps().stream()).
+    private static List<Vec3> extractTreatmentStepDirections(
+            CoreSection section) {
+        return section.getSamples().stream().
+                flatMap(s -> s.getTreatmentSteps().stream()).
                 map(TreatmentStep::getMoment).collect(Collectors.toList());
     }
     

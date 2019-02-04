@@ -1,5 +1,5 @@
 /* This file is part of PuffinPlot, a program for palaeomagnetic
- * data plotting and analysis. Copyright 2012-2019 Pontus Lurcock.
+ * treatmentSteps plotting and analysis. Copyright 2012-2019 Pontus Lurcock.
  *
  * PuffinPlot is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ public class ZplotLoaderTest {
     public void testLoadContinuousAf() throws IOException {
         final File testFile = copyTestData("zplot-af-1.txt");
         final ZplotLoader loader = new ZplotLoader(testFile);
-        final List<TreatmentStep> steps = loader.getData();
+        final List<TreatmentStep> steps = loader.getTreatmentSteps();
         assertEquals(expectedAf.length, steps.size());
         for (int i=0; i<expectedAf.length; i++) {
             final double[] values = expectedAf[i];
@@ -134,7 +134,7 @@ public class ZplotLoaderTest {
     public void testLoadDiscreteThermal() throws IOException {
         final File testFile = copyTestData("zplot-thermal-1.txt");
         final ZplotLoader loader = new ZplotLoader(testFile);
-        final List<TreatmentStep> steps = loader.getData();
+        final List<TreatmentStep> steps = loader.getTreatmentSteps();
         assertEquals(expectedDiscreteThermal.length, steps.size());
         for (int i=0; i<expectedDiscreteThermal.length; i++) {
             final double[] values = expectedDiscreteThermal[i];
@@ -154,7 +154,7 @@ public class ZplotLoaderTest {
         final File file = TestUtils.writeStringToTemporaryFile("empty.txt", "",
                 temporaryFolder);
         final ZplotLoader loader = new ZplotLoader(file);
-        assertTrue(loader.data.isEmpty());
+        assertTrue(loader.treatmentSteps.isEmpty());
         assertEquals(1, loader.messages.size());
     }
 
@@ -165,7 +165,7 @@ public class ZplotLoaderTest {
                 "This is not a valid Zplot file.",
                 temporaryFolder);
         final ZplotLoader loader = new ZplotLoader(file);
-        assertTrue(loader.data.isEmpty());
+        assertTrue(loader.treatmentSteps.isEmpty());
         assertEquals(1, loader.messages.size());
     }
     
@@ -176,7 +176,7 @@ public class ZplotLoaderTest {
                 "This\nis\nnot\na\nvalid\nZplot\nfile.",
                 temporaryFolder);
         final ZplotLoader loader = new ZplotLoader(file);
-        assertTrue(loader.data.isEmpty());
+        assertTrue(loader.treatmentSteps.isEmpty());
         assertEquals(1, loader.messages.size());
     }
     
@@ -189,7 +189,7 @@ public class ZplotLoaderTest {
                         "nevertheless not a valid Zplot file.",
                 temporaryFolder);
         final ZplotLoader loader = new ZplotLoader(file);
-        assertTrue(loader.data.isEmpty());
+        assertTrue(loader.treatmentSteps.isEmpty());
         assertEquals(1, loader.messages.size());
     }
     
@@ -198,7 +198,7 @@ public class ZplotLoaderTest {
         final File file = temporaryFolder.getRoot().toPath().
                 resolve("nonexistent.txt").toFile();
         final ZplotLoader loader = new ZplotLoader(file);
-        assertTrue(loader.data.isEmpty());
+        assertTrue(loader.treatmentSteps.isEmpty());
         assertEquals(1, loader.messages.size());        
     }
     

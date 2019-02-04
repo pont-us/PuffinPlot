@@ -477,17 +477,18 @@ public class SampleTest {
     public void testGetMeasurementType() {
         final Sample sample = new Sample("test", null);
         assertEquals(MeasurementType.DISCRETE, sample.getMeasurementType());
-        addDatumWithMeasurementType(sample, MeasurementType.NONE);
+        addStepWithMeasurementType(sample, MeasurementType.NONE);
         assertEquals(MeasurementType.DISCRETE, sample.getMeasurementType());
-        addDatumWithMeasurementType(sample, MeasurementType.UNKNOWN);
+        addStepWithMeasurementType(sample, MeasurementType.UNKNOWN);
         assertEquals(MeasurementType.DISCRETE, sample.getMeasurementType());
-        addDatumWithMeasurementType(sample, MeasurementType.UNSET);
+        addStepWithMeasurementType(sample, MeasurementType.UNSET);
         assertEquals(MeasurementType.DISCRETE, sample.getMeasurementType());
-        addDatumWithMeasurementType(sample, MeasurementType.CONTINUOUS);
+        addStepWithMeasurementType(sample, MeasurementType.CONTINUOUS);
         assertEquals(MeasurementType.CONTINUOUS, sample.getMeasurementType());
     }
     
-    private static void addDatumWithMeasurementType(Sample sample, MeasurementType mt) {
+    private static void addStepWithMeasurementType(
+            Sample sample, MeasurementType mt) {
         final TreatmentStep treatmentStep = new TreatmentStep(Vec3.NORTH);
         treatmentStep.setMeasurementType(mt);
         sample.addTreatmentStep(treatmentStep);
@@ -532,39 +533,41 @@ public class SampleTest {
     }
     
     @Test
-    public void testGetDatumByTreatmentLevel() {
+    public void testGetTreatmentStepByTreatmentLevel() {
         assertEquals(5,
                 simpleSample.getTreatmentStepByLevel(5).getTreatmentLevel(),
                 delta);
     }
     
     @Test
-    public void testGetDatumByTreatmentLevelWithNoData() {
+    public void testGetTreatmentStepByTreatmentLevelWithNoData() {
         final Sample sample = new Sample("test", null);
         assertNull(sample.getTreatmentStepByLevel(0));
     }
 
     @Test
-    public void testGetDatumByTreatmentTypeAndLevel() {
-        final TreatmentStep treatmentStep = simpleSample.getTreatmentStepByTypeAndLevel(
-                Collections.singleton(TreatmentType.DEGAUSS_XYZ), 5);
+    public void testGetTreatmentStepByTreatmentTypeAndLevel() {
+        final TreatmentStep treatmentStep =
+                simpleSample.getTreatmentStepByTypeAndLevel(
+                        Collections.singleton(TreatmentType.DEGAUSS_XYZ), 5);
         assertEquals(5, treatmentStep.getTreatmentLevel(), delta);
     }
 
     @Test
-    public void testGetDatumByTreatmentLevelWithNoMatchingData() {
+    public void testGetTreatmentStepByTreatmentLevelWithNoMatchingData() {
         assertNull(simpleSample.getTreatmentStepByLevel(17));
     }
 
     @Test
-    public void testGetDatumByTreatmentTypeAndLevelWithNoData() {
+    public void testGetTreatmentStepByTreatmentTypeAndLevelWithNoData() {
         final Sample sample = new Sample("test", null);
         assertNull(sample.getTreatmentStepByTypeAndLevel(
                 new HashSet(Arrays.asList(TreatmentType.values())), 0));
     }
 
     @Test
-    public void testGetDatumByTreatmentTypeAndLevelWithNoMatchingData() {
+    public void testGetTreatmentStepByTreatmentTypeAndLevelWithNoMatchingData()
+    {
         assertNull(simpleSample.getTreatmentStepByTypeAndLevel(
                 Collections.singleton(TreatmentType.THERMAL), 5));
     }
@@ -584,9 +587,11 @@ public class SampleTest {
     public void testGetCirclePoints() {
         final List<Integer> circlePoints = Arrays.asList(2, 3, 6, 7);
         final List<Vec3> expected =
-                circlePoints.stream().map(i -> simpleSample.getTreatmentStepByIndex(i).
+                circlePoints.stream().
+                        map(i -> simpleSample.getTreatmentStepByIndex(i).
                         getMoment()).collect(Collectors.toList());
-        circlePoints.forEach(i -> simpleSample.getTreatmentStepByIndex(i).setOnCircle(true));
+        circlePoints.forEach(i -> simpleSample.
+                getTreatmentStepByIndex(i).setOnCircle(true));
         final List<Vec3> actual = simpleSample.getCirclePoints(Correction.NONE);
         assertEquals(expected.size(), actual.size());
         for (int i=0; i<expected.size(); i++) {
@@ -597,24 +602,27 @@ public class SampleTest {
     @Test
     public void testGetFirstRunNumber() {
         IntStream.range(0, simpleSample.getNumberOfSteps()).
-                forEach(i -> simpleSample.getTreatmentStepByIndex(i).setRunNumber(i+5));
+                forEach(i -> simpleSample.
+                        getTreatmentStepByIndex(i).setRunNumber(i+5));
         assertEquals(5, simpleSample.getFirstRunNumber());
     }
     
     @Test
     public void testGetLastRunNumber() {
         IntStream.range(0, simpleSample.getNumberOfSteps()).
-                forEach(i -> simpleSample.getTreatmentStepByIndex(i).setRunNumber(i+5));
+                forEach(i -> simpleSample.
+                        getTreatmentStepByIndex(i).setRunNumber(i+5));
         assertEquals(simpleSample.getNumberOfSteps() + 4,
                 simpleSample.getLastRunNumber());
     }
     
     @Test
-    public void testDatumByRunNumber() {
+    public void testGetTreatmentStepByRunNumber() {
         IntStream.range(0, simpleSample.getNumberOfSteps()).
-                forEach(i -> simpleSample.getTreatmentStepByIndex(i).setRunNumber(i+5));
+                forEach(i -> simpleSample.
+                        getTreatmentStepByIndex(i).setRunNumber(i+5));
         assertEquals(simpleSample.getTreatmentStepByIndex(5),
-                simpleSample.getDatumByRunNumber(11));
+                simpleSample.getTreatmentStepByRunNumber(11));
     }
     
     @Test
@@ -634,7 +642,8 @@ public class SampleTest {
     
     @Test
     public void testRemoveData() {
-        final Set<TreatmentStep> toRemove = Arrays.stream(new int[] {2, 3, 5, 6}).
+        final Set<TreatmentStep> toRemove =
+                Arrays.stream(new int[] {2, 3, 5, 6}).
                 mapToObj(i -> simpleSample.getTreatmentStepByIndex(i)).
                 collect(Collectors.toSet());
         final List<TreatmentStep> shouldRemain =

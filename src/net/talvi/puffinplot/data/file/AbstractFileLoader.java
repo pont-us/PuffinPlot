@@ -1,5 +1,5 @@
 /* This file is part of PuffinPlot, a program for palaeomagnetic
- * data plotting and analysis. Copyright 2012-2019 Pontus Lurcock.
+ * treatmentSteps plotting and analysis. Copyright 2012-2019 Pontus Lurcock.
  *
  * PuffinPlot is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,19 +32,19 @@ import net.talvi.puffinplot.data.TreatmentStep;
 abstract class AbstractFileLoader implements FileLoader {
 
     protected List<String> messages = new LinkedList<>();
-    protected List<TreatmentStep> data = new ArrayList<>();;
+    protected List<TreatmentStep> treatmentSteps = new ArrayList<>();;
 
     protected void addMessage(String message, Object... args) {
         messages.add(String.format(message, args));
     }
 
-    protected void addDatum(TreatmentStep d) {
-        data.add(d);
+    protected void addTreatmentStep(TreatmentStep d) {
+        treatmentSteps.add(d);
     }
 
     @Override
-    public List<TreatmentStep> getData() {
-        return data;
+    public List<TreatmentStep> getTreatmentSteps() {
+        return treatmentSteps;
     }
 
     @Override

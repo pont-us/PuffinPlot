@@ -351,39 +351,39 @@ public final class Suite implements SampleGroup {
      * {@code UNSET}. In the latter case, the suite's measurement type will be
      * set to that of the supplied datum.
      *
-     * @param d the datum to add
+     * @param step the datum to add
      * @throws IllegalArgumentException if d is null, or if the measurement type
      * of is invalid (i.e. it is null, UNSET, or incompatible with this suite's
      * measurement type)
      */
-    public void addDatum(TreatmentStep d) {
-        Objects.requireNonNull(d);
-        Objects.requireNonNull(d.getMeasurementType());
-        if (d.getMeasurementType() == MeasurementType.UNSET) {
+    public void addTreatmentStep(TreatmentStep step) {
+        Objects.requireNonNull(step);
+        Objects.requireNonNull(step.getMeasurementType());
+        if (step.getMeasurementType() == MeasurementType.UNSET) {
             throw new IllegalArgumentException(
                     "Measurement type may not be UNSET");
         }
         if (measurementType == MeasurementType.UNSET) {
-            measurementType = d.getMeasurementType();
+            measurementType = step.getMeasurementType();
         }
-        if (d.getMeasurementType() != measurementType) {
+        if (step.getMeasurementType() != measurementType) {
             throw new IllegalArgumentException(String.format(
                     "Can't add a %s datum to a %s suite.",
-                    d.getMeasurementType().getNiceName().toLowerCase(),
+                    step.getMeasurementType().getNiceName().toLowerCase(),
                     getMeasurementType().getNiceName().toLowerCase()));
         }
-        if (d.getTreatmentType() == TreatmentType.UNKNOWN) {
+        if (step.getTreatmentType() == TreatmentType.UNKNOWN) {
             hasUnknownTreatType = true;
         }
-        final String datumName = d.getIdOrDepth();
+        final String datumName = step.getIdOrDepth();
         Sample sample = samplesById.get(datumName);
         if (sample == null) {
             sample = new Sample(datumName, this);
             samplesById.put(datumName, sample);
             samples.add(sample);
         }
-        d.setSuite(this);
-        sample.addTreatmentStep(d);
+        step.setSuite(this);
+        sample.addTreatmentStep(step);
     }
 
     private List<File> expandDirs(List<File> files) {
@@ -600,7 +600,7 @@ public final class Suite implements SampleGroup {
             }
             
             if (loader != null) {
-                final List<TreatmentStep> loadedData = loader.getData();
+                final List<TreatmentStep> loadedData = loader.getTreatmentSteps();
                 
                 final Set<MeasurementType> measTypes =
                         TreatmentStep.collectMeasurementTypes(loadedData);
@@ -639,9 +639,9 @@ public final class Suite implements SampleGroup {
                 if (dataIsOk) {
                     tempDataList.ensureCapacity(tempDataList.size() +
                             loadedData.size());
-                    for (TreatmentStep d: loadedData) {
+                    for (TreatmentStep step: loadedData) {
                         // TODO: check for matching measurement type here
-                        if (!d.ignoreOnLoading()) addDatum(d);
+                        if (!step.ignoreOnLoading()) addTreatmentStep(step);
                     }
                     loadWarnings.addAll(loader.getMessages());
                     puffinLines = loader.getExtraLines();

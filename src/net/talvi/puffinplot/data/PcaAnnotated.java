@@ -67,19 +67,21 @@ public class PcaAnnotated {
      * @return results of principal component analysis
      */
     public static PcaAnnotated calculate(Sample sample, Correction correction) {
-        final List<TreatmentStep> rawData = sample.getVisibleTreatmentSteps();
-        final List<Vec3> points = new ArrayList<>(rawData.size());
-        final List<TreatmentStep> data = new ArrayList<>(rawData.size());
+        final List<TreatmentStep> rawSteps = sample.getVisibleTreatmentSteps();
+        final List<Vec3> points = new ArrayList<>(rawSteps.size());
+        final List<TreatmentStep> data = new ArrayList<>(rawSteps.size());
         
         int runEndsSeen = 0;
         boolean thisIsPca = false, lastWasPca = false;
-        for (TreatmentStep d: rawData) {
-            thisIsPca = d.isInPca();
+        for (TreatmentStep step: rawSteps) {
+            thisIsPca = step.isInPca();
             if (thisIsPca) {
-                points.add(d.getMoment(correction));
-                data.add(d);
+                points.add(step.getMoment(correction));
+                data.add(step);
             } else {
-                if (lastWasPca) runEndsSeen++;
+                if (lastWasPca) {
+                    runEndsSeen++;
+                }
             }
             lastWasPca = thisIsPca;
         }

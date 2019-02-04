@@ -39,7 +39,7 @@ public class MedianDestructiveFieldTest {
     public void testInsufficientInput() {
         assertNull(MedianDestructiveField.calculate(Collections.emptyList()));
         assertNull(MedianDestructiveField.calculate(
-                Collections.singletonList(makeDatum(0, 100))));
+                Collections.singletonList(makeTreatmentStep(0, 100))));
     }
  
 
@@ -65,10 +65,10 @@ public class MedianDestructiveFieldTest {
     public void testToStrings() {
         assertEquals("50.0|50.0|Y",
                 String.join("|", MedianDestructiveField.calculate(
-                makeData(new double[][] {{0, 100}, {100, 0}})).
+                makeTreatmentStepList(new double[][] {{0, 100}, {100, 0}})).
                 toStrings()));
         assertTrue(String.join("|", MedianDestructiveField.calculate(
-                makeData(new double[][] {{0, 100}, {100, 60}})).
+                makeTreatmentStepList(new double[][] {{0, 100}, {100, 60}})).
                 toStrings()).endsWith("|N"));
     }
 
@@ -87,12 +87,13 @@ public class MedianDestructiveFieldTest {
             assert(inputAndOutput[1][0].length == 3);
             final double[][] input = inputAndOutput[0];
             final double[] output = inputAndOutput[1][0];
-            testCalculate(makeData(input), output);
+            testCalculate(makeTreatmentStepList(input), output);
         }
         
     }
 
-    private static void testCalculate(List<TreatmentStep> input, double[] output) {
+    private static void testCalculate(
+            List<TreatmentStep> input, double[] output) {
         final MedianDestructiveField mdf =
                 MedianDestructiveField.calculate(input);
         
@@ -105,16 +106,20 @@ public class MedianDestructiveFieldTest {
         }
     }
 
-    private static List<TreatmentStep> makeData(double[][] levelsAndIntensities) {
-        final List<TreatmentStep> data = new ArrayList<>(levelsAndIntensities.length);
+    private static List<TreatmentStep> makeTreatmentStepList(
+            double[][] levelsAndIntensities) {
+        final List<TreatmentStep> steps =
+                new ArrayList<>(levelsAndIntensities.length);
         for (double[] levelAndIntensity: levelsAndIntensities) {
             assert(levelAndIntensity.length == 2);
-            data.add(makeDatum(levelAndIntensity[0], levelAndIntensity[1]));
+            steps.add(makeTreatmentStep(levelAndIntensity[0],
+                    levelAndIntensity[1]));
         }
-        return data;
+        return steps;
     }
 
-    private static TreatmentStep makeDatum(double treatmentLevel, double intensity) {
+    private static TreatmentStep makeTreatmentStep(
+            double treatmentLevel, double intensity) {
         final TreatmentStep d = new TreatmentStep(intensity, 0, 0);
         d.setTreatmentType(TreatmentType.DEGAUSS_XYZ);
         d.setAfX(treatmentLevel);

@@ -1,5 +1,5 @@
 /* This file is part of PuffinPlot, a program for palaeomagnetic
- * data plotting and analysis. Copyright 2012-2019 Pontus Lurcock.
+ * treatmentSteps plotting and analysis. Copyright 2012-2019 Pontus Lurcock.
  *
  * PuffinPlot is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,7 +116,7 @@ public class UcDavisLoader extends AbstractFileLoader {
                 d.setAfZ(levelTesla);
                 d.setMeasurementType(MeasurementType.CONTINUOUS);
                 d.setDepth(partStrings[0]);
-                addDatum(d);
+                addTreatmentStep(d);
             }
         }
     }
@@ -222,7 +222,7 @@ public class UcDavisLoader extends AbstractFileLoader {
      */
     public UcDavisLoader(File file, Map<Object, Object> importOptions) {
 
-        data = new LinkedList<>();
+        treatmentSteps = new LinkedList<>();
         this.importOptions = importOptions;
         this.file = file;
         try {

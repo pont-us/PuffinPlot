@@ -627,11 +627,12 @@ public abstract class Plot
      * @param position a position
      * @return the datum whose point is at the position, if any; otherwise null
      */
-    public TreatmentStep getDatumForPosition(java.awt.geom.Point2D position) {
-        for (PlotPoint p: points) {
-            final TreatmentStep d = p.getTreatmentStep();
-            if (d != null && !d.isHidden() && p.getShape().contains(position)) {
-                return d;
+    public TreatmentStep getTreatmentStepForPosition(Point2D position) {
+        for (PlotPoint point: points) {
+            final TreatmentStep step = point.getTreatmentStep();
+            if (step != null && !step.isHidden() &&
+                    point.getShape().contains(position)) {
+                return step;
             }
         }
         return null;

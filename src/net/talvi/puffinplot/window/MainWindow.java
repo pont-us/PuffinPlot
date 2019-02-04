@@ -122,7 +122,7 @@ public final class MainWindow extends JFrame {
         
         setTransferHandler(handler);
         
-        graphDisplay.addCurrentDatumListener(d ->
+        graphDisplay.addCurrentTreatmentStepListener(d ->
                 statusLabel.setText(d == null ? "|" : d.toSummaryString()));
         
         pack();

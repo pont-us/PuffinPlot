@@ -43,9 +43,9 @@ public class SuiteRpiEstimateTest {
     @Test
     public void testCalculateWithMagSus() {
         final Suite nrmSuite = new Suite("test");
-        nrmSuite.addDatum(makeDatum(0.005, TreatmentType.NONE, 0, 0));
+        nrmSuite.addTreatmentStep(makeStep(0.005, TreatmentType.NONE, 0, 0));
         final Suite msSuite = new Suite("test");
-        msSuite.addDatum(makeDatum(0, TreatmentType.NONE, 0, 10));
+        msSuite.addTreatmentStep(makeStep(0, TreatmentType.NONE, 0, 10));
         final SuiteRpiEstimate<MagSusSampleRpiEstimate> result =
                 SuiteRpiEstimate.calculateWithMagSus(nrmSuite, msSuite);
         assertEquals(0.0005, result.getRpis().get(0).getRatio(), 1e-8);
@@ -65,12 +65,12 @@ public class SuiteRpiEstimateTest {
          */
         
         final Suite nrmSuite = new Suite("test");
-        nrmSuite.addDatum(makeDatum(0.005, TreatmentType.NONE, 0, 0));
-        nrmSuite.addDatum(makeDatum(0.0032, TreatmentType.DEGAUSS_XYZ, 0.02, 0));
+        nrmSuite.addTreatmentStep(makeStep(0.005, TreatmentType.NONE, 0, 0));
+        nrmSuite.addTreatmentStep(makeStep(0.0032, TreatmentType.DEGAUSS_XYZ, 0.02, 0));
         
         final Suite armSuite = new Suite("test");
-        armSuite.addDatum(makeDatum(0.1, TreatmentType.ARM, 0.1, 0));
-        armSuite.addDatum(makeDatum(0.08, TreatmentType.DEGAUSS_XYZ, 0.02, 0));
+        armSuite.addTreatmentStep(makeStep(0.1, TreatmentType.ARM, 0.1, 0));
+        armSuite.addTreatmentStep(makeStep(0.08, TreatmentType.DEGAUSS_XYZ, 0.02, 0));
         
         final SuiteRpiEstimate<ArmSampleRpiEstimate> result =
                 SuiteRpiEstimate.calculateWithArm(nrmSuite, armSuite, 0, 1);
@@ -93,7 +93,7 @@ public class SuiteRpiEstimateTest {
 
     }
 
-    private static TreatmentStep makeDatum(double magnetization,
+    private static TreatmentStep makeStep(double magnetization,
                                            TreatmentType treatmentType, double afIntensity,
                                            double susceptibility) {
         final TreatmentStep treatmentStep = new TreatmentStep(0, 0, magnetization);

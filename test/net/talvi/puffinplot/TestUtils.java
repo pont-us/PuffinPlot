@@ -103,7 +103,7 @@ public class TestUtils {
                 d.setFormAz(0);
                 d.setFormDip(0);
                 sample.addTreatmentStep(d);
-                suite.addDatum(d);
+                suite.addTreatmentStep(d);
             }
         }
         suite.updateReverseIndex();
@@ -128,7 +128,7 @@ public class TestUtils {
                 d.setSample(sample);
                 d.setMagSus(depth);
                 sample.addTreatmentStep(d);
-                suite.addDatum(d);
+                suite.addTreatmentStep(d);
             }
         }
         suite.updateReverseIndex();

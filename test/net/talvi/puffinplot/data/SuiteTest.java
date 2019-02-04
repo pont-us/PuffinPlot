@@ -643,38 +643,38 @@ public class SuiteTest {
     }
     
     @Test(expected = NullPointerException.class)
-    public void testAddDatumNull() {
-        syntheticSuite1.addDatum(null);
+    public void testAddTreatmentStepNull() {
+        syntheticSuite1.addTreatmentStep(null);
     }
 
     @Test(expected = NullPointerException.class)
-    public void testAddDatumNullMeasType() {
-        final TreatmentStep d = new TreatmentStep();
-        d.setMeasurementType(null);
-        syntheticSuite1.addDatum(d);
+    public void testAddTreatmentStepNullMeasType() {
+        final TreatmentStep step = new TreatmentStep();
+        step.setMeasurementType(null);
+        syntheticSuite1.addTreatmentStep(step);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testAddDatumUnsetMeasType() {
-        final TreatmentStep d = new TreatmentStep();
-        d.setMeasurementType(MeasurementType.UNSET);
-        syntheticSuite1.addDatum(d);
+    public void testAddTreatmentStepUnsetMeasType() {
+        final TreatmentStep step = new TreatmentStep();
+        step.setMeasurementType(MeasurementType.UNSET);
+        syntheticSuite1.addTreatmentStep(step);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testAddDatumIncompatibleMeasType() {
-        final TreatmentStep d = new TreatmentStep();
-        d.setMeasurementType(MeasurementType.DISCRETE);
-        syntheticSuite1.addDatum(d);
+    public void testAddTreatmentStepIncompatibleMeasType() {
+        final TreatmentStep step = new TreatmentStep();
+        step.setMeasurementType(MeasurementType.DISCRETE);
+        syntheticSuite1.addTreatmentStep(step);
     }
 
     @Test
-    public void testAddDatumUnknownTreatType() {
-        final TreatmentStep d = new TreatmentStep();
-        d.setMeasurementType(MeasurementType.CONTINUOUS);
-        d.setDepth("0");
-        d.setTreatmentType(TreatmentType.UNKNOWN);
-        syntheticSuite1.addDatum(d);
+    public void testAddTreatmentStepUnknownTreatType() {
+        final TreatmentStep step = new TreatmentStep();
+        step.setMeasurementType(MeasurementType.CONTINUOUS);
+        step.setDepth("0");
+        step.setTreatmentType(TreatmentType.UNKNOWN);
+        syntheticSuite1.addTreatmentStep(step);
     }
 
     @Test
@@ -1355,7 +1355,7 @@ public class SuiteTest {
         d.setMagDev(0);
         d.setMeasurementType(MeasurementType.DISCRETE);
         d.setDiscreteId("sample1");
-        suite.addDatum(d);
+        suite.addTreatmentStep(d);
         final Sample sample = suite.getSampleByIndex(0);
         sample.setCorrections(0, 90, 0, 0, 0);
         suite.updateReverseIndex();

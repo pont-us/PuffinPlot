@@ -28,17 +28,23 @@ import net.talvi.puffinplot.data.TreatmentStep;
  */
 public interface FileLoader {
     
-    /** Returns the data points read from the file.
-     * @return the data points read from the file
+    /**
+     * Returns the treatment steps read from the file.
+     *
+     * @return the treatment steps read from the file
      */
-    public List<TreatmentStep> getData();
+    public List<TreatmentStep> getTreatmentSteps();
     
-    /** Returns any messages produced during the loading process. 
+    /**
+     * Returns any messages produced during the loading process.
+     *
      * @return any messages produced during the loading process
      */
     public List<String> getMessages();
     
-    /** Returns any lines in the file which were not handled by the loader. 
+    /**
+     * Returns any lines in the file which were not handled by the loader.
+     *
      * @return any lines in the file which were not handled by the loader
      */
     public List<String> getExtraLines();

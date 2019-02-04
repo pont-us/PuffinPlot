@@ -1,5 +1,5 @@
 /* This file is part of PuffinPlot, a program for palaeomagnetic
- * data plotting and analysis. Copyright 2012-2019 Pontus Lurcock.
+ * treatmentSteps plotting and analysis. Copyright 2012-2019 Pontus Lurcock.
  *
  * PuffinPlot is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ import static net.talvi.puffinplot.Util.parseDoubleSafely;
 import static net.talvi.puffinplot.data.file.TwoGeeHelper.gaussToAm;
 
 /**
- * A file loader for CIT (Caltech) data files. This code is informed in part
+ * A file loader for CIT (Caltech) treatmentSteps files. This code is informed in part
  * by the file format description at
  * http://cires1.colorado.edu/people/jones.craig/PMag_Formats.html .
  *
@@ -69,7 +69,7 @@ public class CaltechLoader extends AbstractFileLoader {
     public CaltechLoader(File file) {
         this.file = file;
         this.parentDir = file.getParentFile();
-        data = new LinkedList<>();
+        treatmentSteps = new LinkedList<>();
         try {
             reader = new LineNumberReader(new FileReader(file));
             readFile();
@@ -144,29 +144,29 @@ public class CaltechLoader extends AbstractFileLoader {
                     parseDoubleSafely(sampleData.substring(32));
             
             /*
-             * According to the PaleoMag manual, data should start here.
+             * According to the PaleoMag manual, treatmentSteps should start here.
              * However, example files from JMG all have line 3 blank. So we
-             * assume that data lines start here, but check for blank lines
+             * assume that treatmentSteps lines start here, but check for blank lines
              * before attempting to interpret them.
              */
             while ((line = subReader.readLine()) != null) {
                 if (line.trim().isEmpty()) continue;
-                final TreatmentStep d = lineToDatum(line);
-                if (d != null) {
-                    d.setDiscreteId(sampleName);
+                final TreatmentStep step = linetoTreatmentStep(line);
+                if (step != null) {
+                    step.setDiscreteId(sampleName);
                     //d.setSampAz((coreStrike + 90) % 360);
-                    d.setSampAz((coreStrike + 270) % 360);
+                    step.setSampAz((coreStrike + 270) % 360);
                     //d.setSampDip(coreDip);
-                    d.setSampHade(coreDip);
-                    d.setFormAz((bedStrike + 90) % 360);
-                    d.setFormDip(bedDip);
-                    data.add(d);
+                    step.setSampHade(coreDip);
+                    step.setFormAz((bedStrike + 90) % 360);
+                    step.setFormDip(bedDip);
+                    treatmentSteps.add(step);
                 }
             }
         }
     }
 
-    private TreatmentStep lineToDatum(String pmagLine) {
+    private TreatmentStep linetoTreatmentStep(String pmagLine) {
 
         final Matcher matcher = pattern.matcher(pmagLine);
         matcher.find();

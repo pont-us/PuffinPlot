@@ -1,5 +1,5 @@
 /* This file is part of PuffinPlot, a program for palaeomagnetic
- * data plotting and analysis. Copyright 2012-2019 Pontus Lurcock.
+ * treatmentSteps plotting and analysis. Copyright 2012-2019 Pontus Lurcock.
  *
  * PuffinPlot is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,17 +46,17 @@ public class IapdLoader extends AbstractFileLoader {
      * 
      * {@code TreatmentType.class}; value must be an instance of {@link TreatmentType}
      * {@code MeasurementType.class}; value must be an instance of {@link MeasurementType}
+ 
+ These keys respectively specify the treatment type and measurement
+ type for the treatmentSteps in the file. If they are omitted, defaults will
+ be used.
      * 
-     * These keys respectively specify the treatment type and measurement
-     * type for the data in the file. If they are omitted, defaults will
-     * be used.
-     * 
-     * @param file the file from which to read data
-     * @param importOptions import options for reading the data
+     * @param file the file from which to read treatmentSteps
+     * @param importOptions import options for reading the treatmentSteps
      */
     public IapdLoader(File file, Map<Object,Object> importOptions) {
         this.file = file;
-        data = new LinkedList<>();
+        treatmentSteps = new LinkedList<>();
         this.importOptions = importOptions;
         try {
             reader = new LineNumberReader(new FileReader(file));
@@ -101,10 +101,12 @@ public class IapdLoader extends AbstractFileLoader {
         TreatmentType treatmentType = TreatmentType.DEGAUSS_XYZ;
         MeasurementType measurementType = MeasurementType.DISCRETE;
         if (importOptions.containsKey(TreatmentType.class)) {
-            treatmentType = (TreatmentType) importOptions.get(TreatmentType.class);
+            treatmentType =
+                    (TreatmentType) importOptions.get(TreatmentType.class);
         }
         if (importOptions.containsKey(MeasurementType.class)) {
-            measurementType = (MeasurementType) importOptions.get(MeasurementType.class);
+            measurementType =
+                    (MeasurementType) importOptions.get(MeasurementType.class);
         }
         
         final String headerLine = reader.readLine();
@@ -121,8 +123,10 @@ public class IapdLoader extends AbstractFileLoader {
                 sampleName = header[0];
             }
         } else {
-            // Should never happen, since split should always return
-            // a non-empty array, but best to cover it just in case.
+            /*
+             * Should never happen, since split should always return a non-empty
+             * array, but best to cover it just in case.
+             */
             addMessage("No header data in \"%s\"", file.getName());
         }
         
@@ -139,46 +143,47 @@ public class IapdLoader extends AbstractFileLoader {
         boolean success = true;
         final double[] defaults = {0, 0, 0, 0, 0, 0, 0};
         while ((line = reader.readLine()) != null) {
-            final TreatmentStep d = new TreatmentStep();
+            final TreatmentStep step = new TreatmentStep();
             final String[] parts = line.trim().split(" +");
             
-            final ParsedDoubles fields = ParsedDoubles.parse(parts, defaults, 0);
+            final ParsedDoubles fields =
+                    ParsedDoubles.parse(parts, defaults, 0);
             success = success && fields.success;
             final double treatmentLevel = fields.get(0);
             
             switch (treatmentType) {
                 case THERMAL:
-                    d.setTemp(treatmentLevel);
+                    step.setTemp(treatmentLevel);
                     break;
                 case ARM:
                 case DEGAUSS_XYZ:
-                    d.setAfX(treatmentLevel / 1000);
-                    d.setAfY(treatmentLevel / 1000);
-                    d.setAfZ(treatmentLevel / 1000);
+                    step.setAfX(treatmentLevel / 1000);
+                    step.setAfY(treatmentLevel / 1000);
+                    step.setAfZ(treatmentLevel / 1000);
                     break;
                 case DEGAUSS_Z:
-                    d.setAfZ(treatmentLevel / 1000);
+                    step.setAfZ(treatmentLevel / 1000);
                     break;
                 case IRM:
-                    d.setIrmField(treatmentLevel / 1000);
+                    step.setIrmField(treatmentLevel / 1000);
                     break;
             }
             
-            d.setMoment(Vec3.fromPolarDegrees(fields.get(1) / 1000,
+            step.setMoment(Vec3.fromPolarDegrees(fields.get(1) / 1000,
                     fields.get(6), fields.get(5)));
-            d.setDiscreteId(sampleName);
-            d.setSampAz(headerValues.get(1));
-            d.setSampDip(headerValues.get(2));
-            d.setFormAz(headerValues.get(3));
-            d.setFormDip(headerValues.get(4));
-            d.setVolume(headerValues.get(5));
-            d.setTreatmentType(treatmentType);
-            d.setMeasurementType(measurementType);
+            step.setDiscreteId(sampleName);
+            step.setSampAz(headerValues.get(1));
+            step.setSampDip(headerValues.get(2));
+            step.setFormAz(headerValues.get(3));
+            step.setFormDip(headerValues.get(4));
+            step.setVolume(headerValues.get(5));
+            step.setTreatmentType(treatmentType);
+            step.setMeasurementType(measurementType);
             final double a95 = fields.get(4);
             if (a95 > a95max) {
                 a95max = a95;
             }
-            data.add(d);
+            treatmentSteps.add(step);
         }
         if (!success) {
             addMessage("Malformed data fields in \"%s\".", file.getName());

@@ -1,5 +1,5 @@
 /* This file is part of PuffinPlot, a program for palaeomagnetic
- * data plotting and analysis. Copyright 2012-2019 Pontus Lurcock.
+ * treatmentSteps plotting and analysis. Copyright 2012-2019 Pontus Lurcock.
  *
  * PuffinPlot is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,7 +139,7 @@ public class PmdLoaderTest {
                 TestFileLocator.class.getResourceAsStream(filenameAndData[0]);
         final PmdLoader pmdLoader =
                 new PmdLoader(stream, Collections.emptyMap(), filenameAndData[0]);
-        final List<TreatmentStep> loadedData = pmdLoader.getData();
+        final List<TreatmentStep> loadedData = pmdLoader.getTreatmentSteps();
         if (!pmdLoader.messages.isEmpty()){
             System.out.println(pmdLoader.messages);
         }
@@ -181,7 +181,7 @@ public class PmdLoaderTest {
         final PmdLoader pmdLoader = PmdLoader.readFile(
                 new File("/12233e64-2cf3-11e8-9643-2316aaca3cc2"),
                 Collections.emptyMap());
-        assertEquals(0, pmdLoader.getData().size());
+        assertEquals(0, pmdLoader.getTreatmentSteps().size());
         assertTrue(pmdLoader.getMessages().size() > 0);
     }
     
@@ -210,7 +210,7 @@ public class PmdLoaderTest {
         final PmdLoader pmdLoader =
                 new PmdLoader(inputStream, Collections.emptyMap(), "test");
         assertTrue(pmdLoader.getMessages().size() > 0);
-        assertEquals(0, pmdLoader.getData().size());
+        assertEquals(0, pmdLoader.getTreatmentSteps().size());
     }
     
     @Test
@@ -226,7 +226,7 @@ public class PmdLoaderTest {
         assertTrue(pmdLoader.getMessages().size() > 0);
         assertTrue(pmdLoader.getMessages().get(0).toLowerCase().
                 contains("inconsistent"));
-        assertEquals(1, pmdLoader.getData().size());
+        assertEquals(1, pmdLoader.getTreatmentSteps().size());
     }
     
         
