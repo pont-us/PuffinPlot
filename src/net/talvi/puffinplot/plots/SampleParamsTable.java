@@ -32,7 +32,6 @@ import net.talvi.puffinplot.data.PcaValues;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Site;
 import net.talvi.puffinplot.data.Vec3;
-import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 
 /**
@@ -53,16 +52,16 @@ public class SampleParamsTable extends Plot {
     private final Preferences prefs;
     private final DecimalFormat angleFormat;
     
-    /** Creates a sample parameter table with the supplied parameters.
-     * 
-     * @param parent the graph display containing the plot
+    /**
+     * Creates a sample parameter table with the supplied parameters.
+     *
      * @param params the parameters of the plot
-     * @param prefs the preferences containing the plot configuration
      */
     public SampleParamsTable(PlotParams params) {
         super(params);
         this.prefs = params.getPreferences();
-        angleFormat = new DecimalFormat("##0.0", Util.getDecimalFormatSymbols());
+        angleFormat =
+                new DecimalFormat("##0.0", Util.getDecimalFormatSymbols());
     }
     
     @Override
@@ -83,7 +82,7 @@ public class SampleParamsTable extends Plot {
     }
 
     @Override
-    public void draw(Graphics2D g) {
+    public void draw(Graphics2D graphics) {
         clearPoints();
         final Sample selectedSample = params.getSample();
         if (selectedSample==null) {
@@ -96,7 +95,7 @@ public class SampleParamsTable extends Plot {
                 site.getSamples() :
                 selectedSample.getSuite().getSamples();
         
-        points.add(new TextLinePoint(this, g, 10, null, null, headers,
+        points.add(new TextLinePoint(this, graphics, 10, null, null, headers,
                 xSpacing, Color.BLACK));
 
         final Color highlightColour = (prefs != null &&
@@ -133,13 +132,14 @@ public class SampleParamsTable extends Plot {
                 values.set(3, fmt(vector.getIncDeg()));
             }
             
-            points.add(new TextLinePoint(this, g, yPos, null, sample, values,
-                    xSpacing, sample == params.getSample() ?
-                    highlightColour : Color.BLACK));
+            points.add(new TextLinePoint(this, graphics, yPos, null, sample,
+                    values, xSpacing,
+                    sample == params.getSample() ?
+                            highlightColour :
+                            Color.BLACK));
             yPos += ySpacing;
         }
-        g.setColor(Color.BLACK);
-        drawPoints(g);
+        graphics.setColor(Color.BLACK);
+        drawPoints(graphics);
     }
-    
 }

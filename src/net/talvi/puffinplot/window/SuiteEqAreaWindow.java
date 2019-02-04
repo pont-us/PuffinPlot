@@ -53,7 +53,8 @@ public class SuiteEqAreaWindow extends JFrame {
      * @return the equal-area plot in this window's graph display
      */
     public SeparateSuiteEaPlot getPlot() {
-        return (SeparateSuiteEaPlot) graphDisplay.plots.get("fisherplot");
+        return (SeparateSuiteEaPlot)
+                graphDisplay.plots.get(SeparateSuiteEaPlot.class);
     }
     
 }

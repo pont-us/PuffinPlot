@@ -36,8 +36,9 @@ public interface SampleClickListener {
     
     /**
      * Invoked when a sample is clicked in a plot.
-     * 
-     * @param sample the sample corresponding to the plot element which was clicked
+     *
+     * @param sample the sample corresponding to the plot element which was
+     * clicked
      */
     public void sampleClicked(Sample sample);
 }

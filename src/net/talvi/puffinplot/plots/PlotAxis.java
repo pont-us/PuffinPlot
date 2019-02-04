@@ -39,9 +39,15 @@ final class PlotAxis {
 
     public PlotAxis(AxisParameters axisParameters, Plot plot) {
         ap = new AxisParameters(axisParameters);
-        if (ap.stepSize == null) ap.stepSize = calculateStepSize(ap.extent);
-        if (ap.numSteps == null) ap.numSteps = calculateNumSteps(ap.extent, ap.stepSize);
-        if (ap.magnitude == null) ap.magnitude = calculateMagnitude(getLength());
+        if (ap.stepSize == null) {
+            ap.stepSize = calculateStepSize(ap.extent);
+        }
+        if (ap.numSteps == null) {
+            ap.numSteps = calculateNumSteps(ap.extent, ap.stepSize);
+        }
+        if (ap.magnitude == null) {
+            ap.magnitude = calculateMagnitude(getLength());
+        }
         this.plot = plot;
     }
 
@@ -66,71 +72,72 @@ final class PlotAxis {
         return axes.toArray(new PlotAxis[] {});
       }
 
-        public final static class AxisParameters {
-            public double extent = 1;
-            public Direction direction = Direction.UP;
-            public String label = null;
-            public String endLabel = null;
-            public boolean magnitudeOnTicks = false;
-            public boolean magnitudeOnLabel = true;
-            public Double stepSize = null;
-            public Integer numSteps = null;
-            public Integer magnitude = null;
-            public Double markedPosition = null;
-            // farside: true for an axis at top or right.
-            // used to draw label on correct side.
-            public boolean farSide = false;
-            public boolean numberEachTick = false;
-            public double startValue = 0;
-
-            public AxisParameters(double extent, Direction direction) {
-                this.extent = extent;
-                this.direction = direction;
-            }
-
-            public AxisParameters(AxisParameters p) {
-                extent = p.extent;
-                direction = p.direction;
-                label = p.label;
-                endLabel = p.endLabel;
-                magnitudeOnTicks = p.magnitudeOnTicks;
-                magnitudeOnLabel = p.magnitudeOnLabel;
-                stepSize = p.stepSize;
-                numSteps = p.numSteps;
-                magnitude = p.magnitude;
-                markedPosition = p.markedPosition;
-                farSide = p.farSide;
-                numberEachTick = p.numberEachTick;
-            }
-
-            public AxisParameters withEndLabel(String endLabel) {
-                this.endLabel = endLabel;
-                return this;
-            }
-
-            public AxisParameters withLabel(String label) {
-                this.label = label;
-                return this;
-            }
-
-            public AxisParameters withNumberEachTick() {
-                this.numberEachTick = true;
-                return this;
-            }
-
-            public AxisParameters withStartValue(double startValue) {
-                this.startValue = startValue;
-                return this;
-            }
-
+    public final static class AxisParameters {
+        public double extent = 1;
+        public Direction direction = Direction.UP;
+        public String label = null;
+        public String endLabel = null;
+        public boolean magnitudeOnTicks = false;
+        public boolean magnitudeOnLabel = true;
+        public Double stepSize = null;
+        public Integer numSteps = null;
+        public Integer magnitude = null;
+        public Double markedPosition = null;
+        // farside: true for an axis at top or right.
+        // used to draw label on correct side.
+        public boolean farSide = false;
+        public boolean numberEachTick = false;
+        public double startValue = 0;
+        
+        public AxisParameters(double extent, Direction direction) {
+            this.extent = extent;
+            this.direction = direction;
         }
+        
+        public AxisParameters(AxisParameters other) {
+            extent = other.extent;
+            direction = other.direction;
+            label = other.label;
+            endLabel = other.endLabel;
+            magnitudeOnTicks = other.magnitudeOnTicks;
+            magnitudeOnLabel = other.magnitudeOnLabel;
+            stepSize = other.stepSize;
+            numSteps = other.numSteps;
+            magnitude = other.magnitude;
+            markedPosition = other.markedPosition;
+            farSide = other.farSide;
+            numberEachTick = other.numberEachTick;
+        }
+        
+        public AxisParameters withEndLabel(String endLabel) {
+            this.endLabel = endLabel;
+            return this;
+        }
+        
+        public AxisParameters withLabel(String label) {
+            this.label = label;
+            return this;
+        }
+        
+        public AxisParameters withNumberEachTick() {
+            this.numberEachTick = true;
+            return this;
+        }
+        
+        public AxisParameters withStartValue(double startValue) {
+            this.startValue = startValue;
+            return this;
+        }
+        
+    }
 
     private static double calculateStepSize(double extent) {
         // if (extent==0) extent=1;
-        double scaleFactor = Math.pow(10, 1-Math.floor(Math.log10(extent)));
-        double extentScaledTo100 = extent * scaleFactor;
-        double scaledStepSize =
-                calculateStepSizeForValueFrom0To100(Math.floor(extentScaledTo100));
+        final double scaleFactor =
+                Math.pow(10, 1-Math.floor(Math.log10(extent)));
+        final double extentScaledTo100 = extent * scaleFactor;
+        final double scaledStepSize = calculateStepSizeForValueFrom0To100(
+                Math.floor(extentScaledTo100));
         return scaledStepSize / scaleFactor;
     }
 
@@ -141,8 +148,12 @@ final class PlotAxis {
      */
     private static int calculateMagnitude(final double length) {
         int nf = 0;
-        while (length * Math.pow(10, nf) > 1000) nf -= 3;
-        while (length * Math.pow(10, nf) < 1) nf += 1;
+        while (length * Math.pow(10, nf) > 1000) {
+            nf -= 3;
+        }
+        while (length * Math.pow(10, nf) < 1) {
+            nf += 1;
+        }
         return -nf;
     }
 
@@ -152,7 +163,9 @@ final class PlotAxis {
 
     private static double roundUpToNextStep(double extent, double stepSize) {
         double result = 0;
-        while (result < extent) result += stepSize;
+        while (result < extent) {
+            result += stepSize;
+        }
         return stepSize;
     }
 
@@ -163,63 +176,78 @@ final class PlotAxis {
                                20 ;
     }
 
-    public void draw(Graphics2D g, double scale, int xOrig, int yOrig) {
+    public void draw(Graphics2D graphics, double scale, int xOrig, int yOrig) {
         int x = 0, y = 0;
         double t = plot.getTickLength() / 2.0f;
         switch (ap.direction) {
-        case RIGHT: x = 1; break;
-        case DOWN: y = 1; break;
-        case LEFT: x = -1; break;
-        case UP: y = -1; break;
+            case RIGHT:
+                x = 1;
+                break;
+            case DOWN:
+                y = 1;
+                break;
+            case LEFT:
+                x = -1;
+                break;
+            case UP:
+                y = -1;
+                break;
         }
 
         for (int i=1; i<=ap.numSteps; i++) {
-            double pos = i*getStepSize()*scale;
-            g.draw(new Line2D.Double(xOrig+x*pos+y*t, yOrig+y*pos+x*t,
-                    xOrig+x*pos-y*t, yOrig+y*pos-x*t));
+            double pos = i * getStepSize() * scale;
+            graphics.draw(new Line2D.Double(
+                    xOrig + x * pos + y * t, yOrig + y * pos + x * t,
+                    xOrig + x * pos - y * t, yOrig + y * pos - x * t));
             if (ap.numberEachTick || i==ap.numSteps) {
-                double length = getNormalizedLength() * (double) i / ap.numSteps;
+                double length =
+                        getNormalizedLength() * (double) i / ap.numSteps;
                 int length_int = (int) length;
                 String text = Math.abs(length - length_int) < 0.0001
                         ? Integer.toString(length_int)
                         : String.format(Locale.ENGLISH, "%.1f", length);
-                AttributedString as = (ap.magnitudeOnTicks && getMagnitude() != 0)
-                    ? plot.timesTenToThe(text, getMagnitude(), g)
-                    : new AttributedString(text);
-                plot.putText(g, as,
+                AttributedString as =
+                        (ap.magnitudeOnTicks && getMagnitude() != 0)
+                        ? plot.timesTenToThe(text, getMagnitude(), graphics)
+                        : new AttributedString(text);
+                plot.putText(graphics, as,
                         xOrig + x * pos, yOrig + y * pos,
                         ap.direction.labelPos(ap.farSide), 0, 5);
             }
         }
         
-        double xLen = x*getLength()*scale;
-        double yLen = y*getLength()*scale;
-        g.draw(new Line2D.Double(xOrig, yOrig, xOrig+xLen, yOrig+yLen));
-        if (getLength()!=0) {
+        final double xLen = x*getLength()*scale;
+        final double yLen = y*getLength()*scale;
+        graphics.draw(new Line2D.Double(xOrig, yOrig, xOrig+xLen, yOrig+yLen));
+        if (getLength() != 0) {
             if (ap.markedPosition != null) {
-                AttributedString mark = new AttributedString
-                        (String.format(Locale.ENGLISH,
-                                "%.2f", ap.markedPosition * Math.pow(10, -getMagnitude())));
-                plot.putText(g, mark,
+                final AttributedString mark = new AttributedString(
+                                String.format(Locale.ENGLISH, "%.2f",
+                                        ap.markedPosition *
+                                                Math.pow(10, -getMagnitude())));
+                plot.putText(graphics, mark,
                         xOrig + x * ap.markedPosition * scale,
                         yOrig + y * ap.markedPosition * scale,
                         ap.direction.labelPos(!ap.farSide), 0, 5);
-                double pos = ap.markedPosition * scale;
-                g.draw(new Line2D.Double(xOrig+x*pos+y*t, yOrig+y*pos+x*t,
-                    xOrig+x*pos-y*t, yOrig+y*pos-x*t));
+                final double pos = ap.markedPosition * scale;
+                graphics.draw(new Line2D.Double(
+                        xOrig + x * pos + y * t, yOrig + y * pos + x * t,
+                        xOrig + x * pos - y * t, yOrig + y * pos - x * t));
             }
         }
         if (ap.label != null) {
             AttributedString as = (ap.magnitudeOnLabel && getMagnitude() != 0)
-                    ? plot.timesTenToThe(ap.label, getMagnitude(), g)
+                    ? plot.timesTenToThe(ap.label, getMagnitude(), graphics)
                     : new AttributedString(ap.label);
 
-            plot.putText(g, as, xOrig + xLen / 2, yOrig + yLen / 2,
-                    ap.direction.labelPos(ap.farSide), ap.direction.labelRot(), LABEL_PADDING);
+            plot.putText(graphics, as, xOrig + xLen / 2, yOrig + yLen / 2,
+                    ap.direction.labelPos(ap.farSide),
+                    ap.direction.labelRot(), LABEL_PADDING);
         }
         
         if (ap.endLabel != null) {
-            plot.putText(g, ap.endLabel, xOrig+xLen, yOrig+yLen, ap.direction, 0, 8);
+            plot.putText(graphics, ap.endLabel, xOrig + xLen, yOrig + yLen,
+                    ap.direction, 0, 8);
         }
     }
 

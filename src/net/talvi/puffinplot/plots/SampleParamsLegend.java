@@ -24,14 +24,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.prefs.Preferences;
 
 import net.talvi.puffinplot.Util;
 import net.talvi.puffinplot.data.FisherParams;
 import net.talvi.puffinplot.data.GreatCircle;
 import net.talvi.puffinplot.data.PcaValues;
 import net.talvi.puffinplot.data.Sample;
-import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 
 /**
@@ -49,9 +47,7 @@ public class SampleParamsLegend extends Plot {
     
     /** Creates a new sample parameter legend with the supplied parameters.
      * 
-     * @param parent the graph display containing the legend
      * @param params the parameters of the legend
-     * @param prefs the preferences containing the legend configuration
      */
     public SampleParamsLegend(PlotParams params) {
         super(params);

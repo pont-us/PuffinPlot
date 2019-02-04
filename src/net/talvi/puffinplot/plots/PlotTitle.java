@@ -19,10 +19,8 @@ package net.talvi.puffinplot.plots;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.util.prefs.Preferences;
 
 import net.talvi.puffinplot.data.Sample;
-import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 
 /**
@@ -33,11 +31,10 @@ import net.talvi.puffinplot.window.PlotParams;
  */
 public class PlotTitle extends Plot {
 
-    /** Creates a plot title with the supplied parameters.
-     * 
-     * @param parent the graph display containing the plot title
+    /**
+     * Creates a plot title with the supplied parameters.
+     *
      * @param params the parameters of the plot title
-     * @param prefs the preferences containing the plot title configuration
      */
     public PlotTitle(PlotParams params) {
         super(params);
@@ -59,24 +56,26 @@ public class PlotTitle extends Plot {
     }
 
     @Override
-    public void draw(Graphics2D g) {
+    public void draw(Graphics2D graphics) {
         final Sample sample = params.getSample();
-        if (sample==null) return;
+        if (sample==null) {
+            return;
+        }
 
-        g.setFont(Font.getFont(getTextAttributes()));
-        g.setColor(Color.BLACK);
-        final Font oldFont = g.getFont();
+        graphics.setFont(Font.getFont(getTextAttributes()));
+        graphics.setColor(Color.BLACK);
+        final Font oldFont = graphics.getFont();
         final Font biggerFont = oldFont.deriveFont(getFontSize() * 1.5f);
-        g.setFont(biggerFont);
+        graphics.setFont(biggerFont);
         final int minX = (int) getDimensions().getMinX(); 
         final int minY = (int) getDimensions().getMinY();
         final boolean discrete = sample.getMeasurementType().isDiscrete();
-        g.drawString((discrete ? "Sample: " : "Depth: ")
+        graphics.drawString((discrete ? "Sample: " : "Depth: ")
                 + sample.getNameOrDepth(),
                 minX, minY + 16);
-        g.setFont(oldFont);
+        graphics.setFont(oldFont);
         if (sample.getSite() != null) {
-            g.drawString("Site: "+sample.getSite().toString(), minX,
+            graphics.drawString("Site: "+sample.getSite().toString(), minX,
                 minY + 32);
         }
     }

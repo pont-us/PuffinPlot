@@ -76,8 +76,10 @@ class ShapePoint implements PlotPoint {
         }
     }
     
-    /** To deal with the large number of possible parameters,
-     * we use the builder pattern. */
+    /**
+     * A builder class which helps to construct a ShapePoint in a convenient
+     * and flexible way.
+     */
     public static class Builder {
         private final Point2D centre;
         private final Plot plot;
@@ -152,92 +154,97 @@ class ShapePoint implements PlotPoint {
         return new Builder(plot, centre);
     }
     
-    private ShapePoint(Builder b) {
-        this.plot= b.plot;
-        double s = b.size * b.plot.getUnitSize();
-        this.centre = b.centre;
-        this.treatmentStep = b.treatmentStep;
-        this.filled = b.filled;
-        this.lineToHere = b.lineToHere;
-        this.special = b.special;
+    private ShapePoint(Builder builder) {
+        this.plot= builder.plot;
+        final double size = builder.size * builder.plot.getUnitSize();
+        this.centre = builder.centre;
+        this.treatmentStep = builder.treatmentStep;
+        this.filled = builder.filled;
+        this.lineToHere = builder.lineToHere;
+        this.special = builder.special;
         final double xo = centre.getX();
         final double yo = centre.getY();
-        final double hs = s * HIGHLIGHT_SCALE;
-        switch (b.pointShape) {
+        final double hSize = size * HIGHLIGHT_SCALE;
+        switch (builder.pointShape) {
             case SQUARE:
-                shape = new Rectangle2D.Double(xo - s, yo - s, 2 * s, 2 * s);
-                highlight = new Rectangle2D.Double(xo - hs, yo - hs,
-                        2 * hs, 2 * hs);
+                shape = new Rectangle2D.Double(
+                        xo - size, yo - size, 2 * size, 2 * size);
+                highlight = new Rectangle2D.Double(xo - hSize, yo - hSize,
+                        2 * hSize, 2 * hSize);
                 break;
             case TRIANGLE:
-                shape = makeTriangle(s, xo, yo);
-                highlight = makeTriangle(hs, xo, yo);
+                shape = makeTriangle(size, xo, yo);
+                highlight = makeTriangle(hSize, xo, yo);
                 break;
             case CIRCLE:
-                shape = new Ellipse2D.Double(xo-s, yo-s, s*2, s*2);
-                highlight = new Ellipse2D.Double(xo-hs, yo-hs, hs*2, hs*2);
+                shape = new Ellipse2D.Double(xo - size, yo - size,
+                        size * 2, size * 2);
+                highlight = new Ellipse2D.Double(xo - hSize, yo - hSize,
+                        hSize * 2, hSize * 2);
                 break;
             case DIAMOND:
-                shape = makeDiamond(s, xo, yo);
-                highlight = makeDiamond(hs, xo, yo);
+                shape = makeDiamond(size, xo, yo);
+                highlight = makeDiamond(hSize, xo, yo);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown point shape: "+
-                        b.pointShape.toString());
+                        builder.pointShape.toString());
         }
     }
     
-    private static Shape makeTriangle(double s, double xo, double yo) {
+    private static Shape makeTriangle(double size, double xo, double yo) {
         final Path2D path = new Path2D.Double();
-        path.moveTo(xo - s, yo + s * (1/sqrt(3)));
-        path.lineTo(xo + s, yo + s * (1/sqrt(3)));
-        path.lineTo(xo, yo - s * (2/sqrt(3)));
+        path.moveTo(xo - size, yo + size * (1 / sqrt(3)));
+        path.lineTo(xo + size, yo + size * (1 / sqrt(3)));
+        path.lineTo(xo, yo - size * (2 / sqrt(3)));
         path.closePath();
         return path;
     }
     
-    private static Shape makeDiamond(double s, double xo, double yo) {
-        // We wish the sides of the dimand to have length 2s, so
-        // the diagonal needs to have length 2s*sqrt(2).
-        s *= Math.sqrt(2.);
+    private static Shape makeDiamond(double size, double xo, double yo) {
+        /*
+         * We wish the sides of the dimand to have length 2s, so the diagonal
+         * needs to have length 2s*sqrt(2).
+         */
+        size *= Math.sqrt(2.);
         final Path2D path = new Path2D.Double();
-        path.moveTo(xo-s, yo);
-        path.lineTo(xo, yo+s);
-        path.lineTo(xo+s, yo);
-        path.lineTo(xo, yo-s);
+        path.moveTo(xo-size, yo);
+        path.lineTo(xo, yo+size);
+        path.lineTo(xo+size, yo);
+        path.lineTo(xo, yo-size);
         path.closePath();
         return path;
     }
     
     @Override
-    public void draw(Graphics2D g) {
-        g.setStroke(plot.getStroke());
+    public void draw(Graphics2D graphics) {
+        graphics.setStroke(plot.getStroke());
         if (treatmentStep != null) {
-            g.setColor(getTreatmentStep().isSelected() ? Color.RED : Color.BLACK);
+            graphics.setColor(getTreatmentStep().isSelected() ?
+                    Color.RED : Color.BLACK);
         }
-
-        g.draw(shape);
+        graphics.draw(shape);
         if (special) {
-            g.draw(highlight);
+            graphics.draw(highlight);
         }
         if (filled) {
-            g.fill(shape);
+            graphics.fill(shape);
         }
     }
 
     @Override
-    public void drawWithPossibleLine(Graphics2D g, PlotPoint prev,
+    public void drawWithPossibleLine(Graphics2D graphics, PlotPoint prev,
             boolean annotate) {
-        draw(g);
-        g.setColor(Color.BLACK);
+        draw(graphics);
+        graphics.setColor(Color.BLACK);
         if (lineToHere && prev != null) {
-            g.draw(new Line2D.Double(prev.getCentre(), centre));
+            graphics.draw(new Line2D.Double(prev.getCentre(), centre));
         }
         if (annotate && treatmentStep != null) {
             double pad = plot.getFontSize() / 3;
             final String label = treatmentStep.getFormattedTreatmentLevel();
-            plot.putText(g, label, centre.getX(), centre.getY(), getLabelPos(),
-                    0, pad);
+            plot.putText(graphics, label, centre.getX(), centre.getY(),
+                    getLabelPos(), 0, pad);
         }
     }
 

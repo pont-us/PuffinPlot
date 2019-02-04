@@ -48,6 +48,11 @@ public class DepthPlot extends Plot {
     public String getName() {
         return "depth";
     }
+    
+    @Override
+    public String getNiceName() {
+        return "Inclination/Depth";
+    }
 
     @Override
     public void draw(Graphics2D graphics) {

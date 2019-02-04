@@ -18,13 +18,11 @@ package net.talvi.puffinplot.plots;
 
 import java.awt.Graphics2D;
 import java.util.List;
-import java.util.prefs.Preferences;
 
 import net.talvi.puffinplot.data.GreatCircle;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Vec3;
-import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 
 /**
@@ -38,9 +36,7 @@ public class SampleEqAreaPlot extends EqAreaPlot {
 
     /** Creates a sample equal-area plot with the supplied parameters.
      * 
-     * @param parent the graph display containing the plot
      * @param params the parameters of the plot
-     * @param prefs the preferences containing the plot configuration
      */
     public SampleEqAreaPlot(PlotParams params) {
         super(params);
@@ -74,17 +70,19 @@ public class SampleEqAreaPlot extends EqAreaPlot {
         drawAxes();
         boolean first = true;
         Vec3 prev = null;
-        final List<TreatmentStep> visibleData = sample.getVisibleTreatmentSteps();
+        final List<TreatmentStep> visibleData =
+                sample.getVisibleTreatmentSteps();
         boolean hasWellFormedData = false;
-        for (TreatmentStep d: visibleData) {
-            final Vec3 p = d.getMoment(params.getCorrection()).normalize();
-            if (p.isWellFormed()) {
+        for (TreatmentStep step: visibleData) {
+            final Vec3 vector =
+                    step.getMoment(params.getCorrection()).normalize();
+            if (vector.isWellFormed()) {
                 hasWellFormedData = true;
-                addPoint(d, project(p), p.z>0, first, false);
+                addPoint(step, project(vector), vector.z>0, first, false);
                 if (!first) {
-                    drawGreatCircleSegment(prev, p);
+                    drawGreatCircleSegment(prev, vector);
                 }
-                prev = p;
+                prev = vector;
                 first = false;
             }
         }

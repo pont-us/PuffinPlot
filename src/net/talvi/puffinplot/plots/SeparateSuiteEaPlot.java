@@ -27,13 +27,11 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.prefs.Preferences;
 
 import net.talvi.puffinplot.data.FisherValues;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.data.Vec3;
-import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 
 /**
@@ -54,20 +52,22 @@ public class SeparateSuiteEaPlot extends EqAreaPlot {
     
     private boolean groupedBySite = true;
     
-    /** Creates a suite equal-area plot with the supplied parameters.
-     * 
-     * @param parent the graph display containing the plot
+    /**
+     * Creates a suite equal-area plot with the supplied parameters.
+     *
      * @param params the parameters of the plot
      * @param dimensions the dimensions of this plot
-     * @param prefs the preferences containing the plot configuration
      */
     public SeparateSuiteEaPlot(PlotParams params, Rectangle2D dimensions) {
         super(params);
         this.dimensions = dimensions;
     }
 
-    /** Returns this plot's internal name.
-     * @return this plot's internal name */
+    /**
+     * Returns this plot's internal name.
+     *
+     * @return this plot's internal name
+     */
     @Override
     public String getName() {
         return "fisherplot";
@@ -78,22 +78,31 @@ public class SeparateSuiteEaPlot extends EqAreaPlot {
         return "Suite";
     }
     
-    /** Draws this plot. 
-     * @param g the graphics object to which to draw the plot
+    /**
+     * Draws this plot.
+     *
+     * @param graphics the graphics object to which to draw the plot
      */
     @Override
-    public void draw(Graphics2D g) {
-        updatePlotDimensions(g);
+    public void draw(Graphics2D graphics) {
+        updatePlotDimensions(graphics);
         clearPoints();
         drawAxes();
         final Sample sample = params.getSample();
-        if (sample==null) return;
+        if (sample==null) {
+            return;
+        }
         final Suite suite = sample.getSuite();
-        if (suite==null) return;
+        if (suite==null) {
+            return;
+        }
         final List<FisherValues> fishers = groupedBySite 
                 ? suite.getSiteFishers()
-                : Collections.singletonList(suite.getSuiteMeans().getDirsBySample().getAll());
-        if (fishers==null) return;
+                : Collections.singletonList(suite.getSuiteMeans().
+                        getDirsBySample().getAll());
+        if (fishers==null) {
+            return;
+        }
 
         final AlphaComposite translucent =
                 AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .05f);
@@ -102,67 +111,78 @@ public class SeparateSuiteEaPlot extends EqAreaPlot {
 
         boolean firstPoint = true;
         for (FisherValues fisher: fishers) {
-            if (fisher==null) continue;
-            final Vec3 v = fisher.getMeanDirection();
-            final Point2D meanPoint = project(v);
-            addPoint(null, meanPoint, v.z>0, firstPoint, !firstPoint);
+            if (fisher==null) {
+                continue;
+            }
+            final Vec3 vector = fisher.getMeanDirection();
+            final Point2D meanPoint = project(vector);
+            addPoint(null, meanPoint, vector.z>0, firstPoint, !firstPoint);
 
             if (fisher.isA95Valid()) {
                 final GeneralPath pathToFill =
                         new GeneralPath(GeneralPath.WIND_EVEN_ODD, 72);
                 boolean firstEllipsePoint = true;
-                final List<Vec3> errorCircle =
-                        fisher.getMeanDirection().makeSmallCircle(fisher.getA95());
+                final List<Vec3> errorCircle = fisher.getMeanDirection().
+                        makeSmallCircle(fisher.getA95());
                 final List<Vec3> errorCircleInterpolated = new ArrayList();
-                for (List<Vec3> vs: Vec3.interpolateEquatorPoints(errorCircle)) {
+                for (List<Vec3> vs:
+                        Vec3.interpolateEquatorPoints(errorCircle)) {
                     errorCircleInterpolated.addAll(vs);
                 }
 
-                for (Vec3 cVec: errorCircleInterpolated) {
-                    final Point2D.Double p = project(cVec);
+                for (Vec3 cirecleVector: errorCircleInterpolated) {
+                    final Point2D.Double point = project(cirecleVector);
                     if (firstEllipsePoint) {
-                        pathToFill.moveTo((float) p.x, (float) p.y);
+                        pathToFill.moveTo((float) point.x, (float) point.y);
                     } else {
-                        pathToFill.lineTo((float) p.x, (float) p.y);
+                        pathToFill.lineTo((float) point.x, (float) point.y);
                     }
                     firstEllipsePoint = false;
                 }
                 pathToFill.closePath();
                 
-                g.setComposite(translucent);
-                g.fill(pathToFill);
-                g.setComposite(opaque);
+                graphics.setComposite(translucent);
+                graphics.fill(pathToFill);
+                graphics.setComposite(opaque);
                 drawLineSegments(errorCircle);
             }
             
-            final Stroke oldStroke = g.getStroke();
+            final Stroke oldStroke = graphics.getStroke();
             if (groupedBySite) {
-                g.setStroke(dashedStroke);
-                for (Vec3 w : fisher.getDirections()) {
-                    g.draw(new Line2D.Double(meanPoint, project(w)));
+                graphics.setStroke(dashedStroke);
+                for (Vec3 siteDirection: fisher.getDirections()) {
+                    graphics.draw(new Line2D.Double(
+                            meanPoint, project(siteDirection)));
                 }
-                g.setStroke(oldStroke);
+                graphics.setStroke(oldStroke);
             } else {
-                g.setStroke(thinStroke);
-                for (Sample s: params.getSelectedSamples()) {
-                    if (s == null) continue;
-                    final Vec3 direction = s.getDirection();
-                    if (direction == null) continue;
+                graphics.setStroke(thinStroke);
+                for (Sample selectedSample: params.getSelectedSamples()) {
+                    if (selectedSample == null) {
+                        continue;
+                    }
+                    final Vec3 direction = selectedSample.getDirection();
+                    if (direction == null) {
+                        continue;
+                    }
                     final Point2D.Double p = project(direction);
-                    g.draw(new Line2D.Double(p.x - 10, p.y, p.x + 10, p.y));
-                    g.draw(new Line2D.Double(p.x, p.y - 10, p.x, p.y + 10));
+                    graphics.draw(
+                            new Line2D.Double(p.x - 10, p.y, p.x + 10, p.y));
+                    graphics.draw(
+                            new Line2D.Double(p.x, p.y - 10, p.x, p.y + 10));
                 }
             }
             firstPoint = false;
         }
-        drawPoints(g);
+        drawPoints(graphics);
     }
 
     /**
      * Reports whether the Fisher means are grouped by site.
-     * 
-     * @return {@code true} if the graph shows Fisher means are grouped by site; 
-     * {@code false} if it shows a single Fisher mean calculated from all samples
+     *
+     * @return {@code true} if the graph shows Fisher means are grouped by site;
+     * {@code false} if it shows a single Fisher mean calculated from all
+     * samples
      */
     public boolean isGroupedBySite() {
         return groupedBySite;
@@ -170,9 +190,10 @@ public class SeparateSuiteEaPlot extends EqAreaPlot {
 
     /**
      * Sets whether the Fisher means are to be grouped by site.
-     * 
-     * @param groupedBySite {@code true} to show Fisher means are grouped by site; 
-     * {@code false} to show a single Fisher mean calculated from all samples
+     *
+     * @param groupedBySite {@code true} to show Fisher means are grouped by
+     * site; {@code false} to show a single Fisher mean calculated from all
+     * samples
      */
     public void setGroupedBySite(boolean groupedBySite) {
         this.groupedBySite = groupedBySite;

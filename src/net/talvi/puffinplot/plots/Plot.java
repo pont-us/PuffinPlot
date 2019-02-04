@@ -17,7 +17,6 @@
 package net.talvi.puffinplot.plots;
 
 import java.awt.BasicStroke;
-import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.event.MouseEvent;
@@ -45,7 +44,6 @@ import java.util.prefs.Preferences;
 
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.TreatmentStep;
-import net.talvi.puffinplot.window.GraphDisplay;
 import net.talvi.puffinplot.window.PlotParams;
 import net.talvi.puffinplot.window.PuffinRenderingHints;
 
@@ -109,9 +107,7 @@ public abstract class Plot
     /**
      * Creates a plot with the supplied parameters.
      *
-     * @param parent the graph display containing the plot
      * @param params the parameters of the plot
-     * @param prefs the preferences containing the plot configuration
      */
     public Plot(PlotParams params) {
         this.params = params;
@@ -148,7 +144,7 @@ public abstract class Plot
         final Scanner scanner = new Scanner(spec);
         scanner.useLocale(Locale.ENGLISH); // ensure "." for decimal point
         while (scanner.hasNext()) {
-            String plotName = scanner.next();
+            final String plotName = scanner.next();
             if (getName().equals(plotName)) {
                 setVisible(scanner.nextBoolean());
                 double x = scanner.nextDouble();

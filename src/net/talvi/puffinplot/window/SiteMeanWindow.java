@@ -19,8 +19,6 @@ package net.talvi.puffinplot.window;
 import java.util.prefs.Preferences;
 import javax.swing.JFrame;
 
-import net.talvi.puffinplot.plots.SiteEqAreaPlot;
-
 /**
  * A window containing a site mean graph display.
  * 
@@ -40,14 +38,5 @@ public class SiteMeanWindow extends JFrame {
         setContentPane(graphDisplay);
         pack();
         setLocationRelativeTo(null); // centre on screen
-    }
-
-    /**
-     * Returns the single plot in this window's graph display.
-     * 
-     * @return the plot in this window's graph display.
-     */
-    public SiteEqAreaPlot getPlot() {
-        return (SiteEqAreaPlot) graphDisplay.plots.get("greatcircles");
     }
 }
