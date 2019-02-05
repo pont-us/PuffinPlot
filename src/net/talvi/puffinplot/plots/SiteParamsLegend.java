@@ -26,7 +26,6 @@ import java.util.Locale;
 import net.talvi.puffinplot.data.FisherParams;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Site;
-import net.talvi.puffinplot.window.PlotParams;
 
 /**
  * This plot shows site directions in textual form. It can show Fisher

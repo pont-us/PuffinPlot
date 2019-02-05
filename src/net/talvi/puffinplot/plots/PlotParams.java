@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with PuffinPlot.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.talvi.puffinplot.window;
+package net.talvi.puffinplot.plots;
 
 import java.util.List;
 import java.util.prefs.Preferences;

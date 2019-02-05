@@ -25,7 +25,6 @@ import java.awt.geom.Rectangle2D;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Vec3;
-import net.talvi.puffinplot.window.PlotParams;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;

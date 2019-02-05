@@ -30,7 +30,6 @@ import net.talvi.puffinplot.data.FisherValues;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.data.SuiteCalcs;
-import net.talvi.puffinplot.window.PlotParams;
 
 /**
  * A table which displays site location and VGP data.

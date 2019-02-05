@@ -30,7 +30,6 @@ import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Vec3;
-import net.talvi.puffinplot.window.PlotParams;
 
 /**
  * A table showing some of the demagnetization data. At present the columns are:

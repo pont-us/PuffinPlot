@@ -44,7 +44,6 @@ import java.util.prefs.Preferences;
 
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.TreatmentStep;
-import net.talvi.puffinplot.window.PlotParams;
 import net.talvi.puffinplot.window.PuffinRenderingHints;
 
 import static java.awt.font.TextAttribute.SUPERSCRIPT;

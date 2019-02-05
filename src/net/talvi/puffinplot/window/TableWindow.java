@@ -16,6 +16,7 @@
  */
 package net.talvi.puffinplot.window;
 
+import net.talvi.puffinplot.plots.PlotParams;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.LinkedList;

@@ -100,7 +100,7 @@ import net.talvi.puffinplot.window.IapdImportDialog;
 import net.talvi.puffinplot.window.ImportAmsDialog;
 import net.talvi.puffinplot.window.MainGraphDisplay;
 import net.talvi.puffinplot.window.MainWindow;
-import net.talvi.puffinplot.window.PlotParams;
+import net.talvi.puffinplot.plots.PlotParams;
 import net.talvi.puffinplot.window.PrefsWindow;
 import net.talvi.puffinplot.window.ProgressDialog;
 import net.talvi.puffinplot.window.SiteMeanWindow;

@@ -32,7 +32,6 @@ import net.talvi.puffinplot.data.PcaValues;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Site;
 import net.talvi.puffinplot.data.Vec3;
-import net.talvi.puffinplot.window.PlotParams;
 
 /**
  * A table showing sample directions for the current site.

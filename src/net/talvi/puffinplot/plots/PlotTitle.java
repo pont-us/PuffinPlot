@@ -21,7 +21,6 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 
 import net.talvi.puffinplot.data.Sample;
-import net.talvi.puffinplot.window.PlotParams;
 
 /**
  * A title for the graph display, showing the sample identifier and

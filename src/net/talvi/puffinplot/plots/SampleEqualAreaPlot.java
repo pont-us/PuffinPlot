@@ -23,7 +23,6 @@ import net.talvi.puffinplot.data.GreatCircle;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Vec3;
-import net.talvi.puffinplot.window.PlotParams;
 
 /**
  * An equal-area plot showing sample data. This plot shows the magnetic
@@ -54,8 +53,11 @@ public class SampleEqualAreaPlot extends EqualAreaPlot {
     
     @Override
     public boolean areTreatmentStepsLabelled() {
-        if (prefs==null) return false;
-        else return prefs.getBoolean("plots.labelTreatmentSteps", false);
+        if (prefs==null) {
+            return false;
+        } else {
+            return prefs.getBoolean("plots.labelTreatmentSteps", false);
+        }
     }
 
     @Override

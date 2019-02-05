@@ -16,6 +16,7 @@
  */
 package net.talvi.puffinplot.window;
 
+import net.talvi.puffinplot.plots.PlotParams;
 import java.util.prefs.Preferences;
 import javax.swing.JFrame;
 

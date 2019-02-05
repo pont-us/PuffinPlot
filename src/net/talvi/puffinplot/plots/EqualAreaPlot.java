@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.prefs.Preferences;
 
 import net.talvi.puffinplot.data.Vec3;
-import net.talvi.puffinplot.window.PlotParams;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
@@ -109,7 +108,8 @@ public abstract class EqualAreaPlot extends Plot {
     protected void drawAxes() {
         cachedGraphics.setStroke(getStroke());
         cachedGraphics.setColor(Color.BLACK);
-        cachedGraphics.drawArc(xo - radius, yo - radius, radius * 2, radius * 2, 0, 360);
+        cachedGraphics.drawArc(xo - radius, yo - radius,
+                radius * 2, radius * 2, 0, 360);
         final double r = radius;
         for (int theta = 0; theta < 360; theta += decTickStep) {
             final double x = cos(toRadians(theta));
@@ -123,7 +123,7 @@ public abstract class EqualAreaPlot extends Plot {
         for (int i = 0; i < incTickNum; i++) {
             final Point2D p =  project(Vec3.fromPolarDegrees(
                     1., 90 - i * (90./(double)incTickNum), 90.));
-            double x = p.getX();
+            final double x = p.getX();
             cachedGraphics.draw(new Line2D.Double(x, yo - l, x, yo + l));
         }
         cachedGraphics.draw(new Line2D.Double(xo - l, yo, xo + l, yo));
@@ -144,7 +144,7 @@ public abstract class EqualAreaPlot extends Plot {
     protected Path2D.Double vectorsToPath(List<Vec3> vectors) {
         Path2D.Double path = new Path2D.Double();
         boolean first = true;
-        for (Vec3 v : vectors) {
+        for (Vec3 v: vectors) {
             assert(v != null);
             // cachedGraphics.setStroke(new BasicStroke(getUnitSize() * (1-(float)v.z) *20.0f));
             final Point2D p = project(v);

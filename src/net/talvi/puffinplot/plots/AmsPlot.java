@@ -27,7 +27,6 @@ import net.talvi.puffinplot.data.KentParams;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.data.Vec3;
-import net.talvi.puffinplot.window.PlotParams;
 
 /**
  * A plot which shows the principal axes of anisotropy of magnetic

@@ -31,7 +31,6 @@ import net.talvi.puffinplot.data.GreatCircles;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Site;
 import net.talvi.puffinplot.data.Vec3;
-import net.talvi.puffinplot.window.PlotParams;
 
 /**
  * An equal-area plot showing data for a site. For each sample at the site, this

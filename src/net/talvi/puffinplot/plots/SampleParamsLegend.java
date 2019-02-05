@@ -30,7 +30,6 @@ import net.talvi.puffinplot.data.FisherParams;
 import net.talvi.puffinplot.data.GreatCircle;
 import net.talvi.puffinplot.data.PcaValues;
 import net.talvi.puffinplot.data.Sample;
-import net.talvi.puffinplot.window.PlotParams;
 
 /**
  * A textual display of a set of parameters for a single sample.

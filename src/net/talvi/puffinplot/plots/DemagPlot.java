@@ -30,7 +30,6 @@ import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.plots.PlotAxis.AxisParameters;
-import net.talvi.puffinplot.window.PlotParams;
 
 /**
  * Demagnetization plot. This is a simple biplot with demagnetization step on

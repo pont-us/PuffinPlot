@@ -27,7 +27,6 @@ import net.talvi.puffinplot.data.Site;
 import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.data.SuiteCalcs;
 import net.talvi.puffinplot.data.Vec3;
-import net.talvi.puffinplot.window.PlotParams;
 
 /**
  * An equal-area plot data for an entire suite. This plot displays site means

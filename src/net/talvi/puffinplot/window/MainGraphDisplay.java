@@ -16,6 +16,7 @@
  */
 package net.talvi.puffinplot.window;
 
+import net.talvi.puffinplot.plots.PlotParams;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;

@@ -35,7 +35,6 @@ import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.TreatmentStepMomentComparator;
 import net.talvi.puffinplot.data.Vec3;
-import net.talvi.puffinplot.window.PlotParams;
 
 import static java.lang.Math.atan;
 import static java.lang.Math.cos;

@@ -27,7 +27,6 @@ import java.util.prefs.Preferences;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.plots.PlotAxis.AxisParameters;
-import net.talvi.puffinplot.window.PlotParams;
 
 /**
  * A histogram of the intensities of natural remanent magnetizations of
