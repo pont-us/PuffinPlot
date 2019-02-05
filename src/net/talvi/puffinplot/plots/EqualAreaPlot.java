@@ -23,7 +23,6 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
-import java.util.prefs.Preferences;
 
 import net.talvi.puffinplot.data.Vec3;
 
@@ -73,18 +72,12 @@ public abstract class EqualAreaPlot extends Plot {
     protected int radius;
     
     /**
-     * The preferences governing various options for this plot.
-     */
-    protected Preferences prefs;
-    
-    /**
      * Creates a new equal-area plot with the supplies parameters.
      * 
      * @param parameters the plot parameters
      */
     protected EqualAreaPlot(PlotParams parameters) {
         super(parameters);
-        this.prefs = parameters.getPreferences();
     }
     
     /**
@@ -127,8 +120,7 @@ public abstract class EqualAreaPlot extends Plot {
             cachedGraphics.draw(new Line2D.Double(x, yo - l, x, yo + l));
         }
         cachedGraphics.draw(new Line2D.Double(xo - l, yo, xo + l, yo));
-        if (prefs != null &&
-                prefs.getBoolean("plots.labelEqualAreaPlots", false)) {
+        if (params.getSettingBoolean("plots.labelEqualAreaPlots", false)) {
             cachedGraphics.drawString(getShortName(),
                     (float) (xo + radius/2), (float) (yo + radius));
         }

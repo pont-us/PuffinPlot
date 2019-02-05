@@ -44,7 +44,6 @@ public class VgpTable extends Plot {
     private final List<String> headers = 
             Arrays.asList(new String[] {"Site", "λ", "φ", "VGP λ", "VGP φ",
                 "dp", "dm"});
-    private final Preferences prefs;
     
     /** Creates a sample parameter table with the supplied parameters.
      * 
@@ -52,7 +51,6 @@ public class VgpTable extends Plot {
      */
     public VgpTable(PlotParams params) {
         super(params);
-        this.prefs = params.getPreferences();
     }
     
     @Override
@@ -85,8 +83,8 @@ public class VgpTable extends Plot {
         points.add(new TextLinePoint(this, graphics, 10, null, null, headers,
                 xSpacing, Color.BLACK));
 
-        final Color highlightColour = (prefs != null &&
-                prefs.getBoolean("plots.highlightCurrentSample", false)) ?
+        final Color highlightColour = (params.getSettingBoolean(
+                "plots.highlightCurrentSample", false)) ?
                 Color.RED : Color.BLACK;
         final int columns = headers.size();
         float yPos = 2 * ySpacing;

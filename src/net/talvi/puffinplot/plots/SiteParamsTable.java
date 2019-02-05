@@ -50,7 +50,6 @@ public class SiteParamsTable extends Plot {
     private final List<String> headers = 
             Arrays.asList(new String[] {"Site", "n", "PCA", "GC", "dec.",
                 "inc.", "a95", "R", "type"});
-    private final Preferences prefs;
     
     /**
      * Creates a site parameter table with the supplied parameters.
@@ -59,7 +58,6 @@ public class SiteParamsTable extends Plot {
      */
     public SiteParamsTable(PlotParams params) {
         super(params);
-        this.prefs = params.getPreferences();
     }
     
     @Override
@@ -92,8 +90,8 @@ public class SiteParamsTable extends Plot {
         points.add(new TextLinePoint(this, graphics, 10, null, null,
                 headers, xSpacing, Color.BLACK));
 
-        final Color highlightColour = (prefs != null &&
-                prefs.getBoolean("plots.highlightCurrentSample", false)) ?
+        final Color highlightColour = (params.getSettingBoolean(
+                "plots.highlightCurrentSample", false)) ?
                 Color.RED : Color.BLACK;
         final int columns = headers.size();
         float yPos = 2 * ySpacing;

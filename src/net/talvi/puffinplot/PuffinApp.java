@@ -235,13 +235,18 @@ public class PuffinApp {
             }
             
             @Override
-            public Preferences getPreferences() {
-                return PuffinApp.this.getPrefs().getPrefs();
-            }
-            
-            @Override
             public float getUnitSize() {
                 return 0.12f;
+            }
+
+            @Override
+            public String getSetting(String key, String def) {
+                return PuffinApp.this.getPrefs().getPrefs().get(key, def);
+            }
+
+            @Override
+            public boolean getSettingBoolean(String key, boolean def) {
+                return PuffinApp.this.getPrefs().getPrefs().getBoolean(key, def);
             }
             
         };

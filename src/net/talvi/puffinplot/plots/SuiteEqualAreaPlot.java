@@ -79,8 +79,8 @@ public class SuiteEqualAreaPlot extends EqualAreaPlot {
 
         final List<Site> sites = suite.getSites();
         final SuiteCalcs suiteCalcs = suite.getSuiteMeans();
-        final Color highlightColour = (prefs != null &&
-                prefs.getBoolean("plots.highlightCurrentSample", false)) ?
+        final Color highlightColour = (params.getSettingBoolean(
+                "plots.highlightCurrentSample", false)) ?
                 Color.RED : Color.BLACK;
         
         if (sites == null || sites.isEmpty()) {
@@ -105,7 +105,7 @@ public class SuiteEqualAreaPlot extends EqualAreaPlot {
             for (Site site: sites) {
                 final FisherParams siteMean = site.getFisherParams();
                 if (siteMean != null) {
-                    if (prefs.getBoolean(
+                    if (params.getSettingBoolean(
                             "plots.showSiteA95sOnSuitePlot", false)) {
                         drawSiteA95(siteMean);
                     }
@@ -161,8 +161,7 @@ public class SuiteEqualAreaPlot extends EqualAreaPlot {
     }
 
     private void writePointLabel(String s, PlotPoint point) {
-        if (prefs != null &&
-                prefs.getBoolean("plots.labelPointsInSuitePlots", false)) {
+        if (params.getSettingBoolean("plots.labelPointsInSuitePlots", false)) {
             final Point2D centre = point.getCentre();
             putText(cachedGraphics, s, centre.getX(), centre.getY(),
                     Direction.RIGHT,

@@ -23,7 +23,6 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 import java.util.Locale;
-import java.util.prefs.Preferences;
 
 import net.talvi.puffinplot.data.MedianDestructiveField;
 import net.talvi.puffinplot.data.Sample;
@@ -40,8 +39,6 @@ import net.talvi.puffinplot.plots.PlotAxis.AxisParameters;
  */
 public class DemagPlot extends Plot {
 
-    private final Preferences prefs;
-
     /**
      * Creates a demagnetization plot with the supplied parameters
      *
@@ -49,7 +46,6 @@ public class DemagPlot extends Plot {
      */
     public DemagPlot(PlotParams params) {
         super(params);
-        this.prefs = params.getPreferences();
     }
 
     /**
@@ -142,7 +138,8 @@ public class DemagPlot extends Plot {
         }
         
         final PlotAxis xAxis = new PlotAxis(xAxisParams, this);
-        final String vAxisLabel = prefs.get("plots."+getName()+".vAxisLabel",
+        final String vAxisLabel = params.getSetting(
+                "plots."+getName()+".vAxisLabel",
                 "Magnetization (A/m)");
         final PlotAxis yAxis =
                 new PlotAxis(new AxisParameters(maxIntens, Direction.UP).

@@ -22,7 +22,6 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.prefs.Preferences;
 
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
@@ -36,8 +35,6 @@ import net.talvi.puffinplot.plots.PlotAxis.AxisParameters;
  */
 public class NrmHistogram extends Plot {
 
-    private final Preferences prefs;
-
     /**
      * Creates an NRM histogram with the supplied parameters
      *
@@ -45,7 +42,6 @@ public class NrmHistogram extends Plot {
      */
     public NrmHistogram(PlotParams params) {
         super(params);
-        this.prefs = params.getPreferences();
     }
     
     /**

@@ -80,8 +80,10 @@ public interface PlotParams {
      * but not null)
      */
     public List<Sample> getAllSamplesInSelectedSites();
+
+    public String getSetting(String key, String def);
     
-    public Preferences getPreferences();
+    public boolean getSettingBoolean(String key, boolean def);
     
     public float getUnitSize();
 

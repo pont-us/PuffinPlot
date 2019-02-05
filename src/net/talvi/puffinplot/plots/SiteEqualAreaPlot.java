@@ -93,8 +93,8 @@ public class SiteEqualAreaPlot extends EqualAreaPlot {
     }
 
     private Color getHighlightColour() {
-        return (prefs != null &&
-                prefs.getBoolean("plots.highlightCurrentSample", false)) ?
+        return (params.getSettingBoolean(
+                "plots.highlightCurrentSample", false)) ?
                 Color.RED : Color.BLACK;
     }
     
@@ -164,8 +164,7 @@ public class SiteEqualAreaPlot extends EqualAreaPlot {
     }
     
     private void writeSampleLabel(Sample s, PlotPoint point) {
-        if (prefs != null &&
-                prefs.getBoolean("plots.labelSamplesInSitePlots", false)) {
+        if (params.getSettingBoolean("plots.labelSamplesInSitePlots", false)) {
             final Point2D centre = point.getCentre();
             putText(cachedGraphics, s.getNameOrDepth(),
                     centre.getX(), centre.getY(), Direction.RIGHT,

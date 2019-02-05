@@ -112,11 +112,8 @@ public abstract class Plot
         this.params = params;
         String sizesString = DEFAULT_PLOT_POSITIONS;
         fontFamily = "Arial";
-        final Preferences prefs = params.getPreferences();
-        if (prefs != null) {
-            sizesString = prefs.get("plotSizes", DEFAULT_PLOT_POSITIONS);
-            fontFamily = prefs.get("plots.fontFamily", "Arial");
-        }
+        sizesString = params.getSetting("plotSizes", DEFAULT_PLOT_POSITIONS);
+        fontFamily = params.getSetting("plots.fontFamily", "Arial");
         try {
             setDimensionsFromPrefsString(sizesString);
         } catch (NoSuchElementException e) {

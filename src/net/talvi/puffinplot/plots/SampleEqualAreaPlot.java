@@ -53,11 +53,7 @@ public class SampleEqualAreaPlot extends EqualAreaPlot {
     
     @Override
     public boolean areTreatmentStepsLabelled() {
-        if (prefs==null) {
-            return false;
-        } else {
-            return prefs.getBoolean("plots.labelTreatmentSteps", false);
-        }
+        return params.getSettingBoolean("plots.labelTreatmentSteps", false);
     }
 
     @Override

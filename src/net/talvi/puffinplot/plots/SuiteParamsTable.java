@@ -44,7 +44,6 @@ public class SuiteParamsTable extends Plot {
     private final List<String> headers = 
             Arrays.asList(new String[] {"Param", "dec/φ", "inc/λ", "α95",
                 "k", "N", "R"});
-    private final Preferences prefs;
     
     /** Creates a suite parameter table with the supplied parameters.
      * 
@@ -52,7 +51,6 @@ public class SuiteParamsTable extends Plot {
      */
     public SuiteParamsTable(PlotParams params) {
         super(params);
-        this.prefs = params.getPreferences();
     }
     
     @Override

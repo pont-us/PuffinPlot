@@ -48,7 +48,6 @@ public class SampleParamsTable extends Plot {
     private final int ySpacing = (int) (120 * getUnitSize());
     private final List<String> headers = 
             Arrays.asList(new String[] {"Sample", "type", "dec.", "inc."});
-    private final Preferences prefs;
     private final DecimalFormat angleFormat;
     
     /**
@@ -58,7 +57,6 @@ public class SampleParamsTable extends Plot {
      */
     public SampleParamsTable(PlotParams params) {
         super(params);
-        this.prefs = params.getPreferences();
         angleFormat =
                 new DecimalFormat("##0.0", Util.getDecimalFormatSymbols());
     }
@@ -97,8 +95,8 @@ public class SampleParamsTable extends Plot {
         points.add(new TextLinePoint(this, graphics, 10, null, null, headers,
                 xSpacing, Color.BLACK));
 
-        final Color highlightColour = (prefs != null &&
-                prefs.getBoolean("plots.highlightCurrentSample", false)) ?
+        final Color highlightColour = (params.getSettingBoolean(
+                "plots.highlightCurrentSample", false)) ?
                 Color.RED : Color.BLACK;
         
         float yPos = 2 * ySpacing;

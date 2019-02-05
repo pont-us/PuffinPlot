@@ -54,7 +54,6 @@ public class ZPlot extends Plot {
 
     private ZplotAxes axes;
     private final ZplotLegend legend;
-    private final Preferences prefs;
 
     /**
      * Creates a Zijderveld plot with the supplied parameters.
@@ -64,7 +63,6 @@ public class ZPlot extends Plot {
     public ZPlot(PlotParams params) {
         super(params);
         legend = new ZplotLegend(params);
-        this.prefs = params.getPreferences();
     }
 
     private static Rectangle2D extent(List<TreatmentStep> sample, Correction c,
@@ -136,8 +134,7 @@ public class ZPlot extends Plot {
         
     @Override
     public boolean areTreatmentStepsLabelled() {
-        if (prefs==null) return false;
-        else return prefs.getBoolean("plots.labelTreatmentSteps", false);
+        return params.getSettingBoolean("plots.labelTreatmentSteps", false);
     }
 
     @Override
@@ -220,7 +217,8 @@ public class ZPlot extends Plot {
         }
         
         final PcaValues pca = sample.getPcaValues();
-        final String pcaStyle = prefs.get("plots.zplotPcaDisplay", "Long");
+        final String pcaStyle =
+                params.getSetting("plots.zplotPcaDisplay", "Long");
         final double lineScale = "Long".equals(pcaStyle) ? 0.9 : 1.0;
         if (pca != null && !"None".equals(pcaStyle)) {
             if (pca.isAnchored()) {
