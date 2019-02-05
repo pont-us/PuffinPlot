@@ -34,7 +34,7 @@ import net.talvi.puffinplot.window.PlotParams;
  * susceptibility (AMS) tensors, and statistical means and confidence
  * regions for groups of tensors.
  */
-public class AmsPlot extends EqAreaPlot {
+public class AmsPlot extends EqualAreaPlot {
 
     private List<KentParams> cachedBootstrapParams;
     private List<KentParams> cachedHextParams;

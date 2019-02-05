@@ -20,7 +20,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import net.talvi.puffinplot.PuffinApp;
-import net.talvi.puffinplot.plots.SeparateSuiteEaPlot;
+import net.talvi.puffinplot.plots.SeparateSuiteEqualAreaPlot;
 
 /**
  * A window to hold a {@link SuiteEqAreaDisplay}.
@@ -52,9 +52,9 @@ public class SuiteEqAreaWindow extends JFrame {
      * 
      * @return the equal-area plot in this window's graph display
      */
-    public SeparateSuiteEaPlot getPlot() {
-        return (SeparateSuiteEaPlot)
-                graphDisplay.plots.get(SeparateSuiteEaPlot.class);
+    public SeparateSuiteEqualAreaPlot getPlot() {
+        return (SeparateSuiteEqualAreaPlot)
+                graphDisplay.plots.get(SeparateSuiteEqualAreaPlot.class);
     }
     
 }

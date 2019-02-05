@@ -41,7 +41,7 @@ import net.talvi.puffinplot.window.PlotParams;
  * 
  * @author pont
  */
-public class SeparateSuiteEaPlot extends EqAreaPlot {
+public class SeparateSuiteEqualAreaPlot extends EqualAreaPlot {
 
     private final Stroke dashedStroke =
             new BasicStroke(0.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL,
@@ -58,7 +58,7 @@ public class SeparateSuiteEaPlot extends EqAreaPlot {
      * @param params the parameters of the plot
      * @param dimensions the dimensions of this plot
      */
-    public SeparateSuiteEaPlot(PlotParams params, Rectangle2D dimensions) {
+    public SeparateSuiteEqualAreaPlot(PlotParams params, Rectangle2D dimensions) {
         super(params);
         this.dimensions = dimensions;
     }

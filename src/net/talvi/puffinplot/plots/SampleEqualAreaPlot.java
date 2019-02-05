@@ -32,13 +32,13 @@ import net.talvi.puffinplot.window.PlotParams;
  * 
  * @author pont
  */
-public class SampleEqAreaPlot extends EqAreaPlot {
+public class SampleEqualAreaPlot extends EqualAreaPlot {
 
     /** Creates a sample equal-area plot with the supplied parameters.
      * 
      * @param params the parameters of the plot
      */
-    public SampleEqAreaPlot(PlotParams params) {
+    public SampleEqualAreaPlot(PlotParams params) {
         super(params);
     }
 

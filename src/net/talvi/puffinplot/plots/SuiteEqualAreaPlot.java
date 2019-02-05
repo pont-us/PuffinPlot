@@ -36,14 +36,14 @@ import net.talvi.puffinplot.window.PlotParams;
  * hemispheres, a separate mean is shown for each hemisphere. If no sites are
  * defined, sample PCA directions are used instead.
  */
-public class SuiteEqAreaPlot extends EqAreaPlot {
+public class SuiteEqualAreaPlot extends EqualAreaPlot {
 
     /**
      * Creates a suite equal area plot with the supplied parameters.
      *
      * @param params the parameters of the plot
      */
-    public SuiteEqAreaPlot(PlotParams params) {
+    public SuiteEqualAreaPlot(PlotParams params) {
         super(params);
     }
 

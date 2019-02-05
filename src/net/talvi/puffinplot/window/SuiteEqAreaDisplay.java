@@ -26,13 +26,13 @@ import java.awt.print.PrinterException;
 import java.util.prefs.Preferences;
 
 import net.talvi.puffinplot.plots.Plot;
-import net.talvi.puffinplot.plots.SeparateSuiteEaPlot;
+import net.talvi.puffinplot.plots.SeparateSuiteEqualAreaPlot;
 
 /**
  * A graph display which contains a single equal-area plot of Fisher means
  * at suite level.
  * 
- * @see net.talvi.puffinplot.plots.SeparateSuiteEaPlot
+ * @see net.talvi.puffinplot.plots.SeparateSuiteEqualAreaPlot
  * @see SuiteEqAreaWindow
  * @author pont
  */
@@ -50,7 +50,7 @@ public class SuiteEqAreaDisplay extends GraphDisplay implements Printable {
         setOpaque(true); //content panes must be opaque
         zoomTransform = AffineTransform.getScaleInstance(1.0, 1.0);
         setPreferredSize(new Dimension(600, 600));
-        final Plot plot = new SeparateSuiteEaPlot(
+        final Plot plot = new SeparateSuiteEqualAreaPlot(
                 params, new Rectangle2D.Double(20, 20, 560, 560)
                 );
         plot.setVisible(true);

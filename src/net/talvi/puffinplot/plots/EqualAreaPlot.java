@@ -42,16 +42,16 @@ import static java.lang.Math.toRadians;
  *
  * @author pont
  */
-public abstract class EqAreaPlot extends Plot {
+public abstract class EqualAreaPlot extends Plot {
     private static final int decTickStep = 10;
     private static final int incTickNum = 9;
     
     /**
      * The graphics object to which the plot is currently being drawn. It is set
      * by {@link #updatePlotDimensions(Graphics2D)} at the start of the drawing
-     * process, and is then available as a convenience to both EqAreaPlot and
-     * its subclasses, as an alternative to explicitly passing the current
-     * Graphics object around.
+ process, and is then available as a convenience to both EqualAreaPlot and
+ its subclasses, as an alternative to explicitly passing the current
+ Graphics object around.
      */
     protected Graphics2D cachedGraphics;
     
@@ -83,7 +83,7 @@ public abstract class EqAreaPlot extends Plot {
      * 
      * @param parameters the plot parameters
      */
-    protected EqAreaPlot(PlotParams parameters) {
+    protected EqualAreaPlot(PlotParams parameters) {
         super(parameters);
         this.prefs = parameters.getPreferences();
     }

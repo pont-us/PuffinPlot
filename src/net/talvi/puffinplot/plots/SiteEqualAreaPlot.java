@@ -41,7 +41,7 @@ import net.talvi.puffinplot.window.PlotParams;
  *
  * @author pont
  */
-public class SiteEqAreaPlot extends EqAreaPlot {
+public class SiteEqualAreaPlot extends EqualAreaPlot {
 
     private static final int GC_CACHE_SIZE = 200;
     private FisherValues fisherCache = null;
@@ -65,7 +65,7 @@ public class SiteEqAreaPlot extends EqAreaPlot {
      * @param params the parameters of the plot
      * @param dimensions the initial dimensions of the plot
      */
-    public SiteEqAreaPlot(PlotParams params, Rectangle2D dimensions) {
+    public SiteEqualAreaPlot(PlotParams params, Rectangle2D dimensions) {
         super(params);
         this.dimensions = dimensions;
     }
@@ -74,7 +74,7 @@ public class SiteEqAreaPlot extends EqAreaPlot {
      * 
      * @param params the parameters of the plot
      */
-    public SiteEqAreaPlot(PlotParams params) {
+    public SiteEqualAreaPlot(PlotParams params) {
         super(params);
     }
     

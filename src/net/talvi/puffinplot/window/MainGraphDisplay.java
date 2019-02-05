@@ -45,12 +45,12 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
     private List<Sample> samplesForPrinting = null;
     private int printPageIndex = -1;
     private static final Class[] plotClasses = {
-        SampleEqAreaPlot.class, ZPlot.class, DemagPlot.class, DemagTable.class,
-        SampleParamsLegend.class, PlotTitle.class, SiteParamsLegend.class,
-        AmsPlot.class, TernaryPlot.class, SiteEqAreaPlot.class,
-        SuiteEqAreaPlot.class, SampleParamsTable.class, SiteParamsTable.class,
-        NrmHistogram.class, VgpTable.class, SuiteParamsTable.class,
-        DepthPlot.class
+        SampleEqualAreaPlot.class, ZPlot.class, DemagPlot.class,
+        DemagTable.class, SampleParamsLegend.class, PlotTitle.class,
+        SiteParamsLegend.class, AmsPlot.class, TernaryPlot.class,
+        SiteEqualAreaPlot.class, SuiteEqualAreaPlot.class,
+        SampleParamsTable.class, SiteParamsTable.class, NrmHistogram.class,
+        VgpTable.class, SuiteParamsTable.class, DepthPlot.class
     };
 
     private final PlotParams params;

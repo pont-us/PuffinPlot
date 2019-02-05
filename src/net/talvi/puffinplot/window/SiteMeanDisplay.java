@@ -23,20 +23,16 @@ import java.awt.geom.Rectangle2D;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
-import java.util.List;
 import java.util.prefs.Preferences;
-import net.talvi.puffinplot.data.Correction;
-import net.talvi.puffinplot.data.MeasurementAxis;
-import net.talvi.puffinplot.data.Sample;
 
 import net.talvi.puffinplot.plots.Plot;
-import net.talvi.puffinplot.plots.SiteEqAreaPlot;
+import net.talvi.puffinplot.plots.SiteEqualAreaPlot;
 
 /**
  * A graph display containing a single equal-area plot which shows
  * data for a site.
  * 
- * @see SiteEqAreaPlot
+ * @see SiteEqualAreaPlot
  * @see SiteMeanWindow
  * 
  * @author pont
@@ -51,7 +47,7 @@ public class SiteMeanDisplay extends GraphDisplay implements Printable {
         setOpaque(true); // content panes must be opaque
         setPreferredSize(new Dimension(600, 600));
         zoomTransform = AffineTransform.getScaleInstance(1.0, 1.0);
-        final Plot plot = new SiteEqAreaPlot(params,
+        final Plot plot = new SiteEqualAreaPlot(params,
                 new Rectangle2D.Double(20, 20, 560, 560));
         plot.setVisible(true);
         plots.put(plot.getClass(), plot);
