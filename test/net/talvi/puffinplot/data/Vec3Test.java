@@ -369,7 +369,7 @@ public class Vec3Test {
     @Test
     public void testIsWellFormed() {
         for (Vec3 v : testVectors) {
-            assertTrue(v.isWellFormed());
+            assertTrue(v.isFinite());
         }
 
         final double nan = Double.NaN;
@@ -388,7 +388,7 @@ public class Vec3Test {
         };
 
         for (double[] xyz : illFormed) {
-            assertFalse(new Vec3(xyz[0], xyz[1], xyz[2]).isWellFormed());
+            assertFalse(new Vec3(xyz[0], xyz[1], xyz[2]).isFinite());
         }
     }
 
@@ -445,7 +445,7 @@ public class Vec3Test {
                 0.045423951387740906);
         final List<Vec3> steps = Vec3.spherInterpolate(bad0, bad1, 0.1);
         steps.forEach(step -> {
-            assertTrue(step.isWellFormed());
+            assertTrue(step.isFinite());
         });
     }
     

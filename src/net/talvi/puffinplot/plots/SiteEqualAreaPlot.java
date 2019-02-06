@@ -102,13 +102,13 @@ public class SiteEqualAreaPlot extends EqualAreaPlot {
         final GreatCircles circles = site.getGreatCircles();
         if (circles == null) return;
         final Vec3 meanDir = circles.getMeanDirection();
-        assert(meanDir.isWellFormed());
+        assert(meanDir.isFinite());
         double maxRadius = 0;
         final GreatCircle currentGc =
                 params.getSample().getGreatCircle();
         for (GreatCircle circle: circles.getCircles()) {
             final Vec3 pole = circle.getPole();
-            assert(pole.isWellFormed());
+            assert(pole.isFinite());
             cachedGraphics.setColor(
                     circle == currentGc ? getHighlightColour() : Color.BLACK);
             final Vec3 segmentStart =

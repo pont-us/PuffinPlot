@@ -154,7 +154,7 @@ public final class Suite implements SampleGroup {
             if (sample.getSite() != null &&
                     sample.getSite().getLocation() != null &&
                     sample.getDirection() != null &&
-                    sample.getDirection().isWellFormed()) {
+                    sample.getDirection().isFinite()) {
                 final double alpha95 = 0; // arbitrary
                 sampleVgps.add(VGP.calculate(sample.getDirection(), alpha95,
                         sample.getSite().getLocation()).getLocation().toVec3());

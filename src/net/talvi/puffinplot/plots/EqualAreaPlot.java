@@ -233,9 +233,9 @@ public abstract class EqualAreaPlot extends Plot {
      * @param dir vector used to choose which path to draw
      */
     protected void drawGreatCircleSegment(Vec3 v0, Vec3 v1, Vec3 dir) {
-        assert(v0.isWellFormed());
-        assert(v1.isWellFormed());
-        assert(dir.isWellFormed());
+        assert(v0.isFinite());
+        assert(v1.isFinite());
+        assert(dir.isFinite());
         drawLineSegments(Vec3.spherInterpDir(v0, v1, dir, 0.05));
     }
 
@@ -269,7 +269,7 @@ public abstract class EqualAreaPlot extends Plot {
          * Y-coordinates running top-to-bottom rather than bottom-to-top (let
          * x''' = x'' = y, y''' = -y'' = -x).
          */
-        assert(v.isWellFormed());
+        assert(v.isFinite());
         final double h2 = v.x * v.x + v.y * v.y;
         final double L = (h2 > 0) ? sqrt(1 - abs(v.z)) / sqrt(h2) : 0;
         final double x = xo + radius * v.y * L;

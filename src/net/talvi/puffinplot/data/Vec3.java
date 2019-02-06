@@ -125,17 +125,21 @@ public class Vec3 {
      */
     public Vec3 rot180(MeasurementAxis axis) {
         switch (axis) {
-            case X: return new Vec3(x, -y, -z);
-            case Y: return new Vec3(-x, y, -z);
-            case Z: return new Vec3(-x, -y, z);
-            default: return this;
+            case X:
+                return new Vec3(x, -y, -z);
+            case Y:
+                return new Vec3(-x, y, -z);
+            case Z:
+                return new Vec3(-x, -y, z);
+            default:
+                return this;
         }
     }
 
     /**
      * Returns the unit vector on the intersection of the equator (z=0 line)
      * and the great circle between the supplied points. The supplied 
-     * vectors must be well-formed and in opposite hemispheres.
+     * vectors must be finite. and in opposite hemispheres.
      * 
      * @param v0 a vector specifying a direction
      * @param v1 a vector specifying a direction
@@ -144,11 +148,11 @@ public class Vec3 {
      * {@code v0} and {@code v1}
      */
     public static Vec3 equatorPoint(Vec3 v0, Vec3 v1) {
-        if (!v0.isWellFormed()) {
-            throw new IllegalArgumentException("v0 is not well-formed.");
+        if (!v0.isFinite()) {
+            throw new IllegalArgumentException("v0 is not finite.");
         }
-        if (!v1.isWellFormed()) {
-            throw new IllegalArgumentException("v1 is not well-formed.");
+        if (!v1.isFinite()) {
+            throw new IllegalArgumentException("v1 is not finite.");
         }
         if ((v0.z>0 && v1.z>0) || (v0.z<0 && v1.z<0)) {
             throw new IllegalArgumentException(
@@ -188,7 +192,7 @@ public class Vec3 {
                 plus(v1.times(signum(v1.z) / v1.z)).
                 normalize();
         
-        assert(v.isWellFormed());
+        assert(v.isFinite());
         return v;
     }
 
@@ -228,7 +232,7 @@ public class Vec3 {
         List<Vec3> currentSegment = new ArrayList<>();
         Vec3 prev = null;
         for (Vec3 v: vs) {
-            assert(v.isWellFormed());
+            assert(v.isFinite());
             if (prev == null) {
                 currentSegment.add(v);
             } else {
@@ -328,7 +332,7 @@ public class Vec3 {
             final double scale0 = (sin((1.0-t)*omega)) / sin(omega);
             final double scale1 = sin(t*omega) / sin(omega);
             final Vec3 thisVec = v0n.times(scale0).plus(v1n.times(scale1));
-            assert(thisVec.isWellFormed());
+            assert(thisVec.isFinite());
             result.add(thisVec);
         }
         
@@ -351,7 +355,7 @@ public class Vec3 {
 
     private static void requireNonNullAndFinite(Vec3 v, String name) {
         Objects.requireNonNull(v, name+" must be non-null");
-        if (!v.isWellFormed()) {
+        if (!v.isFinite()) {
             throw new IllegalArgumentException(String.format(
                     "%s = %s is not finite", name, v.toString()));
         }
@@ -568,7 +572,7 @@ public class Vec3 {
      * @return rotated vector
      */
     private Vec3 correctTilt(Vec3 v) {
-        assert(v.isWellFormed());
+        assert(v.isFinite());
         final double d = sqrt(x*x + y*y);
         Vec3 result;
         if (d==0) {
@@ -587,7 +591,7 @@ public class Vec3 {
         } else {
             result = v.correctPlane(d, y/d, z, x/d);
         }
-        assert(result.isWellFormed());
+        assert(result.isFinite());
         return result;
     }
     
@@ -1038,7 +1042,7 @@ public class Vec3 {
             final Vec3 v1 = Vec3.fromPolarDegrees(1, 90 - radiusDegrees, dec);
             final Vec3 v2 = v1.rotY(Math.PI / 2 - getIncRad());
             final Vec3 v3 = v2.rotZ(getDecRad());
-            assert(v3.isWellFormed());
+            assert(v3.isFinite());
             result.add(v3);
         }
         result.add(result.get(0));
@@ -1146,7 +1150,7 @@ public class Vec3 {
      *
      * @return true iff this vector contains no NaN or infinite values
      */
-    public boolean isWellFormed() {
+    public boolean isFinite() {
         return (!Double.isNaN(x)) && (!Double.isNaN(y)) && (!Double.isNaN(z))
                 && (!Double.isInfinite(x)) && (!Double.isInfinite(y))
                 && (!Double.isInfinite(z));

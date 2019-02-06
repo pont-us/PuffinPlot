@@ -74,7 +74,7 @@ public class SampleEqualAreaPlot extends EqualAreaPlot {
         for (TreatmentStep step: visibleData) {
             final Vec3 vector =
                     step.getMoment(params.getCorrection()).normalize();
-            if (vector.isWellFormed()) {
+            if (vector.isFinite()) {
                 hasWellFormedData = true;
                 addPoint(step, project(vector), vector.z>0, first, false);
                 if (!first) {
