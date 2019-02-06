@@ -29,15 +29,14 @@ import static java.util.Collections.max;
 import static java.util.Collections.min;
 
 /**
- * <p>A site is a grouping of samples within a suite. In practice, it usually
- * corresponds to a group of samples from a small physical area.
- * In a discrete study, it usually corresponds to a physical field
- * site within a section. In a long core study, it usually corresponds
- * to a narrow ‘slice’ of the core between two defined depths.</p> 
- * 
+ * A site is a grouping of samples within a suite. In practice, it usually
+ * corresponds to a group of samples from a small physical area. In a discrete
+ * study, it usually corresponds to a physical field site within a section. In a
+ * long core study, it usually corresponds to a narrow ‘slice’ of the core
+ * between two defined depths.
+ *
  * @author pont
  */
-
 public class Site implements SampleGroup {
 
     private static final Logger logger =
@@ -61,29 +60,32 @@ public class Site implements SampleGroup {
         this.samples = samples;
     }
 
-    /** Creates a site containing no samples. 
-     * @param name the name of the site */
+    /**
+     * Creates a site containing no samples.
+     *
+     * @param name the name of the site
+     */
     public Site(String name) {
         this.name = name;
         this.samples = new ArrayList<>();
     }
 
-    /** Calculate Fisherian statistics on the PCA directions of samples
-     * within this site. The PCA directions will be automatically calculated
-     * (or recalculated) before the Fisher statistics are calculated,
-     * if sufficient points have been selected for the operation.
-     * If no PCA direction is available, the sample Fisher mean (if any)
-     * and the imported sample direction (if any) are used in turn as
-     * fallbacks. The results are stored within the site. If the 
-     * site has a location set, the VGP will also be calculated and stored.
-     * If no sample directions exist for this site, the site's current
-     * Fisherian statistics (if any) will be cleared.
-     * 
-     * @param correction the correction to apply to the magnetic moment
-     * data when performing the PCA calculations
+    /**
+     * Calculate Fisherian statistics on the PCA directions of samples within
+     * this site. The PCA directions will be automatically calculated (or
+     * recalculated) before the Fisher statistics are calculated, if sufficient
+     * points have been selected for the operation. If no PCA direction is
+     * available, the sample Fisher mean (if any) and the imported sample
+     * direction (if any) are used in turn as fallbacks. The results are stored
+     * within the site. If the site has a location set, the VGP will also be
+     * calculated and stored. If no sample directions exist for this site, the
+     * site's current Fisherian statistics (if any) will be cleared.
+     *
+     * @param correction the correction to apply to the magnetic moment data
+     * when performing the PCA calculations
      */
     public void calculateFisherStats(Correction correction) {
-        Collection<Vec3> directions =
+        final Collection<Vec3> directions =
                 new ArrayList<>(getSamples().size());
         for (Sample sample: getSamples()) {
             sample.doPca(correction);
@@ -103,33 +105,42 @@ public class Site implements SampleGroup {
 
     }
 
-    /** Clears the stored Fisher statistics, if any. */
+    /**
+     * Clears the stored Fisher statistics, if any.
+     */
     public void clearFisherStats() {
         fisher = null;
     }
 
-    /** Calculate a mean direction for the site using best-fit great circles.
-     * For each sample at the site, the great circle is incorporated
-     * into a calculation of the mean direction. If no great circle 
-     * has been fitted for a site, the PCA direction (if any) is used.
-     * Mean direction estimate is by the method of McFadden and McElhinny
-     * (1988). If the site has a location set, the VGP will also be 
-     * calculated and stored.
+    /**
+     * Calculate a mean direction for the site using best-fit great circles. For
+     * each sample at the site, the great circle is incorporated into a
+     * calculation of the mean direction. If no great circle has been fitted for
+     * a site, the PCA direction (if any) is used. Mean direction estimate is by
+     * the method of McFadden and McElhinny (1988). If the site has a location
+     * set, the VGP will also be calculated and stored.
+     * <p>
+     * The syntax of the validity condition is detailed at
+     * {@link GreatCircles#instance(java.util.List, java.util.List, java.lang.String)}.
+     *
+     * @param correction the correction to apply to the magnetic moment data
+     * when fitting the great circles.
+     * @param validityCondition a Javascript expression to determine the
+     * validity of great-circle fits
      * 
-     * @param correction the correction to apply to the magnetic moment
-     * data when fitting the great circles.
      * @see GreatCircles
      */
     public void calculateGreatCirclesDirection(Correction correction,
             String validityCondition) {
-        List<Vec3> endpoints = new LinkedList<>();
-        LinkedList<GreatCircle> circles = new LinkedList<>();
+        final List<Vec3> endpoints = new LinkedList<>();
+        final LinkedList<GreatCircle> circles = new LinkedList<>();
         for (Sample sample: getSamples()) {
-            /* We assume that if there's a great circle then it should be
-             * used (and that if a PCA fit is present for the same site, it's
-             * not relevant to the component being examined here). If there
-             * is no great circle but there *is* a PCA fit, then the PCA
-             * direction is used as a stable endpoint.
+            /*
+             * We assume that if there's a great circle then it should be used
+             * (and that if a PCA fit is present for the same site, it's not
+             * relevant to the component being examined here). If there is no
+             * great circle but there *is* a PCA fit, then the PCA direction is
+             * used as a stable endpoint.
              */
             if (sample.getGreatCircle() != null) {
                 sample.fitGreatCircle(correction); // make sure it's up to date
@@ -150,39 +161,52 @@ public class Site implements SampleGroup {
         }
     }
 
-    /** Returns the name of this site. 
-     * @return the name of this site */
+    /**
+     * Returns the name of this site.
+     *
+     * @return the name of this site
+     */
     @Override
     public String toString() {
         return name;
     }
 
-    /** Returns the samples in this site 
-     * @return the samples in this site */
+    /**
+     * Returns the samples in this site
+     *
+     * @return the samples in this site
+     */
+    @Override
     public List<Sample> getSamples() {
         return Collections.unmodifiableList(samples);
     }
 
-    /** Returns the Fisher statistics (if any) calculated for this site. 
-     * @return the Fisher statistics (if any) calculated for this site */
+    /**
+     * Returns the Fisher statistics (if any) calculated for this site.
+     *
+     * @return the Fisher statistics (if any) calculated for this site
+     */
     public FisherValues getFisherValues() {
         return fisher;
     }
 
-    /** Returns the great-circle parameters (if any) calculated for this site. 
-     * @return the great-circle parameters (if any) calculated for this site */
+    /**
+     * Returns the great-circle parameters (if any) calculated for this site.
+     *
+     * @return the great-circle parameters (if any) calculated for this site
+     */
     public GreatCircles getGreatCircles() {
         return greatCircles;
     }
     
     /**
-     * Returns the Fisherian parameters of the site mean direction,
-     * as calculated by Fisher statistics or great-circle analysis.
-     * If a great-circle mean has been calculated, its parameters will be 
-     * returned. If there is no great-circle mean but a Fisher mean has been 
-     * calculated, the Fisher mean will be returned. If neither type of mean 
-     * has been calculated, a null value will be returned.
-     * 
+     * Returns the Fisherian parameters of the site mean direction, as
+     * calculated by Fisher statistics or great-circle analysis. If a
+     * great-circle mean has been calculated, its parameters will be returned.
+     * If there is no great-circle mean but a Fisher mean has been calculated,
+     * the Fisher mean will be returned. If neither type of mean has been
+     * calculated, a null value will be returned.
+     *
      * @return the Fisherian parameters of the site mean direction
      */
     public FisherParams getFisherParams() {
@@ -199,41 +223,49 @@ public class Site implements SampleGroup {
         return String.format(Locale.ENGLISH, "%g", x);
     }
 
-    /** Returns headers for information on the treatment steps used
-     * for the great-circle analysis. See the PuffinPlot user manual
-     * for details of their interpretation.
-     * 
-     * @return headers for information on the treatment steps used
-     * for the great-circle analyses
+    /**
+     * Returns headers for information on the treatment steps used for the
+     * great-circle analysis. See the PuffinPlot user manual for details of
+     * their interpretation.
+     *
+     * @return headers for information on the treatment steps used for the
+     * great-circle analyses
      */
     public static List<String> getGreatCircleLimitHeader() {
         return Arrays.asList(new String[] {"GC D1min (degC or mT)",
-            "GC D1max (degC or mT)","GC D2min (degC or mT)","GC D2max (degC or mT)"});
+            "GC D1max (degC or mT)", "GC D2min (degC or mT)",
+            "GC D2max (degC or mT)"});
     }
 
-    /** Returns information on the treatment steps used for the 
-     * great-circle analysis. The list consists of:
-     * minFirstGc, maxFirstGc, minLastGc, MaxLastGc.
-     * Where minFirstGc is the minimum (among samples in this site) first 
-     * treatment step value for any great-circle fit, and so forth.
-     * 
-     * @return information on the treatment steps used for the 
-     * great-circle analysis
+    /**
+     * Returns information on the treatment steps used for the great-circle
+     * analysis. The list consists of: minFirstGc, maxFirstGc, minLastGc,
+     * MaxLastGc. Where minFirstGc is the minimum (among samples in this site)
+     * first treatment step value for any great-circle fit, and so forth.
+     *
+     * @return information on the treatment steps used for the great-circle
+     * analysis
      */
     public List<String> getGreatCircleLimitStrings() {
         final List<Double> firsts = new ArrayList<>(samples.size());
         final List<Double> lasts = new ArrayList<>(samples.size());
         for (Sample s: samples) {
             final double first = s.getFirstGcStep();
-            if (first != -1) firsts.add(first);
+            if (first != -1) {
+                firsts.add(first);
+            }
             final double last = s.getLastGcStep();
-            if (last != -1) lasts.add(s.getLastGcStep());
+            if (last != -1) {
+                lasts.add(s.getLastGcStep());
+            }
         }
         return Arrays.asList(new String[] {fmt(min(firsts)),
                 fmt(max(firsts)), fmt(min(lasts)), fmt(max(lasts))});
     }
 
-    /** Clears the stored great-circle fit parameters, if any */
+    /**
+     * Clears the stored great-circle fit parameters, if any
+     */
     public void clearGcFit() {
         greatCircles = null;
     }
@@ -264,16 +296,22 @@ public class Site implements SampleGroup {
         return name;
     }
     
-    /** Reports whether there are any samples in this site. 
-     * @return {@code true} if there are no samples in this site */
+    /**
+     * Reports whether there are any samples in this site.
+     *
+     * @return {@code true} if there are no samples in this site
+     */
     public boolean isEmpty() {
         return samples.isEmpty();
     }
 
-    /** Returns a list of strings giving information about this site.
-     * @return  a list of strings giving information about this site */
+    /**
+     * Returns a list of strings giving information about this site.
+     *
+     * @return a list of strings giving information about this site
+     */
     public List<String> toStrings() {
-        List<String> result = new ArrayList<>();
+        final List<String> result = new ArrayList<>();
         if (!Double.isNaN(height)) {
             result.add("HEIGHT\t" + Double.toString(height));
         }
@@ -285,12 +323,15 @@ public class Site implements SampleGroup {
         return result;
     }
 
-    /** Sets site data from information in a string.
-     * The format is the same as that exported from {@link #toStrings()}.
+    /**
+     * Sets site data from information in a string. The format is the same as
+     * that exported from {@link #toStrings()}.
+     *
      * @param string a string containing site data
      */
     public void fromString(String string) {
-        String[] parts = string.split("\t", -1); // don't discard trailing empty strings
+        // don't discard trailing empty strings
+        String[] parts = string.split("\t", -1);
         switch (parts[0]) {
             case "HEIGHT":
             height = Double.parseDouble(parts[1]);
@@ -303,13 +344,15 @@ public class Site implements SampleGroup {
     }
 
     /**
-     * @return the location
+     * @return the location of this site
      */
     public Location getLocation() {
         return location;
     }
 
     /**
+     * Sets the location of this site.
+     * 
      * @param location the location to set
      */
     public void setLocation(Location location) {

@@ -31,7 +31,7 @@ PuffinPlot uses the following external Java libraries, or parts of them:
 * JAMA https://math.nist.gov/javanumerics/jama/doc/
 * OrangeExtensions https://ymasory.github.io/OrangeExtensions/
 
-appbundler is not used by PuffinPlot itself, but it used during the
+appbundler is not used by PuffinPlot itself, but is used during the
 build process to create a Mac application bundle containing PuffinPlot.
 Note that there is more than one library called ‘appbundler’;
 PuffinPlot uses the one provided by Oracle.
