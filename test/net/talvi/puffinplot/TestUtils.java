@@ -73,10 +73,12 @@ public class TestUtils {
         return sample;
     }
 
-    public static List<Sample> makeUniformSampleList(Vec3 direction, double[] depths, String discreteId) {
+    public static List<Sample> makeUniformSampleList(Vec3 direction,
+            double[] depths, String discreteId) {
         final List<Sample> samples = new ArrayList<>(10);
         for (int i = 0; i < depths.length; i++) {
-            Sample sample = TestUtils.makeOneComponentSample(depths[i], discreteId, direction);
+            final Sample sample = makeOneComponentSample(depths[i],
+                    discreteId, direction);
             samples.add(sample);
         }
         return samples;
@@ -88,22 +90,24 @@ public class TestUtils {
             final String sampleName = String.format("SAMPLE_%d", sampleIndex);
             final Sample sample = new Sample(sampleName, suite);
             for (int demag = 0; demag < 100; demag += 10) {
-                final TreatmentStep d = new TreatmentStep((sampleIndex + 1.0) * (100.0 - demag), sampleIndex * 50, demag);
-                d.setDiscreteId(sampleName);
-                d.setSuite(suite);
-                d.setMeasurementType(MeasurementType.DISCRETE);
-                d.setAfX(demag);
-                d.setAfY(demag);
-                d.setAfZ(demag);
-                d.setTreatmentType(TreatmentType.DEGAUSS_XYZ);
-                d.setSample(sample);
-                d.setMagSus(sampleIndex);
-                d.setSampAz(0);
-                d.setSampDip(0);
-                d.setFormAz(0);
-                d.setFormDip(0);
-                sample.addTreatmentStep(d);
-                suite.addTreatmentStep(d);
+                final TreatmentStep step =new TreatmentStep(
+                        (sampleIndex + 1.0) * (100.0 - demag),
+                        sampleIndex * 50, demag);
+                step.setDiscreteId(sampleName);
+                step.setSuite(suite);
+                step.setMeasurementType(MeasurementType.DISCRETE);
+                step.setAfX(demag);
+                step.setAfY(demag);
+                step.setAfZ(demag);
+                step.setTreatmentType(TreatmentType.DEGAUSS_XYZ);
+                step.setSample(sample);
+                step.setMagSus(sampleIndex);
+                step.setSampAz(0);
+                step.setSampDip(0);
+                step.setFormAz(0);
+                step.setFormDip(0);
+                sample.addTreatmentStep(step);
+                suite.addTreatmentStep(step);
             }
         }
         suite.updateReverseIndex();
@@ -116,23 +120,74 @@ public class TestUtils {
             final String depthString = String.format("%d", depth);
             final Sample sample = new Sample(depthString, suite);
             for (int demag = 0; demag < 100; demag += 10) {
-                final TreatmentStep d = new TreatmentStep((depth + 1.0) * (100.0 - demag),
+                final TreatmentStep step = new TreatmentStep(
+                        (depth + 1.0) * (100.0 - demag),
                         depth * 50, demag);
-                d.setDepth(depthString);
-                d.setSuite(suite);
-                d.setMeasurementType(MeasurementType.CONTINUOUS);
-                d.setAfX(demag);
-                d.setAfY(demag);
-                d.setAfZ(demag);
-                d.setTreatmentType(TreatmentType.DEGAUSS_XYZ);
-                d.setSample(sample);
-                d.setMagSus(depth);
-                sample.addTreatmentStep(d);
-                suite.addTreatmentStep(d);
+                step.setDepth(depthString);
+                step.setSuite(suite);
+                step.setMeasurementType(MeasurementType.CONTINUOUS);
+                step.setAfX(demag);
+                step.setAfY(demag);
+                step.setAfZ(demag);
+                step.setTreatmentType(TreatmentType.DEGAUSS_XYZ);
+                step.setSample(sample);
+                step.setMagSus(depth);
+                sample.addTreatmentStep(step);
+                suite.addTreatmentStep(step);
             }
         }
         suite.updateReverseIndex();
         return suite;
+    }
+    
+    /**
+     * Create a discrete suite of 15 samples with magnetic moment directions
+     * arranged in an arc spanning the upper and lower hemispheres.
+     * 
+     * @return a discrete suite
+     */
+    public static Suite createDiscreteSuiteArc() {
+        final Suite suite = new Suite("SuiteTest");
+        final List<Vec3> directions = Vec3.spherInterpDir(
+                new Vec3(-0.2, 0.2, 1),
+                new Vec3(0.2, -0.2, -1),
+                new Vec3(-1, -1, 0),
+                0.25);
+        for (int i=0; i<directions.size(); i++) {
+            final String name = String.format("SAMPLE_%d", i);
+            final Sample sample = new Sample(name, suite);
+            for (int demag = 0; demag < 100; demag += 10) {
+                final TreatmentStep step =
+                        new TreatmentStep(directions.get(i).times(100.0 - demag));
+                step.setDiscreteId(name);
+                step.setSuite(suite);
+                step.setMeasurementType(MeasurementType.DISCRETE);
+                step.setAfX(demag);
+                step.setAfY(demag);
+                step.setAfZ(demag);
+                step.setTreatmentType(TreatmentType.DEGAUSS_XYZ);
+                step.setSample(sample);
+                step.setSampAz(0);
+                step.setSampDip(0);
+                step.setFormAz(0);
+                step.setFormDip(0);
+                sample.addTreatmentStep(step);
+                suite.addTreatmentStep(step);
+            }
+        }
+        suite.updateReverseIndex();
+        return suite;
+        
+    }
+    
+    public static void doPcaOnAllSamples(Suite suite, boolean anchored) {
+        suite.getSamples().stream().
+                flatMap(sample -> sample.getTreatmentSteps().stream()).
+                forEach(step -> step.setInPca(true));
+        suite.getSamples().forEach(sample -> {
+            sample.setPcaAnchored(anchored);
+            sample.doPca(Correction.NONE);
+        });
     }
     
     public static class ListHandler extends Handler {

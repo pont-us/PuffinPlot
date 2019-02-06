@@ -393,6 +393,7 @@ public class Vec3 {
         requireNonNullFiniteAndNonZero(onPath, "onPath");
         if (!Double.isFinite(stepSize) || stepSize <= 0 || stepSize >= 2*PI) {
             throw new IllegalArgumentException(String.format(
+                    Locale.ENGLISH,
                     "stepSize must be between 0 and 2*PI, but %g was passed",
                     stepSize));
         }
