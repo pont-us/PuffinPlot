@@ -70,7 +70,8 @@ public class TreatmentStepTest {
     @Test
     public void testSetValueWithBadNumberFormat() {
         final ListHandler handler = ListHandler.createAndAdd();
-        new TreatmentStep().setValue(TreatmentStepField.AREA, "not a number", 1);
+        new TreatmentStep().setValue(
+                TreatmentStepField.AREA, "not a number", 1);
         assertTrue(handler.wasOneMessageLogged(Level.WARNING));
     }
     
@@ -84,13 +85,16 @@ public class TreatmentStepTest {
         final Vec3 vec = Vec3.fromPolarDegrees(12, 34, 56);
         final TreatmentStep treatmentStep = new TreatmentStep(vec);
         assertEquals(vec.getDecDeg(),
-                Double.valueOf(treatmentStep.getValue(TreatmentStepField.VIRT_DECLINATION)),
+                Double.valueOf(treatmentStep.getValue(
+                        TreatmentStepField.VIRT_DECLINATION)),
                 1e-10);
         assertEquals(vec.getIncDeg(),
-                Double.valueOf(treatmentStep.getValue(TreatmentStepField.VIRT_INCLINATION)),
+                Double.valueOf(treatmentStep.getValue(
+                        TreatmentStepField.VIRT_INCLINATION)),
                 1e-10);
         assertEquals(vec.mag(),
-                Double.valueOf(treatmentStep.getValue(TreatmentStepField.VIRT_MAGNETIZATION)),
+                Double.valueOf(treatmentStep.getValue(
+                        TreatmentStepField.VIRT_MAGNETIZATION)),
                 1e-10);
     }
     
@@ -124,7 +128,8 @@ public class TreatmentStepTest {
         final TreatmentStep treatmentStep = new TreatmentStep();
         for (TreatmentStepField field: fields) {
             treatmentStep.setValue(field, valueString, 1);
-            assertEquals(value, Double.parseDouble(treatmentStep.getValue(field)),
+            assertEquals(value,
+                    Double.parseDouble(treatmentStep.getValue(field)),
                     1e-10);
         }
     }
@@ -205,7 +210,8 @@ public class TreatmentStepTest {
     public void testMaxIntensity() {
         final List<TreatmentStep> data = new ArrayList<>();
         for (double intensity: new double[] {3, 1, 4, 1, 5, 9, 2, 6}) {
-            final TreatmentStep treatmentStep = new TreatmentStep(intensity, 0, 0);
+            final TreatmentStep treatmentStep =
+                    new TreatmentStep(intensity, 0, 0);
             data.add(treatmentStep);
         }
         assertEquals(9, TreatmentStep.maxIntensity(data), delta);
@@ -253,116 +259,141 @@ public class TreatmentStepTest {
     }
     
     @Test
-    public void testGetTreatmentStepArm() {
-        testGetTreatmentStep(TreatmentType.ARM, TreatmentStep::setAfZ);
+    public void testGetTreatmentLevelArm() {
+        testGetTreatmentLevel(TreatmentType.ARM, TreatmentStep::setAfZ);
     }
     
     @Test
-    public void testGetTreatmentStepDegaussXyz() {
-        testGetTreatmentStep(TreatmentType.DEGAUSS_XYZ, TreatmentStep::setAfZ);
+    public void testGetTreatmentLevelDegaussXyz() {
+        testGetTreatmentLevel(TreatmentType.DEGAUSS_XYZ,
+                TreatmentStep::setAfZ);
     }
     
     @Test
-    public void testGetTreatmentStepDegaussZ() {
-        testGetTreatmentStep(TreatmentType.DEGAUSS_Z, TreatmentStep::setAfZ);
+    public void testGetTreatmentLevelDegaussZ() {
+        testGetTreatmentLevel(TreatmentType.DEGAUSS_Z, TreatmentStep::setAfZ);
     }
     
     @Test
-    public void testGetTreatmentStepIRM() {
-        testGetTreatmentStep(TreatmentType.IRM, TreatmentStep::setIrmField);
+    public void testGetTreatmentLevelIRM() {
+        testGetTreatmentLevel(TreatmentType.IRM, TreatmentStep::setIrmField);
     }
     
     @Test
-    public void testGetTreatmentStepThermal() {
-        testGetTreatmentStep(TreatmentType.THERMAL, TreatmentStep::setTemp);
+    public void testGetTreatmentLevelIrm2() {
+        final TreatmentStep step = new TreatmentStep();
+        step.setTreatmentType(TreatmentType.IRM);
+        step.setIrmField(0.7);
+        assertEquals(0.7, step.getTreatmentLevel(), delta);
     }
     
-    private static void testGetTreatmentStep(TreatmentType type,
-                                             ObjDoubleConsumer<TreatmentStep> setValue) {
+    @Test
+    public void testGetTreatmentLevelThermal() {
+        testGetTreatmentLevel(TreatmentType.THERMAL, TreatmentStep::setTemp);
+    }
+    
+    private static void testGetTreatmentLevel(TreatmentType type,
+            ObjDoubleConsumer<TreatmentStep> setValue) {
         final TreatmentStep d = new TreatmentStep();
         for (double value: new double[] {0, 0.01, 17, 529}) {
             d.setTreatmentType(type);
             setValue.accept(d, value);
-            assertEquals(value, d.getTreatmentStep(), delta);
+            assertEquals(value, d.getTreatmentLevel(), delta);
         }
     }
     
     @Test
     public void testSetAndGetSampAz() {
-        testDoubleSetterAndGetter(TreatmentStep::setSampAz, TreatmentStep::getSampAz);
+        testDoubleSetterAndGetter(TreatmentStep::setSampAz,
+                TreatmentStep::getSampAz);
     }
     
     @Test
     public void testSetAndGetSampDip() {
-        testDoubleSetterAndGetter(TreatmentStep::setSampDip, TreatmentStep::getSampDip);
+        testDoubleSetterAndGetter(TreatmentStep::setSampDip,
+                TreatmentStep::getSampDip);
     }
     
     @Test
     public void testSetAndGetSampHade() {
-        testDoubleSetterAndGetter(TreatmentStep::setSampHade, TreatmentStep::getSampHade);
+        testDoubleSetterAndGetter(TreatmentStep::setSampHade,
+                TreatmentStep::getSampHade);
     }
     
     @Test
     public void testSetAndGetAfX() {
-        testDoubleSetterAndGetter(TreatmentStep::setAfX, TreatmentStep::getAfX);
+        testDoubleSetterAndGetter(TreatmentStep::setAfX,
+                TreatmentStep::getAfX);
     }
     
     @Test
     public void testSetAndGetAfY() {
-        testDoubleSetterAndGetter(TreatmentStep::setAfY, TreatmentStep::getAfY);
+        testDoubleSetterAndGetter(TreatmentStep::setAfY,
+                TreatmentStep::getAfY);
     }
     
     @Test
     public void testSetAndGetAfZ() {
-        testDoubleSetterAndGetter(TreatmentStep::setAfZ, TreatmentStep::getAfZ);
+        testDoubleSetterAndGetter(TreatmentStep::setAfZ, 
+               TreatmentStep::getAfZ);
     }
     
     @Test
     public void testSetAndGetArea() {
-        testDoubleSetterAndGetter(TreatmentStep::setArea, TreatmentStep::getArea);
+        testDoubleSetterAndGetter(TreatmentStep::setArea,
+                TreatmentStep::getArea);
     }
     
     @Test
     public void testSetAndGetMagSus() {
-        testDoubleSetterAndGetter(TreatmentStep::setMagSus, TreatmentStep::getMagSus);
+        testDoubleSetterAndGetter(TreatmentStep::setMagSus,
+                TreatmentStep::getMagSus);
     }
     
     @Test
     public void testSetAndGetVolume() {
-        testDoubleSetterAndGetter(TreatmentStep::setVolume, TreatmentStep::getVolume);
+        testDoubleSetterAndGetter(TreatmentStep::setVolume,
+                TreatmentStep::getVolume);
     }
 
     @Test
     public void testSetAndGetFormAz() {
-        testDoubleSetterAndGetter(TreatmentStep::setFormAz, TreatmentStep::getFormAz);
+        testDoubleSetterAndGetter(TreatmentStep::setFormAz,
+                TreatmentStep::getFormAz);
     }
     
     @Test
     public void testSetAndGetFormDip() {
-        testDoubleSetterAndGetter(TreatmentStep::setFormDip, TreatmentStep::getFormDip);
+        testDoubleSetterAndGetter(TreatmentStep::setFormDip,
+                TreatmentStep::getFormDip);
     }
     
     @Test
     public void testSetAndGetFormStrike() {
-        testDoubleSetterAndGetter(TreatmentStep::setFormStrike, TreatmentStep::getFormStrike);
+        testDoubleSetterAndGetter(TreatmentStep::setFormStrike,
+                TreatmentStep::getFormStrike);
     }
     
     @Test
     public void testSetAndGetXDrift() {
-        testDoubleSetterAndGetter(TreatmentStep::setXDrift, TreatmentStep::getXDrift);
+        testDoubleSetterAndGetter(TreatmentStep::setXDrift,
+                TreatmentStep::getXDrift);
     }
     
     @Test
     public void testSetAndGetYDrift() {
-        testDoubleSetterAndGetter(TreatmentStep::setYDrift, TreatmentStep::getYDrift);
+        testDoubleSetterAndGetter(TreatmentStep::setYDrift,
+                TreatmentStep::getYDrift);
     }
     
     @Test
     public void testSetAndGetZDrift() {
-        testDoubleSetterAndGetter(TreatmentStep::setZDrift, TreatmentStep::getZDrift);
+        testDoubleSetterAndGetter(TreatmentStep::setZDrift,
+                TreatmentStep::getZDrift);
     }
     
-    private void testDoubleSetterAndGetter(ObjDoubleConsumer<TreatmentStep> setter,
+    private void testDoubleSetterAndGetter(
+            ObjDoubleConsumer<TreatmentStep> setter,
             ToDoubleFunction<TreatmentStep> getter) {
         final Suite suite = new Suite("test");
         final TreatmentStep treatmentStep = new TreatmentStep();
@@ -377,12 +408,14 @@ public class TreatmentStepTest {
     
     @Test
     public void testSetAndGetRunNumber() {
-        testIntSetterAndGetter(TreatmentStep::setRunNumber, TreatmentStep::getRunNumber);
+        testIntSetterAndGetter(TreatmentStep::setRunNumber,
+                TreatmentStep::getRunNumber);
     }
     
     @Test
     public void testSetAndGetSlotNumber() {
-        testIntSetterAndGetter(TreatmentStep::setSlotNumber, TreatmentStep::getSlotNumber);
+        testIntSetterAndGetter(TreatmentStep::setSlotNumber,
+                TreatmentStep::getSlotNumber);
     }
     
     private void testIntSetterAndGetter(ObjIntConsumer<TreatmentStep> setter,
@@ -441,19 +474,12 @@ public class TreatmentStepTest {
             final List<Vec3> vectors = IntStream.range(0, nVectors).
                     mapToObj(i -> TestUtils.randomVector(rnd, 1)).
                     collect(Collectors.toList());
-            final List<TreatmentStep> data = vectors.stream().map(v -> new TreatmentStep(v)).
+            final List<TreatmentStep> data = vectors.stream().
+                    map(v -> new TreatmentStep(v)).
                     collect(Collectors.toList());
             target.setMomentToMean(data);
             assertTrue(Vec3.mean(vectors).equals(target.getMoment(), delta));
         }
-    }
-        
-    @Test
-    public void testGetTreatmentLevelIrm() {
-        final TreatmentStep d = new TreatmentStep();
-        d.setTreatmentType(TreatmentType.IRM);
-        d.setIrmField(0.7);
-        assertEquals(0.7, d.getTreatmentLevel(), delta);
     }
     
     @Test
@@ -473,7 +499,8 @@ public class TreatmentStepTest {
         final Sample sample = new Sample("test", null);
         final TreatmentStep d0 = makeSimpleTreatmentStep(TreatmentType.THERMAL,
                 75, 24.1, -23.2, 7.123e-3);
-        final TreatmentStep d1 = makeSimpleTreatmentStep(TreatmentType.DEGAUSS_XYZ,
+        final TreatmentStep d1 = makeSimpleTreatmentStep(
+                TreatmentType.DEGAUSS_XYZ,
                 0.35, 0.0, 3.5, 1.45e-2);
         sample.addTreatmentStep(d0);
         sample.addTreatmentStep(d1);

@@ -250,13 +250,13 @@ public class Site implements SampleGroup {
         final List<Double> firsts = new ArrayList<>(samples.size());
         final List<Double> lasts = new ArrayList<>(samples.size());
         for (Sample s: samples) {
-            final double first = s.getFirstGcStep();
+            final double first = s.getFirstGcStepLevel();
             if (first != -1) {
                 firsts.add(first);
             }
-            final double last = s.getLastGcStep();
+            final double last = s.getLastGcStepLevel();
             if (last != -1) {
-                lasts.add(s.getLastGcStep());
+                lasts.add(s.getLastGcStepLevel());
             }
         }
         return Arrays.asList(new String[] {fmt(min(firsts)),

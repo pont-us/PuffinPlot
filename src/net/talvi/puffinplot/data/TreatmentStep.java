@@ -91,7 +91,7 @@ public class TreatmentStep {
     private Suite suite;
 
     /**
-     * Creates a datum with a specified magnetization vector.
+     * Creates a treatment step with a specified magnetization vector.
      *
      * @param x x component of the magnetization vector
      * @param y y component of the magnetization vector
@@ -102,7 +102,7 @@ public class TreatmentStep {
     }
     
     /**
-     * Creates a datum with a supplied magnetization vector.
+     * Creates a treatment step with a supplied magnetization vector.
      *
      * @param vector the magnetization vector
      */
@@ -111,25 +111,25 @@ public class TreatmentStep {
     }
 
     /**
-     * Creates a datum with no data. The moment is set to zero.
+     * Creates a treatment step with no data. The moment is set to zero.
      */
     public TreatmentStep() {
         moment = Vec3.ORIGIN;
     }
 
     /**
-     * Reports whether this datum is selected.
+     * Reports whether this treatment step is selected.
      *
-     * @return {@code true} if this datum is selected
+     * @return {@code true} if this treatment step is selected
      */
     public boolean isSelected() {
         return selected;
     }
 
     /**
-     * Sets the selection state of this datum.
+     * Sets the selection state of this treatment step.
      *
-     * @param v {@code true} to select this datum, {@code false} to deselect
+     * @param v {@code true} to select this treatment step, {@code false} to deselect
      */
     public void setSelected(boolean v) {
         touch();
@@ -290,18 +290,18 @@ public class TreatmentStep {
     }
 
     /**
-     * Reports whether this datum should be hidden on plots.
+     * Reports whether this treatment step should be hidden on plots.
      *
-     * @return {@code true} if this datum should not be displayed on plots
+     * @return {@code true} if this treatment step should not be displayed on plots
      */
     public boolean isHidden() {
         return hidden;
     }
 
     /**
-     * Sets whether this datum should be hidden on plots.
+     * Sets whether this treatment step should be hidden on plots.
      *
-     * @param v {@code true} if this datum should not be displayed on plots
+     * @param v {@code true} if this treatment step should not be displayed on plots
      */
     public void setHidden(boolean v) {
         touch();
@@ -767,14 +767,14 @@ public class TreatmentStep {
         inPca = v;
     }
     
-    /** Returns the sample hade for this datum.
+    /** Returns the sample hade for this treatment step.
      * @return the sample's hade, in degrees */
     public double getSampHade() {
         return 90 - sampDip;
     }
     
     /**
-     * Sets the sample hade for this datum. Since the hade is the complement of
+     * Sets the sample hade for this treatment step. Since the hade is the complement of
      * the dip, this will of course change the sample's dip.
      *
      * @param hadeDeg the hade to set, in degrees
@@ -785,7 +785,7 @@ public class TreatmentStep {
     }
     
     /**
-     * Returns the formation strike for this datum.
+     * Returns the formation strike for this treatment step.
      *
      * @return the formation strike, in degrees
      */
@@ -796,7 +796,7 @@ public class TreatmentStep {
     }
     
     /**
-     * Sets the formation strike for this datum. This will of course also set
+     * Sets the formation strike for this treatment step. This will of course also set
      * the formation dip azimuth.
      *
      * @param strikeDeg the formation strike, in degrees
@@ -822,20 +822,20 @@ public class TreatmentStep {
     }
     
     /**
-     * Reports whether this datum has any magnetic susceptibility data.
+     * Reports whether this treatment step has any magnetic susceptibility data.
      *
      * @return {@code true} if there is magnetic susceptibility data in this
-     * datum
+     * treatment step
      */
     public boolean hasMagSus() {
         return !Double.isNaN(magSus);
     }
 
     /**
-     * Reports whether this datum has magnetic susceptibility but not magnetic
+     * Reports whether this treatment step has magnetic susceptibility but not magnetic
      * moment data.
      *
-     * @return {@code true} if this datum contains magnetic susceptibility data
+     * @return {@code true} if this treatment step contains magnetic susceptibility data
      * and does not contain magnetic moment data
      */
     public boolean isMagSusOnly() {
@@ -930,9 +930,10 @@ public class TreatmentStep {
     }
     
     /**
-     * Toggles the datum's selection state. {@code datum.toggleSelected()}
+     * Toggles the treatment step's selection state.
+     * {@code step.toggleSelected()}
      * is functionally equivalent to
-     * {@code datum.setSelected(!datum.isSelected()}.
+     * {@code step.setSelected(!datum.isSelected()}.
      */
     public void toggleSelected() {
         touch();
@@ -942,50 +943,62 @@ public class TreatmentStep {
     /**
      * Returns a numerical representation of the intensity of the treatment
      * which was applied immediately before this measurement. The interpretation
-     * of the number depends on the treatment type. For thermal treatment, it
-     * is a temperature in degrees Celsius. For magnetic treatments
-     * (AF demagnetization, ARM, IRM) it returns the magnetic field. As 
-     * is conventional, the magnetic field is returned as the equivalent 
-     * magnetic induction in units of Tesla.
+     * of the number depends on the treatment type. For thermal treatment, it is
+     * a temperature in degrees Celsius. For magnetic treatments (AF
+     * demagnetization, ARM, IRM) it returns the magnetic field. As is
+     * conventional, the magnetic field is returned as the equivalent magnetic
+     * induction in units of Tesla.
      * <p>
-     * For ARM treatment, this method returns the strength of the
-     * alternating field rather than the DC bias field.
-     * 
+     * For ARM treatment, this method returns the strength of the alternating
+     * field rather than the DC bias field.
+     *
      * @return the treatment level
      */
     public double getTreatmentLevel() {
         switch (treatmentType) {
-        case NONE: return 0;
-        case DEGAUSS_XYZ:
-            /*
-             * This is a bit ill-defined: in general, of course, we can't
-             * collapse a three-dimensional treatment into a single value. We
-             * assume that the same treatment has been applied on each axis, and
-             * that zero values are due to lazy construction of the input file.
-             * (The exception is if all the values are zero, in which case we
-             * assume that it's an actual zero-level treatment.) The logic below
-             * should handle NaN values cleanly, but negative values will come
-             * out as zero. So far I've never seen a file with negative AF
-             * treatment values.
-             */
-            if (afx>0) return afx;
-            if (afy>0) return afy;
-            if (afz>0) return afz;
-            return 0;
-        case DEGAUSS_Z: return afz;
-        case THERMAL: return temp;
-        case ARM: return afz; //usually we vary this & keep bias field constant
-        case IRM: return getIrmField();
-        case UNKNOWN: return 0;
-        default: throw new IllegalArgumentException("unhandled treatment type");
+            case NONE:
+                return 0;
+            case DEGAUSS_XYZ:
+                /*
+                 * This is a bit ill-defined: in general, of course, we can't
+                 * collapse a three-dimensional treatment into a single value.
+                 * We assume that the same treatment has been applied on each
+                 * axis, and that zero values are due to lazy construction of
+                 * the input file. (The exception is if all the values are zero,
+                 * in which case we assume that it's an actual zero-level
+                 * treatment.) The logic below should handle NaN values cleanly,
+                 * but negative values will come out as zero. So far I've never
+                 * seen a file with negative AF treatment values.
+                 */
+                if (afx > 0) {
+                    return afx;
+                }
+                if (afy > 0) {
+                    return afy;
+                }
+                if (afz > 0) {
+                    return afz;
+                }
+                return 0;
+            case DEGAUSS_Z:
+                return afz;
+            case THERMAL:
+                return temp;
+            case ARM:
+                return afz; // usually we vary this & keep bias field constant
+            case IRM:
+                return getIrmField();
+            case UNKNOWN:
+                return 0;
+            default:
+                throw new IllegalArgumentException("unhandled treatment type");
         }
     }
     
     /**
-     * Returns the treatment level formatted as a string.
-     * Temperatures are given in degrees Celsius, AF intensities
-     * in millitesla.
-     * 
+     * Returns the treatment level formatted as a string. Temperatures are given
+     * in degrees Celsius, AF intensities in millitesla.
+     *
      * @return a string representing the treatment level
      */
     public String getFormattedTreatmentLevel() {
@@ -1001,17 +1014,17 @@ public class TreatmentStep {
 
     /**
      * Returns the maximum treatment level within the supplied group of
-     * datum objects.
+     * treatment step objects.
      * 
-     * @param data a list of datum objects; must be non-null
-     * @return the highest treatment level for any of the supplied datum objects
+     * @param data a list of treatment step objects; must be non-null
+     * @return the highest treatment level for any of the supplied treatment step objects
      * @throws NullPointerException if {@code data} is null
      */
     public static double maxTreatmentLevel(List<TreatmentStep> data) {
         requireNonNull(data, "data must be non-null");
         double max = 0;
-        for (TreatmentStep d: data) {
-            double level = d.getTreatmentLevel();
+        for (TreatmentStep step: data) {
+            final double level = step.getTreatmentLevel();
             if (level > max) {
                 max = level;
             }
@@ -1021,18 +1034,18 @@ public class TreatmentStep {
 
     /**
      * Returns the maximum magnitude of magnetic dipole moment per unit volume
-     * within the supplied group of datum objects.
+     * within the supplied group of treatment step objects.
      * 
-     * @param data a list of datum objects; must be non-null
+     * @param data a list of treatment step objects; must be non-null
      * @return the highest magnitude of magnetic dipole moment per unit volume
-     * for any of the supplied datum objects
+     * for any of the supplied treatment step objects
      * @throws NullPointerException if {@code data} is null
      */
     public static double maxIntensity(List<TreatmentStep> data) {
         requireNonNull(data, "data must be non-null");
         double max = 0;
-        for (TreatmentStep d: data) {
-            double i = d.getIntensity();
+        for (TreatmentStep step: data) {
+            final double i = step.getIntensity();
             if (i > max) {
                 max = i;
             }
@@ -1042,10 +1055,10 @@ public class TreatmentStep {
 
     /**
      * Returns the maximum magnetic susceptibility within the supplied group of
-     * datum objects.
+     * treatment step objects.
      *
-     * @param data a list of datum objects; must be non-null
-     * @return the highest magnetic susceptibility for any of the supplied datum
+     * @param data a list of treatment step objects; must be non-null
+     * @return the highest magnetic susceptibility for any of the supplied treatment step
      * objects
      * @throws NullPointerException if {@code data} is null
      */
@@ -1072,20 +1085,20 @@ public class TreatmentStep {
     }
 
     /**
-     * Returns {@code true} if this datum should be ignored (thrown away)
+     * Returns {@code true} if this treatment step should be ignored (thrown away)
      * when loading a data file. Currently, this method returns true if
      * the measurement type is {@code NONE} – that is, there is
      * no data within the object.
      * 
-     * @return {@code true} if this datum should be ignored when loading a file
+     * @return {@code true} if this treatment step should be ignored when loading a file
      */
     public boolean ignoreOnLoading() {
         return getMeasurementType() == MeasurementType.NONE;
     }
 
     /**
-     * Reports whether the datum contains a magnetic moment measurement.
-     * @return {@code true} if the datum contains a magnetic moment measurement
+     * Reports whether the treatment step contains a magnetic moment measurement.
+     * @return {@code true} if the treatment step contains a magnetic moment measurement
      */
     public boolean hasMagMoment() {
         return moment != null;
@@ -1247,24 +1260,6 @@ public class TreatmentStep {
     }
 
     /**
-     * @return the value of the treatment step for this datum
-     */
-    public double getTreatmentStep() {
-        switch (getTreatmentType()) {
-            case ARM:
-            case DEGAUSS_XYZ:
-            case DEGAUSS_Z:
-                return afz;
-            case IRM:
-                return irmField;
-            case THERMAL:
-                return temp;
-            default:
-                return 0;
-        }
-    }
-
-    /**
      * This class allows datum objects to be created from string representations
      * of a specified format. The headers (corresponding to field names)
      * are specified in the constructor, and data lines with a format
@@ -1275,9 +1270,10 @@ public class TreatmentStep {
         private final List<TreatmentStepField> fields;
 
         /**
-         * Create a new reader using the supplied header strings.
-         * Each header string should correspond to the string representation
-         * of a {@link TreatmentStepField} field.
+         * Create a new reader using the supplied header strings. Each header
+         * string should correspond to the string representation of a
+         * {@link TreatmentStepField} field.
+         *
          * @param headers list of headers defining the data format
          */
         public Reader(List<String> headers) {
@@ -1286,36 +1282,36 @@ public class TreatmentStep {
         }
 
         /**
-         * Creates a a datum object using the supplied strings to 
-         * populate the data fields. The values in the supplied list of
-         * strings must occur in the same order as the corresponding
-         * {@link TreatmentStepField}s supplied to the reader's constructor.
-         * 
+         * Creates a a datum object using the supplied strings to populate the
+         * data fields. The values in the supplied list of strings must occur in
+         * the same order as the corresponding {@link TreatmentStepField}s
+         * supplied to the reader's constructor.
+         *
          * @param strings string representations of data values
          * @return a datum object containing the supplied values
          */
         public TreatmentStep fromStrings(List<String> strings) {
-            final TreatmentStep d = new TreatmentStep(Vec3.ORIGIN);
+            final TreatmentStep step = new TreatmentStep(Vec3.ORIGIN);
             for (int i=0; i<strings.size(); i++) {
-                d.setValue(fields.get(i), strings.get(i), 1.);
+                step.setValue(fields.get(i), strings.get(i), 1.);
             }
-            return d;
+            return step;
         }
     }
 
     /**
      * Produces a list of strings representing the data values within this
-     * datum object. The order of the strings corresponds to the order of
-     * the fields in {@link TreatmentStepField#realFields}.
-     * 
-     * @return  a list of strings representing the data values within this
-     * datum
+     * treatment step object. The order of the strings corresponds to the order
+     * of the fields in {@link TreatmentStepField#realFields}.
+     *
+     * @return a list of strings representing the data values within this
+     * treatment step
      */
     public List<String> toStrings() {
         List<String> result =
                 new ArrayList<>(TreatmentStepField.getRealFields().size());
-        for (TreatmentStepField df : TreatmentStepField.getRealFields()) {
-            result.add(getValue(df));
+        for (TreatmentStepField field: TreatmentStepField.getRealFields()) {
+            result.add(getValue(field));
         }
         return result;
     }
@@ -1342,7 +1338,7 @@ public class TreatmentStep {
     }
 
     /**
-     * Sets this datum's suite as "modified". Intended to be called
+     * Sets this tratment steps's suite as "modified". Intended to be called
      * from any method that modifies the datum, to keep track of whether
      * the suite has been saved since the last modification. 
      */

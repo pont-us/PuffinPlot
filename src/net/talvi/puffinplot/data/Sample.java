@@ -708,10 +708,10 @@ public class Sample {
      * @return the treatment level for the first point used in the great-circle
      * fit
      */
-    public double getFirstGcStep() {
+    public double getFirstGcStepLevel() {
         for (TreatmentStep step: treatmentSteps) {
             if (step.isOnCircle()) {
-                return step.getTreatmentStep();
+                return step.getTreatmentLevel();
             }
         }
         return -1;
@@ -724,11 +724,11 @@ public class Sample {
      * @return the treatment level for the last point used in the great-circle
      * fit
      */
-    public double getLastGcStep() {
+    public double getLastGcStepLevel() {
         double result = -1;
         for (TreatmentStep step: treatmentSteps) {
             if (step.isOnCircle()) {
-                result = step.getTreatmentStep();
+                result = step.getTreatmentLevel();
             }
         }
         return result;
@@ -1195,8 +1195,8 @@ public class Sample {
                         field.name());
                 break;
         }
-        for (TreatmentStep d: getTreatmentSteps()) {
-            d.setValue(field, value, 1);
+        for (TreatmentStep step: getTreatmentSteps()) {
+            step.setValue(field, value, 1);
         }
     }
     
@@ -1373,7 +1373,7 @@ public class Sample {
         
         public TreatmentTypeAndLevel(TreatmentStep treatmentStep) {
             this.treatmentType = treatmentStep.getTreatmentType();
-            this.treatmentLevel = treatmentStep.getTreatmentStep();
+            this.treatmentLevel = treatmentStep.getTreatmentLevel();
         }
         
         @Override
