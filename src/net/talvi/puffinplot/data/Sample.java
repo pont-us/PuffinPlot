@@ -1364,7 +1364,7 @@ public class Sample {
                     forEach(step -> firstSample.addTreatmentStep(step));
         }
         firstSample.mergeDuplicateTreatmentSteps();
-        firstSample.treatmentSteps.sort(new TreatmentStepTreatmentComparator());
+        firstSample.treatmentSteps.sort(new TreatmentLevelComparator());
     }
     
     private static class TreatmentTypeAndLevel {

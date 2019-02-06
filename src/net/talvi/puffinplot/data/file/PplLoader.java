@@ -46,7 +46,8 @@ import static net.talvi.puffinplot.data.file.TwoGeeHelper.treatTypeFromString;
 
 public class PplLoader extends AbstractFileLoader {
 
-    private static final Logger logger = Logger.getLogger(PplLoader.class.getName());
+    private static final Logger logger =
+            Logger.getLogger(PplLoader.class.getName());
     private static final Pattern puffinHeader =
             Pattern.compile("^PuffinPlot file. Version (\\d+)");
     private LineNumberReader reader;
@@ -116,9 +117,9 @@ public class PplLoader extends AbstractFileLoader {
                 // Fortunately, measurement type strings happen to carry
                 // across so we don't need to munge them.
             }
-            TreatmentStep d = null;
+            TreatmentStep step = null;
             try {
-                d = datumReader.fromStrings(values);
+                step = datumReader.fromStrings(values);
             } catch (NumberFormatException e) {
                 final String msg = String.format(Locale.ENGLISH,
                         "Error at line %d "+
@@ -129,16 +130,19 @@ public class PplLoader extends AbstractFileLoader {
             if (version==2) {
                 // Ppl 2 files store magnetic data (except susceptibility)
                 // in cgs units, which must be corrected on loading.
-                d.setMoment(gaussToAm(d.getMoment(Correction.NONE)));
-                if (!isNaN(d.getAfX())) d.setAfX(oerstedToTesla(d.getAfX()));
-                if (!isNaN(d.getAfY())) d.setAfX(oerstedToTesla(d.getAfY()));
-                if (!isNaN(d.getAfZ())) d.setAfX(oerstedToTesla(d.getAfZ()));
-                if (!isNaN(d.getIrmField()))
-                    d.setIrmField(oerstedToTesla(d.getIrmField()));
-                if (!isNaN(d.getArmField()))
-                    d.setArmField(oerstedToTesla(d.getArmField()));
+                step.setMoment(gaussToAm(step.getMoment(Correction.NONE)));
+                if (!isNaN(step.getAfX()))
+                    step.setAfX(oerstedToTesla(step.getAfX()));
+                if (!isNaN(step.getAfY()))
+                    step.setAfX(oerstedToTesla(step.getAfY()));
+                if (!isNaN(step.getAfZ()))
+                    step.setAfX(oerstedToTesla(step.getAfZ()));
+                if (!isNaN(step.getIrmField()))
+                    step.setIrmField(oerstedToTesla(step.getIrmField()));
+                if (!isNaN(step.getArmField()))
+                    step.setArmField(oerstedToTesla(step.getArmField()));
             }
-            addTreatmentStep(d);
+            addTreatmentStep(step);
         }
         if (line != null) {
             extraLines = new ArrayList<>();

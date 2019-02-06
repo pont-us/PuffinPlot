@@ -129,22 +129,23 @@ public class PmdLoader extends AbstractFileLoader {
                 break;
             }
             final PmdDataLine dataLine = PmdDataLine.read(line);
-            final TreatmentStep d = new TreatmentStep(dataLine.moment.divideBy(headerLine.volume));
-            d.setMeasurementType(MeasurementType.DISCRETE);
-            d.setDiscreteId(headerLine.name);
-            d.setSampAz(headerLine.sampleAzimuth);
-            d.setSampDip(90 - headerLine.sampleHade);
-            d.setFormAz((headerLine.formationStrike + 90) % 360);
-            d.setFormDip(headerLine.formationDip);
-            d.setTreatmentType(dataLine.treatmentType);
-            switch (d.getTreatmentType()) {
+            final TreatmentStep step = new TreatmentStep(
+                    dataLine.moment.divideBy(headerLine.volume));
+            step.setMeasurementType(MeasurementType.DISCRETE);
+            step.setDiscreteId(headerLine.name);
+            step.setSampAz(headerLine.sampleAzimuth);
+            step.setSampDip(90 - headerLine.sampleHade);
+            step.setFormAz((headerLine.formationStrike + 90) % 360);
+            step.setFormDip(headerLine.formationDip);
+            step.setTreatmentType(dataLine.treatmentType);
+            switch (step.getTreatmentType()) {
                 case DEGAUSS_XYZ:
-                    d.setAfX(dataLine.treatmentLevel/1000.);
-                    d.setAfY(dataLine.treatmentLevel/1000.);
-                    d.setAfZ(dataLine.treatmentLevel/1000.);
+                    step.setAfX(dataLine.treatmentLevel/1000.);
+                    step.setAfY(dataLine.treatmentLevel/1000.);
+                    step.setAfZ(dataLine.treatmentLevel/1000.);
                     break;
                 case THERMAL:
-                    d.setTemp(dataLine.treatmentLevel);
+                    step.setTemp(dataLine.treatmentLevel);
                     break;
             }
             final Vec3 sampleCorrected = dataLine.moment.correctSample(
@@ -162,9 +163,9 @@ public class PmdLoader extends AbstractFileLoader {
                     dataLine.formationCorrectedDeclination, 0.3);
             checkConsistency(location, formationCorrected.getIncDeg(),
                     dataLine.formationCorrectedInclination, 0.3);
-            checkConsistency(location, d.getIntensity(), dataLine.magnetization, 
-                    Math.max(d.getIntensity(), dataLine.magnetization)/100);
-            addTreatmentStep(d);
+            checkConsistency(location, step.getIntensity(), dataLine.magnetization, 
+                    Math.max(step.getIntensity(), dataLine.magnetization)/100);
+            addTreatmentStep(step);
         }
     }
     

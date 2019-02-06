@@ -90,7 +90,7 @@ public class UcDavisLoader extends AbstractFileLoader {
              * pair.
              */
             for (Integer level : levels) {
-                final TreatmentStep d = new TreatmentStep();
+                final TreatmentStep step = new TreatmentStep();
 
                 /**
                  * The file contains both Cartesian and polar data, for each
@@ -100,23 +100,22 @@ public class UcDavisLoader extends AbstractFileLoader {
                  * have more corrections applied (e.g. for effective sensor
                  * length), so for now I'm ignoring the Cartesian values and
                  * initializing the datum using the polar vector.
-                 *
                  */
-                d.setMoment(Vec3.fromPolarDegrees(
+                step.setMoment(Vec3.fromPolarDegrees(
                         parts.get(fieldMap.get(new ColumnDef(level,
                                 TreatmentStepField.VIRT_MAGNETIZATION))),
                         parts.get(fieldMap.get(new ColumnDef(level,
                                 TreatmentStepField.VIRT_INCLINATION))),
                         parts.get(fieldMap.get(new ColumnDef(level,
                                 TreatmentStepField.VIRT_DECLINATION)))));
-                d.setTreatmentType(TreatmentType.DEGAUSS_XYZ);
+                step.setTreatmentType(TreatmentType.DEGAUSS_XYZ);
                 final double levelTesla = level / 1000.;
-                d.setAfX(levelTesla);
-                d.setAfY(levelTesla);
-                d.setAfZ(levelTesla);
-                d.setMeasurementType(MeasurementType.CONTINUOUS);
-                d.setDepth(partStrings[0]);
-                addTreatmentStep(d);
+                step.setAfX(levelTesla);
+                step.setAfY(levelTesla);
+                step.setAfZ(levelTesla);
+                step.setMeasurementType(MeasurementType.CONTINUOUS);
+                step.setDepth(partStrings[0]);
+                addTreatmentStep(step);
             }
         }
     }

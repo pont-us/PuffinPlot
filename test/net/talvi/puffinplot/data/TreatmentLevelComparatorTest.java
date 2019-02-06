@@ -28,14 +28,14 @@ import static org.junit.Assert.assertTrue;
  *
  * @author pont
  */
-public class TreatmentStepTreatmentComparatorTest {
+public class TreatmentLevelComparatorTest {
 
-    final TreatmentStepTreatmentComparator comparator =
-                new TreatmentStepTreatmentComparator();
-    
+    final TreatmentLevelComparator comparator =
+                new TreatmentLevelComparator();
     
     /**
-     * Test that comparisons of different treatment types produce 0.
+     * Test that comparisons of different treatment types compare the treatment
+     * levels (even when it doesn't make sense physically).
      */
     @Test
     public void testCompareDifferentTreatmentTypes() {
@@ -45,8 +45,8 @@ public class TreatmentStepTreatmentComparatorTest {
         final TreatmentStep d1 = new TreatmentStep();
         d1.setTreatmentType(TreatmentType.THERMAL);
         d1.setTemp(50);
-        assertEquals(0, comparator.compare(d0, d1));
-        assertEquals(0, comparator.compare(d1, d0));
+        assertTrue(comparator.compare(d0, d1) > 0);
+        assertTrue(comparator.compare(d1, d0) < 0);
     }
     
     @Test

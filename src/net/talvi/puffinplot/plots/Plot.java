@@ -408,7 +408,7 @@ public abstract class Plot
     /**
      * Adds a point to this plot's internal buffer.
      * 
-     * @param d the datum associated with the point ({@code null} if none)
+     * @param step the datum associated with the point ({@code null} if none)
      * @param p the position of the point
      * @param filled {@code true} if the point should be filled
      * @param special {@code true} if the point should be highlighted
@@ -416,9 +416,9 @@ public abstract class Plot
      * point to this one.
      * @return the point which was created
      */
-    protected PlotPoint addPoint(TreatmentStep d, Point2D p, boolean filled,
+    protected PlotPoint addPoint(TreatmentStep step, Point2D p, boolean filled,
                                  boolean special, boolean line) {
-        final ShapePoint pp = ShapePoint.build(this, p).datum(d).
+        final ShapePoint pp = ShapePoint.build(this, p).datum(step).
                 filled(filled).lineToHere(line).special(special).
                 build();
         points.add(pp);

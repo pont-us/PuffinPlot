@@ -210,32 +210,33 @@ public class CaltechLoader extends AbstractFileLoader {
                         new Object[] {demagLevelString, file.getName()});
             }
         }
-        final TreatmentStep d =
-                new TreatmentStep(gaussToAm(Vec3.fromPolarDegrees(intens, inc, dec)));
-        d.setMeasurementType(MeasurementType.DISCRETE);
+        final TreatmentStep step =
+                new TreatmentStep(gaussToAm(Vec3.fromPolarDegrees(
+                        intens, inc, dec)));
+        step.setMeasurementType(MeasurementType.DISCRETE);
         
         final String treatment = matcher.group(1);
         if (null != treatment) {
             switch (treatment) {
                 case "NR":
-                    d.setTreatmentType(TreatmentType.NONE);
+                    step.setTreatmentType(TreatmentType.NONE);
                     break;
                 case "AF":
-                    d.setTreatmentType(TreatmentType.DEGAUSS_XYZ);
-                    d.setAfX(demagLevel / 1000.0);
-                    d.setAfY(demagLevel / 1000.0);
-                    d.setAfZ(demagLevel / 1000.0);
+                    step.setTreatmentType(TreatmentType.DEGAUSS_XYZ);
+                    step.setAfX(demagLevel / 1000.0);
+                    step.setAfY(demagLevel / 1000.0);
+                    step.setAfZ(demagLevel / 1000.0);
                     break;
                 case "TT":
-                    d.setTreatmentType(TreatmentType.THERMAL);
-                    d.setTemp(demagLevel);
+                    step.setTreatmentType(TreatmentType.THERMAL);
+                    step.setTemp(demagLevel);
                     break;
                 default:
-                    d.setTreatmentType(TreatmentType.UNKNOWN);
+                    step.setTreatmentType(TreatmentType.UNKNOWN);
                     break;
         }
         }
         
-        return d;
+        return step;
     }
 }

@@ -30,9 +30,9 @@ public interface CurrentTreatmentStepListener {
      * Called when the current treatment step changes, generally as a result of
      * the mouse pointer moving.
      *
-     * @param d the treatment step represented by the point currently under the
-     * mouse pointer, or {@code null} if there is no treatment-step-related
+     * @param step the treatment step represented by the point currently under
+     * the mouse pointer, or {@code null} if there is no treatment-step-related
      * point under the mouse pointer.
      */
-    public void treatmentStepChanged(TreatmentStep d);
+    public void treatmentStepChanged(TreatmentStep step);
 }

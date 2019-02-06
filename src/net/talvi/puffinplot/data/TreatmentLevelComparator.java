@@ -22,20 +22,26 @@ import java.util.Comparator;
  *
  * @author pont
  */
-public class TreatmentStepTreatmentComparator implements Comparator<TreatmentStep> {
+public class TreatmentLevelComparator
+        implements Comparator<TreatmentStep> {
 
     /**
+     * Compare treatment steps according to their treatment level. The
+     * comparison result is the same as the result of comparing the treatment
+     * level. Note that while any two steps may be compared by this comparison,
+     * the results may not make sense physically (e.g. comparing a temperature
+     * with an AF field strength).
      *
-     * @param d0
-     * @param d1
-     * @return
+     * @param step1 the first step to be compared
+     * @param step2 the second step to be compared
+     * @return a negative integer, zero, or a positive integer as the treatment
+     * level of the first step is less than, equal to, or greater than that of
+     * the second step.
      */
     @Override
-    public int compare(TreatmentStep d0, TreatmentStep d1) {
-        if (d0.getTreatmentType() != d1.getTreatmentType()) {
-            return 0;
-        }
-        return Double.compare(d0.getTreatmentLevel(), d1.getTreatmentLevel());
+    public int compare(TreatmentStep step1, TreatmentStep step2) {
+        return Double.compare(step1.getTreatmentLevel(),
+                step2.getTreatmentLevel());
     }
     
 }

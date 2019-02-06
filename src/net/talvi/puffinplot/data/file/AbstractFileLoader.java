@@ -38,8 +38,8 @@ abstract class AbstractFileLoader implements FileLoader {
         messages.add(String.format(message, args));
     }
 
-    protected void addTreatmentStep(TreatmentStep d) {
-        treatmentSteps.add(d);
+    protected void addTreatmentStep(TreatmentStep step) {
+        treatmentSteps.add(step);
     }
 
     @Override
