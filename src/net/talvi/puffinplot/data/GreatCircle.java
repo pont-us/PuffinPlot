@@ -51,14 +51,14 @@ public final class GreatCircle {
         this.points = points;
         this.mad1 = mad1;
         
-        /* Calculate the direction of the point trend along the circle
-         * (clockwise / anticlockwise). Can't be sure that all points
-         * will be strictly in the right direction, so we'll add up
-         * the offsets of all the point pairs and take the sign of the sum.
-         * (Can't just take angle between first and last point, since
-         * the path might be more than 180 degrees -- though of course
-         * that would imply something more complex than a single component
-         * peeling off.)
+        /*
+         * Calculate the direction of the point trend along the circle
+         * (clockwise / anticlockwise). Can't be sure that all points will be
+         * strictly in the right direction, so we'll add up the offsets of all
+         * the point pairs and take the sign of the sum. (Can't just take angle
+         * between first and last point, since the path might be more than 180
+         * degrees -- though of course that would imply something more complex
+         * than a single component peeling off.)
          */
         double total = 0;
         for (int i=1; i<points.size(); i++) {
@@ -108,39 +108,46 @@ public final class GreatCircle {
     }
 
     
-    /** Returns the normalized points to which the great circle was fitted,
-     * if any. If there are none, an empty list will be returned.
-     * 
-     * @return the normalized points to which the great circle was fitted */
+    /**
+     * Returns the normalized points to which the great circle was fitted, if
+     * any. If there are none, an empty list will be returned.
+     *
+     * @return the normalized points to which the great circle was fitted
+     */
     public List<Vec3> getPoints() {
         return points;
     }
 
-    /** Returns a pole to the fitted great circle. There is no guarantee
-     * as to which of the two possible pole directions will be returned.
+    /**
+     * Returns a pole to the fitted great circle. There is no guarantee as to
+     * which of the two possible pole directions will be returned.
+     *
      * @return a pole to the fitted great circle
      */
     public Vec3 getPole() {
         return pole;
     }
 
-    /** For a supplied direction, returns the nearest direction which lies
-     * on this great circle.
+    /**
+     * For a supplied direction, returns the nearest direction which lies on
+     * this great circle.
+     *
      * @param point a vector specifying a direction
-     * @return a vector on this great circle, as close as possible to the specified direction
+     * @return a vector on this great circle, as close as possible to the
+     * specified direction
      */
     public Vec3 nearestOnCircle(Vec3 point) {
         return pole.nearestOnCircle(point);
     }
 
-    /** Returns the normalized final point used in the great-circle fit,
-     * if any. If the great circle was instantiated from a pole rather
-     * than a set of points, there is no final point to return, and
-     * this method will throw a {@code UnsupportedOperationException}.
-     * 
+    /**
+     * Returns the normalized final point used in the great-circle fit, if any.
+     * If the great circle was instantiated from a pole rather than a set of
+     * points, there is no final point to return, and this method will throw a
+     * {@code UnsupportedOperationException}.
+     *
      * @return the normalized final point used in the great-circle fit
-     * @throws UnsupportedOperationException if this great circle
-     *    has no points
+     * @throws UnsupportedOperationException if this great circle has no points
      */
     public Vec3 lastPoint() {
         if (points.isEmpty()) {
@@ -150,26 +157,26 @@ public final class GreatCircle {
         return points.get(points.size()-1);
     }
 
-    /** Returns the angle between the supplied direction and the last point
-     * on the great-circle fit. A negative value indicates that the 
-     * supplied direction is before the last great-circle point when 
-     * travelling along the great circle in the direction in which the
-     * original points were provided. A positive value indicates that
-     * the supplied direction is beyond the final great-circle point.
-     * 
+    /**
+     * Returns the angle between the supplied direction and the last point on
+     * the great-circle fit. A negative value indicates that the supplied
+     * direction is before the last great-circle point when travelling along the
+     * great circle in the direction in which the original points were provided.
+     * A positive value indicates that the supplied direction is beyond the
+     * final great-circle point.
+     *
      * If the great circle has no points, this method will throw an
      * UnsupportedOperationException.
-     * 
+     *
      * @param v a direction
-     * @return the angle between the supplied direction and the last point
-     * on the great-circle fit
-     * @throws UnsupportedOperationException if this great circle has
-     * no points
+     * @return the angle between the supplied direction and the last point on
+     * the great-circle fit
+     * @throws UnsupportedOperationException if this great circle has no points
      */
     public double angleFromLast(Vec3 v) {
-        /* We don't need to check and throw UnsupportOperationException
-         * explicitly here: lastPoint() will throw it if there are
-         * no points.
+        /*
+         * We don't need to check and throw UnsupportOperationException
+         * explicitly here: lastPoint() will throw it if there are no points.
          */
         return nearestOnCircle(lastPoint()).angleTo(v)
                 * pointTrend;
@@ -179,9 +186,11 @@ public final class GreatCircle {
         return String.format(Locale.ENGLISH, "%.4f", d);
     }
     
-    /** Returns the statistical parameters as a list of strings.
-     * The order of the parameters is the same as the order of
-     * the headers provided by {@link #getHeaders()}.
+    /**
+     * Returns the statistical parameters as a list of strings. The order of the
+     * parameters is the same as the order of the headers provided by
+     * {@link #getHeaders()}.
+     *
      * @return the statistical parameters as a list of strings
      */
     public List<String> toStrings() {
@@ -190,8 +199,12 @@ public final class GreatCircle {
                 fmt(getMad1()), Integer.toString(points.size()));
     }
 
-    /** Returns a list of empty strings equal in length to the number of parameters.
-     * @return  a list of empty strings equal in length to the number of parameters
+    /**
+     * Returns a list of empty strings equal in length to the number of
+     * parameters.
+     *
+     * @return a list of empty strings equal in length to the number of
+     * parameters
      */
     public static List<String> getEmptyFields() {
         return Collections.nCopies(HEADERS.size(), "");
@@ -205,13 +218,13 @@ public final class GreatCircle {
     }
 
     /**
-     * Returns the MAD1 (planar maximum angular deviation) value for
-     * the great-circle fit. If this great circle was not created by
-     * fitting points, this method will throw an UnsupportedOperationException.
-     * 
+     * Returns the MAD1 (planar maximum angular deviation) value for the
+     * great-circle fit. If this great circle was not created by fitting points,
+     * this method will throw an UnsupportedOperationException.
+     *
      * @return the MAD1 value for the great-circle fit, if any
-     * @throws UnsupportedOperationException if no fit was performed to
-     * produce this great circle
+     * @throws UnsupportedOperationException if no fit was performed to produce
+     * this great circle
      */
     public double getMad1() {
         if (Double.isNaN(mad1)) {

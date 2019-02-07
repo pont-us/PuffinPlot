@@ -35,7 +35,6 @@ public class Location {
     
     private static final List<String> HEADERS =
             Arrays.asList("Lat (deg)", "Long (deg)");
-
     
     /**
      * Create a new location.
@@ -98,23 +97,31 @@ public class Location {
         return new Location(toDegrees(latRad), toDegrees(longRad));
     }
     
-    /** Returns the headers describing the parameters as a list of strings.
+    /**
+     * Returns the headers describing the parameters as a list of strings.
+     *
      * @return the headers describing the parameters
      */
     public static List<String> getHeaders() {
         return HEADERS;
     }
 
-    /** Returns a list of empty strings equal in length to the number of parameters.
-     * @return  a list of empty strings equal in length to the number of parameters
+    /**
+     * Returns a list of empty strings equal in length to the number of
+     * parameters.
+     *
+     * @return a list of empty strings equal in length to the number of
+     * parameters
      */
     public static List<String> getEmptyFields() {
         return Collections.nCopies(HEADERS.size(), "");
     }
 
-    /** Returns the VGP parameters as a list of strings.
-     * The order of the parameters is the same as the order of
-     * the headers provided by {@link #getHeaders()}.
+    /**
+     * Returns the VGP parameters as a list of strings. The order of the
+     * parameters is the same as the order of the headers provided by
+     * {@link #getHeaders()}.
+     *
      * @return the VGP parameters as a list of strings
      */
     public List<String> toStrings() {
@@ -122,11 +129,19 @@ public class Location {
                 Double.toString(getLongDeg()));
     }
     
+    /**
+     * @return a three-dimensional unit vector representing this location
+     */
     public Vec3 toVec3() {
         return Vec3.fromPolarDegrees(1, latitude, longitude);
     }
     
-    public static Location fromVec3(Vec3 v) {
-        return new Location(v.getIncDeg(), v.getDecDeg());
+    /**
+     * @param vector a non-zero, finite vector
+     * @return a Location corresponding to the direction of the supplied
+     * vector
+     */
+    public static Location fromVec3(Vec3 vector) {
+        return new Location(vector.getIncDeg(), vector.getDecDeg());
     }
 }

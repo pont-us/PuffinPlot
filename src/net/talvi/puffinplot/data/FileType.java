@@ -21,38 +21,47 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Locale;
-import java.util.logging.Logger;
 
 /**
- * The fields of this enum represent the types of file that PuffinPlot
- * can read.
- * 
+ * The fields of this enum represent the types of file that PuffinPlot can read.
+ *
  * @author pont
  */
 public enum FileType {
     
     /** DAT, 2G Long Core software */
     TWOGEE("2G cryomagnetometer", '2'),
+    
     /** TXT, Steve Hurst's Zplot program */
     ZPLOT("Zplot (Hurst)", 'z'),
+    
     /** PPL, old PuffinPlot file format */
     PUFFINPLOT_OLD("Old PuffinPlot format", 'o'),
+    
     /** PPL, new PuffinPlot file format */
     PUFFINPLOT_NEW("PuffinPlot", 'p'),
+    
     /** SAM, Caltech (a.k.a. CIT) */
     CALTECH("Caltech (.sam)", 's'),
+    
     /** DAT, [Super-]IAPD[2000] (Torsvik et al.) */
     IAPD("IAPD", 'i'),
+    
     /** Ancient UC Davis 2G format */
     UCDAVIS("UC Davis (old)", 'a'),
+    
     /** Sample-level directional data */
     DIRECTIONS("Sample directions", 'd'),
+    
     /** Custom tabular, defined by a FileFormat */
     CUSTOM_TABULAR("Custom format", 'c'),
+    
     /** Textual PMD format originated by R. Enkin */
     PMD_ENKIN("PMD (Enkin)", 'm'),
+    
     /** JR6 format used by AGICO software */
     JR6("JR6", 'j'),
+    
     /** Unknown file format */
     UNKNOWN("Unknown", 'u');
 
