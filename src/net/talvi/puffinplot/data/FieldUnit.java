@@ -17,10 +17,9 @@
 package net.talvi.puffinplot.data;
 
 /**
- *  <p>This enum represents a unit in which magnetic
- * field strength can be measured. It is intended for use in
- * the tabular file importer.</p>
- * 
+ * This enum represents a unit in which magnetic field strength can be measured.
+ * It is intended for use in the tabular file importer.
+ *
  * @author pont
  */
 public enum FieldUnit {

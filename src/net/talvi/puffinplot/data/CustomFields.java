@@ -31,7 +31,9 @@ import java.util.stream.Collectors;
 public class CustomFields<T> {
     private List<T> values;
 
-    /** Creates a set of custom fields with the specified values.
+    /**
+     * Creates a set of custom fields with the specified values.
+     *
      * @param initialValues the values with which to initialize the fields
      */
     public CustomFields(List<T> initialValues) {
@@ -101,11 +103,10 @@ public class CustomFields<T> {
     }
 
     /**
-     * Swaps the values in two adjacent positions within this 
-     * custom field list.
-     * 
-     * @param position the first of the positions to swap; its value will
-     * be swapped with the next value
+     * Swaps the values in two adjacent positions within this custom field list.
+     *
+     * @param position the first of the positions to swap; its value will be
+     * swapped with the next value
      */
     public void swapAdjacent(int position) {
         final T temp = get(position);
@@ -113,8 +114,11 @@ public class CustomFields<T> {
         set(position+1, temp);
     }
 
-    /** Returns a string representation of the list of values.
-     * @return a string representation of the list of values */
+    /**
+     * Returns a string representation of the list of values.
+     *
+     * @return a string representation of the list of values
+     */
     public String exportAsString() {
         StringBuilder sb = new StringBuilder();
         boolean first = true;
@@ -126,13 +130,20 @@ public class CustomFields<T> {
         return sb.toString();
     }
     
+    /**
+     * @return a list of strings representing the values of the fields
+     * which this object contains
+     */
     public List<String> toStrings() {
         return values.stream().map(x -> x.toString()).
                 collect(Collectors.toList());
     }
 
-    /** Returns the number of values in this list.
-     * @return the number of values in this list */
+    /**
+     * Returns the number of values in this list.
+     *
+     * @return the number of values in this list
+     */
     public int size() {
         return values.size();
     }

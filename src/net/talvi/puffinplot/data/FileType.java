@@ -24,7 +24,7 @@ import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
- * This fields of this enum represent the types of file that PuffinPlot
+ * The fields of this enum represent the types of file that PuffinPlot
  * can read.
  * 
  * @author pont
@@ -56,7 +56,6 @@ public enum FileType {
     /** Unknown file format */
     UNKNOWN("Unknown", 'u');
 
-    private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
     private final String niceName;
     private final int shortcut;
     
@@ -74,11 +73,15 @@ public enum FileType {
      */
     static public FileType guess(File file) throws IOException {
         final String name = file.getName().toLowerCase(Locale.ENGLISH);
-        if (name.endsWith(".dat")) return TWOGEE;
-        else if (name.endsWith(".iapd")) return IAPD;
-        else if (name.endsWith(".txt")) return ZPLOT;
-        else if (name.endsWith(".sam")) return CALTECH;
-        else if (name.endsWith(".ppl")) {
+        if (name.endsWith(".dat")) {
+            return TWOGEE;
+        } else if (name.endsWith(".iapd")) {
+            return IAPD;
+        } else if (name.endsWith(".txt")) {
+            return ZPLOT;
+        } else if (name.endsWith(".sam")) {
+            return CALTECH;
+        } else if (name.endsWith(".ppl")) {
             FileType result = PUFFINPLOT_OLD;
             try (BufferedReader reader =
                     new BufferedReader(new FileReader(file))) {
@@ -93,10 +96,9 @@ public enum FileType {
     }
 
     /**
-     * Returns a user-friendly name for this filetype.
-     * 
-     * The returned string is suitable for display in a user interface.
-     * 
+     * Returns a user-friendly name for this filetype. The returned string is
+     * suitable for display in a user interface.
+     *
      * @return the name of this filetype
      */
     public String getNiceName() {
@@ -104,7 +106,8 @@ public enum FileType {
     }
 
     /**
-     * @return the shortcut
+     * @return a character code representing a suggested keyboard shortcut
+     * for this filetype
      */
     public int getShortcut() {
         return shortcut;

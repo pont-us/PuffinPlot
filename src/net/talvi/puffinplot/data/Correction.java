@@ -23,7 +23,7 @@ import java.util.Scanner;
 import java.util.logging.Logger;
 
 /**
- * <p>This class represents the corrections which may be applied to the measured
+ * This class represents the corrections which may be applied to the measured
  * remanence to estimate the true remanence. The main corrections are the
  * orientation corrections for sample and formation orientations. The class
  * also contains facilities for handling tray corrections (subtracting the
@@ -31,11 +31,11 @@ import java.util.logging.Logger;
  * remanence of an empty measurement slot to correct for instrument drift).
  * At present, these are not actually used by PuffinPlot: the tray correction
  * is applied when the data file is first loaded, and the empty-slot
- * correction is not implemented.</p>
- * 
- * <p>Note that this class does not contain any of the data for actually
+ * correction is not implemented.
+ * <p>
+ * Note that this class does not contain any of the data for actually
  * applying to corrections; it just determines which corrections
- * should be applied.</p>
+ * should be applied.
  * 
  * @author pont
  */
@@ -73,14 +73,20 @@ public class Correction {
         this.magDevAppliedToFormation = magDevAppliedToFormation;
     }
 
-    /** Sets the rotation correction. 
-     * @param rotation the type of rotation correction to use */
+    /**
+     * Sets the rotation correction.
+     *
+     * @param rotation the type of rotation correction to use
+     */
     public void setRotation(Rotation rotation) {
         this.rotation = rotation;
     }
 
-    /** Returns the rotation correction. 
-     * @return the type of rotation correction currently in use */
+    /**
+     * Returns the rotation correction.
+     *
+     * @return the type of rotation correction currently in use
+     */
     public Rotation getRotation() {
         return rotation;
     }
@@ -100,15 +106,21 @@ public class Correction {
     }
 
     /**
-     * An enumeration of the types of rotation correction which may
-     * be applied to a sample's data.
+     * An enumeration of the types of rotation correction which may be applied
+     * to a sample's data.
      */
     public static enum Rotation {
-        /** no rotation applied to data */
+        /**
+         * no rotation applied to data
+         */
         NONE("None"),
-        /** data rotated to correct for sample orientation */
+        /**
+         * data rotated to correct for sample orientation
+         */
         SAMPLE("Sample"),
-        /** data rotated to correct for sample and formation orientation */
+        /**
+         * data rotated to correct for sample and formation orientation
+         */
         FORMATION("Formn.");
         
         private final String niceName;
@@ -117,27 +129,34 @@ public class Correction {
             this.niceName = niceName;
         }
 
-        /** Returns a user-friendly name for this rotation correction. 
-         * @return a user-friendly name for this rotation correction */
+        /**
+         * Returns a user-friendly name for this rotation correction.
+         *
+         * @return a user-friendly name for this rotation correction
+         */
         public String getNiceName() {
             return niceName;
         }
     }
     
-    /** Returns a user-friendly string describing this correction. 
-     * @return user-friendly string describing this correction */
+    /**
+     * Returns a user-friendly string describing this correction.
+     *
+     * @return user-friendly string describing this correction
+     */
     public String getDescription() {
         return getRotation().getNiceName() +
                 (empty ? " E" : "") +
                 (tray ? " T" : "");
     }
 
-    /** Returns {@code true} if this correction includes a rotation for sample
-     * orientation. This is the case if the rotation is {@code SAMPLE}
-     * or {@code FORMATION}.
-     * 
-     * @return {@code true} if this correction includes
-     * a rotation for sample orientation
+    /**
+     * Returns {@code true} if this correction includes a rotation for sample
+     * orientation. This is the case if the rotation is {@code SAMPLE} or
+     * {@code FORMATION}.
+     *
+     * @return {@code true} if this correction includes a rotation for sample
+     * orientation
      */
     public boolean includesSample() {
         return (getRotation() == Rotation.SAMPLE ||

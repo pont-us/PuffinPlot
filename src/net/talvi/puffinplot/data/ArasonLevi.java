@@ -121,14 +121,12 @@ public final class ArasonLevi {
     }
 
     /**
-     * Evaluation of the Hyperbolic Bessel functions
-     * I0(x), I1(x) and their ratio I1(x)/I0(x).  These functions are
-     * sometimes also called the modified Bessel functions of order zero
-     * and one.  Since both the functions I0(x) and I1(x) increase
-     * exponentially as x increases and become numerically unstable,
-     * the output is given as I0(x)/exp(|x|), etc.
-     * The ratio I1(x)/I0(x) increases smoothly from 0 to 1 as x
-     * increases from zero.
+     * Evaluation of the Hyperbolic Bessel functions I0(x), I1(x) and their
+     * ratio I1(x)/I0(x). These functions are sometimes also called the modified
+     * Bessel functions of order zero and one. Since both the functions I0(x)
+     * and I1(x) increase exponentially as x increases and become numerically
+     * unstable, the output is given as I0(x)/exp(|x|), etc. The ratio
+     * I1(x)/I0(x) increases smoothly from 0 to 1 as x increases from zero.
      * 
      * x	input	                Range: -Inf  <  x     < +Inf
      * bi0e	output	I0(x)/exp(|x|)  Range:  0    <  bi0e  <= 1
@@ -147,7 +145,6 @@ public final class ArasonLevi {
      *   abs[ exp(x)*bi1e - I1(x) ]           < 0.3E-7   (for x<3.75)
      *   abs[ sqrt(x)*(bi0e - I0(x)/exp(x)) ] < 1.9E-7   (for x>=3.75)
      *   abs[ sqrt(x)*(bi1e - I1(x)/exp(x)) ] < 2.2E-7   (for x>=3.75)
-
      */
     private static final class Bessel {
 
@@ -230,10 +227,10 @@ public final class ArasonLevi {
      * Hyperbolic cotangent calculation using a Taylor expansion for very small
      * input values to avoid rounding errors.
      *
-     * The function is similar to 1/x close to zero, and practically
-     * identical to 1 for x>3.  For the value x=0 the function returns 
-     * the value zero, although it should return +/-Inf.
-     * We have the relation  coth(-x) = - coth(x)
+     * The function is similar to 1/x close to zero, and practically identical
+     * to 1 for x>3. For the value x=0 the function returns the value zero,
+     * although it should return +/-Inf. We have the relation coth(-x) = -
+     * coth(x)
      *
      * The accuracy of these calculations are:
      *   abs[ error ] < 1.E-13   (for 0.0001<x<0.01)
@@ -415,11 +412,12 @@ public final class ArasonLevi {
         }
         
         if (n == 1) {
-            /* It's not entirely clear what the correct (per the original
-             * code) error code is here. The Fortrtan returns 1 (error),
-             * the JavaScript returns 0. Here I go with the Fortran, since
-             * the JavaScript also creates an "ERROR" alert, suggesting
-             * that its return code of 0 (no error) is wrong. 
+            /*
+             * It's not entirely clear what the correct (per the original code)
+             * error code is here. The Fortran returns 1 (error), the JavaScript
+             * returns 0. Here I go with the Fortran, since the JavaScript also
+             * creates an "ERROR" alert, suggesting that its return code of 0
+             * (no error) is wrong.
              */
             LOGGER.warning("Only one inclination supplied.");
             return new ArasonLevi(ierr, n, xinc[0], -1, t63max, a95max);
@@ -649,7 +647,8 @@ public final class ArasonLevi {
 
         /* Estimation of 95% (circular) symmetric confidence limit of the mean */
         /* Alpha-95 calculated from (N, kappa), same method as Kono (1980) */
-        co = 1. - (n - 1.) * (pow(20., 1. / (n - 1.)) - 1.) / (n * (akap1 - 1.) + 1.);
+        co = 1. - (n - 1.) * (pow(20., 1. / (n - 1.)) - 1.) /
+                (n * (akap1 - 1.) + 1.);
 
         double a95_tmp = 0;
         if (co < 0) {

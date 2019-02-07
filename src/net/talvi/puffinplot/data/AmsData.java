@@ -17,10 +17,10 @@
 package net.talvi.puffinplot.data;
 
 /**
- * This class holds AMS (anisotropy of magnetic susceptibility)
- * data for a named sample. It is a simple container
- * class, and does not process the data in any way.
- * 
+ * This class holds AMS (anisotropy of magnetic susceptibility) data for a named
+ * sample. It is a simple container class, and does not process the data in any
+ * way.
+ *
  * @author pont
  */
 public final class AmsData {
@@ -55,44 +55,65 @@ public final class AmsData {
         this.fTest = fTest;
     }
 
-    /** Returns the sample's name.
-     * @return the sample's name */
+    /**
+     * Returns the sample's name.
+     *
+     * @return the sample's name
+     */
     public String getName() {
         return name;
     }
 
-    /** Returns the sample's susceptibility tensor.
-     * @return the sample's susceptibility tensor */
+    /**
+     * Returns the sample's susceptibility tensor.
+     *
+     * @return the sample's susceptibility tensor
+     */
     public double[] getTensor() {
         return tensor;
     }
 
-    /** Returns the sample's dip azimuth in degrees.
-     * @return the sample's dip azimuth in degrees */
+    /**
+     * Returns the sample's dip azimuth in degrees.
+     *
+     * @return the sample's dip azimuth in degrees
+     */
     public double getSampleAz() {
         return sampleAz;
     }
 
-    /** Returns the sample's dip in degrees.
-     * @return the sample's dip in degrees */
+    /**
+     * Returns the sample's dip in degrees.
+     *
+     * @return the sample's dip in degrees
+     */
     public double getSampleDip() {
         return sampleDip;
     }
 
-    /** Returns the formation dip azimuth in degrees.
-     * @return the formation dip azimuth in degrees */
+    /**
+     * Returns the formation dip azimuth in degrees.
+     *
+     * @return the formation dip azimuth in degrees
+     */
     public double getFormAz() {
         return formAz;
     }
 
-    /** Returns the formation dip in degrees.
-     * @return the formation dip in degrees */
+    /**
+     * Returns the formation dip in degrees.
+     *
+     * @return the formation dip in degrees
+     */
     public double getFormDip() {
         return formDip;
     }
 
-    /** Returns the F-test value for the sample's anisotropy measurement.
-     * @return the F-test value for the sample's anisotropy measurement */
+    /**
+     * Returns the F-test value for the sample's anisotropy measurement.
+     *
+     * @return the F-test value for the sample's anisotropy measurement
+     */
     public double getfTest() {
         return fTest;
     }

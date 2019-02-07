@@ -53,17 +53,21 @@ public class Eigens {
         final EigenvalueDecomposition eigDecomp = matrix.eig();
         final double[] eigenvalues = eigDecomp.getRealEigenvalues();
 
-        /* There has to be a less horrific method of arranging the
-         * results in order of decreasing eigenvalue magnitude,
-         * but I haven't yet discovered it.
+        /*
+         * There has to be a less horrific method of arranging the results in
+         * order of decreasing eigenvalue magnitude, but I haven't yet
+         * discovered it.
          */
         final int[] o = order(eigenvalues);
         final Matrix evs = eigDecomp.getV();
         final List<Vec3> vectorsTmp = new ArrayList<>(3);
         final List<Double> valuesTmp = new ArrayList<>(3);
-        final double[] v1 = evs.getMatrix(0, 2, o[0], o[0]).getColumnPackedCopy();
-        final double[] v2 = evs.getMatrix(0, 2, o[1], o[1]).getColumnPackedCopy();
-        final double[] v3 = evs.getMatrix(0, 2, o[2], o[2]).getColumnPackedCopy();
+        final double[] v1 =
+                evs.getMatrix(0, 2, o[0], o[0]).getColumnPackedCopy();
+        final double[] v2 =
+                evs.getMatrix(0, 2, o[1], o[1]).getColumnPackedCopy();
+        final double[] v3 =
+                evs.getMatrix(0, 2, o[2], o[2]).getColumnPackedCopy();
         vectorsTmp.add(new Vec3(v1[0], v1[1], v1[2]));
         vectorsTmp.add(new Vec3(v2[0], v2[1], v2[2]));
         vectorsTmp.add(new Vec3(v3[0], v3[1], v3[2]));
@@ -83,7 +87,8 @@ public class Eigens {
      * @param normalize {@code true} to normalize the vectors before analysis
      * @return the eigenvectors and eigenvalues of the orientation tensor
      */
-    public static Eigens fromVectors(Collection<Vec3> vectors, boolean normalize) {
+    public static Eigens fromVectors(Collection<Vec3> vectors,
+            boolean normalize) {
         final Matrix orientationTensor = new Matrix(3,3); // zeros
         for (Vec3 vector: vectors) {
             orientationTensor.plusEquals(normalize
@@ -129,14 +134,18 @@ public class Eigens {
         return result;
     }
 
-    /** Returns the eigenvectors in order of decreasing eigenvalue.
+    /**
+     * Returns the eigenvectors in order of decreasing eigenvalue.
+     *
      * @return the eigenvectors in order of decreasing eigenvalue
      */
     public List<Vec3> getVectors() {
         return vectors;
     }
 
-    /** Returns the eigenvalues in decreasing order.
+    /**
+     * Returns the eigenvalues in decreasing order.
+     *
      * @return the eigenvalues in decreasing order
      */
     public List<Double> getValues() {
