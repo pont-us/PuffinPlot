@@ -985,7 +985,47 @@ public class Vec3Test {
             assertTrue(v.equals(v.rotZ(angle).rotZ(-angle), delta));
         }
     }
+    
+    @Test
+    public void testNormalize() {
+        for (Vec3 v: testVectors) {
+            if (Vec3.ORIGIN.equals(v)) {
+                continue;
+            }
+            final Vec3 normalized = v.normalize();
+            assertEquals(1, normalized.mag(), delta);
+            assertEquals(v.getDecRad(), normalized.getDecRad(), delta);
+            assertEquals(v.getIncRad(), normalized.getIncRad(), delta);
+        }
+    }
 
+    /**
+     * The result is undefined and thus unchecked, but we want to check that no
+     * exception is thrown.
+     */
+    @Test
+    public void testNormalizeZero() {
+        Vec3.ORIGIN.normalize();
+    }
+    
+    /**
+     * The result is undefined and thus unchecked, but we want to check that no
+     * exception is thrown.
+     */
+    @Test
+    public void testNormalizeNaN() {
+        new Vec3(Double.NaN, 1, 1).normalize();
+    }
+    
+    /**
+     * The result is undefined and thus unchecked, but we want to check that no
+     * exception is thrown.
+     */
+    @Test
+    public void testNormalizeInfinite() {
+        new Vec3(Double.POSITIVE_INFINITY, 1, 1).normalize();
+    }
+    
     private static double getVectorComponent(Vec3 v, int i) {
         switch (i) {
             case 0: return v.x;

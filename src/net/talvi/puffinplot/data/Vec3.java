@@ -47,20 +47,40 @@ import static java.lang.Math.toRadians;
  */
 public class Vec3 {
 
-    /** the x component of the vector */
+    /**
+     * the x component of the vector
+     */
     public final double x;
-    /** the y component of the vector */
+    
+    /**
+     * the y component of the vector
+     */
     public final double y;
-    /** the z component of the vector */
+    
+    /**
+     * the z component of the vector
+     */
     public final double z;
-    /** the origin vector (zero along each axis) */
-    public static final Vec3 ORIGIN = new Vec3(0,0,0);
-    /** a unit vector pointing north */
-    public static final Vec3 NORTH = new Vec3(1,0,0);
-    /** a unit vector pointing east */
-    public static final Vec3 EAST = new Vec3(0,1,0);
-    /** a unit vector pointing down */
-    public static final Vec3 DOWN = new Vec3(0,0,1);
+    
+    /**
+     * the origin vector (zero along each axis)
+     */
+    public static final Vec3 ORIGIN = new Vec3(0, 0, 0);
+    
+    /**
+     * a unit vector pointing north
+     */
+    public static final Vec3 NORTH = new Vec3(1, 0, 0);
+    
+    /**
+     * a unit vector pointing east
+     */
+    public static final Vec3 EAST = new Vec3(0, 1, 0);
+    
+    /**
+     * a unit vector pointing down
+     */
+    public static final Vec3 DOWN = new Vec3(0, 0, 1);
     
     /**
      * Creates a vector with the specified components.
@@ -372,12 +392,12 @@ public class Vec3 {
 
     /**
      * Interpolates a great-circle path in a chosen direction between two
-     * specified vectors. Of the two possible arcs, the result will be the 
-     * arc which passes closer to {@code onPath}.
-     * 
-     * The supplied step size is only used as a guideline; the actual
-     * step size may at certain positions drop to 0 (i.e. a point is
-     * repeated) or increase to as much as 1.8*stepSize.
+     * specified vectors. Of the two possible arcs, the result will be the arc
+     * which passes closer to {@code onPath}.
+     *
+     * The supplied step size is only used as a guideline; the actual step size
+     * may at certain positions drop to 0 (i.e. a point is repeated) or increase
+     * to as much as 1.8*stepSize.
      * 
      * @param v0 a non-null, non-zero, finite vector giving the first
      *           end-point of the arc
@@ -543,10 +563,9 @@ public class Vec3 {
     }
 
     /**
-     * Returns a list of equally spaced points around a great circle
-     * having this vector as its pole. Assumes that this is a unit
-     * vector.
-     * 
+     * Returns a list of equally spaced points around a great circle having this
+     * vector as its pole. Assumes that this is a unit vector.
+     *
      * @param n number of points to return
      * @param closed if true, first point will also be appended to end of list,
      * giving n+1 points, but only n unique ones, creating a closed circle.
@@ -637,9 +656,8 @@ public class Vec3 {
 
     /**
      * Using the enclosing vector to define the pole of a great circle G, this
-     * method accepts another unit vector v and returns the nearest
-     * unit vector to v which lies on G. Algorithm from McFadden and
-     * McElhinny 1988, p. 165.
+     * method accepts another unit vector v and returns the nearest unit vector
+     * to v which lies on G. Algorithm from McFadden and McElhinny 1988, p. 165.
      *
      * @param v a unit vector
      * @return the nearest point to v which lies on this great circle
@@ -647,9 +665,11 @@ public class Vec3 {
     public Vec3 nearestOnCircle(Vec3 v) {
         final double tau = this.dot(v);
         if (abs(tau) >= 1) {
-            // v is on the pole to the circle, so all circle points are
-            // equally near. Pick one arbitrarily.
-            // One of these two must be non-parallel to this vector!
+            /*
+             * v is on the pole to the circle, so all circle points are equally
+             * near. Pick one arbitrarily. One of these two must be non-parallel
+             * to this vector!
+             */
             if (abs(this.dot(NORTH)) < 1) {
                 return nearestOnCircle(NORTH);
             } else {
@@ -666,7 +686,9 @@ public class Vec3 {
     }
 
     /**
-     * Normalizes this vector.
+     * Normalizes this vector. If this vector contains any non-finite
+     * components, the result of this method is undefined, but it will
+     * not throw an exception.
      *
      * @return a unit vector with the same direction as this vector
      */
@@ -683,13 +705,20 @@ public class Vec3 {
      */
     public double getComponent(MeasurementAxis component) {
         switch (component) {
-            case X: return x;
-            case Y: return y;
-            case Z: return z;
-            case MINUSX: return -x;
-            case MINUSY: return -y;
-            case MINUSZ: return -z;
-            case H: return sqrt(x*x+y*y);
+            case X:
+                return x;
+            case Y:
+                return y;
+            case Z:
+                return z;
+            case MINUSX:
+                return -x;
+            case MINUSY:
+                return -y;
+            case MINUSZ:
+                return -z;
+            case H:
+                return sqrt(x * x + y * y);
             /*
              * We don't expect that the default case will ever be reached, but
              * it's required to keep the compiler happy and may be useful if
@@ -833,8 +862,10 @@ public class Vec3 {
         if (sign == 0) sign = cross.x;
         double magnitude = cross.mag();
         if (magnitude > 1) {
-            // Rounding errors can sometimes produce values slightly above
-            // 1, which would lead to a NaN from the asin.
+            /*
+             * Rounding errors can sometimes produce values slightly above 1,
+             * which would lead to a NaN from the asin.
+             */
             magnitude = 1;
         }
         return asin(magnitude) * signum(sign);
@@ -930,11 +961,17 @@ public class Vec3 {
      */
     public double getStrikeDeg() {
         double decDeg = getDecDeg();
-        // Ensure we have the declination of the *upward* vector 
-        if (getIncDeg() > 0) decDeg += 180;
+        // Ensure we have the declination of the *upward* vector.
+        if (getIncDeg() > 0) {
+            decDeg += 180;
+        }
         double strike = decDeg - 90;
-        while (strike < 0) { strike += 360; }
-        while (strike >= 360) { strike -= 360; }
+        while (strike < 0) {
+            strike += 360;
+        }
+        while (strike >= 360) {
+            strike -= 360;
+        }
         return strike;
     }
 
@@ -946,7 +983,9 @@ public class Vec3 {
     public double getDipDeg() {
         double incDeg = getIncDeg();
         // Ensure we have an upward (negative) inclination
-        if (incDeg > 0) incDeg = -incDeg;
+        if (incDeg > 0) {
+            incDeg = -incDeg;
+        }
         return incDeg + 90;
     }
 
@@ -1122,7 +1161,7 @@ public class Vec3 {
         if (scale) {
             oom = (int) (log10(mag())) - 1;
             double sf = pow(10, oom);
-            Vec3 fixed = this.divideBy(sf);
+            final Vec3 fixed = this.divideBy(sf);
             vec = fixed;
         } else {
             vec = this;

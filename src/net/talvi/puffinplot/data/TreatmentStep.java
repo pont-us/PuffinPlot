@@ -1260,10 +1260,10 @@ public class TreatmentStep {
     }
 
     /**
-     * This class allows datum objects to be created from string representations
-     * of a specified format. The headers (corresponding to field names)
-     * are specified in the constructor, and data lines with a format
-     * corresponding to the supplied headers can then be turned into 
+     * This class allows TreatmentStep objects to be created from string
+     * representations of a specified format. The headers (corresponding to
+     * field names) are specified in the constructor, and data lines with a
+     * format corresponding to the supplied headers can then be turned into
      * datum objects.
      */
     public static class Reader {
