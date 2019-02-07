@@ -36,13 +36,13 @@ import static java.lang.Math.acos;
  * This class represents a set of great circles and a set of directions.
  * It calculates a best-fitting mean direction from these data using
  * the method of McFadden and McElhinny (1988).
- * 
+ * <p>
  * References:
- * 
+ * <p>
  * McFadden, P. L. & McElhinny, M. W., 1988. The combined analysis of
  * remagnetization circles and direct observations in palaeomagnetism. Earth
  * and Planetary Science Letters, 87, pp. 161–172.
- * * 
+ *
  * @author pont
  */
 public final class GreatCircles implements FisherParams {
@@ -208,24 +208,30 @@ public final class GreatCircles implements FisherParams {
         return minPointsTmp;
     }
 
-    /** Returns the number of stable endpoints used in the calculation.
-     * @return the number of stable endpoints used in the calculation */
+    /**
+     * Returns the number of stable endpoints used in the calculation.
+     *
+     * @return the number of stable endpoints used in the calculation
+     */
     public int getM() {
         return endpoints.size();
     }
 
-    /** Returns the number of great circles used in the calculation.
-     * @return the number of great circles used in the calculation */
+    /**
+     * Returns the number of great circles used in the calculation.
+     *
+     * @return the number of great circles used in the calculation
+     */
     @Override
     public int getN() {
         return circles.size();
     }
     
     /**
-     * Returns the smallest number of treatment steps used to define 
-     * any of the great circles in this collection.
-     * 
-     * @return the smallest number of treatment steps used to define any of the 
+     * Returns the smallest number of treatment steps used to define any of the
+     * great circles in this collection.
+     *
+     * @return the smallest number of treatment steps used to define any of the
      * great circles in this collection
      */
     private int getMinPoints() {
@@ -243,18 +249,24 @@ public final class GreatCircles implements FisherParams {
         return Math.toDegrees(Math.acos(v));
     }
 
-    /** Returns the great circles which were originally supplied to the
+    /**
+     * Returns the great circles which were originally supplied to the
      * constructor.
+     *
      * @return the great circles which were originally supplied to the
-     * constructor */
+     * constructor
+     */
     public final List<GreatCircle> getCircles() {
         return Collections.unmodifiableList(circles);
     }
 
-    /** Returns the best-fit mean direction for the supplied circles and
-     * directions. 
+    /**
+     * Returns the best-fit mean direction for the supplied circles and
+     * directions.
+     *
      * @return the best-fit mean direction for the supplied circles and
-     * directions */
+     * directions
+     */
     @Override
     public Vec3 getMeanDirection() {
         return direction;
@@ -268,9 +280,11 @@ public final class GreatCircles implements FisherParams {
         return String.format(Locale.ENGLISH, "%d", d);
     }
 
-    /** Returns the statistical parameters as a list of strings.
-     * The order of the parameters is the same as the order of
-     * the headers provided by {@link #getHeaders()}.
+    /**
+     * Returns the statistical parameters as a list of strings. The order of the
+     * parameters is the same as the order of the headers provided by
+     * {@link #getHeaders()}.
+     *
      * @return the statistical parameters as a list of strings
      */
     public List<String> toStrings() {
@@ -280,25 +294,30 @@ public final class GreatCircles implements FisherParams {
                 intFmt(getMinPoints()));
     }
 
-    /** Returns a list of empty strings equal in length to the number of
+    /**
+     * Returns a list of empty strings equal in length to the number of
      * parameters.
-     * @return  a list of empty strings equal in length to the number of
+     *
+     * @return a list of empty strings equal in length to the number of
      * parameters
      */
     public static List<String> getEmptyFields() {
         return Collections.nCopies(HEADERS.size(), "");
     }
 
-    /** Returns the headers describing the parameters as a list of strings.
+    /**
+     * Returns the headers describing the parameters as a list of strings.
+     *
      * @return the headers describing the parameters
      */
     public static List<String> getHeaders() {
         return HEADERS;
     }
     
-    /** Returns {@code true} if this great-circle fit is valid according
-     * to the condition specified in the preferences.
-     * 
+    /**
+     * Returns {@code true} if this great-circle fit is valid according to the
+     * condition specified in the preferences.
+     *
      * @return {@code true} if this great-circle fit is valid
      */
     public boolean isValid() {
@@ -308,9 +327,10 @@ public final class GreatCircles implements FisherParams {
         return isValid;
     }
     
-    /** Returns {@code true} if this great-circle fit is valid according
-     * to the supplied condition.
-     * 
+    /**
+     * Returns {@code true} if this great-circle fit is valid according to the
+     * supplied condition.
+     *
      * @return {@code true} if this great-circle fit is valid
      */
     private boolean isValid(String validityCondition) {
@@ -343,11 +363,6 @@ public final class GreatCircles implements FisherParams {
     @Override
     public double getA95() {
         return a95;
-    }
-    
-    @Override
-    public boolean isA95Valid() {
-        return Double.isFinite(a95);
     }
     
     @Override

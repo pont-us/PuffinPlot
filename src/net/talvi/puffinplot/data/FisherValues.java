@@ -63,7 +63,7 @@ public class FisherValues implements FisherParams {
      * a FisherValues object with the direction of the single vector
      * as the mean, but the a95 and k values are entirely undefined; they may
      * be NaN or infinity.
-     * 
+     * <p>
      * The a95 value is not guaranteed to represent a real number:
      * some sets of directions may produce an undefined (NaN or
      * infinite) a95. This is a consequence of the definition, rather than
@@ -77,8 +77,6 @@ public class FisherValues implements FisherParams {
      */
     public static FisherValues calculate(Collection<Vec3> vectors) {
         if (vectors.isEmpty()) {
-            // TODO Would probably be better to return a null *object*
-            // rather than a null reference here.
             return null;
         }
         
@@ -97,11 +95,11 @@ public class FisherValues implements FisherParams {
         final double k = (N-1)/(N-R);
         final double cosOfA95 = 1 - ((N-R)/R) * (pow(1/p,1/(N-1))-1);
         
-        /* cosOfA95 is *not* guaranteed to be in the range of cos,
-         * so it's possible to get a NaN here. It would of course be
-         * possible to trap this case and return (e.g.) 180, but NaN
-         * seems like the clearest way to indicate "no valid a95 for
-         * this data set".
+        /*
+         * cosOfA95 is *not* guaranteed to be in the range of cos, so it's
+         * possible to get a NaN here. It would of course be possible to trap
+         * this case and return (e.g.) 180, but NaN seems like the clearest way
+         * to indicate "no valid a95 for this data set".
          */
         final double a95 = Math.toDegrees(acos(cosOfA95));
 
@@ -114,11 +112,6 @@ public class FisherValues implements FisherParams {
         return a95;
     }
     
-    @Override
-    public boolean isA95Valid() {
-        return Double.isFinite(a95);
-    }
-
     @Override
     public double getK() {
         return k;
@@ -139,12 +132,13 @@ public class FisherValues implements FisherParams {
         return meanDirection;
     }
     
-    /** Returns a list of unit vectors representing
-     * the directions of the vectors on which these statistics were
-     * calculated. 
-     * 
-     * @return the directions of the vectors on which these statistics
-     * were calculated */
+    /**
+     * Returns a list of unit vectors representing the directions of the vectors
+     * on which these statistics were calculated.
+     *
+     * @return the directions of the vectors on which these statistics were
+     * calculated
+     */
     public List<Vec3> getDirections() {
         return directions;
     }
@@ -153,11 +147,13 @@ public class FisherValues implements FisherParams {
         return String.format(Locale.ENGLISH, "%.4f", d);
     }
 
-    /** Returns the statistical parameters as a list of strings.
-     * The order of the parameters is the same as the order of
-     * the headers provided by {@link #getHeaders()}.
+    /**
+     * Returns the statistical parameters as a list of strings. The order of the
+     * parameters is the same as the order of the headers provided by
+     * {@link #getHeaders()}.
+     *
      * @return the statistical parameters as a list of strings
-     * @see #toStrings(net.talvi.puffinplot.data.FisherValues) 
+     * @see #toStrings(net.talvi.puffinplot.data.FisherValues)
      */
     public List<String> toStrings() {
         return Arrays.asList(fmt(getMeanDirection().getDecDeg()),
@@ -166,16 +162,17 @@ public class FisherValues implements FisherParams {
                 fmt(getR()));
     }
     
-    /** Returns the statistical parameters as a list of strings.
-     * The order of the parameters is the same as the order of
-     * the headers provided by {@link #getHeaders()}.
-     * It returns the same result as the corresponding instance method
-     * for any non-null input, but (unlike the instance method)
+    /**
+     * Returns the statistical parameters as a list of strings. The order of the
+     * parameters is the same as the order of the headers provided by
+     * {@link #getHeaders()}. It returns the same result as the corresponding
+     * instance method for any non-null input, but (unlike the instance method)
      * also works for a {@code null} {@code FisherValues}.
+     *
      * @param fisherValues the Fisher parameters to return as strings
-     * @return the statistical parameters as a list of strings,
-     * or a list of empty strings if {@code fisherValues} was {@code null}
-     * @see #toStrings() 
+     * @return the statistical parameters as a list of strings, or a list of
+     * empty strings if {@code fisherValues} was {@code null}
+     * @see #toStrings()
      */
     public static List<String> toStrings(FisherValues fisherValues) {
         if (fisherValues != null) {
@@ -185,8 +182,11 @@ public class FisherValues implements FisherParams {
         }
     }
 
-    /** Returns a string representation of the parameters.
-     *  @return a string representation of the parameters */
+    /**
+     * Returns a string representation of the parameters.
+     *
+     * @return a string representation of the parameters
+     */
     @Override
     public String toString() {
         List<String> values = toStrings();
@@ -201,18 +201,23 @@ public class FisherValues implements FisherParams {
         return result.toString();
     }
 
-    /** Returns the headers describing the parameters as a list of strings.
+    /**
+     * Returns the headers describing the parameters as a list of strings.
+     *
      * @return the headers describing the parameters
      */
     public static List<String> getHeaders() {
         return HEADERS;
     }
 
-    /** Returns a list of empty strings equal in length to the number of parameters.
-     * @return  a list of empty strings equal in length to the number of parameters
+    /**
+     * Returns a list of empty strings equal in length to the number of
+     * parameters.
+     *
+     * @return a list of empty strings equal in length to the number of
+     * parameters
      */
     public static List<String> getEmptyFields() {
         return Collections.nCopies(HEADERS.size(), "");
     }
-
 }
