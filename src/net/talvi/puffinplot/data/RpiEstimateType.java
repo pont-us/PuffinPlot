@@ -17,9 +17,18 @@
 package net.talvi.puffinplot.data;
 
 /**
- *
+ *  The parameter used in normalizing an NRM to produce an RPI estimate.
+ * 
  * @author pont
  */
 enum RpiEstimateType {
-    MAG_SUS, ARM_DEMAG
+    /**
+     * Magnetic susceptibility
+     */
+    MAG_SUS,
+    
+    /**
+     * ARM demagnetization
+     */
+    ARM_DEMAG
 }

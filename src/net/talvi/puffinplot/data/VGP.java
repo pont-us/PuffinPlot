@@ -30,10 +30,13 @@ import static java.lang.Math.tan;
 
 /**
  * A class representing a virtual geomagnetic pole.
- * 
- * This class can calculate a VGP from a site direction and position,
- * along with the associated confidence region.
- * 
+ * <p>
+ * This class can calculate a VGP from a site direction and position, along with
+ * the associated confidence region. For details on the calculation technique
+ * and on palaeomagnetic poles in general, see Chapter 7 of Robert F. Butler
+ * (1992), <i>Paleomagnetism: Magnetic Domains to Geologic Terranes</i>. Oxford:
+ * Blackwell Scientific.
+ *
  * @author pont
  */
 public class VGP {
@@ -43,7 +46,8 @@ public class VGP {
     private final Location location;
     
     private static final List<String> HEADERS =
-        Arrays.asList("VGP lat (deg)", "VGP long (deg)", "VGP dp (deg)", "VGP dm (deg)");
+        Arrays.asList("VGP lat (deg)", "VGP long (deg)",
+                "VGP dp (deg)", "VGP dm (deg)");
     
     private VGP(Location location, double dp, double dm) {
         this.location = location;
@@ -81,15 +85,21 @@ public class VGP {
                 parameters.getA95(), site);
     }
     
-    /** Returns the headers describing the parameters as a list of strings.
+    /**
+     * Returns the headers describing the parameters as a list of strings.
+     *
      * @return the headers describing the parameters
      */
     public static List<String> getHeaders() {
         return HEADERS;
     }
 
-    /** Returns a list of empty strings equal in length to the number of parameters.
-     * @return  a list of empty strings equal in length to the number of parameters
+    /**
+     * Returns a list of empty strings equal in length to the number of
+     * parameters.
+     *
+     * @return a list of empty strings equal in length to the number of
+     * parameters
      */
     public static List<String> getEmptyFields() {
         return Collections.nCopies(HEADERS.size(), "");
@@ -99,9 +109,11 @@ public class VGP {
         return String.format(Locale.ENGLISH, "%.4f", d);
     }
 
-    /** Returns the VGP parameters as a list of strings.
-     * The order of the parameters is the same as the order of
-     * the headers provided by {@link #getHeaders()}.
+    /**
+     * Returns the VGP parameters as a list of strings. The order of the
+     * parameters is the same as the order of the headers provided by
+     * {@link #getHeaders()}.
+     *
      * @return the VGP parameters as a list of strings
      */
     public List<String> toStrings() {
@@ -111,23 +123,24 @@ public class VGP {
                 fmt(getDp()), fmt(getDm()));
     }
 
-            
     /**
-     * @return the dp
+     * @return <i>dp</i>, the angular length of the semi-axis of the ellipse of
+     * confidence along the site-to-pole great circle
      */
     public double getDp() {
         return dp;
     }
 
     /**
-     * @return the dm
+     * @return <i>dm</i>, the angular length of the semi-axis of the ellipse of
+     * confidence perpendicular the site-to-pole great circle.
      */
     public double getDm() {
         return dm;
     }
 
     /**
-     * @return the location
+     * @return the location of this VGP 
      */
     public Location getLocation() {
         return location;

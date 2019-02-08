@@ -42,8 +42,8 @@ public class PcaAnnotated {
     static {
         List<String> headers = new ArrayList<>();
         headers.addAll(PcaValues.getHeaders());
-        headers.addAll(Arrays.asList("PCA start (degC or mT)", "PCA end (degC or mT)",
-                "PCA contiguous"));
+        headers.addAll(Arrays.asList("PCA start (degC or mT)",
+                "PCA end (degC or mT)", "PCA contiguous"));
         HEADERS = Collections.unmodifiableList(headers);
     }
 
@@ -101,15 +101,20 @@ public class PcaAnnotated {
                 contiguous);
     }
 
-    /** Returns the results of the principal component analysis.
-     * @return the results of the principal component analysis */
+    /**
+     * Returns the results of the principal component analysis.
+     *
+     * @return the results of the principal component analysis
+     */
     public PcaValues getPcaValues() {
         return pcaValues;
     }
 
-    /** Returns the parameters as a list of strings.
-     * The order of the parameters is the same as the order of
-     * the headers provided by {@link #getHeaders()}.
+    /**
+     * Returns the parameters as a list of strings. The order of the parameters
+     * is the same as the order of the headers provided by
+     * {@link #getHeaders()}.
+     *
      * @return the parameters as a list of strings
      */
     public List<String> toStrings() {
@@ -121,14 +126,21 @@ public class PcaAnnotated {
         return Collections.unmodifiableList(result);
     }
 
-    /** Returns the headers describing the parameters as a list of strings.
-     * @return the headers describing the parameters */
+    /**
+     * Returns the headers describing the parameters as a list of strings.
+     *
+     * @return the headers describing the parameters
+     */
     public static List<String> getHeaders() {
         return HEADERS;
     }
 
-    /** Returns a list of empty strings equal in length to the number of parameters.
-     * @return  a list of empty strings equal in length to the number of parameters
+    /**
+     * Returns a list of empty strings equal in length to the number of
+     * parameters.
+     *
+     * @return a list of empty strings equal in length to the number of
+     * parameters
      */
     public static List<String> getEmptyFields() {
         return Collections.nCopies(HEADERS.size(), "");

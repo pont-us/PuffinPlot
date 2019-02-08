@@ -19,6 +19,8 @@ package net.talvi.puffinplot.data;
 import java.util.Comparator;
 
 /**
+ * A comparator that compares treatment steps according to their treatment
+ * level.
  *
  * @author pont
  */

@@ -22,23 +22,22 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * <p>This class calculates and stores the median destructive field (MDF) for 
+ * This class calculates and stores the median destructive field (MDF) for 
  * a set of {@link TreatmentStep} objects. This is the AF field required to
  * reduce the magnetic moment of a sample to half of its original
  * value. Despite the name of the class, it will calculate a 
  * ‘median destructive’ value for any quantifiable treatment type, so
- * it can also provide a ‘median destructive temperature’.</p>
- * 
- * <p>It is unlikely that a particular step will reduce the sample's
+ * it can also provide a ‘median destructive temperature’.
+ * <p>
+ * It is unlikely that a particular step will reduce the sample's
  * magnetic moment to <i>precisely</i> half the original value, so
  * the MDF value is calculated by linear interpolation between the
- * two closest data points on either side of the halfway line.</p>
- * 
- * <p>The MDF is not guaranteed to be well-defined for all samples,
+ * two closest data points on either side of the halfway line.
+ * <p>
+ * The MDF is not guaranteed to be well-defined for all samples,
  * since some samples may never reach half the original intensity.
  * The intensity of others may fluctuate and cross the midpoint 
  * multiple times; in this case only this first crossing is considered.
- * </p>
  * 
  * @author pont
  */
@@ -60,19 +59,18 @@ public class MedianDestructiveField {
 
     private static double interpolate(double x0, double x1,
             double y0, double y1, double y) {
-        double x =  x0 + (x1 - x0) * (y1 - y) / (y1 - y0);
-        return x;
+        return x0 + (x1 - x0) * (y1 - y) / (y1 - y0);
     }
 
     /**
-     * Calculate and create a median destructive field (or temperature)
-     * value for the supplied data. If there are fewer than two treatment
-     * steps in the supplied list, {@code null} will be returned.
-     * 
-     * @param steps a list of data representing successive demagnetization
-     * steps for a single sample
-     * @return the treatment level at which the sample retains half
-     * of its original magnetic moment
+     * Calculate and create a median destructive field (or temperature) value
+     * for the supplied data. If there are fewer than two treatment steps in the
+     * supplied list, {@code null} will be returned.
+     *
+     * @param steps a list of data representing successive demagnetization steps
+     * for a single sample
+     * @return the treatment level at which the sample retains half of its
+     * original magnetic moment
      */
     public static MedianDestructiveField calculate(List<TreatmentStep> steps) {
         if (steps.size() < 2) {
@@ -99,9 +97,11 @@ public class MedianDestructiveField {
                 halfIntReached);
     }
 
-    /** Returns the treatment level at which the intensity of the sample's
+    /**
+     * Returns the treatment level at which the intensity of the sample's
      * magnetic moment reached half of its initial value. If this did not
      * happen, this method may return an arbitrary value.
+     *
      * @return the treatment level at which the intensity of the sample's
      * magnetic moment reached half of its initial value, if possible
      */
@@ -109,38 +109,49 @@ public class MedianDestructiveField {
         return demagLevel;
     }
 
-    /** Returns half of the intensity of the sample's initial magnetic moment.
-     * @return half of the intensity of the sample's initial magnetic moment */
+    /**
+     * Returns half of the intensity of the sample's initial magnetic moment.
+     *
+     * @return half of the intensity of the sample's initial magnetic moment
+     */
     public double getIntensity() {
         return intensity;
     }
 
-    /** Reports whether this sample reached half its initial intensity. 
+    /**
+     * Reports whether this sample reached half its initial intensity.
+     *
      * @return {@code true} if this sample reached half its initial intensity
      */
     public boolean isHalfIntReached() {
         return halfIntReached;
     }
 
-    /** Returns the headers describing the parameters as a list of strings.
+    /**
+     * Returns the headers describing the parameters as a list of strings.
+     *
      * @return the headers describing the parameters
      */
     public static List<String> getHeaders() {
         return HEADERS;
     }
 
-    /** Returns a list of empty strings equal in length to the
-     * number of parameters.
-     * @return  a list of empty strings equal in length to the number
-     * of parameters
+    /**
+     * Returns a list of empty strings equal in length to the number of
+     * parameters.
+     *
+     * @return a list of empty strings equal in length to the number of
+     * parameters
      */
     public static List<String> getEmptyFields() {
         return Collections.nCopies(HEADERS.size(), "");
     }
     
-    /** Returns the parameters as a list of strings.
-     * The order of the parameters is the same as the order of
-     * the headers provided by {@link #getHeaders()}.
+    /**
+     * Returns the parameters as a list of strings. The order of the parameters
+     * is the same as the order of the headers provided by
+     * {@link #getHeaders()}.
+     *
      * @return the parameters as a list of strings
      */
     public List<String> toStrings() {

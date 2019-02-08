@@ -51,26 +51,39 @@ public enum TreatmentType {
         this.unit = unit;
     }
 
-    /** Returns a user-friendly name for this treatment.
-     * @return a user-friendly name for this treatment */
+    /**
+     * Returns a user-friendly name for this treatment.
+     *
+     * @return a user-friendly name for this treatment
+     */
     public String getNiceName() {
         return name;
     }
     
-    /** Returns the axis label to use when plotting a graph involving this treatment.
-     * @return the axis label to use when plotting a graph involving this treatment */
+    /**
+     * Returns the axis label to use when plotting a graph involving this
+     * treatment.
+     *
+     * @return the axis label to use when plotting a graph involving this
+     * treatment
+     */
     public String getAxisLabel() {
         return treatment;
     }
 
-    /** The units in which this treatment is quantified. 
-     * @return the units in which this treatment is quantified */
+    /**
+     * The units in which this treatment is quantified.
+     *
+     * @return the units in which this treatment is quantified
+     */
     public String getUnit() {
         return unit;
     }
     
-    /** @return {@code true} if this treatment involves application of
-     * an alternating magnetic field */
+    /**
+     * @return {@code true} if this treatment involves application of an
+     * alternating magnetic field
+     */
     public boolean involvesAf() {
         return this==DEGAUSS_XYZ || this==DEGAUSS_Z || this==ARM;
     }

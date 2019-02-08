@@ -29,6 +29,9 @@ import java.util.List;
  */
 public interface SampleGroup {
     
+    /**
+     * @return the samples comprising this sample group
+     */
     List<Sample> getSamples();
     
 }

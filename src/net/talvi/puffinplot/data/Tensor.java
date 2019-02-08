@@ -38,15 +38,14 @@ public class Tensor {
             Arrays.asList("AMS dec1", "AMS inc1", "AMS dec2", "AMS inc2",
             "AMS dec3", "AMS inc3");
 
-    /** Creates a tensor with the specified components and
-     * transformed using the specified matrices. The tensor
-     * is constructed by first making a tensor with the
-     * specified components, then sequentially transforming it
-     * by the two specified matrices. Since the
-     * tensor is symmetric, only six components need to be defined.
-     * All the components, and the elements of the matrices, must be
-     * finite values.
-     * 
+    /**
+     * Creates a tensor with the specified components and transformed using the
+     * specified matrices. The tensor is constructed by first making a tensor
+     * with the specified components, then sequentially transforming it by the
+     * two specified matrices. Since the tensor is symmetric, only six
+     * components need to be defined. All the components, and the elements of
+     * the matrices, must be finite values.
+     *
      * @param k11 (1,1) component
      * @param k22 (2,2) component
      * @param k33 (3,3) component
@@ -86,7 +85,9 @@ public class Tensor {
         amsAxes = amsEigens.getVectors();
     }
 
-    /** Creates a tensor with the specified principal axes.
+    /**
+     * Creates a tensor with the specified principal axes.
+     *
      * @param axes the principal axes of the tensor
      */
     private Tensor(List<Vec3> axes) {
@@ -103,15 +104,20 @@ public class Tensor {
         amsAxes = axes;
     }
 
-    /** Returns a string giving the components of the tensor, separated by spaces.
-     * The order is k11, k22, k33, k12, k23, k13.
-     * @return a string giving the components of the tensor, separated by spaces */
+    /**
+     * Returns a string giving the components of the tensor, separated by
+     * spaces. The order is k11, k22, k33, k12, k23, k13.
+     *
+     * @return a string giving the components of the tensor, separated by spaces
+     */
     public String toTensorComponentString() {
         final String fmt = "%.5f %.5f %.5f %.5f %.5f %.5f";
         return String.format(Locale.ENGLISH, fmt, k11, k22, k33, k12, k23, k13);
     }
 
-    /** Creates a tensor with the specified axes.
+    /**
+     * Creates a tensor with the specified axes.
+     *
      * @param k1 major axis
      * @param k2 intermediate axis
      * @param k3 minor axis
@@ -125,7 +131,9 @@ public class Tensor {
         return new Tensor(axes);
     }
 
-    /** Returns one of the tensor's three principal axes as a vector. 
+    /**
+     * Returns one of the tensor's three principal axes as a vector.
+     *
      * @param axis 0 for major axis, 1 for intermediate, and 2 for minor
      * @return the requested axis
      */
@@ -137,9 +145,11 @@ public class Tensor {
         return String.format(Locale.ENGLISH, "%.1f", d);
     }
 
-    /** Returns the principal directions as a list of strings.
-     * The order of the parameters is the same as the order of
-     * the headers provided by {@link #getHeaders()}.
+    /**
+     * Returns the principal directions as a list of strings. The order of the
+     * parameters is the same as the order of the headers provided by
+     * {@link #getHeaders()}.
+     *
      * @return the principal directions as a list of strings
      */
     public List<String> toStrings() {
@@ -151,14 +161,20 @@ public class Tensor {
                 fmt(p3.getDecDeg()), fmt(p3.getIncDeg()));
     }
 
-    /** Returns a list of empty strings equal in length to the number of parameters.
-     * @return  a list of empty strings equal in length to the number of parameters
+    /**
+     * Returns a list of empty strings equal in length to the number of
+     * parameters.
+     *
+     * @return a list of empty strings equal in length to the number of
+     * parameters
      */
     public static List<String> getEmptyFields() {
         return Collections.nCopies(HEADERS.size(), "");
     }
 
-    /** Returns the headers describing the parameters as a list of strings.
+    /**
+     * Returns the headers describing the parameters as a list of strings.
+     *
      * @return the headers describing the parameters
      */
     public static List<String> getHeaders() {

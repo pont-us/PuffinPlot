@@ -18,11 +18,24 @@ package net.talvi.puffinplot.data;
 
 /**
  *  An estimate of relative palaeointensity for a single sample.
- * 
  */
 public interface SampleRpiEstimate {
     
+    /**
+     *
+     * @return a string of comma-separated values representing an RPI
+     * estimate for a sample
+     * 
+     * @see #getCommaSeparatedHeader() 
+     */
     String toCommaSeparatedString();
 
+    /**
+     * 
+     * @return a string of comma-separated headers defining the interpretation
+     * of the values returned by {@link #toCommaSeparatedString()}
+     * 
+     * @see #toCommaSeparatedString()
+     */
     String getCommaSeparatedHeader();
 }

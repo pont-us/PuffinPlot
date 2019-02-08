@@ -22,9 +22,9 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * This class performs three-dimension principal component analysis on
- * a supplied collection of vectors and stores the results.
- * 
+ * This class performs three-dimension principal component analysis on a
+ * supplied collection of vectors and stores the results.
+ *
  * @see PcaAnnotated
  * @author pont
  */
@@ -90,16 +90,20 @@ public class PcaValues {
                 anchored, points.size());
     }
 
-    /** Returns the maximum angle of planar deviation.
-     * This is defined by Kirschvink (1980) p. 703.
+    /**
+     * Returns the maximum angle of planar deviation. This is defined by
+     * Kirschvink (1980) p. 703.
+     *
      * @return the maximum angle of planar deviation in degrees
      */
     public double getMad1() {
         return mad1;
     }
 
-    /** Returns the maximum angle of linear deviation.
-     * This is defined by Kirschvink (1980) p. 703.
+    /**
+     * Returns the maximum angle of linear deviation. This is defined by
+     * Kirschvink (1980) p. 703.
+     *
      * @return the maximum angle of linear deviation in degrees
      */
     public double getMad3() {
@@ -117,20 +121,27 @@ public class PcaValues {
         return origin;
     }
 
-    /** Returns the direction of the principal PCA axis. 
+    /**
+     * Returns the direction of the principal PCA axis.
+     *
      * @return the direction of the principal PCA axis
      */
     public Vec3 getDirection() {
         return direction;
     }
     
-    /** Reports whether the PCA calculation was anchored.
-     * @return {@code true} is the PCA calculation was anchored */
+    /**
+     * Reports whether the PCA calculation was anchored.
+     *
+     * @return {@code true} is the PCA calculation was anchored
+     */
     public boolean isAnchored() {
         return anchored;
     }
 
-    /** Returns the number of points used in this PCA.
+    /**
+     * Returns the number of points used in this PCA.
+     *
      * @return the number of points used in this PCA
      */
     public int getNpoints() {
@@ -141,8 +152,11 @@ public class PcaValues {
         return String.format(Locale.ENGLISH, "%.4f", d);
     }
 
-    /** Returns the headers describing the parameters as a list of strings.
-     * @return the headers describing the parameters */
+    /**
+     * Returns the headers describing the parameters as a list of strings.
+     *
+     * @return the headers describing the parameters
+     */
     public static List<String> getHeaders() {
         return HEADERS;
     }
@@ -163,9 +177,11 @@ public class PcaValues {
         return sb.toString();
     }
 
-    /** Returns the parameters as a list of strings.
-     * The order of the parameters is the same as the order of
-     * the headers provided by {@link #getHeaders()}.
+    /**
+     * Returns the parameters as a list of strings. The order of the parameters
+     * is the same as the order of the headers provided by
+     * {@link #getHeaders()}.
+     *
      * @return the parameters as a list of strings
      */
     public List<String> toStrings() {

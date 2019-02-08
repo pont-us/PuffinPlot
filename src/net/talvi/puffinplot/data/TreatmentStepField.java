@@ -198,7 +198,9 @@ public enum TreatmentStepField {
         return nameMap.get(heading);
     }
 
-    /** Returns the heading string for this field.
+    /**
+     * Returns the heading string for this field.
+     *
      * @return the heading string for this field
      */
     public String getHeading() {
@@ -239,12 +241,14 @@ public enum TreatmentStepField {
         return virtual;
     }
     
-    /** Reports whether this field is importable. Importable fields are those
+    /**
+     * Reports whether this field is importable. Importable fields are those
      * which may be specified for custom data import. Note that (perhaps
-     * counterintuitively) the virtual fields for declination, inclination, 
-     * and magnetization <em>are</em> importable, although they cannot
-     * be set by {@link TreatmentStep#setValue(TreatmentStepField, String, double)}: they are
-     * handled as a special case by {@link FileFormat#readLine(String)}.
+     * counterintuitively) the virtual fields for declination, inclination, and
+     * magnetization <em>are</em> importable, although they cannot be set by
+     * {@link TreatmentStep#setValue(TreatmentStepField, String, double)}: they
+     * are handled as a special case by {@link FileFormat#readLine(String)}.
+     *
      * @return {@code true} if this field is importable
      */
     public boolean isImportable() {

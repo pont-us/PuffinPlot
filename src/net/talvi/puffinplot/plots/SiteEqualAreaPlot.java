@@ -237,7 +237,9 @@ public class SiteEqualAreaPlot extends EqualAreaPlot {
         drawAxes();
         clearPoints();
         final Sample sample = params.getSample();
-        if (sample==null) return;
+        if (sample==null) {
+            return;
+        }
         final Site site = sample.getSite();
         if (site == null) {
             writeString(graphics, "No sites defined.", xo - 40, yo - 20);

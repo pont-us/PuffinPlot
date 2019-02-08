@@ -893,14 +893,20 @@ public class Sample {
         }
     }
 
-    /** Returns the site for this sample.
-     * @return the site for this sample */
+    /**
+     * Returns the site for this sample.
+     *
+     * @return the site for this sample
+     */
     public Site getSite() {
         return site;
     }
 
-    /** Sets the site for this sample.
-     * @param site the site for this sample */
+    /**
+     * Sets the site for this sample.
+     *
+     * @param site the site for this sample
+     */
     public void setSite(Site site) {
         touch();
         this.site = site;
