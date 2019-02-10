@@ -81,7 +81,6 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
     }
 
     private void createPlots() {
-        final Preferences preferences = app.getPrefs().getPrefs();
         try {
             for (Class plotClass: plotClasses) {
                 plots.put(plotClass,

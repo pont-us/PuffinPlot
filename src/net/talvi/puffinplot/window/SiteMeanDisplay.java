@@ -24,7 +24,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
-import java.util.prefs.Preferences;
 
 import net.talvi.puffinplot.plots.Plot;
 import net.talvi.puffinplot.plots.SiteEqualAreaPlot;
@@ -42,8 +41,10 @@ public class SiteMeanDisplay extends GraphDisplay implements Printable {
 
     /**
      * Creates a new site mean graph display.
+     * 
+     * @param params parameters for the site mean plot in this display
      */
-    public SiteMeanDisplay(PlotParams params, Preferences prefs) {
+    public SiteMeanDisplay(PlotParams params) {
         super();
         setOpaque(true); // content panes must be opaque
         setPreferredSize(new Dimension(600, 600));

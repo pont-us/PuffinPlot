@@ -33,14 +33,20 @@ import java.util.prefs.Preferences;
  */
 public class IdToFileMap {
     
-    Preferences prefs;
+    private final Preferences prefs;
     // prefix for preferences keys
-    private final static String prefsPrefix = "lastUsedFileDir.";
+    private final static String PREFS_PREFIX = "lastUsedFileDir.";
     private final static Logger logger =
             Logger.getLogger(IdToFileMap.class.getName());
 
-    public IdToFileMap(Preferences prefs) {
-        this.prefs = prefs;
+    /**
+     * Creates a new IdToFileMap, which wwill store and retrieve mappings
+     * using the supplied Preferences object.
+     * 
+     * @param preferences the Preferences object in which to store the mappings
+     */
+    public IdToFileMap(Preferences preferences) {
+        this.prefs = preferences;
     }
     
     /**
@@ -50,7 +56,7 @@ public class IdToFileMap {
      * @return the associated directory, or null if there is none
      */
     public File get(String identifier) {
-        final String filename = prefs.get(prefsPrefix+identifier, "");
+        final String filename = prefs.get(PREFS_PREFIX + identifier, "");
         if (filename.isEmpty()) {
             return null;
         } else {
@@ -66,7 +72,7 @@ public class IdToFileMap {
      *         or null if there is none
      */
     public String getString(String identifier) {
-        final String filename = prefs.get(prefsPrefix+identifier, "");
+        final String filename = prefs.get(PREFS_PREFIX + identifier, "");
         if (filename.isEmpty()) {
             return null;
         } else {
@@ -86,9 +92,10 @@ public class IdToFileMap {
                     "Supplied file object must be a directory.");
         }
         try {
-            prefs.put(prefsPrefix+identifier, directory.getCanonicalPath());
-        } catch (IOException ex) {
-            logger.log(Level.WARNING, "Could not get directory path.", ex);
+            prefs.put(PREFS_PREFIX + identifier, directory.getCanonicalPath());
+        } catch (IOException exception) {
+            logger.log(Level.WARNING,
+                    "Could not get directory path.", exception);
         }
     }
 }

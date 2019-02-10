@@ -252,7 +252,7 @@ public class PuffinApp {
 
         tableWindow = new TableWindow(plotParams);
         suiteEqAreaWindow = new SuiteEqAreaWindow(this);
-        siteEqAreaWindow = new SiteMeanWindow(plotParams, prefs.getPrefs());
+        siteEqAreaWindow = new SiteMeanWindow(plotParams);
         /*
          * NB: main window must be instantiated last, as the Window menu
          * references the other windows.

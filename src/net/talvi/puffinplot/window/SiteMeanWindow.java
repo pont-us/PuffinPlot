@@ -17,7 +17,6 @@
 package net.talvi.puffinplot.window;
 
 import net.talvi.puffinplot.plots.PlotParams;
-import java.util.prefs.Preferences;
 import javax.swing.JFrame;
 
 /**
@@ -33,9 +32,9 @@ public class SiteMeanWindow extends JFrame {
     /**
      * Creates a new site mean window.
      */
-    public SiteMeanWindow(PlotParams params, Preferences prefs) {
+    public SiteMeanWindow(PlotParams params) {
         setTitle("Site equal-area plot");
-        graphDisplay = new SiteMeanDisplay(params, prefs);
+        graphDisplay = new SiteMeanDisplay(params);
         setContentPane(graphDisplay);
         pack();
         setLocationRelativeTo(null); // centre on screen

@@ -202,7 +202,7 @@ public final class PuffinPrefs {
      */
     public void importFromFile(File file) {
         try {
-            FileInputStream inStream = new FileInputStream(file);
+            final FileInputStream inStream = new FileInputStream(file);
             Preferences.importPreferences(inStream);
             inStream.close();
         } catch (InvalidPreferencesFormatException | IOException exception) {

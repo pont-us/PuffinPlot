@@ -44,11 +44,10 @@ public class SuiteEqAreaDisplay extends GraphDisplay implements Printable {
      * Creates a new suite equal-area graph display
      *
      * @param params parameters for the plot
-     * @param prefs preferences for the plot
      */
-    public SuiteEqAreaDisplay(PlotParams params, Preferences prefs) {
+    public SuiteEqAreaDisplay(PlotParams params) {
         super();
-        setOpaque(true); //content panes must be opaque
+        setOpaque(true); // Content panes must be opaque.
         zoomTransform = AffineTransform.getScaleInstance(1.0, 1.0);
         setPreferredSize(new Dimension(600, 600));
         final Plot plot = new SeparateSuiteEqualAreaPlot(

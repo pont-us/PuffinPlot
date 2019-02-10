@@ -41,11 +41,11 @@ import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
 
 /**
- * The control panel provides a user interface for common operations.
- * These include suite selection, orientation correction, and Zijderveld
- * plot axis selection. The control panel sits at the top of the main window.
- * The control panel also displays some sample data.
- * 
+ * The control panel provides a user interface for common operations. These
+ * include suite selection, orientation correction, and Zijderveld plot axis
+ * selection. The control panel sits at the top of the main window. The control
+ * panel also displays some sample data.
+ *
  * @author pont
  */
 public class ControlPanel extends JPanel 
@@ -59,6 +59,7 @@ public class ControlPanel extends JPanel
     private final HprojBox hprojBox;
     private final PuffinApp app;
     private final Preferences prefs;
+    private volatile boolean updatingSuites = false;
     
     private final Action toggleZplotAction = new AbstractAction() {
         private static final long serialVersionUID = 1L;
@@ -68,8 +69,9 @@ public class ControlPanel extends JPanel
         }
     };
 
-    /** Creates a new control panel
-     * 
+    /**
+     * Creates a new control panel
+     *
      * @param app The PuffinPlot instance associated with this panel
      */
     public ControlPanel(PuffinApp app) {
@@ -90,7 +92,8 @@ public class ControlPanel extends JPanel
         final JButton pcaButton = new JButton(app.getActions().pcaOnSelection);
         pcaButton.setText("PCA");
         add(pcaButton);
-        final JButton clearButton = new JButton(app.getActions().clearSampleCalcs);
+        final JButton clearButton =
+                new JButton(app.getActions().clearSampleCalcs);
         clearButton.setText("Clear"); // shorter name for the toolbar
         add(clearButton);
         
@@ -102,7 +105,6 @@ public class ControlPanel extends JPanel
         getActionMap().put("toggle-zplot", toggleZplotAction);
     }
     
-    private volatile boolean updatingSuites = false;
     void updateSuites() {
         updatingSuites = true;
         suiteBox.removeAllItems();
@@ -121,7 +123,8 @@ public class ControlPanel extends JPanel
         return String.format(Locale.ENGLISH,
                 "Samp. %.1f/%.1f",
                 s.getSampAz(),
-                "Azimuth/Dip".equals(displayMode) ? s.getSampDip() : s.getSampHade());
+                "Azimuth/Dip".equals(displayMode) ?
+                        s.getSampDip() : s.getSampHade());
     }
     
     private String formationOrientation(Sample s) {
@@ -129,32 +132,38 @@ public class ControlPanel extends JPanel
                 prefs.get("display.formationOrientation", "Dip azimuth/Dip");
         return String.format(Locale.ENGLISH,
                 "Form. %.1f/%.1f",
-                "Dip azimuth/Dip".equals(displayMode) ? s.getFormAz() : s.getFormStrike(),
+                "Dip azimuth/Dip".equals(displayMode) ?
+                        s.getFormAz() : s.getFormStrike(),
                 s.getFormDip());
     }
     
-    /** Updates this control panel's sample information display. */
+    /**
+     * Updates this control panel's sample information display.
+     */
     public void updateSample() {
-        Sample s = app.getSample();
-        if (s != null) 
+        final Sample sample = app.getSample();
+        if (sample != null) {
             correctionField.setText(
-                    sampleOrientation(s) + " " +
-                    formationOrientation(s) + " " +
+                    sampleOrientation(sample) + " " +
+                    formationOrientation(sample) + " " +
                     String.format(Locale.ENGLISH,
                             "Dev. %.1f Anc:%s",
-                            s.getMagDev(), s.isPcaAnchored() ? "Y" : "N"));
+                            sample.getMagDev(),
+                            sample.isPcaAnchored() ? "Y" : "N"));
+        }
     }
 
-    /** Handles action events. Currently the only action event 
-     * handled is that produced by a user selecting a suite from
-     * the suite selection combo box.
+    /**
+     * Handles action events. Currently the only action event handled is that
+     * produced by a user selecting a suite from the suite selection combo box.
+     *
      * @param e the action event to handle
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        /* No way to tell if this was a user click or the box being
-         * rebuilt, so we have to use this ugly variable to avoid spurious
-         * changes.
+        /*
+         * No way to tell if this was a user click or the box being rebuilt, so
+         * we have to use this ugly variable to avoid spurious changes.
          */
         if (!updatingSuites) {
             int index = suiteBox.getSelectedIndex();
@@ -162,14 +171,18 @@ public class ControlPanel extends JPanel
         }
     }
     
-    /** Returns the X-axis of the vertical Zijderveld plot. 
+    /**
+     * Returns the X-axis of the vertical Zijderveld plot.
+     *
      * @return the X-axis of the vertical Zijderveld plot
      */
     public MeasurementAxis getVprojXaxis() {
         return vVsBox.axis();
     }
         
-    /** Returns the X-axis of the horizontal Zijderveld plot. 
+    /**
+     * Returns the X-axis of the horizontal Zijderveld plot.
+     *
      * @return the X-axis of the horizontal Zijderveld plot
      */
     public MeasurementAxis getHprojXaxis() {
@@ -178,7 +191,9 @@ public class ControlPanel extends JPanel
         return hprojBox.getXaxis();
     }
         
-    /** Returns the Y-axis of the horizontal Zijderveld plot. 
+    /**
+     * Returns the Y-axis of the horizontal Zijderveld plot.
+     *
      * @return the Y-axis of the horizontal Zijderveld plot
      */
     public MeasurementAxis getHprojYaxis() {
@@ -187,21 +202,28 @@ public class ControlPanel extends JPanel
         return hprojBox.getYaxis();
     }
     
-    /** Returns the correction to apply to magnetic moment data. 
-     * @return the correction to apply to magnetic moment data */
+    /**
+     * Returns the correction to apply to magnetic moment data.
+     *
+     * @return the correction to apply to magnetic moment data
+     */
     public Correction getCorrection() {
-        /* Tray correction is applied on loading, and empty slot correction
-         * is currently unused, so these fields are set to false in the
-         * Correction. Originally these were read from the user checkboxes
-         * trayButton and emptyButton, which have now been removed.
+        /*
+         * Tray correction is applied on loading, and empty slot correction is
+         * currently unused, so these fields are set to false in the Correction.
+         * Originally these were read from the user checkboxes trayButton and
+         * emptyButton, which have now been removed.
          */
         return new Correction(false, false,
                 rotationBox.getRotation(),
                 app.getCorrection().isMagDevAppliedToFormation());
     }
     
-    /** Sets the correction to apply to magnetic moment data. 
-     * @param c the correction to apply to magnetic moment data */
+    /**
+     * Sets the correction to apply to magnetic moment data.
+     *
+     * @param c the correction to apply to magnetic moment data
+     */
     public void setCorrection(Correction c) {
         rotationBox.setRotation(c.getRotation());
     }
@@ -217,10 +239,14 @@ public class ControlPanel extends JPanel
         
         public MeasurementAxis axis() {
             switch (getSelectedIndex()) {
-            case 0: return MeasurementAxis.X;
-            case 1: return MeasurementAxis.Y;
-            case 2: return MeasurementAxis.H;
-            default: throw new RuntimeException("unknown axis");
+                case 0:
+                    return MeasurementAxis.X;
+                case 1:
+                    return MeasurementAxis.Y;
+                case 2:
+                    return MeasurementAxis.H;
+                default:
+                    throw new RuntimeException("unknown axis");
             }
         }
         
@@ -240,17 +266,25 @@ public class ControlPanel extends JPanel
         
         public MeasurementAxis getXaxis() {
             switch (getSelectedIndex()) {
-            case 0: return MeasurementAxis.Y;
-            case 1: return MeasurementAxis.X;
-            default: throw new RuntimeException("unknown horizontal projection x-axis");
+                case 0:
+                    return MeasurementAxis.Y;
+                case 1:
+                    return MeasurementAxis.X;
+                default:
+                    throw new RuntimeException(
+                            "unknown horizontal projection x-axis");
             }
         }
         
         public MeasurementAxis getYaxis() {
             switch (getSelectedIndex()) {
-            case 0: return MeasurementAxis.X;
-            case 1: return MeasurementAxis.MINUSY;
-            default: throw new RuntimeException("unknown horizontal projection y-axis");
+                case 0:
+                    return MeasurementAxis.X;
+                case 1:
+                    return MeasurementAxis.MINUSY;
+                default:
+                    throw new RuntimeException(
+                            "unknown horizontal projection y-axis");
             }
         }
     }
@@ -270,24 +304,24 @@ public class ControlPanel extends JPanel
         
         public Rotation getRotation() {
             int i = getSelectedIndex();
-            return                i == 0 ? Rotation.NONE :
-                                  i == 1 ? Rotation.SAMPLE :
-                               /* i == 2*/ Rotation.FORMATION;
+            return i == 0 ? Rotation.NONE :
+                   i == 1 ? Rotation.SAMPLE :
+                /* i == 2*/ Rotation.FORMATION;
         }
     }
 
-    /** Handles changes in the state of user interface components.
-     * For instance, this method will be called if the user
-     * selects a different correction to be applied to magnetic
-     * moment data.
-     * 
-     * @param e the event corresponding to the change
+    /**
+     * Handles changes in the state of user interface components. For instance,
+     * this method will be called if the user selects a different correction to
+     * be applied to magnetic moment data.
+     *
+     * @param event the event corresponding to the change
      */
     @Override
-    public void itemStateChanged(ItemEvent e) {
-        final Object s = e.getSource();
-        if (s == rotationBox || s == vVsBox || s == hprojBox) {
-            if (s == rotationBox) {
+    public void itemStateChanged(ItemEvent event) {
+        final Object source = event.getSource();
+        if (source == rotationBox || source == vVsBox || source == hprojBox) {
+            if (source == rotationBox) {
                 app.setCorrection(getCorrection());
                 app.redoCalculationsForAllSuites();
             }
