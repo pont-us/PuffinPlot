@@ -110,7 +110,6 @@ import net.talvi.puffinplot.window.TabularImportWindow;
 import org.freehep.graphicsbase.util.UserProperties;
 
 import static net.talvi.puffinplot.Util.runningOnOsX;
-import net.talvi.puffinplot.window.GraphDisplay;
 
 /**
  * Instantiating {@code PuffinApp} starts the PuffinPlot desktop application. It
@@ -188,7 +187,6 @@ public class PuffinApp {
     private PuffinApp() {
 
         LOGGER.info("Instantiating PuffinApp.");
-        // have to set app here (not in main) since we need it during initialization
         // com.apple.macos.useScreenMenuBar deprecated since 1.4, I think
         System.setProperty("apple.laf.useScreenMenuBar", "true");
         System.setProperty("com.apple.mrj.application.apple.menu.about.name",
@@ -246,7 +244,8 @@ public class PuffinApp {
 
             @Override
             public boolean getSettingBoolean(String key, boolean def) {
-                return PuffinApp.this.getPrefs().getPrefs().getBoolean(key, def);
+                return PuffinApp.this.getPrefs().getPrefs().
+                        getBoolean(key, def);
             }
             
         };
@@ -308,11 +307,11 @@ public class PuffinApp {
     }
     
     /**
-     * Pushes any buffered output to the in-memory log handler, flushes
-     * the log handler and log stream, and returns the log stream. This
-     * method is mainly intended to let {@link ExceptionHandler} write
-     * logging information to a crash report file.
-     * 
+     * Pushes any buffered output to the in-memory log handler, flushes the log
+     * handler and log stream, and returns the log stream. This method is mainly
+     * intended to let {@link ExceptionHandler} write logging information to a
+     * crash report file.
+     *
      * @return the output stream of PuffinApp's logger
      * @throws IOException if an I/O error occurred while flushing the stream
      */
@@ -353,8 +352,9 @@ public class PuffinApp {
             buildProperties.load(propStream);
         } catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Failed to get build date", ex);
-            /* The only effect of this on the user is a lack of build date
-             * in the about box, so we can get away with just logging it.
+            /*
+             * The only effect of this on the user is a lack of build date in
+             * the about box, so we can get away with just logging it.
              */
         } finally {
             if (propStream != null)
@@ -365,11 +365,10 @@ public class PuffinApp {
     }
     
     /**
-     * Reads values from the {@code build.properties} file. This is a
-     * properties file written into the PuffinPlot jar at build time,
-     * and currently contains the keys {@code build.date} and
-     * {@code build.year}.
-     * 
+     * Reads values from the {@code build.properties} file. This is a properties
+     * file written into the PuffinPlot jar at build time, and currently
+     * contains the keys {@code build.date} and {@code build.year}.
+     *
      * @param key the property key to read
      * @return the value of the key
      */
@@ -396,13 +395,13 @@ public class PuffinApp {
 
     /**
      * Redo existing sample and site calculations affected by specified samples.
-     * 
+     * <p>
      * Any existing PCA calculations or great-circle fits will be done for the
      * specified samples, and any existing great-circle or Fisherian
      * calculations will be done for any site containing one of the specified
      * samples. Site calculations will not be done for sites that don't have
      * them already.
-       * 
+     * <p>
      * This method does not update the display.
      * 
      * @param samples samples which have changed
@@ -458,14 +457,18 @@ public class PuffinApp {
         updateDisplay();
     }
     
-    /** Returns the preferences for this PuffinApp.
+    /**
+     * Returns the preferences for this PuffinApp.
+     *
      * @return the preferences for this PuffinApp
      */
     public PuffinPrefs getPrefs() {
         return prefs;
     }
 
-    /** Returns this PuffinApp's main window
+    /**
+     * Returns this PuffinApp's main window
+     *
      * @return this PuffinApp's main window
      */
     public MainWindow getMainWindow() {
@@ -528,7 +531,9 @@ public class PuffinApp {
         }
     }
     
-    /** Closes the suite whose data is currently being displayed. */
+    /**
+     * Closes the suite whose data is currently being displayed.
+     */
     public void closeCurrentSuite() {
         if (suites == null || suites.isEmpty()) return;
         int index = suites.indexOf(currentSuite);
@@ -542,10 +547,9 @@ public class PuffinApp {
         getMainWindow().suitesChanged();
     }
 
-    /** Creates a new, empty suite and adds it to the suite list.
-     * 
-     * Mainly intended for use by scripts, so not currently
-     * accessible via the GUI.
+    /**
+     * Creates a new, empty suite and adds it to the suite list. Mainly intended
+     * for use by scripts, so not currently accessible via the GUI.
      */
     public void createNewSuite() {
         final Suite suite = new Suite("PuffinPlot " +
@@ -560,15 +564,16 @@ public class PuffinApp {
         updateDisplay();
     }
     
-    /** Reads data into the current suite, or a new suite,
-     * from the specified files.
-     * 
-     * @param files the files from which to read data
-     * @param createNewSuite whether to create a new suite; if this parameter
-     *   is {@code true} or if there is no current suite, a new suite will be
-     *   created for the data.
+    /**
+     * Reads data into the current suite, or a new suite, from the specified
+     * files.
      *
-    */
+     * @param files the files from which to read data
+     * @param createNewSuite whether to create a new suite; if this parameter is
+     * {@code true} or if there is no current suite, a new suite will be created
+     * for the data.
+     *
+     */
     public void openFiles(List<File> files, boolean createNewSuite) {
         if (files.isEmpty()) {
             return;
@@ -654,7 +659,8 @@ public class PuffinApp {
                     if (i == MAX_WARNINGS) {
                         final int remainder = warnings.size() - MAX_WARNINGS;
                         if (remainder == 1) {
-                            /* No point adding a "1 more warning omitted" line
+                            /*
+                             * No point adding a "1 more warning omitted" line
                              * when we could just use that line to show the
                              * final warning!
                              */
@@ -686,9 +692,11 @@ public class PuffinApp {
                 currentSuite = suites.get(suites.size()-1);
             }
             getMainWindow().suitesChanged();
-            // A newly created suite is of course unmodified. If on the other
-            // hand we have appended data to an existing suite, it *is* now
-            // modified.
+            /*
+             * A newly created suite is of course unmodified. If on the other
+             * hand we have appended data to an existing suite, it *is* now
+             * modified.
+             */
             suite.setSaved(reallyCreateNewSuite);
         } catch (FileNotFoundException e) {
             errorDialog("File not found", e.getMessage());
@@ -709,9 +717,12 @@ public class PuffinApp {
         window.setTitle("PuffinPlot: " + currentSuite.getName() +
                 (currentSuite.isSaved() || runningOnOsX()? "" : " *"));
         if (runningOnOsX()) {
-            // See Apple tech note TN2196
-            // https://developer.apple.com/library/mac/technotes/tn2007/tn2196.html#WINDOW_DOCUMENTMODIFIED
-            // http://nadeausoftware.com/articles/2009/01/mac_java_tip_how_control_window_decorations
+            /*
+             * See Apple tech note TN2196:
+             * https://developer.apple.com/library/mac/technotes/tn2007/tn2196.html#WINDOW_DOCUMENTMODIFIED
+             * See also:
+             * http://nadeausoftware.com/articles/2009/01/mac_java_tip_how_control_window_decorations
+             */
             window.getRootPane().putClientProperty("Window.documentModified",
                     !currentSuite.isSaved());
         }
@@ -729,10 +740,9 @@ public class PuffinApp {
     }
 
     /**
-     * Displays a dialog box reporting an error.
-     * The text of the error box is taken from the supplied
-     * exception.
-     * 
+     * Displays a dialog box reporting an error. The text of the error box is
+     * taken from the supplied exception.
+     *
      * @param title the title for the dialog box
      * @param ex the exception from which to take the message text
      */
@@ -770,15 +780,21 @@ public class PuffinApp {
         return Collections.unmodifiableList(suites);
     }
 
-    /** Returns the current Suite.
-     * @return the current Suite */
+    /**
+     * Returns the current Suite.
+     *
+     * @return the current Suite
+     */
     public Suite getSuite() {
         return currentSuite;
     }
     
-    /** Sets the currently displayed Suite.
-     * @param index the index of the suite to be displayed within 
-     * PuffinApp's list of suites */
+    /**
+     * Sets the currently displayed Suite.
+     *
+     * @param index the index of the suite to be displayed within PuffinApp's
+     * list of suites
+     */
     public void setSuite(int index) {
         if (index >= 0 && index < suites.size()) {
             currentSuite = suites.get(index);
@@ -798,8 +814,11 @@ public class PuffinApp {
         return suite.getCurrentSample();
     }
 
-    /** Gets all the currently selected samples.
-     * @return the currently selected samples */
+    /**
+     * Gets all the currently selected samples.
+     *
+     * @return the currently selected samples
+     */
     public List<Sample> getSelectedSamples() {
         final List<Sample> result =
                 getMainWindow().getSampleChooser().getSelectedSamples();
@@ -808,10 +827,10 @@ public class PuffinApp {
     }
     
     /**
-     * Apply the supplied function to each of the currently selected
-     * samples, then redo any existing calculations for the selected
-     * samples and any sites that contain them.
-     * 
+     * Applies the supplied function to each of the currently selected samples,
+     * then redoes any existing calculations for the selected samples and any
+     * sites that contain them.
+     *
      * @param function function to apply to the currently selected samples
      */
     public void modifySelectedSamples(Consumer<Sample> function) {
@@ -821,7 +840,9 @@ public class PuffinApp {
         updateDisplay();
     }
 
-    /** Returns the site for which data is currently being displayed.
+    /**
+     * Returns the site for which data is currently being displayed.
+     *
      * @return the current site
      */
     public Site getCurrentSite() {
@@ -883,69 +904,97 @@ public class PuffinApp {
         aboutBox.setVisible(true);
     }
 
-    /** Opens the preferences window. */
+    /**
+     * Opens the preferences window.
+     */
     public void showPreferences() {
         prefsWindow.setVisible(true);
     }
 
-    /** Opens the page setup dialog box. */
+    /**
+     * Opens the page setup dialog box.
+     */
     public void showPageSetupDialog() {
         final PrinterJob job = PrinterJob.getPrinterJob();
         currentPageFormat = job.pageDialog(currentPageFormat);
     }
 
-    /** Returns the current page format. 
-     * @return the current page format */
+    /**
+     * Returns the current page format.
+     *
+     * @return the current page format
+     */
     public PageFormat getCurrentPageFormat() {
         return currentPageFormat;
     }
 
-    /** Returns the data table window. 
-     * @return the data table window */
+    /**
+     * Returns the data table window.
+     *
+     * @return the data table window
+     */
     public TableWindow getTableWindow() {
         return tableWindow;
     }
 
-    /** Returns the actions associated with this PuffinApp. 
-     * @return the action associated with this PuffinApp */
+    /**
+     * Returns the actions associated with this PuffinApp.
+     *
+     * @return the action associated with this PuffinApp
+     */
     public PuffinActions getActions() {
         return actions;
     }
 
-    /** Returns the suite equal-area plot window. 
-     * @return the suite equal-area plot window */
+    /**
+     * Returns the suite equal-area plot window.
+     *
+     * @return the suite equal-area plot window
+     */
     public SuiteEqAreaWindow getSuiteEqAreaWindow() {
         return suiteEqAreaWindow;
     }
     
-    /** Returns the great-circle statistics window. 
-     * @return the great-circle statistics window */
+    /**
+     * Returns the great-circle statistics window.
+     *
+     * @return the great-circle statistics window
+     */
     public SiteMeanWindow getSiteEqAreaWindow() {
         return siteEqAreaWindow;
     }
     
-    /** Returns the list of recently used files. 
-     * @return the list of recently used files */
+    /**
+     * Returns the list of recently used files.
+     *
+     * @return the list of recently used files
+     */
     public RecentFileList getRecentFiles() {
         return recentFiles;
     }
 
-    /** Sets the list of recently used files (allowing it to be restored
-     * after restarting the application).
+    /**
+     * Sets the list of recently used files (allowing it to be restored after
+     * restarting the application).
+     *
      * @param recentFiles the list of recently used files
      */
     public void setRecentFiles(RecentFileList recentFiles) {
         this.recentFiles = recentFiles;
     }
 
-    /** Shows the window for editing the titles of the custom flags. */
+    /**
+     * Shows the window for editing the titles of the custom flags.
+     */
     public void showCustomFlagsWindow() {
         if (currentSuite == null) return;
         new CustomFieldEditor(currentSuite.getCustomFlagNames(),
                 "Edit custom flags", this);
     }
     
-    /** Shows the window for editing the titles of the custom notes. */
+    /**
+     * Shows the window for editing the titles of the custom notes.
+     */
     public void showCustomNotesWindow() {
         if (currentSuite == null) return;
         new CustomFieldEditor(currentSuite.getCustomNoteNames(),
@@ -953,9 +1002,9 @@ public class PuffinApp {
     }
     
     /**
-     * Performs statistical calculations on AMS data using a script from
-     * Lisa Tauxe's pmagpy software suite.
-     * 
+     * Performs statistical calculations on AMS data using a script from Lisa
+     * Tauxe's pmagpy software suite.
+     *
      * @param calcType the type of calculation to perform
      * @param scriptName the external script which will perform the calculations
      */
@@ -994,10 +1043,12 @@ public class PuffinApp {
         List<File> files = Collections.emptyList();
         final boolean useSwingChooserForOpen = !runningOnOsX();
         
-        // If we are on OS X, having this flag set would *prohibit* selection
-        // of files, so we make sure it's clear. showOpenMacFileDialog is
-        // meant to clear it after showing its dialog, but there's no harm
-        // in clearing it here too.
+        /*
+         * If we are on OS X, having this flag set would *prohibit* selection of
+         * files, so we make sure it's clear. showOpenMacFileDialog is meant to
+         * clear it after showing its dialog, but there's no harm in clearing it
+         * here too.
+         */
         System.clearProperty("apple.awt.fileDialogForDirectories");
         
         if (useSwingChooserForOpen) {
@@ -1049,20 +1100,23 @@ public class PuffinApp {
                 files = Arrays.asList(fileArray);
             }
         } finally {
-            // Setting this property prohibits non-directory selection,
-            // and persists for all file open dialogs for the rest of the
-            // application's run, so it's important to ensure that it's cleared
-            // as soon as we're done with the open-folder dialog.
+            /*
+             * Setting this property prohibits non-directory selection, and
+             * persists for all file open dialogs for the rest of the
+             * application's run, so it's important to ensure that it's cleared
+             * as soon as we're done with the open-folder dialog.
+             */
             System.clearProperty("apple.awt.fileDialogForDirectories");
         }
         if (files != null) openFiles(files, true);
     }
     
-    /** Shows an ‘open files’ dialog box.
-     * 
-     * @param createNewSuite If {@code true}, or if there is no current suite,
-     * a new suite will be created for the data from the files; otherwise,
-     * the data will be added to the current suite.
+    /**
+     * Shows an ‘open files’ dialog box.
+     *
+     * @param createNewSuite If {@code true}, or if there is no current suite, a
+     * new suite will be created for the data from the files; otherwise, the
+     * data will be added to the current suite.
      */
     public void showOpenFilesDialog(boolean createNewSuite) {
         final List<File> files = openFileDialog("Open file(s)");
@@ -1082,10 +1136,11 @@ public class PuffinApp {
         }
     }
     
-    /** <p>Shows an ‘open files’ dialog box; if the user selects
-     * any files, AMS data will be imported from them. The files are 
-     * expected to be in Agico ASC format, as produced by the SAFYR
-     * and SUSAR programs.</p> */
+    /**
+     * Shows an ‘open files’ dialog box; if the user selects any files, AMS data
+     * will be imported from them. The files are expected to be in Agico ASC
+     * format, as produced by the SAFYR and SUSAR programs.
+     */
     public void showImportAmsDialog() {
         if (showErrorIfNoSuite()) {
             return;
@@ -1096,12 +1151,13 @@ public class PuffinApp {
 
     }
     
-    /** <p>Shows an ‘open file’ dialog box; if the user selects a file,
-     * the current preferences will be overwritten with preferences data
-     * from that file. The file is expected to contain Java Preferences
-     * data in XML format.</p> */
+    /**
+     * Shows an ‘open file’ dialog box; if the user selects a file, the current
+     * preferences will be overwritten with preferences data from that file. The
+     * file is expected to contain Java Preferences data in XML format.
+     */
     public void showImportPreferencesDialog() {
-        List<File> files = openFileDialog("Import preferences file");
+        final List<File> files = openFileDialog("Import preferences file");
         if (files != null && files.size() > 0) {
             getPrefs().importFromFile(files.get(0));
             getMainWindow().getGraphDisplay().recreatePlots();
@@ -1141,32 +1197,39 @@ public class PuffinApp {
      */
     public void copyPointSelection() {
         final Sample sample = getSample();
-        if (sample==null) return;
+        if (sample==null) {
+            return;
+        }
         pointSelectionClipboard = sample.getSelectionBitSet();
         updateDisplay();
     }
     
     /**
-     * For each selected sample, selects the points corresponding to those
-     * last copied to the clipboard.
+     * For each selected sample, selects the points corresponding to those last
+     * copied to the clipboard.
+     *
      * @see #copyPointSelection()
      */
     public void pastePointSelection() {
-        if (pointSelectionClipboard==null) return;
+        if (pointSelectionClipboard==null) {
+            return;
+        }
         modifySelectedSamples(s ->
                 s.setSelectionBitSet(pointSelectionClipboard));
     }
     
     /**
-     * For all selected samples, rotates magnetization data 180° around
-     * the specified axis. The intended use is to correct erroneous
-     * data caused by incorrect sample orientation during measurement.
-     * 
+     * For all selected samples, rotates magnetization data 180° around the
+     * specified axis. The intended use is to correct erroneous data caused by
+     * incorrect sample orientation during measurement.
+     *
      * @param axis the axis around which to flip the selected samples
      */
     public void flipSelectedSamples(MeasurementAxis axis) {
         final List<Sample> samples = getSelectedSamples();
-        if (samples.isEmpty()) return;
+        if (samples.isEmpty()) {
+            return;
+        }
         final String msgFmt = 
                 "You are about to rotate the data for %d selected sample%s\n"
                 + "by 180° about the %s axis.\n"
@@ -1209,7 +1272,7 @@ public class PuffinApp {
         final String factorString = JOptionPane.showInputDialog(
                 getMainWindow(),
                 "Please enter magnetic susceptibility scaling factor.");
-        // my empirically determined value for the Bartington is 4.3e-5.
+        // My empirically determined value for the Bartington is 4.3e-5.
         if (factorString == null) return;
         try {
             final double factor = Double.parseDouble(factorString);
@@ -1405,7 +1468,7 @@ public class PuffinApp {
     
     /**
      * Runs a specified Python script, first downloading Jython if required.
-     * 
+     *
      * This method attempts to run a specified Python script. First it checks if
      * the Jython jar is already cached locally in PuffinPlot's application data
      * folder. If not, it prompts the user for confirmation and downloads and
@@ -1468,13 +1531,13 @@ public class PuffinApp {
             try {
                 if (!JythonJarManager.checkSha1Digest(true)) {
                     if (worker.getException() != null) {
-                        errorDialog("Error during download",
-                                "<html><p style='width: 400px';>"
-                                        + "An error occured during the "
-                                        + "download. (Error description: ‘"
-                                        + worker.getException().getLocalizedMessage()
-                                        + "’) Please try again. If the error persists, "
-                                        + "please report it to puffinplot@gmail.com.");
+                        errorDialog("Error during download", "<html>"
+                                + "<p style='width: 400px';>"
+                                + "An error occured during the "
+                                + "download. (Error description: ‘"
+                                + worker.getException().getLocalizedMessage()
+                                + "’) Please try again. If the error persists, "
+                                + "please report it to puffinplot@gmail.com.");
                     } else {
                         // No exception occurred, but the file is corrupted.
                         errorDialog("Download failed",
@@ -1514,8 +1577,8 @@ public class PuffinApp {
     }
     
     /**
-     * Opens a file selection dialog and runs the Python script
-     * (if any) which the user selects from that dialog. 
+     * Opens a file selection dialog and runs the Python script (if any) which
+     * the user selects from that dialog.
      */
     public void showRunPythonScriptDialog() {
         final List<File> files = openFileDialog("Select Python script");
@@ -1532,8 +1595,8 @@ public class PuffinApp {
     }
 
     /**
-     *  Runs a specified script written in JavaScript
-     * 
+     * Runs a specified script written in JavaScript
+     *
      * @param scriptPath the path to the JavaScript script
      */
     public void runJavascriptScript(String scriptPath) {
@@ -1550,8 +1613,8 @@ public class PuffinApp {
     }
     
     /**
-     * Opens a file selection dialog and runs the Javascript script
-     * (if any) which the user selects from that dialog. 
+     * Opens a file selection dialog and runs the Javascript script (if any)
+     * which the user selects from that dialog.
      */
     public void showRunJavascriptScriptDialog() {
         final List<File> files = openFileDialog("Select Javascript script");
@@ -1569,7 +1632,9 @@ public class PuffinApp {
     
     void showImportLocationsDialog() {
         final List<File> files = openFileDialog("Select location file");
-        if (files.isEmpty()) return;
+        if (files.isEmpty()) {
+            return;
+        }
         final File file = files.get(0);
         final Suite suite = getSuite();
         if (suite==null) return;
@@ -1616,9 +1681,9 @@ public class PuffinApp {
     
     /**
      * Saves the current suite under its current filename.
-     * 
-     * If the suite has no current filename, one will be requested from
-     * the user using a standard file dialog.
+     * <p>
+     * If the suite has no current filename, one will be requested from the user
+     * using a standard file dialog.
      */
     public void save() {
         save(getSuite());
@@ -1626,9 +1691,9 @@ public class PuffinApp {
     
     /**
      * Shows a print dialog.
-     * 
-     * @param window An identifier specifying the window to print;
-     * valid values are MAIN, SITE, and SUITE.
+     *
+     * @param window An identifier specifying the window to print; valid values
+     * are MAIN, SITE, and SUITE.
      */
     public void showPrintDialog(String window) {
         final PrinterJob job = PrinterJob.getPrinterJob();
@@ -1646,12 +1711,16 @@ public class PuffinApp {
         }
         job.setPrintable(printable, getCurrentPageFormat());
         try {
-            /* Note: if we pass an attribute set to printDialog(),
-            * it forces the use of a cross-platform Swing print
-            * dialog rather than the default native one. */
-            if (job.printDialog()) job.print();
-        } catch (PrinterException pe) {
-            errorDialog("Printing error", pe.getLocalizedMessage());
+            /*
+             * Note: if we pass an attribute set to printDialog(), it forces the
+             * use of a cross-platform Swing print dialog rather than the
+             * default native one.
+             */
+            if (job.printDialog()) {
+                job.print();
+            }
+        } catch (PrinterException exception) {
+            errorDialog("Printing error", exception.getLocalizedMessage());
         }
     }
     
@@ -1778,8 +1847,7 @@ public class PuffinApp {
     }
     
     /**
-     * Calculate RPI using two loaded suites.
-     * 
+     * Calculates RPI using two loaded suites.
      */
     public void calculateRpi() {
         if (getSuites().size() < 2) {
@@ -1833,7 +1901,7 @@ public class PuffinApp {
     }
     
     /**
-     * Show the dialog for a discrete to continuous sample conversion.
+     * Shows the dialog for a discrete to continuous sample conversion.
      */
     public void showDiscreteToContinuousDialog() {
         final List<File> files =
@@ -1855,7 +1923,7 @@ public class PuffinApp {
     }
     
     /**
-     * Show the dialog for creating and exporting a data and code bundle.
+     * Shows the dialog for creating and exporting a data and code bundle.
      */
     public void showCreateBundleDialog() {
         if (getSuite() == null) {

@@ -32,10 +32,10 @@ import net.talvi.puffinplot.data.SensorLengths;
 import net.talvi.puffinplot.data.file.TwoGeeLoader;
 
 /**
- * PuffinPrefs stores, loads, and saves PuffinPlot's user preferences.
- * It is essentially a convenience wrapper around a 
+ * PuffinPrefs stores, loads, and saves PuffinPlot's user preferences. It is
+ * essentially a convenience wrapper around a
  * {@link java.util.prefs.Preferences} object.
- * 
+ *
  * @author pont
  */
 public final class PuffinPrefs {
@@ -51,10 +51,10 @@ public final class PuffinPrefs {
 
     /**
      * Instantiates a set of PuffinPlot preferences for the specified
-     * {@link PuffinApp} instance. The preference settings are loaded
-     * from the {@link java.util.prefs.Preferences} node associated with the package
+     * {@link PuffinApp} instance. The preference settings are loaded from the
+     * {@link java.util.prefs.Preferences} node associated with the package
      * containing PuffinPrefs.
-     * 
+     *
      * @param app the PuffinPlot instance for which to create the preferences
      */
     public PuffinPrefs(PuffinApp app) {
@@ -63,9 +63,9 @@ public final class PuffinPrefs {
     }
 
     /**
-     * Returns the underlying {@link java.util.prefs.Preferences} object which holds the 
-     * preferences.
-     * 
+     * Returns the underlying {@link java.util.prefs.Preferences} object which
+     * holds the preferences.
+     *
      * @return the Preferences object containing the preferences
      */
     public Preferences getPrefs() {
@@ -93,20 +93,28 @@ public final class PuffinPrefs {
         this.axisScaleLocked = axisScaleLocked;
     }
 
-    /** Returns the effective sensor lengths for opening 2G data files.
-     * @return the effective sensor lengths for opening 2G data files */
+    /**
+     * Returns the effective sensor lengths for opening 2G data files.
+     *
+     * @return the effective sensor lengths for opening 2G data files
+     */
     public SensorLengths getSensorLengths() {
         return sensorLengths;
     }
 
-    /** Sets the effective sensor lengths for opening 2G data files.
-     * @param sensorLengths the effective sensor lengths for opening 
-     * 2G data files */
+    /**
+     * Sets the effective sensor lengths for opening 2G data files.
+     *
+     * @param sensorLengths the effective sensor lengths for opening 2G data
+     * files
+     */
     public void setSensorLengths(SensorLengths sensorLengths) {
         this.sensorLengths = sensorLengths;
     }
 
-    /** Reports whether PCA fits should be anchored to the origin. 
+    /**
+     * Reports whether PCA fits should be anchored to the origin.
+     *
      * @return {@code true} if PCA fits should be anchored to the origin.
      * @see net.talvi.puffinplot.data.PcaValues
      */
@@ -114,9 +122,11 @@ public final class PuffinPrefs {
         return pcaAnchored;
     }
 
-    /** Sets whether PCA fits should be anchored to the origin.
-     * @param pcaThroughOrigin {@code true} if PCA fits should 
-     * be anchored to the origin.
+    /**
+     * Sets whether PCA fits should be anchored to the origin.
+     *
+     * @param pcaThroughOrigin {@code true} if PCA fits should be anchored to
+     * the origin.
      * @see net.talvi.puffinplot.data.PcaValues
      */
     public void setPcaAnchored(boolean pcaThroughOrigin) {
@@ -125,36 +135,43 @@ public final class PuffinPrefs {
     
     /**
      * Gives the configured size and position for a specified plot.
+     *
      * @param plotName the name of a plot
-     * @return the bounding box of the specified plot within the main display area
+     * @return the bounding box of the specified plot within the main display
+     * area
      * @see net.talvi.puffinplot.plots.Plot
      */
     public Rectangle2D getPlotSize(String plotName) {
-        if (!plotSizes.containsKey(plotName))
+        if (!plotSizes.containsKey(plotName)) {
             plotSizes.put(plotName, new Rectangle2D.Double(100, 100, 100, 100));
+        }
         return plotSizes.get(plotName);
     }
 
     /**
      * Loads the preferences from the preferences backing store. The preferences
      * node used is the one associated with the package containing this class.
+     *
      * @see java.util.prefs.Preferences
      */
     public void load() {
         app.setRecentFiles(new RecentFileList(getPrefs()));
         setSensorLengths(SensorLengths.fromPrefs(prefs));
-        twoGeeProtocol = TwoGeeLoader.Protocol.valueOf(prefs.get("measurementProtocol", "NORMAL"));
+        twoGeeProtocol = TwoGeeLoader.Protocol.
+                valueOf(prefs.get("measurementProtocol", "NORMAL"));
     }
     
     /**
      * Saves the preferences to the preferences backing store. The preferences
      * node used is the one associated with the package containing this class.
+     *
      * @see java.util.prefs.Preferences
      */
     public void save() {
         Preferences p = getPrefs();
         app.getRecentFiles().save(p);
-        p.put("plotSizes", app.getMainWindow().getGraphDisplay().getPlotSizeString());
+        p.put("plotSizes",
+                app.getMainWindow().getGraphDisplay().getPlotSizeString());
         p.put("correction", app.getCorrection().toString());
         getSensorLengths().save(prefs);
         p.put("measurementProtocol", twoGeeProtocol.name());
@@ -171,10 +188,9 @@ public final class PuffinPrefs {
             FileOutputStream outStream = new FileOutputStream(file);
             prefs.exportSubtree(outStream);
             outStream.close();
-        } catch (IOException ex) {
-            Logger.getLogger(PuffinPrefs.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (BackingStoreException ex) {
-            Logger.getLogger(PuffinPrefs.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException | BackingStoreException ex) {
+            Logger.getLogger(PuffinPrefs.class.getName()).
+                    log(Level.SEVERE, null, ex);
         }
     }
 
@@ -189,21 +205,26 @@ public final class PuffinPrefs {
             FileInputStream inStream = new FileInputStream(file);
             Preferences.importPreferences(inStream);
             inStream.close();
-        } catch (InvalidPreferencesFormatException ex) {
-            Logger.getLogger(PuffinPrefs.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(PuffinPrefs.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidPreferencesFormatException | IOException exception) {
+            Logger.getLogger(PuffinPrefs.class.getName()).
+                    log(Level.SEVERE, null, exception);
         }
     }
 
-    /** Returns the measurement protocol used when opening 2G data files.
-     * @return the measurement protocol used when opening 2G data files */
+    /**
+     * Returns the measurement protocol used when opening 2G data files.
+     *
+     * @return the measurement protocol used when opening 2G data files
+     */
     public TwoGeeLoader.Protocol get2gProtocol() {
         return twoGeeProtocol;
     }
 
-    /** Sets the measurement protocol to use when opening 2G data files.
-     * @param protocol the measurement protocol to use when opening 2G data files
+    /**
+     * Sets the measurement protocol to use when opening 2G data files.
+     *
+     * @param protocol the measurement protocol to use when opening 2G data
+     * files
      */
     public void set2gProtocol(TwoGeeLoader.Protocol protocol) {
         this.twoGeeProtocol = protocol;
