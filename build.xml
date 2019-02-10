@@ -46,23 +46,6 @@
     </target>    
     
     <target name="-pre-jar">
-        <exec executable="hg" outputproperty="build.hg.revid">
-            <arg value="id"/> 
-            <arg value="-i"/> 
-            <arg value="${basedir}"/>
-        </exec>
-        <exec executable="hg" outputproperty="build.hg.tag">
-            <arg value="id"/> 
-            <arg value="-t"/> 
-            <arg value="${basedir}"/>
-        </exec>
-        <exec dir="${basedir}" executable="hg" outputproperty="build.hg.date">
-            <arg value="log"/> 
-            <arg value="-l1"/> 
-            <arg value="-r."/>
-            <arg value="--template"/> 
-            <arg value="{date|hgdate}"/>
-        </exec>
         <exec dir="${basedir}" executable="git">
             <arg value="cat-file"/> 
             <arg value="commit"/> 
@@ -99,9 +82,6 @@
             <entry key="build.date" type="date" value="now" pattern="yyyy-MM-dd HH:mm"/>
             <entry key="build.year" type="date" value="now" pattern="yyyy"/>
             <entry key="build.release.version" value="${release.version}"/>
-            <entry key="build.hg.revid" value="${build.hg.revid}"/>
-            <entry key="build.hg.tag" value="${build.hg.tag}"/>
-            <entry key="build.hg.date" value="${build.hg.date}"/>
             <entry key="build.git.committerdate" value="${build.git.committerdate}"/>
             <entry key="build.git.tag" value="${git.tag}"/>
             <entry key="build.git.hash" value="${git.hash}"/>
