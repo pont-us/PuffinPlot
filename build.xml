@@ -90,7 +90,7 @@
         
     </target>
     
-    <target name="package-for-store" depends="jar"
+    <target name="combined-jar" depends="jar"
         description="Creates a composite JAR file containing all dependencies.">
         
         <!-- By default, this target is dependent on NetBeans
@@ -149,7 +149,7 @@
     (For good measure I also set the properties.)
     -->
     
-    <target name="macbundle" depends="package-for-store">
+    <target name="macbundle" depends="combined-jar">
         <fail unless="release.version" message="No version number."/>
         <delete dir="${basedir}/dist/${ant.project.name}.app" />
         <tstamp>

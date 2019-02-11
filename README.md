@@ -89,7 +89,7 @@ Main Ant build targets:
 It contains the PuffinPlot jar, a Mac application folder, the
 user manual, and JavaDoc. This target depends on most of the
 other targets.
-* `package-for-store` creates a unified PuffinPlot jar, including
+* `combined-jar` creates a unified PuffinPlot jar, including
 the external libraries as well as the PuffinPlot code itself.
 * `build-manual` creates PDF and HTML manuals from the LaTeX sources.
 * `macbundle` creates a Mac OS X application from a PuffinPlot jar.
@@ -99,4 +99,3 @@ the external libraries as well as the PuffinPlot code itself.
 PuffinPlot uses the Bugs Everywhere bug-tracking system; the bug
 database lives within the repository itself, in the `.be` folder. Bugs
 Everywhere is available from http://www.bugseverywhere.org/ .
-
