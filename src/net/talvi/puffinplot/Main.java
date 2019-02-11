@@ -34,22 +34,21 @@ import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Suite;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 /**
- * This class contains the initial entry point for starting PuffinPlot.
- * It parses any command-line arguments, then creates the PuffinPlot
- * GUI or runs in scripting mode as appropriate.
- * 
+ * This class contains the initial entry point for starting PuffinPlot. It
+ * parses any command-line arguments, then creates the PuffinPlot GUI or runs in
+ * scripting mode as appropriate.
  */
 public class Main {
 
-    private static final Logger LOGGER = Logger.getLogger("net.talvi.puffinplot");
+    private static final Logger LOGGER =
+            Logger.getLogger("net.talvi.puffinplot");
     
     /**
      * Instantiates and starts a new PuffinApp.
@@ -99,20 +98,20 @@ public class Main {
     @SuppressWarnings("static-access")
     private static Options createOptions() {
         final Option helpOpt = new Option("help", "print this message");
-        final Option scriptOpt = OptionBuilder.withArgName("file")
-                .hasArg().withDescription("run specified script")
-                .create("script");
-        final Option scriptLangOpt = OptionBuilder.withArgName("language")
-                .hasArg()
-                .withDescription("language for script (javascript or python)")
-                .create("scriptlanguage");
-        final Option installJythonOpt = OptionBuilder
-                .withDescription("download and install Jython")
-                .create("installjython");
-        final Option processOpt = OptionBuilder.withArgName("file")
-                .hasArg()
-                .withDescription("process given ppl file and save results")
-                .create("process");
+        final Option scriptOpt = Option.builder("script")
+                .hasArg().argName("file").desc("run specified script")
+                .build();
+        final Option scriptLangOpt = Option.builder("scriptlanguage")
+                .hasArg().argName("language")
+                .desc("language for script (javascript or python)")
+                .build();
+        final Option installJythonOpt = Option.builder("installjython")
+                .desc("download and install Jython")
+                .build();
+        final Option processOpt = Option.builder("process")
+                .hasArg().argName("file")
+                .desc("process given ppl file and save results")
+                .build();
         final Option withAppOpt = new Option("withapp",
                 "create a Puffin application (script mode only)");
         final Options options = new Options();
@@ -127,7 +126,7 @@ public class Main {
     
     private static void parseCliArguments(String[] args) {
         final Options options = createOptions();
-        final CommandLineParser parser = new GnuParser();
+        final CommandLineParser parser = new DefaultParser();
         try {
             final CommandLine commandLine = parser.parse(options, args);
             processCliArguments(commandLine, options);
@@ -185,17 +184,22 @@ public class Main {
                         } catch (ScriptException | IOException ex) {
                             LOGGER.log(Level.SEVERE, null, ex);
                             // TODO make sure this makes it to stderr
+                        } finally {
+                            scriptApp.quit();
                         }
                     });
                 } else {
                     final Reader reader = new FileReader(scriptPath);
                     engine.eval(reader);
                 }
-            } catch (IOException | ScriptException | RuntimeException ex) {
-                // PyException is a RuntimeException, so doesn't *have*
-                // to be caught, but it makes sense to do so.
-                System.err.println("Error running Python script "+scriptPath);
-                ex.printStackTrace(System.err);
+            } catch (IOException | ScriptException | RuntimeException
+                    exception) {
+                /*
+                 * PyException is a RuntimeException, so doesn't *have* to be
+                 * caught, but it makes sense to do so.
+                 */
+                System.err.println("Error running Python script " + scriptPath);
+                exception.printStackTrace(System.err);
                 System.exit(1);
             }
         }

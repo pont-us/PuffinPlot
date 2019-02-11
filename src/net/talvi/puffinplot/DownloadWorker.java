@@ -29,8 +29,8 @@ import java.util.logging.Logger;
 import javax.swing.SwingWorker;
 
 /**
- * A SwingWorker which downloads a file from a specified URL and
- * saves it to a specified path.
+ * A SwingWorker which downloads a file from a specified URL and saves it to a
+ * specified path.
  */
 public class DownloadWorker extends SwingWorker<Void, Void> {
 
@@ -38,12 +38,12 @@ public class DownloadWorker extends SwingWorker<Void, Void> {
     private final Path outputPath;
     private final static Logger logger =
             Logger.getLogger(IdToFileMap.class.getName());
-    private IOException exception = null;
+    private IOException storedException = null;
 
     /**
-     * Create a worker which will download a a file from a given URL
-     * to a given path.
-     * 
+     * Create a worker which will download a a file from a given URL to a given
+     * path.
+     *
      * @param url the URL from which to download the file
      * @param outputPath the path to which to save the file
      */
@@ -53,17 +53,20 @@ public class DownloadWorker extends SwingWorker<Void, Void> {
     }
 
     private int getFileSize() {
-        HttpURLConnection conn = null;
+        HttpURLConnection connection = null;
         try {
-            conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("HEAD");
-            conn.getInputStream();
-            return conn.getContentLength();
-        } catch (IOException e) {
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("HEAD");
+            connection.getInputStream();
+            return connection.getContentLength();
+        } catch (IOException ioException) {
+            logger.log(Level.WARNING,
+                    "Exception thrown while getting file size",
+                    ioException);
             return -1;
         } finally {
-            if (conn != null) {
-                conn.disconnect();
+            if (connection != null) {
+                connection.disconnect();
             }
         }
     }
@@ -74,7 +77,8 @@ public class DownloadWorker extends SwingWorker<Void, Void> {
         final int totalSize = getFileSize();
         final File outputFile = outputPath.toFile();
         try (FileOutputStream outStream = new FileOutputStream(outputFile);
-                ReadableByteChannel rbc = Channels.newChannel(url.openStream())) {
+                ReadableByteChannel byteChannel =
+                        Channels.newChannel(url.openStream())) {
            
             long count;
             long totalTransferred = 0;
@@ -82,13 +86,15 @@ public class DownloadWorker extends SwingWorker<Void, Void> {
             while (true) {
                 if (isCancelled()) {
                     logger.log(Level.INFO, "Download cancelled, aborting.");
-                    // The try-with-resources construct will close the
-                    // stream and byte channel automatically when we return.
+                    /*
+                     * The try-with-resources construct will close the stream
+                     * and byte channel automatically when we return.
+                     */
                     return null;
                 }
                 logger.fine(String.format("Download: %d", totalTransferred));
                 count = outStream.getChannel().
-                        transferFrom(rbc, totalTransferred, 256 * 1024);
+                        transferFrom(byteChannel, totalTransferred, 256 * 1024);
                 totalTransferred += count;
                 setProgress(Math.min(100,
                         (int) (100 * totalTransferred / totalSize)));
@@ -100,17 +106,20 @@ public class DownloadWorker extends SwingWorker<Void, Void> {
             }
             logger.info(String.format("Download complete: %d / %d",
                     totalTransferred, totalSize));
-        } catch (IOException ex) {
-            exception = ex;
+        } catch (IOException ioException) {
+            storedException = ioException;
             if (isCancelled()) {
                 logger.log(Level.INFO,
                         "Download was cancelled and exception was thrown.");
             }
-            logger.log(Level.SEVERE, "I/O Exception during download", ex);
+            logger.log(Level.SEVERE, "I/O Exception during download",
+                    ioException);
             
-            // TODO Do something about RuntimeExceptions in this method --
-            // by default they are swallowed silently in a SwingWorker!
-            // See https://baptiste-wicht.com/posts/2010/09/a-better-swingworker.html
+            /*
+             * TODO Do something about RuntimeExceptions in this method -- by
+             * default they are swallowed silently in a SwingWorker! See
+             * https://baptiste-wicht.com/posts/2010/09/a-better-swingworker.html
+             */
         }
         setProgress(100);
         return null;
@@ -119,10 +128,10 @@ public class DownloadWorker extends SwingWorker<Void, Void> {
     /**
      * If an exception was thrown during the download process, this method will
      * return it.
-     * 
-     * @return the exception which was thrown, or null if none was thrown
+     *
+     * @return the storedException which was thrown, or null if none was thrown
      */
-    public IOException getException() {
-        return exception;
+    public IOException getStoredException() {
+        return storedException;
     }
 }

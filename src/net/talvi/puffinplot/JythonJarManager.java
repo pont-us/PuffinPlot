@@ -27,7 +27,7 @@ import java.security.NoSuchAlgorithmException;
 
 /**
  * A collection of static methods for managing the Jython jar.
- *
+ * <p>
  * PuffinPlot can make use of Jython, but for reasons of size Jython is not
  * included in the build. To use Jython in PuffinPlot, the Jython jar must be
  * downloaded and installed locally. This class provides some static utility
@@ -41,6 +41,11 @@ public class JythonJarManager {
     private static final long CORRECT_SIZE = 41135585;
     private static final String CORRECT_SHA1 =
             "942C3294840DC9DFB3528D775F4D02A6D57C421F";
+
+    /**
+     * A string representation of the URL from which the jython jar is
+     * downloaded.
+     */
     public static final String SOURCE_URL_STRING =
             "http://central.maven.org/maven2/org/python/jython-standalone/" +
             "2.7.1/jython-standalone-2.7.1.jar";
@@ -113,13 +118,13 @@ public class JythonJarManager {
     }
 
     /**
-     * Downloads the Jython jar from a hard-coded URL and saves it in
-     * the application data directory.
-     * 
+     * Downloads the Jython jar from a hard-coded URL and saves it in the
+     * application data directory.
+     * <p>
      * This method may block indefinitely.
-     * 
-     * @throws IOException if there is an error reading from the URL
-     * or writing to the file
+     *
+     * @throws IOException if there is an error reading from the URL or writing
+     * to the file
      */
     public static void download() throws IOException {
         // NB: Files.copy can block indefinitely.

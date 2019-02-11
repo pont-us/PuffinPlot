@@ -1530,12 +1530,12 @@ public class PuffinApp {
             // Verify the SHA-1 checksum.
             try {
                 if (!JythonJarManager.checkSha1Digest(true)) {
-                    if (worker.getException() != null) {
+                    if (worker.getStoredException() != null) {
                         errorDialog("Error during download", "<html>"
                                 + "<p style='width: 400px';>"
                                 + "An error occured during the "
                                 + "download. (Error description: ‘"
-                                + worker.getException().getLocalizedMessage()
+                                + worker.getStoredException().getLocalizedMessage()
                                 + "’) Please try again. If the error persists, "
                                 + "please report it to puffinplot@gmail.com.");
                     } else {
