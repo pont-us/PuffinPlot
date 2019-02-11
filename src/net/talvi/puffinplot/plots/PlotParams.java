@@ -48,7 +48,7 @@ public interface PlotParams {
     
     /**
      * @return a list of the currently selected samples. May be empty,
-     * but not null
+     * but not null.
      */
     public List<Sample> getSelectedSamples();
 
@@ -60,16 +60,25 @@ public interface PlotParams {
     public Correction getCorrection();
 
     /**
+     * Returns the X axis of the Zijderveld plot's vertical projection.
+     * Valid values are X (V vs. N), Y (V vs. E), and H (V vs. H).
+     * 
      * @return the X axis of the Zijderveld plot's vertical projection
      */
     public MeasurementAxis getVprojXaxis();
 
     /**
+     * Returns the X axis of the Zijderveld plot's horizontal projection.
+     * Valid values are Y (N is up) and X (W is up).
+     * 
      * @return the X axis of the Zijderveld plot's horizontal projection
      */
     public MeasurementAxis getHprojXaxis();
 
     /**
+     * Returns the Y axis of the Zijderveld plot's horizontal projection.
+     * Valid values are X (N is up) and MINUSY (W is up).
+     * 
      * @return the Y axis of the Zijderveld plot's horizontal projection
      */
     public MeasurementAxis getHprojYaxis();

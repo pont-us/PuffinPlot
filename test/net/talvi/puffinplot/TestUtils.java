@@ -16,10 +16,14 @@
  */
 package net.talvi.puffinplot;
 
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +35,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.imageio.ImageIO;
 
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.MeasurementType;
@@ -39,6 +44,8 @@ import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Vec3;
+import net.talvi.puffinplot.plots.Plot;
+import net.talvi.puffinplot.plots.testdata.TestFileLocator;
 import org.junit.rules.TemporaryFolder;
 
 /**
@@ -188,6 +195,56 @@ public class TestUtils {
             sample.setPcaAnchored(anchored);
             sample.doPca(Correction.NONE);
         });
+    }
+
+    public static boolean isImageCorrect(String expected, BufferedImage actual)
+            throws IOException {
+        final InputStream stream =
+                TestFileLocator.class.getResourceAsStream(expected + ".png");
+        final BufferedImage expectedImage = ImageIO.read(stream);
+        return areImagesEqual(expectedImage, actual);
+    }
+
+    private static boolean areImagesEqual(BufferedImage image1,
+            BufferedImage image2) {
+        if (image1.getHeight() != image2.getHeight()) {
+            return false;
+        }
+        if (image1.getWidth() != image2.getWidth()) {
+            return false;
+        }
+        for (int y = 0; y < image1.getHeight(); y++) {
+            for (int x = 0; x < image1.getWidth(); x++) {
+                if (image1.getRGB(x, y) != image2.getRGB(x, y)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * This is a convenience method for creating reference images for use
+     * as expected values in characterization tests. It saves PNG images
+     * to the user home directory.
+     * 
+     * @param image the image to save
+     * @param filename the filename under which to save the image (without
+     * extension)
+     * @throws IOException if there was an error writing the image
+     */
+    public static void saveImage(BufferedImage image, String filename)
+            throws IOException {
+        final String home = System.getProperty("user.home");
+        final Path path = Paths.get(home, filename + ".png");
+        ImageIO.write(image, "PNG", path.toFile());
+    }
+
+    public static BufferedImage makeImage(Plot plot) {
+        final BufferedImage actual = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+        final Graphics2D graphics = actual.createGraphics();
+        plot.draw(graphics);
+        return actual;
     }
     
     public static class ListHandler extends Handler {

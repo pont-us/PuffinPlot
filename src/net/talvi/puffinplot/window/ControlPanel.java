@@ -53,9 +53,9 @@ public class ControlPanel extends JPanel
 
     private static final long serialVersionUID = 1L;
     private final JLabel correctionField;
-    JComboBox suiteBox;
+    private final JComboBox suiteBox;
     private final RotationBox rotationBox;
-    VVsBox vVsBox;
+    private final VVsBox vVsBox;
     private final HprojBox hprojBox;
     private final PuffinApp app;
     private final Preferences prefs;

@@ -16,19 +16,13 @@
  */
 package net.talvi.puffinplot.plots;
 
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collections;
-import javax.imageio.ImageIO;
 import net.talvi.puffinplot.TestUtils;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
-import net.talvi.puffinplot.plots.testdata.TestFileLocator;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -60,23 +54,18 @@ public class SuiteEqualAreaPlotTest {
     @Test
     public void testDrawNoData() throws IOException {
         final Plot plot = makePlot();
-        final BufferedImage actual =
-                new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
-        final Graphics2D graphics = actual.createGraphics();
-        plot.draw(graphics);
-        assertTrue(isImageCorrect("SuiteEqualAreaPlot-empty", actual));
+        BufferedImage actual = TestUtils.makeImage(makePlot());
+        assertTrue(
+                TestUtils.isImageCorrect("SuiteEqualAreaPlot-empty", actual));
     }
-    
+
     @Test
     public void testDrawNoSuite() throws IOException {
         final Sample sample = new Sample("test", null);
         params.setSample(sample);
-        final Plot plot = makePlot();
-        final BufferedImage actual =
-                new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
-        final Graphics2D graphics = actual.createGraphics();
-        plot.draw(graphics);
-        assertTrue(isImageCorrect("SuiteEqualAreaPlot-empty", actual));        
+        final BufferedImage actual = TestUtils.makeImage(makePlot());
+        assertTrue(
+                TestUtils.isImageCorrect("SuiteEqualAreaPlot-empty", actual));        
     }
     
     @Test
@@ -90,13 +79,8 @@ public class SuiteEqualAreaPlotTest {
                 put("plots.labelPointsInSuitePlots", false);
         params.getSettingsMapBoolean().
                 put("plots.highlightCurrentSample", true);
-        final Plot plot = makePlot();
-        final BufferedImage actual =
-                new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
-        final Graphics2D graphics = actual.createGraphics();
-        plot.draw(graphics);
-        //saveImage(actual, filename);
-        assertTrue(isImageCorrect(filename, actual));        
+        final BufferedImage actual = TestUtils.makeImage(makePlot());
+        assertTrue(TestUtils.isImageCorrect(filename, actual));        
     }
     
     @Test
@@ -108,15 +92,11 @@ public class SuiteEqualAreaPlotTest {
         suite.getSites().get(0).calculateFisherStats(Correction.NONE);
         suite.getSites().get(1).clearFisherStats();
         suite.calculateSuiteMeans(suite.getSamples(), Collections.emptyList());
-        params.getSettingsMapBoolean().put("plots.showSiteA95sOnSuitePlot", true);
+        params.getSettingsMapBoolean().
+                put("plots.showSiteA95sOnSuitePlot", true);
         params.setSample(suite.getSampleByIndex(0));
-        final Plot plot = makePlot();
-        final BufferedImage actual =
-                new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
-        final Graphics2D graphics = actual.createGraphics();
-        plot.draw(graphics);
-        //saveImage(actual, filename);
-        assertTrue(isImageCorrect(filename, actual));        
+        final BufferedImage actual = TestUtils.makeImage(makePlot());
+        assertTrue(TestUtils.isImageCorrect(filename, actual));        
     }
     
     @Test
@@ -128,20 +108,8 @@ public class SuiteEqualAreaPlotTest {
         params.setSample(suite.getSampleByIndex(0));
         params.getSettingsMapBoolean().
                 put("plots.labelPointsInSuitePlots", true);
-        final Plot plot = makePlot();
-        final BufferedImage actual =
-                new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
-        final Graphics2D graphics = actual.createGraphics();
-        plot.draw(graphics);
-        //saveImage(actual, filename);
-        assertTrue(isImageCorrect(filename, actual));        
-    }
-    
-    private static void saveImage(BufferedImage image, String filename)
-            throws IOException {
-        final String home = System.getProperty("user.home");
-        final Path path = Paths.get(home, filename + ".png");
-        ImageIO.write(image, "PNG", path.toFile());
+        BufferedImage actual = TestUtils.makeImage(makePlot());
+        assertTrue(TestUtils.isImageCorrect(filename, actual));        
     }
     
     private SuiteEqualAreaPlot makePlot() {
@@ -150,31 +118,4 @@ public class SuiteEqualAreaPlotTest {
         return new SuiteEqualAreaPlot(params);
     }
     
-    private static boolean isImageCorrect(String expected,
-            BufferedImage actual) throws IOException {
-        final InputStream stream =
-                TestFileLocator.class.getResourceAsStream(expected + ".png");
-        final BufferedImage expectedImage = ImageIO.read(stream);
-        return areImagesEqual(expectedImage, actual);
-    }
-    
-    private static boolean areImagesEqual(
-            BufferedImage image1, BufferedImage image2) {
-        if (image1.getHeight() != image2.getHeight()) {
-            return false;
-        }
-        if (image1.getWidth() != image2.getWidth()) {
-            return false;
-        }
-        
-        for (int y=0; y<image1.getHeight(); y++) {
-            for (int x=0; x<image1.getWidth(); x++)  {
-                if (image1.getRGB(x, y) !=
-                        image2.getRGB(x, y)) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
 }

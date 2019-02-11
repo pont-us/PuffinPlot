@@ -38,8 +38,8 @@ public class SettablePlotParams implements PlotParams {
     private MeasurementAxis hprojYaxis;
     private List<Sample> allSamplesInSelectedSites;
     private float unitSize = 0.12f;
-    private Map<String, String> settingsMap = new HashMap<>();
-    private Map<String, Boolean> settingsMapBoolean = new HashMap<>();
+    private final Map<String, String> settingsMap = new HashMap<>();
+    private final Map<String, Boolean> settingsMapBoolean = new HashMap<>();
     
     @Override
     public Sample getSample() {
