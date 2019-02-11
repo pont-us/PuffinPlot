@@ -25,7 +25,6 @@ import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.prefs.Preferences;
 
 import net.talvi.puffinplot.Util;
 import net.talvi.puffinplot.data.Correction;
