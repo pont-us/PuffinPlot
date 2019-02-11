@@ -29,6 +29,7 @@ public class PuffinUserException extends Exception {
 
     /**
      * Creates a PuffinPlot user exception with the specified message.
+     *
      * @param message the message to use for the new exception
      */
     public PuffinUserException(String message) {
@@ -36,8 +37,9 @@ public class PuffinUserException extends Exception {
     }
     
     /**
-     * Creates a PuffinPlot user exception wrapping the supplied exception.
-     * The detail message will be taken from the supplied exception.
+     * Creates a PuffinPlot user exception wrapping the supplied exception. The
+     * detail message will be taken from the supplied exception.
+     *
      * @param exception the exception to wrap
      */
     public PuffinUserException(IOException exception) {

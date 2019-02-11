@@ -39,11 +39,33 @@ import net.talvi.puffinplot.data.Suite;
 
 import static net.talvi.puffinplot.PuffinApp.getGreatCirclesValidityCondition;
 
+/**
+ * Provides a static method for saving a PuffinPlot suite as a self-contained
+ * bundle comprising data, calculation results, scripts for automated
+ * processing, and optionally the PuffinPlot jar itself.
+ *
+ * @author pont
+ */
 public class Bundle {
     
     private static final Logger LOGGER =
             Logger.getLogger("net.talvi.puffinplot");
 
+    /**
+     * Create and save a PuffinPlot data bundle.
+     * 
+     * @param suite the suite from which to create the bundle
+     * @param bundlePath the path to which to save the bundle
+     * @param correction the correction to apply to the data when performing
+     *        calculations
+     * @param samples the samples to include in suite mean calculations
+     * @param sites the sites to include in suite mean calculations
+     * @param copyJarFile {@code true} if the PuffinPlot jar file should also
+     *        be included in the bundle
+     * @throws IOException if an I/O exception occurred while saving the bundle
+     * @throws PuffinUserException if an exception occurred which saving the
+     *         suite or any of the results files
+     */          
     public static void createBundle(Suite suite, Path bundlePath,
             Correction correction, List<Sample> samples, List<Site> sites,
             boolean copyJarFile)

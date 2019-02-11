@@ -26,7 +26,6 @@ import java.util.Scanner;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 
-
 /**
  * RecentFileList manages a list of file-sets. It is intended to be used
  * to manage a collection of recently used files for convenient re-opening
@@ -90,7 +89,7 @@ public class RecentFileList {
      */
     public String[] getFilesetNames() {
         final String[] result = new String[fileSets.size()];
-        int i=0;
+        int i = 0;
         for (FileSet fileSet: fileSets) {
             result[i] = Integer.toString(i+1) + " " + fileSet.getName();
             i++;
@@ -122,7 +121,7 @@ public class RecentFileList {
      * @return the requested file-set
      */
     public List<File> getFilesAndReorder(int index) {
-        FileSet result = fileSets.get(index);
+        final FileSet result = fileSets.get(index);
         fileSets.remove(index);
         fileSets.add(0, result);
         return result.getFiles();
@@ -135,10 +134,12 @@ public class RecentFileList {
      * @param files the files to be added (as a single file-set) to the list
      */
     public void add(List<File> files) {
-        FileSet f = new FileSet(files);
-        fileSets.remove(f);
-        fileSets.add(0, f);
-        if (fileSets.size() > MAX_LENGTH) fileSets.removeLast();
+        final FileSet fileSet = new FileSet(files);
+        fileSets.remove(fileSet);
+        fileSets.add(0, fileSet);
+        if (fileSets.size() > MAX_LENGTH) {
+            fileSets.removeLast();
+        }
     }
 
     private static class FileSet {
@@ -188,7 +189,7 @@ public class RecentFileList {
             final List<String> pathNames = getPathNames();
             final int prefixLength = longestCommonPrefix(pathNames);
             final List<String> cPathNames =
-                    new ArrayList<>(pathNames.size()+1);
+                    new ArrayList<>(pathNames.size() + 1);
             cPathNames.add(pathNames.get(0).substring(0, prefixLength));
             for (String path: pathNames) {
                 cPathNames.add(path.substring(prefixLength));
@@ -200,9 +201,9 @@ public class RecentFileList {
                 List<String> compressed) {
             final List<String> result =
                     new ArrayList<>(compressed.size()-1);
-            String prefix = compressed.get(0);
+            final String prefix = compressed.get(0);
             for (String path: compressed.subList(1, compressed.size())) {
-                result.add(prefix+path);
+                result.add(prefix + path);
             }
             return result;
         }
@@ -217,60 +218,66 @@ public class RecentFileList {
          * The string representation is designed to be stored and retrieved
          * through the Preferences API, which seems to have trouble with
          * control characters. Thus the format is
-         *
+         * <p>
          * numpaths pathlen1... pathlenN path1path2...pathN
-         *
+         * <p>
          * which avoids the need to find a suitable separator string
          * (i.e. one which can be handled by the Preferences API on all
          * platforms, and will never appear in a pathname on any platform).
-         *
+         * <p>
          * Note that, to avoid overrunning the size limit for a Preferences
          * value, path1 is the longest common prefix of the paths, and
          * the other paths are unique suffixes which, along with path1,
          * make up the full pathnames. getCompressedPathNames and
          * decompressPathNames deal with this encoding scheme.
-         * 
+         * <p>
          * @return a string representation of this class
          */
         @Override
         public String toString() {
-            List<String> pathNames = getCompressedPathNames();
-            StringBuilder sb = new StringBuilder();
-            sb.append(pathNames.size());
-            sb.append(" ");
+            final List<String> pathNames = getCompressedPathNames();
+            final StringBuilder builder = new StringBuilder();
+            builder.append(pathNames.size());
+            builder.append(" ");
             for (String path: pathNames) {
-                sb.append(path.length());
-                sb.append(" ");
+                builder.append(path.length());
+                builder.append(" ");
             }
             for (String path: pathNames) {
-                sb.append(path);
+                builder.append(path);
             }
-            return sb.toString();
+            return builder.toString();
         }
 
-        public static FileSet fromString(String s) {
-            if (s==null) return null;
-            final Scanner scanner = new Scanner(s);
+        public static FileSet fromString(String string) {
+            if (string == null) {
+                return null;
+            }
+            final Scanner scanner = new Scanner(string);
             scanner.useLocale(Locale.ENGLISH);
             final int numPaths = scanner.nextInt();
-            if (numPaths<2) return null;
+            if (numPaths < 2) {
+                return null;
+            }
             final List<Integer> lengths = new ArrayList<>(numPaths);
             final List<String> compressed = new ArrayList<>(numPaths);
-            for (int i=0; i<numPaths; i++) lengths.add(scanner.nextInt());
+            for (int i=0; i<numPaths; i++) {
+                lengths.add(scanner.nextInt());
+            }
             final String allThePaths = scanner.findInLine(".*$");
             int pos=1;
             for (Integer length: lengths) {
-                String path = allThePaths.substring(pos, pos + length);
+                final String path = allThePaths.substring(pos, pos + length);
                 compressed.add(path);
                 pos += length;
             }
-            List<String> decompressed = decompressPathNames(compressed);
-            List<File> files = new ArrayList<>(compressed.size());
+            final List<String> decompressed = decompressPathNames(compressed);
+            final List<File> files = new ArrayList<>(compressed.size());
             for (String filename: decompressed) {
                 files.add(new File(filename));
             }
             FileSet fileSet = null;
-            if (files.size()>0) {
+            if (files.size() > 0) {
                 fileSet = new FileSet(files);
             }
             return fileSet;
@@ -291,9 +298,11 @@ public class RecentFileList {
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (!(o instanceof FileSet)) return false;
-            final FileSet f = (FileSet) o;
+        public boolean equals(Object other) {
+            if (!(other instanceof FileSet)) {
+                return false;
+            }
+            final FileSet f = (FileSet) other;
             return (files.equals(f.files));
         }
 
