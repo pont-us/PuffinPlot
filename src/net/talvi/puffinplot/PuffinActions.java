@@ -572,7 +572,7 @@ public class PuffinActions {
                     'J', false, KeyEvent.VK_C) {
                 private static final long serialVersionUID = 1L;
                 @Override public void actionPerformed(ActionEvent e) {
-                    app.copyPointSelection(); }};
+                    app.copyStepSelection(); }};
     
     /**
      * For each selected sample, sets the selected points using the 
@@ -584,7 +584,7 @@ public class PuffinActions {
             'K', false, KeyEvent.VK_P) {
         private static final long serialVersionUID = 1L;
                 @Override public void actionPerformed(ActionEvent e) {
-                    app.pastePointSelection(); }};
+                    app.pasteStepSelection(); }};
 
     /**
      * For each selected sample, makes the selected points invisible.
@@ -641,7 +641,8 @@ public class PuffinActions {
     /**
      * Opens a print dialog for the site equal-area plot window.
      */
-    public final Action printGc = new PuffinAction("Print site EA window…",
+    public final Action printSiteEqualArea = new PuffinAction(
+            "Print site EA window…",
             "Print the contents of the site equal-area plot window",
             null, false, KeyEvent.VK_N) {
         private static final long serialVersionUID = 1L;
@@ -654,7 +655,7 @@ public class PuffinActions {
      * Opens a printing dialog box allowing printing of the suite equal-area 
      * data display.
      */
-    public final Action printSuiteEqArea = new PuffinAction(
+    public final Action printSuiteEqualArea = new PuffinAction(
             "Print suite EA window…",
             "Print the contents of the suite equal-area plot window",
             null, false, KeyEvent.VK_U) {

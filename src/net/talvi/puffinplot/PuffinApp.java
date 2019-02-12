@@ -144,7 +144,7 @@ public class PuffinApp {
     private RecentFileList recentFiles;
     private Correction correction;
     private final IdToFileMap lastUsedFileOpenDirs;
-    private java.util.BitSet pointSelectionClipboard = new java.util.BitSet(0);
+    private java.util.BitSet stepSelectionClipboard = new java.util.BitSet(0);
     private Properties buildProperties;
     private SuiteCalcs multiSuiteCalcs;
     private ScriptEngine pythonEngine = null;
@@ -427,7 +427,8 @@ public class PuffinApp {
     }
     
     /**
-     * For all selected samples, fit a great circle to the selected points.
+     * For all selected samples, fit a great circle to the selected treatment
+     * steps.
      */
     public void fitGreatCirclesToSelection() {
         for (Sample sample: getSelectedSamples()) {
@@ -440,8 +441,8 @@ public class PuffinApp {
     
     /**
      * For all selected samples, determine a best-fit line to the selected
-     * points by principal component analysis.
-     * 
+     * treatment steps by principal component analysis.
+     * <p>
      * Any affected Fisherian site means or great-circle directions will be
      * recalculated automatically. These directions will not be calculated for
      * any sites that don't have them already.
@@ -535,15 +536,26 @@ public class PuffinApp {
      * Closes the suite whose data is currently being displayed.
      */
     public void closeCurrentSuite() {
-        if (suites == null || suites.isEmpty()) return;
+        if (suites == null || suites.isEmpty()) {
+            return;
+        }
         int index = suites.indexOf(currentSuite);
-        if (!canSuiteBeClosed(currentSuite)) return;
+        if (!canSuiteBeClosed(currentSuite)) {
+            return;
+        }
         suites.remove(currentSuite);
-        // Set new current suite to previous (if any), else next (if any),
-        // or none.
-        if (index > 0) index--;
-        if (suites.size() > 0) currentSuite = suites.get(index);
-        else currentSuite = null;
+        /*
+         * Set new current suite to previous (if any), else next (if any), or
+         * none.
+         */
+        if (index > 0) {
+            index--;
+        }
+        if (suites.size() > 0) {
+            currentSuite = suites.get(index);
+        } else {
+            currentSuite = null;
+        }
         getMainWindow().suitesChanged();
     }
 
@@ -635,9 +647,7 @@ public class PuffinApp {
             final Suite suite;
             if (reallyCreateNewSuite) {
                 suite = new Suite("PuffinPlot " + version.getVersionString());
-                suite.addSavedListener((boolean newState) -> {
-                    updateMainWindowTitle();
-                });
+                suite.addSavedListener(newState -> updateMainWindowTitle());
             } else {
                 suite = getSuite();
             }
@@ -653,10 +663,10 @@ public class PuffinApp {
                 final StringBuilder sb =
                         new StringBuilder(warnings.size() == 1 ? "" :
                                 "The following problems occurred:\n");
-                int i = 0;
+                int nWarnings = 0;
                 final int MAX_WARNINGS = 10;
-                for (String w: warnings) {
-                    if (i == MAX_WARNINGS) {
+                for (String warning: warnings) {
+                    if (nWarnings == MAX_WARNINGS) {
                         final int remainder = warnings.size() - MAX_WARNINGS;
                         if (remainder == 1) {
                             /*
@@ -664,16 +674,16 @@ public class PuffinApp {
                              * when we could just use that line to show the
                              * final warning!
                              */
-                            sb.append(w);
+                            sb.append(warning);
                         } else {
                             sb.append("(").append(remainder).
                                     append(" more errors not shown.)");
                         }
                         break;
                     }
-                    sb.append(w);
+                    sb.append(warning);
                     sb.append("\n");
-                    i++;
+                    nWarnings++;
                 }
                 errorDialog(warnings.size() == 1 ?
                         "Error during file opening" :
@@ -810,7 +820,9 @@ public class PuffinApp {
      */
     public Sample getSample() {
         final Suite suite = getSuite();
-        if (suite==null) return null;
+        if (suite==null) {
+            return null;
+        }
         return suite.getCurrentSample();
     }
 
@@ -822,7 +834,9 @@ public class PuffinApp {
     public List<Sample> getSelectedSamples() {
         final List<Sample> result =
                 getMainWindow().getSampleChooser().getSelectedSamples();
-        if (result==null) return Collections.emptyList();
+        if (result==null) {
+            return Collections.emptyList();
+        }
         return result;
     }
     
@@ -847,7 +861,9 @@ public class PuffinApp {
      */
     public Site getCurrentSite() {
         final Sample sample = getSample();
-        if (sample==null) return null;
+        if (sample==null) {
+            return null;
+        }
         return sample.getSite();
     }
 
@@ -987,7 +1003,9 @@ public class PuffinApp {
      * Shows the window for editing the titles of the custom flags.
      */
     public void showCustomFlagsWindow() {
-        if (currentSuite == null) return;
+        if (currentSuite == null) {
+            return;
+        }
         new CustomFieldEditor(currentSuite.getCustomFlagNames(),
                 "Edit custom flags", this);
     }
@@ -996,7 +1014,9 @@ public class PuffinApp {
      * Shows the window for editing the titles of the custom notes.
      */
     public void showCustomNotesWindow() {
-        if (currentSuite == null) return;
+        if (currentSuite == null) {
+            return;
+        }
         new CustomFieldEditor(currentSuite.getCustomNoteNames(),
                 "Edit custom notes", this);
     }
@@ -1009,7 +1029,9 @@ public class PuffinApp {
      * @param scriptName the external script which will perform the calculations
      */
     public void doAmsCalc(AmsCalculationType calcType, String scriptName) {
-        if (showErrorIfNoSuite()) return;
+        if (showErrorIfNoSuite()) {
+            return;
+        }
         try {
             final String directory =
                     getPrefs().getPrefs().get("data.pmagPyPath",
@@ -1176,7 +1198,9 @@ public class PuffinApp {
                 + "values?",
                 "Confirm clear preferences", 
                 JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-        if (result != JOptionPane.YES_OPTION) return;
+        if (result != JOptionPane.YES_OPTION) {
+            return;
+        }
         try {
             getPrefs().getPrefs().clear();
             getPrefs().getPrefs().flush();
@@ -1191,31 +1215,31 @@ public class PuffinApp {
     }
     
     /**
-     * Copies the current pattern of selected points to a clipboard.
+     * Copies the current pattern of selected treatment steps to a clipboard.
      *
-     * @see #pastePointSelection()
+     * @see #pasteStepSelection()
      */
-    public void copyPointSelection() {
+    public void copyStepSelection() {
         final Sample sample = getSample();
-        if (sample==null) {
+        if (sample == null) {
             return;
         }
-        pointSelectionClipboard = sample.getSelectionBitSet();
+        stepSelectionClipboard = sample.getSelectionBitSet();
         updateDisplay();
     }
     
     /**
-     * For each selected sample, selects the points corresponding to those last
-     * copied to the clipboard.
+     * For each selected sample, selects the treatment steps corresponding to
+     * those last copied to the clipboard.
      *
-     * @see #copyPointSelection()
+     * @see #copyStepSelection()
      */
-    public void pastePointSelection() {
-        if (pointSelectionClipboard==null) {
+    public void pasteStepSelection() {
+        if (stepSelectionClipboard == null) {
             return;
         }
         modifySelectedSamples(s ->
-                s.setSelectionBitSet(pointSelectionClipboard));
+                s.setSelectionBitSet(stepSelectionClipboard));
     }
     
     /**
@@ -1236,7 +1260,7 @@ public class PuffinApp {
                 + "Are you sure you wish to do this?\n"
                 + "Press OK to confirm, or Cancel to abort.";
         final String msg = String.format(msgFmt, samples.size(),
-                samples.size()==1 ? "" : "s", axis.toString());
+                samples.size() == 1 ? "" : "s", axis.toString());
         final int choice = JOptionPane.showConfirmDialog(getMainWindow(), msg,
                 "Flip samples", JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.WARNING_MESSAGE);
@@ -1254,7 +1278,7 @@ public class PuffinApp {
                 + "Are you sure you wish to do this?\n"
                 + "Press OK to confirm, or Cancel to abort.";
         final String msg = String.format(msgFmt, samples.size(),
-                samples.size()==1 ? "" : "s");
+                samples.size() == 1 ? "" : "s");
         final int choice = JOptionPane.showConfirmDialog(getMainWindow(), msg,
                 "Invert samples", JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.WARNING_MESSAGE);
@@ -1268,12 +1292,16 @@ public class PuffinApp {
      * a user-specified factor.
      */
     public void showRescaleMagSusDialog() {
-        if (showErrorIfNoSuite()) return;
+        if (showErrorIfNoSuite()) {
+            return;
+        }
         final String factorString = JOptionPane.showInputDialog(
                 getMainWindow(),
                 "Please enter magnetic susceptibility scaling factor.");
         // My empirically determined value for the Bartington is 4.3e-5.
-        if (factorString == null) return;
+        if (factorString == null) {
+            return;
+        }
         try {
             final double factor = Double.parseDouble(factorString);
             getSuite().rescaleMagSus(factor);
@@ -1287,7 +1315,9 @@ public class PuffinApp {
      * directions.
      */
     public void clearSiteCalculations() {
-        if (showErrorIfNoSuite()) return;
+        if (showErrorIfNoSuite()) {
+            return;
+        }
         for (Site site: getSelectedSites()) {
             site.clearGcFit();
             site.clearFisherStats();
@@ -1299,7 +1329,9 @@ public class PuffinApp {
      * Clears the results of any AMS calculations for the current suite.
      */
     public void clearAmsCalcs()  {
-        if (showErrorIfNoSuite()) return;
+        if (showErrorIfNoSuite()) {
+            return;
+        }
         getSuite().clearAmsCalculations();
         updateDisplay();
     }
@@ -1406,20 +1438,22 @@ public class PuffinApp {
      */
     public void calculateMultiSuiteMeans() {
         multiSuiteCalcs = Suite.calculateMultiSuiteMeans(suites);
-        StringBuilder meansBuilder = new StringBuilder();
-        List<List<String>> meansStrings = new ArrayList<>(8);
+        final StringBuilder meansBuilder = new StringBuilder();
+        final List<List<String>> meansStrings = new ArrayList<>(8);
         meansStrings.add(SuiteCalcs.getHeaders());
         meansStrings.addAll(multiSuiteCalcs.toStrings());
         for (List<String> line: meansStrings) {
             boolean first = true;
             for (String cell: line) {
-                if (!first) meansBuilder.append("\t");
+                if (!first) {
+                    meansBuilder.append("\t");
+                }
                 meansBuilder.append(cell);
                 first = false;
             }
             meansBuilder.append("\n");
         }
-        String meansString = meansBuilder.toString();
+        final String meansString = meansBuilder.toString();
         final JTextArea textArea = new JTextArea(meansString);
         textArea.setTabSize(10);
         JOptionPane.showMessageDialog(getMainWindow(),
@@ -1747,7 +1781,8 @@ public class PuffinApp {
     }
     
     void showSaveAsDialog(Suite suite) {
-        String pathname = getSavePath("Save data", ".ppl", "PuffinPlot data");
+        final String pathname =
+                getSavePath("Save data", ".ppl", "PuffinPlot data");
         if (pathname != null) {
             try {
                 final File file = new File(pathname);
@@ -1765,8 +1800,10 @@ public class PuffinApp {
             final String type) {
         final boolean useSwingChooserForSave = !runningOnOsX();
         final String lastDirKey = title + extension + type;
-        // It's a deliberate choice not to use IdToFileMap here --
-        // see comment on lastUsedSaveDirectories declaration.
+        /*
+         * It's a deliberate choice not to use IdToFileMap here -- see comment
+         * on lastUsedSaveDirectories declaration.
+         */
         final String startingDir =
                 lastUsedSaveDirectories.containsKey(lastDirKey) ?
                 lastUsedSaveDirectories.get(lastDirKey) : null;
