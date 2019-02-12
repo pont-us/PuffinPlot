@@ -19,6 +19,7 @@ package net.talvi.puffinplot.plots;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Random;
 import net.talvi.puffinplot.TestUtils;
 import static net.talvi.puffinplot.TestUtils.createContinuousSuite;
 import static net.talvi.puffinplot.TestUtils.makeImage;
@@ -46,6 +47,11 @@ public class ZPlotTest {
     @Test
     public void testGetNiceName() {
         assertEquals("Zplot", defaultPlot.getNiceName());
+    }
+    
+    @Test
+    public void testLegendGetNiceName() {
+        assertEquals("Zplot key", defaultPlot.getLegend().getNiceName());
     }
 
     @Test
@@ -82,6 +88,67 @@ public class ZPlotTest {
         params.setHprojXaxis(MeasurementAxis.X);
         params.setHprojYaxis(MeasurementAxis.MINUSY);
         final BufferedImage actual = makeZPlotImage(makePlot());
+        TestUtils.saveImage(actual, filename);
+        // assertTrue(TestUtils.isImageCorrect(filename, actual));
+    }
+
+    @Test
+    public void testDrawWithData2() throws IOException {
+        final String filename = "Zplot-2";
+        final Suite suite = TestUtils.createDiscreteSuiteArc();
+        params.getSettingsMapBoolean().put("plots.labelTreatmentSteps", true);
+        params.setSample(suite.getSampleByIndex(0));
+        params.setCorrection(Correction.NONE);
+        params.setVprojXaxis(MeasurementAxis.X);
+        params.setHprojXaxis(MeasurementAxis.Y);
+        params.setHprojYaxis(MeasurementAxis.X);
+        final BufferedImage actual = makeZPlotImage(makePlot());
+        // TestUtils.saveImage(actual, filename);
+        assertTrue(TestUtils.isImageCorrect(filename, actual));
+    }
+
+    @Test
+    public void testDrawWithData3() throws IOException {
+        final String filename = "Zplot-3";
+        final Suite suite = TestUtils.createDiscreteSuiteArc();
+        TestUtils.jitter(suite, new Random(17));
+        suite.getSamples().stream().
+                flatMap(s -> s.getTreatmentSteps().stream()).
+                forEach(step -> {
+                    step.setPcaAnchored(true);
+                    step.setInPca(true);
+                });
+        suite.doSampleCalculations(Correction.NONE);
+        params.setSample(suite.getSampleByIndex(0));
+        params.setCorrection(Correction.NONE);
+        params.setVprojXaxis(MeasurementAxis.X);
+        params.setHprojXaxis(MeasurementAxis.Y);
+        params.setHprojYaxis(MeasurementAxis.X);
+        final BufferedImage actual = makeZPlotImage(makePlot());
+        // TestUtils.saveImage(actual, filename);
+        assertTrue(TestUtils.isImageCorrect(filename, actual));
+    }
+
+    @Test
+    public void testDrawWithData4() throws IOException {
+        final String filename = "Zplot-4";
+        final Suite suite = TestUtils.createDiscreteSuite();
+        TestUtils.jitter(suite, new Random(17));
+        suite.getSamples().stream().
+                flatMap(s -> s.getTreatmentSteps().stream()).
+                forEach(step -> {
+                    step.setPcaAnchored(false);
+                    step.setInPca(true);
+                });
+        suite.doSampleCalculations(Correction.NONE);
+        params.setSample(suite.getSampleByIndex(0));
+        params.getSettingsMap().put("plots.zplotPcaDisplay", "Short");
+        params.setCorrection(Correction.NONE);
+        params.setVprojXaxis(MeasurementAxis.X);
+        params.setHprojXaxis(MeasurementAxis.Y);
+        params.setHprojYaxis(MeasurementAxis.X);
+        final BufferedImage actual = makeZPlotImage(makePlot());
+        // TestUtils.saveImage(actual, filename);
         assertTrue(TestUtils.isImageCorrect(filename, actual));
     }
 
@@ -101,7 +168,7 @@ public class ZPlotTest {
     
     private ZPlot makePlot() {
         params.getSettingsMap().put("plotSizes",
-                "zplot false 10 40 240 240 zplotlegend true 10 10 240 40");
+                "zplot false 10 60 240 200 zplotlegend true 10 10 240 40");
         return new ZPlot(params);
     }
     
