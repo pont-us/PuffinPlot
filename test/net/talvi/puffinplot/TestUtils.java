@@ -103,9 +103,9 @@ public class TestUtils {
                 step.setDiscreteId(sampleName);
                 step.setSuite(suite);
                 step.setMeasurementType(MeasurementType.DISCRETE);
-                step.setAfX(demag);
-                step.setAfY(demag);
-                step.setAfZ(demag);
+                step.setAfX(demag / 1000.);
+                step.setAfY(demag / 1000.);
+                step.setAfZ(demag / 1000.);
                 step.setTreatmentType(TreatmentType.DEGAUSS_XYZ);
                 step.setSample(sample);
                 step.setMagSus(sampleIndex);
@@ -133,9 +133,9 @@ public class TestUtils {
                 step.setDepth(depthString);
                 step.setSuite(suite);
                 step.setMeasurementType(MeasurementType.CONTINUOUS);
-                step.setAfX(demag);
-                step.setAfY(demag);
-                step.setAfZ(demag);
+                step.setAfX(demag / 1000.);
+                step.setAfY(demag / 1000.);
+                step.setAfZ(demag / 1000.);
                 step.setTreatmentType(TreatmentType.DEGAUSS_XYZ);
                 step.setSample(sample);
                 step.setMagSus(depth);
@@ -169,9 +169,9 @@ public class TestUtils {
                 step.setDiscreteId(name);
                 step.setSuite(suite);
                 step.setMeasurementType(MeasurementType.DISCRETE);
-                step.setAfX(demag);
-                step.setAfY(demag);
-                step.setAfZ(demag);
+                step.setAfX(demag / 1000.);
+                step.setAfY(demag / 1000.);
+                step.setAfZ(demag / 1000.);
                 step.setTreatmentType(TreatmentType.DEGAUSS_XYZ);
                 step.setSample(sample);
                 step.setSampAz(0);
@@ -221,6 +221,27 @@ public class TestUtils {
             }
         }
         return true;
+    }
+    
+    public static void jitter(Suite suite, Random rnd) {
+        suite.getSamples().stream().
+                flatMap(s -> s.getTreatmentSteps().stream()).
+                forEach(step -> step.setMoment(jitter(step.getMoment(), rnd)));
+    }
+    
+    private static Vec3 jitter(Vec3 v, Random random) {
+        return new Vec3(
+                v.x * randomFactor(random),
+                v.y * randomFactor(random),
+                v.z * randomFactor(random));
+    }
+    
+    /**
+     * @param random random source
+     * @return a random number between 0.9 and 1.1
+     */
+    private static double randomFactor(Random random) {
+        return random.nextDouble() * 0.2 + 0.9;
     }
 
     /**

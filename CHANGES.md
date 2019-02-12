@@ -93,6 +93,8 @@ Data export
 -   Precision of exported parameters increased to four decimal places.
 -   PuffinPlot can now export a bundle containing both data and a
     processing script, allowing analyses to be reproduced automatically.
+-   In exported site data, write field strengths for minimum and maximum
+	great-circle steps in millitesla rather than tesla.
 
 Miscellaneous bug fixes
 -----------------------

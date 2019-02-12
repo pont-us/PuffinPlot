@@ -1699,20 +1699,22 @@ public class SuiteTest {
     public void testMergeDuplicateSamplesWithDifferentTreatmentSteps() {
         final Suite suite0 = TestUtils.createContinuousSuite();
         final Suite suite1 = TestUtils.createContinuousSuite();
-        suite1.getSamples().stream().flatMap(s -> s.getTreatmentSteps().stream()).
-                forEach(d -> {
-                    d.setAfX(d.getAfX() + 5);
-                    d.setAfY(d.getAfY() + 5);
-                    d.setAfZ(d.getAfZ() + 5);
+        suite1.getSamples().stream().
+                flatMap(sample -> sample.getTreatmentSteps().stream()).
+                forEach(step -> {
+                    step.setAfX(step.getAfX() + 0.005);
+                    step.setAfY(step.getAfY() + 0.005);
+                    step.setAfZ(step.getAfZ() + 0.005);
                 });
         suite1.getSamples().forEach(
-                s -> suite0.addSample(s, s.getNameOrDepth()));
+                sample -> suite0.addSample(sample, sample.getNameOrDepth()));
         suite0.updateReverseIndex();
         suite0.mergeDuplicateSamples(suite0.getSamples());
-        for (Sample s: suite0.getSamples()) {
-            assertArrayEquals(new double[] {0, 5, 10, 15, 20, 25, 30,
-                35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95},
-                    s.getTreatmentLevels(),
+        for (Sample sample: suite0.getSamples()) {
+            assertArrayEquals(new double[]
+            {0, .005, .010, .015, .020, .025, .030, .035, .040, .045, .050,
+                .055, .060, .065, .070, .075, .080, .085, .090, .095},
+                    sample.getTreatmentLevels(),
                     delta
                 );
         }

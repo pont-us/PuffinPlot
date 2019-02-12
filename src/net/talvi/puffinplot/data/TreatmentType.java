@@ -22,33 +22,55 @@ package net.talvi.puffinplot.data;
  * @author pont
  */
 public enum TreatmentType {
-    /** no treatment applied */
-    NONE("No treatment", "", ""),
-    /** static alternating-field treatment along three orthogonal axes */
-    DEGAUSS_XYZ("3-axis degauss", "3-axis AF strength", "T"),
-    /** static alternating-field treatment along one axis*/
-    DEGAUSS_Z("Z-axis degauss", "Z-axis AF strength", "T"),
-    /** anhysteretic remanent magnetization: alternating-field treatment with 
-     a DC biasing field */
-    ARM("Z-axis ARM", "AF strength", "T"), //AF usually more interesting than bias
-    /** isothermal remanent magnetization: a pulsed non-alternating field */
-    IRM("IRM", "IRM field", "T"),
-    /** heating */
-    THERMAL("Heating", "Temperature", "°C"),
-    /** unknown treatment type */
-    UNKNOWN("Unknown", "Unknown treatment", "?");
+    /**
+     * No treatment applied.
+     */
+    NONE("No treatment", "", "", false),
+    /**
+     * Static alternating-field treatment along three orthogonal axes.
+     */
+    DEGAUSS_XYZ("3-axis degauss", "3-axis AF strength", "T", true),
+    /**
+     * Static alternating-field treatment along one axis.
+     */
+    DEGAUSS_Z("Z-axis degauss", "Z-axis AF strength", "T", true),
+    /**
+     * Anhysteretic remanent magnetization: alternating-field treatment with a
+     * DC biasing field. The associated treatment level is assumed to be the
+     * alternating-field strength rather than the bias field.
+     */
+    ARM("Z-axis ARM", "AF strength", "T", true),
+    /**
+     * Isothermal remanent magnetization: a pulsed non-alternating field.
+     */
+    IRM("IRM", "IRM field", "T", true),
+    /**
+     * Heating.
+     */
+    THERMAL("Heating", "Temperature", "°C", false),
+    /**
+     * Unknown treatment type.
+     */
+    UNKNOWN("Unknown", "Unknown treatment", "?", false);
 
     // Human-friendly name for treatment
     private final String name;
-    // The actual quantifiable `thing' applied (temperature or field)
+    /*
+     * A description of what the treatment level measures (e.g. "temperature"
+     * for thermal treatment).
+     */
     private final String treatment;
     // Unit name for the applied `thing'
     private final String unit;
+    // True if and only if this is a magnetic (e.g. AF, IRM) treatment
+    private final boolean magnetic;
 
-    private TreatmentType(String name, String treatment, String unit) {
+    private TreatmentType(String name, String treatment, String unit,
+            boolean magnetic) {
         this.name = name;
         this.treatment = treatment;
         this.unit = unit;
+        this.magnetic = magnetic;
     }
 
     /**
@@ -81,10 +103,10 @@ public enum TreatmentType {
     }
     
     /**
-     * @return {@code true} if this treatment involves application of an
-     * alternating magnetic field
+     * @return {@code true} if and only if this treatment involves application
+     * of a magnetic field
      */
-    public boolean involvesAf() {
-        return this==DEGAUSS_XYZ || this==DEGAUSS_Z || this==ARM;
+    public boolean isMagneticField() {
+        return magnetic;
     }
 }

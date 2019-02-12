@@ -78,25 +78,25 @@ public class TreatmentTypeTest {
     }
     
     @Test
-    public void testIncludesAf() {
+    public void testIsMagneticField() {
         for (TreatmentType treatmentType : TreatmentType.values()) {
             if (treatmentType == TreatmentType.DEGAUSS_XYZ ||
                 treatmentType == TreatmentType.DEGAUSS_Z ||
-                    treatmentType == TreatmentType.ARM) {
-                assertTrue(treatmentType.involvesAf());
+                    treatmentType == TreatmentType.ARM ||
+                    treatmentType == TreatmentType.IRM) {
+                assertTrue(treatmentType.isMagneticField());
             } else {
-                assertFalse(treatmentType.involvesAf());
+                assertFalse(treatmentType.isMagneticField());
             }
         }
     }
     
     @Test
     public void testGetNiceName() {
-        /* Nice names aren't precisely defined and we can't do an automated
-         * test for niceness, so we just check for duplicates and empty
-         * names.
-         */
-        
+        /*
+         * Nice names aren't precisely defined and we can't do an automated test
+         * for niceness, so we just check for duplicates and empty names.
+         */        
         final Collection<String> niceNames =
                 Arrays.stream(TreatmentType.values()).map(tt -> tt.getNiceName()).
                         collect(Collectors.toList());
@@ -111,7 +111,7 @@ public class TreatmentTypeTest {
     @Test
     public void testGetUnit() {
         for (TreatmentType treatmentType : TreatmentType.values()) {
-            if (treatmentType.involvesAf() || treatmentType == TreatmentType.IRM) {
+            if (treatmentType.isMagneticField()) {
                 assertEquals("T", treatmentType.getUnit());
             }
             if (treatmentType == TreatmentType.THERMAL) {

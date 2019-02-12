@@ -57,7 +57,7 @@ public class SiteTest {
             for (int j=0; j<5; j++) {
                 final TreatmentStep d = new TreatmentStep(Vec3.fromPolarDegrees(1, 30+10*j, 20*i));
                 d.setTreatmentType(TreatmentType.DEGAUSS_Z);
-                d.setAfZ(j*10);
+                d.setAfZ(j * 10. / 1000.);
                 d.setOnCircle(true);
                 sample.addTreatmentStep(d);
             }
@@ -67,7 +67,7 @@ public class SiteTest {
         for (int j=0; j<5; j++) {
             final TreatmentStep d = new TreatmentStep(Vec3.fromPolarDegrees(j, 90, 0));
             d.setTreatmentType(TreatmentType.DEGAUSS_Z);
-            d.setAfZ(j*10);
+            d.setAfZ(j * 10. / 1000.);
             d.setInPca(true);
             pcaSample.addTreatmentStep(d);
         }

@@ -703,7 +703,7 @@ public class Jr6LoaderTest {
                 actualTreatmentStep.getTreatmentType());
         
         final double expectedTreatmentLevel =
-                treatmentTypes[(int) expectedValues[0]].involvesAf() ?
+                treatmentTypes[(int) expectedValues[0]].isMagneticField() ?
                 expectedValues[1] / 1000 : expectedValues[1];
         assertEquals(expectedTreatmentLevel,
                 actualTreatmentStep.getTreatmentLevel(), 1e-10);

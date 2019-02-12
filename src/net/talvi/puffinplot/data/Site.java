@@ -242,6 +242,8 @@ public class Site implements SampleGroup {
      * analysis. The list consists of: minFirstGc, maxFirstGc, minLastGc,
      * MaxLastGc. Where minFirstGc is the minimum (among samples in this site)
      * first treatment step value for any great-circle fit, and so forth.
+     * Temperatures are given in degrees Celsius, and AF field strengths
+     * as equivalent inductions in millitesla.
      *
      * @return information on the treatment steps used for the great-circle
      * analysis
@@ -249,14 +251,14 @@ public class Site implements SampleGroup {
     public List<String> getGreatCircleLimitStrings() {
         final List<Double> firsts = new ArrayList<>(samples.size());
         final List<Double> lasts = new ArrayList<>(samples.size());
-        for (Sample s: samples) {
-            final double first = s.getFirstGcStepLevel();
+        for (Sample sample: samples) {
+            final double first = sample.getFirstGcStepLevel();
             if (first != -1) {
                 firsts.add(first);
             }
-            final double last = s.getLastGcStepLevel();
+            final double last = sample.getLastGcStepLevel();
             if (last != -1) {
-                lasts.add(s.getLastGcStepLevel());
+                lasts.add(last);
             }
         }
         return Arrays.asList(new String[] {fmt(min(firsts)),

@@ -703,15 +703,19 @@ public class Sample {
     
     /**
      * Returns the treatment level for the first point used in the great-circle
-     * fit.
-     *
+     * fit. Temperatures are returned in degrees Celsius. Magnetic field
+     * strengths are returned as equivalent magnetic induction in millitesla.
+     * (Note that this differs from PuffinPlot's internal representation,
+     * which is in tesla.)
+     * 
      * @return the treatment level for the first point used in the great-circle
      * fit
      */
     public double getFirstGcStepLevel() {
         for (TreatmentStep step: treatmentSteps) {
             if (step.isOnCircle()) {
-                return step.getTreatmentLevel();
+                return step.getTreatmentLevel() *
+                        (step.getTreatmentType().isMagneticField() ? 1000. : 1);
             }
         }
         return -1;
@@ -719,7 +723,10 @@ public class Sample {
 
     /**
      * Returns the treatment level for the last point used in the great-circle
-     * fit.
+     * fit. Temperatures are returned in degrees Celsius. Magnetic field
+     * strengths are returned as equivalent magnetic induction in millitesla.
+     * (Note that this differs from PuffinPlot's internal representation,
+     * which is in tesla.)
      *
      * @return the treatment level for the last point used in the great-circle
      * fit
@@ -728,7 +735,8 @@ public class Sample {
         double result = -1;
         for (TreatmentStep step: treatmentSteps) {
             if (step.isOnCircle()) {
-                result = step.getTreatmentLevel();
+                result = step.getTreatmentLevel() *
+                        (step.getTreatmentType().isMagneticField() ? 1000. : 1);
             }
         }
         return result;

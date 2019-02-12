@@ -119,7 +119,7 @@ public class DemagPlot extends Plot {
             xAxisLabel = "Measurement number";
         } else {
             String unit = treatmentType.getUnit();
-            if (treatmentType.involvesAf()) {
+            if (treatmentType.isMagneticField()) {
                 unit = "m" + unit;
                 demagRescale = 1000;
             }
