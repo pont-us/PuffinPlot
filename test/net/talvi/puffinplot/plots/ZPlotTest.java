@@ -88,8 +88,8 @@ public class ZPlotTest {
         params.setHprojXaxis(MeasurementAxis.X);
         params.setHprojYaxis(MeasurementAxis.MINUSY);
         final BufferedImage actual = makeZPlotImage(makePlot());
-        TestUtils.saveImage(actual, filename);
-        // assertTrue(TestUtils.isImageCorrect(filename, actual));
+        // TestUtils.saveImage(actual, filename);
+        assertTrue(TestUtils.isImageCorrect(filename, actual));
     }
 
     @Test
