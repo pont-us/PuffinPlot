@@ -1020,7 +1020,7 @@ public class TreatmentStep {
      * @return the highest treatment level for any of the supplied treatment step objects
      * @throws NullPointerException if {@code data} is null
      */
-    public static double maxTreatmentLevel(List<TreatmentStep> data) {
+    public static double maxTreatmentLevel(Collection<TreatmentStep> data) {
         requireNonNull(data, "data must be non-null");
         double max = 0;
         for (TreatmentStep step: data) {
@@ -1041,7 +1041,7 @@ public class TreatmentStep {
      * for any of the supplied treatment step objects
      * @throws NullPointerException if {@code data} is null
      */
-    public static double maxIntensity(List<TreatmentStep> data) {
+    public static double maxIntensity(Collection<TreatmentStep> data) {
         requireNonNull(data, "data must be non-null");
         double max = 0;
         for (TreatmentStep step: data) {
@@ -1062,7 +1062,7 @@ public class TreatmentStep {
      * objects
      * @throws NullPointerException if {@code data} is null
      */
-    public static double maxMagSus(List<TreatmentStep> data) {
+    public static double maxMagSus(Collection<TreatmentStep> data) {
         requireNonNull(data, "data must be non-null");
         double max = 0;
         for (TreatmentStep step: data) {

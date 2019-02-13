@@ -21,6 +21,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
@@ -87,11 +88,8 @@ public class DemagPlot extends Plot {
             return;
         }
 
-        final Rectangle2D dim = cropRectangle(getDimensions(),
-                320, 100, 50, 290);
         g.setColor(Color.BLACK);
-        double maxDemag = TreatmentStep.maxTreatmentLevel(data);
-        double maxIntens = TreatmentStep.maxIntensity(data);
+        final double maxDemag = TreatmentStep.maxTreatmentLevel(data);
 
         /*
          * If all the measurements have the same demag level, we'll just plot
@@ -106,10 +104,7 @@ public class DemagPlot extends Plot {
         } else {
             xAxisLength = maxDemag;
         }
-        if (maxIntens == 0) {
-            maxIntens = 1;
-        }
-
+        
         final TreatmentType treatmentType =
                 sample.getTreatmentStepByIndex(sample.getNumberOfSteps() - 1).
                         getTreatmentType();
@@ -138,13 +133,13 @@ public class DemagPlot extends Plot {
         }
         
         final PlotAxis xAxis = new PlotAxis(xAxisParams, this);
-        final String vAxisLabel = params.getSetting(
-                "plots."+getName()+".vAxisLabel",
-                "Magnetization (A/m)");
-        final PlotAxis yAxis =
-                new PlotAxis(new AxisParameters(maxIntens, Direction.UP).
-                withLabel(vAxisLabel).withNumberEachTick(), this);
-        
+        final PlotAxis yAxis = new PlotAxis(
+                new AxisParameters(correctedMaxIntensity(data), Direction.UP).
+                        withLabel(vAxisLabel()).withNumberEachTick(),
+                this);
+
+        final Rectangle2D dim = cropRectangle(getDimensions(),
+                320, 100, 50, 290);
         final double xScale = dim.getWidth() / xAxis.getLength();
         final double yScale = dim.getHeight() / yAxis.getLength();
         yAxis.draw(g, yScale, (int) dim.getMinX(), (int) dim.getMaxY());
@@ -178,12 +173,7 @@ public class DemagPlot extends Plot {
             addPoint(null,
                     new Point2D.Double(dim.getMaxX() + 10, dim.getMaxY()),
                     false, false, false);
-            final AxisParameters msAxisParams =
-                    new AxisParameters(TreatmentStep.maxMagSus(data),
-                    Direction.UP).withNumberEachTick();
-            msAxisParams.label = "Mag. sus. (S.I.)";
-            msAxisParams.farSide = true;
-            final PlotAxis msAxis = new PlotAxis(msAxisParams, this);
+            final PlotAxis msAxis = makeMagSusAxis(data);
             final double msScale = dim.getHeight() / msAxis.getLength();
             msAxis.draw(g, msScale, (int) dim.getMaxX(), (int) dim.getMaxY());
             i = 0;
@@ -193,11 +183,11 @@ public class DemagPlot extends Plot {
                         step.getTreatmentLevel() * demagRescale;
                 final double xPos = dim.getMinX() +
                     (xBySequence ? (i + 1) : demagLevel) * xScale;
-                double magSus = step.getMagSus();
-                if (magSus < 0) {
-                    magSus = 0;
-                }
                 if (step.hasMagSus()) {
+                    double magSus = step.getMagSus();
+                    if (magSus < 0) {
+                        magSus = 0;
+                    }
                     addPoint(step, new Point2D.Double(xPos,
                             dim.getMaxY() - magSus * msScale),
                             false, false, !first);
@@ -207,5 +197,39 @@ public class DemagPlot extends Plot {
             }
         }
         drawPoints(g);
+    }
+
+    private String vAxisLabel() {
+        return params.getSetting("plots." + getName() + ".vAxisLabel",
+                "Magnetization (A/m)");
+    }
+
+    /**
+     * @param steps some treatment steps
+     * @return the maximum magnetic intensity of the steps if this value is not
+     *   0; 1 if the maximum intensity is 0
+     */
+    private static double correctedMaxIntensity(
+            final Collection<TreatmentStep> steps) {
+        double maxIntens = TreatmentStep.maxIntensity(steps);
+        if (maxIntens == 0) {
+            maxIntens = 1;
+        }
+        return maxIntens;
+    }
+
+    private PlotAxis makeMagSusAxis(Collection<TreatmentStep> data) {
+        double maxMagSus = TreatmentStep.maxMagSus(data);
+        
+        if (maxMagSus <= 0) {
+            maxMagSus = 1;
+        }
+        final AxisParameters msAxisParams =
+                new AxisParameters(maxMagSus, Direction.UP).
+                        withNumberEachTick();
+        msAxisParams.label = "Mag. sus. (S.I.)";
+        msAxisParams.farSide = true;
+        final PlotAxis msAxis = new PlotAxis(msAxisParams, this);
+        return msAxis;
     }
 }
