@@ -194,7 +194,9 @@ public class PuffinApp {
         loadBuildProperties();
         version = Version.fromGitProperties(this::getBuildProperty);
         prefs = new PuffinPrefs(this);
-        lastUsedFileOpenDirs = new IdToFileMap(prefs.getPrefs());
+        lastUsedFileOpenDirs = new IdToFileMap(
+                key -> prefs.getPrefs().get(key, ""),
+                prefs.getPrefs()::put);
         actions = new PuffinActions(this);
         plotParams = new PlotParams() {
             @Override

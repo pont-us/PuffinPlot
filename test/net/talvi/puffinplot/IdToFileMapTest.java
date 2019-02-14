@@ -21,7 +21,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -38,8 +40,9 @@ import static org.junit.Assert.assertNull;
  */
 public class IdToFileMapTest {
     
-    private Preferences prefs;
-    private IdToFileMap idToFileMap;
+    private Map<String, String> backingStore = new HashMap<>();
+    private IdToFileMap idToFileMap1;
+    private IdToFileMap idToFileMap2;
     private List<File> dirs;
     private static final int nDirs = 5;
     private static final String[] identifiers ={
@@ -47,18 +50,10 @@ public class IdToFileMapTest {
         "Five, a slightly longer ID string"};
     private static final String nonExistentKey = "This key does not exist.";
     
-    public IdToFileMapTest() {
-    }
-    
     @Before
     public void setUp() throws IOException {
-        final Preferences classPrefs =
-                Preferences.userNodeForPackage(IdToFileMapTest.class);
-        prefs = classPrefs.node("test");
-        // There's no actual "test" package corresponding to this node,
-        // but it's not going to clash with anything else, and using a
-        // separate node allows us to clear it easily after the test.
-        idToFileMap = new IdToFileMap(prefs);
+        idToFileMap1 = new IdToFileMap(backingStore::get, backingStore::put);
+        idToFileMap2 = new IdToFileMap(backingStore::get, backingStore::put);
         dirs = new ArrayList<>(nDirs);
         for (int i=0; i<nDirs; i++) {
             final Path path = Files.createTempDirectory("puffinplot-test");
@@ -68,10 +63,6 @@ public class IdToFileMapTest {
     
     @After
     public void tearDown() throws BackingStoreException {
-        idToFileMap = null;
-        // Nobody else should be using this node so we can safely clear it.
-        prefs.clear();
-        prefs.flush();
         for (File file: dirs) {
             file.delete();
         }
@@ -83,11 +74,11 @@ public class IdToFileMapTest {
     @Test
     public void testPutAndGet() {
         for (int i=0; i<nDirs; i++) {
-            idToFileMap.put(identifiers[i], dirs.get(i));
+            idToFileMap1.put(identifiers[i], dirs.get(i));
         }
         
         for (int i=0; i<nDirs; i++) {
-            final File dir = idToFileMap.get(identifiers[i]);
+            final File dir = idToFileMap2.get(identifiers[i]);
             assertEquals(dirs.get(i), dir);
         }
     }
@@ -99,11 +90,11 @@ public class IdToFileMapTest {
     @Test
     public void testPutAndGetString() throws IOException {
         for (int i=0; i<nDirs; i++) {
-            idToFileMap.put(identifiers[i], dirs.get(i));
+            idToFileMap2.put(identifiers[i], dirs.get(i));
         }
         
         for (int i=0; i<nDirs; i++) {
-            final String dir = idToFileMap.getString(identifiers[i]);
+            final String dir = idToFileMap1.getString(identifiers[i]);
             assertEquals(dirs.get(i).getCanonicalPath(), dir);
         }
     }
@@ -113,8 +104,8 @@ public class IdToFileMapTest {
      */
     @Test
     public void testNonexistent() {
-        assertNull(idToFileMap.get(nonExistentKey));;
-        assertNull(idToFileMap.getString(nonExistentKey));
+        assertNull(idToFileMap1.get(nonExistentKey));
+        assertNull(idToFileMap2.getString(nonExistentKey));
     }
     
 }

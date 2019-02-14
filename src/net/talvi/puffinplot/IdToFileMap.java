@@ -18,46 +18,56 @@ package net.talvi.puffinplot;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
+import java.util.function.BiConsumer;
+import java.util.function.UnaryOperator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.prefs.Preferences;
 
 /**
- * A class to maintain a mapping between identifier strings and directories.
- * 
- * The store is backed by a Java Preferences object supplied to the 
- * constructor. The intended application is keeping track of last-used
- * directories for Open File dialog boxes.
+ * A class to maintain a mapping between identifier strings and files.
+ * <p>
+ * This is essentially a thin wrapper around a supplied getter and putter
+ * method; in the PuffinPlot Swing application, these are supplied by a
+ * java.util.prefs.Preferences object, and the IdToFileMap is used to
+ * keep track of the last-used directory for various Open File dialogs.
  *
  * @author pont
  */
 public class IdToFileMap {
     
-    private final Preferences prefs;
-    // prefix for preferences keys
+    private final UnaryOperator<String> getter;
+    private final BiConsumer<String, String> putter;
+    // prefix for keys
     private final static String PREFS_PREFIX = "lastUsedFileDir.";
     private final static Logger logger =
             Logger.getLogger(IdToFileMap.class.getName());
 
     /**
      * Creates a new IdToFileMap, which wwill store and retrieve mappings
-     * using the supplied Preferences object.
+     * using the supplied getter and putter.
      * 
-     * @param preferences the Preferences object in which to store the mappings
+     * @param getter a getter method which returns a value for a provided
+     * key. For a non-existent key, it should return an empty string.
+     * @param putter a fuction which takes a key and a value, and stores
+     * the value under the given key.
      */
-    public IdToFileMap(Preferences preferences) {
-        this.prefs = preferences;
+    
+    public IdToFileMap(UnaryOperator<String> getter,
+            BiConsumer<String, String> putter) {
+        this.getter = getter;
+        this.putter = putter;
     }
     
     /**
      * Return the directory associated with an identifier.
      * 
-     * @param identifier a dialog identifier
+     * @param identifier an identifier
      * @return the associated directory, or null if there is none
      */
     public File get(String identifier) {
-        final String filename = prefs.get(PREFS_PREFIX + identifier, "");
-        if (filename.isEmpty()) {
+        final String filename = getter.apply(PREFS_PREFIX + identifier);
+        if (filename == null || filename.isEmpty()) {
             return null;
         } else {
             return new File(filename);
@@ -67,13 +77,13 @@ public class IdToFileMap {
     /**
      * Return the directory associated with an identifier, as a string.
      * 
-     * @param identifier a dialog identifier
+     * @param identifier an identifier
      * @return a string giving the canonical path of the associated directory,
      *         or null if there is none
      */
     public String getString(String identifier) {
-        final String filename = prefs.get(PREFS_PREFIX + identifier, "");
-        if (filename.isEmpty()) {
+        final String filename = getter.apply(PREFS_PREFIX + identifier);
+        if (filename == null || filename.isEmpty()) {
             return null;
         } else {
             return filename;
@@ -81,18 +91,21 @@ public class IdToFileMap {
     }
     
     /**
-     * Set the directory associated with an open dialog identifier.
+     * Set the directory associated with an identifier.
      * 
-     * @param identifier an dialog identifier
-     * @param directory the associated directory
+     * @param identifier an identifier (non-null)
+     * @param directory the associated directory (non-null)
      */
     public void put(String identifier, File directory) {
+        Objects.requireNonNull(identifier);
+        Objects.requireNonNull(directory);
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException(
                     "Supplied file object must be a directory.");
         }
         try {
-            prefs.put(PREFS_PREFIX + identifier, directory.getCanonicalPath());
+            putter.accept(PREFS_PREFIX + identifier,
+                    directory.getCanonicalPath());
         } catch (IOException exception) {
             logger.log(Level.WARNING,
                     "Could not get directory path.", exception);

@@ -155,8 +155,9 @@ public final class PuffinPrefs {
      * @see java.util.prefs.Preferences
      */
     public void load() {
-        app.setRecentFiles(new RecentFileList(getPrefs()));
-        setSensorLengths(SensorLengths.fromPrefs(prefs));
+        app.setRecentFiles(
+                new RecentFileList(key -> getPrefs().get(key, null)));
+        setSensorLengths(SensorLengths.fromPrefs(getPrefs()));
         twoGeeProtocol = TwoGeeLoader.Protocol.
                 valueOf(prefs.get("measurementProtocol", "NORMAL"));
     }
@@ -169,7 +170,7 @@ public final class PuffinPrefs {
      */
     public void save() {
         Preferences p = getPrefs();
-        app.getRecentFiles().save(p);
+        app.getRecentFiles().save(getPrefs()::remove, getPrefs()::put);
         p.put("plotSizes",
                 app.getMainWindow().getGraphDisplay().getPlotSizeString());
         p.put("correction", app.getCorrection().toString());
