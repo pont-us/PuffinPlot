@@ -23,21 +23,27 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
-import java.util.prefs.Preferences;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 /**
- * RecentFileList manages a list of file-sets. It is intended to be used
- * to manage a collection of recently used files for convenient re-opening
- * by a user. Note that each item in the list can comprise multiple files.
- * The length of the list is currently hard-wired to 8, though this would
- * be trivial to change if necessary.
- * 
- * RecentFileList loads and saves its data to a
- * {@link java.util.prefs.Preferences} object, using the keys of the form
+ * RecentFileList manages a list of file-sets. It is intended to be used to
+ * manage a collection of recently used files for convenient re-opening by a
+ * user. Note that each item in the list can comprise multiple files. The length
+ * of the list is currently hard-wired to 8, though this would be trivial to
+ * change if necessary.
+ * <p>
+ * RecentFileList can load and store data to a backing store which maps Strings
+ * to Strings; in normal use in the PuffinPlot desktop application, a
+ * {@link java.util.prefs.Preferences} object fulfils this role. The constructor
+ * and save method take functional interfaces as arguments, so any object
+ * providing put, get, and remove methods for a String-to-String map can be used
+ * as a store. RecentFileList prefixes its keys with the string
  * {@code recentFileX}, where X is a non-negative integer less than the maximum
  * number of file-sets.
- * 
+ * * 
  * @author pont
  */
 public class RecentFileList {
@@ -46,34 +52,41 @@ public class RecentFileList {
     private final LinkedList<FileSet> fileSets;
 
     /**
-     * Creates a new file list, reading data (if any) from the supplied
-     * {@link Preferences} object. If any {@code recentFile0} (and so on)
-     * keys are absent, no error is raised, and the corresponding slots
-     * in the file list are left empty.
-     * 
-     * @param prefs the preferences object from which the read file list
-     * data
+     * Creates a new file list, reading data (if any) using the supplied getter.
+     * The getter must return {@code null} for a non-existent key. If any of the
+     * {@code recentFile0} (and so on) keys are absent, no error is raised, and
+     * the corresponding slots in the file list are left empty.
+     *
+     * @param getter a function which takes a key and returns a value from a
+     * backing store
      */
-    public RecentFileList(Preferences prefs) {
+    public RecentFileList(UnaryOperator<String> getter) {
         fileSets = new LinkedList<>();
         for (int i = 0; i < MAX_LENGTH; i++) {
             FileSet fileSet =
-                    FileSet.fromString(prefs.get("recentFile" + i, null));
+                    FileSet.fromString(getter.apply("recentFile" + i));
             if (fileSet != null) fileSets.add(fileSet);
         }
     }
 
     /**
-     * Saves the recent file list to the specified Preferences object.
+     * Stores the recent file list using the supplied remover and putter
+     * functions.
      * 
-     * @param prefs the Preferences to which to save the recent file list
+     * @param remover a function which takes a key and removes the corresponding
+     * key-value pair from a backing store. If the key is absent, it should
+     * do nothing.
+     * @param putter a function which stores a key-value pair, taking a key as
+     * the first argument and a value as the second argument. It will not be
+     * called with a null key or with a null value.
      */
-    public void save(Preferences prefs) {
+    public void save(Consumer<String> remover,
+            BiConsumer<String, String> putter) {
         for (int i = 0; i < MAX_LENGTH; i++) {
-            prefs.remove("recentFile" + i);
+            remover.accept("recentFile" + i);
         }
         for (int i = 0; i < fileSets.size(); i++) {
-            prefs.put("recentFile" + i, fileSets.get(i).toString());
+            putter.accept("recentFile" + i, fileSets.get(i).toString());
         }
     }
 
@@ -216,20 +229,20 @@ public class RecentFileList {
 
         /**
          * The string representation is designed to be stored and retrieved
-         * through the Preferences API, which seems to have trouble with
-         * control characters. Thus the format is
+         * through the java.util.prefs Preferences API, which seems to have
+         * trouble with control characters. Thus the format is
          * <p>
          * numpaths pathlen1... pathlenN path1path2...pathN
          * <p>
-         * which avoids the need to find a suitable separator string
-         * (i.e. one which can be handled by the Preferences API on all
-         * platforms, and will never appear in a pathname on any platform).
+         * which avoids the need to find a suitable separator string (i.e. one
+         * which can be handled by the Preferences API on all platforms, and
+         * will never appear in a pathname on any platform).
          * <p>
          * Note that, to avoid overrunning the size limit for a Preferences
-         * value, path1 is the longest common prefix of the paths, and
-         * the other paths are unique suffixes which, along with path1,
-         * make up the full pathnames. getCompressedPathNames and
-         * decompressPathNames deal with this encoding scheme.
+         * value, path1 is the longest common prefix of the paths, and the other
+         * paths are unique suffixes which, along with path1, make up the full
+         * pathnames. getCompressedPathNames and decompressPathNames deal with
+         * this encoding scheme.
          * <p>
          * @return a string representation of this class
          */
