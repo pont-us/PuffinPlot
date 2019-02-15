@@ -147,7 +147,7 @@ public class PuffinActions {
             null, false, KeyEvent.VK_A) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent event) {
-            if (app.getSuite() == null) {
+            if (app.getCurrentSuite() == null) {
                 app.errorDialog("Error saving calculations", "No file loaded.");
                             return;
             }
@@ -156,7 +156,7 @@ public class PuffinActions {
                     ".csv", "Comma Separated Values");
             if (pathname != null) {
                 try {
-                    app.getSuite().saveCalcsSample(new File(pathname));
+                    app.getCurrentSuite().saveCalcsSample(new File(pathname));
                 } catch (PuffinUserException ex) {
                     app.errorDialog("Error saving calculations", ex);
                 }
@@ -174,7 +174,7 @@ public class PuffinActions {
             null, false, KeyEvent.VK_I) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent arg0) {
-            if (app.getSuite() == null) {
+            if (app.getCurrentSuite() == null) {
                 app.errorDialog("Error saving calculation", "No file loaded.");
                             return;
             }
@@ -183,7 +183,7 @@ public class PuffinActions {
 
             if (pathname != null) {
                 try {
-                    app.getSuite().saveCalcsSite(new File(pathname));
+                    app.getCurrentSuite().saveCalcsSite(new File(pathname));
                 } catch (PuffinUserException ex) {
                     app.errorDialog("Error saving calculations", ex);
                 }
@@ -201,7 +201,7 @@ public class PuffinActions {
             null, false, KeyEvent.VK_U) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent arg0) {
-            if (app.getSuite() == null) {
+            if (app.getCurrentSuite() == null) {
                 app.errorDialog("Error saving calculation", "No file loaded.");
                 return;
             }
@@ -210,7 +210,7 @@ public class PuffinActions {
 
             if (pathname != null) {
                 try {
-                    app.getSuite().saveCalcsSuite(new File(pathname));
+                    app.getCurrentSuite().saveCalcsSuite(new File(pathname));
                 } catch (PuffinUserException ex) {
                     app.errorDialog("Error saving calculations",
                             ex.getLocalizedMessage());
@@ -255,8 +255,8 @@ public class PuffinActions {
             KeyEvent.VK_A) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent arg0) {
-            if (app.getSuite() != null) {
-                app.showSaveAsDialog(app.getSuite());
+            if (app.getCurrentSuite() != null) {
+                app.showSaveAsDialog(app.getCurrentSuite());
             }
         }
     };
@@ -343,12 +343,13 @@ public class PuffinActions {
      * of the selected samples.
      */
     public final Action fisherOnSample = new PuffinAction("Fisher on sample",
-            "Fisher statistics on selected demagnetization steps of selected samples",
+            "Fisher statistics on selected demagnetization steps of "
+                    + "selected samples",
             null, false,
             KeyEvent.VK_S) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            final Suite suite = app.getSuite();
+            final Suite suite = app.getCurrentSuite();
             if (suite == null) {
                 app.errorDialog("Fisher on sample", "No suite loaded.");
             } else {
@@ -371,7 +372,7 @@ public class PuffinActions {
             KeyEvent.VK_I) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            final Suite suite = app.getSuite();
+            final Suite suite = app.getCurrentSuite();
             if (suite == null) {
                 app.errorDialog("Fisher by site", "No suite loaded.");
             } else if (suite.getSites().isEmpty()) {
@@ -394,7 +395,7 @@ public class PuffinActions {
             'F', true, KeyEvent.VK_U) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            final Suite suite = app.getSuite();
+            final Suite suite = app.getCurrentSuite();
             if (suite == null) {
                 app.errorDialog("Calculate suite means", "No suite loaded.");
             } else {
@@ -721,10 +722,10 @@ public class PuffinActions {
             KeyEvent.VK_I) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            if (app.getSuite() == null) return;
+            if (app.getCurrentSuite() == null) return;
             String pathname = app.getSavePath("Export IRM data", null,
                     null);
-            app.getSuite().exportToFiles(new File(pathname),
+            app.getCurrentSuite().exportToFiles(new File(pathname),
                     Arrays.asList(new TreatmentStepField[] {TreatmentStepField.IRM_FIELD,
                     TreatmentStepField.VIRT_MAGNETIZATION}));
         }
@@ -958,7 +959,7 @@ public class PuffinActions {
             KeyEvent.VK_C) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            app.getSuite().clearSites(app.getSelectedSamples());
+            app.getCurrentSuite().clearSites(app.getSelectedSamples());
             app.updateDisplay();
         }
     };
@@ -975,7 +976,7 @@ public class PuffinActions {
         @Override public void actionPerformed(ActionEvent e) {
             final String name = JOptionPane.showInputDialog("Site name");
             if (name==null || "".equals(name)) return;
-            app.getSuite().setNamedSiteForSamples(app.getSelectedSamples(),
+            app.getCurrentSuite().setNamedSiteForSamples(app.getSelectedSamples(),
                     name);
             app.updateDisplay();
         }
@@ -995,7 +996,7 @@ public class PuffinActions {
             final String maskSpec =
                     JOptionPane.showInputDialog("Character positions to use");
             if (maskSpec==null || "".equals(maskSpec)) return;
-            app.getSuite().setSiteNamesBySubstring(app.getSelectedSamples(),
+            app.getCurrentSuite().setSiteNamesBySubstring(app.getSelectedSamples(),
                     Util.numberRangeStringToBitSet(maskSpec, 256));
             app.updateDisplay();
         }
@@ -1023,7 +1024,7 @@ public class PuffinActions {
                         thicknessString + " is not a number.");
             }
             if (Float.isNaN(thickness)) return;
-            app.getSuite().setSiteNamesByDepth(app.getSelectedSamples(),
+            app.getCurrentSuite().setSiteNamesByDepth(app.getSelectedSamples(),
                     thickness);
             app.updateDisplay();
         }
@@ -1198,7 +1199,7 @@ public class PuffinActions {
                     JOptionPane.OK_CANCEL_OPTION,
                     JOptionPane.PLAIN_MESSAGE);
             if (option == JOptionPane.OK_OPTION) {
-                app.getSuite().removeSamplesByTreatmentType(
+                app.getCurrentSuite().removeSamplesByTreatmentType(
                         app.getSelectedSamples(),
                         TreatmentType.values()[comboBox.getSelectedIndex()]
                 );
@@ -1216,7 +1217,7 @@ public class PuffinActions {
             null, false, KeyEvent.VK_M) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            app.getSuite().mergeDuplicateTreatmentSteps(
+            app.getCurrentSuite().mergeDuplicateTreatmentSteps(
                     app.getSelectedSamples());
             app.updateDisplay();
         }
@@ -1232,7 +1233,7 @@ public class PuffinActions {
             null, false, KeyEvent.VK_M) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            app.getSuite().mergeDuplicateSamples(app.getSelectedSamples());
+            app.getCurrentSuite().mergeDuplicateSamples(app.getSelectedSamples());
             app.updateDisplay();
         }
     };

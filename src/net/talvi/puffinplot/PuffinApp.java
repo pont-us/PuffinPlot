@@ -174,8 +174,8 @@ public class PuffinApp {
 
         @Override
         public void sampleClicked(Sample sample) {
-            final Suite suite = getSuite();
-            getSuite().setCurrentSampleIndex(suite.getIndexBySample(sample));
+            final Suite suite = getCurrentSuite();
+            getCurrentSuite().setCurrentSampleIndex(suite.getIndexBySample(sample));
             getMainWindow().getSampleChooser().updateValueFromSuite();
             updateDisplay();
         }
@@ -204,7 +204,7 @@ public class PuffinApp {
                 return mainGraphDisplay != null &&
                         mainGraphDisplay.isPrintingInProgress()
                         ? mainGraphDisplay.getCurrentlyPrintingSample()
-                        : PuffinApp.this.getSample();
+                        : PuffinApp.this.getCurrentSample();
             }
             @Override
             public List<Sample> getSelectedSamples() {
@@ -338,7 +338,7 @@ public class PuffinApp {
      * has changed.
      */
     public void redoCalculationsForAllSuites() {
-        for (Suite suite: suites) {
+        for (Suite suite: getSuites()) {
             suite.doSampleCalculations(getCorrection());
             suite.doSiteCalculations(getCorrection(),
                     getGreatCirclesValidityCondition());
@@ -359,8 +359,14 @@ public class PuffinApp {
              * the about box, so we can get away with just logging it.
              */
         } finally {
-            if (propStream != null)
-                try {propStream.close();} catch (IOException e) {}
+            if (propStream != null) {
+                try {
+                    propStream.close();
+                } catch (IOException ex) {
+                    LOGGER.log(Level.WARNING, "Error closing property stream",
+                            ex);
+                }                
+            }
         }
         LOGGER.log(Level.INFO, "Build date: {0}",
                 getBuildProperty("build.date"));
@@ -420,8 +426,10 @@ public class PuffinApp {
                 site.calculateFisherStats(getCorrection());
             }
             if (site.getGreatCircles() != null) {
-                // PCAs are also used in GC calculations, so this needs
-                // to be recalculated even if only the PCA has changed.
+                /*
+                 * PCAs are also used in GC calculations, so this needs to be
+                 * recalculated even if only the PCA has changed.
+                 */
                 site.calculateGreatCirclesDirection(getCorrection(),
                         getGreatCirclesValidityCondition());
             }
@@ -600,7 +608,7 @@ public class PuffinApp {
          */
         recentFiles.add(files);
         
-        final boolean reallyCreateNewSuite = createNewSuite || getSuite()==null;
+        final boolean reallyCreateNewSuite = createNewSuite || getCurrentSuite()==null;
 
         try {
             final FileType guessedType = FileType.guess(files.get(0));
@@ -651,7 +659,7 @@ public class PuffinApp {
                 suite = new Suite("PuffinPlot " + version.getVersionString());
                 suite.addSavedListener(newState -> updateMainWindowTitle());
             } else {
-                suite = getSuite();
+                suite = getCurrentSuite();
             }
             suite.readFiles(files, prefs.getSensorLengths(),
                     prefs.get2gProtocol(),
@@ -793,11 +801,11 @@ public class PuffinApp {
     }
 
     /**
-     * Returns the current Suite.
+     * Returns the currently displayed Suite.
      *
      * @return the current Suite
      */
-    public Suite getSuite() {
+    public Suite getCurrentSuite() {
         return currentSuite;
     }
     
@@ -807,36 +815,38 @@ public class PuffinApp {
      * @param index the index of the suite to be displayed within PuffinApp's
      * list of suites
      */
-    public void setSuite(int index) {
-        if (index >= 0 && index < suites.size()) {
-            currentSuite = suites.get(index);
+    public void setCurrentSuite(int index) {
+        if (index >= 0 && index < getSuites().size()) {
+            currentSuite = getSuites().get(index);
             getMainWindow().suitesChanged();
             updateMainWindowTitle();
         }
     }
     
     /**
-     * Gets the current Sample
+     * Gets the currently displayed Sample
      * 
-     * @return the current Sample
+     * @return the current Sample, or {@code null} if there is no current
+     * sample.
      */
-    public Sample getSample() {
-        final Suite suite = getSuite();
-        if (suite==null) {
+    public Sample getCurrentSample() {
+        final Suite suite = getCurrentSuite();
+        if (suite == null) {
             return null;
         }
         return suite.getCurrentSample();
     }
 
     /**
-     * Gets all the currently selected samples.
+     * Gets all the currently selected samples. If there are no selected
+     * samples, an empty list will be returned.
      *
      * @return the currently selected samples
      */
     public List<Sample> getSelectedSamples() {
         final List<Sample> result =
                 getMainWindow().getSampleChooser().getSelectedSamples();
-        if (result==null) {
+        if (result == null) {
             return Collections.emptyList();
         }
         return result;
@@ -859,11 +869,11 @@ public class PuffinApp {
     /**
      * Returns the site for which data is currently being displayed.
      *
-     * @return the current site
+     * @return the current site, or {@code null} if there is no current site
      */
     public Site getCurrentSite() {
-        final Sample sample = getSample();
-        if (sample==null) {
+        final Sample sample = getCurrentSample();
+        if (sample == null) {
             return null;
         }
         return sample.getSite();
@@ -1040,7 +1050,7 @@ public class PuffinApp {
                     "/usr/local/bin");
             final File file = new File(directory, scriptName);
             final String scriptPath = file.getAbsolutePath();
-            getSuite().calculateAmsStatistics(getAllSamplesInSelectedSites(),
+            getCurrentSuite().calculateAmsStatistics(getAllSamplesInSelectedSites(),
                  calcType, scriptPath);
         } catch (IOException ioe) {
             errorDialog("Error running AMS script", "The following error "+
@@ -1150,7 +1160,7 @@ public class PuffinApp {
     }
     
     private boolean showErrorIfNoSuite() {
-        if (getSuite() == null) {
+        if (getCurrentSuite() == null) {
             errorDialog("No data file open",
                     "You must open a data file\n"
                     + "before you can perform this operation.");
@@ -1222,7 +1232,7 @@ public class PuffinApp {
      * @see #pasteStepSelection()
      */
     public void copyStepSelection() {
-        final Sample sample = getSample();
+        final Sample sample = getCurrentSample();
         if (sample == null) {
             return;
         }
@@ -1306,7 +1316,7 @@ public class PuffinApp {
         }
         try {
             final double factor = Double.parseDouble(factorString);
-            getSuite().rescaleMagSus(factor);
+            getCurrentSuite().rescaleMagSus(factor);
         } catch (NumberFormatException exception) {
             errorDialog("Input error", "That didn't look like a number.");
         }
@@ -1334,7 +1344,7 @@ public class PuffinApp {
         if (showErrorIfNoSuite()) {
             return;
         }
-        getSuite().clearAmsCalculations();
+        getCurrentSuite().clearAmsCalculations();
         updateDisplay();
     }
     
@@ -1439,7 +1449,7 @@ public class PuffinApp {
      * Calculate means across all currently loaded suites.
      */
     public void calculateMultiSuiteMeans() {
-        multiSuiteCalcs = Suite.calculateMultiSuiteMeans(suites);
+        multiSuiteCalcs = Suite.calculateMultiSuiteMeans(getSuites());
         final StringBuilder meansBuilder = new StringBuilder();
         final List<List<String>> meansStrings = new ArrayList<>(8);
         meansStrings.add(SuiteCalcs.getHeaders());
@@ -1465,7 +1475,7 @@ public class PuffinApp {
     
     
     void exportCalcsMultiSuite() {
-        if (getSuite() == null) {
+        if (getCurrentSuite() == null) {
                 errorDialog("Error saving calculations", "No file loaded.");
                 return;
         }
@@ -1672,7 +1682,7 @@ public class PuffinApp {
             return;
         }
         final File file = files.get(0);
-        final Suite suite = getSuite();
+        final Suite suite = getCurrentSuite();
         if (suite==null) return;
         try {
             suite.importLocations(file);
@@ -1722,7 +1732,7 @@ public class PuffinApp {
      * using a standard file dialog.
      */
     public void save() {
-        save(getSuite());
+        save(getCurrentSuite());
     }
     
     /**
@@ -1947,7 +1957,7 @@ public class PuffinApp {
                 openFileDialog("Select CSV file for conversion");
         if (files.isEmpty()) return;
         final File file = files.get(0);
-        final Suite suite = getSuite();
+        final Suite suite = getCurrentSuite();
         if (suite==null) return;
         try {
             suite.convertDiscreteToContinuous(file);
@@ -1965,7 +1975,7 @@ public class PuffinApp {
      * Shows the dialog for creating and exporting a data and code bundle.
      */
     public void showCreateBundleDialog() {
-        if (getSuite() == null) {
+        if (getCurrentSuite() == null) {
             errorDialog("No suite loaded", "PuffinPlot cannot create a bundle, "
                     + "as there is no data suite loaded.");
             return;
@@ -1988,7 +1998,7 @@ public class PuffinApp {
         }
         final Path zipPath = Paths.get(zipPathString);
         try {
-            Bundle.createBundle(getSuite(), zipPath, getCorrection(),
+            Bundle.createBundle(getCurrentSuite(), zipPath, getCorrection(),
                     getSelectedSamples(), getSelectedSites(),
                     includeJar);
         } catch (IOException | PuffinUserException ex) {

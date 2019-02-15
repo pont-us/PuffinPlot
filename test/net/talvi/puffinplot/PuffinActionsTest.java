@@ -81,7 +81,7 @@ public class PuffinActionsTest {
     @Test
     public void testSaveAsWithSuite() {
         final Suite suite = new Suite("test");
-        Mockito.when(app.getSuite()).thenReturn(suite);
+        Mockito.when(app.getCurrentSuite()).thenReturn(suite);
         actions.saveAs.actionPerformed(null);
         Mockito.verify(app).showSaveAsDialog(Mockito.any());
     }

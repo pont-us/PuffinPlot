@@ -167,7 +167,7 @@ public class RemoveByDepthRangeDialog extends javax.swing.JDialog {
         final Double bottom = Util.tryToParseDouble(
                 app.getMainWindow(), rangeBottomText.getText());
         if (bottom == null) return;
-        app.getSuite().removeSamplesOutsideDepthRange(top, bottom);
+        app.getCurrentSuite().removeSamplesOutsideDepthRange(top, bottom);
         app.getMainWindow().suitesChanged();
         setVisible(false);
     }//GEN-LAST:event_removeButtonActionPerformed

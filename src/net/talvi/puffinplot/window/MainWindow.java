@@ -182,7 +182,7 @@ public final class MainWindow extends JFrame {
      */
     public void sampleChanged() {
         getControlPanel().updateSample();
-        final Sample sample = app.getSample();
+        final Sample sample = app.getCurrentSample();
         if (sample==null) return;
         sampleDataPanel.setSample(sample);
         repaint(100);

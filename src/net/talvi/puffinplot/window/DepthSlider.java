@@ -66,7 +66,7 @@ class DepthSlider extends JPanel
         addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                final Suite suite = app.getSuite();
+                final Suite suite = app.getCurrentSuite();
                 if (suite != null) {
                     suite.setCurrentSampleIndex(getValue());
                     app.updateDisplay();

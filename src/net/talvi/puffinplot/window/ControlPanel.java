@@ -112,7 +112,7 @@ public class ControlPanel extends JPanel
             suiteBox.addItem(suite);
         }
         updatingSuites = false;
-        Suite currentSuite = app.getSuite();
+        Suite currentSuite = app.getCurrentSuite();
         if (currentSuite != null) suiteBox.setSelectedItem(currentSuite);
         app.getMainWindow().updateSampleDataPanel();
     }
@@ -141,7 +141,7 @@ public class ControlPanel extends JPanel
      * Updates this control panel's sample information display.
      */
     public void updateSample() {
-        final Sample sample = app.getSample();
+        final Sample sample = app.getCurrentSample();
         if (sample != null) {
             correctionField.setText(
                     sampleOrientation(sample) + " " +
@@ -167,7 +167,7 @@ public class ControlPanel extends JPanel
          */
         if (!updatingSuites) {
             int index = suiteBox.getSelectedIndex();
-            if (index > -1) app.setSuite(index);
+            if (index > -1) app.setCurrentSuite(index);
         }
     }
     

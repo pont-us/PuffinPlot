@@ -162,7 +162,7 @@ public class AlignDeclinationsDialog extends javax.swing.JDialog {
 
 
     private boolean canAlignSectionDeclinations() {
-        final Suite suite = app.getSuite();
+        final Suite suite = app.getCurrentSuite();
         if (suite == null) {
             app.errorDialog("No suite loaded",
                     "PuffinPlot cannot align core sections, "
@@ -187,7 +187,7 @@ public class AlignDeclinationsDialog extends javax.swing.JDialog {
         if (topDeclination == null) return;
         if (canAlignSectionDeclinations()) {
             if (canAlignSectionDeclinations()) {
-                app.getSuite().
+                app.getCurrentSuite().
                         alignSectionDeclinations(topDeclination, endLength);
                 JOptionPane.showMessageDialog(app.getMainWindow(),
                         "Core section declinations successfully aligned.",

@@ -94,7 +94,7 @@ public class SampleChooser extends JPanel {
      */
     public List<Sample> getSelectedSamples() {
         final List<Sample> samples;
-        final Suite suite = app.getSuite();
+        final Suite suite = app.getCurrentSuite();
         if (suite == null) return Collections.emptyList();
         switch (suite.getMeasurementType()) {
         case DISCRETE:
@@ -138,7 +138,7 @@ public class SampleChooser extends JPanel {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (getSelectedIndex() != -1) {
-                    app.getSuite().setCurrentSampleIndex(getSelectedIndex());
+                    app.getCurrentSuite().setCurrentSampleIndex(getSelectedIndex());
                 }
                 app.updateDisplay();
             }
@@ -164,7 +164,7 @@ public class SampleChooser extends JPanel {
      * Puffin application's current suite.
      */
     public void updateSuite() {
-        final Suite suite = app.getSuite();
+        final Suite suite = app.getCurrentSuite();
         if (suite == null) {
             setVisibility(false, false);
             return;
@@ -209,7 +209,7 @@ public class SampleChooser extends JPanel {
      * application supplied to this SampleChooser's constructor.
      */
     public void updateValueFromSuite() {
-        final Suite suite = app.getSuite();
+        final Suite suite = app.getCurrentSuite();
         final int index = suite.getCurrentSampleIndex();
         switch (suite.getMeasurementType()) {
             case CONTINUOUS:

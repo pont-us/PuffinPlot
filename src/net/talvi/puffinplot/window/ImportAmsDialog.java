@@ -137,7 +137,7 @@ public class ImportAmsDialog extends javax.swing.JDialog {
         setVisible(false);
         try {
             final List<File> files = app.openFileDialog("Select AMS files");
-            app.getSuite().importAmsFromAsc(files,
+            app.getCurrentSuite().importAmsFromAsc(files,
                     magneticNorthCheckBox.isSelected(),
                     overwriteSampleCorrectionCheckBox.isSelected(),
                     overwriteFormationCorrectionCheckBox.isSelected());

@@ -215,7 +215,7 @@ public final class MainMenuBar extends JMenuBar {
 
         @Override
         public boolean getState() {
-                final Sample sample = app.getSample();
+                final Sample sample = app.getCurrentSample();
                 return sample != null ? sample.isPcaAnchored() : false;
             }
     }
@@ -225,7 +225,7 @@ public final class MainMenuBar extends JMenuBar {
      * This allows any stateful menu items to be changed.
      */
     public void sampleChanged() {
-        final Sample sample = app.getSample();
+        final Sample sample = app.getCurrentSample();
         if (sample != null) {
             anchorItem.setSelected(sample.isPcaAnchored());
         }
