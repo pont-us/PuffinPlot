@@ -42,8 +42,11 @@ import java.util.stream.Collectors;
  * providing put, get, and remove methods for a String-to-String map can be used
  * as a store. RecentFileList prefixes its keys with the string
  * {@code recentFileX}, where X is a non-negative integer less than the maximum
- * number of file-sets.
- * * 
+ * number of file-sets. Note that RecentFileList does not synchronize with the
+ * store, except on instantiation (when it is initialized from the supplied
+ * getter) and on a call to {@code save} (when it writes to the store using
+ * the supplied remover and putter).
+ * 
  * @author pont
  */
 public class RecentFileList {
@@ -130,7 +133,7 @@ public class RecentFileList {
      * and (since this file is now the most recently used) moves it to the
      * top of the list.
      * 
-     * @param index the index of a file-set within the list
+     * @param index the zero-based index of a file-set within the list
      * @return the requested file-set
      */
     public List<File> getFilesAndReorder(int index) {
