@@ -24,7 +24,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
-import java.util.prefs.Preferences;
 
 import net.talvi.puffinplot.plots.Plot;
 import net.talvi.puffinplot.plots.SeparateSuiteEqualAreaPlot;

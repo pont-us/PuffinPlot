@@ -135,7 +135,8 @@ public final class MainMenuBar extends JMenuBar {
                 makeMenu("Import data", KeyEvent.VK_I,
                         pa.appendFiles,
                         pa.importLocations, pa.importAms),
-                pa.pageSetup, pa.print, pa.printSuiteEqualArea, pa.printSiteEqualArea,
+                pa.pageSetup, pa.print, pa.printSuiteEqualArea,
+                pa.printSiteEqualArea,
                 pa.runJavascriptScript, pa.runPythonScript, pa.prefs, pa.quit));
         
         add(makeMenu("Edit",KeyEvent.VK_E,

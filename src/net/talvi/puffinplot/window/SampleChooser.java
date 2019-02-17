@@ -37,12 +37,10 @@ import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
 
 /**
- * A component allowing a user to choose the current sample and
- * the selected samples.
- * For discrete suites, it shows a list of sample names.
- * For continuous suites, it shows a slider control representing
- * the depth within the core.
- * 
+ * A component allowing a user to choose the current sample and the selected
+ * samples. For discrete suites, it shows a list of sample names. For continuous
+ * suites, it shows a slider control representing the depth within the core.
+ *
  * @author pont
  */
 public class SampleChooser extends JPanel {
@@ -77,11 +75,14 @@ public class SampleChooser extends JPanel {
         add(depthSlider = new DepthSlider(app));
         sampleList = new SampleList(new DefaultListModel());
         samplePane = new JScrollPane(sampleList);
-        samplePane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        samplePane.setVerticalScrollBarPolicy(
+                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         add(samplePane);
         int modifierKey = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke('N', modifierKey), "next");
-        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke('B', modifierKey), "previous");
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).
+                put(KeyStroke.getKeyStroke('N', modifierKey), "next");
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).
+                put(KeyStroke.getKeyStroke('B', modifierKey), "previous");
         getActionMap().put("next", nextAction);
         getActionMap().put("previous", prevAction);
         setVisibility(false, false);
@@ -135,13 +136,14 @@ public class SampleChooser extends JPanel {
             this.model = model;
             setAlignmentY(0);
             addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (getSelectedIndex() != -1) {
-                    app.getCurrentSuite().setCurrentSampleIndex(getSelectedIndex());
+                @Override
+                public void valueChanged(ListSelectionEvent e) {
+                    if (getSelectedIndex() != -1) {
+                        app.getCurrentSuite().
+                                setCurrentSampleIndex(getSelectedIndex());
+                    }
+                    app.updateDisplay();
                 }
-                app.updateDisplay();
-            }
             });
         }
         
@@ -160,8 +162,8 @@ public class SampleChooser extends JPanel {
     }
 
     /**
-     * Redraws the sample chooser to reflect a change in the
-     * Puffin application's current suite.
+     * Redraws the sample chooser to reflect a change in the Puffin
+     * application's current suite.
      */
     public void updateSuite() {
         final Suite suite = app.getCurrentSuite();
@@ -191,10 +193,9 @@ public class SampleChooser extends JPanel {
     }
 
     /**
-     * For long core suites, returns the current depth index.
-     * Note that this is not the depth itself, but an index into the list
-     * of data points.
-     * 
+     * For long core suites, returns the current depth index. Note that this is
+     * not the depth itself, but an index into the list of data points.
+     *
      * @return the current depth index for long core suites
      */
     public int getDepthIndex() {

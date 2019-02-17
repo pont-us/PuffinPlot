@@ -19,7 +19,6 @@ package net.talvi.puffinplot.window;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import javax.swing.Box;
 import javax.swing.BoxLayout;

@@ -89,18 +89,22 @@ public class TabularImportWindow extends JDialog {
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
         final JPanel firstPanel = new JPanel();
         firstPanel.setLayout(new BoxLayout(firstPanel, BoxLayout.Y_AXIS));
-        firstPanel.setBorder(BorderFactory.createTitledBorder("General settings"));
+        firstPanel.setBorder(
+                BorderFactory.createTitledBorder("General settings"));
         headerLinesPanel = new HeaderLinesPanel();
         firstPanel.add(headerLinesPanel);
         measTypeChooser = new EnumChooser<>("Measurement type",
                 new String[] {"Continuous", "Discrete"},
-                new MeasurementType[] {MeasurementType.CONTINUOUS, MeasurementType.DISCRETE},
+                new MeasurementType[] { 
+                    MeasurementType.CONTINUOUS, MeasurementType.DISCRETE},
                 initialFormat.getMeasurementType());
         firstPanel.add(measTypeChooser);
         treatTypeChooser = new EnumChooser<>("Treatment type",
                 "Thermal#AF (3-axis)#AF (z-axis)#IRM#ARM".split("#"),
-                new TreatmentType[] {TreatmentType.THERMAL, TreatmentType.DEGAUSS_XYZ,
-                TreatmentType.DEGAUSS_Z, TreatmentType.IRM, TreatmentType.ARM},
+                new TreatmentType[] {
+                    TreatmentType.THERMAL, TreatmentType.DEGAUSS_XYZ,
+                    TreatmentType.DEGAUSS_Z, TreatmentType.IRM,
+                    TreatmentType.ARM},
                 initialFormat.getTreatmentType());
         firstPanel.add(treatTypeChooser);
         momentUnitChooser = new EnumChooser<>("Unit for magnetic moment",
@@ -115,7 +119,9 @@ public class TabularImportWindow extends JDialog {
                 initialFormat.getFieldUnit());
         firstPanel.add(fieldUnitChooser);
         firstPanel.add(separatorChooser = new StringChooser("Column separator",
-                new String[] {"Comma", "Tab", "Single space", "Any white space", "| (pipe)"},
+                new String[] {
+                    "Comma", "Tab", "Single space",
+                    "Any white space", "| (pipe)"},
                 new String[] {",", "\t", " ", "\\s+", "|"},
                 initialFormat.getSeparator()));
         firstPanel.add(fixedWidthBox = new JCheckBox("Use fixed-width columns",
@@ -138,7 +144,8 @@ public class TabularImportWindow extends JDialog {
         scrollPane.setColumnHeader(headerViewport);
         final JPanel columnPanel = new JPanel();
         columnPanel.setLayout(new BorderLayout());
-        columnPanel.setBorder(BorderFactory.createTitledBorder("Column definitions"));
+        columnPanel.setBorder(
+                BorderFactory.createTitledBorder("Column definitions"));
         columnPanel.add(scrollPane, BorderLayout.CENTER);
         contentPane.add(columnPanel);
         final JPanel buttonPanel = new JPanel();
@@ -272,7 +279,8 @@ public class TabularImportWindow extends JDialog {
                 treatTypeChooser.getValue(),
                 separatorChooser.getValue(),
                 fixedWidthBox.isSelected(),
-                FileFormat.convertStringToColumnWidths(columnWidthsBox.getValue()),
+                FileFormat.convertStringToColumnWidths(
+                        columnWidthsBox.getValue()),
                 momentUnitChooser.getValue(),
                 fieldUnitChooser.getValue());
     }
@@ -283,8 +291,8 @@ public class TabularImportWindow extends JDialog {
         public HeaderLinesPanel() {
             setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
             final JLabel label = new JLabel("Number of header lines to skip");
-            spinnerModel = new SpinnerNumberModel(initialFormat.getHeaderLines(),
-                    0, 1000, 1);
+            spinnerModel = new SpinnerNumberModel(
+                    initialFormat.getHeaderLines(), 0, 1000, 1);
             final JSpinner spinner = new JSpinner(spinnerModel);
             add(label);
             add(spinner);
@@ -306,7 +314,8 @@ public class TabularImportWindow extends JDialog {
                 FieldChooser fieldChooser = new FieldChooser(i+1);
                 if (columnIterator.hasNext()) {
                     final int column = columnIterator.next();
-                    final TreatmentStepField field = initialFormat.getColumnMap().get(column);
+                    final TreatmentStepField field =
+                            initialFormat.getColumnMap().get(column);
                     fieldChooser.setContents(column+1, field);
                 }
                 add(fieldChooser);

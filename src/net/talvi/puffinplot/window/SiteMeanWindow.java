@@ -31,6 +31,9 @@ public class SiteMeanWindow extends JFrame {
 
     /**
      * Creates a new site mean window.
+     * 
+     * @param params parameters controlling the site mean graph in this
+     * window's graph display
      */
     public SiteMeanWindow(PlotParams params) {
         setTitle("Site equal-area plot");

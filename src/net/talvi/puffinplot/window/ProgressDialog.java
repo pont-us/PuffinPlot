@@ -52,7 +52,8 @@ public class ProgressDialog extends JDialog
     private final JPanel innerPanel;
     private final SwingWorker<Void, Void> worker;
 
-    private ProgressDialog(String title, Frame owner, SwingWorker<Void, Void> worker) {
+    private ProgressDialog(String title, Frame owner,
+            SwingWorker<Void, Void> worker) {
         super(owner, title, true);
 
         progressBar = new JProgressBar(0, 100);
@@ -122,7 +123,8 @@ public class ProgressDialog extends JDialog
      */
     public static void showDialog(String title, Frame parent,
             SwingWorker<Void, Void> worker) {
-        final ProgressDialog progressDialog = new ProgressDialog(title, parent, worker);
+        final ProgressDialog progressDialog =
+                new ProgressDialog(title, parent, worker);
         progressDialog.setup(parent);
         progressDialog.setVisible(true);
         // This will block until the dialog closes.

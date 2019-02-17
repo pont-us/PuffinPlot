@@ -65,7 +65,8 @@ import net.talvi.puffinplot.plots.Plot;
  */
 public class PrefsWindow extends JFrame {
 
-    private static final Logger logger = Logger.getLogger("net.talvi.puffinplot");
+    private static final Logger logger =
+            Logger.getLogger("net.talvi.puffinplot");
     private static final long serialVersionUID = 1L;
     private final JTextField[] sensorLengthField = new JTextField[3];
     private final PresetsBox presetsBox;

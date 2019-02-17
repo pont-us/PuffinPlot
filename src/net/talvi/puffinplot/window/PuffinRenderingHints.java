@@ -117,7 +117,8 @@ public final class PuffinRenderingHints extends RenderingHints {
      * The value is ignored; the key's existence indicates that E notation
      * should be used.
      */
-    public static final PuffinRenderingHints.Key KEY_E_NOTATION = new PuffinRenderingHints.Key(0);
+    public static final PuffinRenderingHints.Key KEY_E_NOTATION =
+            new PuffinRenderingHints.Key(0);
     
     /**
      * A key for a PuffinPlot rendering hint.
