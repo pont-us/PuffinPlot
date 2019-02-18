@@ -44,7 +44,7 @@ public class TreatmentLevelComparatorTest {
         d0.setAfZ(100);
         final TreatmentStep d1 = new TreatmentStep();
         d1.setTreatmentType(TreatmentType.THERMAL);
-        d1.setTemp(50);
+        d1.setTemperature(50);
         assertTrue(comparator.compare(d0, d1) > 0);
         assertTrue(comparator.compare(d1, d0) < 0);
     }
@@ -55,7 +55,7 @@ public class TreatmentLevelComparatorTest {
         for (int i=0; i<3; i++) {
             final TreatmentStep d = new TreatmentStep();
             d.setTreatmentType(TreatmentType.THERMAL);
-            d.setTemp(i*100);
+            d.setTemperature(i*100);
             data.add(d);
         }
         for (int i=0; i<3; i++) {

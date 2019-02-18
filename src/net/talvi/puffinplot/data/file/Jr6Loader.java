@@ -85,7 +85,7 @@ public class Jr6Loader extends AbstractFileLoader {
         step.setTreatmentType(dataLine.getTreatmentType());
         switch (dataLine.getTreatmentType()) {
             case THERMAL:
-                step.setTemp(dataLine.getTreatmentLevel());
+                step.setTemperature(dataLine.getTreatmentLevel());
                 break;
             case DEGAUSS_XYZ:
             case ARM:

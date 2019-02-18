@@ -1574,7 +1574,7 @@ public class SuiteTest {
         for (int step=0; step<3; step++) {
             final TreatmentStep d = new TreatmentStep();
             d.setTreatmentType(TreatmentType.THERMAL);
-            d.setTemp(step*10);
+            d.setTemperature(step*10);
             sample.addTreatmentStep(d);
             expected.add(d);
         }

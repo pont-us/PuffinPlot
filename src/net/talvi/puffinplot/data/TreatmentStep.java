@@ -67,7 +67,7 @@ public class TreatmentStep {
     private MeasurementType measurementType = MeasurementType.UNSET;
     private TreatmentType treatmentType = TreatmentType.UNKNOWN;
     private double afx = NaN, afy = NaN, afz = NaN;
-    private double temp = NaN;
+    private double temperature = NaN;
     private double magSus = NaN;
     private double sampAz = NaN, sampDip = NaN, formAz = NaN, formDip = NaN;
     private double magDev = 0;
@@ -167,11 +167,11 @@ public class TreatmentStep {
     /**
      * Sets the sample's dip angle.
      *
-     * @param v the sample dip angle to set, in degrees
+     * @param dip the sample dip angle to set, in degrees
      */
-    public void setSampDip(double v) {
+    public void setSampDip(double dip) {
         touch();
-        sampDip = v;
+        sampDip = dip;
     }
 
     /**
@@ -186,11 +186,11 @@ public class TreatmentStep {
     /**
      * Sets the formation dip azimuth.
      *
-     * @param v the formation dip azimuth to set, in degrees
+     * @param azimuth the formation dip azimuth to set, in degrees
      */
-    public void setFormAz(double v) {
+    public void setFormAz(double azimuth) {
         touch();
-        formAz = v;
+        formAz = azimuth;
     }
 
     /**
@@ -205,11 +205,11 @@ public class TreatmentStep {
     /**
      * Sets the formation dip angle.
      *
-     * @param v the formation dip angle to set, in degrees
+     * @param dip the formation dip angle to set, in degrees
      */
-    public void setFormDip(double v) {
+    public void setFormDip(double dip) {
         touch();
-        formDip = v;
+        formDip = dip;
     }
 
     /**
@@ -224,11 +224,11 @@ public class TreatmentStep {
     /**
      * Sets the local geomagnetic field declination for the sampling site.
      *
-     * @param v the local geomagnetic field declination to set, in degrees
+     * @param azimuth the local geomagnetic field declination to set, in degrees
      */
-    public void setMagDev(double v) {
+    public void setMagDev(double azimuth) {
         touch();
-        magDev = v;
+        magDev = azimuth;
     }
 
     /**
@@ -243,11 +243,12 @@ public class TreatmentStep {
     /**
      * Sets whether PCA fits for this point should be anchored.
      *
-     * @param v {@code true} to set PCA fits for this point to be anchored
+     * @param isAnchored {@code true} to set PCA fits for this point to be
+     * anchored
      */
-    public void setPcaAnchored(boolean v) {
+    public void setPcaAnchored(boolean isAnchored) {
         touch();
-        pcaAnchored = v;
+        pcaAnchored = isAnchored;
     }
 
     /**
@@ -262,12 +263,12 @@ public class TreatmentStep {
     /**
      * Sets the measurement's data-file line. Not currently used.
      *
-     * @param v the data-file line to set for this measurement; not currently
-     * used
+     * @param newLine the data-file line to set for this measurement; not
+     * currently used
      */
-    public void setLine(Line v) {
+    public void setLine(Line newLine) {
         touch();
-        line = v;
+        line = newLine;
     }
 
     /**
@@ -282,17 +283,18 @@ public class TreatmentStep {
     /**
      * Sets the sample on which this measurement was made.
      *
-     * @param v the sample on which this measurement was made
+     * @param newSample the sample on which this measurement was made
      */
-    public void setSample(Sample v) {
+    public void setSample(Sample newSample) {
         touch();
-        sample = v;
+        sample = newSample;
     }
 
     /**
      * Reports whether this treatment step should be hidden on plots.
      *
-     * @return {@code true} if this treatment step should not be displayed on plots
+     * @return {@code true} if this treatment step should not be displayed on
+     * plots
      */
     public boolean isHidden() {
         return hidden;
@@ -301,11 +303,12 @@ public class TreatmentStep {
     /**
      * Sets whether this treatment step should be hidden on plots.
      *
-     * @param v {@code true} if this treatment step should not be displayed on plots
+     * @param newHidden {@code true} if this treatment step should not be
+     * displayed on plots
      */
-    public void setHidden(boolean v) {
+    public void setHidden(boolean newHidden) {
         touch();
-        hidden = v;
+        hidden = newHidden;
     }
 
     /**
@@ -323,12 +326,12 @@ public class TreatmentStep {
      * For continuous measurements, sets the depth of this measurement within
      * the core.
      *
-     * @param v for continuous measurements, the depth of this measurement
-     * within the core
+     * @param newDepth for continuous measurements, the depth of this
+     * measurement within the core
      */
-    public void setDepth(String v) {
+    public void setDepth(String newDepth) {
         touch();
-        depth = v;
+        depth = newDepth;
         if (sample != null) {
             sample.setDepth(depth);
         }
@@ -349,12 +352,12 @@ public class TreatmentStep {
      * Sets the magnetic susceptibility of the sample at this stage of
      * treatment.
      *
-     * @param v the magnetic susceptibility of the sample at this stage of
-     * treatment
+     * @param newMagSus the magnetic susceptibility of the sample at this stage
+     * of treatment
      */
-    public void setMagSus(double v) {
+    public void setMagSus(double newMagSus) {
         touch();
-        magSus = v;
+        magSus = newMagSus;
     }
 
     /**
@@ -369,11 +372,11 @@ public class TreatmentStep {
     /**
      * Sets the type of this measurement (discrete or continuous).
      *
-     * @param v the type of this measurement (discrete or continuous)
+     * @param type the type of this measurement (discrete or continuous)
      */
-    public void setMeasurementType(MeasurementType v) {
+    public void setMeasurementType(MeasurementType type) {
         touch();
-        measurementType = v;
+        measurementType = type;
     }
 
     /**
@@ -388,11 +391,11 @@ public class TreatmentStep {
     /**
      * For discrete samples, sets the sample identifier (name).
      *
-     * @param v for discrete samples, the identifier (name) of the sample
+     * @param id for discrete samples, the identifier (name) of the sample
      */
-    public void setDiscreteId(String v) {
+    public void setDiscreteId(String id) {
         touch();
-        discreteId = v;
+        discreteId = id;
     }
 
     /**
@@ -408,12 +411,12 @@ public class TreatmentStep {
     /**
      * Sets the treatment applied before this measurement (AF, thermal, etc.).
      *
-     * @param v the treatment applied before this measurement (AF, thermal,
+     * @param type the treatment applied before this measurement (AF, thermal,
      * etc.)
      */
-    public void setTreatmentType(TreatmentType v) {
+    public void setTreatmentType(TreatmentType type) {
         touch();
-        treatmentType = v;
+        treatmentType = type;
     }
 
     /**
@@ -485,11 +488,11 @@ public class TreatmentStep {
     /**
      * For IRM treatment, sets the IRM field strength.
      *
-     * @param v for IRM treatment, the IRM field strength
+     * @param field for IRM treatment, the IRM field strength
      */
-    public void setIrmField(double v) {
+    public void setIrmField(double field) {
         touch();
-        irmField = v;
+        irmField = field;
     }
 
     /**
@@ -504,11 +507,11 @@ public class TreatmentStep {
     /**
      * For ARM treatment, sets the ARM bias field strength.
      *
-     * @param v for ARM treatment, the ARM bias field strength
+     * @param field for ARM treatment, the ARM bias field strength
      */
-    public void setArmField(double v) {
+    public void setArmField(double field) {
         touch();
-        armField = v;
+        armField = field;
     }
 
     /**
@@ -523,11 +526,11 @@ public class TreatmentStep {
     /**
      * For ARM treatment, sets the axis of the ARM field.
      *
-     * @param v for ARM treatment, the axis of the ARM field
+     * @param axis for ARM treatment, the axis of the ARM field
      */
-    public void setArmAxis(ArmAxis v) {
+    public void setArmAxis(ArmAxis axis) {
         touch();
-        armAxis = v;
+        armAxis = axis;
     }
 
     /**
@@ -535,18 +538,19 @@ public class TreatmentStep {
      *
      * @return for thermal treatment, the temperature in degrees Celsius
      */
-    public double getTemp() {
-        return temp;
+    public double getTemperature() {
+        return temperature;
     }
 
     /**
      * For thermal treatment, sets the temperature in degrees Celsius.
      *
-     * @param v for thermal treatment, the temperature in degrees Celsius
+     * @param newTemperature for thermal treatment, the temperature in degrees
+     * Celsius
      */
-    public void setTemp(double v) {
+    public void setTemperature(double newTemperature) {
         touch();
-        temp = v;
+        temperature = newTemperature;
     }
 
     /**
@@ -562,11 +566,11 @@ public class TreatmentStep {
     /**
      * For continuous measurements, sets the cross-sectional area of the core.
      *
-     * @param v the cross-sectional area of the core
+     * @param newArea the cross-sectional area of the core
      */
-    public void setArea(double v) {
+    public void setArea(double newArea) {
         touch();
-        area = v;
+        area = newArea;
     }
 
     /**
@@ -581,11 +585,11 @@ public class TreatmentStep {
     /**
      * For discrete measurements, sets the volume of the sample.
      *
-     * @param v for discrete measurements, the volume of the sample
+     * @param newVolume for discrete measurements, the volume of the sample
      */
-    public void setVolume(double v) {
+    public void setVolume(double newVolume) {
         touch();
-        volume = v;
+        volume = newVolume;
     }
 
     /**
@@ -603,12 +607,12 @@ public class TreatmentStep {
      * Sets the number of the machine run during which this measurement was
      * made.
      *
-     * @param v the number of the machine run during which this measurement was
-     * made
+     * @param newRunNumber the number of the machine run during which this
+     * measurement was made
      */
-    public void setRunNumber(int v) {
+    public void setRunNumber(int newRunNumber) {
         touch();
-        runNumber = v;
+        runNumber = newRunNumber;
     }
 
     /**
@@ -623,11 +627,11 @@ public class TreatmentStep {
     /**
      * Sets the timestamp of this measurement.
      *
-     * @param v the timestamp of this measurement
+     * @param newTimestamp the timestamp of this measurement
      */
-    public void setTimestamp(String v) {
+    public void setTimestamp(String newTimestamp) {
         touch();
-        timestamp = v;
+        timestamp = newTimestamp;
     }
 
     /**
@@ -722,11 +726,11 @@ public class TreatmentStep {
     /**
      * Sets the data suite containing this measurement.
      *
-     * @param v the data suite containing this measurement
+     * @param newSuite the data suite containing this measurement
      */
-    public void setSuite(Suite v) {
+    public void setSuite(Suite newSuite) {
         touch();
-        suite = v;
+        suite = newSuite;
     }
 
     /**
@@ -865,14 +869,19 @@ public class TreatmentStep {
      *
      * @return the magnetic dipole moment per unit volume in A/m
      */
-    public Vec3 getMoment() { return moment; }
+    public Vec3 getMoment() {
+        return moment;
+    }
     
     /**
      * Sets the sample's magnetic dipole moment per unit volume
      * in A/m.
      * @param v the magnetic dipole moment per unit volume in A/m
      */
-    public void setMoment(Vec3 v)      { touch(); moment = v; }
+    public void setMoment(Vec3 v) {
+        touch();
+        moment = v;
+    }
 
     /**
      * Returns the measured magnetic dipole moment per unit volume, as modified
@@ -983,7 +992,7 @@ public class TreatmentStep {
             case DEGAUSS_Z:
                 return afz;
             case THERMAL:
-                return temp;
+                return temperature;
             case ARM:
                 return afz; // usually we vary this & keep bias field constant
             case IRM:
@@ -1121,7 +1130,7 @@ public class TreatmentStep {
         case AF_X: return fmt(afx);
         case AF_Y: return fmt(afy);
         case AF_Z: return fmt(afz);
-        case TEMPERATURE: return fmt(temp);
+        case TEMPERATURE: return fmt(temperature);
         case MAG_SUS: return fmt(magSus);
         case SAMPLE_AZ: return fmt(getSampAz());
         case SAMPLE_DIP: return fmt(getSampDip());
@@ -1226,7 +1235,7 @@ public class TreatmentStep {
         case AF_X: afx = doubleVal; break;
         case AF_Y: afy = doubleVal; break;
         case AF_Z: afz = doubleVal; break;
-        case TEMPERATURE: temp = doubleVal; break;
+        case TEMPERATURE: temperature = doubleVal; break;
         case MAG_SUS: magSus = doubleVal; break;
         case SAMPLE_AZ: setSampAz(doubleVal); break;
         case SAMPLE_DIP: setSampDip(doubleVal); break;
@@ -1409,7 +1418,7 @@ public class TreatmentStep {
                 break;
             case THERMAL:
                 treatmentLevel = String.format(Locale.ENGLISH, ", %.1f°C",
-                        getTemp());
+                        getTemperature());
                 break;
             case IRM:
                 treatmentLevel = String.format(Locale.ENGLISH, ", %.0f mT",

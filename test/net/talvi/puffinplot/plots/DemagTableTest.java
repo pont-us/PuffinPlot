@@ -81,7 +81,7 @@ public class DemagTableTest {
             int temperature = 20;
             for (TreatmentStep step: sample.getTreatmentSteps()) {
                 step.setTreatmentType(TreatmentType.THERMAL);
-                step.setTemp(temperature);
+                step.setTemperature(temperature);
             }
         }
         params.getSettingsMap().put("plotSizes",

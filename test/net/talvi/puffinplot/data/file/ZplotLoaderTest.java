@@ -142,7 +142,7 @@ public class ZplotLoaderTest {
             assertEquals(TreatmentType.THERMAL, step.getTreatmentType());
             assertEquals(MeasurementType.DISCRETE, step.getMeasurementType());
             assertEquals(expectedSampleNames[i], step.getIdOrDepth());
-            assertEquals(values[0], step.getTemp(), delta);
+            assertEquals(values[0], step.getTemperature(), delta);
             assertEquals(values[1], step.getMoment().getDecDeg(), delta);
             assertEquals(values[2], step.getMoment().getIncDeg(), delta);
             assertEquals(values[3]*1000, step.getMoment().mag(), delta);

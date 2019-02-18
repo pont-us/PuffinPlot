@@ -229,7 +229,7 @@ public class CaltechLoader extends AbstractFileLoader {
                     break;
                 case "TT":
                     step.setTreatmentType(TreatmentType.THERMAL);
-                    step.setTemp(demagLevel);
+                    step.setTemperature(demagLevel);
                     break;
                 default:
                     step.setTreatmentType(TreatmentType.UNKNOWN);

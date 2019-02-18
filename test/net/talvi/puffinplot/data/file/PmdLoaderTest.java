@@ -166,7 +166,7 @@ public class PmdLoaderTest {
                     assertEquals(expVals[1], d.getAfX()*1000, 1e-10);
                     break;
                 case THERMAL:
-                    assertEquals(expVals[1], d.getTemp(), 1e-10);
+                    assertEquals(expVals[1], d.getTemperature(), 1e-10);
                     break;
             }
         }

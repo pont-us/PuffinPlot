@@ -214,7 +214,7 @@ public class Sample {
             double magSus = step.getMagSus();
             if (!Double.isNaN(magSus)) {
                 if (magSus > prevMagSus * limit) {
-                    msj = step.getTemp();
+                    msj = step.getTemperature();
                     break;
                 }
                 prevMagSus = magSus;

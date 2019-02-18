@@ -547,7 +547,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
         }
         step.setArmAxis(ArmAxis.fromString(r.getString("ARM axis", "UNKNOWN")));
         // TODO better default ARM axis
-        step.setTemp(r.getDouble("Temp C", step.getTemp()));
+        step.setTemperature(r.getDouble("Temp C", step.getTemperature()));
         step.setArmField(r.getDouble("ARM Gauss", step.getArmField()));
         step.setSampAz(r.getDouble("Sample Azimiuth", step.getSampAz())); // sic
         step.setSampDip(r.getDouble("Sample Dip", step.getSampDip()));

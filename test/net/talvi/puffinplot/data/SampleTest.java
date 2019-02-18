@@ -422,7 +422,7 @@ public class SampleTest {
         for (int i=0; i<tempsAndms.length; i+=2) {
             final TreatmentStep d = new TreatmentStep();
             d.setTreatmentType(TreatmentType.THERMAL);
-            d.setTemp(tempsAndms[i]);
+            d.setTemperature(tempsAndms[i]);
             d.setMagSus(tempsAndms[i+1]);
             s.addTreatmentStep(d);
         }
@@ -659,12 +659,12 @@ public class SampleTest {
         final Sample sample = new Sample("sample0", null);
         final List<Vec3> vectors = new ArrayList<>();
         final Random rnd = new Random(77);
-        for (int step=0; step<3; step++) {
+        for (int i = 0; i < 3; i++) {
             final Vec3 vector = TestUtils.randomVector(rnd, 1);
-            final TreatmentStep d = new TreatmentStep(vector);
-            d.setTreatmentType(TreatmentType.THERMAL);
-            d.setTemp(50);
-            sample.addTreatmentStep(d);
+            final TreatmentStep step = new TreatmentStep(vector);
+            step.setTreatmentType(TreatmentType.THERMAL);
+            step.setTemperature(50);
+            sample.addTreatmentStep(step);
             vectors.add(vector);
         }
         final Vec3 expectedMean = Vec3.mean(vectors);
@@ -679,29 +679,33 @@ public class SampleTest {
         final Sample sample1 = makeSimpleSample();
         sample1.getTreatmentSteps().forEach(d -> d.invertMoment());
         Sample.mergeSamples(Arrays.asList(sample0, sample1));
-        sample0.getTreatmentSteps().stream().allMatch(d -> d.getIntensity() < delta);
+        assertTrue(sample0.getTreatmentSteps().stream()
+                       .allMatch(step -> step.getIntensity() < delta));
     }
     
     @Test
     public void testMergeSamplesWithOverlappingData() {
         final Sample s0 = new Sample("Sample 0", null);
-        for (int i=0; i<3; i++) {
-            final TreatmentStep d = new TreatmentStep(10-i, 20-i, 30-i);
-            d.setTreatmentType(TreatmentType.THERMAL);
-            d.setTemp(i*100);
-            s0.addTreatmentStep(d);
+        for (int i = 0; i < 3; i++) {
+            final TreatmentStep step =
+                    new TreatmentStep(10 - i, 20 - i, 30 - i);
+            step.setTreatmentType(TreatmentType.THERMAL);
+            step.setTemperature(i * 100);
+            s0.addTreatmentStep(step);
         }
         final Sample s1 = new Sample("Sample 1", null);
-        for (int i=0; i<3; i++) {
-            final TreatmentStep d = new TreatmentStep(10-i, 20-i, 30-i);
-            d.setTreatmentType(TreatmentType.THERMAL);
-            d.setTemp(i*100 + 50);
-            s1.addTreatmentStep(d);
+        for (int i = 0; i < 3; i++) {
+            final TreatmentStep step =
+                    new TreatmentStep(10 - i, 20 - i, 30 - i);
+            step.setTreatmentType(TreatmentType.THERMAL);
+            step.setTemperature(i*100 + 50);
+            s1.addTreatmentStep(step);
         }
         Sample.mergeSamples(Arrays.asList(s0, s1));
         assertArrayEquals(
                 new double[] {0, 50, 100, 150, 200, 250},
-                s0.getTreatmentSteps().stream().mapToDouble(d -> d.getTemp()).toArray(),
+                s0.getTreatmentSteps().stream()
+                        .mapToDouble(step -> step.getTemperature()).toArray(),
                 delta);
     }
     

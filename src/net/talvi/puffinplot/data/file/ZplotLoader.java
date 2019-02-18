@@ -177,7 +177,7 @@ public class ZplotLoader extends AbstractFileLoader {
                 step.setAfZ(oerstedToTesla(demag));
                 break;
             case THERMAL:
-                step.setTemp(demag);
+                step.setTemperature(demag);
                 break;
             default:
                 throw new Error("Unhandled treatment type " +

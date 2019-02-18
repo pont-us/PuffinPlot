@@ -145,7 +145,7 @@ public class PmdLoader extends AbstractFileLoader {
                     step.setAfZ(dataLine.treatmentLevel/1000.);
                     break;
                 case THERMAL:
-                    step.setTemp(dataLine.treatmentLevel);
+                    step.setTemperature(dataLine.treatmentLevel);
                     break;
             }
             final Vec3 sampleCorrected = dataLine.moment.correctSample(

@@ -182,7 +182,7 @@ public class TreatmentStepTest {
     public void testGetFormattedTreatmentLevelThermal() {
         final TreatmentStep thermal = new TreatmentStep();
         thermal.setTreatmentType(TreatmentType.THERMAL);
-        thermal.setTemp(70);
+        thermal.setTemperature(70);
         assertEquals("70", thermal.getFormattedTreatmentLevel());
     }
 
@@ -200,7 +200,7 @@ public class TreatmentStepTest {
         for (double tl: new double[] {20, 80, 50}) {
             final TreatmentStep treatmentStep = new TreatmentStep();
             treatmentStep.setTreatmentType(TreatmentType.THERMAL);
-            treatmentStep.setTemp(tl);
+            treatmentStep.setTemperature(tl);
             data.add(treatmentStep);
         }
         assertEquals(80, TreatmentStep.maxTreatmentLevel(data), delta);
@@ -289,7 +289,8 @@ public class TreatmentStepTest {
     
     @Test
     public void testGetTreatmentLevelThermal() {
-        testGetTreatmentLevel(TreatmentType.THERMAL, TreatmentStep::setTemp);
+        testGetTreatmentLevel(TreatmentType.THERMAL,
+                TreatmentStep::setTemperature);
     }
     
     private static void testGetTreatmentLevel(TreatmentType type,
@@ -354,6 +355,12 @@ public class TreatmentStepTest {
     public void testSetAndGetVolume() {
         testDoubleSetterAndGetter(TreatmentStep::setVolume,
                 TreatmentStep::getVolume);
+    }
+    
+    @Test
+    public void testSetAndGetTemperature() {
+        testDoubleSetterAndGetter(TreatmentStep::setTemperature,
+                TreatmentStep::getTemperature);
     }
 
     @Test
@@ -598,7 +605,7 @@ public class TreatmentStepTest {
             case UNKNOWN:
                 break;
             case THERMAL:
-                step.setTemp(level);
+                step.setTemperature(level);
                 break;
             case IRM:
                 step.setIrmField(level);

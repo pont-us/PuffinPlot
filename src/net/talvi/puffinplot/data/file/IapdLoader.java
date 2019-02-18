@@ -153,7 +153,7 @@ public class IapdLoader extends AbstractFileLoader {
             
             switch (treatmentType) {
                 case THERMAL:
-                    step.setTemp(treatmentLevel);
+                    step.setTemperature(treatmentLevel);
                     break;
                 case ARM:
                 case DEGAUSS_XYZ:
