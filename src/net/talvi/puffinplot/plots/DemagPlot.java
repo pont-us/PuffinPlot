@@ -83,13 +83,13 @@ public class DemagPlot extends Plot {
             return;
         }
         
-        final List<TreatmentStep> data = sample.getVisibleTreatmentSteps();
-        if (data.isEmpty()) {
+        final List<TreatmentStep> steps = sample.getVisibleTreatmentSteps();
+        if (steps.isEmpty()) {
             return;
         }
 
         g.setColor(Color.BLACK);
-        final double maxDemag = TreatmentStep.maxTreatmentLevel(data);
+        final double maxDemag = TreatmentStep.maxTreatmentLevel(steps);
 
         /*
          * If all the measurements have the same demag level, we'll just plot
@@ -99,7 +99,7 @@ public class DemagPlot extends Plot {
 
         double xAxisLength;
         if (maxDemag == 0) {
-            xAxisLength = data.size() > 1 ? data.size() : 1;
+            xAxisLength = steps.size() > 1 ? steps.size() : 1;
             xBySequence = true;
         } else {
             xAxisLength = maxDemag;
@@ -134,7 +134,7 @@ public class DemagPlot extends Plot {
         
         final PlotAxis xAxis = new PlotAxis(xAxisParams, this);
         final PlotAxis yAxis = new PlotAxis(
-                new AxisParameters(correctedMaxIntensity(data), Direction.UP).
+                new AxisParameters(correctedMaxIntensity(steps), Direction.UP).
                         withLabel(vAxisLabel()).withNumberEachTick(),
                 this);
 
@@ -148,7 +148,7 @@ public class DemagPlot extends Plot {
                 true, false, false);
         
         int i = 0;
-        for (TreatmentStep step: data) {
+        for (TreatmentStep step: steps) {
             final double demagLevel = step.getTreatmentLevel() * demagRescale;
             final double xPos = dim.getMinX() +
                     (xBySequence ? (i + 1) : demagLevel) * xScale;
@@ -173,12 +173,12 @@ public class DemagPlot extends Plot {
             addPoint(null,
                     new Point2D.Double(dim.getMaxX() + 10, dim.getMaxY()),
                     false, false, false);
-            final PlotAxis msAxis = makeMagSusAxis(data);
+            final PlotAxis msAxis = makeMagSusAxis(steps);
             final double msScale = dim.getHeight() / msAxis.getLength();
             msAxis.draw(g, msScale, (int) dim.getMaxX(), (int) dim.getMaxY());
             i = 0;
             boolean first = true;
-            for (TreatmentStep step: data) {
+            for (TreatmentStep step: steps) {
                 final double demagLevel =
                         step.getTreatmentLevel() * demagRescale;
                 final double xPos = dim.getMinX() +

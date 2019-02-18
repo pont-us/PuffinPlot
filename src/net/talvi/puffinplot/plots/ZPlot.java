@@ -80,7 +80,7 @@ public class ZPlot extends Plot {
     /**
      * Draws a line indicating a PCA direction.
      * 
-     * @param g graphics context
+     * @param graphics graphics context
      * @param x TODO
      * @param y TODO
      * @param angleRad TODO
@@ -89,25 +89,28 @@ public class ZPlot extends Plot {
      * clipping rectangle, and no line will be drawn)
      * @param scale TODO
      */
-    private void drawPcaLine(Graphics2D g, double x, double y,
+    private void drawPcaLine(Graphics2D graphics, double x, double y,
             double angleRad, Color colour, Rectangle2D clip,
             double scale) {
         /*
          * Line clipping is done ‘manually’. The previous implementation just
-         * used g.setClip(axes.getBounds()) (saving and restoring the previous
-         * clip rectangle), but this caused problems, chiefly that the lines
-         * would appear at full length in SVG and PDF exports. Unfortunately
-         * there seems to be no appropriate clipping function in the Java
-         * libraries, so I have added a clipping routine to the Util class.
+         * used graphics.setClip(axes.getBounds()) (saving and restoring the
+         * previous clip rectangle), but this caused problems, chiefly that the
+         * lines would appear at full length in SVG and PDF exports.
+         * Unfortunately there seems to be no appropriate clipping function in
+         * the Java libraries, so I have added a clipping routine to the Util
+         * class.
          */
         
         // SAFE_LENGTH is intended always to reach the edges of the plot.
-        if (clip == null) return;
+        if (clip == null) {
+            return;
+        }
         final double SAFE_LENGTH = 10000;
         final double dx = SAFE_LENGTH * sin(angleRad);
         final double dy = SAFE_LENGTH * cos(angleRad);
-        g.setStroke(getStroke());
-        g.setColor(colour);
+        graphics.setStroke(getStroke());
+        graphics.setColor(colour);
         final Line2D line = Util.clipLineToRectangle(
                 new Line2D.Double(x-dx, y+dy, x+dx, y-dy), clip);
         /*
@@ -117,7 +120,7 @@ public class ZPlot extends Plot {
          * here.
          */
         if (line != null) {
-            g.draw(Util.scaleLine(line, scale));
+            graphics.draw(Util.scaleLine(line, scale));
         }
     }
     
@@ -267,7 +270,7 @@ public class ZPlot extends Plot {
                  * If we're plotting vertical projections vs. `H', there's no
                  * meaningful way to display the vertical component of the PCA:
                  * the projection plane is changing with every point so there is
-                 * no meaningful plane onto which the PCA line can be projected.
+                 * no consistent plane onto which the PCA line can be projected.
                  */
                 if ("Short".equals(pcaStyle)) {
                     clipRectangle = Util.envelope(pcaPointsV);
@@ -323,7 +326,8 @@ public class ZPlot extends Plot {
          * When calculating the final angle we need to add 1 to the north index
          * since the axes array starts with the right (positive-X) axis.
          */
-        return ((Math.PI/2)*(northIndex+1) + direction*dec) % (2*Math.PI);
+        return ((Math.PI / 2) * (northIndex + 1) + direction * dec) %
+                (2 * Math.PI);
     }
     
     /**

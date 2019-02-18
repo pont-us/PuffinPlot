@@ -32,19 +32,21 @@ import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Vec3;
 
 /**
- * A table showing some of the demagnetization data. At present the columns are:
- * treatment step, declination, inclination, intensity, magnetic susceptibility.
- * In the future they may become configurable.
- * 
+ * A table showing some of the data from individual treatment steps of a single
+ * sample. Since the most usual treatments are demagnetizing ones, it is called
+ * {@code DemagTable}. At present the columns are: treatment level (or step
+ * number, if no level is known), declination, inclination, intensity, magnetic
+ * susceptibility. In the future they may become configurable.
+ *
  * @author pont
  */
 public class DemagTable extends Plot {
 
-    private final List<String> headers = Arrays.asList(
+    private final List<String> defaultHeaders = Arrays.asList(
             new String[] {"demag.", "dec.", "inc.", "int.", "m.s."});
     
     /**
-     * Creates a data table with the supplied parameters
+     * Creates a demagnetization table with the supplied parameters
      *
      * @param params the parameters of the table
      */
@@ -91,18 +93,17 @@ public class DemagTable extends Plot {
             return;
         }
 
-        final List<String> headers2 = new ArrayList<>(headers);
+        final List<String> headers = new ArrayList<>(defaultHeaders);
         if (sample.getTreatmentStepByIndex(0).getTreatmentType() ==
                 TreatmentType.THERMAL) {
-            headers2.set(0, "temp.");
+            headers.set(0, "temp.");
         }
         
-        final double unitSize = getUnitSize();
         final List<Double> xSpacing = Stream.of(360., 450., 450., 660., 580.).
-                map(x -> x*unitSize).collect(Collectors.toList());
-        final int ySpacing = (int) (120 * unitSize);
+                map(x -> x * getUnitSize()).collect(Collectors.toList());
+        final int ySpacing = (int) (120 * getUnitSize());
         
-        points.add(new TextLinePoint(this, graphics, 10, null, null, headers2,
+        points.add(new TextLinePoint(this, graphics, 10, null, null, headers,
                 xSpacing, Color.BLACK));
         final boolean useSequence =
                 (TreatmentStep.maxTreatmentLevel(steps) == 0);
@@ -118,7 +119,7 @@ public class DemagTable extends Plot {
             if (yPos > getDimensions().getHeight()) {
                 break;
             }
-            final List<String> values = new ArrayList<>(4);
+            final List<String> values = new ArrayList<>(5);
             final Vec3 moment = step.getMoment(params.getCorrection());
             final String demag = useSequence ? Integer.toString(sequence)
                     : step.getFormattedTreatmentLevel();

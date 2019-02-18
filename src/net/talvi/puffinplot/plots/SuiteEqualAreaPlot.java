@@ -86,15 +86,16 @@ public class SuiteEqualAreaPlot extends EqualAreaPlot {
         if (sites == null || sites.isEmpty()) {
             // If there are no sites, we plot sample directions.
             for (Sample sample: suite.getSamples()) {
-                final Vec3 dir = sample.getDirection();
-                if (dir != null) {
-                    final PlotPoint p = ShapePoint.build(this, project(dir)).
-                            filled(dir.z>0).build();
+                final Vec3 direction = sample.getDirection();
+                if (direction != null) {
+                    final PlotPoint point = ShapePoint.build(this,
+                            project(direction)).
+                            filled(direction.z > 0).build();
                     graphics.setColor(sample == selectedSample ?
                             highlightColour : Color.BLACK);
-                    p.draw(graphics);
+                    point.draw(graphics);
                     graphics.setColor(Color.BLACK);
-                    writePointLabel(sample.getNameOrDepth(), p);
+                    writePointLabel(sample.getNameOrDepth(), point);
                 }
             }
             if (suiteCalcs != null) {
@@ -109,14 +110,15 @@ public class SuiteEqualAreaPlot extends EqualAreaPlot {
                             "plots.showSiteA95sOnSuitePlot", false)) {
                         drawSiteA95(siteMean);
                     }
-                    final Vec3 dir = siteMean.getMeanDirection();
-                    final PlotPoint p = ShapePoint.build(this, project(dir)).
-                            filled(dir.z>0).build();
+                    final Vec3 meanDirection = siteMean.getMeanDirection();
+                    final PlotPoint point = ShapePoint.build(this,
+                            project(meanDirection)).
+                            filled(meanDirection.z > 0).build();
                     graphics.setColor(site == selectedSample.getSite() ?
                             highlightColour : Color.BLACK);
-                    p.draw(graphics);
+                    point.draw(graphics);
                     graphics.setColor(Color.BLACK);
-                    writePointLabel(site.getName(), p);
+                    writePointLabel(site.getName(), point);
                 }
             }
             if (suiteCalcs != null) {
@@ -160,10 +162,10 @@ public class SuiteEqualAreaPlot extends EqualAreaPlot {
         }
     }
 
-    private void writePointLabel(String s, PlotPoint point) {
+    private void writePointLabel(String text, PlotPoint point) {
         if (params.getSettingBoolean("plots.labelPointsInSuitePlots", false)) {
             final Point2D centre = point.getCentre();
-            putText(cachedGraphics, s, centre.getX(), centre.getY(),
+            putText(cachedGraphics, text, centre.getX(), centre.getY(),
                     Direction.RIGHT,
                     0, 6);
         }
