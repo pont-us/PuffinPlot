@@ -261,8 +261,13 @@ public class TestUtils {
         ImageIO.write(image, "PNG", path.toFile());
     }
 
-    public static BufferedImage makeImage(Plot plot) {
-        final BufferedImage actual = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+    public static java.awt.image.BufferedImage makeImage(Plot plot) {
+        return makeImage(plot, 256, 256);
+    }
+
+    public static BufferedImage makeImage(Plot plot, int width, int height) {
+        final BufferedImage actual =
+                new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         final Graphics2D graphics = actual.createGraphics();
         plot.draw(graphics);
         return actual;

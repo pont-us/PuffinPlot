@@ -125,13 +125,6 @@ public class DemagTable extends Plot {
             values.add(demag);
             values.add(angleFormat.format(moment.getDecDeg()));
             values.add(angleFormat.format(moment.getIncDeg()));
-            /*
-             * Don't use .1g, it tickles a bug in Java (#6469160) which throws
-             * an ArrayFormatException (at least in Sun Java 5 & 6). Update:
-             * apparently fixed in Java 8 -- see
-             * http://bugs.java.com/view_bug.do?bug_id=6469160 . No reason to
-             * change the format at the moment, though.
-             */
             values.add(intensityFormat.format(moment.mag()));
             values.add(Double.isNaN(step.getMagSus()) ? "—" :
                        magSusFormat.format(step.getMagSus()));
