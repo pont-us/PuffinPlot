@@ -126,16 +126,20 @@ public class UcDavisLoader extends AbstractFileLoader {
      * The tuplets are defined in the header line. This class is a container for
      * those two values, and is used as a key for a hash table which maps a
      * (parameter, level) tuplet to a column index.
+     * <p>
+     * ColumnDef is only used internally by UcDavisLoader, but it is
+     * package-private to make it easier to test fully.
      *
      */
-    private static class ColumnDef {
+    static class ColumnDef {
 
         public final Integer treatmentLevel;
         public final TreatmentStepField parameter;
         private final static Pattern HEADER_PATTERN
                 = Pattern.compile("([^(]+)[(](\\d+)[)]");
 
-        private ColumnDef(Integer treatmentLevel, TreatmentStepField parameter) {
+        private ColumnDef(Integer treatmentLevel,
+                TreatmentStepField parameter) {
             this.treatmentLevel = treatmentLevel;
             this.parameter = parameter;
         }

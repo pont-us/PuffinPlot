@@ -324,12 +324,15 @@ public class TestUtils {
     }
     
     public static File writeStringToTemporaryFile(String fileName,
-            String fileContents,
-            TemporaryFolder temporaryFolder) throws IOException {
+            String fileContents, TemporaryFolder temporaryFolder)
+            throws IOException {
         final Path filePath = temporaryFolder.getRoot().toPath().
                 resolve(fileName);
-        Files.write(filePath, fileContents.getBytes(),
-                StandardOpenOption.CREATE);
+        filePath.toFile().createNewFile();
+        if (fileContents != null) {
+            Files.write(filePath, fileContents.getBytes(),
+                    StandardOpenOption.CREATE);
+        }
         return filePath.toFile();
     }
     
