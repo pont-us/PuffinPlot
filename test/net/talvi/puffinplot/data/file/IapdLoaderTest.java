@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.FileType;
@@ -32,13 +30,15 @@ import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.TreatmentStep;
-import org.junit.After;
+import net.talvi.puffinplot.data.TreatmentTypeTest;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Rule;
+import org.junit.rules.TemporaryFolder;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -65,6 +65,10 @@ public class IapdLoaderTest {
             +" 200   1121.1160   158.2 59.5  0.2   206.2  43.4  NOT MS\r\n"
             +" 500   725.0541    153.7 52.7  0.2   205.3  36.2  NOT MS\r\n";
     
+    private static final String MINIMAL_FILE =
+    "TG1H1  299.0 71.0   0.0   0.0   11.20  1    1\r\n" +
+                " 0     17145.4700  153.1 50.8  9.9   205.4  34.2  NOT MS\r\n";
+    
     private static final double[][] FILE_DATA = {
         {0,     17145.4700,  153.1,50.8,  0.4,   205.4,  34.2},
         {5,     17145.8600,  146.0,52.5,  0.4,   199.7,  35.0},
@@ -83,82 +87,142 @@ public class IapdLoaderTest {
         {200,   1121.1160,   158.2,59.5,  0.2,   206.2,  43.4},
         {500,   725.0541,    153.7,52.7,  0.2,   205.3,  36.2}};
     
-    private Map<Object, Object> options;
-    private File file;
-    private Suite suite;
+    private Map<Object, Object> options = new HashMap<>();
+    private Suite suite = new Suite(getClass().getSimpleName());;
     
-    public IapdLoaderTest() {
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    
+    @Test
+    public void testWithMissingFile() throws IOException {
+        final IapdLoader loader =
+                new IapdLoader(temporaryFolder.getRoot().toPath().
+                        resolve("nonexistent").toFile(),
+                options);
+        // Check for "error reading file" warning.
+        assertEquals(2, loader.messages.size());
+        assertTrue(loader.treatmentSteps.isEmpty());
     }
     
-    @Before
-    public void setUp() {
-        // Create an empty temporary file.
-        file = null;
-        try {
-            file = File.createTempFile("puffinplot-test-", ".DAT");
-            file.deleteOnExit();
-        } catch (IOException ex) {
-            Logger.getLogger(IapdLoaderTest.class.getName()).log(Level.SEVERE, null, ex);
-            fail("Error creating temporary file.");
-        }
-        
-        // Write our data into it.
-        try (FileWriter fw = new FileWriter(file)) {
-            fw.write(FILE_TEXT);
-        } catch (IOException ex) {
-            Logger.getLogger(IapdLoaderTest.class.getName()).log(Level.SEVERE, null, ex);
-            fail("Error writing data to temporary file.");
-        }
-        
-        options = new HashMap<>();
-        options.put(TreatmentType.class, TreatmentType.DEGAUSS_XYZ);
-        options.put(MeasurementType.class, MeasurementType.DISCRETE);
-        
-        suite = new Suite(getClass().getSimpleName());
+    @Test
+    public void testWithEmptyFile() throws IOException {
+        final File file = makeFile("EMPTY.DAT", null);
+        readFile(file);
+        // Check for empty file warning.
+        assertEquals(1, suite.getLoadWarnings().size());
+        // Check for empty suite.
+        assertTrue(suite.getSamples().isEmpty());
     }
     
-    @After
-    public void tearDown() {
-        file.delete(); // it's already deleteOnExit, but no harm in explicit delete too
+    @Test
+    public void testWithHighA95() throws IOException {
+        readFile(makeFile("HIGH_A95.DAT", MINIMAL_FILE));
+        assertEquals(1, suite.getLoadWarnings().size());
+        assertEquals(1, suite.getSampleByIndex(0).getTreatmentSteps().size());
+    }
+    
+    @Test
+    public void testWithMissingSampleName() throws IOException {
+        readFile(makeFile("NO_SAMPLE_NAME.DAT",
+                " " + FILE_TEXT.substring(FILE_TEXT.indexOf("\n"))));
+        // Should have "No sample name" and "Malformed header" warnings
+        assertEquals(2, suite.getLoadWarnings().size());
+        // The sample should load, albeit with default orientation
+        assertEquals(1, suite.getSamples().size());
+        assertEquals(16, suite.getSampleByIndex(0).getTreatmentSteps().size());
+    }
+    
+    @Test
+    public void testWithMalformedData() throws IOException {
+        readFile(makeFile("BAD_DATA.DAT", FILE_TEXT + "malformed line\r\n"));
+        assertEquals(1, suite.getLoadWarnings().size());
+        /*
+         * The malformed line should also beloaded as a treatment step, with
+         * default values for the missing data.
+         */
+        assertEquals(17, suite.getSampleByIndex(0).getTreatmentSteps().size());
+    }
+    
+    @Test
+    public void testTreatmentTypes() throws IOException {
+        for (TreatmentType tType: 
+            // new TreatmentType[] {TreatmentType.DEGAUSS_Z}
+            TreatmentType.values()
+                ) {
+            if (tType == TreatmentType.NONE || tType == TreatmentType.UNKNOWN) {
+                continue;
+            }
+            options.put(TreatmentType.class, tType);
+            suite = new Suite(getClass().getSimpleName());;
+            readFile(makeFile("TREATMENT_TYPE.DAT", MINIMAL_FILE));
+            assertEquals(tType, suite.getSampleByIndex(0).
+                    getTreatmentStepByIndex(0).getTreatmentType());
+        }
     }
 
     @Test
-    public void testConstructor() {
-        try {
-            suite.readFiles(Arrays.asList(new File[] {file}),
-                    null, TwoGeeLoader.Protocol.NORMAL, true,
-                    FileType.IAPD, null, options);
-        } catch (IOException ex) {
-            Logger.getLogger(IapdLoaderTest.class.getName()).log(Level.SEVERE, null, ex);
-            fail("Error reading file.");
-        }
+    public void testWithValidData() throws IOException {
+        options.put(TreatmentType.class, TreatmentType.DEGAUSS_XYZ);
+        options.put(MeasurementType.class, MeasurementType.DISCRETE);
+
+        readFile(makeFile("IAPD-loader-test.DAT", FILE_TEXT));
         final Sample sample = suite.getSampleByName("TG1H1");
-        final Correction sampCorr = new Correction(false, false, Correction.Rotation.SAMPLE, false);
-        final Correction noCorr = new Correction(false, false, Correction.Rotation.NONE, false);
+        final Correction sampCorr =
+                new Correction(false, false, Correction.Rotation.SAMPLE, false);
+        final Correction noCorr =
+                new Correction(false, false, Correction.Rotation.NONE, false);
         assertNotNull(sample);
         for (double[] fields: FILE_DATA) {
             final double demagLevel = fields[0] / 1000;
             final double intensity = fields[1] / 1000;
             
-            /* The IAPD file format contains precalculated sample-corrected
-               directions, so we can read these directly and check them against
-               the values that PuffinPlot produces from applying the 
-               orientations in the first line to the uncorrected sample 
-               directions in fields 5 and 6.
-            */
+            /*
+             * The IAPD file format contains precalculated sample-corrected
+             * directions, so we can read these directly and check them against
+             * the values that PuffinPlot produces from applying the
+             * orientations in the first line to the uncorrected sample
+             * directions in fields 5 and 6.
+             */
             final double decSamp = fields[2];
             final double incSamp = fields[3];
             
             final double decRaw = fields[5];
             final double incRaw = fields[6];
             
-            final TreatmentStep d = sample.getTreatmentStepByLevel(demagLevel);
-            assertEquals(intensity, d.getIntensity(), 1e-10);
-            assertEquals(decSamp, d.getMoment(sampCorr).getDecDeg(), 0.05);
-            assertEquals(incSamp, d.getMoment(sampCorr).getIncDeg(), 0.05);
-            assertEquals(decRaw, d.getMoment(noCorr).getDecDeg(), 0.05);
-            assertEquals(incRaw, d.getMoment(noCorr).getIncDeg(), 0.05);
+            /*
+             * The demagnetization level is checked implicitly: if it's
+             * wrong, the correct step won't be fetched and the other fields
+             * won't match.
+             */
+            final TreatmentStep step =
+                    sample.getTreatmentStepByLevel(demagLevel);
+            assertEquals(intensity, step.getIntensity(), 1e-10);
+            assertEquals(decSamp, step.getMoment(sampCorr).getDecDeg(), 0.05);
+            assertEquals(incSamp, step.getMoment(sampCorr).getIncDeg(), 0.05);
+            assertEquals(decRaw, step.getMoment(noCorr).getDecDeg(), 0.05);
+            assertEquals(incRaw, step.getMoment(noCorr).getIncDeg(), 0.05);
         }
+        assertEquals(0, suite.getLoadWarnings().size());
+    }
+
+    private File makeFile(String name, String contents) throws IOException {
+        final File file =
+                temporaryFolder.getRoot().toPath().resolve(name).toFile();
+        file.createNewFile();
+        
+        if (contents != null) {
+            try (FileWriter fw = new FileWriter(file)) {
+                fw.write(contents);
+            }
+        }
+        
+        return file;
     }
     
+    private void readFile(File file) throws IOException {
+        suite.readFiles(Arrays.asList(new File[] { file }),
+                null, TwoGeeLoader.Protocol.NORMAL, true,
+                FileType.IAPD, null, options);
+    }
+
 }

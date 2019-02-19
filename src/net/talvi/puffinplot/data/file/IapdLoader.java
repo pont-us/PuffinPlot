@@ -41,16 +41,18 @@ public class IapdLoader extends AbstractFileLoader {
     
     /**
      * Creates a new IapdLoader.
-     * 
+     *
      * Valid import option keys are:
-     * 
-     * {@code TreatmentType.class}; value must be an instance of {@link TreatmentType}
-     * {@code MeasurementType.class}; value must be an instance of {@link MeasurementType}
- 
- These keys respectively specify the treatment type and measurement
- type for the treatmentSteps in the file. If they are omitted, defaults will
- be used.
-     * 
+     *
+     * {@code TreatmentType.class}; value must be an instance of
+     * {@link TreatmentType}
+     * {@code MeasurementType.class}; value must be an instance of
+     * {@link MeasurementType}
+     *
+     * These keys respectively specify the treatment type and measurement type
+     * for the treatmentSteps in the file. If they are omitted, defaults will be
+     * used.
+     *
      * @param file the file from which to read treatmentSteps
      * @param importOptions import options for reading the treatmentSteps
      */
@@ -98,16 +100,12 @@ public class IapdLoader extends AbstractFileLoader {
     }
 
     private void readFile() throws IOException {
-        TreatmentType treatmentType = TreatmentType.DEGAUSS_XYZ;
-        MeasurementType measurementType = MeasurementType.DISCRETE;
-        if (importOptions.containsKey(TreatmentType.class)) {
-            treatmentType =
-                    (TreatmentType) importOptions.get(TreatmentType.class);
-        }
-        if (importOptions.containsKey(MeasurementType.class)) {
-            measurementType =
-                    (MeasurementType) importOptions.get(MeasurementType.class);
-        }
+        final TreatmentType treatmentType =
+                (TreatmentType) importOptions.getOrDefault(
+                        TreatmentType.class, TreatmentType.DEGAUSS_XYZ);
+        final MeasurementType measurementType =
+                (MeasurementType) importOptions.getOrDefault(
+                        MeasurementType.class, MeasurementType.DISCRETE);
         
         final String headerLine = reader.readLine();
         if (headerLine == null) {
@@ -149,6 +147,12 @@ public class IapdLoader extends AbstractFileLoader {
             final ParsedDoubles fields =
                     ParsedDoubles.parse(parts, defaults, 0);
             success = success && fields.success;
+            /*
+             * We carry on even if there was a parsing error (i.e.
+             * fields.success == false): ParsedDoubles sets default values
+             * so we may get something useful out, and the user will in any
+             * case be warned about the malformed data.
+             */
             final double treatmentLevel = fields.get(0);
             
             switch (treatmentType) {
