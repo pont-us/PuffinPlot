@@ -48,7 +48,7 @@ public class PplLoader extends AbstractFileLoader {
 
     private static final Logger logger =
             Logger.getLogger(PplLoader.class.getName());
-    private static final Pattern puffinHeader =
+    private static final Pattern PUFFIN_HEADER =
             Pattern.compile("^PuffinPlot file. Version (\\d+)");
     private LineNumberReader reader;
     private TreatmentStep.Reader datumReader;
@@ -70,17 +70,16 @@ public class PplLoader extends AbstractFileLoader {
             if (firstLine == null) {
                 throw new IOException(file + " is empty.");
             }
-            Matcher matcher = puffinHeader.matcher(firstLine);
+            final Matcher matcher = PUFFIN_HEADER.matcher(firstLine);
             if (!matcher.matches()) {
                 throw new IOException(file + " doesn't appear to be a "
                         + "PuffinPlot file.");
             }
-            String versionString = matcher.group(1);
+            final String versionString = matcher.group(1);
             version = Integer.parseInt(versionString);
             if (version != 2 && version != 3) {
                 throw new IOException(String.format(Locale.ENGLISH,
-                        "%s is of version %d,"
-                        + "which cannot be "
+                        "%s is of version %d, which cannot be "
                         + "loaded by this version of PuffinPlot.",
                         file, version));
             }
@@ -88,17 +87,20 @@ public class PplLoader extends AbstractFileLoader {
             if (headerLine == null) {
                 throw new IOException(file + " contains no headers or data.");
             }
-            List<String> headers = Arrays.asList(headerLine.split("\t"));
+            final List<String> headers = Arrays.asList(headerLine.split("\t"));
             treatmentField = headers.indexOf("TREATMENT");
             datumReader = new TreatmentStep.Reader(headers);
             readFile();
-        } catch (IOException | MalformedFileException e) {
-            addMessage(e.getMessage());
+        } catch (IOException | MalformedFileException exception) {
+            addMessage(exception.getMessage());
         } finally {
             try {
-                if (reader != null) reader.close();
-            } catch (IOException ex) {
-                logger.log(Level.WARNING, "Failed to close reader: ", ex);
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (IOException exception) {
+                logger.log(Level.WARNING, "Failed to close reader: ",
+                        exception);
             }
         }
     }
@@ -106,16 +108,22 @@ public class PplLoader extends AbstractFileLoader {
     private void readFile() throws IOException, MalformedFileException {
         String line;
         while ((line = reader.readLine()) != null) {
-            if ("".equals(line)) break;
-            List<String> values = Arrays.asList(line.split("\t"));
-            if (version==2) {
-                // Ppl 2 files still use the 2G strings for treatment types,
-                // so we munge it into a suitable input for TreatmentType.valueOf
-                // before passing it to the TreatmentStep reader.
+            if ("".equals(line)) {
+                break;
+            }
+            final List<String> values = Arrays.asList(line.split("\t"));
+            if (version == 2) {
+                /*
+                 * Ppl 2 files still use the 2G strings for treatment types, so
+                 * we munge it into a suitable input for TreatmentType.valueOf
+                 * before passing it to the TreatmentStep reader.
+                 */
                 values.set(treatmentField, treatTypeFromString(values.get
                         (treatmentField)).toString());
-                // Fortunately, measurement type strings happen to carry
-                // across so we don't need to munge them.
+                /*
+                 * Fortunately, measurement type strings happen to carry across
+                 * so we don't need to munge them.
+                 */
             }
             TreatmentStep step = null;
             try {
@@ -127,20 +135,27 @@ public class PplLoader extends AbstractFileLoader {
                         file.getName(), e.getMessage());
                 throw new MalformedFileException(msg);
             }
-            if (version==2) {
-                // Ppl 2 files store magnetic data (except susceptibility)
-                // in cgs units, which must be corrected on loading.
+            if (version == 2) {
+                /*
+                 * Ppl 2 files store magnetic data (except susceptibility) in
+                 * cgs units, which must be corrected on loading.
+                 */
                 step.setMoment(gaussToAm(step.getMoment(Correction.NONE)));
-                if (!isNaN(step.getAfX()))
+                if (!isNaN(step.getAfX())) {
                     step.setAfX(oerstedToTesla(step.getAfX()));
-                if (!isNaN(step.getAfY()))
+                }
+                if (!isNaN(step.getAfY())) {
                     step.setAfX(oerstedToTesla(step.getAfY()));
-                if (!isNaN(step.getAfZ()))
+                }
+                if (!isNaN(step.getAfZ())) {
                     step.setAfX(oerstedToTesla(step.getAfZ()));
-                if (!isNaN(step.getIrmField()))
+                }
+                if (!isNaN(step.getIrmField())) {
                     step.setIrmField(oerstedToTesla(step.getIrmField()));
-                if (!isNaN(step.getArmField()))
+                }
+                if (!isNaN(step.getArmField())) {
                     step.setArmField(oerstedToTesla(step.getArmField()));
+                }
             }
             addTreatmentStep(step);
         }

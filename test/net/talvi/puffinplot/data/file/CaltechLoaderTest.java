@@ -118,19 +118,21 @@ public class CaltechLoaderTest {
         for (int i=0; i<sampleNames.length; i++) {
             final String sampleName = sampleNames[i];
             final List<TreatmentStep> sampleData = data.stream().
-                    filter(d -> sampleName.equals(d.getIdOrDepth())).
+                    filter(step -> sampleName.equals(step.getIdOrDepth())).
                     collect(Collectors.toList());
             final List<Vec3> sampleDirs = sampleData.stream().
-                    map(d -> d.getMoment(correction)).
+                    map(step -> step.getMoment(correction)).
                     collect(Collectors.toList());
             final PcaValues pca = PcaValues.calculate(sampleDirs, false);
             final double[] expected = pcaDirs[i];
             assertEquals(expected[0], pca.getDirection().getDecDeg(), 0.1);
             assertEquals(expected[1], pca.getDirection().getIncDeg(), 0.1);
             assertEquals(expected[2], pca.getMad3(), 0.1);
-            assertEquals(firstTreatmentType, sampleData.get(0).getTreatmentType());
+            assertEquals(firstTreatmentType,
+                    sampleData.get(0).getTreatmentType());
             assertTrue(sampleData.stream().skip(1).
-                allMatch(d -> d.getTreatmentType() == subsequentTreatmentType));
+                allMatch(step ->
+                        step.getTreatmentType() == subsequentTreatmentType));
             assertEquals(nDataPerSample, sampleData.size());
         }
         

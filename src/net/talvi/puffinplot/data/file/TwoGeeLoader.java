@@ -125,7 +125,8 @@ public class TwoGeeLoader extends AbstractFileLoader {
                 fields.put(fieldNames[i], i);
         }
         treatmentSteps = new LinkedList<>();
-        Vec3 trayMoment = null; // only used for TRAY_FIRST and TRAY_NORMAL_IGNORE
+        // trayMoment is only used for TRAY_FIRST and TRAY_NORMAL_IGNORE.
+        Vec3 trayMoment = null;
         String line;
         while ((line = reader.readLine()) != null) {
             final TreatmentStep step =
@@ -235,11 +236,13 @@ public class TwoGeeLoader extends AbstractFileLoader {
      */
     private TreatmentStep combine2(TreatmentStep tray, TreatmentStep normal,
             boolean useTrayData) {
-        if (tray == null || normal == null) return null;
+        if (tray == null || normal == null) {
+            return null;
+        }
         final Vec3 trayV = tray.getMoment(Correction.NONE);
         final Vec3 normV = normal.getMoment(Correction.NONE);
         // The volume correction's already been applied on loading.
-        TreatmentStep result = useTrayData ? tray : normal;
+        final TreatmentStep result = useTrayData ? tray : normal;
         result.setMoment(normV.minus(trayV));
         return result;
     }
@@ -255,7 +258,9 @@ public class TwoGeeLoader extends AbstractFileLoader {
          * measurement, and just poke in the magnetic moment vector calculated
          * from the three readings.
          */
-        if (tray==null || normal==null || reversed==null) return null;
+        if (tray == null || normal == null || reversed == null) {
+            return null;
+        }
         final Vec3 trayV = tray.getMoment(Correction.NONE);
         final Vec3 normV = normal.getMoment(Correction.NONE);
         final Vec3 revV = reversed.getMoment(Correction.NONE);
@@ -292,10 +297,10 @@ public class TwoGeeLoader extends AbstractFileLoader {
      * (2) requested but not found
      */
     private void correlateFields() {
-        Set<String> fileFieldSet = new HashSet<>(fields.keySet());
-        Set<String> notUsed = new HashSet<>(fileFieldSet);
+        final Set<String> fileFieldSet = new HashSet<>(fields.keySet());
+        final Set<String> notUsed = new HashSet<>(fileFieldSet);
         notUsed.removeAll(requestedFields);
-        Set<String> notInFile = new HashSet<>(requestedFields);
+        final Set<String> notInFile = new HashSet<>(requestedFields);
         notInFile.removeAll(fileFieldSet);
         LOGGER.info(String.format(Locale.ENGLISH,
                 "Field headers in file %s\n" +
@@ -345,7 +350,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
                 return defaultValue;
             }
             String v = values[fields.get(name)];
-            // catch the common case without using an expensive exception
+            // Catch the common case without using an expensive exception.
             if ("NA".equals(v)) {
                 return Double.NaN;
             }
@@ -373,10 +378,15 @@ public class TwoGeeLoader extends AbstractFileLoader {
                 return defaultValue;
             }
             String v = values[fields.get(name)];
-            // catch the common case without using an expensive exception
-            if ("NA".equals(v)) return 0;
-            try { return Integer.parseInt(v); }
-            catch (NumberFormatException e) { return 0; }
+            // Catch the common case without using an expensive exception.
+            if ("NA".equals(v)) {
+                return 0;
+            }
+            try {
+                return Integer.parseInt(v);
+            } catch (NumberFormatException exception) {
+                return 0;
+            }
         }
 
         private String getString(String name, String defaultValue) {
@@ -421,7 +431,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
     private TreatmentStep lineToTreatmentStep(String line, int lineNumber) {
         final FieldReader r = new FieldReader(line);
         
-        // This TreatmentStep will be initialized with a default volume and area.
+        // The TreatmentStep will be initialized with a default volume and area.
         final TreatmentStep step = new TreatmentStep();
         
         final MeasurementType measurementType;
@@ -436,22 +446,29 @@ public class TwoGeeLoader extends AbstractFileLoader {
             measurementType = MeasurementType.DISCRETE;
         }
         
-        // Default values for area and volume are hard-coded in the TreatmentStep
-        // class, and will be used here if nothing is specified in the file.
+        /*
+         * Default values for area and volume are hard-coded in the
+         * TreatmentStep class, and will be used here if nothing is specified in
+         * the file.
+         */
         step.setArea(r.getDouble("Area", step.getArea()));
         step.setVolume(r.getDouble("Volume", step.getVolume()));
         
         final Vec3 momentGaussCm3 = readMagnetizationVector(r);
         if (momentGaussCm3 != null) {
-            // we have a raw magnetic moment in gauss * cm^3 (a.k.a. emu).
-            // First we divide it by the sample volume in cm^3 to get a
-            // magnetization in gauss.
+            /*
+             * we have a raw magnetic moment in gauss * cm^3 (a.k.a. emu). First
+             * we divide it by the sample volume in cm^3 to get a magnetization
+             * in gauss.
+             */
             final Vec3 magnetizationGauss;
             switch (measurementType) {
             case CONTINUOUS:
                 if (usePolarMoment) {
-                    // Polar moments in 2G files are already corrected for
-                    // sensor length and cross-sectional core area
+                    /*
+                     * Polar moments in 2G files are already corrected for
+                     * sensor length and cross-sectional core area.
+                     */
                     magnetizationGauss = momentGaussCm3;
                 } else {
                     magnetizationGauss = momentGaussCm3.
@@ -511,20 +528,22 @@ public class TwoGeeLoader extends AbstractFileLoader {
         }
         step.setMeasurementType(measurementType);
         
-        if (fieldExists("Treatment Type"))
+        if (fieldExists("Treatment Type")) {
             step.setTreatmentType(treatTypeFromString(
                     r.getString("Treatment Type", "degauss z")));
-        else if (fieldExistsAndIsValid("ARM Gauss", r))
+        } else if (fieldExistsAndIsValid("ARM Gauss", r)) {
             step.setTreatmentType(TreatmentType.ARM);
-        else if (fieldExistsAndIsValid("IRM Gauss", r))
+        } else if (fieldExistsAndIsValid("IRM Gauss", r)) {
             step.setTreatmentType(TreatmentType.IRM);
-        else if (fieldExistsAndIsValid("AF X", r))
+        } else if (fieldExistsAndIsValid("AF X", r)) {
             step.setTreatmentType(TreatmentType.DEGAUSS_XYZ);
-        else if (fieldExistsAndIsValid("AF Z", r))
+        } else if (fieldExistsAndIsValid("AF Z", r)) {
             step.setTreatmentType(TreatmentType.DEGAUSS_Z);
-        else if (fieldExistsAndIsValid("Temp C", r))
+        } else if (fieldExistsAndIsValid("Temp C", r)) {
             step.setTreatmentType(TreatmentType.THERMAL);
-        else step.setTreatmentType(TreatmentType.DEGAUSS_Z);
+        } else {
+            step.setTreatmentType(TreatmentType.DEGAUSS_Z);
+        }
         
         if (r.hasDouble("AF X")) {
             step.setAfX(oerstedToTesla(r.getDouble("AF X", Double.NaN)));
