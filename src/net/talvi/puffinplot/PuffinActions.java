@@ -38,7 +38,7 @@ import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.data.TreatmentType;
-import net.talvi.puffinplot.data.TreatmentStepField;
+import net.talvi.puffinplot.data.TreatmentParameter;
 import net.talvi.puffinplot.window.AlignDeclinationsDialog;
 import net.talvi.puffinplot.window.CiteWindow;
 import net.talvi.puffinplot.window.EditSampleParametersWindow;
@@ -726,8 +726,8 @@ public class PuffinActions {
             String pathname = app.getSavePath("Export IRM data", null,
                     null);
             app.getCurrentSuite().exportToFiles(new File(pathname),
-                    Arrays.asList(new TreatmentStepField[] {TreatmentStepField.IRM_FIELD,
-                    TreatmentStepField.VIRT_MAGNETIZATION}));
+                    Arrays.asList(new TreatmentParameter[] {TreatmentParameter.IRM_FIELD,
+                    TreatmentParameter.VIRT_MAGNETIZATION}));
         }
     };
 

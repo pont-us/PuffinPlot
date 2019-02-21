@@ -286,7 +286,7 @@ public final class Suite implements SampleGroup {
      */
     public void saveAs(File file)
             throws PuffinUserException {
-        List<String> fields = TreatmentStepField.getRealFieldStrings();
+        List<String> fields = TreatmentParameter.getRealFieldStrings();
 
         FileWriter fileWriter = null;
         CsvWriter csvWriter = null;
@@ -1255,7 +1255,7 @@ public final class Suite implements SampleGroup {
      * @param directory the directory in which to create the files
      * @param fields the fields to export
      */
-    public void exportToFiles(File directory, List<TreatmentStepField> fields) {
+    public void exportToFiles(File directory, List<TreatmentParameter> fields) {
         if (directory.exists()) {
             if (!directory.isDirectory()) {
                 logger.warning(String.format(Locale.ENGLISH,

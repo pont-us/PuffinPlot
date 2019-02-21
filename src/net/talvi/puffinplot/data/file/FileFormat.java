@@ -30,7 +30,7 @@ import net.talvi.puffinplot.data.MeasurementType;
 import net.talvi.puffinplot.data.MomentUnit;
 import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.TreatmentStep;
-import net.talvi.puffinplot.data.TreatmentStepField;
+import net.talvi.puffinplot.data.TreatmentParameter;
 import net.talvi.puffinplot.data.Vec3;
 
 /**
@@ -44,7 +44,7 @@ public final class FileFormat {
     
     private final MeasurementType measurementType;
     private final TreatmentType treatmentType;
-    private final Map<Integer, TreatmentStepField> columnMap;
+    private final Map<Integer, TreatmentParameter> columnMap;
     private final int headerLines;
     private final String separator;
     private final boolean useFixedWidthColumns;
@@ -68,7 +68,7 @@ public final class FileFormat {
      * @param momentUnit units in which magnetic moment per unit volume is expressed
      * @param fieldUnit units in which magnetic field strength is expressed
      */
-    public FileFormat(Map<Integer, TreatmentStepField> columnMap, int headerLines,
+    public FileFormat(Map<Integer, TreatmentParameter> columnMap, int headerLines,
                       MeasurementType measurementType, TreatmentType treatmentType,
                       String separator, boolean useFixedWidthColumns,
                       List<Integer> columnWidths, MomentUnit momentUnit, FieldUnit fieldUnit) {
@@ -81,7 +81,7 @@ public final class FileFormat {
         this.columnWidths = columnWidths;
         this.momentUnit = momentUnit;
         this.fieldUnit = fieldUnit;
-        this.specifiesVolume = columnMap.values().contains(TreatmentStepField.VOLUME);
+        this.specifiesVolume = columnMap.values().contains(TreatmentParameter.VOLUME);
     }
     
     private String[] splitLine(String line) {
@@ -118,7 +118,7 @@ public final class FileFormat {
         double dec = Double.NaN, inc = Double.NaN, intensity = Double.NaN;
         for (int i=0; i<fieldStrings.length; i++) {
             if (!columnMap.containsKey(i)) continue;
-            final TreatmentStepField fieldType = columnMap.get(i);
+            final TreatmentParameter fieldType = columnMap.get(i);
             final String valueString = fieldStrings[i];
             double scale = 1;
             switch (fieldType) {
@@ -227,7 +227,7 @@ public final class FileFormat {
         prefs.put(pp+".columnWidths", getColumnWidthsAsString());
         StringBuilder fieldsBuilder = new StringBuilder();
         boolean first = true;
-        for (Entry<Integer, TreatmentStepField> entry: columnMap.entrySet()) {
+        for (Entry<Integer, TreatmentParameter> entry: columnMap.entrySet()) {
             if (!first) fieldsBuilder.append("\t");
             fieldsBuilder.append(Integer.toString(entry.getKey()));
             fieldsBuilder.append(",");
@@ -258,13 +258,13 @@ public final class FileFormat {
                 convertStringToColumnWidths(prefs.get(pp+".columnWidths", ""));
         final String columnString = prefs.get(pp+".columnMap", "");
         final String[] columnDefs = columnString.split("\t");
-        final Map<Integer, TreatmentStepField> columnMap =
+        final Map<Integer, TreatmentParameter> columnMap =
                 new LinkedHashMap<>(columnDefs.length);
         for (String columnDef: columnDefs) {
             if ("".equals(columnDef)) continue;
             final String[] parts = columnDef.split(",");
             final int column = Integer.parseInt(parts[0]);
-            final TreatmentStepField field = TreatmentStepField.valueOf(parts[1]);
+            final TreatmentParameter field = TreatmentParameter.valueOf(parts[1]);
             columnMap.put(column, field);
         }
         final MomentUnit momentUnit =
@@ -292,7 +292,7 @@ public final class FileFormat {
     /**
      * @return the mapping between column numbers and data field types
      */
-    public Map<Integer, TreatmentStepField> getColumnMap() {
+    public Map<Integer, TreatmentParameter> getColumnMap() {
         return columnMap;
     }
 
@@ -326,12 +326,12 @@ public final class FileFormat {
      * @return {@code true} iff this format specifies a full magnetization vector
      */
     public boolean specifiesFullVector() {
-        return (columnMap.containsValue(TreatmentStepField.X_MOMENT) &&
-                columnMap.containsValue(TreatmentStepField.Y_MOMENT) &&
-                columnMap.containsValue(TreatmentStepField.Z_MOMENT)) ||
-                (columnMap.containsValue(TreatmentStepField.VIRT_INCLINATION) &&
-                columnMap.containsValue(TreatmentStepField.VIRT_DECLINATION) &&
-                columnMap.containsValue(TreatmentStepField.VIRT_MAGNETIZATION));
+        return (columnMap.containsValue(TreatmentParameter.X_MOMENT) &&
+                columnMap.containsValue(TreatmentParameter.Y_MOMENT) &&
+                columnMap.containsValue(TreatmentParameter.Z_MOMENT)) ||
+                (columnMap.containsValue(TreatmentParameter.VIRT_INCLINATION) &&
+                columnMap.containsValue(TreatmentParameter.VIRT_DECLINATION) &&
+                columnMap.containsValue(TreatmentParameter.VIRT_MAGNETIZATION));
     }
     
     /**
@@ -345,8 +345,8 @@ public final class FileFormat {
      */
     public boolean specifiesDirection() {
         return specifiesFullVector() ||
-                (columnMap.containsValue(TreatmentStepField.VIRT_INCLINATION) &&
-                columnMap.containsValue(TreatmentStepField.VIRT_DECLINATION));
+                (columnMap.containsValue(TreatmentParameter.VIRT_INCLINATION) &&
+                columnMap.containsValue(TreatmentParameter.VIRT_DECLINATION));
     }
 
     /**

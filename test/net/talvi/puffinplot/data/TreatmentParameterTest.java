@@ -34,12 +34,12 @@ import static org.junit.Assert.fail;
  *
  * @author pont
  */
-public class TreatmentStepFieldTest {
+public class TreatmentParameterTest {
 
     @Test
     public void testValues() {
-        final TreatmentStepField[] result = TreatmentStepField.values();
-        final List<TreatmentStepField> resultList = Arrays.asList(result);
+        final TreatmentParameter[] result = TreatmentParameter.values();
+        final List<TreatmentParameter> resultList = Arrays.asList(result);
 
         /*
          * There seems little point in exhaustively testing the values array --
@@ -48,25 +48,25 @@ public class TreatmentStepFieldTest {
          * is of a reasonable size.
          */
         assertTrue(result.length > 20);
-        assertTrue(resultList.contains(TreatmentStepField.AF_X));
-        assertTrue(resultList.contains(TreatmentStepField.VOLUME));
-        assertTrue(resultList.contains(TreatmentStepField.VIRT_MAGNETIZATION));
+        assertTrue(resultList.contains(TreatmentParameter.AF_X));
+        assertTrue(resultList.contains(TreatmentParameter.VOLUME));
+        assertTrue(resultList.contains(TreatmentParameter.VIRT_MAGNETIZATION));
     }
 
     @Test
     public void testValueOf() {
-        final TreatmentStepField[] values = TreatmentStepField.values();
-        for (TreatmentStepField value : values) {
-            assertEquals(value, TreatmentStepField.valueOf(value.toString()));
+        final TreatmentParameter[] values = TreatmentParameter.values();
+        for (TreatmentParameter value : values) {
+            assertEquals(value, TreatmentParameter.valueOf(value.toString()));
         }
     }
 
     @Test
     public void testGetHeadingAndGetByHeading() {
-        final TreatmentStepField[] values = TreatmentStepField.values();
-        for (TreatmentStepField value : values) {
+        final TreatmentParameter[] values = TreatmentParameter.values();
+        for (TreatmentParameter value : values) {
             assertEquals(value,
-                    TreatmentStepField.getByHeading(value.getHeading()));
+                    TreatmentParameter.getByHeading(value.getHeading()));
         }
     }
 
@@ -77,8 +77,8 @@ public class TreatmentStepFieldTest {
          * non-null and non-empty.
          */
 
-        final TreatmentStepField[] values = TreatmentStepField.values();
-        for (TreatmentStepField value : values) {
+        final TreatmentParameter[] values = TreatmentParameter.values();
+        for (TreatmentParameter value : values) {
             final String result = value.getNiceName();
             assertNotNull(result);
             assertNotEquals("", result);
@@ -91,12 +91,12 @@ public class TreatmentStepFieldTest {
          * Here we test that the default value for each field type is a valid
          * string representation of that type.
          */
-        final TreatmentStepField[] fields = TreatmentStepField.values();
+        final TreatmentParameter[] fields = TreatmentParameter.values();
         final Set<Class> exceptionThrowingTypes = Arrays.stream(new Class[]{
             double.class, int.class, ArmAxis.class, MeasurementType.class,
             TreatmentType.class
         }).collect(Collectors.toSet());
-        for (TreatmentStepField field : fields) {
+        for (TreatmentParameter field : fields) {
             final String defaultValue = field.getDefaultValue();
             final Class type = field.getType();
             if (exceptionThrowingTypes.contains(type)) {
@@ -122,7 +122,7 @@ public class TreatmentStepFieldTest {
                  * returns true for an input of "true" (with any casing) and
                  * "false" otherwise. But there seems no reason to allow values
                  * other than "true" and "false" for the default string
-                 * representations in TreatmentStepField.
+                 * representations in TreatmentParameter.
                  */
                 assertTrue("false".equals(defaultValue)
                         || "true".equals(defaultValue));
@@ -136,8 +136,8 @@ public class TreatmentStepFieldTest {
 
     @Test
     public void testIsVirtual() {
-        final TreatmentStepField[] fields = TreatmentStepField.values();
-        for (TreatmentStepField field : fields) {
+        final TreatmentParameter[] fields = TreatmentParameter.values();
+        for (TreatmentParameter field : fields) {
             assertEquals(field.isVirtual(),
                     field.toString().startsWith("VIRT_"));
         }
@@ -149,11 +149,11 @@ public class TreatmentStepFieldTest {
          * All fields are importable, except for PuffinPlot's own fields and the
          * MS jump temperature.
          */
-        final TreatmentStepField[] fields = TreatmentStepField.values();
-        for (TreatmentStepField field : fields) {
+        final TreatmentParameter[] fields = TreatmentParameter.values();
+        for (TreatmentParameter field : fields) {
             assertEquals(field.isImportable(),
                     !(field.toString().startsWith("PP_")
-                    || field == TreatmentStepField.VIRT_MSJUMP));
+                    || field == TreatmentParameter.VIRT_MSJUMP));
         }
     }
 
@@ -164,11 +164,11 @@ public class TreatmentStepFieldTest {
          * getRealFields() and the set of all fields for which isVirtual() is
          * true. (This is unfortunately rather verbose in Java.)
          */
-        final Set<TreatmentStepField> allFields = Arrays.stream(TreatmentStepField.values()).
+        final Set<TreatmentParameter> allFields = Arrays.stream(TreatmentParameter.values()).
                 collect(Collectors.toSet());
-        final Set<TreatmentStepField> virtualFields = allFields.stream().
+        final Set<TreatmentParameter> virtualFields = allFields.stream().
                 filter(f -> f.isVirtual()).collect(Collectors.toSet());
-        final Set<TreatmentStepField> realFields = TreatmentStepField.getRealFields().stream().
+        final Set<TreatmentParameter> realFields = TreatmentParameter.getRealFields().stream().
                 collect(Collectors.toSet());
         // check that virtual and real are disjoint
         assertTrue(realFields.stream().
@@ -176,7 +176,7 @@ public class TreatmentStepFieldTest {
         assertTrue(virtualFields.stream().
                 noneMatch(f -> realFields.contains(f)));
         // check that every element is either in virtual or real
-        final Set<TreatmentStepField> virtualPlusReal = new HashSet<>();
+        final Set<TreatmentParameter> virtualPlusReal = new HashSet<>();
         virtualPlusReal.addAll(virtualFields);
         virtualPlusReal.addAll(realFields);
         assertEquals(allFields, virtualPlusReal);
@@ -184,9 +184,9 @@ public class TreatmentStepFieldTest {
 
     @Test
     public void testGetRealFieldStrings() {
-        final Set<String> actual = TreatmentStepField.getRealFieldStrings().stream().
+        final Set<String> actual = TreatmentParameter.getRealFieldStrings().stream().
                 collect(Collectors.toSet());
-        final Set<String> expected = TreatmentStepField.getRealFields().stream().
+        final Set<String> expected = TreatmentParameter.getRealFields().stream().
                 map(f -> f.toString()).collect(Collectors.toSet());
         assertEquals(expected, actual);
     }

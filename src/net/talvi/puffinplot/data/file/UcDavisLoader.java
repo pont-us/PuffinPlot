@@ -35,7 +35,7 @@ import java.util.stream.Stream;
 import net.talvi.puffinplot.data.MeasurementType;
 import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.TreatmentStep;
-import net.talvi.puffinplot.data.TreatmentStepField;
+import net.talvi.puffinplot.data.TreatmentParameter;
 import net.talvi.puffinplot.data.Vec3;
 
 /**
@@ -101,13 +101,12 @@ public class UcDavisLoader extends AbstractFileLoader {
                  * length), so for now I'm ignoring the Cartesian values and
                  * initializing the datum using the polar vector.
                  */
-                step.setMoment(Vec3.fromPolarDegrees(
+                step.setMoment(Vec3.fromPolarDegrees(parts.get(fieldMap.get(new ColumnDef(level,
+                                TreatmentParameter.VIRT_MAGNETIZATION))),
                         parts.get(fieldMap.get(new ColumnDef(level,
-                                TreatmentStepField.VIRT_MAGNETIZATION))),
+                                TreatmentParameter.VIRT_INCLINATION))),
                         parts.get(fieldMap.get(new ColumnDef(level,
-                                TreatmentStepField.VIRT_INCLINATION))),
-                        parts.get(fieldMap.get(new ColumnDef(level,
-                                TreatmentStepField.VIRT_DECLINATION)))));
+                                TreatmentParameter.VIRT_DECLINATION)))));
                 step.setTreatmentType(TreatmentType.DEGAUSS_XYZ);
                 final double levelTesla = level / 1000.;
                 step.setAfX(levelTesla);
@@ -134,12 +133,12 @@ public class UcDavisLoader extends AbstractFileLoader {
     static class ColumnDef {
 
         public final Integer treatmentLevel;
-        public final TreatmentStepField parameter;
+        public final TreatmentParameter parameter;
         private final static Pattern HEADER_PATTERN
                 = Pattern.compile("([^(]+)[(](\\d+)[)]");
 
         private ColumnDef(Integer treatmentLevel,
-                TreatmentStepField parameter) {
+                TreatmentParameter parameter) {
             this.treatmentLevel = treatmentLevel;
             this.parameter = parameter;
         }
@@ -150,20 +149,20 @@ public class UcDavisLoader extends AbstractFileLoader {
          * @param s parameter specifier from the UC Davis file
          * @return the parameter type specified by the string
          */
-        private static TreatmentStepField stringToField(String s) {
+        private static TreatmentParameter stringToField(String s) {
             switch (s) {
                 case "X":
-                    return TreatmentStepField.X_MOMENT;
+                    return TreatmentParameter.X_MOMENT;
                 case "Y":
-                    return TreatmentStepField.Y_MOMENT;
+                    return TreatmentParameter.Y_MOMENT;
                 case "Z":
-                    return TreatmentStepField.Z_MOMENT;
+                    return TreatmentParameter.Z_MOMENT;
                 case "D":
-                    return TreatmentStepField.VIRT_DECLINATION;
+                    return TreatmentParameter.VIRT_DECLINATION;
                 case "I":
-                    return TreatmentStepField.VIRT_INCLINATION;
+                    return TreatmentParameter.VIRT_INCLINATION;
                 case "J":
-                    return TreatmentStepField.VIRT_MAGNETIZATION;
+                    return TreatmentParameter.VIRT_MAGNETIZATION;
                 default:
                     return null;
             }
@@ -178,7 +177,7 @@ public class UcDavisLoader extends AbstractFileLoader {
         public static ColumnDef fromHeader(String header) {
             final Matcher matcher = HEADER_PATTERN.matcher(header);
             matcher.matches();
-            final TreatmentStepField field = stringToField(matcher.group(1));
+            final TreatmentParameter field = stringToField(matcher.group(1));
             return new ColumnDef(Integer.parseInt(matcher.group(2)),
                     field);
         }

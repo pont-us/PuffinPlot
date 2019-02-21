@@ -30,7 +30,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
 import net.talvi.puffinplot.data.TreatmentStep;
-import net.talvi.puffinplot.data.TreatmentStepField;
+import net.talvi.puffinplot.data.TreatmentParameter;
 
 /**
  * A window which shows all the data for a sample in tabular form.
@@ -95,12 +95,12 @@ public class TableWindow extends JFrame {
 
         @Override
         public int getColumnCount() {
-            return TreatmentStepField.values().length - 1;
+            return TreatmentParameter.values().length - 1;
         }
         
         @Override
         public String getColumnName(int c) {
-            return TreatmentStepField.values()[c].toString().toLowerCase();
+            return TreatmentParameter.values()[c].toString().toLowerCase();
         }
           
         @Override
@@ -114,7 +114,7 @@ public class TableWindow extends JFrame {
 
         @Override
         public Class<?> getColumnClass(int c) {
-            return TreatmentStepField.values()[c].getClass();
+            return TreatmentParameter.values()[c].getClass();
         }
 
         @Override
@@ -122,7 +122,7 @@ public class TableWindow extends JFrame {
             try {
                 final TreatmentStep step =
                         params.getSample().getTreatmentSteps().get(row);
-                return step.getValue(TreatmentStepField.values()[col]);
+                return step.getValue(TreatmentParameter.values()[col]);
             } catch (NullPointerException e) {
                 throw new RuntimeException("row " + row + " col " + col, e);
             }

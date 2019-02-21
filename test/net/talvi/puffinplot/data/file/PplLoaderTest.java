@@ -24,7 +24,7 @@ import static net.talvi.puffinplot.TestUtils.writeStringToTemporaryFile;
 import net.talvi.puffinplot.data.ArmAxis;
 import net.talvi.puffinplot.data.MeasurementType;
 import net.talvi.puffinplot.data.TreatmentStep;
-import net.talvi.puffinplot.data.TreatmentStepField;
+import net.talvi.puffinplot.data.TreatmentParameter;
 import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.file.testdata.TestFileLocator;
 import static org.junit.Assert.assertEquals;
@@ -149,13 +149,12 @@ public class PplLoaderTest {
         assertTrue(step.getAfZ() == 0 ||
                 step.getTreatmentType() == TreatmentType.DEGAUSS_XYZ);
         
-        Arrays.asList(
-                TreatmentStepField.MAG_SUS,
-                TreatmentStepField.AF_X,
-                TreatmentStepField.AF_Y,
-                TreatmentStepField.TEMPERATURE,
-                TreatmentStepField.IRM_FIELD,
-                TreatmentStepField.ARM_FIELD).
+        Arrays.asList(TreatmentParameter.MAG_SUS,
+                TreatmentParameter.AF_X,
+                TreatmentParameter.AF_Y,
+                TreatmentParameter.TEMPERATURE,
+                TreatmentParameter.IRM_FIELD,
+                TreatmentParameter.ARM_FIELD).
                 forEach(f -> assertEquals("NaN", step.getValue(f)));
     }
 

@@ -71,13 +71,13 @@ public class TreatmentStepTest {
     public void testSetValueWithBadNumberFormat() {
         final ListHandler handler = ListHandler.createAndAdd();
         new TreatmentStep().setValue(
-                TreatmentStepField.AREA, "not a number", 1);
+                TreatmentParameter.AREA, "not a number", 1);
         assertTrue(handler.wasOneMessageLogged(Level.WARNING));
     }
     
     @Test(expected = IllegalArgumentException.class)
     public void testSetValueWithNonSettableField() {
-        new TreatmentStep().setValue(TreatmentStepField.VIRT_MSJUMP, "1.0", 1);
+        new TreatmentStep().setValue(TreatmentParameter.VIRT_MSJUMP, "1.0", 1);
     }
     
     @Test
@@ -86,47 +86,47 @@ public class TreatmentStepTest {
         final TreatmentStep treatmentStep = new TreatmentStep(vec);
         assertEquals(vec.getDecDeg(),
                 Double.valueOf(treatmentStep.getValue(
-                        TreatmentStepField.VIRT_DECLINATION)),
+                        TreatmentParameter.VIRT_DECLINATION)),
                 1e-10);
         assertEquals(vec.getIncDeg(),
                 Double.valueOf(treatmentStep.getValue(
-                        TreatmentStepField.VIRT_INCLINATION)),
+                        TreatmentParameter.VIRT_INCLINATION)),
                 1e-10);
         assertEquals(vec.mag(),
                 Double.valueOf(treatmentStep.getValue(
-                        TreatmentStepField.VIRT_MAGNETIZATION)),
+                        TreatmentParameter.VIRT_MAGNETIZATION)),
                 1e-10);
     }
     
     @Test
     public void testSetAndGetValuesDouble() {
-        final List<TreatmentStepField> fields = Arrays.asList(
-                TreatmentStepField.DEPTH,
-                TreatmentStepField.X_MOMENT,
-                TreatmentStepField.Y_MOMENT,
-                TreatmentStepField.Z_MOMENT,
-                TreatmentStepField.MAG_SUS,
-                TreatmentStepField.VOLUME,
-                TreatmentStepField.AREA,
-                TreatmentStepField.SAMPLE_AZ,
-                TreatmentStepField.SAMPLE_DIP,
-                TreatmentStepField.FORM_AZ,
-                TreatmentStepField.FORM_DIP,
-                TreatmentStepField.MAG_DEV,
-                TreatmentStepField.AF_X,
-                TreatmentStepField.AF_Y,
-                TreatmentStepField.AF_Z,
-                TreatmentStepField.TEMPERATURE,
-                TreatmentStepField.IRM_FIELD,
-                TreatmentStepField.ARM_FIELD,
-                TreatmentStepField.VIRT_SAMPLE_HADE,
-                TreatmentStepField.VIRT_FORM_STRIKE
+        final List<TreatmentParameter> fields = Arrays.asList(
+                TreatmentParameter.DEPTH,
+                TreatmentParameter.X_MOMENT,
+                TreatmentParameter.Y_MOMENT,
+                TreatmentParameter.Z_MOMENT,
+                TreatmentParameter.MAG_SUS,
+                TreatmentParameter.VOLUME,
+                TreatmentParameter.AREA,
+                TreatmentParameter.SAMPLE_AZ,
+                TreatmentParameter.SAMPLE_DIP,
+                TreatmentParameter.FORM_AZ,
+                TreatmentParameter.FORM_DIP,
+                TreatmentParameter.MAG_DEV,
+                TreatmentParameter.AF_X,
+                TreatmentParameter.AF_Y,
+                TreatmentParameter.AF_Z,
+                TreatmentParameter.TEMPERATURE,
+                TreatmentParameter.IRM_FIELD,
+                TreatmentParameter.ARM_FIELD,
+                TreatmentParameter.VIRT_SAMPLE_HADE,
+                TreatmentParameter.VIRT_FORM_STRIKE
         );
         
         final double value = 30;
         final String valueString = Double.toString(value);
         final TreatmentStep treatmentStep = new TreatmentStep();
-        for (TreatmentStepField field: fields) {
+        for (TreatmentParameter field: fields) {
             treatmentStep.setValue(field, valueString, 1);
             assertEquals(value,
                     Double.parseDouble(treatmentStep.getValue(field)),
@@ -498,7 +498,7 @@ public class TreatmentStepTest {
                 return 17;
             }
         });
-        assertEquals("17.0", d.getValue(TreatmentStepField.VIRT_MSJUMP));
+        assertEquals("17.0", d.getValue(TreatmentParameter.VIRT_MSJUMP));
     }
     
     @Test

@@ -52,7 +52,7 @@ import static java.util.Objects.requireNonNull;
  * In terms of PuffinPlot's user interface, a TreatmentStep often defines the
  * position and appearance of a point on one or more of the plots.
  *
- * @see TreatmentStepField
+ * @see TreatmentParameter
  *
  * @author pont
  */
@@ -1124,7 +1124,7 @@ public class TreatmentStep {
      * @return a string representation of the value contained in the field
      * @throws NullPointerException if {@code field} is null
      */
-    public String getValue(TreatmentStepField field) {
+    public String getValue(TreatmentParameter field) {
         requireNonNull(field, "field must be non-null");
         switch (field) {
         case AF_X: return fmt(afx);
@@ -1180,7 +1180,7 @@ public class TreatmentStep {
      * 
      * @throws NullPointerException if {@code field} or {@code value} is null
      */
-    public void setValue(TreatmentStepField field, String value,
+    public void setValue(TreatmentParameter field, String value,
             double factor) {
         requireNonNull(field, "field must be non-null");
         requireNonNull(value, "value must be non-null");
@@ -1217,7 +1217,7 @@ public class TreatmentStep {
         }
     }
     
-    private void doSetValue(TreatmentStepField field, String s, double factor) {
+    private void doSetValue(TreatmentParameter field, String s, double factor) {
         requireNonNull(field, "field must be non-null");
         requireNonNull(s, "value must be non-null");
         double doubleVal = 0;
@@ -1276,24 +1276,24 @@ public class TreatmentStep {
      * datum objects.
      */
     public static class Reader {
-        private final List<TreatmentStepField> fields;
+        private final List<TreatmentParameter> fields;
 
         /**
          * Create a new reader using the supplied header strings. Each header
          * string should correspond to the string representation of a
-         * {@link TreatmentStepField} field.
+         * {@link TreatmentParameter} field.
          *
          * @param headers list of headers defining the data format
          */
         public Reader(List<String> headers) {
             fields = new ArrayList<>(headers.size());
-            for (String s: headers) fields.add(TreatmentStepField.valueOf(s));
+            for (String s: headers) fields.add(TreatmentParameter.valueOf(s));
         }
 
         /**
          * Creates a a datum object using the supplied strings to populate the
          * data fields. The values in the supplied list of strings must occur in
-         * the same order as the corresponding {@link TreatmentStepField}s
+         * the same order as the corresponding {@link TreatmentParameter}s
          * supplied to the reader's constructor.
          *
          * @param strings string representations of data values
@@ -1311,15 +1311,15 @@ public class TreatmentStep {
     /**
      * Produces a list of strings representing the data values within this
      * treatment step object. The order of the strings corresponds to the order
-     * of the fields in {@link TreatmentStepField#realFields}.
+     * of the fields in {@link TreatmentParameter#realFields}.
      *
      * @return a list of strings representing the data values within this
      * treatment step
      */
     public List<String> toStrings() {
         List<String> result =
-                new ArrayList<>(TreatmentStepField.getRealFields().size());
-        for (TreatmentStepField field: TreatmentStepField.getRealFields()) {
+                new ArrayList<>(TreatmentParameter.getRealFields().size());
+        for (TreatmentParameter field: TreatmentParameter.getRealFields()) {
             result.add(getValue(field));
         }
         return result;
@@ -1334,11 +1334,11 @@ public class TreatmentStep {
      * @param delimiter the string which should separate the values
      * @return a string representation of the requested values
      */
-    public String exportFieldValues(Collection<TreatmentStepField> fields,
+    public String exportFieldValues(Collection<TreatmentParameter> fields,
             String delimiter) {
         final StringBuilder sb = new StringBuilder();
         boolean first = true;
-        for (TreatmentStepField field: fields) {
+        for (TreatmentParameter field: fields) {
             if (!first) sb.append(delimiter);
             sb.append(getValue(field));
             first = false;

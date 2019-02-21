@@ -1371,8 +1371,8 @@ public class SuiteTest {
     @Test
     public void testExportToFiles() throws IOException {
         syntheticSuite2.exportToFiles(temporaryFolder.getRoot(),
-                Arrays.asList(TreatmentStepField.AF_X, TreatmentStepField.X_MOMENT,
-                        TreatmentStepField.Y_MOMENT, TreatmentStepField.Z_MOMENT));
+                Arrays.asList(TreatmentParameter.AF_X, TreatmentParameter.X_MOMENT,
+                        TreatmentParameter.Y_MOMENT, TreatmentParameter.Z_MOMENT));
         for (Sample sample: syntheticSuite2.getSamples()) {
             final List<String> lines = Files.readAllLines(
                     Paths.get(temporaryFolder.getRoot().getCanonicalPath(),
@@ -1529,7 +1529,7 @@ public class SuiteTest {
         final ListHandler handler = ListHandler.createAndAdd();
         final File file = temporaryFolder.newFile("blocks_directory");
         syntheticSuite1.exportToFiles(file,
-                Arrays.asList(TreatmentStepField.AREA));
+                Arrays.asList(TreatmentParameter.AREA));
         assertTrue(handler.wasOneMessageLogged(Level.WARNING));
     }
     
@@ -1541,7 +1541,7 @@ public class SuiteTest {
         final File specifiedDirectory =
                 file.toPath().resolve("desired_subdirectory").toFile();
         syntheticSuite1.exportToFiles(specifiedDirectory,
-                Arrays.asList(TreatmentStepField.AREA));
+                Arrays.asList(TreatmentParameter.AREA));
         assertEquals(Level.WARNING, handler.records.get(0).getLevel());
     }
     
