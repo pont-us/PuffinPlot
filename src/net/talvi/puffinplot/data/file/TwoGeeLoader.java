@@ -103,26 +103,32 @@ public class TwoGeeLoader extends AbstractFileLoader {
         try {
             reader = new LineNumberReader(new FileReader(file));
             readFile();
-        } catch (IOException e) {
-            addMessage(e.getMessage());
+        } catch (IOException exception) {
+            addMessage("Error reading file: " + exception.getMessage());
         } finally {
-            try { reader.close(); } catch (IOException e2) {}
+            try {
+                reader.close();
+            } catch (IOException exception2) {
+                LOGGER.log(Level.WARNING, "Exception closing reader",
+                        exception2);
+            }
         }
     }
 
     private void readFile() throws IOException {
         LOGGER.log(Level.INFO,
                 "Reading 2G file {0}.", file.toString());
-        String fileName = file.getName();
-        String fieldsLine = reader.readLine();
+        final String fileName = file.getName();
+        final String fieldsLine = reader.readLine();
         if (fieldsLine == null) {
             addMessage("%s is empty.", fileName);
-            reader.close();
+            return; // The caller should close the reader for us.
         } else {
             fields = new HashMap<>();
-            String[] fieldNames = fieldsLine.split(("\\t"));
-            for (int i=0; i<fieldNames.length; i++)
+            final String[] fieldNames = fieldsLine.split(("\\t"));
+            for (int i = 0; i < fieldNames.length; i++) {
                 fields.put(fieldNames[i], i);
+            }
         }
         treatmentSteps = new LinkedList<>();
         // trayMoment is only used for TRAY_FIRST and TRAY_NORMAL_IGNORE.
@@ -224,7 +230,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
                 }
             }
             if (messages.size() > MAX_WARNINGS) {
-                addMessage("Too many errors in %s", fileName);
+                addMessage("Too many errors in %s -- aborting.", fileName);
                 break;
             }
         }
@@ -488,7 +494,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
              * an equivalent magnetic dipole moment per unit volume, expressed
              * in A/m.
              */
-            Vec3 momentPerUnitVolumeAm = gaussToAm(magnetizationGauss);
+            final Vec3 momentPerUnitVolumeAm = gaussToAm(magnetizationGauss);
             step.setMoment(momentPerUnitVolumeAm);
         }
         step.setMagSus(r.getDouble("MS corr", step.getMagSus()));
@@ -504,7 +510,8 @@ public class TwoGeeLoader extends AbstractFileLoader {
                  * this configurable) and use this depth value to set the slot
                  * number.
                  */
-                String depthString = r.getString("Depth", step.getDepth());
+                final String depthString =
+                        r.getString("Depth", step.getDepth());
                 /*
                  * The depth value is represented as a float (it has a trailing
                  * .0 even if integral); if the depth field in the
@@ -590,8 +597,9 @@ public class TwoGeeLoader extends AbstractFileLoader {
             }
             step.setRunNumber(runNumber);
         }
-        if (fieldExists("Sample Timestamp"))
+        if (fieldExists("Sample Timestamp")) {
             step.setTimestamp(r.getString("Sample Timestamp", "UNKNOWN"));
+        }
         step.setXDrift(r.getDouble("X drift", step.getXDrift()));
         step.setYDrift(r.getDouble("Y drift", step.getYDrift()));
         step.setZDrift(r.getDouble("Z drift", step.getZDrift()));
