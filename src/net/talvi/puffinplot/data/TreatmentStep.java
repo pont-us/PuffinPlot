@@ -32,6 +32,7 @@ import static java.lang.Double.NaN;
 import static java.lang.Double.parseDouble;
 import static java.lang.Math.toRadians;
 import static java.util.Objects.requireNonNull;
+import java.util.logging.Level;
 
 /**
  * TreatmentStep is the fundamental data class of PuffinPlot. It represents a
@@ -129,7 +130,8 @@ public class TreatmentStep {
     /**
      * Sets the selection state of this treatment step.
      *
-     * @param v {@code true} to select this treatment step, {@code false} to deselect
+     * @param v {@code true} to select this treatment step, {@code false} to
+     * deselect
      */
     public void setSelected(boolean v) {
         touch();
@@ -771,15 +773,18 @@ public class TreatmentStep {
         inPca = v;
     }
     
-    /** Returns the sample hade for this treatment step.
-     * @return the sample's hade, in degrees */
+    /**
+     * Returns the sample hade for this treatment step.
+     *
+     * @return the sample's hade, in degrees
+     */
     public double getSampHade() {
         return 90 - sampDip;
     }
     
     /**
-     * Sets the sample hade for this treatment step. Since the hade is the complement of
-     * the dip, this will of course change the sample's dip.
+     * Sets the sample hade for this treatment step. Since the hade is the
+     * complement of the dip, this will of course change the sample's dip.
      *
      * @param hadeDeg the hade to set, in degrees
      */
@@ -795,20 +800,24 @@ public class TreatmentStep {
      */
     public double getFormStrike() {
         double strike = formAz - 90;
-        if (strike < 0) strike += 360;
+        if (strike < 0) {
+            strike += 360;
+        }
         return strike;
     }
     
     /**
-     * Sets the formation strike for this treatment step. This will of course also set
-     * the formation dip azimuth.
+     * Sets the formation strike for this treatment step. This will of course
+     * also set the formation dip azimuth.
      *
      * @param strikeDeg the formation strike, in degrees
      */
     public void setFormStrike(double strikeDeg) {
         touch();
         double az = strikeDeg + 90;
-        if (az > 360) az -= 360;
+        if (az > 360) {
+            az -= 360;
+        }
         formAz = az;
     }
 
@@ -836,11 +845,11 @@ public class TreatmentStep {
     }
 
     /**
-     * Reports whether this treatment step has magnetic susceptibility but not magnetic
-     * moment data.
+     * Reports whether this treatment step has magnetic susceptibility but not
+     * magnetic moment data.
      *
-     * @return {@code true} if this treatment step contains magnetic susceptibility data
-     * and does not contain magnetic moment data
+     * @return {@code true} if this treatment step contains magnetic
+     * susceptibility data and does not contain magnetic moment data
      */
     public boolean isMagSusOnly() {
         /*
@@ -940,8 +949,7 @@ public class TreatmentStep {
     
     /**
      * Toggles the treatment step's selection state.
-     * {@code step.toggleSelected()}
-     * is functionally equivalent to
+     * {@code step.toggleSelected()} is functionally equivalent to
      * {@code step.setSelected(!datum.isSelected()}.
      */
     public void toggleSelected() {
@@ -1024,9 +1032,10 @@ public class TreatmentStep {
     /**
      * Returns the maximum treatment level within the supplied group of
      * treatment step objects.
-     * 
+     *
      * @param data a list of treatment step objects; must be non-null
-     * @return the highest treatment level for any of the supplied treatment step objects
+     * @return the highest treatment level for any of the supplied treatment
+     * step objects
      * @throws NullPointerException if {@code data} is null
      */
     public static double maxTreatmentLevel(Collection<TreatmentStep> data) {
@@ -1067,8 +1076,8 @@ public class TreatmentStep {
      * treatment step objects.
      *
      * @param data a list of treatment step objects; must be non-null
-     * @return the highest magnetic susceptibility for any of the supplied treatment step
-     * objects
+     * @return the highest magnetic susceptibility for any of the supplied
+     * treatment step objects
      * @throws NullPointerException if {@code data} is null
      */
     public static double maxMagSus(Collection<TreatmentStep> data) {
@@ -1094,20 +1103,24 @@ public class TreatmentStep {
     }
 
     /**
-     * Returns {@code true} if this treatment step should be ignored (thrown away)
-     * when loading a data file. Currently, this method returns true if
-     * the measurement type is {@code NONE} – that is, there is
-     * no data within the object.
-     * 
-     * @return {@code true} if this treatment step should be ignored when loading a file
+     * Returns {@code true} if this treatment step should be ignored (thrown
+     * away) when loading a data file. Currently, this method returns true if
+     * the measurement type is {@code NONE} – that is, there is no data within
+     * the object.
+     *
+     * @return {@code true} if this treatment step should be ignored when
+     * loading a file
      */
     public boolean ignoreOnLoading() {
         return getMeasurementType() == MeasurementType.NONE;
     }
 
     /**
-     * Reports whether the treatment step contains a magnetic moment measurement.
-     * @return {@code true} if the treatment step contains a magnetic moment measurement
+     * Reports whether the treatment step contains a magnetic moment
+     * measurement.
+     *
+     * @return {@code true} if the treatment step contains a magnetic moment
+     * measurement
      */
     public boolean hasMagMoment() {
         return moment != null;
@@ -1127,43 +1140,80 @@ public class TreatmentStep {
     public String getValue(TreatmentParameter field) {
         requireNonNull(field, "field must be non-null");
         switch (field) {
-        case AF_X: return fmt(afx);
-        case AF_Y: return fmt(afy);
-        case AF_Z: return fmt(afz);
-        case TEMPERATURE: return fmt(temperature);
-        case MAG_SUS: return fmt(magSus);
-        case SAMPLE_AZ: return fmt(getSampAz());
-        case SAMPLE_DIP: return fmt(getSampDip());
-        case FORM_AZ: return fmt(getFormAz());
-        case FORM_DIP: return fmt(getFormDip());
-        case MAG_DEV: return fmt(getMagDev());
-        case X_MOMENT: return fmt(moment.x);
-        case Y_MOMENT: return fmt(moment.y);
-        case Z_MOMENT: return fmt(moment.z);
-        case DEPTH: return depth;
-        case IRM_FIELD: return fmt(getIrmField());
-        case ARM_FIELD: return fmt(armField);
-        case VOLUME: return fmt(volume);
-        case DISCRETE_ID: return discreteId;
-        case MEAS_TYPE: return measurementType.toString();
-        case TREATMENT: return treatmentType.toString();
-        case ARM_AXIS: return armAxis.toString();
-        case TIMESTAMP: return timestamp;
-        case RUN_NUMBER: return Integer.toString(runNumber);
-        case SLOT_NUMBER: return Integer.toString(slotNumber);
-        case AREA: return fmt(area);
-        case PP_SELECTED: return Boolean.toString(selected);
-        case PP_ANCHOR_PCA: return Boolean.toString(isPcaAnchored());
-        case PP_HIDDEN: return Boolean.toString(isHidden());
-        case PP_ONCIRCLE: return Boolean.toString(isOnCircle());
-        case PP_INPCA: return Boolean.toString(isInPca());
-        case VIRT_MAGNETIZATION: return fmt(getIntensity());
-        case VIRT_DECLINATION: return fmt(moment.getDecDeg());
-        case VIRT_INCLINATION: return fmt(moment.getIncDeg());
-        case VIRT_SAMPLE_HADE: return fmt(getSampHade());
-        case VIRT_FORM_STRIKE: return fmt(getFormStrike());
-        case VIRT_MSJUMP: return fmt(getSample().getMagSusJump());
-        default: throw new IllegalArgumentException("Unknown field "+field);
+            case AF_X:
+                return fmt(afx);
+            case AF_Y:
+                return fmt(afy);
+            case AF_Z:
+                return fmt(afz);
+            case TEMPERATURE:
+                return fmt(temperature);
+            case MAG_SUS:
+                return fmt(magSus);
+            case SAMPLE_AZ:
+                return fmt(getSampAz());
+            case SAMPLE_DIP:
+                return fmt(getSampDip());
+            case FORM_AZ:
+                return fmt(getFormAz());
+            case FORM_DIP:
+                return fmt(getFormDip());
+            case MAG_DEV:
+                return fmt(getMagDev());
+            case X_MOMENT:
+                return fmt(moment.x);
+            case Y_MOMENT:
+                return fmt(moment.y);
+            case Z_MOMENT:
+                return fmt(moment.z);
+            case DEPTH:
+                return depth;
+            case IRM_FIELD:
+                return fmt(getIrmField());
+            case ARM_FIELD:
+                return fmt(armField);
+            case VOLUME:
+                return fmt(volume);
+            case DISCRETE_ID:
+                return discreteId;
+            case MEAS_TYPE:
+                return measurementType.toString();
+            case TREATMENT:
+                return treatmentType.toString();
+            case ARM_AXIS:
+                return armAxis.toString();
+            case TIMESTAMP:
+                return timestamp;
+            case RUN_NUMBER:
+                return Integer.toString(runNumber);
+            case SLOT_NUMBER:
+                return Integer.toString(slotNumber);
+            case AREA:
+                return fmt(area);
+            case PP_SELECTED:
+                return Boolean.toString(selected);
+            case PP_ANCHOR_PCA:
+                return Boolean.toString(isPcaAnchored());
+            case PP_HIDDEN:
+                return Boolean.toString(isHidden());
+            case PP_ONCIRCLE:
+                return Boolean.toString(isOnCircle());
+            case PP_INPCA:
+                return Boolean.toString(isInPca());
+            case VIRT_MAGNETIZATION:
+                return fmt(getIntensity());
+            case VIRT_DECLINATION:
+                return fmt(moment.getDecDeg());
+            case VIRT_INCLINATION:
+                return fmt(moment.getIncDeg());
+            case VIRT_SAMPLE_HADE:
+                return fmt(getSampHade());
+            case VIRT_FORM_STRIKE:
+                return fmt(getFormStrike());
+            case VIRT_MSJUMP:
+                return fmt(getSample().getMagSusJump());
+            default:
+                throw new IllegalArgumentException("Unknown field " + field);
         }
     }
 
@@ -1198,9 +1248,10 @@ public class TreatmentStep {
              * exception loose here. There might be a case for rethrowing as a
              * checked exception, however.
              */
-            logger.warning(String.format(Locale.ENGLISH,
+            logger.log(Level.WARNING, String.format(Locale.ENGLISH,
                     "Invalid value ‘%s’ for field ‘%s’; using default ‘%s’",
-                    value, field.toString(), field.getDefaultValue()));
+                    value, field.toString(), field.getDefaultValue()),
+                    exception);
 
             /*
              * In the absence of a parseable supplied value, we set the field to
@@ -1232,39 +1283,104 @@ public class TreatmentStep {
             intVal = Integer.parseInt(s);
         }
         switch (field) {
-        case AF_X: afx = doubleVal; break;
-        case AF_Y: afy = doubleVal; break;
-        case AF_Z: afz = doubleVal; break;
-        case TEMPERATURE: temperature = doubleVal; break;
-        case MAG_SUS: magSus = doubleVal; break;
-        case SAMPLE_AZ: setSampAz(doubleVal); break;
-        case SAMPLE_DIP: setSampDip(doubleVal); break;
-        case FORM_AZ: setFormAz(doubleVal); break;
-        case FORM_DIP: setFormDip(doubleVal); break;
-        case MAG_DEV: setMagDev(doubleVal); break;
-        case X_MOMENT: moment = moment.setX(doubleVal); break;
-        case Y_MOMENT: moment = moment.setY(doubleVal); break;
-        case Z_MOMENT: moment = moment.setZ(doubleVal); break;
-        case DEPTH: depth = s; break;
-        case IRM_FIELD: setIrmField(doubleVal); break;
-        case ARM_FIELD: armField = doubleVal; break;
-        case VOLUME: volume = doubleVal; break;
-        case DISCRETE_ID: discreteId = s; break;
-        case MEAS_TYPE: measurementType = MeasurementType.valueOf(s); break;
-        case TREATMENT: treatmentType = TreatmentType.valueOf(s); break;
-        case ARM_AXIS: armAxis = ArmAxis.fromString(s); break;
-        case TIMESTAMP: timestamp = s; break;
-        case SLOT_NUMBER: slotNumber = intVal; break;
-        case RUN_NUMBER: runNumber = intVal; break;
-        case AREA: area = doubleVal; break;
-        case PP_SELECTED: selected = boolVal; break;
-        case PP_ANCHOR_PCA: setPcaAnchored(boolVal); break;
-        case PP_HIDDEN: setHidden(boolVal); break;
-        case PP_ONCIRCLE: setOnCircle(boolVal); break;
-        case PP_INPCA: setInPca(boolVal); break;
-        case VIRT_SAMPLE_HADE: setSampHade(doubleVal); break;
-        case VIRT_FORM_STRIKE: setFormStrike(doubleVal); break;
-        default: throw new IllegalArgumentException("Unknown field "+field);
+            case AF_X:
+                afx = doubleVal;
+                break;
+            case AF_Y:
+                afy = doubleVal;
+                break;
+            case AF_Z:
+                afz = doubleVal;
+                break;
+            case TEMPERATURE:
+                temperature = doubleVal;
+                break;
+            case MAG_SUS:
+                magSus = doubleVal;
+                break;
+            case SAMPLE_AZ:
+                setSampAz(doubleVal);
+                break;
+            case SAMPLE_DIP:
+                setSampDip(doubleVal);
+                break;
+            case FORM_AZ:
+                setFormAz(doubleVal);
+                break;
+            case FORM_DIP:
+                setFormDip(doubleVal);
+                break;
+            case MAG_DEV:
+                setMagDev(doubleVal);
+                break;
+            case X_MOMENT:
+                moment = moment.setX(doubleVal);
+                break;
+            case Y_MOMENT:
+                moment = moment.setY(doubleVal);
+                break;
+            case Z_MOMENT:
+                moment = moment.setZ(doubleVal);
+                break;
+            case DEPTH:
+                depth = s;
+                break;
+            case IRM_FIELD:
+                setIrmField(doubleVal);
+                break;
+            case ARM_FIELD:
+                armField = doubleVal;
+                break;
+            case VOLUME:
+                volume = doubleVal;
+                break;
+            case DISCRETE_ID:
+                discreteId = s;
+                break;
+            case MEAS_TYPE:
+                measurementType = MeasurementType.valueOf(s);
+                break;
+            case TREATMENT:
+                treatmentType = TreatmentType.valueOf(s);
+                break;
+            case ARM_AXIS:
+                armAxis = ArmAxis.fromString(s);
+                break;
+            case TIMESTAMP:
+                timestamp = s;
+                break;
+            case SLOT_NUMBER:
+                slotNumber = intVal;
+                break;
+            case RUN_NUMBER:
+                runNumber = intVal;
+                break;
+            case AREA:
+                area = doubleVal;
+                break;
+            case PP_SELECTED:
+                selected = boolVal;
+                break;
+            case PP_ANCHOR_PCA:
+                setPcaAnchored(boolVal);
+                break;
+            case PP_HIDDEN:
+                setHidden(boolVal);
+                break;
+            case PP_ONCIRCLE:
+                setOnCircle(boolVal);
+                break;
+            case PP_INPCA:
+                setInPca(boolVal);
+                break;
+            case VIRT_SAMPLE_HADE:
+                setSampHade(doubleVal);
+                break;
+            case VIRT_FORM_STRIKE:
+                setFormStrike(doubleVal);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown field " + field);
         }
     }
 
@@ -1352,7 +1468,9 @@ public class TreatmentStep {
      * the suite has been saved since the last modification. 
      */
     public void touch() {
-        if (suite != null) suite.setSaved(false);
+        if (suite != null) {
+            suite.setSaved(false);
+        }
     }
     
     /**
