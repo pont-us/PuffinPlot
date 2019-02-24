@@ -51,10 +51,10 @@ import static net.talvi.puffinplot.data.file.TwoGeeHelper.treatTypeFromString;
  */
 public class TwoGeeLoader extends AbstractFileLoader {
 
-    private static final Logger LOGGER =
-            Logger.getLogger("net.talvi.puffinplot");
+    private static final Logger LOGGER
+            = Logger.getLogger("net.talvi.puffinplot");
     private Vec3 sensorLengths = new Vec3(1, 1, 1);
-    private Map<String,Integer> fields;
+    private Map<String, Integer> fields;
     private static final Pattern EMPTY_LINE = Pattern.compile("^\\s*$");
     private static final int MAX_WARNINGS = 10;
     private final File file;
@@ -65,32 +65,44 @@ public class TwoGeeLoader extends AbstractFileLoader {
 
     /**
      * A measurement protocol. A protocol defines the order in which sample
-     * measurements and empty-tray measurements are taken, and the 
-     * sample orientations during sample measurements.
+     * measurements and empty-tray measurements are taken, and the sample
+     * orientations during sample measurements.
      */
     public static enum Protocol {
-        /** just a sample measurement */
+        /**
+         * just a sample measurement
+         */
         NORMAL,
-        /** tray measurement then sample measurement */
+        /**
+         * tray measurement then sample measurement
+         */
         TRAY_NORMAL,
-        /** sample measurement then tray measurement */
+        /**
+         * sample measurement then tray measurement
+         */
         NORMAL_TRAY,
-        /** tray, then sample, then sample flipped around Y axis */
+        /**
+         * tray, then sample, then sample flipped around Y axis
+         */
         TRAY_NORMAL_YFLIP,
-        /** single initial tray measurement, then sample measurements */
+        /**
+         * single initial tray measurement, then sample measurements
+         */
         TRAY_FIRST,
-        /** as TRAY_NORMAL but only use first tray correction */
+        /**
+         * as TRAY_NORMAL but only use first tray correction
+         */
         TRAY_NORMAL_IGNORE;
     }
-    
+
     /**
      * Creates a new 2G loader using the supplied parameters.
      *
      * @param file the file to read
      * @param protocol the measurement protocol which was used to create the
-     * treatmentSteps
+     * file
      * @param sensorLengths the effective sensor lengths (only used for long
-     * core treatmentSteps)
+     * core data)
      * @param usePolarMoment read magnetic moment from dec/inc/intensity, not
      * x/y/z
      */
@@ -135,15 +147,15 @@ public class TwoGeeLoader extends AbstractFileLoader {
         Vec3 trayMoment = null;
         String line;
         while ((line = reader.readLine()) != null) {
-            final TreatmentStep step =
-                    readTreatmentStep(line, reader.getLineNumber());
-            // skip lines containing no treatmentSteps at all
+            final TreatmentStep step
+                    = readTreatmentStep(line, reader.getLineNumber());
+            // skip lines containing no data at all
             if (step == null || (!step.hasMagSus() && !step.hasMagMoment())) {
                 continue;
             }
-            // if the first line only is tray treatmentSteps, save it
-            if (protocol == Protocol.TRAY_FIRST &&
-                    reader.getLineNumber() == 2) {
+            // if the first line only is tray data, save it
+            if (protocol == Protocol.TRAY_FIRST
+                    && reader.getLineNumber() == 2) {
                 trayMoment = step.getMoment(Correction.NONE);
                 continue;
             }
@@ -155,9 +167,9 @@ public class TwoGeeLoader extends AbstractFileLoader {
                  * datum is also MS only, then there's no moment measurement to
                  * attach it to, and it gets its own datum.
                  */
-                if (treatmentSteps.size()>0) {
-                    final TreatmentStep previousStep =
-                            treatmentSteps.get(treatmentSteps.size() - 1);
+                if (treatmentSteps.size() > 0) {
+                    final TreatmentStep previousStep
+                            = treatmentSteps.get(treatmentSteps.size() - 1);
                     if (!previousStep.isMagSusOnly()) {
                         previousStep.setMagSus(step.getMagSus());
                     } else {
@@ -216,7 +228,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
                         break;
                     case TRAY_FIRST:
                         // can't use combine2 as we want the rest of the
-                        // treatmentSteps from d, not the tray measurement
+                        // data from d, not the tray measurement
                         final Vec3 normV = step.getMoment(Correction.NONE);
                         step.setMoment(normV.minus(trayMoment));
                         // treatmentSteps.add(d);
@@ -256,11 +268,11 @@ public class TwoGeeLoader extends AbstractFileLoader {
     private static Vec3 vectorMean(Vec3... vectors) {
         return Vec3.mean(Arrays.asList(vectors));
     }
-    
+
     private TreatmentStep combine3(TreatmentStep tray, TreatmentStep normal,
             TreatmentStep reversed) {
         /*
-         * We'll keep the rest of the treatmentSteps from the first (tray)
+         * We'll keep the rest of the data from the first (tray)
          * measurement, and just poke in the magnetic moment vector calculated
          * from the three readings.
          */
@@ -273,7 +285,6 @@ public class TwoGeeLoader extends AbstractFileLoader {
 
         // The volume correction's already been applied on loading.
         // revV has the X and Z axes flipped, but Y axis the same.
-        
         // calculate estimates of the true magnetic moment
         // norm_tray: tray-corrected normal measurement
         final Vec3 norm_tray = normV.minus(trayV);
@@ -281,10 +292,9 @@ public class TwoGeeLoader extends AbstractFileLoader {
         final Vec3 norm_rev = normV.minus(revV).divideBy(2);
         // rev_tray: tray-corrected reverse measurement
         final Vec3 rev_tray = revV.minus(trayV);
-        
+
         // average the relevant estimates for each axis
         // for x and z, average tray-corr. norm, tc rev, and norm/rev average
-        
         final Vec3 avg_x_z = vectorMean(norm_tray, norm_rev, rev_tray.invert());
         // for y, average tray-corrected normal and reversed
         // (since 'reversed' doesn't flip the Y axis)
@@ -297,10 +307,10 @@ public class TwoGeeLoader extends AbstractFileLoader {
     }
 
     /**
-     * Cross-correlate which fields have been requested during loading
-     * with which fields were present in the file, to produce a report
-     * on which fields which were (1) in the file but not requested and
-     * (2) requested but not found
+     * Cross-correlate which fields have been requested during loading with
+     * which fields were present in the file, to produce a report on which
+     * fields which were (1) in the file but not requested and (2) requested but
+     * not found
      */
     private void correlateFields() {
         final Set<String> fileFieldSet = new HashSet<>(fields.keySet());
@@ -309,8 +319,8 @@ public class TwoGeeLoader extends AbstractFileLoader {
         final Set<String> notInFile = new HashSet<>(requestedFields);
         notInFile.removeAll(fileFieldSet);
         LOGGER.info(String.format(Locale.ENGLISH,
-                "Field headers in file %s\n" +
-                "Not found in file: %s\nIn file but ignored: %s", file,
+                "Field headers in file %s\n"
+                + "Not found in file: %s\nIn file but ignored: %s", file,
                 Arrays.toString(notInFile.toArray()),
                 Arrays.toString(notUsed.toArray())));
     }
@@ -328,7 +338,9 @@ public class TwoGeeLoader extends AbstractFileLoader {
             return null;
             //throw new IllegalArgumentException("null line in readTreatmentStep");
         }
-        if (EMPTY_LINE.matcher(line).matches()) return null;
+        if (EMPTY_LINE.matcher(line).matches()) {
+            return null;
+        }
         try {
             step = lineToTreatmentStep(line, lineNumber);
         } catch (IllegalArgumentException e) {
@@ -404,10 +416,10 @@ public class TwoGeeLoader extends AbstractFileLoader {
     }
 
     private boolean fieldExistsAndIsValid(String fieldName, FieldReader r) {
-        return fieldExists(fieldName) &&
-                !r.getString(fieldName, "dummy").equals("NA");
+        return fieldExists(fieldName)
+                && !r.getString(fieldName, "dummy").equals("NA");
     }
-    
+
     private Vec3 readMagnetizationVector(FieldReader r) {
         Vec3 result = null;
         if (usePolarMoment) {
@@ -433,16 +445,16 @@ public class TwoGeeLoader extends AbstractFileLoader {
         }
         return result;
     }
-    
+
     private TreatmentStep lineToTreatmentStep(String line, int lineNumber) {
         final FieldReader r = new FieldReader(line);
-        
+
         // The TreatmentStep will be initialized with a default volume and area.
         final TreatmentStep step = new TreatmentStep();
-        
+
         final MeasurementType measurementType;
         if (fieldExists("Meas. type")) {
-            measurementType =measTypeFromString(
+            measurementType = measTypeFromString(
                     r.getString("Meas. type", "sample/continuous"));
         } else if (fieldExists("Depth")) {
             measurementType = MeasurementType.CONTINUOUS;
@@ -451,7 +463,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
         } else {
             measurementType = MeasurementType.DISCRETE;
         }
-        
+
         /*
          * Default values for area and volume are hard-coded in the
          * TreatmentStep class, and will be used here if nothing is specified in
@@ -459,7 +471,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
          */
         step.setArea(r.getDouble("Area", step.getArea()));
         step.setVolume(r.getDouble("Volume", step.getVolume()));
-        
+
         final Vec3 momentGaussCm3 = readMagnetizationVector(r);
         if (momentGaussCm3 != null) {
             /*
@@ -469,23 +481,34 @@ public class TwoGeeLoader extends AbstractFileLoader {
              */
             final Vec3 magnetizationGauss;
             switch (measurementType) {
-            case CONTINUOUS:
-                if (usePolarMoment) {
-                    /*
-                     * Polar moments in 2G files are already corrected for
-                     * sensor length and cross-sectional core area.
-                     */
-                    magnetizationGauss = momentGaussCm3;
-                } else {
-                    magnetizationGauss = momentGaussCm3.
-                            divideBy(sensorLengths.times(step.getArea()));
-                }
-                break;
-            case DISCRETE:
-                magnetizationGauss = momentGaussCm3.divideBy(step.getVolume());
-                break;
-            default:
-                magnetizationGauss = Vec3.ORIGIN;
+                case CONTINUOUS:
+                    if (usePolarMoment) {
+                        /*
+                         * Polar moments in 2G files are already corrected for
+                         * sensor length and cross-sectional core area (and are
+                         * thus not actually moments but magnetizations).
+                         */
+                        magnetizationGauss = momentGaussCm3;
+                    } else {
+                        magnetizationGauss = momentGaussCm3.
+                                divideBy(sensorLengths.times(step.getArea()));
+                    }
+                    break;
+                case DISCRETE:
+                    if (usePolarMoment) {
+                        /*
+                         * Polar moments in 2G files are already corrected for
+                         * sample volume (and are thus not actually moments but
+                         * magnetizations).
+                         */
+                        magnetizationGauss = momentGaussCm3;
+                    } else {
+                        magnetizationGauss
+                                = momentGaussCm3.divideBy(step.getVolume());
+                    }
+                    break;
+                default:
+                    magnetizationGauss = Vec3.ORIGIN;
             }
             /*
              * To avoid unpleasant 4pi factors, we follow common palaeomagnetic
@@ -504,37 +527,37 @@ public class TwoGeeLoader extends AbstractFileLoader {
                 final int USER_SPECIFIED_DEPTH = 1;
                 /*
                  * For a discrete measurement, "Depth" actually contains the sum
-                 * of the (meaningless) user-specified treatmentSteps table
-                 * depth field and the slot number. We assume that the
-                 * treatmentSteps table depth field was set to 1 (TODO: make
-                 * this configurable) and use this depth value to set the slot
-                 * number.
+                 * of the (meaningless) user-specified data table depth field
+                 * and the slot number. We assume that the data table depth
+                 * field was set to 1 (TODO: make this configurable) and use
+                 * this depth value to set the slot number.
                  */
-                final String depthString =
-                        r.getString("Depth", step.getDepth());
+                final String depthString
+                        = r.getString("Depth", step.getDepth());
                 /*
                  * The depth value is represented as a float (it has a trailing
-                 * .0 even if integral); if the depth field in the
-                 * treatmentSteps table were a non-integral value, this
-                 * presumably would also be one. Since I just want the slot
-                 * number and can't think of a case where a non- integral depth
-                 * would be useful in a discrete file, I'm going to discard the
-                 * fractional part here.
+                 * .0 even if integral); if the depth field in the data table
+                 * were a non-integral value, this presumably would also be one.
+                 * Since I just want the slot number and can't think of a case
+                 * where a non-integral depth would be useful in a discrete
+                 * file, I'm going to discard the fractional part here.
                  */
                 int depth = (int) Double.parseDouble(depthString);
                 step.setSlotNumber(depth - USER_SPECIFIED_DEPTH);
-            } else /* assume continuous measurement */ {
+            } else /*
+             * assume continuous measurement
+             */ {
                 step.setDepth(r.getString("Depth", step.getDepth()));
             }
         }
-        
+
         // Sometimes, continuous files use "Position" for the depth field
-        if (measurementType.isContinuous() &&
-                !fieldExists("Depth") && fieldExists("Position")) {
+        if (measurementType.isContinuous()
+                && !fieldExists("Depth") && fieldExists("Position")) {
             step.setDepth(r.getString("Position", step.getDepth()));
         }
         step.setMeasurementType(measurementType);
-        
+
         if (fieldExists("Treatment Type")) {
             step.setTreatmentType(treatTypeFromString(
                     r.getString("Treatment Type", "degauss z")));
@@ -551,7 +574,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
         } else {
             step.setTreatmentType(TreatmentType.DEGAUSS_Z);
         }
-        
+
         if (r.hasDouble("AF X")) {
             step.setAfX(oerstedToTesla(r.getDouble("AF X", Double.NaN)));
         }
@@ -587,12 +610,12 @@ public class TwoGeeLoader extends AbstractFileLoader {
              * The slot number is not explicitly stored; fortunately, for
              * discrete samples, the depth field contains the slot number plus
              * (I think) whatever number was entered for "depth" in the sample
-             * treatmentSteps table. So provided that this field is always given
-             * the same value, we can produce a corrected run number.
+             * data table. So provided that this field is always given the same
+             * value, we can produce a corrected run number.
              */
             int runNumber = r.getInt("Run #", 0);
-            if (measurementType == MeasurementType.DISCRETE &&
-                    step.getSlotNumber() != -1) {
+            if (measurementType == MeasurementType.DISCRETE
+                    && step.getSlotNumber() != -1) {
                 runNumber -= step.getSlotNumber();
             }
             step.setRunNumber(runNumber);
