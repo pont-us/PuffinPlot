@@ -19,8 +19,10 @@ package net.talvi.puffinplot.data.file;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import net.talvi.puffinplot.TestUtils;
 import net.talvi.puffinplot.data.ArmAxis;
 import net.talvi.puffinplot.data.MeasurementType;
@@ -94,9 +96,8 @@ public class TwoGeeLoaderTest {
     
     @Test
     public void testWithSg12_7() throws IOException {
-        final Path filePath = copyFile("SG12-7.DAT");
         for (boolean polar: new boolean[] {false, true}) {
-            final TwoGeeLoader loader = new TwoGeeLoader(filePath.toFile(),
+            final TwoGeeLoader loader = new TwoGeeLoader(copyFile("SG12-7.DAT"),
                     TwoGeeLoader.Protocol.NORMAL, new Vec3(1, 1, 1), polar);
             for (int i = 0; i < loader.getTreatmentSteps().size(); i++) {
                 final double[] expected = expected_sg12_7[i];
@@ -164,16 +165,8 @@ public class TwoGeeLoaderTest {
     
     @Test
     public void testThermal1posMagSus() throws IOException {
-        final Path filePath = copyFile("FQ0101.1.DAT");
-        final TwoGeeLoader loader = new TwoGeeLoader(filePath.toFile(),
-                TwoGeeLoader.Protocol.NORMAL, new Vec3(4.628, -4.404, -6.280),
-                false);
-        for (int i = 0; i < loader.getTreatmentSteps().size(); i++) {
-            final double[] expected = expected_fq0101_1[i];
-            final TreatmentStep step = loader.getTreatmentSteps().get(i);
-            checkVariableThermalFields(expected, step);
-            checkConstantThermalFields(step, 10.0, 132.0, 19.0);
-        }        
+        checkThermalFile("FQ0101.1.DAT", expected_fq0101_1,
+                TwoGeeLoader.Protocol.NORMAL, 10.0, 132, 19);
     }
 
     private static final double[][] expected_ccb0101_1 = {
@@ -202,16 +195,44 @@ public class TwoGeeLoaderTest {
      */
     @Test
     public void testTrayNormal() throws IOException {
-        final Path filePath = copyFile("CCB0101.1.DAT");
-        final TwoGeeLoader loader = new TwoGeeLoader(filePath.toFile(),
-                TwoGeeLoader.Protocol.TRAY_NORMAL,
+        checkThermalFile("CCB0101.1.DAT", expected_ccb0101_1,
+                TwoGeeLoader.Protocol.TRAY_NORMAL, 10.3, 255, 3);
+    }
+    
+    private static final double[][] expected_fqk0618_1 = {
+        {25, -1.0671990291262135E-05, -2.582883495145631E-05, -7.997912621359223E-05, 8.3333},
+        {50, -9.774466019417474E-06, -1.9637029126213596E-05, -7.876844660194174E-05, 8.7522},
+        {75, -1.191019417475728E-05, -1.4483106796116504E-05, -7.481893203883495E-05, 8.8371},
+        {100, -1.2684223300970872E-05, -1.3024805825242716E-05, -6.63883495145631E-05, 8.4195},
+        {125, -1.3629126213592232E-05, -8.836456310679612E-06, -6.321699029126213E-05, 9.2538},
+        {150, -1.235631067961165E-05, -8.504563106796115E-06, -6.371067961165047E-05, 9},
+        {175, -1.033398058252427E-05, -9.605135922330098E-06, -6.256019417475728E-05, 9},
+        {200, -1.3329126213592233E-05, -6.488446601941748E-06, -6.223980582524271E-05, 8.6667},
+        {225, -1.2083155339805825E-05, -1.798689320388349E-06, -6.20257281553398E-05, 8.085},
+        {250, -3.0187864077669897E-06, -5.892718446601931E-07, -5.5415048543689316E-05, 9},
+        {275, 1.1278038834951456E-06, 1.1588805825242717E-05, -4.724126213592232E-05, 8.9136},
+        {300, -3.2413106796116498E-06, 1.1044368932038834E-05, -4.8966019417475737E-05, 8.1666},
+        {325, -5.707330097087379E-05, -8.26388349514563E-06, -3.4692233009708736E-05, 19.667}
+    };
+    
+    @Test
+    public void testTrayNormalYflip() throws IOException {
+        checkThermalFile("FQK0618.1.DAT", expected_fqk0618_1,
+                TwoGeeLoader.Protocol.TRAY_NORMAL_YFLIP, 10.3, 107, 45);
+    }
+    
+    private void checkThermalFile(String filename, double[][] expected,
+            TwoGeeLoader.Protocol protocol,
+            double volume, double sampAz, double sampDip) throws IOException {
+        final TwoGeeLoader loader = new TwoGeeLoader(copyFile(filename),
+                protocol,
                 new Vec3(4.628, -4.404, -6.280), false);
+        assertEquals(expected.length, loader.getTreatmentSteps().size());
         for (int i = 0; i < loader.getTreatmentSteps().size(); i++) {
-            final double[] expected = expected_ccb0101_1[i];
             final TreatmentStep step = loader.getTreatmentSteps().get(i);
-            checkVariableThermalFields(expected, step);
-            checkConstantThermalFields(step, 10.3, 255, 3);
-        }        
+            checkVariableThermalFields(expected[i], step);
+            checkConstantThermalFields(step, volume, sampAz, sampDip);
+        }
     }
 
     private void checkVariableThermalFields(double[] expected,
@@ -242,13 +263,14 @@ public class TwoGeeLoaderTest {
         assertEquals(ArmAxis.NONE, step.getArmAxis());
     }
 
-    private Path copyFile(String filename) throws IOException {
+    private File copyFile(String filename) throws IOException {
         final Path filePath
                 = temporaryFolder.getRoot().toPath().resolve(filename);
         Files.copy(
                 TestFileLocator.class.getResourceAsStream("twogee/" + filename),
-                filePath);
-        return filePath;
+                filePath,
+                StandardCopyOption.REPLACE_EXISTING);
+        return filePath.toFile();
     }
     
 }
