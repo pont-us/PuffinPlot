@@ -171,12 +171,50 @@ public class TwoGeeLoaderTest {
         for (int i = 0; i < loader.getTreatmentSteps().size(); i++) {
             final double[] expected = expected_fq0101_1[i];
             final TreatmentStep step = loader.getTreatmentSteps().get(i);
-            checkVariableFieldsFq0101_1(expected, step);
-            checkConstantFieldsFq0101_1(step);
+            checkVariableThermalFields(expected, step);
+            checkConstantThermalFields(step, 10.0, 132.0, 19.0);
         }        
     }
 
-    private void checkVariableFieldsFq0101_1(double[] expected,
+    private static final double[][] expected_ccb0101_1 = {
+        {25, 7.695436893203883E-05, -3.95378640776699E-06, -5.047961165048542E-06, 2},
+        {50, 7.747320388349515E-05, -6.462135922330099E-07, -3.133E-06, 0.053433},
+        {75, 7.668330097087379E-05, 2.8543689320388734E-08, -3.559436893203883E-06, 0},
+        {100, 6.634805825242718E-05, -5.3432038834951455E-06, -5.413592233009709E-06, 0.054901},
+        {125, 5.792815533980582E-05, -4.632135922330097E-06, -3.426116504854368E-06, 1},
+        {150, 5.347029126213592E-05, -4.030776699029127E-06, -4.825320388349514E-06, 0.94635},
+        {175, 5.378844660194174E-05, -3.031359223300971E-06, -4.595865048543689E-06, 1},
+        {200, 4.8939611650485435E-05, -6.436407766990291E-06, -4.3798446601941745E-06, 1},
+        {225, 4.438951456310679E-05, -7.4632038834951456E-06, -2.2870873786407764E-06, 1},
+        {250, 4.4476407766990284E-05, -6.603980582524272E-06, -1.3360194174757276E-06, 1.0591},
+        {275, 4.680009708737864E-05, -6.856019417475727E-06, 6.961165048543688E-07, 0.10781},
+        {300, -9.3126213592233E-07, -9.665631067961164E-06, 7.477378640776699E-06, 3},
+        {325, -1.1872038834951455E-05, -6.360485436893204E-06, -1.1988349514563107E-06, 2.0572},
+        {350, -1.2436310679611648E-05, -1.2646407766990291E-05, 4.349417475728155E-06, 1.11},
+        {375, -8.048640776699028E-06, -9.367961165048543E-06, -2.533398058252427E-06, 3.055},
+        {400, 1.0062038834951456E-05, 1.2381553398058254E-06, -4.6175728155339795E-06, 0}
+    };
+    
+    /**
+     * Test with a file using the TRAY_NORMAL protocol
+     * 
+     * @throws IOException 
+     */
+    @Test
+    public void testTrayNormal() throws IOException {
+        final Path filePath = copyFile("CCB0101.1.DAT");
+        final TwoGeeLoader loader = new TwoGeeLoader(filePath.toFile(),
+                TwoGeeLoader.Protocol.TRAY_NORMAL,
+                new Vec3(4.628, -4.404, -6.280), false);
+        for (int i = 0; i < loader.getTreatmentSteps().size(); i++) {
+            final double[] expected = expected_ccb0101_1[i];
+            final TreatmentStep step = loader.getTreatmentSteps().get(i);
+            checkVariableThermalFields(expected, step);
+            checkConstantThermalFields(step, 10.3, 255, 3);
+        }        
+    }
+
+    private void checkVariableThermalFields(double[] expected,
             TreatmentStep step) {
         assertEquals(expected[0], step.getTemperature(), DELTA);
         assertEquals(expected[1], step.getMoment().x, DELTA);
@@ -184,13 +222,14 @@ public class TwoGeeLoaderTest {
         assertEquals(expected[3], step.getMoment().z, DELTA);
         assertEquals(expected[4], step.getMagSus(), DELTA);
     }
-    
-    private void checkConstantFieldsFq0101_1(TreatmentStep step) {
+
+    private void checkConstantThermalFields(TreatmentStep step,
+            double volume, double sampAz, double sampDip) {
         assertEquals(MeasurementType.DISCRETE, step.getMeasurementType());
-        assertEquals(10, step.getVolume(), DELTA);
+        assertEquals(volume, step.getVolume(), DELTA);
         assertEquals(4, step.getArea(), DELTA);
-        assertEquals(132, step.getSampAz(), DELTA);
-        assertEquals(19, step.getSampDip(), DELTA);
+        assertEquals(sampAz, step.getSampAz(), DELTA);
+        assertEquals(sampDip, step.getSampDip(), DELTA);
         assertEquals(0, step.getFormAz(), DELTA);
         assertEquals(0, step.getFormDip(), DELTA);
         assertEquals(0, step.getMagDev(), DELTA);
@@ -202,7 +241,7 @@ public class TwoGeeLoaderTest {
         assertTrue(Double.isNaN(step.getArmField()));
         assertEquals(ArmAxis.NONE, step.getArmAxis());
     }
-    
+
     private Path copyFile(String filename) throws IOException {
         final Path filePath
                 = temporaryFolder.getRoot().toPath().resolve(filename);
@@ -211,7 +250,5 @@ public class TwoGeeLoaderTest {
                 filePath);
         return filePath;
     }
-    
-
     
 }
