@@ -73,22 +73,27 @@ public class TwoGeeLoader extends AbstractFileLoader {
          * just a sample measurement
          */
         NORMAL,
+        
         /**
          * tray measurement then sample measurement
          */
         TRAY_NORMAL,
+        
         /**
          * sample measurement then tray measurement
          */
         NORMAL_TRAY,
+        
         /**
          * tray, then sample, then sample flipped around Y axis
          */
         TRAY_NORMAL_YFLIP,
+        
         /**
          * single initial tray measurement, then sample measurements
          */
         TRAY_FIRST,
+        
         /**
          * as TRAY_NORMAL but only use first tray correction
          */
@@ -183,14 +188,12 @@ public class TwoGeeLoader extends AbstractFileLoader {
                 TreatmentStep combined = null;
                 switch (protocol) {
                     case NORMAL:
-                        //data.add(d);
                         combined = step;
                         break;
                     case TRAY_NORMAL:
                         tray = step;
                         normal = readTreatmentStep(reader.readLine(),
                                 reader.getLineNumber());
-                        //data.add(combine2(tray, normal, true));
                         combined = combine2(tray, normal, true);
                         break;
                     case TRAY_NORMAL_IGNORE:
@@ -202,14 +205,12 @@ public class TwoGeeLoader extends AbstractFileLoader {
                         }
                         normal.setMoment(normal.getMoment(Correction.NONE).
                                 minus(trayMoment));
-                        //data.add(normal);
                         combined = normal;
                         break;
                     case NORMAL_TRAY:
                         normal = step;
                         tray = readTreatmentStep(reader.readLine(),
                                 reader.getLineNumber());
-                        //data.add(combine2(tray, normal, false));
                         combined = combine2(tray, normal, false);
                         break;
                     case TRAY_NORMAL_YFLIP:
@@ -223,15 +224,15 @@ public class TwoGeeLoader extends AbstractFileLoader {
                          */
                         yflip = readTreatmentStep(reader.readLine(),
                                 reader.getLineNumber());
-                        //data.add(combine3(tray, normal, yflip));
                         combined = combine3(tray, normal, yflip);
                         break;
                     case TRAY_FIRST:
-                        // can't use combine2 as we want the rest of the
-                        // data from d, not the tray measurement
+                        /*
+                         * We can't use combine2 as we want the rest of the data
+                         * from d, not the tray measurement.
+                         */
                         final Vec3 normV = step.getMoment(Correction.NONE);
                         step.setMoment(normV.minus(trayMoment));
-                        // treatmentSteps.add(d);
                         combined = step;
                         break;
                 }
@@ -271,21 +272,25 @@ public class TwoGeeLoader extends AbstractFileLoader {
 
     private TreatmentStep combine3(TreatmentStep tray, TreatmentStep normal,
             TreatmentStep reversed) {
-        /*
-         * We'll keep the rest of the data from the first (tray)
-         * measurement, and just poke in the magnetic moment vector calculated
-         * from the three readings.
-         */
         if (tray == null || normal == null || reversed == null) {
             return null;
         }
+
+        /*
+         * We will keep the data from the first (tray) measurement, except that
+         * we poke in a new value for the magnetic moment vector, calculated
+         * from the three readings. The volume correction has already been
+         * applied.
+         */
+        
+        // 1. Get the three moment measurements from the treatment steps.
         final Vec3 trayV = tray.getMoment(Correction.NONE);
         final Vec3 normV = normal.getMoment(Correction.NONE);
+        // revV has the X and Z axes flipped, but Y axis the same.
         final Vec3 revV = reversed.getMoment(Correction.NONE);
 
-        // The volume correction's already been applied on loading.
-        // revV has the X and Z axes flipped, but Y axis the same.
-        // calculate estimates of the true magnetic moment
+        // 2. Calculate estimates of the true magnetic moment.
+        
         // norm_tray: tray-corrected normal measurement
         final Vec3 norm_tray = normV.minus(trayV);
         // norm_rev: average x and z from normal/reverse; y =~ 0
@@ -293,16 +298,17 @@ public class TwoGeeLoader extends AbstractFileLoader {
         // rev_tray: tray-corrected reverse measurement
         final Vec3 rev_tray = revV.minus(trayV);
 
-        // average the relevant estimates for each axis
+        // 3. Average the relevant estimates for each axis.
+        
         // for x and z, average tray-corr. norm, tc rev, and norm/rev average
         final Vec3 avg_x_z = vectorMean(norm_tray, norm_rev, rev_tray.invert());
         // for y, average tray-corrected normal and reversed
         // (since 'reversed' doesn't flip the Y axis)
         final Vec3 avg_y = vectorMean(norm_tray, rev_tray);
 
-        // combine the axis estimates into a single vector
-        Vec3 avg = new Vec3(avg_x_z.x, avg_y.y, avg_x_z.z);
-        tray.setMoment(avg);
+        // 4. Combine the individual axis estimates into a single vector.
+        final Vec3 average = new Vec3(avg_x_z.x, avg_y.y, avg_x_z.z);
+        tray.setMoment(average);
         return tray;
     }
 
@@ -336,7 +342,6 @@ public class TwoGeeLoader extends AbstractFileLoader {
                     + "is 2G Protocol correctly set in Preferences?",
                     lineNumber);
             return null;
-            //throw new IllegalArgumentException("null line in readTreatmentStep");
         }
         if (EMPTY_LINE.matcher(line).matches()) {
             return null;
@@ -532,8 +537,8 @@ public class TwoGeeLoader extends AbstractFileLoader {
                  * field was set to 1 (TODO: make this configurable) and use
                  * this depth value to set the slot number.
                  */
-                final String depthString
-                        = r.getString("Depth", step.getDepth());
+                final String depthString =
+                        r.getString("Depth", step.getDepth());
                 /*
                  * The depth value is represented as a float (it has a trailing
                  * .0 even if integral); if the depth field in the data table
