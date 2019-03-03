@@ -48,6 +48,16 @@ public class TwoGeeLoaderTest {
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Test
+    public void testWithNonexistentFile() throws IOException {
+        final TwoGeeLoader loader = new TwoGeeLoader(
+                temporaryFolder.getRoot().toPath().resolve("nonexistent").
+                        toFile(),
+                TwoGeeLoader.Protocol.NORMAL, new Vec3(1, 1, 1), true);
+        assertEquals(0, loader.getTreatmentSteps().size());
+        assertEquals(1, loader.getMessages().size());
+    }
+    
+    @Test
     public void testWithEmptyFile() throws IOException {
         final File file =
                 TestUtils.writeStringToTemporaryFile(

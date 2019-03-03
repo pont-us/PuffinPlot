@@ -117,18 +117,11 @@ public class TwoGeeLoader extends AbstractFileLoader {
         this.protocol = protocol;
         this.usePolarMoment = usePolarMoment;
         setSensorLengths(sensorLengths);
-        try {
-            reader = new LineNumberReader(new FileReader(file));
+        try (LineNumberReader r = new LineNumberReader(new FileReader(file))) {
+            reader = r;
             readFile();
         } catch (IOException exception) {
             addMessage("Error reading file: " + exception.getMessage());
-        } finally {
-            try {
-                reader.close();
-            } catch (IOException exception2) {
-                LOGGER.log(Level.WARNING, "Exception closing reader",
-                        exception2);
-            }
         }
     }
 

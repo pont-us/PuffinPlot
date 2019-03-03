@@ -100,7 +100,7 @@ public class PplLoaderTest {
     }
     
     @Test
-    public void testWithValidFile() throws IOException {
+    public void testWithVersion3File() throws IOException {
         final String filename = "c5h-truncated.ppl";
         final Path filePath =
                 temporaryFolder.getRoot().toPath().resolve(filename);
@@ -156,6 +156,59 @@ public class PplLoaderTest {
                 TreatmentParameter.IRM_FIELD,
                 TreatmentParameter.ARM_FIELD).
                 forEach(f -> assertEquals("NaN", step.getValue(f)));
+    }
+    
+    private static final double[][] expectedVersion2 = {
+        {25, 1.2539417475728154E-05, 0.00010844922330097089, -0.0001057888349514563, 10},
+        {50, 2.456368932038835E-05, 9.959029126213592E-05, -9.436456310679613E-05, 10.052},
+        {75, 2.2204563106796116E-05, 0.00010166300970873787, -0.00011500757281553397, 9.1056},
+        {100, 3.3783495145631077E-06, 0.00013295048543689322, -9.034660194174755E-05, 11},
+        {125, 1.3048737864077671E-05, 1.7123300970873785E-05, -1.9799320388349512E-05, 9.0536},
+        {150, 1.0973883495145629E-05, 1.0697184466019416E-05, -1.675038834951456E-05, 10},
+        {175, 4.529310679611651E-05, 1.1473786407767007E-06, -1.8276893203883495E-05, 11.053},
+        {200, 1.3350388349514562E-05, 1.408378640776699E-05, -1.5256407766990291E-05, 9.055},
+        {25, 2.392955339805825E-05, 7.725155339805826E-06, -3.2551941747572815E-05, 12},
+        {50, 2.781087378640776E-05, 4.955757281553397E-06, -3.5526699029126214E-05, 11.155},
+        {75, 2.7847864077669902E-05, -1.8592233009708654E-07, -2.257757281553398E-05, 10.317},
+        {100, 3.0117087378640778E-05, -2.8426213592233005E-06, -3.227735922330097E-05, 11},
+        {125, 4.03804854368932E-05, 7.101403883495145E-06, -2.5261262135922328E-05, 10.149},
+        {150, 4.169631067961165E-05, -8.934368932038834E-06, -2.0503524271844657E-05, 12},
+        {175, 1.196174757281553E-05, 1.1867572815533979E-05, -2.0949805825242717E-05, 10.159},
+        {200, 4.4693592233009704E-05, -1.0288349514563102E-06, -2.0131941747572812E-05, 10.152}
+    };
+    
+    @Test
+    public void testWithVersion2File() throws IOException {
+        final String filename = "waipara-truncated.ppl";
+        final Path filePath
+                = temporaryFolder.getRoot().toPath().resolve(filename);
+        Files.copy(TestFileLocator.class.getResourceAsStream(filename),
+                filePath);
+        final PplLoader loader = new PplLoader(filePath.toFile());
+        for (int i=0; i<expectedVersion2.length; i++) {
+            final double[] expected = expectedVersion2[i];
+            final TreatmentStep step = loader.getTreatmentSteps().get(i);
+            assertEquals(expected[0], step.getTemperature(), DELTA);
+            assertEquals(expected[1], step.getMoment().x, DELTA);
+            assertEquals(expected[2], step.getMoment().y, DELTA);
+            assertEquals(expected[3], step.getMoment().z, DELTA);
+            assertEquals(expected[4], step.getMagSus(), DELTA);
+            
+            /*
+             * This is unfortunately a rather trivial test for the conversion of
+             * AF intensities in a Version 2 file, because I don't have any
+             * version 2 AF-treated files to test with. Creating one is also
+             * hard because even the first released PuffinPlot version (0.95)
+             * was using PPL format version 3, and building older PuffinPlot
+             * versions from source to create Version 2 test files is tricky
+             * (obsolete Java and library versions, etc.). But this also means
+             * that the chances of PuffinPlot ever actually encountering a
+             * Version 2 AF file are effectively zero.
+             */
+            assertEquals(0, step.getAfX(), DELTA);
+            assertEquals(0, step.getAfY(), DELTA);
+            assertEquals(0, step.getAfZ(), DELTA);
+        }
     }
 
 }

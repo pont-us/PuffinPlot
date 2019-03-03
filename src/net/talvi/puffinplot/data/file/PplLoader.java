@@ -64,8 +64,8 @@ public class PplLoader extends AbstractFileLoader {
      */
     public PplLoader(File file) {
         this.file = file;
-        try {
-            reader = new LineNumberReader(new FileReader(file));
+        try (LineNumberReader r = new LineNumberReader(new FileReader(file))) {
+            reader = r;
             final String firstLine = reader.readLine();
             if (firstLine == null) {
                 throw new IOException(file + " is empty.");
@@ -93,15 +93,6 @@ public class PplLoader extends AbstractFileLoader {
             readFile();
         } catch (IOException | MalformedFileException exception) {
             addMessage(exception.getMessage());
-        } finally {
-            try {
-                if (reader != null) {
-                    reader.close();
-                }
-            } catch (IOException exception) {
-                logger.log(Level.WARNING, "Failed to close reader: ",
-                        exception);
-            }
         }
     }
 
