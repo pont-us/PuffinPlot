@@ -44,14 +44,16 @@ public class FileFormatTest {
     
     @Test
     public void testReadLinesWithVolume() {
-        final Map<Integer, TreatmentParameter> columnMap = makeColMap(1, TreatmentParameter.AF_Z,
-                2, TreatmentParameter.X_MOMENT,
-                3, TreatmentParameter.Y_MOMENT,
-                4, TreatmentParameter.Z_MOMENT,
-                5, TreatmentParameter.DISCRETE_ID,
-                6, TreatmentParameter.VOLUME
-        );
-        final FileFormat ff = new FileFormat(columnMap, 1, MeasurementType.DISCRETE,
+        final Map<Integer, TreatmentParameter> columnMap =
+                makeColMap(1, TreatmentParameter.AF_Z,
+                        2, TreatmentParameter.X_MOMENT,
+                        3, TreatmentParameter.Y_MOMENT,
+                        4, TreatmentParameter.Z_MOMENT,
+                        5, TreatmentParameter.DISCRETE_ID,
+                        6, TreatmentParameter.VOLUME
+                );
+        final FileFormat ff = new FileFormat(columnMap, 1,
+                MeasurementType.DISCRETE,
                 TreatmentType.DEGAUSS_XYZ, " ", false, null, MomentUnit.AM,
                 FieldUnit.MILLITESLA);
         final List<String> lines = Arrays.asList(
@@ -86,12 +88,14 @@ public class FileFormatTest {
         
     @Test
     public void testReadLineIncompletePolarData() {
-        final Map<Integer, TreatmentParameter> columnMap = makeColMap(0, TreatmentParameter.X_MOMENT,
-                1, TreatmentParameter.Y_MOMENT,
-                2, TreatmentParameter.Z_MOMENT,
-                3, TreatmentParameter.VIRT_DECLINATION
+        final Map<Integer, TreatmentParameter> columnMap =
+                makeColMap(0, TreatmentParameter.X_MOMENT,
+                    1, TreatmentParameter.Y_MOMENT,
+                    2, TreatmentParameter.Z_MOMENT,
+                    3, TreatmentParameter.VIRT_DECLINATION
         );
-        final FileFormat ff = new FileFormat(columnMap, 1, MeasurementType.DISCRETE,
+        final FileFormat ff = new FileFormat(columnMap, 1,
+                MeasurementType.DISCRETE,
                 TreatmentType.DEGAUSS_XYZ, ",", false, Collections.emptyList(),
                 MomentUnit.AM, FieldUnit.MILLITESLA);
         final TreatmentStep treatmentStep = ff.readLine("2,4,6,12");
@@ -110,15 +114,16 @@ public class FileFormatTest {
     
     @Test
     public void testConstructorAndGetters() {
-        final Map<Integer, TreatmentParameter> columnMap = makeColMap(1, TreatmentParameter.AF_Z,
-                2, TreatmentParameter.X_MOMENT,
-                3, TreatmentParameter.Y_MOMENT,
-                4, TreatmentParameter.Z_MOMENT
+        final Map<Integer, TreatmentParameter> columnMap =
+                makeColMap(1, TreatmentParameter.AF_Z,
+                    2, TreatmentParameter.X_MOMENT,
+                    3, TreatmentParameter.Y_MOMENT,
+                    4, TreatmentParameter.Z_MOMENT
         );
         final List<Integer> columnWidths = Arrays.asList(10, 9, 8, 7);
         FileFormat ff = new FileFormat(columnMap, 3, MeasurementType.DISCRETE,
-                TreatmentType.DEGAUSS_XYZ, " ", true, columnWidths, MomentUnit.AM,
-                FieldUnit.MILLITESLA);
+                TreatmentType.DEGAUSS_XYZ, " ", true, columnWidths,
+                MomentUnit.AM, FieldUnit.MILLITESLA);
         assertEquals(ff.getColumnMap(), columnMap);
         assertEquals(3, ff.getHeaderLines());
         assertEquals(MeasurementType.DISCRETE, ff.getMeasurementType());
@@ -131,28 +136,36 @@ public class FileFormatTest {
     
     @Test
     public void testSpecifiesFullVector() {
-        assertFalse(makeFormat(1, TreatmentParameter.X_MOMENT, 2, TreatmentParameter.Y_MOMENT,
-                3, TreatmentParameter.VIRT_DECLINATION, 4, TreatmentParameter.VIRT_INCLINATION).
+        assertFalse(makeFormat(1, TreatmentParameter.X_MOMENT, 2,
+                TreatmentParameter.Y_MOMENT,
+                3, TreatmentParameter.VIRT_DECLINATION, 4,
+                TreatmentParameter.VIRT_INCLINATION).
                 specifiesFullVector());
-        assertFalse(makeFormat(1, TreatmentParameter.X_MOMENT, 2, TreatmentParameter.Z_MOMENT).
+        assertFalse(makeFormat(1, TreatmentParameter.X_MOMENT, 2,
+                TreatmentParameter.Z_MOMENT).
                 specifiesFullVector());
-        assertTrue(makeFormat(1, TreatmentParameter.X_MOMENT, 2, TreatmentParameter.Y_MOMENT,
+        assertTrue(makeFormat(1, TreatmentParameter.X_MOMENT, 2,
+                TreatmentParameter.Y_MOMENT,
                 3, TreatmentParameter.Z_MOMENT).
                 specifiesFullVector());
-        assertTrue(makeFormat(1, TreatmentParameter.VIRT_DECLINATION, 2, TreatmentParameter.VIRT_INCLINATION,
+        assertTrue(makeFormat(1, TreatmentParameter.VIRT_DECLINATION, 2,
+                TreatmentParameter.VIRT_INCLINATION,
                 3, TreatmentParameter.VIRT_MAGNETIZATION).
                 specifiesFullVector());
     }
     
     @Test
     public void testSpecifiesDirection() {
-        assertFalse(makeFormat(1, TreatmentParameter.X_MOMENT, 2, TreatmentParameter.Y_MOMENT,
+        assertFalse(makeFormat(1, TreatmentParameter.X_MOMENT, 2,
+                TreatmentParameter.Y_MOMENT,
                 3, TreatmentParameter.VIRT_DECLINATION).
                 specifiesDirection());
-        assertFalse(makeFormat(1, TreatmentParameter.X_MOMENT, 2, TreatmentParameter.Y_MOMENT,
+        assertFalse(makeFormat(1, TreatmentParameter.X_MOMENT, 2,
+                TreatmentParameter.Y_MOMENT,
                 3, TreatmentParameter.VIRT_INCLINATION).
                 specifiesDirection());
-        assertTrue(makeFormat(1, TreatmentParameter.X_MOMENT, 2, TreatmentParameter.Y_MOMENT,
+        assertTrue(makeFormat(1, TreatmentParameter.X_MOMENT, 2,
+                TreatmentParameter.Y_MOMENT,
                 3, TreatmentParameter.Z_MOMENT).
                 specifiesDirection());
         assertTrue(makeFormat(1, TreatmentParameter.VIRT_DECLINATION,
@@ -184,7 +197,8 @@ public class FileFormatTest {
         Mockito.when(prefsMock.getInt(Mockito.anyString(), Mockito.anyInt())).
                 thenAnswer(invocation -> intMap.getOrDefault(
                         invocation.getArgument(0), invocation.getArgument(1)));
-        Mockito.when(prefsMock.getBoolean(Mockito.anyString(), Mockito.anyBoolean())).
+        Mockito.when(prefsMock.getBoolean(Mockito.anyString(),
+                Mockito.anyBoolean())).
                 thenAnswer(invocation -> boolMap.getOrDefault(
                         invocation.getArgument(0), invocation.getArgument(1)));
         final FileFormat ff = FileFormat.readFromPrefs(prefsMock);
@@ -203,10 +217,12 @@ public class FileFormatTest {
 
     @Test
     public void testWriteToPrefs() {
-        final FileFormat ff = makeFormat(5, TreatmentParameter.AF_X, 6, TreatmentParameter.VIRT_MAGNETIZATION);
+        final FileFormat ff = makeFormat(5, TreatmentParameter.AF_X, 6,
+                TreatmentParameter.VIRT_MAGNETIZATION);
         final Preferences prefsMock = Mockito.mock(Preferences.class);
         ff.writeToPrefs(prefsMock);
-        Mockito.verify(prefsMock).put("fileformat.columnMap", "5,AF_X\t6,VIRT_MAGNETIZATION");
+        Mockito.verify(prefsMock).put("fileformat.columnMap",
+                "5,AF_X\t6,VIRT_MAGNETIZATION");
         Mockito.verify(prefsMock).put("fileformat.fieldUnit", "MILLITESLA");
         Mockito.verify(prefsMock).put("fileformat.treatType", "DEGAUSS_XYZ");
         Mockito.verify(prefsMock).put("fileformat.momentUnit", "AM");
@@ -225,7 +241,8 @@ public class FileFormatTest {
                 FieldUnit.MILLITESLA);        
     }
 
-    private static Map<Integer, TreatmentParameter> makeColMap(Object... colDefs) {
+    static Map<Integer, TreatmentParameter> makeColMap(
+            Object... colDefs) {
         final Map<Integer, TreatmentParameter> map = new HashMap<>();
         for (int i=0; i<colDefs.length; i += 2) {
             map.put((Integer) colDefs[i], (TreatmentParameter) colDefs[i+1]);

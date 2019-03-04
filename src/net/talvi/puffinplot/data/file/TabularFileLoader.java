@@ -35,8 +35,6 @@ import java.util.List;
  * @author pont
  */
 public class TabularFileLoader extends AbstractFileLoader {
-    private final File file;
-    private final FileFormat format;
     
     /**
      * Creates a new TabularFileLoader.
@@ -45,38 +43,30 @@ public class TabularFileLoader extends AbstractFileLoader {
      * @param format the format in which the treatmentSteps is stored in the file
      */
     public TabularFileLoader(File file, FileFormat format) {
-        this.file = file;
-        this.format = format;
-        BufferedReader reader = null;
         if (!format.specifiesFullVector()) {
             if (!format.specifiesDirection()) {
-                addMessage("The specified fields are not sufficient to specify\n"
-                        + "a direction; all magnetization vectors will be set to zero!");
+                addMessage("The specified fields are not sufficient to specify "
+                        + "a direction; missing vector components will be set "
+                        + "to zero!");
             } else {
-                addMessage("The specified fields specify a magnetization direction\n"
-                        + "but no magnitude. All magnetization intensities "
-                        + "will be set to 1.");
+                addMessage("The specified fields specify a magnetization "
+                        + "direction but no magnitude. All magnetization "
+                        + "intensities will be set to 1.");
             }
         }
-        try {
-            reader = new BufferedReader(new FileReader(file));
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            
             final List<String> lines = new ArrayList<>(50);
             while (true) {
                 final String line = reader.readLine();
-                if (line==null) break;
+                if (line == null) {
+                    break;
+                }
                 lines.add(line);
             }
             treatmentSteps = format.readLines(lines);
         } catch (IOException ex) {
             addMessage(ex.getLocalizedMessage());
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException ex2) {
-                    // do nothing
-                }
-            }
         }
     }
 }

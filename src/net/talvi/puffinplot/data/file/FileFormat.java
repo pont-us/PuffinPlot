@@ -117,7 +117,9 @@ public final class FileFormat {
         treatmentStep.setFormDip(0);
         double dec = Double.NaN, inc = Double.NaN, intensity = Double.NaN;
         for (int i=0; i<fieldStrings.length; i++) {
-            if (!columnMap.containsKey(i)) continue;
+            if (!columnMap.containsKey(i)) {
+                continue;
+            }
             final TreatmentParameter fieldType = columnMap.get(i);
             final String valueString = fieldStrings[i];
             double scale = 1;
@@ -156,7 +158,8 @@ public final class FileFormat {
             treatmentStep.setMoment(Vec3.fromPolarDegrees(intensity, inc, dec));
         }
         if (specifiesVolume) {
-            treatmentStep.setMoment(treatmentStep.getMoment().divideBy(treatmentStep.getVolume()));
+            treatmentStep.setMoment(treatmentStep.getMoment().
+                    divideBy(treatmentStep.getVolume()));
         }
         return treatmentStep;
     }
