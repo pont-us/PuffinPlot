@@ -65,7 +65,7 @@ public class UcDavisLoader extends AbstractFileLoader {
          * structures for subsequent use: a sorted set of treatment levels, and
          * a hash table mapping (parameter, level) pairs to column indices.
          */
-        final SortedSet<Integer> levels = new TreeSet();
+        final SortedSet<Integer> levels = new TreeSet<>();
         final Map<ColumnDef, Integer> fieldMap = new HashMap<>();
         final String[] headers = headerLine.trim().split("\t");
         for (int i = 1; i < headers.length; i++) {

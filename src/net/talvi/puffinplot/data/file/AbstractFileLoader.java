@@ -49,7 +49,7 @@ abstract class AbstractFileLoader implements FileLoader {
 
     @Override
     public List<String> getExtraLines() {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     @Override

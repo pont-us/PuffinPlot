@@ -1189,9 +1189,9 @@ public class PuffinActions {
             label.setAlignmentX(0.5f);
             panel.add(label);
             panel.add(Box.createVerticalStrut(8));
-            final JComboBox comboBox = 
-                    new JComboBox(Arrays.stream(TreatmentType.values()).
-                    map(tt -> tt.getNiceName()).toArray());
+            final JComboBox<String> comboBox =
+                    new JComboBox<>(Arrays.stream(TreatmentType.values()).
+                        map(tt -> tt.getNiceName()).toArray(String[]::new));
             panel.add(comboBox);
             final int option = JOptionPane.showConfirmDialog(
                     app.getMainWindow(), panel,

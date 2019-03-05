@@ -73,7 +73,7 @@ public class SampleChooser extends JPanel {
         this.app = app;
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         add(depthSlider = new DepthSlider(app));
-        sampleList = new SampleList(new DefaultListModel());
+        sampleList = new SampleList(new DefaultListModel<>());
         samplePane = new JScrollPane(sampleList);
         samplePane.setVerticalScrollBarPolicy(
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -126,12 +126,12 @@ public class SampleChooser extends JPanel {
         return samples;
     }
 
-    private class SampleList extends JList {
+    private class SampleList extends JList<String> {
         private static final long serialVersionUID = 1L;
 
-        DefaultListModel model;
+        final DefaultListModel<String> model;
 
-        SampleList(DefaultListModel model) {
+        SampleList(DefaultListModel<String> model) {
             super(model);
             this.model = model;
             setAlignmentY(0);
@@ -150,8 +150,10 @@ public class SampleChooser extends JPanel {
         void changeIndexBy(int delta) {
             if (isVisible()) {
                 int proposedValue = getSelectedIndex() + delta;
-                if (proposedValue >= 0 && proposedValue < getModel().getSize())
+                if (proposedValue >= 0 &&
+                        proposedValue < getModel().getSize()) {
                     setSelectedIndex(proposedValue);
+                }
             }
         }
     }
@@ -177,10 +179,11 @@ public class SampleChooser extends JPanel {
                 setVisibility(true, false);
                 break;
             case DISCRETE:
-                DefaultListModel model = sampleList.model;
+                final DefaultListModel<String> model = sampleList.model;
                 model.clear();
-                for (Sample s: suite.getSamples())
-                    model.addElement(s.getNameOrDepth());
+                for (Sample sample: suite.getSamples()) {
+                    model.addElement(sample.getNameOrDepth());
+                }
                 sampleList.setSelectedIndex(0);
                 setVisibility(false, true);
                 break;

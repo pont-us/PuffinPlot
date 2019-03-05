@@ -43,7 +43,7 @@ public class CustomFields<T> {
 
     /** Creates an empty set of custom fields. */
     public CustomFields() {
-        this(Collections.EMPTY_LIST);
+        this(Collections.emptyList());
     }
 
     /**

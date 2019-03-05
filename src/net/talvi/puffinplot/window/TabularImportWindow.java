@@ -190,13 +190,13 @@ public class TabularImportWindow extends JDialog {
     private class StringChooser extends JPanel {
         private static final long serialVersionUID = 1L;
         private final String[] values;
-        private final JComboBox comboBox;
+        private final JComboBox<String> comboBox;
         
         public StringChooser(String labelText, String[] labels, String[] values,
                 String initialValue) {
             setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
             final JLabel label = new JLabel(labelText);
-            comboBox = new JComboBox(labels);
+            comboBox = new JComboBox<>(labels);
             this.values = values;
             label.setLabelFor(comboBox);
             for (int i=0; i<values.length; i++) {
@@ -244,7 +244,7 @@ public class TabularImportWindow extends JDialog {
             this.names = names;
             this.values = values;
             setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-            comboBox = new JComboBox(names);
+            comboBox = new JComboBox<String>(names);
             for (int i=0; i<values.length; i++) {
                 if (values[i]==initialValue) {
                     comboBox.setSelectedIndex(i);
@@ -327,13 +327,11 @@ public class TabularImportWindow extends JDialog {
     private static class FieldChooser extends JPanel {
         private static final long serialVersionUID = 1L;
     
-        private final JComboBox fieldBox;
+        private final JComboBox<String> fieldBox;
         private final JSpinner spinner;
         private final SpinnerNumberModel spinnerModel;
         private static final List<String> fieldStrings;
         private static final List<TreatmentParameter> fields;
-        private static final String[] emptyStringArray =
-                new String[] {}; // for List.toArray
         
         static {
             TreatmentParameter[] allValues = TreatmentParameter.values();
@@ -360,7 +358,7 @@ public class TabularImportWindow extends JDialog {
             spinner = new JSpinner(spinnerModel);
             spinner.setMaximumSize(new Dimension(80, 24));
             add(spinner);
-            fieldBox = new JComboBox(fieldStrings.toArray(emptyStringArray));
+            fieldBox = new JComboBox<>(fieldStrings.toArray(new String[] {}));
             fieldBox.setMaximumSize(new Dimension(300, 24));
             add(fieldBox);
         }

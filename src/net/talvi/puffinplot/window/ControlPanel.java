@@ -53,6 +53,11 @@ public class ControlPanel extends JPanel
 
     private static final long serialVersionUID = 1L;
     private final JLabel correctionField;
+    /*
+     * No type parameter for the combo box, since it may contain either
+     * suites or strings. (In the latter case, it's a single string reading
+     * "no files loaded".)
+     */
     private final JComboBox suiteBox;
     private final RotationBox rotationBox;
     private final VVsBox vVsBox;
@@ -117,24 +122,23 @@ public class ControlPanel extends JPanel
         app.getMainWindow().updateSampleDataPanel();
     }
     
-    private String sampleOrientation(Sample s) {
+    private String sampleOrientation(Sample sample) {
         final String displayMode =
                 prefs.get("display.sampleOrientation", "Azimuth/Dip");
         return String.format(Locale.ENGLISH,
-                "Samp. %.1f/%.1f",
-                s.getSampAz(),
+                "Samp. %.1f/%.1f", sample.getSampAz(),
                 "Azimuth/Dip".equals(displayMode) ?
-                        s.getSampDip() : s.getSampHade());
+                        sample.getSampDip() : sample.getSampHade());
     }
     
-    private String formationOrientation(Sample s) {
+    private String formationOrientation(Sample sample) {
         final String displayMode =
                 prefs.get("display.formationOrientation", "Dip azimuth/Dip");
         return String.format(Locale.ENGLISH,
                 "Form. %.1f/%.1f",
                 "Dip azimuth/Dip".equals(displayMode) ?
-                        s.getFormAz() : s.getFormStrike(),
-                s.getFormDip());
+                        sample.getFormAz() : sample.getFormStrike(),
+                sample.getFormDip());
     }
     
     /**
@@ -167,7 +171,9 @@ public class ControlPanel extends JPanel
          */
         if (!updatingSuites) {
             int index = suiteBox.getSelectedIndex();
-            if (index > -1) app.setCurrentSuite(index);
+            if (index > -1) {
+                app.setCurrentSuite(index);
+            }
         }
     }
     

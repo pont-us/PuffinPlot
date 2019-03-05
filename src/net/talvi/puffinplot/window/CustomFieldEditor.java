@@ -45,10 +45,10 @@ public class CustomFieldEditor extends JFrame {
     private static final long serialVersionUID = 1L;
 
     private final JPanel contentPane;
-    private final JList list;
-    private final DefaultListModel listModel;
-    private static final String addString = "Add…";
-    private static final String removeString = "Remove";
+    private final JList<String> list;
+    private final DefaultListModel<String> listModel;
+    private static final String ADD_STRING = "Add…";
+    private static final String REMOVE_STRING = "Remove";
     private final JButton removeButton;
     private final JButton addButton;
     private final JButton renameButton;
@@ -69,21 +69,21 @@ public class CustomFieldEditor extends JFrame {
         super(title);
         this.app = app;
         this.fields = fields;
-        listModel = new DefaultListModel();
+        listModel = new DefaultListModel<>();
         setFromFields();
 
         // Create the widgets
-        list = new JList(listModel);
+        list = new JList<>(listModel);
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         list.setSelectedIndex(0);
         list.setVisibleRowCount(5);
         list.setPreferredSize(new Dimension(150, list.getPreferredSize().height));
         JScrollPane listScrollPane = new JScrollPane(list);
 
-        addButton = new JButton(addString);
+        addButton = new JButton(ADD_STRING);
         AddFieldListener addListener = new AddFieldListener();
         addButton.addActionListener(addListener);
-        removeButton = new JButton(removeString);
+        removeButton = new JButton(REMOVE_STRING);
         removeButton.addActionListener(new RemoveFieldListener());
         renameButton = new JButton("Rename…");
         renameButton.addActionListener(new RenameListener());
@@ -178,7 +178,6 @@ public class CustomFieldEditor extends JFrame {
     private class AddFieldListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            //String name = customFieldName.getText();
             String name = (String) JOptionPane.showInputDialog(
                     CustomFieldEditor.this,
                     "Name for new field",

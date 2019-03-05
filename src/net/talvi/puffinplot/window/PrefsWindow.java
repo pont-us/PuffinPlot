@@ -428,7 +428,8 @@ public class PrefsWindow extends JFrame {
         }
     }
     
-    private class PrefsComboBox extends JComboBox implements ItemListener {
+    private class PrefsComboBox extends JComboBox<String>
+            implements ItemListener {
         private static final long serialVersionUID = 1L;
 
         private final String prefsKey;
@@ -448,7 +449,7 @@ public class PrefsWindow extends JFrame {
         }
     }
 
-    private class PresetsBox extends JComboBox implements ItemListener {
+    private class PresetsBox extends JComboBox<String> implements ItemListener {
         private static final long serialVersionUID = 1L;
 
         public PresetsBox() {

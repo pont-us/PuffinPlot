@@ -49,7 +49,7 @@ public class TreatmentWindow extends JFrame implements ActionListener {
     private final TreatmentCombo treatmentCombo;
     private final PuffinApp app;
     
-    private static class TreatmentCombo extends JComboBox {
+    private static class TreatmentCombo extends JComboBox<String> {
         
         public TreatmentCombo() {
             super();

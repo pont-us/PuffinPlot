@@ -477,7 +477,7 @@ public final class Suite implements SampleGroup {
         readFiles(files, SensorLengths.fromPresetName("1:1:1"),
                 TwoGeeLoader.Protocol.NORMAL, false,
                 FileType.PUFFINPLOT_NEW, null,
-                Collections.EMPTY_MAP);
+                Collections.emptyMap());
     }
 
     /**
@@ -492,7 +492,8 @@ public final class Suite implements SampleGroup {
      * used to correct Cartesian magnetic moment data
      * @param protocol for 2G files only: the measurement protocol used
      * @param usePolarMoment for 2G files only: use polar (dec/inc/int)
-     * data fields instead of Cartesian ones (X/Y/Z) to determine magnetic moment
+     * data fields instead of Cartesian ones (X/Y/Z) to determine magnetic
+     * moment
      * @param fileType type of the specified files
      * @param format explicitly specified custom tabular file format
      * @param importOptions extra options passed to file importers

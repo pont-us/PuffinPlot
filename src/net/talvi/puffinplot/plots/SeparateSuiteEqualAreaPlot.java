@@ -123,7 +123,7 @@ public class SeparateSuiteEqualAreaPlot extends EqualAreaPlot {
                 boolean firstEllipsePoint = true;
                 final List<Vec3> errorCircle = fisher.getMeanDirection().
                         makeSmallCircle(fisher.getA95());
-                final List<Vec3> errorCircleInterpolated = new ArrayList();
+                final List<Vec3> errorCircleInterpolated = new ArrayList<>();
                 for (List<Vec3> vs:
                         Vec3.interpolateEquatorPoints(errorCircle)) {
                     errorCircleInterpolated.addAll(vs);
