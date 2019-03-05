@@ -1218,15 +1218,17 @@ public class TreatmentStep {
     }
 
     /**
-     * Sets the value of a specified data field using a string.
+     * Sets the value of a specified treatment parameter using a string. * For
+     * double values, the field is set to the parsed value multiplied by the
+     * conversion factor. The parameter {@code TreatmentParameter.DEPTH} is
+     * handled as a string, not a double; additionally, supplying a string
+     * containing the text {@code "null"} as a value for the depth will set the
+     * depth to an actual null, not to the string {@code "null"}.
      * 
      * @param field the field to set the value of (non-null)
      * @param value a string representation of the value to set the field to
      *              (non-null)
      * @param factor conversion factor for double values
-     * 
-     * For double values, the field is set to the parsed value multiplied
-     * by the conversion factor.
      * 
      * @throws NullPointerException if {@code field} or {@code value} is null
      */
@@ -1323,7 +1325,8 @@ public class TreatmentStep {
                 moment = moment.setZ(doubleVal);
                 break;
             case DEPTH:
-                depth = s;
+                // If the string is "null", set depth to an actual null value.
+                depth = (s == null) ? null : s;
                 break;
             case IRM_FIELD:
                 setIrmField(doubleVal);

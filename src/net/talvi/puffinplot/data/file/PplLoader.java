@@ -50,7 +50,7 @@ public class PplLoader extends AbstractFileLoader {
     private static final Pattern PUFFIN_HEADER =
             Pattern.compile("^PuffinPlot file. Version (\\d+)");
     private LineNumberReader reader;
-    private TreatmentStep.Reader datumReader;
+    private TreatmentStep.Reader stepReader;
     private int treatmentField;
     private int version;
     private List<String> extraLines = Collections.emptyList();
@@ -88,7 +88,7 @@ public class PplLoader extends AbstractFileLoader {
             }
             final List<String> headers = Arrays.asList(headerLine.split("\t"));
             treatmentField = headers.indexOf("TREATMENT");
-            datumReader = new TreatmentStep.Reader(headers);
+            stepReader = new TreatmentStep.Reader(headers);
             readFile();
         } catch (IOException | MalformedFileException exception) {
             addMessage(exception.getMessage());
@@ -117,7 +117,7 @@ public class PplLoader extends AbstractFileLoader {
             }
             TreatmentStep step = null;
             try {
-                step = datumReader.fromStrings(values);
+                step = stepReader.fromStrings(values);
             } catch (NumberFormatException e) {
                 final String msg = String.format(Locale.ENGLISH,
                         "Error at line %d "+

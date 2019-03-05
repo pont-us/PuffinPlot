@@ -55,7 +55,7 @@ public enum TreatmentParameter {
     /** the identifier (name) of a discrete sample */
     DISCRETE_ID("Sample ID", null, String.class, "0", true, false),
     /** the depth in the core of a continuous measurement */
-    DEPTH("Depth", null, double.class, "0", true, false),
+    DEPTH("Depth", null, String.class, "0", true, false),
     /** the number of the machine run during which the measurements were made */
     RUN_NUMBER("Run #", null, int.class, "0", true, false),
     /** the timestamp of the measurement */
