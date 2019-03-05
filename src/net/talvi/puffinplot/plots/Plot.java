@@ -109,7 +109,6 @@ public abstract class Plot
      */
     public Plot(PlotParams params) {
         this.params = params;
-        fontFamily = "Arial";
         final String sizesString =
                 params.getSetting("plotSizes", DEFAULT_PLOT_POSITIONS);
         fontFamily = params.getSetting("plots.fontFamily", "Arial");

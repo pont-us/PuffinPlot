@@ -1380,7 +1380,8 @@ public class PuffinApp {
         com.itextpdf.text.pdf.PdfWriter writer =
                 com.itextpdf.text.pdf.PdfWriter.getInstance(document,
                 new java.io.FileOutputStream(pdfFile));
-        final FontMapper mapper = new DefaultFontMapper();
+        final DefaultFontMapper mapper = new DefaultFontMapper();
+        
         document.open();
         final PdfContentByte content = writer.getDirectContent();
         int pdfPage = 0;
@@ -1388,8 +1389,15 @@ public class PuffinApp {
         // a rough imitation of the Java printing interface
         do {
             document.newPage();  // shouldn't make a difference on first pass
-            final Graphics2D g2 =
-                    content.createGraphics(size.width, size.height, mapper);
+            /*
+             * It might be worth exposing the "onlyShapes" argument at some
+             * point: when set, it converts text to paths. Annoying for anyone
+             * who wants to select it, of course, but a better chance that it
+             * will be accurately reproduced in the PDF.
+             */
+            final boolean onlyShapes = false;
+            final Graphics2D g2 = new com.itextpdf.awt.PdfGraphics2D(content,
+                    size.width, size.height, mapper, onlyShapes, onlyShapes, 99);
             finished = display.printPdfPage(g2, pdfPage);
             g2.dispose();
             pdfPage++;
