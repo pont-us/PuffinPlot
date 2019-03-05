@@ -126,8 +126,7 @@ public class TwoGeeLoader extends AbstractFileLoader {
     }
 
     private void readFile() throws IOException {
-        LOGGER.log(Level.INFO,
-                "Reading 2G file {0}.", file.toString());
+        LOGGER.log(Level.INFO, "Reading 2G file {0}.", file.toString());
         final String fileName = file.getName();
         final String fieldsLine = reader.readLine();
         if (fieldsLine == null) {
@@ -145,8 +144,8 @@ public class TwoGeeLoader extends AbstractFileLoader {
         Vec3 trayMoment = null;
         String line;
         while ((line = reader.readLine()) != null) {
-            final TreatmentStep step
-                    = readTreatmentStep(line, reader.getLineNumber());
+            final TreatmentStep step =
+                    readTreatmentStep(line, reader.getLineNumber());
             // skip lines containing no data at all
             if (step == null || (!step.hasMagSus() && !step.hasMagMoment())) {
                 continue;
@@ -329,7 +328,6 @@ public class TwoGeeLoader extends AbstractFileLoader {
     }
 
     private TreatmentStep readTreatmentStep(String line, int lineNumber) {
-        TreatmentStep step = null;
         if (line == null) {
             addMessage("File ended unexpectedly at line %d -- "
                     + "is 2G Protocol correctly set in Preferences?",
@@ -340,12 +338,12 @@ public class TwoGeeLoader extends AbstractFileLoader {
             return null;
         }
         try {
-            step = lineToTreatmentStep(line, lineNumber);
+            return lineToTreatmentStep(line, lineNumber);
         } catch (IllegalArgumentException e) {
             addMessage("%s at line %d in file %s -- ignoring this line.",
                     e.getMessage(), lineNumber, file.getName());
+            return null;
         }
-        return step;
     }
 
     private boolean fieldExists(String name) {
@@ -393,13 +391,13 @@ public class TwoGeeLoader extends AbstractFileLoader {
             if (!fieldExists(name)) {
                 return defaultValue;
             }
-            String v = values[fields.get(name)];
+            final String value = values[fields.get(name)];
             // Catch the common case without using an expensive exception.
-            if ("NA".equals(v)) {
+            if ("NA".equals(value)) {
                 return 0;
             }
             try {
-                return Integer.parseInt(v);
+                return Integer.parseInt(value);
             } catch (NumberFormatException exception) {
                 return 0;
             }

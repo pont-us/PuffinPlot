@@ -371,6 +371,68 @@ public class TwoGeeLoaderTest {
         assertTrue(Double.isNaN(step.getArmField()));
         assertEquals(ArmAxis.NONE, step.getArmAxis());
     }
+    
+    private static final double[][] expectedContinuous = {
+        {0, 0, -0.0007885085574572129, 0.0007436108299595142, 0.0003326047502564507},
+        {0.01, 0, -0.0006369900913653328, 0.0007305161943319837, 0.0007130119150950841},
+        {0.02, 0, 0.00010817140651138852, 0.00029022646761133603, 0.0014047186932849363},
+        {0.03, 0, 0.0018146956633637887, -0.0009521761133603238, 0.0025336542255188195},
+        {0.04, 0, 0.004478638527859993, -0.0032596786437246966, 0.0043040321944291015},
+        {0.05, 0, 0.007387080169862309, -0.006411310728744939, 0.006972303322023199},
+        {0.06, 0, 0.009496847252605843, -0.009460399797570851, 0.010237512822536099},
+        {0.07, 0, 0.010408570325569426, -0.011729504048582995, 0.013664878087272153},
+        {0.08, 0, 0.010085574572127139, -0.012654984817813766, 0.016330387437860017},
+        {0.09, 0, 0.009445373825762451, -0.01269736842105263, 0.01809753018227728},
+    };
+    
+    @Test
+    public void testContinuous() throws IOException {
+        /*
+         * C8G-EDITED.DAT has been modified from the original file by
+         * 1. truncating it to two treatment levels,
+         * 2. inserting a blank line (to check handling of empty lines by
+         *    the loader), and
+         * 3. adding an "Area" column (accidentally omitted during 2G set-up,
+         *    and necessary since PuffinPlot's default is 4 cm² but this
+         *    core was 3.8 cm²; polar values in file are already area-
+         *    corrected, so using 4 cm² would cause a discrepancy between
+         *    polar and Cartesian values.
+         */
+        final File file = copyFile("C8G-EDITED.DAT");
+        for (boolean polar: new boolean[] {false, true}) {
+            final TwoGeeLoader loader
+                    = new TwoGeeLoader(file, TwoGeeLoader.Protocol.NORMAL,
+                            new Vec3(4.09, 4.16, 6.67), polar);
+            assertTrue(loader.getMessages().isEmpty());
+            assertEquals(92, loader.getTreatmentSteps().size());
+            /*
+             * We check that the total number of steps is correct, but only
+             * verify the data for the first ten.
+             */
+            for (int i = 0; i < expectedContinuous.length; i++) {
+                final double[] expected = expectedContinuous[i];
+                final TreatmentStep step = loader.getTreatmentSteps().get(i);
+                assertEquals(expected[0], Double.parseDouble(step.getDepth()),
+                        DELTA);
+                assertEquals(expected[1], step.getAfZ(), DELTA);
+                /*
+                 * The expected data is generated with polar=false. With
+                 * polar=true the results only match to within 1/2000,
+                 * hence the "approxEquals" comparison. This is expected,
+                 * since the values in the 2G file are only stored to
+                 * a precision of 4-5 significant figures.
+                 */
+                approxEquals(expected[2], step.getMoment().x, 2000);
+                approxEquals(expected[3], step.getMoment().y, 2000);
+                approxEquals(expected[4], step.getMoment().z, 2000);
+            }
+        }
+    }
+    
+    private static final void approxEquals(double expected, double actual,
+            double precision) {
+        assertEquals(expected, actual, Math.abs(expected / precision));
+    }
 
     private File copyFile(String filename) throws IOException {
         final Path filePath
