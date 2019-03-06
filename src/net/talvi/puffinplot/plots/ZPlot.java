@@ -314,9 +314,9 @@ public class ZPlot extends Plot {
          * North axis.
          */
         int direction = 0;
-        if (axes[(northIndex+3)%4] == MeasurementAxis.Y) {
+        if (axes[(northIndex + 3) % 4] == MeasurementAxis.Y) {
             direction = -1; // East axis anticlockwise of North axis
-        } else if (axes[(northIndex+1)%4] == MeasurementAxis.Y) {
+        } else if (axes[(northIndex + 1) % 4] == MeasurementAxis.Y) {
             direction = 1; // East axis anticlockwise of North axis
         } else {
             return Double.NaN;

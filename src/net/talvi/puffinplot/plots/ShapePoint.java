@@ -243,8 +243,10 @@ class ShapePoint implements PlotPoint {
         if (annotate && treatmentStep != null) {
             double pad = plot.getFontSize() / 3;
             final String label = treatmentStep.getFormattedTreatmentLevel();
-            plot.putText(graphics, label, centre.getX(), centre.getY(),
-                    getLabelPos(), 0, pad);
+            if (!"NaN".equals(label)) {
+                plot.putText(graphics, label, centre.getX(), centre.getY(),
+                        getLabelPos(), 0, pad);
+            }
         }
     }
 
