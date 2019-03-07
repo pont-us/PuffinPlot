@@ -22,6 +22,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -84,7 +85,7 @@ public class DemagTable extends Plot {
         clearPoints();
 
         final Sample sample = params.getSample();
-        if (sample==null) {
+        if (sample == null) {
             return;
         }
         
@@ -121,7 +122,8 @@ public class DemagTable extends Plot {
             }
             final List<String> values = new ArrayList<>(5);
             final Vec3 moment = step.getMoment(params.getCorrection());
-            final String demag = useSequence ? Integer.toString(sequence)
+            final String demag = useSequence
+                    ? String.format(Locale.ENGLISH, "#%d", sequence)
                     : step.getFormattedTreatmentLevel();
             values.add(demag);
             values.add(angleFormat.format(moment.getDecDeg()));

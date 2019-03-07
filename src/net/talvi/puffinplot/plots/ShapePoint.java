@@ -33,7 +33,7 @@ import static java.lang.Math.sqrt;
 
 /**
  * A graph point with a geometrical shape. Available shapes are
- * square, triangular, and circular.
+ * square, triangle, circle, and diamond.
  * 
  * @author pont
  */
@@ -69,9 +69,12 @@ class ShapePoint implements PlotPoint {
         
         public static PointShape fromAmsAxis(int axis) {
             switch (axis) {
-                case 0: return SQUARE;
-                case 1: return TRIANGLE;
-                default: return CIRCLE;
+                case 0:
+                    return SQUARE;
+                case 1:
+                    return TRIANGLE;
+                default:
+                    return CIRCLE;
             }
         }
     }
@@ -203,15 +206,15 @@ class ShapePoint implements PlotPoint {
     
     private static Shape makeDiamond(double size, double xo, double yo) {
         /*
-         * We wish the sides of the dimand to have length 2s, so the diagonal
-         * needs to have length 2s*sqrt(2).
+         * We want the sides of the diamond to have length 2s, so the diagonal
+         * needs to have length 2s * sqrt(2).
          */
         size *= Math.sqrt(2.);
         final Path2D path = new Path2D.Double();
-        path.moveTo(xo-size, yo);
-        path.lineTo(xo, yo+size);
-        path.lineTo(xo+size, yo);
-        path.lineTo(xo, yo-size);
+        path.moveTo(xo - size, yo);
+        path.lineTo(xo, yo + size);
+        path.lineTo(xo + size, yo);
+        path.lineTo(xo, yo - size);
         path.closePath();
         return path;
     }
@@ -255,7 +258,9 @@ class ShapePoint implements PlotPoint {
         return treatmentStep;
     }
     
-    /* For the present, only TextLinePoints can have samples. */
+    /*
+     * Currently, only TextLinePoints can have samples.
+     */
     @Override
     public Sample getSample() {
         return null;

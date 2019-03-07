@@ -1014,11 +1014,25 @@ public class TreatmentStep {
     
     /**
      * Returns the treatment level formatted as a string. Temperatures are given
-     * in degrees Celsius, AF intensities in millitesla.
+     * in degrees Celsius, AF intensities in millitesla. If there is no valid
+     * treatment level (i.e. the treatment level is NaN), returns the 1-based
+     * index of this treatment step within its sample.
      *
      * @return a string representing the treatment level
      */
     public String getFormattedTreatmentLevel() {
+        if ((Double.isNaN(getTreatmentLevel())
+                || getTreatmentType() == TreatmentType.NONE
+                || getTreatmentType() == TreatmentType.UNKNOWN)
+                && getSample() != null) {
+            /*
+             * If there's no valid treatment level, use this step's position in
+             * the sample.
+             */
+            return String.format(Locale.ENGLISH, "%d",
+                    getSample().getTreatmentSteps().indexOf(this) + 1);
+        }
+        
         if (getTreatmentType().getUnit().equals("T")) {
             // magnetic treatment -- turn T into mT
             return String.format(Locale.ENGLISH, "%.0f",
@@ -1031,7 +1045,8 @@ public class TreatmentStep {
 
     /**
      * Returns the maximum treatment level within the supplied group of
-     * treatment step objects.
+     * treatment step objects. If there is no finite, positive treatment
+     * level among the supplied steps, 0 is returned.
      *
      * @param data a list of treatment step objects; must be non-null
      * @return the highest treatment level for any of the supplied treatment
