@@ -103,8 +103,8 @@ public class DemagTableTest {
                 .forEach(step -> step.setTreatmentType(TreatmentType.UNKNOWN));
         params.setSample(suite.getSampleByIndex(0));
         final BufferedImage actual = TestUtils.makeImage(makePlot(), 512, 512);
-        TestUtils.saveImage(actual, filename);
-        // assertTrue(TestUtils.isImageCorrect(filename, actual));
+        // TestUtils.saveImage(actual, filename);
+        assertTrue(TestUtils.isImageCorrect(filename, actual));
     }
     
     private DemagTable makePlot() {
@@ -113,7 +113,5 @@ public class DemagTableTest {
         params.setCorrection(Correction.NONE);
         return new DemagTable(params);
     }
-    
-
     
 }

@@ -76,6 +76,8 @@ import com.itextpdf.awt.FontMapper;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfContentByte;
+import java.awt.event.KeyEvent;
+import java.util.Optional;
 import net.talvi.puffinplot.data.AmsCalculationType;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.CsvWriter;
@@ -749,13 +751,17 @@ public class PuffinApp {
     }
     
     /**
-     * Displays a dialog box reporting an error.
+     * Displays a dialog box reporting an error. The supplied message will be
+     * placed within an HTML {@code <p>} element to allow it to word-wrap.
      * 
      * @param title the title for the dialog box
      * @param message the message to be displayed
      */
     public void errorDialog(String title, String message) {
-        JOptionPane.showMessageDialog(getMainWindow(), message, title,
+        JOptionPane.showMessageDialog(getMainWindow(),
+                "<html><body><p style='width: 320px;'>"
+                + message + "</p></body></html>",
+                title,
                 JOptionPane.ERROR_MESSAGE);
     }
 
@@ -1142,7 +1148,9 @@ public class PuffinApp {
              */
             System.clearProperty("apple.awt.fileDialogForDirectories");
         }
-        if (files != null) openFiles(files, true);
+        if (files != null) {
+            openFiles(files, true);
+        }
     }
     
     /**
@@ -1636,7 +1644,9 @@ public class PuffinApp {
      */
     public void showRunPythonScriptDialog() {
         final List<File> files = openFileDialog("Select Python script");
-        if (files.isEmpty()) return;
+        if (files.isEmpty()) {
+            return;
+        }
         final File file = files.get(0);
         try {
             runPythonScriptInGui(file.getAbsolutePath());
@@ -1672,7 +1682,9 @@ public class PuffinApp {
      */
     public void showRunJavascriptScriptDialog() {
         final List<File> files = openFileDialog("Select Javascript script");
-        if (files.isEmpty()) return;
+        if (files.isEmpty()) {
+            return;
+        }
         final File file = files.get(0);
         try {
             runJavascriptScript(file.getAbsolutePath());
@@ -1896,7 +1908,9 @@ public class PuffinApp {
                             null, // icon
                             options,
                             options[1]);
-                    if (option==1) pathname = null;
+                    if (option == 1) {
+                        pathname = null;
+                    }
                 }
             }
         }
@@ -1963,10 +1977,14 @@ public class PuffinApp {
     public void showDiscreteToContinuousDialog() {
         final List<File> files =
                 openFileDialog("Select CSV file for conversion");
-        if (files.isEmpty()) return;
+        if (files.isEmpty()) {
+            return;
+        }
         final File file = files.get(0);
         final Suite suite = getCurrentSuite();
-        if (suite==null) return;
+        if (suite==null) {
+            return;
+        }
         try {
             suite.convertDiscreteToContinuous(file);
             getMainWindow().suitesChanged();
@@ -1991,6 +2009,7 @@ public class PuffinApp {
         
         final JCheckBox includeJarCheckBox =
                 new JCheckBox("Include PuffinPlot in bundle");
+        includeJarCheckBox.setMnemonic(KeyEvent.VK_I);
         final int selectedOption = JOptionPane.showConfirmDialog(
                 getMainWindow(), includeJarCheckBox, "Create bundle",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
@@ -2006,11 +2025,21 @@ public class PuffinApp {
         }
         final Path zipPath = Paths.get(zipPathString);
         try {
-            Bundle.createBundle(getCurrentSuite(), zipPath, getCorrection(),
-                    getSelectedSamples(), getSelectedSites(),
-                    includeJar);
+            final Optional<Exception> jarCopyException =
+                    Bundle.createBundle(getCurrentSuite(), zipPath,
+                            getCorrection(), getSelectedSamples(),
+                            getSelectedSites(), includeJar);
+            if (jarCopyException.isPresent()) {
+                LOGGER.log(Level.WARNING, "Exception thrown copying jar",
+                        jarCopyException.get());
+                errorDialog("Error copying jar file", String.format(
+                        "An error occurred while copying the PuffinPlot jar "
+                        + "file, so the bundle was created without this "
+                        + "file. Error message: \"%s\".",
+                        jarCopyException.get().getLocalizedMessage()));
+            }
         } catch (IOException | PuffinUserException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "Exception thrown creating bundle", ex);
             errorDialog("Error creating bundle", ex.getLocalizedMessage());
         }
     }

@@ -27,7 +27,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.security.CodeSource;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -53,6 +55,12 @@ public class Bundle {
 
     /**
      * Create and save a PuffinPlot data bundle.
+     * <p>
+     * Exceptions that occur during jar file copying are handled specially,
+     * in order to allow an archive to be created even when the jar file can't
+     * be copied: in this case the exception is caught internally, the archive
+     * is created without the jar file, and the exception is wrapped in an
+     * {@code Optional} and returned as the <i>return value</i> of the method.
      * 
      * @param suite the suite from which to create the bundle
      * @param bundlePath the path to which to save the bundle
@@ -60,13 +68,21 @@ public class Bundle {
      *        calculations
      * @param samples the samples to include in suite mean calculations
      * @param sites the sites to include in suite mean calculations
-     * @param copyJarFile {@code true} if the PuffinPlot jar file should also
-     *        be included in the bundle
+     * @param copyJarFile if {@code true}, attempt to copy the PuffinPlot jar
+     *        file into the bundle
+     * 
+     * @return an optional exception; if an exception is thrown while copying
+     *         the jar file, it is returned, wrapped in an {@code Optional},
+     *         and the archive is created without the jar file. If no
+     *         exception is thrown during copying, the returned {@code Optional}
+     *         contains no value.
+     * 
      * @throws IOException if an I/O exception occurred while saving the bundle
+     *         (other than while copying the jar file)
      * @throws PuffinUserException if an exception occurred which saving the
      *         suite or any of the results files
      */          
-    public static void createBundle(Suite suite, Path bundlePath,
+    public static Optional<Exception> createBundle(Suite suite, Path bundlePath,
             Correction correction, List<Sample> samples, List<Site> sites,
             boolean copyJarFile)
             throws IOException, PuffinUserException {
@@ -106,10 +122,18 @@ public class Bundle {
                 new BufferedReader(new InputStreamReader(readMeStream)).
                         lines().collect(Collectors.joining("\n", "", "\n"));        
         writeFile(tempDir, "README.md", false, readMeContents);
+        Optional<Exception> jarCopyException = Optional.empty();
         if (copyJarFile) {
-            copyPuffinPlotJarFile(tempDir);
+            try {
+                copyPuffinPlotJarFile(tempDir);
+            } catch (IOException | URISyntaxException exception) {
+                LOGGER.log(Level.WARNING, "Exception thrown while "
+                        + "copying jar file", exception);
+                jarCopyException = Optional.of(exception);
+            }
         }
         Util.zipDirectory(tempDir, bundlePath);
+        return jarCopyException;
     }
     
     private static void writeFile(Path parent, String filename,
@@ -124,16 +148,10 @@ public class Bundle {
     }
     
     private static void copyPuffinPlotJarFile(Path destinationDir)
-            throws IOException {
-        File jarFile = null;
-        try {
-            jarFile = new File(PuffinApp.class.getProtectionDomain().
-                    getCodeSource().getLocation().toURI().getPath());
-        } catch (URISyntaxException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-        }
+            throws IOException, URISyntaxException {
+        final File jarFile = findJarFile();
         if (jarFile == null) {
-            return;
+            throw new IOException("jar file not found");
         }
         LOGGER.log(Level.INFO, "PuffinPlot jar file location: {0}",
                 jarFile.getAbsolutePath());
@@ -141,5 +159,19 @@ public class Bundle {
         final Path destPath = destinationDir.resolve("PuffinPlot.jar");
         Files.copy(jarPath, destPath, StandardCopyOption.COPY_ATTRIBUTES);
         destPath.toFile().setExecutable(true, false);
+    }
+    
+    private static File findJarFile() {
+        final CodeSource codeSource =
+                PuffinApp.class.getProtectionDomain().getCodeSource();
+        if (codeSource == null) {
+            return null;
+        }
+        final File file = new File(codeSource.getLocation().getPath());
+        /*
+         * If PuffinPlot is running from non-jarred class files, file will be
+         * the "classes" directory.
+         */
+        return file.isFile() ? file : null;
     }
 }
