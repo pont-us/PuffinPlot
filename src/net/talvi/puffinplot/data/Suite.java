@@ -199,11 +199,8 @@ public final class Suite implements SampleGroup {
      * reversed modes of the data in the suites, in that order
      */
     public static List<FisherValues> doReversalTest(List<Suite> suites) {
-        List<Vec3> normal = new ArrayList<>(), reversed = new ArrayList<>();
-        
-        // Good candidate for streamification:
-        // see http://stackoverflow.com/a/30110890
-        
+        final List<Vec3> normal = new ArrayList<>(),
+                reversed = new ArrayList<>();
         for (Suite suite: suites) {
             for (Sample sample: suite.getSamples()) {
                 final Vec3 vector = sample.getDirection();
@@ -212,9 +209,8 @@ public final class Suite implements SampleGroup {
                 }
             }
         }
-        FisherValues fisherNormal = FisherValues.calculate(normal);
-        FisherValues fisherReversed = FisherValues.calculate(reversed);
-        return Arrays.asList(fisherNormal, fisherReversed);
+        return Arrays.asList(FisherValues.calculate(normal),
+                FisherValues.calculate(reversed));
     }
     
     /**
@@ -249,7 +245,7 @@ public final class Suite implements SampleGroup {
      * @return the results of previously calculated per-site Fisher statistics
      */
     public List<FisherValues> getSiteFishers() {
-        List<FisherValues> result = new ArrayList<>(getSites().size());
+        final List<FisherValues> result = new ArrayList<>(getSites().size());
         for (Site site: getSites()) {
             if (site.getFisherValues() != null) {
                 result.add(site.getFisherValues());
@@ -274,7 +270,9 @@ public final class Suite implements SampleGroup {
      * @throws PuffinUserException if an error occurred while saving the data
      */
     public void save() throws PuffinUserException {
-        if (getPuffinFile() != null) saveAs(getPuffinFile());
+        if (getPuffinFile() != null) {
+            saveAs(getPuffinFile());
+        }
     }
 
     /**
@@ -286,7 +284,7 @@ public final class Suite implements SampleGroup {
      */
     public void saveAs(File file)
             throws PuffinUserException {
-        List<String> fields = TreatmentParameter.getRealFieldStrings();
+        final List<String> fields = TreatmentParameter.getRealFieldStrings();
 
         FileWriter fileWriter = null;
         CsvWriter csvWriter = null;
@@ -437,8 +435,12 @@ public final class Suite implements SampleGroup {
         final Set<Site> sitesDone = new HashSet<>();
         for (Sample sample: getSamples()) {
             final Site site = sample.getSite();
-            if (site == null) continue;
-            if (sitesDone.contains(site)) continue;
+            if (site == null) {
+                continue;
+            }
+            if (sitesDone.contains(site)) {
+                continue;
+            }
             site.calculateFisherStats(correction);
             site.calculateGreatCirclesDirection(correction,
                     greatCirclesValidityCondition);
@@ -458,8 +460,10 @@ public final class Suite implements SampleGroup {
         name = "[Empty suite]";
         creationDate = new Date();
         modificationDate = new Date();
-        // If we subsequently read a PuffinPlot file, file creator and 
-        // creation date will be overwritten by the stored values.
+        /*
+         * If we subsequently read a PuffinPlot file, file creator and creation
+         * date will be overwritten by the stored values.
+         */
     }
     
     /**
@@ -719,7 +723,7 @@ public final class Suite implements SampleGroup {
                     final double dec = Double.parseDouble(parts[1]);
                     final double inc = Double.parseDouble(parts[2]);
                     final Vec3 v = Vec3.fromPolarDegrees(1., inc, dec);
-                    Sample sample = new Sample(sampleName, this);
+                    final Sample sample = new Sample(sampleName, this);
                     sample.setImportedDirection(v);
                     addSample(sample, sampleName);
                 }
@@ -961,7 +965,7 @@ public final class Suite implements SampleGroup {
      * @return the sample with the specified index
      */
     public Sample getSampleByIndex(int i) {
-        if (getSamples().isEmpty() || i==-1) {
+        if (getSamples().isEmpty() || i == -1) {
             return null;
         } else {
             return samples.get(i);
@@ -975,8 +979,8 @@ public final class Suite implements SampleGroup {
      * @return the index of the sample, or {@code -1} if not in this suite
      */
     public int getIndexBySample(Sample sample) {
-        final Integer index =  indicesBySample.get(sample);
-        return index==null ? -1 : index;
+        final Integer index = indicesBySample.get(sample);
+        return index == null ? -1 : index;
     }
     
     /**
@@ -1022,50 +1026,48 @@ public final class Suite implements SampleGroup {
      * @param string a string from which to read suite data
      */
     public void fromString(String string) {
-        String[] parts = string.split("\t");
-        if (null != parts[0]) switch (parts[0]) {
-            case "MEASUREMENT_TYPE":
-                setMeasurementType(MeasurementType.valueOf(parts[1]));
-                break;
-            case "CUSTOM_FLAG_NAMES":
-                customFlagNames = new CustomFlagNames(
-                        Arrays.asList(parts).subList(1, parts.length));
-                break;
-            case "CUSTOM_NOTE_NAMES":
-                customNoteNames = new CustomNoteNames(
-                        Arrays.asList(parts).subList(1, parts.length));
-                break;
-            case "CREATION_DATE":
-            {
-                try {
-                    creationDate = iso8601format.parse(parts[1]);
-                } catch (ParseException ex) {
-                    logger.log(Level.SEVERE, null, ex);
-                }
+        final String[] parts = string.split("\t");
+        if (null != parts[0]) {
+            switch (parts[0]) {
+                case "MEASUREMENT_TYPE":
+                    setMeasurementType(MeasurementType.valueOf(parts[1]));
+                    break;
+                case "CUSTOM_FLAG_NAMES":
+                    customFlagNames = new CustomFlagNames(
+                            Arrays.asList(parts).subList(1, parts.length));
+                    break;
+                case "CUSTOM_NOTE_NAMES":
+                    customNoteNames = new CustomNoteNames(
+                            Arrays.asList(parts).subList(1, parts.length));
+                    break;
+                case "CREATION_DATE":
+                    try {
+                        creationDate = iso8601format.parse(parts[1]);
+                    } catch (ParseException ex) {
+                        logger.log(Level.SEVERE, null, ex);
+                    }
+                    break;
+                case "MODIFICATION_DATE":
+                    try {
+                        modificationDate = iso8601format.parse(parts[1]);
+                    } catch (ParseException ex) {
+                        logger.log(Level.SEVERE, null, ex);
+                    }
+                    break;
+                case "ORIGINAL_FILE_TYPE":
+                    originalFileType = FileType.valueOf(parts[1]);
+                    break;
+                case "ORIGINAL_CREATOR_PROGRAM":
+                    fileCreator = parts[1];
+                    break;
+                case "SAVED_BY_PROGRAM":
+                    /*
+                     * There's no need to store the value of this field --
+                     * it will be overwritten in any case if the file is saved.
+                     */
+                    logger.log(Level.INFO, "File saved by: {0}", parts[1]);
+                    break;
             }
-            break;
-            case "MODIFICATION_DATE":
-            {
-                try {
-                    modificationDate = iso8601format.parse(parts[1]);
-                } catch (ParseException ex) {
-                    logger.log(Level.SEVERE, null, ex);
-                }
-            }
-            break;
-            case "ORIGINAL_FILE_TYPE":
-                originalFileType = FileType.valueOf(parts[1]);
-                break;
-            case "ORIGINAL_CREATOR_PROGRAM":
-                fileCreator = parts[1];
-                break;
-            case "SAVED_BY_PROGRAM":
-                /*
-                 * There's no need to actually store the value of this field --
-                 * it will be overwritten in any case if the file is saved.
-                 */
-                logger.log(Level.INFO, "File saved by: {0}", parts[1]);
-                break;
         }
     }
     
@@ -1245,9 +1247,11 @@ public final class Suite implements SampleGroup {
      * in this suite, or 0 if there are none
      */
     private double getFirstValidMagneticDeviation() {
-        for (Sample s: samples) {
-            final double v = s.getMagDev();
-            if (!Double.isNaN(v)) return v;
+        for (Sample sample: samples) {
+            final double v = sample.getMagDev();
+            if (!Double.isNaN(v)) {
+                return v;
+            }
         }
         return 0;
     }
@@ -1407,7 +1411,7 @@ public final class Suite implements SampleGroup {
 
     Site getOrCreateSite(String siteName) {
         Site site = getSiteByName(siteName);
-        if (site==null) {
+        if (site == null) {
             site = new Site(siteName);
             sites.add(site);
         }
@@ -1633,17 +1637,18 @@ public final class Suite implements SampleGroup {
     public void calculateAmsStatistics(List<Sample> samples,
             AmsCalculationType calcType, String scriptPath)
             throws IOException, IllegalArgumentException {
-        /* It may not be immediately obvious why this should be an instance
-         * method of Suite. In fact the only reason for this is that it
-         * stores its results in Suite. This is probably OK. The main deficiency
-         * of the current model for AMS data is that it only allows one set of
-         * data to be stored at a time. However, even if we improve that to
-         * allow multiple sets of AMS data, the Suite is the natural place
-         * to store them (since the sets of samples for AMS calculations
-         * isn't necessarily tied to a single Site).
+        /*
+         * It may not be immediately obvious why this should be an instance
+         * method of Suite. In fact the only reason for this is that it stores
+         * its results in Suite. This is probably OK. The main deficiency of the
+         * current model for AMS data is that it only allows one set of data to
+         * be stored at a time. However, even if we improve that to allow
+         * multiple sets of AMS data, the Suite is the natural place to store
+         * them (since the sets of samples for AMS calculations isn't
+         * necessarily tied to a single Site).
          */
         setSaved(false);
-        List<Tensor> tensors = new ArrayList<>();
+        final List<Tensor> tensors = new ArrayList<>();
         for (Sample s: samples) {
             if (s.getAms() != null) tensors.add(s.getAms());
         }
@@ -1689,10 +1694,12 @@ public final class Suite implements SampleGroup {
      * @return the minimum depth of a sample within the suite
      */
     public double getMinDepth() {
-        if (!getMeasurementType().isContinuous()) return Double.NaN;
+        if (!getMeasurementType().isContinuous()) {
+            return Double.NaN;
+        }
         double minimum = Double.POSITIVE_INFINITY;
-        for (Sample s: getSamples()) {
-            final double depth = s.getDepth();
+        for (Sample sample: getSamples()) {
+            final double depth = sample.getDepth();
             if (depth<minimum) {
                 minimum = depth;
             }
@@ -1707,11 +1714,13 @@ public final class Suite implements SampleGroup {
      * @return the maximum depth of a sample within the suite
      */
     public double getMaxDepth() {
-        if (!getMeasurementType().isContinuous()) return Double.NaN;
+        if (!getMeasurementType().isContinuous()) {
+            return Double.NaN;
+        }
         double maximum = Double.NEGATIVE_INFINITY;
-        for (Sample s: getSamples()) {
-            final double depth = s.getDepth();
-            if (depth>maximum) {
+        for (Sample sample: getSamples()) {
+            final double depth = sample.getDepth();
+            if (depth > maximum) {
                 maximum = depth;
             }
         }
@@ -1816,10 +1825,10 @@ public final class Suite implements SampleGroup {
             @Override
             public String siteName(Sample sample) {
                 final String sampleName = sample.getNameOrDepth();
-                StringBuilder sb = new StringBuilder(sampleName.length());
-                for (int i=0; i<sampleName.length(); i++) {
+                final StringBuilder sb = new StringBuilder(sampleName.length());
+                for (int i = 0; i < sampleName.length(); i++) {
                     if (charMask.get(i)) {
-                        sb.append(sampleName.substring(i, i+1));
+                        sb.append(sampleName.substring(i, i + 1));
                     }
                 }
                 return sb.toString();
