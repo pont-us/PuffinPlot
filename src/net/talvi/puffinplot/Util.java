@@ -31,6 +31,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.PosixFileAttributeView;
 import java.nio.file.attribute.PosixFilePermission;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -387,43 +388,68 @@ public class Util {
         return result;
     }
     
+    /**
+     * Create a zip file from the contents of a directory. If the directory
+     * is on a filesystem and filestore supporting Posix file permissions,
+     * these will be preserved in the zip file.
+     * 
+     * @param dir the directory to archive
+     * @param zipFile the path of the zip file to create
+     * @throws IOException if there was an exception while reading the
+     * directory contents or writing the zip file
+     */
     public static void zipDirectory(final Path dir, Path zipFile)
             throws IOException {
-        final byte[] buffer = new byte[1024];
-        
-        /* We use the Apache Commons compress library rather than the built-in
-         * java.util zip library, because the latter doesn't support Posix
-         * file permissions.
+        /*
+         * We use the Apache Commons compress library rather than the built-in
+         * java.util zip library, because the latter doesn't support Posix file
+         * permissions.
          */
         
         try (final ZipArchiveOutputStream zipStream =
                 new ZipArchiveOutputStream(zipFile.toFile())) {
-            
-            Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
-                @Override
-                public FileVisitResult visitFile(Path path,
-                        BasicFileAttributes attrs) throws IOException {
-                    if (attrs.isRegularFile()) {
-                        final Path relPath = dir.relativize(path);
-                        final ZipArchiveEntry entry =
-                                new ZipArchiveEntry(relPath.toString());
-                        
-                        entry.setUnixMode(numericalPermissions(
-                                Files.getPosixFilePermissions(path)));
-                        zipStream.putArchiveEntry(entry);
-                        final Path fullFilePath = dir.resolve(path);
-                        try (final FileInputStream inStream =
-                                new FileInputStream(fullFilePath.toFile())) {
-                            int len;
-                            while ((len = inStream.read(buffer)) > 0) {
-                                zipStream.write(buffer, 0, len);
-                            }
-                        }
-                        zipStream.closeArchiveEntry();
-                    }
-                    return FileVisitResult.CONTINUE;
+            Files.walkFileTree(dir, new ZippingFileVisitor(dir, zipStream));
+        }
+    }
+    
+    private static class ZippingFileVisitor extends SimpleFileVisitor<Path> {
+
+        private final byte[] buffer = new byte[1024];
+        private final Path dir;
+        private final ZipArchiveOutputStream zipStream;
+
+        public ZippingFileVisitor(Path dir, ZipArchiveOutputStream zipStream) {
+            this.dir = dir;
+            this.zipStream = zipStream;
+        }
+
+        @Override
+        public FileVisitResult visitFile(Path path, BasicFileAttributes attrs)
+                throws IOException {
+            if (attrs.isRegularFile()) {
+                final Path relPath = dir.relativize(path);
+                final ZipArchiveEntry entry
+                        = new ZipArchiveEntry(relPath.toString());
+
+                if (Files.getFileStore(path).supportsFileAttributeView(
+                        PosixFileAttributeView.class)
+                        && Files.getFileAttributeView(
+                                path, PosixFileAttributeView.class) != null) {
+                    entry.setUnixMode(numericalPermissions(
+                            Files.getPosixFilePermissions(path)));
                 }
-            });
+                zipStream.putArchiveEntry(entry);
+                final Path fullFilePath = dir.resolve(path);
+                try (final FileInputStream inStream
+                        = new FileInputStream(fullFilePath.toFile())) {
+                    int len;
+                    while ((len = inStream.read(buffer)) > 0) {
+                        zipStream.write(buffer, 0, len);
+                    }
+                }
+                zipStream.closeArchiveEntry();
+            }
+            return FileVisitResult.CONTINUE;
         }
     }
     
@@ -450,9 +476,11 @@ public class Util {
                 }
             } while (count != -1);
         }
-        // printHexBinary seems to return upper case in practice, but I can't
-        // find this officially guaranteed anywhere, so safest to ensure it
-        // with a toUpperCase().
+        /*
+         * printHexBinary seems to return upper case in practice, but I can't
+         * find this officially guaranteed anywhere, so safest to ensure it with
+         * a toUpperCase().
+         */
         return javax.xml.bind.DatatypeConverter.
                 printHexBinary(digest.digest()).toUpperCase();
     }

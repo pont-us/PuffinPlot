@@ -132,6 +132,16 @@ public class Bundle {
                 jarCopyException = Optional.of(exception);
             }
         }
+        /*
+         * The zipDirectory method will preserve permissions on a Posix
+         * filesystem (so executable scripts will remain executable), but
+         * it can't do anything on a file system which doesn't support
+         * an executable bit.
+         * 
+         * TODO: consider modifying zipDirectory to take a collection of
+         * Paths on which to set the executable bit: this can be done in
+         * the zip file regardless of whether the source FS supports it.
+         */
         Util.zipDirectory(tempDir, bundlePath);
         return jarCopyException;
     }
@@ -143,6 +153,7 @@ public class Bundle {
             fw.write(contents);
         }
         if (executable) {
+            // On Windows, this will do nothing.
             path.toFile().setExecutable(true, false);
         }
     }
