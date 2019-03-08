@@ -216,15 +216,21 @@ public class Main {
                 
                 final String bareFilename =
                         inputFileString.replaceFirst("[.]...$", "");
-                
                 suite.saveCalcsSample(new File(bareFilename + "-sample.csv"));
-                suite.saveCalcsSite(new File(bareFilename + "-site.csv"));
+                if (!suite.getSites().isEmpty()) {
+                    suite.saveCalcsSite(new File(bareFilename + "-site.csv"));
+                }
                 suite.saveCalcsSuite(new File(bareFilename + "-suite.csv"));
                 
+                System.out.println();
+                System.out.println("Processing completed successfully.");
+                System.exit(0);
             } catch (IOException | PuffinUserException ex) {
+                System.err.println();
                 System.err.println("An error occurred during processing.");
                 Logger.getLogger(PuffinApp.class.getName()).
                         log(Level.SEVERE, null, ex);
+                System.exit(1);
             }
         }
         

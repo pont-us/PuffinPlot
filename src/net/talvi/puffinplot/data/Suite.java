@@ -1058,9 +1058,12 @@ public final class Suite implements SampleGroup {
                 break;
             case "ORIGINAL_CREATOR_PROGRAM":
                 fileCreator = parts[1];
+                break;
             case "SAVED_BY_PROGRAM":
-                // There's no need to actually store the value of this field --
-                // it will be overwritten in any case if the file is saved.
+                /*
+                 * There's no need to actually store the value of this field --
+                 * it will be overwritten in any case if the file is saved.
+                 */
                 logger.log(Level.INFO, "File saved by: {0}", parts[1]);
                 break;
         }
