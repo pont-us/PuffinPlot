@@ -72,7 +72,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
 import com.itextpdf.awt.DefaultFontMapper;
-import com.itextpdf.awt.FontMapper;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfContentByte;
@@ -112,6 +111,7 @@ import net.talvi.puffinplot.window.TabularImportWindow;
 import org.freehep.graphicsbase.util.UserProperties;
 
 import static net.talvi.puffinplot.Util.runningOnOsX;
+import net.talvi.puffinplot.window.RpiDialog;
 
 /**
  * Instantiating {@code PuffinApp} starts the PuffinPlot desktop application. It
@@ -1921,44 +1921,10 @@ public class PuffinApp {
      * Calculates RPI using two loaded suites.
      */
     public void calculateRpi() {
-        if (getSuites().size() < 2) {
-            errorDialog("Not enough suites for RPI", "An RPI calculation "
-                    + "requires two open suites: one for NRM, and one for "
-                    + "ARM.");
+        final RpiDialog rpiDialog = new RpiDialog(this);
+        if (!rpiDialog.show()) {
             return;
         }
-        
-        final JComboBox<Suite> nrmSuiteCombo =
-                new JComboBox<>(getSuites().toArray(new Suite[0]));
-        final JComboBox<Suite> armSuiteCombo =
-                new JComboBox<>(getSuites().toArray(new Suite[0]));
-        nrmSuiteCombo.setSelectedIndex(0);
-        armSuiteCombo.setSelectedIndex(1);
-        final JComponent[] inputs = new JComponent[] {
-		new JLabel("NRM suite"), nrmSuiteCombo,
-		new JLabel("ARM suite"), armSuiteCombo,
-        };
-        final int userChoice = JOptionPane.showConfirmDialog(getMainWindow(),
-                inputs, "Select suites to use",
-                JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE);
-        
-        final int nrmSuiteIndex = nrmSuiteCombo.getSelectedIndex();
-        final int armSuiteIndex = armSuiteCombo.getSelectedIndex();
-        
-        if (userChoice == JOptionPane.CANCEL_OPTION ||
-                nrmSuiteIndex == -1 || armSuiteIndex == -1) {
-            return;
-        }
-        
-        if (nrmSuiteIndex == armSuiteIndex) {
-            errorDialog("RPI suites must be different", "You can't use the "
-                    + "same suite for both NRM and ARM in an RPI calculation.");
-            return;
-        }
-        
-        final Suite nrmSuite = getSuites().get(nrmSuiteIndex);
-        final Suite armSuite = getSuites().get(armSuiteIndex);
         
         final String destinationPath = getSavePath("Select RPI output file",
                 ".csv", "Comma Separated Values");
@@ -1966,7 +1932,9 @@ public class PuffinApp {
             return;
         }
         final SuiteRpiEstimate rpis =
-                SuiteRpiEstimate.calculateWithArm(nrmSuite, armSuite,
+                SuiteRpiEstimate.calculateWithArm(
+                        rpiDialog.getNrm(),
+                        rpiDialog.getNormalizer(),
                         Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
         rpis.writeToFile(destinationPath);
     }
