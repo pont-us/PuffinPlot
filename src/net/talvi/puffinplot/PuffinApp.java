@@ -1936,11 +1936,19 @@ public class PuffinApp {
         if (destinationPath == null) {
             return;
         }
-        final SuiteRpiEstimate rpis =
-                SuiteRpiEstimate.calculateWithStepwiseAF(
-                        rpiDialog.getNrm(),
-                        rpiDialog.getNormalizer(),
+        SuiteRpiEstimate rpis = null;
+        switch (rpiDialog.getEstimateType()) {
+            case ARM_DEMAG:
+            case IRM_DEMAG:
+                rpis = SuiteRpiEstimate.calculateWithStepwiseAF(
+                        rpiDialog.getNrm(), rpiDialog.getNormalizer(),
                         Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+                break;
+            case MAG_SUS:
+                rpis = SuiteRpiEstimate.calculateWithMagSus(
+                        rpiDialog.getNrm(), rpiDialog.getNormalizer());
+                break;
+        }
         rpis.writeToFile(destinationPath);
     }
     

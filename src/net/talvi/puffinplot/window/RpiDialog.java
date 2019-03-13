@@ -16,17 +16,24 @@
  */
 package net.talvi.puffinplot.window;
 
-import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.util.List;
 import java.util.stream.Stream;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.data.RpiEstimateType;
 import net.talvi.puffinplot.data.Suite;
+
+import static javax.swing.SwingConstants.TRAILING;
+import static java.awt.GridBagConstraints.LINE_START;
+import static java.awt.GridBagConstraints.LINE_END;
+import static java.awt.GridBagConstraints.BOTH;
 
 /**
  * A class to show a dialog to input settings for an RPI calculation.
@@ -82,15 +89,33 @@ public class RpiDialog {
                         .map(ret -> ret.getNiceName()).toArray(String[]::new));
         nrmComboBox.setSelectedIndex(0);
         normalizerComboBox.setSelectedIndex(1);
-        final JComponent[] inputs = new JComponent[] {
-            new JLabel("NRM suite"), nrmComboBox,
-            new JLabel("Normalizer suite"), normalizerComboBox,
-            new JLabel("Normalizer type"), estimateTypeComboBox};
+        
+        final JPanel panel = new JPanel();
+        final Insets insets = new Insets(4, 4, 4, 4);
+        panel.setLayout(new GridBagLayout());
+        panel.add(new JLabel("NRM Suite", TRAILING),
+                new GridBagConstraints(0, 0, 1, 1, 0.5, 0.5,
+                        LINE_END, BOTH, insets, 0, 0));
+        panel.add(new JLabel("Normalizer Suite", TRAILING),
+                new GridBagConstraints(0, 1, 1, 1, 0.5, 0.5,
+                        LINE_END, BOTH, insets, 0, 0));
+        panel.add(new JLabel("Normalizer type", TRAILING),
+                new GridBagConstraints(0, 2, 1, 1, 0.5, 0.5,
+                        LINE_END, BOTH, insets, 0, 0));
+        panel.add(nrmComboBox,
+                new GridBagConstraints(1, 0, 1, 1, 0.5, 0.5,
+                        LINE_START, BOTH, insets, 0, 0));
+        panel.add(normalizerComboBox,
+                new GridBagConstraints(1, 1, 1, 1, 0.5, 0.5,
+                        LINE_START, BOTH, insets, 0, 0));
+        panel.add(estimateTypeComboBox,
+                new GridBagConstraints(1, 2, 1, 1, 0.5, 0.5,
+                        LINE_START, BOTH, insets, 0, 0));
         
         final int userChoice = JOptionPane.showConfirmDialog(
-                parentFrame, inputs, "Select suites to use",
+                parentFrame, panel, "Select suites to use",
                 JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE);
+                JOptionPane.PLAIN_MESSAGE);
 
         final int nrmIndex = nrmComboBox.getSelectedIndex();
         final int normalizerIndex = normalizerComboBox.getSelectedIndex();
