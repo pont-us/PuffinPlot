@@ -58,6 +58,10 @@ import net.talvi.puffinplot.data.SensorLengths;
 import net.talvi.puffinplot.data.file.TwoGeeLoader;
 import net.talvi.puffinplot.plots.Plot;
 
+import static java.awt.GridBagConstraints.LINE_START;
+import static java.awt.GridBagConstraints.LINE_END;
+import static java.awt.GridBagConstraints.BOTH;
+
 /**
  * A window which allows the user to change PuffinPlot's preferences.
  * 
@@ -68,7 +72,7 @@ public class PrefsWindow extends JFrame {
     private static final Logger logger =
             Logger.getLogger("net.talvi.puffinplot");
     private static final long serialVersionUID = 1L;
-    private final JTextField[] sensorLengthField = new JTextField[3];
+    private final JTextField[] sensorLengthFields = new JTextField[3];
     private final PresetsBox presetsBox;
     private final List<PlotBox> plotBoxes = new ArrayList<>(24);
     private final List<PrefTextField> prefTextFields = new ArrayList<>();
@@ -86,12 +90,11 @@ public class PrefsWindow extends JFrame {
         this.app = app;
         prefs = app.getPrefs();
         final Insets insets = new Insets(4,4,4,4);
-        final int BOTH = GridBagConstraints.BOTH;
         setPreferredSize(new Dimension(500, 560));
         setLayout(new GridBagLayout());
         final JTabbedPane tp = new JTabbedPane();
         add(tp, new GridBagConstraints(0, 0, 4, 1, 0.99, 0.99,
-                GridBagConstraints.LINE_START, BOTH,
+                LINE_START, BOTH,
                 insets, 0, 0));
         final JPanel loadingPanel = new JPanel(false);
         loadingPanel.setLayout(new GridBagLayout());
@@ -104,57 +107,55 @@ public class PrefsWindow extends JFrame {
         presetsLabel.setHorizontalAlignment(JLabel.RIGHT);
         squidPanel.add(presetsLabel,
                 new GridBagConstraints(0, 0, 1, 1, 0.8, 0.8,
-                        GridBagConstraints.LINE_START,
-                        BOTH, insets, 0, 0));
-        for (int i=0; i<3; i++) {
-            sensorLengthField[i] = new JTextField(lengths.get(i), 7);
+                        LINE_START, BOTH, insets, 0, 0));
+        for (int i = 0; i < 3; i++) {
+            sensorLengthFields[i] = new JTextField(lengths.get(i), 7);
         }
         presetsBox = new PresetsBox();
 
         squidPanel.add(presetsBox, new GridBagConstraints(1, 0, 1, 1, 0.8, 0.8,
-                        GridBagConstraints.LINE_START,
-                        BOTH, insets, 1, 1));
-        for (int i=0; i<3; i++) {
-            final GridBagConstraints c = new GridBagConstraints();
-            c.gridy = i + 1;
-            c.ipadx = c.ipady = 0;
-            c.anchor = GridBagConstraints.EAST;
+                        LINE_START, BOTH, insets, 1, 1));
+        for (int i = 0; i < 3; i++) {
+            final GridBagConstraints constraints = new GridBagConstraints();
+            constraints.gridy = i + 1;
+            constraints.ipadx = constraints.ipady = 0;
+            constraints.anchor = GridBagConstraints.EAST;
             final JLabel label = new JLabel(labels[i]);
             label.setHorizontalTextPosition(SwingConstants.LEFT);
-            squidPanel.add(label, c);
-            c.anchor = GridBagConstraints.WEST;
-            c.gridx = 1;
-            squidPanel.add(sensorLengthField[i], c);
+            squidPanel.add(label, constraints);
+            constraints.anchor = GridBagConstraints.WEST;
+            constraints.gridx = 1;
+            squidPanel.add(sensorLengthFields[i], constraints);
         }
         
-        GridBagConstraints gbc2 = new GridBagConstraints();
-        gbc2.gridwidth = 3;
-        gbc2.anchor = GridBagConstraints.LINE_START;
-        gbc2.fill = GridBagConstraints.BOTH;
-        gbc2.weightx = 0.8;
-        gbc2.weighty = 0;
+        GridBagConstraints gbConstraints = new GridBagConstraints();
+        gbConstraints.gridwidth = 3;
+        gbConstraints.anchor = LINE_START;
+        gbConstraints.fill = BOTH;
+        gbConstraints.weightx = 0.8;
+        gbConstraints.weighty = 0;
         loadingPanel.add(makeLabelledPrefComboBox("Read magnetization from",
                 "readTwoGeeMagFrom",
                 new String[] {"X/Y/Z", "Dec/Inc/Intensity"},
                 "X/Y/Z",
                 "Magnetization can be read either from x/y/z moments or from "
                 + "declination/inclination/intensity."),
-                gbc2);
+                gbConstraints);
         
-        gbc2 = new GridBagConstraints();
-        gbc2.gridy = 1;
-        gbc2.gridwidth = 3;
-        gbc2.anchor = GridBagConstraints.LINE_START;
-        gbc2.fill = GridBagConstraints.BOTH;
-        gbc2.weightx = 0.8;
-        gbc2.weighty = 0;
-        loadingPanel.add(squidPanel, gbc2);
+        gbConstraints = new GridBagConstraints();
+        gbConstraints.gridy = 1;
+        gbConstraints.gridwidth = 3;
+        gbConstraints.anchor = LINE_START;
+        gbConstraints.fill = BOTH;
+        gbConstraints.weightx = 0.8;
+        gbConstraints.weighty = 0;
+        loadingPanel.add(squidPanel, gbConstraints);
         
-        gbc2.gridy = 6;
-        gbc2.gridx = 0;
-        gbc2.gridwidth = 1;
-        gbc2.weightx = 0.25;
-        gbc2.anchor = GridBagConstraints.LINE_END;
+        gbConstraints.gridy = 6;
+        gbConstraints.gridx = 0;
+        gbConstraints.gridwidth = 1;
+        gbConstraints.weightx = 0.25;
+        gbConstraints.anchor = LINE_END;
         final TwoGeeLoader.Protocol[] protocolValues =
                 TwoGeeLoader.Protocol.values();
         final String[] protocolStrings = new String[protocolValues.length];
@@ -163,11 +164,13 @@ public class PrefsWindow extends JFrame {
         }
         loadingPanel.add(makeLabelledPrefComboBox("Protocol",
                 "measurementProtocol", protocolStrings, "NORMAL",
-                "The measurement protocol to use when reading 2G files."), gbc2);
+                "The measurement protocol to use when reading 2G files."),
+                gbConstraints);
         
         final JPanel plotsPanel = new JPanel(false);
         plotsPanel.setLayout(new BoxLayout(plotsPanel, BoxLayout.Y_AXIS));
-        final JLabel plotsLabel = new JLabel("<html><b>Visible plots</b></html>");
+        final JLabel plotsLabel =
+                new JLabel("<html><b>Visible plots</b></html>");
         plotsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         plotsLabel.setHorizontalAlignment(SwingConstants.CENTER);
         plotsPanel.add(Box.createRigidArea((new Dimension(0,8))));
@@ -215,7 +218,7 @@ public class PrefsWindow extends JFrame {
                 new String[] {"Default", "Native", "Metal", "Nimbus"},
                 "Default",
                 "PuffinPlot's appearance (changes take effect on restart)"));
-        miscPanel.add(makeLabelledPrefTextField("GC validity",
+        miscPanel.add(makeLabelledPrefTextField("Great circle validity",
                 "data.greatcircles.validityExpr", "true"));
         miscPanel.add(makeLabelledPrefComboBox("Zplot PCA display",
                 "plots.zplotPcaDisplay",
@@ -257,18 +260,18 @@ public class PrefsWindow extends JFrame {
         final PuffinActions actions = app.getActions();
         add(makeActionButton(actions.clearPreferences, "Clear"),
                 new GridBagConstraints(
-                0, 1, 1, 1, 1, .01, GridBagConstraints.LINE_START,
-                BOTH, insets, 0, 0));
+                        0, 1, 1, 1, 1, .01, LINE_START,
+                        BOTH, insets, 0, 0));
         add(makeActionButton(actions.importPrefs, "Import"),
                 new GridBagConstraints(
-                1, 1, 1, 1, 1, .01, GridBagConstraints.LINE_START,
-                BOTH, insets, 0, 0));
+                        1, 1, 1, 1, 1, .01, LINE_START,
+                        BOTH, insets, 0, 0));
         add(makeActionButton(actions.exportPrefs, "Export"),
                 new GridBagConstraints(
-                2, 1, 1, 1, 1, .01, GridBagConstraints.LINE_START,
-                BOTH, insets, 0, 0));
+                        2, 1, 1, 1, 1, .01, LINE_START,
+                        BOTH, insets, 0, 0));
         add(closeButton, new GridBagConstraints(
-                3, 1, 1, 1, 1, .01, GridBagConstraints.LINE_END,
+                3, 1, 1, 1, 1, .01, LINE_END,
                 BOTH, new Insets(4, 50, 4, 4), 20, 0));
         pack();
         setLocationRelativeTo(app.getMainWindow());
@@ -463,34 +466,39 @@ public class PrefsWindow extends JFrame {
         public void itemStateChanged(ItemEvent e) {
             String name = (String) getSelectedItem();
             if (name.equals("Custom")) {
-                for (JTextField slf: sensorLengthField) slf.setEnabled(true);
+                for (JTextField sensorLengthField: sensorLengthFields) {
+                    sensorLengthField.setEnabled(true);
+                }
             } else {
-                final SensorLengths sl = SensorLengths.fromPresetName(name);
-                for (int i=0; i<3; i++) {
-                    JTextField slf = sensorLengthField[i];
-                    slf.setEnabled(false);
-                    slf.setText(sl.getLengths().get(i));
+                final SensorLengths sensorLengths =
+                        SensorLengths.fromPresetName(name);
+                for (int i = 0; i < 3; i++) {
+                    final JTextField sensorLengthField = sensorLengthFields[i];
+                    sensorLengthField.setEnabled(false);
+                    sensorLengthField.setText(
+                            sensorLengths.getLengths().get(i));
                 }
             }
             applySettings();
         }
         
-        private void updateWith(SensorLengths sl) {
-            String preset = sl.getPreset();
-            setSelectedItem(preset != null ? sl.getPreset() : "Custom");
+        private void updateWith(SensorLengths sensorLengths) {
+            final String preset = sensorLengths.getPreset();
+            setSelectedItem(preset != null ? preset : "Custom");
             for (int i = 0; i < 3; i++) {
-                JTextField slf = sensorLengthField[i];
-                slf.setEnabled(preset == null);
-                slf.setText(sl.getLengths().get(i));
+                final JTextField sensorLengthField = sensorLengthFields[i];
+                sensorLengthField.setEnabled(preset == null);
+                sensorLengthField.setText(sensorLengths.getLengths().get(i));
             }
         }
         
         public void applySettings() {
-            String name = (String) getSelectedItem();
+            final String name = (String) getSelectedItem();
             prefs.setSensorLengths(name.equals("Custom")
-                    ? SensorLengths.fromStrings(sensorLengthField[0].getText(),
-                        sensorLengthField[1].getText(),
-                        sensorLengthField[2].getText())
+                    ? SensorLengths.fromStrings(
+                            sensorLengthFields[0].getText(),
+                            sensorLengthFields[1].getText(),
+                            sensorLengthFields[2].getText())
                     : SensorLengths.fromPresetName(name));
         }
     }
