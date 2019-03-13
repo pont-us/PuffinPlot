@@ -21,14 +21,30 @@ package net.talvi.puffinplot.data;
  * 
  * @author pont
  */
-enum RpiEstimateType {
+public enum RpiEstimateType {
+    
     /**
      * Magnetic susceptibility
      */
-    MAG_SUS,
+    MAG_SUS("Magnetic susceptibility"),
     
     /**
      * ARM demagnetization
      */
-    ARM_DEMAG
+    ARM_DEMAG("ARM demagnetization"),
+    
+    /**
+     * IRM demagnetization
+     */
+    IRM_DEMAG("IRM demagnetization");
+    
+    private final String name;
+    
+    private RpiEstimateType(String name) {
+        this.name = name;
+    }
+    
+    public String getNiceName() {
+        return name;
+    }
 }

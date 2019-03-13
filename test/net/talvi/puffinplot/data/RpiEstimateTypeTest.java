@@ -38,7 +38,8 @@ public class RpiEstimateTypeTest {
         final Set<RpiEstimateType> expected = Arrays.asList(new
                 RpiEstimateType[] {
             RpiEstimateType.MAG_SUS,
-            RpiEstimateType.ARM_DEMAG
+            RpiEstimateType.ARM_DEMAG,
+            RpiEstimateType.IRM_DEMAG
         }).stream().collect(Collectors.toSet());
         assertEquals(expected, actual);
     }

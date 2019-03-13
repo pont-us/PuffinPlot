@@ -28,7 +28,7 @@ import static org.junit.Assert.assertEquals;
  *
  * @author pont
  */
-public class ArmSampleRpiEstimateTest {
+public class StepwiseSampleRpiEstimateTest {
 
     private static final double delta = 1e-10;
 
@@ -40,9 +40,9 @@ public class ArmSampleRpiEstimateTest {
     final double slope = 3;
     final double r = 2;
     final double rSquared = 4;
-    final ArmSampleRpiEstimate estimate;
+    final StepwiseSampleRpiEstimate estimate;
     
-    public ArmSampleRpiEstimateTest() {
+    public StepwiseSampleRpiEstimateTest() {
         nrmSample = new Sample("NRM sample", null);
         final TreatmentStep nrmTreatmentStep = new TreatmentStep();
         nrmTreatmentStep.setDepth("7");
@@ -51,7 +51,7 @@ public class ArmSampleRpiEstimateTest {
         final TreatmentStep armTreatmentStep = new TreatmentStep(1, 2, 2);
         armSample.addTreatmentStep(armTreatmentStep);
         
-        estimate = new ArmSampleRpiEstimate(
+        estimate = new StepwiseSampleRpiEstimate(
                 intensities, nrmSample, armSample, meanRatio, slope, r,
                 rSquared);
     }
@@ -100,7 +100,7 @@ public class ArmSampleRpiEstimateTest {
 
     @Test
     public void testGetCommaSeparatedHeader() {
-        assertEquals("mean ratio,slope,r,r-squared,ARM",
+        assertEquals("mean ratio,slope,r,r-squared,normalizer",
                 estimate.getCommaSeparatedHeader());
     }
     

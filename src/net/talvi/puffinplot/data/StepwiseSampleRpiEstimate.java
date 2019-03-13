@@ -21,9 +21,9 @@ import java.util.Locale;
 
 /**
  * An estimate of relative palaeointensity for a single sample, normalized
- * by ARM.
+ * by a stepwise series of AF fields.
  */
-public class ArmSampleRpiEstimate implements SampleRpiEstimate {
+public class StepwiseSampleRpiEstimate implements SampleRpiEstimate {
     
     private final Sample nrmSample;
     private final Sample normalizer;
@@ -33,11 +33,11 @@ public class ArmSampleRpiEstimate implements SampleRpiEstimate {
     private final double r;
     private final double rSquared;
 
-    ArmSampleRpiEstimate(List<Double> intensities, Sample nrmSample,
-            Sample armSample, double meanRatio,
+    StepwiseSampleRpiEstimate(List<Double> intensities, Sample nrmSample,
+            Sample normalizer, double meanRatio,
             double slope, double r, double rSquared) {
         this.nrmSample = nrmSample;
-        this.normalizer = armSample;
+        this.normalizer = normalizer;
         this.intensities = intensities;
         this.meanRatio = meanRatio;
         this.slope = slope;
@@ -53,7 +53,7 @@ public class ArmSampleRpiEstimate implements SampleRpiEstimate {
     }
 
     /**
-     * @return the sample used for ARM intensity normalization
+     * @return the sample used for intensity normalization
      */
     public Sample getNormalizer() {
         return normalizer;
@@ -67,7 +67,7 @@ public class ArmSampleRpiEstimate implements SampleRpiEstimate {
     }
 
     /**
-     * @return the mean of the NRM/ARM intensity ratios
+     * @return the mean of the NRM/normalizer intensity ratios
      */
     public double getMeanRatio() {
         return meanRatio;
@@ -114,7 +114,7 @@ public class ArmSampleRpiEstimate implements SampleRpiEstimate {
 
     @Override
     public String getCommaSeparatedHeader() {
-        return "mean ratio,slope,r,r-squared,ARM";
+        return "mean ratio,slope,r,r-squared,normalizer";
     }
     
 }

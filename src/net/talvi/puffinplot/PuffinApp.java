@@ -1932,7 +1932,7 @@ public class PuffinApp {
             return;
         }
         final SuiteRpiEstimate rpis =
-                SuiteRpiEstimate.calculateWithArm(
+                SuiteRpiEstimate.calculateWithStepwiseAF(
                         rpiDialog.getNrm(),
                         rpiDialog.getNormalizer(),
                         Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);

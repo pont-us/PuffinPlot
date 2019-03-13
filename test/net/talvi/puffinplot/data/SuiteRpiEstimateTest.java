@@ -41,7 +41,7 @@ public class SuiteRpiEstimateTest {
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
     
     @Test
-    public void testCalculateWithMagSus() {
+    public void testCalculateWithMagSus() throws IOException {
         final Suite nrmSuite = new Suite("test");
         nrmSuite.addTreatmentStep(makeStep(0.005, TreatmentType.NONE, 0, 0));
         final Suite msSuite = new Suite("test");
@@ -57,23 +57,27 @@ public class SuiteRpiEstimateTest {
     }
 
     @Test
-    public void testCalculateWithArm() {
+    public void testCalculateWithArm() throws IOException {
 
-        /* We fake up very simple NRM and ARM suites (one sample with two
-         * steps each) and compare the calculated RPI estimates with
-         * known, hand-calculated values.
+        /*
+         * We fake up very simple NRM and ARM suites (one sample with two steps
+         * each) and compare the calculated RPI estimates with known,
+         * hand-calculated values.
          */
         
         final Suite nrmSuite = new Suite("test");
         nrmSuite.addTreatmentStep(makeStep(0.005, TreatmentType.NONE, 0, 0));
-        nrmSuite.addTreatmentStep(makeStep(0.0032, TreatmentType.DEGAUSS_XYZ, 0.02, 0));
+        nrmSuite.addTreatmentStep(
+                makeStep(0.0032, TreatmentType.DEGAUSS_XYZ, 0.02, 0));
         
         final Suite armSuite = new Suite("test");
         armSuite.addTreatmentStep(makeStep(0.1, TreatmentType.ARM, 0.1, 0));
-        armSuite.addTreatmentStep(makeStep(0.08, TreatmentType.DEGAUSS_XYZ, 0.02, 0));
+        armSuite.addTreatmentStep(
+                makeStep(0.08, TreatmentType.DEGAUSS_XYZ, 0.02, 0));
         
-        final SuiteRpiEstimate<ArmSampleRpiEstimate> result =
-                SuiteRpiEstimate.calculateWithArm(nrmSuite, armSuite, 0, 1);
+        final SuiteRpiEstimate<StepwiseSampleRpiEstimate> result =
+                SuiteRpiEstimate.calculateWithStepwiseAF(
+                        nrmSuite, armSuite, 0, 1);
         assertEquals(0.05, result.getRpis().get(0).getIntensities().get(0),
                 1e-8);
         assertEquals(0.04, result.getRpis().get(0).getIntensities().get(1),
@@ -87,16 +91,17 @@ public class SuiteRpiEstimateTest {
         assertEquals(1.00, result.getRpis().get(0).getR(), 1e-8);
         assertEquals(1.00, result.getRpis().get(0).getrSquared(), 1e-8);
         checkWrittenFile(
-                "Depth,0.00000,0.0200000,mean ratio,slope,r,r-squared,ARM\n" +
+                "Depth,0.00000,0.0200000,mean ratio,slope,r,r-squared,normalizer\n" +
                 "0,0.0500000,0.0400000,0.0450000,0.0900000,1.00000,1.00000,0.100000\n"
                 , result);
 
     }
 
     private static TreatmentStep makeStep(double magnetization,
-                                           TreatmentType treatmentType, double afIntensity,
-                                           double susceptibility) {
-        final TreatmentStep treatmentStep = new TreatmentStep(0, 0, magnetization);
+            TreatmentType treatmentType, double afIntensity,
+            double susceptibility) {
+        final TreatmentStep treatmentStep =
+                new TreatmentStep(0, 0, magnetization);
         treatmentStep.setTreatmentType(treatmentType);
         treatmentStep.setMeasurementType(MeasurementType.CONTINUOUS);
         treatmentStep.setAfX(afIntensity);
@@ -107,20 +112,15 @@ public class SuiteRpiEstimateTest {
         return treatmentStep;
     }
     
-    private void checkWrittenFile(String expected, SuiteRpiEstimate rpis) {
-        try {
-            final Path tempDir = Files.createTempDirectory(
-                    temporaryFolder.getRoot().toPath(),
-                    "puffintest");
-            final Path tempFile = tempDir.resolve(Paths.get("rpifile"));
-            rpis.writeToFile(tempFile.toString());
-            final String actual = new String(Files.readAllBytes(tempFile));
-            assertEquals(expected, actual);
-        } catch (IOException ex) {
-            Logger.getLogger(SuiteRpiEstimateTest.class.getName()).log(Level.SEVERE, null, ex);
-            fail();
-        }
-        
+    private void checkWrittenFile(String expected, SuiteRpiEstimate rpis)
+            throws IOException {
+        final Path tempDir = Files.createTempDirectory(
+                temporaryFolder.getRoot().toPath(),
+                "puffintest");
+        final Path tempFile = tempDir.resolve(Paths.get("rpifile"));
+        rpis.writeToFile(tempFile.toString());
+        final String actual = new String(Files.readAllBytes(tempFile));
+        assertEquals(expected, actual);
     }
     
 }

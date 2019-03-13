@@ -16,11 +16,13 @@
  */
 package net.talvi.puffinplot.window;
 
+import java.util.stream.Stream;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import net.talvi.puffinplot.PuffinApp;
+import net.talvi.puffinplot.data.RpiEstimateType;
 import net.talvi.puffinplot.data.Suite;
 
 /**
@@ -36,6 +38,7 @@ public class RpiDialog {
 
     private Suite nrm = null;
     private Suite normalizer = null;
+    private RpiEstimateType estimateType = null;
     private final PuffinApp app;
     
     /**
@@ -67,11 +70,15 @@ public class RpiDialog {
                 new JComboBox<>(app.getSuites().toArray(new Suite[0]));
         final JComboBox<Suite> normalizerComboBox =
                 new JComboBox<>(app.getSuites().toArray(new Suite[0]));
+        final JComboBox<String> estimateTypeComboBox =
+                new JComboBox<>(Stream.of(RpiEstimateType.values())
+                        .map(ret -> ret.getNiceName()).toArray(String[]::new));
         nrmComboBox.setSelectedIndex(0);
         normalizerComboBox.setSelectedIndex(1);
-        final JComponent[] inputs = new JComponent[]{
+        final JComponent[] inputs = new JComponent[] {
             new JLabel("NRM suite"), nrmComboBox,
-            new JLabel("Normalizer suite"), normalizerComboBox,};
+            new JLabel("Normalizer suite"), normalizerComboBox,
+            new JLabel("Normalizer type"), estimateTypeComboBox};
         
         final int userChoice = JOptionPane.showConfirmDialog(
                 app.getMainWindow(),
@@ -81,25 +88,28 @@ public class RpiDialog {
 
         final int nrmIndex = nrmComboBox.getSelectedIndex();
         final int normalizerIndex = normalizerComboBox.getSelectedIndex();
+        final int estimateTypeIndex = estimateTypeComboBox.getSelectedIndex();
         
         if (nrmIndex == normalizerIndex) {
-            app.errorDialog("RPI suites must be different", "You can't use the "
-                    + "same suite for both NRM and ARM in an RPI calculation.");
+            app.errorDialog("RPI suites must be different",
+                    "You can't use the same suite for both NRM and normalizer "
+                    + "in an RPI calculation.");
             return false;
         }
 
         if (userChoice == JOptionPane.CANCEL_OPTION
-                || nrmIndex == -1 || normalizerIndex == -1) {
+                || nrmIndex == -1 || normalizerIndex == -1
+                || estimateTypeIndex == -1) {
             return false;
         }
         
         nrm = app.getSuites().get(nrmIndex);
         normalizer = app.getSuites().get(normalizerIndex);
+        estimateType = RpiEstimateType.values()[estimateTypeIndex];
         return true;
     }
     
     /**
-     *
      * @return the NRM suite selected by the user, or null if none
      */
     public Suite getNrm() {
@@ -107,12 +117,17 @@ public class RpiDialog {
     }
 
     /**
-     *
      * @return the normalizer suite selected by the user, or null if none
      */
     public Suite getNormalizer() {
         return normalizer;
     }
 
+    /**
+     * @return the estimate type selected by the user, or null if none
+     */
+    public RpiEstimateType getEstimateType() {
+        return estimateType;
+    }
 
 }

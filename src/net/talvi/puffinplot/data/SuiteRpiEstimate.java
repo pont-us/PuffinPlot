@@ -94,26 +94,24 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
             }
             final double ms = msSample.getTreatmentSteps().get(0).getMagSus();
             final double rpi = nrm/ms;
-            rpis.add(new MagSusSampleRpiEstimate(
-                        nrmSample, msSample,
-                        rpi));
+            rpis.add(new MagSusSampleRpiEstimate(nrmSample, msSample, rpi));
         }
         return new SuiteRpiEstimate<>(Collections.emptyList(), rpis);
     }
     
     /**
-     * Estimate RPI by normalizing a stepwise demagnetized NRM to a stepwise
-     * demagnetized ARM.
+     * Estimate RPI by normalizing a stepwise demagnetized NRM to another
+     * stepwise demagnetized remanence (ARM or IRM).
      * 
      * @param nrmSuite suite containing NRM data
-     * @param armSuite suite containing ARM normalizer data
+     * @param normalizerSuite suite containing ARM normalizer data
      * @param minLevel lowest AF treatment level to consider
      * @param maxLevel highest AF treatment level to consider
      * @return a collection of RPI estimates
      */
-    public static SuiteRpiEstimate<ArmSampleRpiEstimate>
-        calculateWithArm(Suite nrmSuite,
-            Suite armSuite, double minLevel, double maxLevel) {
+    public static SuiteRpiEstimate<StepwiseSampleRpiEstimate>
+        calculateWithStepwiseAF(Suite nrmSuite,
+            Suite normalizerSuite, double minLevel, double maxLevel) {
         final double[] allTreatmentLevels =
                 nrmSuite.getSamples().get(0).getTreatmentLevels();
         
@@ -125,10 +123,10 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
         
         /*
          * We have to get steps by treatment type as well as level, to avoid
-         * accidentally retrieving the initial ARM-application step when looking
-         * for a demag step with the same AF level. We need both the DEGAUSS_Z
-         * and DEGAUSS_XYZ types here, since both are routinely used for ARM
-         * demagnetization.
+         * accidentally retrieving the initial remanence-application step when
+         * looking for a demag step with the same AF level. We need both the
+         * DEGAUSS_Z and DEGAUSS_XYZ types here, since both are routinely used
+         * for demagnetization.
          *
          * With Java 9, the ugly initialization below will be replaceable with a
          * simple Set.of(TreatmentType.DEGAUSS_XYZ, TreatmentType.DEGAUSS_Z).
@@ -137,49 +135,56 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
                 Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
                         TreatmentType.DEGAUSS_XYZ, TreatmentType.DEGAUSS_Z)));
         
-        final List<ArmSampleRpiEstimate> rpis =
+        final List<StepwiseSampleRpiEstimate> rpis =
                 new ArrayList<>(nrmSuite.getNumSamples());
         for (Sample nrmSample: nrmSuite.getSamples()) {
-            final String depth = nrmSample.getTreatmentSteps().get(0).getDepth();
-            final Sample armSample = armSuite.getSampleByName(depth);
-            if (armSample != null) {
-                final List<Double> nrmInts = new ArrayList<>(nLevels);
-                final List<Double> armInts = new ArrayList<>(nLevels);
+            final String depth =
+                    nrmSample.getTreatmentSteps().get(0).getDepth();
+            final Sample normalizerSample =
+                    normalizerSuite.getSampleByName(depth);
+            if (normalizerSample != null) {
+                final List<Double> nrmIntensities = new ArrayList<>(nLevels);
+                final List<Double> normalizerIntensities =
+                        new ArrayList<>(nLevels);
                 final List<Double> ratios = new ArrayList<>(nLevels);
                 
                 for (double demagStep: treatmentLevels) {
                     final TreatmentStep nrmStep =
                             nrmSample.getTreatmentStepByLevel(demagStep);
                     /*
-                     * We have to treat the first ARM step as a special case,
-                     * since its treatment level will correspond to the ARM AF
-                     * field but we're actually interested in its AF demag step,
-                     * which is 0. We assume that this will just be the first
-                     * datum and fetch it by index.
+                     * We have to treat the first step as a special case, since
+                     * it's where the remanence is imparted so its treatment
+                     * level will correspond to the ARM or IRM field but we're
+                     * actually interested in its AF demag step, which is 0. We
+                     * assume that this will just be the first datum and fetch
+                     * it by index.
                      */
-                    final TreatmentStep armStep = demagStep == 0 ?
-                            armSample.getTreatmentStepByIndex(0) :
-                            armSample.getTreatmentStepByTypeAndLevel(
+                    final TreatmentStep normalizerStep = demagStep == 0 ?
+                            normalizerSample.getTreatmentStepByIndex(0) :
+                            normalizerSample.getTreatmentStepByTypeAndLevel(
                                     demagTreatmentTypes, demagStep);
-                    if (nrmStep != null && armStep != null) {
+                    if (nrmStep != null && normalizerStep != null) {
                         final double nrmInt = nrmStep.getIntensity();
-                        final double armInt = armStep.getIntensity();
-                        ratios.add(nrmInt/armInt);
-                        nrmInts.add(nrmInt);
-                        armInts.add(armInt);
+                        final double armInt = normalizerStep.getIntensity();
+                        ratios.add(nrmInt / armInt);
+                        nrmIntensities.add(nrmInt);
+                        normalizerIntensities.add(armInt);
                     } else {
                         ratios.add(-1.); // code for "leave blank"
                     }
                 }
                 double totalRatio = 0;
                 final SimpleRegression regression = new SimpleRegression();
-                final int nPairs = nrmInts.size();
-                for (int i=0; i<nPairs; i++) {
-                    totalRatio += nrmInts.get(i) / armInts.get(i);
-                    regression.addData(armInts.get(i), nrmInts.get(i));
+                final int nPairs = nrmIntensities.size();
+                for (int i = 0; i < nPairs; i++) {
+                    totalRatio += nrmIntensities.get(i)
+                            / normalizerIntensities.get(i);
+                    regression.addData(normalizerIntensities.get(i),
+                            nrmIntensities.get(i));
                 }
-                rpis.add(new ArmSampleRpiEstimate(ratios, nrmSample, armSample,
-                        totalRatio/nPairs,
+                rpis.add(new StepwiseSampleRpiEstimate(ratios,
+                        nrmSample, normalizerSample,
+                        totalRatio / nPairs,
                         regression.getSlope(),
                         regression.getR(),
                         regression.getRSquare()));
