@@ -1949,7 +1949,14 @@ public class PuffinApp {
                         rpiDialog.getNrm(), rpiDialog.getNormalizer());
                 break;
         }
-        rpis.writeToFile(destinationPath);
+        try {
+            rpis.writeToFile(destinationPath);
+        } catch (IOException ex) {
+            LOGGER.log(Level.WARNING, "Exception writing RPI data", ex);
+            errorDialog("Error writing RPI data",
+                    "An error occurred while writing the RPI data. "
+                    + "Error message: ‘" + ex.getLocalizedMessage() + "’.");
+        }
     }
     
     /**

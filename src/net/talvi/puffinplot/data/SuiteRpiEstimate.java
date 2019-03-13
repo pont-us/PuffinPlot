@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -54,22 +53,17 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
         this.rpis = rpis;
     }
     
-    public void writeToFile(String path) {
+    public void writeToFile(String path) throws IOException {
         final File outFile = new File(path);
         try (FileWriter writer = new FileWriter(outFile)) {
             writer.write("Depth,");
             for (double level: getTreatmentLevels()) {
                 writer.write(String.format(Locale.ENGLISH, "%g,", level));
             }
-            writer.write(getRpis().get(0).getCommaSeparatedHeader() +
-                    "\n");
-            
+            writer.write(getRpis().get(0).getCommaSeparatedHeader() + "\n");
             for (SampleRpiEstimate rpi: getRpis()) {
                 writer.write(rpi.toCommaSeparatedString());
             }
-        } catch (IOException e) {
-            LOGGER.log(Level.WARNING,
-                    "calculateRpi: exception writing file.", e);
         }
     }
     
@@ -86,15 +80,15 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
                 new ArrayList<>(nrmSuite.getNumSamples());
         for (Sample nrmSample: nrmSuite.getSamples()) {
             final double nrm = nrmSample.getNrm();
-            final String depth = nrmSample.getTreatmentSteps().get(0).getDepth();
+            final String depth =
+                    nrmSample.getTreatmentSteps().get(0).getDepth();
             final Sample msSample = msSuite.getSampleByName(depth);
-            if (msSample == null) {
-                throw new IllegalArgumentException("No MS sample for depth " +
-                                                   depth);
+            if (msSample != null) {
+                final double ms =
+                        msSample.getTreatmentSteps().get(0).getMagSus();
+                final double rpi = nrm / ms;
+                rpis.add(new MagSusSampleRpiEstimate(nrmSample, msSample, rpi));
             }
-            final double ms = msSample.getTreatmentSteps().get(0).getMagSus();
-            final double rpi = nrm/ms;
-            rpis.add(new MagSusSampleRpiEstimate(nrmSample, msSample, rpi));
         }
         return new SuiteRpiEstimate<>(Collections.emptyList(), rpis);
     }
