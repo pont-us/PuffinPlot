@@ -16,9 +16,12 @@
  */
 package net.talvi.puffinplot.window;
 
+import java.awt.Component;
+import java.util.List;
 import java.util.stream.Stream;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import net.talvi.puffinplot.PuffinApp;
@@ -39,15 +42,19 @@ public class RpiDialog {
     private Suite nrm = null;
     private Suite normalizer = null;
     private RpiEstimateType estimateType = null;
-    private final PuffinApp app;
+    private final JFrame parentFrame;
+    private final List<Suite> suites;
     
     /**
      * Create a new RPI dialog.
      * 
-     * @param app the PuffinApp from which to get the suite lists
+     * @param suites the available suites for RPI calculation
+     * @param parentFrame the parent frame for any error dialogs which may
+     *                    be shown
      */
-    public RpiDialog(PuffinApp app) {
-        this.app = app;
+    public RpiDialog(List<Suite> suites, JFrame parentFrame) {
+        this.suites = suites;
+        this.parentFrame = parentFrame;
     }
     
     /**
@@ -59,17 +66,17 @@ public class RpiDialog {
      * "OK"; {@code false} otherwise
      */
     public boolean show() {
-        if (app.getSuites().size() < 2) {
-            app.errorDialog("Not enough suites for RPI", "An RPI calculation "
-                    + "requires two open suites: one for the NRM, and one for "
-                    + "the normalizer.");
+        if (suites.size() < 2) {
+            PuffinApp.errorDialog("Not enough suites for RPI",
+                    "An RPI calculation requires two open suites: one for "
+                    + "the NRM, and one for the normalizer.", parentFrame);
             return false;
         }
 
         final JComboBox<Suite> nrmComboBox =
-                new JComboBox<>(app.getSuites().toArray(new Suite[0]));
+                new JComboBox<>(suites.toArray(new Suite[0]));
         final JComboBox<Suite> normalizerComboBox =
-                new JComboBox<>(app.getSuites().toArray(new Suite[0]));
+                new JComboBox<>(suites.toArray(new Suite[0]));
         final JComboBox<String> estimateTypeComboBox =
                 new JComboBox<>(Stream.of(RpiEstimateType.values())
                         .map(ret -> ret.getNiceName()).toArray(String[]::new));
@@ -81,8 +88,7 @@ public class RpiDialog {
             new JLabel("Normalizer type"), estimateTypeComboBox};
         
         final int userChoice = JOptionPane.showConfirmDialog(
-                app.getMainWindow(),
-                inputs, "Select suites to use",
+                parentFrame, inputs, "Select suites to use",
                 JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE);
 
@@ -91,9 +97,9 @@ public class RpiDialog {
         final int estimateTypeIndex = estimateTypeComboBox.getSelectedIndex();
         
         if (nrmIndex == normalizerIndex) {
-            app.errorDialog("RPI suites must be different",
+            PuffinApp.errorDialog("RPI suites must be different",
                     "You can't use the same suite for both NRM and normalizer "
-                    + "in an RPI calculation.");
+                    + "in an RPI calculation.", parentFrame);
             return false;
         }
 
@@ -103,8 +109,8 @@ public class RpiDialog {
             return false;
         }
         
-        nrm = app.getSuites().get(nrmIndex);
-        normalizer = app.getSuites().get(normalizerIndex);
+        nrm = suites.get(nrmIndex);
+        normalizer = suites.get(normalizerIndex);
         estimateType = RpiEstimateType.values()[estimateTypeIndex];
         return true;
     }

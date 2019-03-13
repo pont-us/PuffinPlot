@@ -158,7 +158,7 @@ public class PuffinActions {
                 try {
                     app.getCurrentSuite().saveCalcsSample(new File(pathname));
                 } catch (PuffinUserException ex) {
-                    app.errorDialog("Error saving calculations", ex);
+                    app.errorDialog("Error saving calculations", ex.getLocalizedMessage());
                 }
             }
         }
@@ -185,7 +185,7 @@ public class PuffinActions {
                 try {
                     app.getCurrentSuite().saveCalcsSite(new File(pathname));
                 } catch (PuffinUserException ex) {
-                    app.errorDialog("Error saving calculations", ex);
+                    app.errorDialog("Error saving calculations", ex.getLocalizedMessage());
                 }
             }
         }
@@ -1092,7 +1092,7 @@ public class PuffinActions {
             null, false, KeyEvent.VK_R) {
         private static final long serialVersionUID = 1L;
         @Override public void actionPerformed(ActionEvent e) {
-            app.calculateRpi();
+            app.showCalculateRpiDialog();
         }
     };
     

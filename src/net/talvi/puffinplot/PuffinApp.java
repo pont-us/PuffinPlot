@@ -64,10 +64,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
@@ -75,6 +72,7 @@ import com.itextpdf.awt.DefaultFontMapper;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfContentByte;
+import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.util.Optional;
 import net.talvi.puffinplot.data.AmsCalculationType;
@@ -753,6 +751,25 @@ public class PuffinApp {
     /**
      * Displays a dialog box reporting an error. The supplied message will be
      * placed within an HTML {@code <p>} element to allow it to word-wrap.
+     *
+     * @param title the title for the dialog box
+     * @param message the message to be displayed
+     * @param parent the dialog will be displayed in this component's Frame
+     */
+    public static void errorDialog(String title, String message,
+            Component parent) {
+        JOptionPane.showMessageDialog(parent,
+                "<html><body><p style='width: 320px;'>"
+                + message + "</p></body></html>",
+                title,
+                JOptionPane.ERROR_MESSAGE);        
+    }
+    
+    /**
+     * Displays a dialog box reporting an error over this PuffinApp's main
+     * window. This is a convenience wrapper for the static
+     * {@link PuffinApp#errorDialog(java.lang.String, java.lang.String, java.awt.Component)}
+     * method.
      * 
      * @param title the title for the dialog box
      * @param message the message to be displayed
@@ -764,18 +781,7 @@ public class PuffinApp {
                 title,
                 JOptionPane.ERROR_MESSAGE);
     }
-
-    /**
-     * Displays a dialog box reporting an error. The text of the error box is
-     * taken from the supplied exception.
-     *
-     * @param title the title for the dialog box
-     * @param ex the exception from which to take the message text
-     */
-    public void errorDialog(String title, PuffinUserException ex) {
-        errorDialog(title, ex.getLocalizedMessage());
-    }
-
+    
     @SuppressWarnings("unchecked")
     private void createAppleEventHandler() {
         try {
@@ -1806,7 +1812,7 @@ public class PuffinApp {
                 getRecentFiles().add(Collections.singletonList(file));
                 getMainWindow().getMainMenuBar().updateRecentFiles();
             } catch (PuffinUserException ex) {
-                errorDialog("Error saving file", ex);
+                errorDialog("Error saving file", ex.getLocalizedMessage());
             }
             else showSaveAsDialog(suite);
         }
@@ -1823,7 +1829,7 @@ public class PuffinApp {
                 getMainWindow().getMainMenuBar().updateRecentFiles();
                 updateMainWindowTitle();
             } catch (PuffinUserException ex) {
-                errorDialog("Error saving file", ex);
+                errorDialog("Error saving file", ex.getLocalizedMessage());
             }
         }
     }
@@ -1920,12 +1926,11 @@ public class PuffinApp {
     /**
      * Calculates RPI using two loaded suites.
      */
-    public void calculateRpi() {
-        final RpiDialog rpiDialog = new RpiDialog(this);
+    public void showCalculateRpiDialog() {
+        final RpiDialog rpiDialog = new RpiDialog(suites, getMainWindow());
         if (!rpiDialog.show()) {
             return;
         }
-        
         final String destinationPath = getSavePath("Select RPI output file",
                 ".csv", "Comma Separated Values");
         if (destinationPath == null) {

@@ -309,7 +309,7 @@ public class PuffinActionsTest {
     @Test
     public void testCalculateRpi() {
         actions.calculateRpi.actionPerformed(null);
-        Mockito.verify(app).calculateRpi();
+        Mockito.verify(app).showCalculateRpiDialog();
     }
     
     @Test
