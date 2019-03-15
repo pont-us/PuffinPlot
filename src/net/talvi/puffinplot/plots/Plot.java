@@ -47,6 +47,7 @@ import net.talvi.puffinplot.window.PuffinRenderingHints;
 
 import static java.awt.font.TextAttribute.SUPERSCRIPT;
 import static java.awt.font.TextAttribute.SUPERSCRIPT_SUPER;
+import java.util.function.Consumer;
 
 /**
  * An abstract superclass for all plots and other data displays.
@@ -79,6 +80,8 @@ public abstract class Plot
     private Map<Attribute,Object> attributeMap = new HashMap<>();
     private boolean visible;
     private final Set<SampleClickListener> sampleClickListeners =
+            new HashSet<>();
+    private final Set<Consumer<Boolean>> visibilityChangedListeners =
             new HashSet<>();
 
     /** the default sizes and positions of the plots */
@@ -140,11 +143,16 @@ public abstract class Plot
         while (scanner.hasNext()) {
             final String plotName = scanner.next();
             if (getName().equals(plotName)) {
-                setVisible(scanner.nextBoolean());
-                double x = scanner.nextDouble();
-                double y = scanner.nextDouble();
-                double w = scanner.nextDouble();
-                double h = scanner.nextDouble();
+                final Boolean oldVisibility = isVisible();
+                final Boolean newVisibility = scanner.nextBoolean();
+                setVisible(newVisibility);
+                if (newVisibility != oldVisibility) {
+                    fireVisibilityChangedNotification(newVisibility);
+                }
+                final double x = scanner.nextDouble();
+                final double y = scanner.nextDouble();
+                final double w = scanner.nextDouble();
+                final double h = scanner.nextDouble();
                 dimensions = new Rectangle2D.Double(x, y, w, h);
             } else {
                 for (int i=0; i<5; i++) {
@@ -691,7 +699,11 @@ public abstract class Plot
      * it
      */
     public void setVisible(boolean visible) {
+        final boolean oldVisibility = this.visible;
         this.visible = visible;
+        if (this.visible != oldVisibility) {
+            fireVisibilityChangedNotification(this.visible);
+        }
     }
     
     /**
@@ -730,5 +742,33 @@ public abstract class Plot
         for (SampleClickListener listener: sampleClickListeners) {
             listener.sampleClicked(sample);
         }
+    }
+    
+    /**
+     * Adds a listener for visibility changes to this plot.
+     *
+     * @see
+     * Plot#removeVisibilityChangedListener(Consumer<Boolean>)
+     *
+     * @param listener the listener to add
+     */
+    public void addVisibilityChangedListener(Consumer<Boolean> listener) {
+        visibilityChangedListeners.add(listener);
+    }
+    
+    /**
+     * Removes a listener for visibility changes to this plot.
+     *
+     * @see Plot#addVisibilityChangedListener(Consumer<Boolean>)
+     *
+     * @param listener the listener to remove
+     */
+    public void removeVisibilityChangedListener(Consumer<Boolean> listener) {
+        visibilityChangedListeners.remove(listener);
+    }
+
+    private void fireVisibilityChangedNotification(Boolean newVisibility) {
+        visibilityChangedListeners
+                .forEach(listener -> listener.accept(newVisibility));
     }
 }

@@ -74,7 +74,6 @@ public class PrefsWindow extends JFrame {
     private static final long serialVersionUID = 1L;
     private final JTextField[] sensorLengthFields = new JTextField[3];
     private final PresetsBox presetsBox;
-    private final List<PlotBox> plotBoxes = new ArrayList<>(24);
     private final List<PrefTextField> prefTextFields = new ArrayList<>();
     private final PuffinApp app;
     private final PuffinPrefs prefs;
@@ -180,9 +179,7 @@ public class PrefsWindow extends JFrame {
         plotsSubPanel.setLayout(new GridLayout(0, 2));
 
         for (Plot plot: app.getMainWindow().getGraphDisplay().getPlots()) {
-            final PlotBox pb = new PlotBox(plot);
-            plotsSubPanel.add(pb);
-            plotBoxes.add(pb);
+            plotsSubPanel.add(new PlotBox(plot));
         }
         plotsPanel.add(plotsSubPanel);
         
@@ -244,15 +241,15 @@ public class PrefsWindow extends JFrame {
         final JButton closeButton = new JButton("Close");
         closeButton.addActionListener(event -> {
             /*
-             * window closing event isn't triggered by a setVisible(false),
-             * so we have to update the SensorLengths here.
+             * The window closing event isn't triggered by a setVisible(false),
+             * so we have to apply the settings here.
              */
             applySettings();
             setVisible(false);
         });
         addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(WindowEvent e) {
+            public void windowClosing(WindowEvent event) {
                 applySettings();
             }
         });
@@ -276,7 +273,7 @@ public class PrefsWindow extends JFrame {
         pack();
         setLocationRelativeTo(app.getMainWindow());
     }
-
+    
     private JButton makeActionButton(final Action action, String name) {
         final JButton button = new JButton(name);
         button.addActionListener(new ActionListener() {
@@ -357,9 +354,10 @@ public class PrefsWindow extends JFrame {
         presetsBox.applySettings();
         prefs.set2gProtocol(TwoGeeLoader.Protocol.valueOf(
                 prefs.getPrefs().get("measurementProtocol", "NORMAL")));
-        for (PlotBox plotBox: plotBoxes) {
-            plotBox.applySetting();
-        }
+        /*
+         * PlotBox settings are applied instantly so we don't need to apply
+         * them here.
+         */
         for (PrefTextField prefBox: prefTextFields) {
             prefBox.storeValue();
         }
@@ -375,7 +373,6 @@ public class PrefsWindow extends JFrame {
 
     private class PlotBox extends JPanel {
         private static final long serialVersionUID = 1L;
-        private final Plot plot;
         private final JCheckBox checkBox;
         
         public PlotBox(Plot plot) {
@@ -384,11 +381,17 @@ public class PrefsWindow extends JFrame {
             add(Box.createRigidArea((new Dimension(8, 0))));
             checkBox = new JCheckBox(plot.getNiceName(), plot.isVisible());
             add(checkBox);
-            this.plot = plot;
-        }
-
-        public void applySetting() {
-            plot.setVisible(checkBox.isSelected());
+            
+            /*
+             * The plot's visibility may also be changed by the "Reset layout"
+             * action, so we the checkbox needs to monitor it.
+             */
+            plot.addVisibilityChangedListener(checkBox::setSelected);
+            
+            checkBox.addChangeListener(event -> {
+                plot.setVisible(checkBox.isSelected());
+                app.updateDisplay();
+            });
         }
     }
 
@@ -406,7 +409,7 @@ public class PrefsWindow extends JFrame {
         }
     }
     
-    private class PrefsCheckBox extends JCheckBox{
+    private class PrefsCheckBox extends JCheckBox {
         private static final long serialVersionUID = 1L;
         public PrefsCheckBox(String label, final String key,
             boolean defaultValue) {
@@ -417,17 +420,14 @@ public class PrefsWindow extends JFrame {
         }
     }
     
-    private class MagDevCheckBox extends JCheckBox implements ItemListener {
+    private class MagDevCheckBox extends JCheckBox {
         private static final long serialVersionUID = 1L;
         public MagDevCheckBox() {
             super("Bedding is vs. magnetic north",
                    app.getCorrection().isMagDevAppliedToFormation());
-            addItemListener(this);
-        }
-
-        @Override
-        public void itemStateChanged(ItemEvent e) {
-            app.getCorrection().setMagDevAppliedToFormation(isSelected());
+            addItemListener(event ->
+                    app.getCorrection().
+                            setMagDevAppliedToFormation(isSelected()));
         }
     }
     
