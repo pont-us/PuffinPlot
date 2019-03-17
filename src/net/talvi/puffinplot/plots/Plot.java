@@ -86,7 +86,7 @@ public abstract class Plot
 
     /** the default sizes and positions of the plots */
     protected static final String DEFAULT_PLOT_POSITIONS =
-            "equarea true 308 259 289 324 " +
+            "equarea true 333 246 269 316 " +
             "zplot true 600 73 337 509 " +
             "demag true 336 73 262 172 " +
             "datatable true 6 144 326 437 " +
@@ -122,7 +122,12 @@ public abstract class Plot
             // safe to continue, default will be set below
         }
         // We may have a sizes string in prefs, but without this specific plot.
-        if (dimensions==null) {
+        if (dimensions == null) {
+            /*
+             * If the plot is not in the defaults string, this may leave
+             * dimensions as null, but it can also be set afterwards by
+             * the constructor of a subclass.
+             */
             setDimensionsFromPrefsString(DEFAULT_PLOT_POSITIONS);
         }
         unitSizeChanged();
@@ -143,8 +148,8 @@ public abstract class Plot
         while (scanner.hasNext()) {
             final String plotName = scanner.next();
             if (getName().equals(plotName)) {
-                final Boolean oldVisibility = isVisible();
-                final Boolean newVisibility = scanner.nextBoolean();
+                final boolean oldVisibility = isVisible();
+                final boolean newVisibility = scanner.nextBoolean();
                 setVisible(newVisibility);
                 if (newVisibility != oldVisibility) {
                     fireVisibilityChangedNotification(newVisibility);
@@ -390,12 +395,10 @@ public abstract class Plot
      */
     public String getDimensionsAsString() {
         logger.log(Level.FINE, "Getting dimensions for {0}", getName());
-        Rectangle2D r = dimensions;
-        // Explicit locale to ensure . for decimal separator
-        return String.format(Locale.ENGLISH, "%b %g %g %g %g ",
+        return String.format(Locale.ENGLISH, "%b %.0f %.0f %.0f %.0f ",
                 isVisible(),
-                r.getMinX(), r.getMinY(),
-                r.getWidth(), r.getHeight());
+                dimensions.getMinX(), dimensions.getMinY(),
+                dimensions.getWidth(), dimensions.getHeight());
     }
 
     /**
