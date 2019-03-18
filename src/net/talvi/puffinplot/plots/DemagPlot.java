@@ -79,7 +79,7 @@ public class DemagPlot extends Plot {
         clearPoints();
         
         final Sample sample = params.getSample();
-        if (sample==null) {
+        if (sample == null) {
             return;
         }
         
@@ -139,7 +139,7 @@ public class DemagPlot extends Plot {
                 this);
 
         final Rectangle2D dim = cropRectangle(getDimensions(),
-                320, 100, 50, 290);
+                320, 320, 50, 290);
         final double xScale = dim.getWidth() / xAxis.getLength();
         final double yScale = dim.getHeight() / yAxis.getLength();
         yAxis.draw(g, yScale, (int) dim.getMinX(), (int) dim.getMaxY());

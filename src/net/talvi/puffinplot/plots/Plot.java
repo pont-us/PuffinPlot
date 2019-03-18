@@ -86,9 +86,9 @@ public abstract class Plot
 
     /** the default sizes and positions of the plots */
     protected static final String DEFAULT_PLOT_POSITIONS =
-            "equarea true 333 246 269 316 " +
-            "zplot true 600 73 337 509 " +
-            "demag true 336 73 262 172 " +
+            "equarea true 334 297 264 284 " +
+            "zplot true 600 72 337 509 " +
+            "demag true 334 72 264 209 " +
             "datatable true 6 144 326 437 " +
             "pcatable true 10 80 318 59 " +
             "title true 11 8 379 64 " +
@@ -328,8 +328,8 @@ public abstract class Plot
      */
     protected AttributedString timesTenToThe(String significand,
             String exponent, Graphics2D g) {
-        if (!g.getRenderingHints().
-                containsKey(PuffinRenderingHints.KEY_E_NOTATION)) {
+        if (!g.getRenderingHints()
+                .containsKey(PuffinRenderingHints.KEY_E_NOTATION)) {
             String text = significand;
             // 00D7 is the multiplication sign
             if (exponent.startsWith("-")) {

@@ -142,7 +142,7 @@ public class ZPlot extends Plot {
     @Override
     public void draw(Graphics2D graphics) {
         final Sample sample = params.getSample();
-        if (sample==null) {
+        if (sample == null) {
             return;
         }
         final List<TreatmentStep> steps = sample.getVisibleTreatmentSteps();
@@ -161,7 +161,7 @@ public class ZPlot extends Plot {
         final Rectangle2D extent2 =
                 extent(steps, correction, vProjXax, MeasurementAxis.MINUSZ);
         final Rectangle2D axisDimensions =
-                cropRectangle(getDimensions(), 250, 250, 200, 200);
+                cropRectangle(getDimensions(), 300, 300, 200, 200);
                 
         final MeasurementAxis[] hProjAxes = {
             hProjXax,
@@ -238,7 +238,7 @@ public class ZPlot extends Plot {
             final double incRad = pca.getDirection().getIncRad();
             final double decRad = pca.getDirection().getDecRad();
             final double x1 = pca.getOrigin().getComponent(hProjXax) * scale;
-            final double y1 = - pca.getOrigin().getComponent(hProjYax) * scale;
+            final double y1 = -pca.getOrigin().getComponent(hProjYax) * scale;
             if ("Short".equals(pcaStyle)) {
                 clipRectangle = Util.envelope(pcaPointsH);
             }
@@ -276,7 +276,7 @@ public class ZPlot extends Plot {
                     clipRectangle = Util.envelope(pcaPointsV);
                 }
                 drawPcaLine(graphics, xOffset + x2, yOffset + y2,
-                        Math.PI/2 + incCorr,
+                        Math.PI / 2 + incCorr,
                         Color.BLUE, clipRectangle, lineScale);
             }
         }
