@@ -274,7 +274,18 @@ public class PuffinApp {
         if (runningOnOsX()) {
             createAppleEventHandler();
         }
+        LOGGER.log(Level.INFO, "Getting default printer page...");
+        /*
+         * The following line hangs for 190 seconds the first time PuffinPlot
+         * is started on the INGV network (subsequent starts are quick).
+         * Presumably the delay is caused by searching the extensive LAN
+         * for available printers.
+         * 
+         * TODO: run this in a separate thread, and disable printing until
+         * it's completed.
+         */
         currentPageFormat = PrinterJob.getPrinterJob().defaultPage();
+        LOGGER.log(Level.INFO, "Got default printer page.");
         currentPageFormat.setOrientation(PageFormat.LANDSCAPE);
         aboutBox = new AboutBox(this);
 

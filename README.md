@@ -39,25 +39,30 @@ PuffinPlot uses the one provided by Oracle.
 Jython can be dynamically downloaded, installed, and used by PuffinPlot
 at runtime, but is not a build dependency.
 
-### TeX dependencies
+### Dependencies: user manual
 
-The manual is produced using LaTeX. The following programs and packages are
-required to build it. For each package name, the name of the Debian package
-containing it is also given.
+The manual is typeset as PDF and HTML using LaTeX. Some PDF and PNG
+figures for the manual are automatically generated from SVG sources
+using Inkscape when the manual is built.
 
 On most Debian-based operating systems, all the TeX dependencies should
 be installable with the command
 
 ```
-sudo apt-get install tex4ht texlive-fonts-extra texlive-fonts-recommended texlive-latex-base texlive-latex-extra texlive-latex-recommended
+sudo apt install tex4ht texlive-fonts-extra texlive-fonts-recommended texlive-latex-base texlive-latex-extra texlive-latex-recommended inkscape
 ```
+
+The following programs and packages are required to build it. For each
+program or package name, the name of the Debian package containing it is
+also given.
 
 #### Programs
 
 * pdflatex : texlive-latex-base
 * htlatex : tex4ht
+* inkscape : inkscape
 
-#### Packages
+#### TeX Packages
 
 * babel : texlive-latex-base
 * geometry : texlive-latex-base
