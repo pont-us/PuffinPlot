@@ -179,6 +179,8 @@ public class CoreSectionTest {
     @Test(expected = IllegalStateException.class)
     public void testGetDirectionNearEndInvalid() {
         final List<Sample> samples = makeSampleListDirectionsOnly();
+        samples.get(0).setImportedDirection(null);
+        samples.get(1).setImportedDirection(null);        
         samples.get(2).setImportedDirection(null);
         CoreSection.fromSamples(samples).getDirectionNearEnd(End.TOP, 3);
     }
@@ -186,14 +188,26 @@ public class CoreSectionTest {
     @Test
     public void testIsDirectionDefinedNearEnd() {
         final List<Sample> samples = makeSampleListDirectionsOnly();
-        samples.get(2).setImportedDirection(null);
-        samples.get(6).setImportedDirection(null);
+        samples.get(0).setImportedDirection(null);
+        samples.get(1).setImportedDirection(null);
         final CoreSection section = CoreSection.fromSamples(samples);
-        assertTrue(section.isDirectionDefinedNearEnd(End.TOP, 1));
-        assertTrue(section.isDirectionDefinedNearEnd(End.TOP, 2));
-        assertFalse(section.isDirectionDefinedNearEnd(End.TOP, 3));
+        assertFalse(section.isDirectionDefinedNearEnd(End.TOP, 1));
+        assertFalse(section.isDirectionDefinedNearEnd(End.TOP, 2));
+        assertTrue(section.isDirectionDefinedNearEnd(End.TOP, 3));
         assertTrue(section.isDirectionDefinedNearEnd(End.BOTTOM, 3));
-        assertFalse(section.isDirectionDefinedNearEnd(End.BOTTOM, 4));
+        assertTrue(section.isDirectionDefinedNearEnd(End.BOTTOM, 4));
+    }
+    
+    @Test
+    public void testGetDirectionWithMissingDirections() {
+        final List<Sample> samples = makeSampleListDirectionsOnly();
+        final Vec3 expectedMeanDirection =
+                meanDirection(samples.subList(0, 3));
+        samples.get(3).setImportedDirection(null);
+        samples.get(4).setImportedDirection(null);
+        assertTrue(expectedMeanDirection.equals(
+                CoreSection.fromSamples(samples)
+                        .getDirectionNearEnd(End.TOP, 5), 1e-10));
     }
     
     private static Vec3 meanDirection(List<Sample> samples) {

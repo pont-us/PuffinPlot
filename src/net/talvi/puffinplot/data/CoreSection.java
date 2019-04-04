@@ -129,32 +129,33 @@ public class CoreSection implements SampleGroup {
      * @param nSamples the number of samples to average
      * @return the mean direction of the top or bottom samples
      * 
-     * @throws IllegalStateException if any section end samples do not
-     * have a direction
+     * @throws IllegalStateException if none of the section end samples have
+     * a direction
      */
     public Vec3 getDirectionNearEnd(End end, int nSamples) {
         final List<Sample> endSamples = getSamplesNearEnd(end, nSamples);
-        if (endSamples.stream().anyMatch(s -> s.getDirection() == null)) {
-            throw new IllegalStateException("Some end samples have no "
+        if (endSamples.stream().allMatch(s -> s.getDirection() == null)) {
+            throw new IllegalStateException("No end samples have a "
                     + "defined direction.");
         } 
-        return FisherValues.calculate(endSamples.stream().
-                map(Sample::getDirection).
-                collect(Collectors.toList())).getMeanDirection();
+        return FisherValues.calculate(endSamples.stream()
+                .map(Sample::getDirection)
+                .filter(direction -> direction != null)
+                .collect(Collectors.toList())).getMeanDirection();
     }
 
     /**
-     * Report whether the direction is defined near the specified end
-     * of this core. The direction is defined iff every sample near the
-     * end has a direction.
-     * 
+     * Report whether the direction is defined near the specified end of this
+     * core. The direction is defined if and only if any sample near the end has
+     * a direction.
+       * 
      * @param end the section end
      * @param nSamples the number of samples to regard as "near the end"
      * @return true iff all the samples near the end have a direction
      */
     boolean isDirectionDefinedNearEnd(End end, int nSamples) {
         final List<Sample> endSamples = getSamplesNearEnd(end, nSamples);
-        return endSamples.stream().allMatch(s -> s.getDirection() != null);
+        return endSamples.stream().anyMatch(s -> s.getDirection() != null);
     }
 
 }
