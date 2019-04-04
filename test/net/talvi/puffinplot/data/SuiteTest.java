@@ -253,12 +253,12 @@ public class SuiteTest {
                 "MDF demagnetization (degC or T),MDF midpoint reached,"+
                 "Fisher dec. (deg),Fisher inc. (deg),Fisher a95 (deg),"+
                 "Fisher k,Fisher nDirs,Fisher R,AMS dec1,AMS inc1,"+
-                "AMS dec2,AMS inc2,AMS dec3,AMS inc3",
+                "AMS dec2,AMS inc2,AMS dec3,AMS inc3,Initial MS",
                 lines.get(0));
         assertEquals(syntheticSuite1.getSamples().size()+1, lines.size());
         // Check that lines have right number of fields
         for (String line: lines) {
-            assertEquals(35, line.chars().filter(c -> c == ',').count());
+            assertEquals(36, line.chars().filter(c -> c == ',').count());
         }
     }
     

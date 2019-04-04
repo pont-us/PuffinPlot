@@ -136,7 +136,6 @@ public class PuffinActions {
         }
     };
 
-
     /**
      * Opens a ‘Save’ dialog box; sample calculations are saved to 
      * the chosen file (if any).
@@ -158,7 +157,8 @@ public class PuffinActions {
                 try {
                     app.getCurrentSuite().saveCalcsSample(new File(pathname));
                 } catch (PuffinUserException ex) {
-                    app.errorDialog("Error saving calculations", ex.getLocalizedMessage());
+                    app.errorDialog("Error saving calculations",
+                            ex.getLocalizedMessage());
                 }
             }
         }

@@ -786,7 +786,8 @@ public final class Suite implements SampleGroup {
                     FisherValues.getHeaders(),
                     Tensor.getHeaders(),
                     customFlagNames.toStrings(),
-                    customNoteNames.toStrings());
+                    customNoteNames.toStrings(),
+                    "Initial MS");
             for (Sample sample: samples) {
                 final PcaAnnotated pca = sample.getPcaAnnotated();
                 final MedianDestructiveField mdf = sample.getMdf();
@@ -809,7 +810,11 @@ public final class Suite implements SampleGroup {
                         ams == null ? Tensor.getEmptyFields() :
                                 ams.toStrings(),
                         sample.getCustomFlags().toStrings(),
-                        sample.getCustomNotes().toStrings());
+                        sample.getCustomNotes().toStrings(),
+                        sample.getTreatmentSteps().isEmpty() ? ""
+                            : String.format(Locale.ENGLISH, "%.4g",
+                                sample.getTreatmentStepByIndex(0).getMagSus())
+                );
             }
         } catch (IOException ex) {
             throw new PuffinUserException(ex);
