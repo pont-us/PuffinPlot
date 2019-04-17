@@ -36,7 +36,12 @@ public enum RpiEstimateType {
     /**
      * IRM demagnetization
      */
-    IRM_DEMAG("IRM demagnetization");
+    IRM_DEMAG("IRM demagnetization"),
+    
+    /**
+     * ARM magnetization
+     */
+    ARM_MAG("ARM magnetization");
     
     private final String name;
     

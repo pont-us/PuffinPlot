@@ -187,6 +187,86 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
         return new SuiteRpiEstimate<>(treatmentLevels, rpis);
     }
 
+    /* TODO: there is a lot of duplicated code between calculateWithStepwiseARM
+     * and calculateWithStepwiseAf -- factor it out.
+        * 
+         */
+    public static SuiteRpiEstimate<StepwiseSampleRpiEstimate>
+            calculateWithStepwiseARM(Suite nrmSuite,
+                    Suite normalizerSuite, double minLevel, double maxLevel) {
+        final double[] allTreatmentLevels
+                = nrmSuite.getSamples().get(0).getTreatmentLevels();
+
+        final List<Double> treatmentLevels
+                = Arrays.stream(allTreatmentLevels).boxed().
+                        filter(x -> x >= minLevel - 1e-10 && x <= maxLevel + 1e-10).
+                        collect(Collectors.toList());
+        final int nLevels = treatmentLevels.size();
+
+        /*
+         * Could also just assume that all normalizer steps have ARM treatment
+         * type, but may as well filter by treatment type as well as level since
+         * it's easy to do and may be useful e.g. if we have a single suite
+         * containing both AF demagnetization and stepwise ARM application.
+        */
+        final Set<TreatmentType> demagTreatmentTypes =
+                Collections.singleton(TreatmentType.ARM);
+
+        final List<StepwiseSampleRpiEstimate> rpis
+                = new ArrayList<>(nrmSuite.getNumSamples());
+        for (Sample nrmSample: nrmSuite.getSamples()) {
+            final String depth
+                    = nrmSample.getTreatmentSteps().get(0).getDepth();
+            final Sample normalizerSample
+                    = normalizerSuite.getSampleByName(depth);
+            if (normalizerSample != null) {
+                final List<Double> nrmIntensities = new ArrayList<>(nLevels);
+                final List<Double> normalizerIntensities
+                        = new ArrayList<>(nLevels);
+                final List<Double> ratios = new ArrayList<>(nLevels);
+
+                for (double demagStep: treatmentLevels) {
+                    final TreatmentStep nrmStep
+                            = nrmSample.getTreatmentStepByLevel(demagStep);
+
+                    final TreatmentStep normalizerStep =
+                            normalizerSample.getTreatmentStepByTypeAndLevel(
+                                    demagTreatmentTypes, demagStep);
+                    if (nrmStep != null && normalizerStep != null) {
+                        final double nrmInt = nrmStep.getIntensity();
+                        final double armInt = normalizerStep.getIntensity();
+                        ratios.add(nrmInt / armInt);
+                        nrmIntensities.add(nrmInt);
+                        normalizerIntensities.add(armInt);
+                    } else {
+                        ratios.add(-1.); // code for "leave blank"
+                    }
+                }
+                double totalRatio = 0;
+                final SimpleRegression regression = new SimpleRegression();
+                final int nPairs = nrmIntensities.size();
+                /*
+                 * ARM intensities are increasing, and NRM intensities
+                 * are increasing, so this will produce a negative slope
+                 * which we invert when constructing the estimate.
+                 */
+                for (int i = 0; i < nPairs; i++) {
+                    totalRatio += nrmIntensities.get(i)
+                            / normalizerIntensities.get(i);
+                    regression.addData(normalizerIntensities.get(i),
+                            nrmIntensities.get(i));
+                }
+                rpis.add(new StepwiseSampleRpiEstimate(ratios,
+                        nrmSample, normalizerSample,
+                        totalRatio / nPairs,
+                        -regression.getSlope(),
+                        regression.getR(),
+                        regression.getRSquare()));
+            }
+        }
+        return new SuiteRpiEstimate<>(treatmentLevels, rpis);
+    }
+        
     /**
      * @return the treatment levels
      */

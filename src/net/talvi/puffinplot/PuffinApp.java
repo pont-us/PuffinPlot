@@ -1955,6 +1955,11 @@ public class PuffinApp {
                         rpiDialog.getNrm(), rpiDialog.getNormalizer(),
                         Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
                 break;
+            case ARM_MAG:
+                rpis = SuiteRpiEstimate.calculateWithStepwiseARM(
+                        rpiDialog.getNrm(), rpiDialog.getNormalizer(),
+                        Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+                break;
             case MAG_SUS:
                 rpis = SuiteRpiEstimate.calculateWithMagSus(
                         rpiDialog.getNrm(), rpiDialog.getNormalizer());

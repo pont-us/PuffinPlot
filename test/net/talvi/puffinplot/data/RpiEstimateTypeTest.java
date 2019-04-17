@@ -38,6 +38,7 @@ public class RpiEstimateTypeTest {
         final Set<RpiEstimateType> expected = Arrays.asList(new
                 RpiEstimateType[] {
             RpiEstimateType.MAG_SUS,
+            RpiEstimateType.ARM_MAG,
             RpiEstimateType.ARM_DEMAG,
             RpiEstimateType.IRM_DEMAG
         }).stream().collect(Collectors.toSet());
