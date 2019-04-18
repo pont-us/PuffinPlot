@@ -29,14 +29,21 @@ import java.util.stream.Collectors;
 
 import net.talvi.puffinplot.data.MeasurementType;
 import net.talvi.puffinplot.data.TreatmentStep;
+import net.talvi.puffinplot.data.TreatmentType;
 
 public class Jr6Loader extends AbstractFileLoader {
 
-    public Jr6Loader(InputStream inputStream, String fileIdentifier) {
-                try (BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(inputStream, "ASCII"))) {
-            /* BufferedReader.lines() handles all three common line terminators
-             * automatically, so we don't need to worry about CRLFs etc. */
+    private final TreatmentType defaultTreatmentType;
+    
+    public Jr6Loader(InputStream inputStream, String fileIdentifier,
+            TreatmentType defaultTreatmentType) {
+        this.defaultTreatmentType = defaultTreatmentType;
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(inputStream, "ASCII"))) {
+            /*
+             * BufferedReader.lines() handles all three common line terminators
+             * automatically, so we don't need to worry about CRLFs etc.
+             */
             final List<String> lines =
                     reader.lines().collect(Collectors.toList());
             processLines(lines);
@@ -46,13 +53,20 @@ public class Jr6Loader extends AbstractFileLoader {
     }
     
     private Jr6Loader() {
+        defaultTreatmentType = TreatmentType.THERMAL;
     }
 
     public static Jr6Loader readFile(File file,
             Map<Object, Object> importOptions) {
         try {
+            final Object specifiedTreatmentType =
+                    importOptions.get(TreatmentType.class);
+            final TreatmentType defaultTreatmentType = 
+                    (specifiedTreatmentType instanceof TreatmentType)
+                    ? ((TreatmentType) specifiedTreatmentType)
+                    : TreatmentType.THERMAL;
             final FileInputStream fis = new FileInputStream(file);
-            return new Jr6Loader(fis, file.getName());
+            return new Jr6Loader(fis, file.getName(), defaultTreatmentType);
         } catch (IOException ex) {
             final Jr6Loader loader = new Jr6Loader();
             loader.messages.add("Error reading \"" + file.getName() + "\"");
@@ -63,7 +77,8 @@ public class Jr6Loader extends AbstractFileLoader {
 
     private void processLines(List<String> lines) {
         for (String line: lines) {
-            final Jr6DataLine dataLine = Jr6DataLine.read(line);
+            final Jr6DataLine dataLine =
+                    Jr6DataLine.read(line, defaultTreatmentType);
             addTreatmentStep(makeTreatmentStep(dataLine));
         }
     }

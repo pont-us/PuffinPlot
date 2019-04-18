@@ -80,6 +80,54 @@ public class Jr6DataLineTest {
                 DipParameter.D0, AzimuthParameter.A12, DipParameter.D0),
                 line.getOrientationParameters());
     }
+    
+    /**
+     * Test a line with a thermal treatment without a T prefix, where the
+     * treatment type has to be specified separately as an option.
+     */
+    @Test
+    public void testReadThermalWithoutPrefix() {
+        final String string = "DKT02CA2  580      11.61 -1.21-15.78  "
+                + "-3   0   0   0   0   0   0 12  0 12  0   1";
+        final Jr6DataLine line = Jr6DataLine.read(string,
+                TreatmentType.THERMAL);
+        assertEquals("DKT02CA2", line.getName());
+        assertEquals(TreatmentType.THERMAL, line.getTreatmentType());
+        assertEquals(580, line.getTreatmentLevel());
+        assertTrue(new Vec3(11.61e-3, -1.21e-3, -15.78e-3).equals(
+                line.getMagnetization(), 1e-10));
+        assertEquals(0, line.getAzimuth());
+        assertEquals(0, line.getDip());
+        assertEquals(0, line.getFoliationAzimuth());
+        assertEquals(0, line.getFoliationDip());
+        assertEquals(0, line.getLineationTrend());
+        assertEquals(0, line.getLineationPlunge());
+        assertEquals(new OrientationParameters(AzimuthParameter.A12,
+                DipParameter.D0, AzimuthParameter.A12, DipParameter.D0),
+                line.getOrientationParameters());
+    }
+
+    @Test
+    public void testReadWithBlankTreatment() {
+        final String string = "DMQ53LB1          -15.63  4.93 -7.89  "
+                + "-2   0   0   0   0   0   0 12  0 12  0   1";
+        final Jr6DataLine line = Jr6DataLine.read(string,
+                TreatmentType.DEGAUSS_XYZ);
+        assertEquals("DMQ53LB1", line.getName());
+        assertEquals(TreatmentType.NONE, line.getTreatmentType());
+        assertEquals(0, line.getTreatmentLevel());
+        assertTrue(new Vec3(-15.63e-2, 4.93e-2, -7.89e-2).equals(
+                line.getMagnetization(), 1e-10));
+        assertEquals(0, line.getAzimuth());
+        assertEquals(0, line.getDip());
+        assertEquals(0, line.getFoliationAzimuth());
+        assertEquals(0, line.getFoliationDip());
+        assertEquals(0, line.getLineationTrend());
+        assertEquals(0, line.getLineationPlunge());
+        assertEquals(new OrientationParameters(AzimuthParameter.A12,
+                DipParameter.D0, AzimuthParameter.A12, DipParameter.D0),
+                line.getOrientationParameters());
+    }
 
     @Test(expected = IllegalArgumentException.class)
     public void testUnknownTreatmentCode() {

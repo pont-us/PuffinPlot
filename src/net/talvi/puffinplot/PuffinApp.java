@@ -75,6 +75,8 @@ import com.itextpdf.text.pdf.PdfContentByte;
 import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.util.Optional;
+import java.util.stream.Stream;
+import javax.swing.JComboBox;
 import net.talvi.puffinplot.data.AmsCalculationType;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.CsvWriter;
@@ -663,6 +665,15 @@ public class PuffinApp {
                     importOptions.put(MeasurementType.class,
                             iapdDialog.getMeasurementType());
                     break;
+                case JR6:
+                    final TreatmentType defaultTreatmentType =
+                            showSpecifyTreatmentTypeDialog();
+                    if (defaultTreatmentType == null) {
+                        return;
+                    }
+                    importOptions.put(TreatmentType.class,
+                            defaultTreatmentType);
+                    break;
             }
             
             final Suite suite;
@@ -791,6 +802,29 @@ public class PuffinApp {
                 + message + "</p></body></html>",
                 title,
                 JOptionPane.ERROR_MESSAGE);
+    }
+    
+    private TreatmentType showSpecifyTreatmentTypeDialog() {
+        final List<TreatmentType> comboValues =
+                Stream.of(TreatmentType.values())
+                        .filter(tt -> tt != TreatmentType.UNKNOWN)
+                        .collect(Collectors.toList());
+        final JComboBox<String> treatmentCombo =
+                new JComboBox<>(comboValues.stream()
+                        .map(tt -> tt.getNiceName())
+                        .toArray(String[]::new));
+        treatmentCombo.setToolTipText("This treatment type will be used "
+                + "for any lines that don't contain treatment type "
+                + "information.");
+        final int selectedOption = JOptionPane.showConfirmDialog(
+                getMainWindow(), treatmentCombo,
+                "Select default treatment type",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (selectedOption == JOptionPane.CANCEL_OPTION) {
+            return null;
+        } else {
+            return comboValues.get(treatmentCombo.getSelectedIndex());
+        }
     }
     
     @SuppressWarnings("unchecked")

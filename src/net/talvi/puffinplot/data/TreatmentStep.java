@@ -1022,12 +1022,22 @@ public class TreatmentStep {
      */
     public String getFormattedTreatmentLevel() {
         if ((Double.isNaN(getTreatmentLevel())
-                || getTreatmentType() == TreatmentType.NONE
                 || getTreatmentType() == TreatmentType.UNKNOWN)
                 && getSample() != null) {
             /*
              * If there's no valid treatment level, use this step's position in
-             * the sample.
+             * the sample. Note that we don't do this for a treatment type of
+             * "none", which is often just the initial step in a sequence of
+             * steps which *do* have treatment levels.
+             */
+            
+            /*
+             * TODO: the logic for "treatment levels by sequence" should
+             * probably be moved up to the sample level, because (1) the whole
+             * concept of "sequence" only makes sense at sample level, (2)
+             * a sample can decide on level vs. sequence based on all the
+             * steps within it (3) it avoids the danger of mixing sequence
+             * and level within a sample, which would be rather confusing.
              */
             return String.format(Locale.ENGLISH, "%d",
                     getSample().getTreatmentSteps().indexOf(this) + 1);
