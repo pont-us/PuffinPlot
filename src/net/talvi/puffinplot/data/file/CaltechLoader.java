@@ -37,8 +37,8 @@ import static net.talvi.puffinplot.Util.parseDoubleSafely;
 import static net.talvi.puffinplot.data.file.TwoGeeHelper.gaussToAm;
 
 /**
- * A file loader for CIT (Caltech) treatmentSteps files. This code is informed in part
- * by the file format description at
+ * A file loader for CIT (Caltech) treatmentSteps files. This code is informed
+ * in part by the file format description at
  * http://cires1.colorado.edu/people/jones.craig/PMag_Formats.html .
  *
  * @author pont
