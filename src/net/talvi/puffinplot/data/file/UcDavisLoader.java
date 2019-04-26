@@ -50,7 +50,6 @@ public class UcDavisLoader extends AbstractFileLoader {
 
     private LineNumberReader reader;
     private final File file;
-    private final Map<Object, Object> importOptions;
 
     private void readFile() throws IOException {
 
@@ -223,9 +222,7 @@ public class UcDavisLoader extends AbstractFileLoader {
      * @param importOptions import options (currently ignored)
      */
     public UcDavisLoader(File file, Map<Object, Object> importOptions) {
-
         treatmentSteps = new LinkedList<>();
-        this.importOptions = importOptions;
         this.file = file;
         try {
             reader = new LineNumberReader(new FileReader(file));
@@ -234,6 +231,5 @@ public class UcDavisLoader extends AbstractFileLoader {
             messages.add("Error reading \"" + file.getName() + "\"");
             messages.add(e.getMessage());
         }
-
     }
 }

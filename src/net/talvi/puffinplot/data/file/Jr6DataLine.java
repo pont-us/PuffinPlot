@@ -29,16 +29,17 @@ import net.talvi.puffinplot.data.Vec3;
  */
 class Jr6DataLine {
 
-    private final static String regexXyz = "([-0-9. ]{6})";
-    private final static String regex4digits = "([-0-9. ]{4})";
-    private final static String fullRegexString =
-            "(.{10})(.{8})" + regexXyz + regexXyz + regexXyz +
-            regex4digits + regex4digits + regex4digits + regex4digits + 
-            regex4digits + regex4digits + regex4digits +
+    private final static String REGEX_XYZ = "([-0-9. ]{6})";
+    private final static String REGEX_4_DIGITS = "([-0-9. ]{4})";
+    private final static String FULL_REGEX_STRING =
+            "(.{10})(.{8})" + REGEX_XYZ + REGEX_XYZ + REGEX_XYZ +
+            REGEX_4_DIGITS + REGEX_4_DIGITS + REGEX_4_DIGITS + REGEX_4_DIGITS + 
+            REGEX_4_DIGITS + REGEX_4_DIGITS + REGEX_4_DIGITS +
             "(  3|  6|  9| 12)(  0| 90)(  3|  6|  9| 12)(  0| 90)" +
-            regex4digits;
-    private final static Pattern regexPattern = Pattern.compile(fullRegexString);
-    private final static Pattern intPattern =
+            REGEX_4_DIGITS;
+    private final static Pattern REGEX_PATTERN =
+            Pattern.compile(FULL_REGEX_STRING);
+    private final static Pattern INT_PATTERN =
             Pattern.compile("^[0-9]*$");
 
     private final String name;
@@ -54,7 +55,7 @@ class Jr6DataLine {
     private final OrientationParameters orientationParameters;
 
     private Jr6DataLine(String string, TreatmentType defaultTreatmentType) {
-        final Matcher matcher = regexPattern.matcher(string);
+        final Matcher matcher = REGEX_PATTERN.matcher(string);
         final boolean matches = matcher.matches();
         if (!matches) {
             throw new IllegalArgumentException("Malformed JR6 line");
@@ -130,7 +131,7 @@ class Jr6DataLine {
     }
     
     private static boolean representsInt(String s) {
-        return intPattern.matcher(s).matches();
+        return INT_PATTERN.matcher(s).matches();
     }
 
     public static Jr6DataLine read(String string) {
@@ -196,7 +197,8 @@ class Jr6DataLine {
     }
     
     public VectorAndOrientations getVectorAndOrientations() {
-        return new VectorAndOrientations(magnetization, azimuth, dip, foliationAzimuth, foliationDip);
+        return new VectorAndOrientations(magnetization, azimuth, dip,
+                foliationAzimuth, foliationDip);
     }
 
 }

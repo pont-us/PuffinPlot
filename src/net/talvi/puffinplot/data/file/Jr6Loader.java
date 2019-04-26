@@ -31,10 +31,25 @@ import net.talvi.puffinplot.data.MeasurementType;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.TreatmentType;
 
+/**
+ * A loader for the JR6 format developed by Agico and used by the REMA6W
+ * program.
+ * 
+ * @author pont
+ */
 public class Jr6Loader extends AbstractFileLoader {
 
     private final TreatmentType defaultTreatmentType;
     
+    /**
+     * Create a new JR6 loader for a specified input stream.
+     * 
+     * @param inputStream a stream of JR6 file contents
+     * @param fileIdentifier an identifier for the file
+     *   (only used in load messages)
+     * @param defaultTreatmentType the treatment type to use for lines which
+     *   don't specify one explicitly
+     */
     public Jr6Loader(InputStream inputStream, String fileIdentifier,
             TreatmentType defaultTreatmentType) {
         this.defaultTreatmentType = defaultTreatmentType;
@@ -56,6 +71,21 @@ public class Jr6Loader extends AbstractFileLoader {
         defaultTreatmentType = TreatmentType.THERMAL;
     }
 
+    /**
+     * Return a JR6 loader for the specified file.
+     * <p>
+     * Currently one load option can be supplied: if the option map
+     * contains the key {@code TreatmentType.class} with an associated
+     * value of type {@code TreatmentType}, that value will be used as the
+     * default treatment type for the data in the file. Otherwise,
+     * treatment type will default to thermal. The default treatment type
+     * is only used for data lines which do not explicitly specify a treatment
+     * type.
+     * 
+     * @param file a JR6 file to read
+     * @param importOptions load options (see method description for details)
+     * @return a JR6 loader for the specified file
+     */
     public static Jr6Loader readFile(File file,
             Map<Object, Object> importOptions) {
         try {

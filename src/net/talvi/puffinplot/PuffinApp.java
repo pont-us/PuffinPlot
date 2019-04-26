@@ -780,9 +780,13 @@ public class PuffinApp {
      */
     public static void errorDialog(String title, String message,
             Component parent) {
+        /*
+         * Omitting the closing HTML tags is a deliberate choice: if included,
+         * they can sometimes leak into the displayed text.
+         */
         JOptionPane.showMessageDialog(parent,
                 "<html><body><p style='width: 320px;'>"
-                + message + "</p></body></html>",
+                + message,
                 title,
                 JOptionPane.ERROR_MESSAGE);        
     }
@@ -797,9 +801,13 @@ public class PuffinApp {
      * @param message the message to be displayed
      */
     public void errorDialog(String title, String message) {
+        /*
+         * Omitting the closing HTML tags is a deliberate choice: if included,
+         * they can sometimes leak into the displayed text.
+         */
         JOptionPane.showMessageDialog(getMainWindow(),
                 "<html><body><p style='width: 320px;'>"
-                + message + "</p></body></html>",
+                + message,
                 title,
                 JOptionPane.ERROR_MESSAGE);
     }

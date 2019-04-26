@@ -34,21 +34,38 @@ import net.talvi.puffinplot.data.Vec3;
 
 import static java.lang.Math.toRadians;
 
+/**
+ * A loader for the PMD (Enkin) file format (filename suffix pmd), a text-based
+ * format used by the PMGSC program of R. Enkin et al., and supported by other
+ * paleomagnetic software including Paleomac and Remasoft. Not to be confused
+ * with the binary PMD format native to Paleomac.
+ *
+ * @author pont
+ */
 public class PmdLoader extends AbstractFileLoader {
     
     private static final List<String> VALID_HEADERS =
             Arrays.asList(new String[] {
-                " PAL  Xc (Am2)  Yc (Am2)  Zc (Am2)  MAG(A/m)   Dg    Ig    Ds    Is   a95 ",
-                "STEP  Xc [Am2]  Yc [Am2]  Zc [Am2]  MAG[A/m]   Dg    Ig    Ds    Is  a95 ",
-                "STEP  Xc (Am2)  Yc (Am2)  Zc (Am2)  MAG(A/m)   GDEC  GINC  SDEC  SINC a95 ",
-                "STEP  Xc [Am²]  Yc [Am²]  Zc [Am²]  MAG[A/m]   Dg    Ig    Ds    Is  a95 ",
-                "STEP  Xc (Am2)  Yc (Am2)  Zc (Am2)  MAG(A/m)   Dg    Ig    Ds    Is   a95 "
-            });
+        " PAL  Xc (Am2)  Yc (Am2)  Zc (Am2)  MAG(A/m)   Dg    Ig    Ds    Is   a95 ",
+        "STEP  Xc [Am2]  Yc [Am2]  Zc [Am2]  MAG[A/m]   Dg    Ig    Ds    Is  a95 ",
+        "STEP  Xc (Am2)  Yc (Am2)  Zc (Am2)  MAG(A/m)   GDEC  GINC  SDEC  SINC a95 ",
+        "STEP  Xc [Am²]  Yc [Am²]  Zc [Am²]  MAG[A/m]   Dg    Ig    Ds    Is  a95 ",
+        "STEP  Xc (Am2)  Yc (Am2)  Zc (Am2)  MAG(A/m)   Dg    Ig    Ds    Is   a95 "
+    });
 
     private final String fileIdentifier;
     private String firstLineComment = "";
-    
-    public static PmdLoader readFile(File file, Map<Object, Object> importOptions) {
+
+    /**
+     * Return a PmdLoader containing the treatmentSteps from the supplied
+     * input stream.
+     *
+     * @param file the file from which to read data
+     * @param importOptions import options (currently not used)
+     * @return a PmdLoader to read data from the specified file
+     */
+    public static PmdLoader readFile(File file,
+            Map<Object, Object> importOptions) {
         try {
             final FileInputStream fis = new FileInputStream(file);
             return new PmdLoader(fis, importOptions, file.getName());
@@ -61,13 +78,13 @@ public class PmdLoader extends AbstractFileLoader {
     }
     
     /**
-     * Create a new PmdLoader containing the treatmentSteps from the supplied input
- stream.
-     * 
+     * Create a new PmdLoader containing the treatmentSteps from the supplied
+     * input stream.
+     *
      * @param inputStream the input stream from which to read the PMD file
      * @param importOptions import options (currently not used)
-     * @param fileIdentifier an optional identifier for the file being
-     * read. It is only used in constructing warning and error messages.
+     * @param fileIdentifier an optional identifier for the file being read. It
+     * is only used in constructing warning and error messages.
      */
     public PmdLoader(InputStream inputStream, Map<Object, Object> importOptions,
             String fileIdentifier) {
@@ -87,7 +104,8 @@ public class PmdLoader extends AbstractFileLoader {
          */
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
                 inputStream, "Cp437"))) {
-            /* BufferedReader.lines() handles all three common line terminators
+            /*
+             * BufferedReader.lines() handles all three common line terminators
              * automatically, so we don't need to worry about CRLFs etc.
              */
             final List<String> lines =
@@ -95,7 +113,6 @@ public class PmdLoader extends AbstractFileLoader {
             processLines(lines);
         } catch (IOException | UncheckedIOException ex) {
             addMessage("Error reading file %s", fileIdentifier);
-            //Logger.getLogger(PmdLoader.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
@@ -113,8 +130,10 @@ public class PmdLoader extends AbstractFileLoader {
             addMessage("Line 2: unknown format for first header line");
             return;
         }
-        // Line 2 is the second of two header lines, and consists purely of
-        // column headings. We check it against a list of known formats.
+        /*
+         * Line 2 is the second of two header lines, and consists purely of
+         * column headings. We check it against a list of known formats.
+         */
         if (!VALID_HEADERS.contains(lines.get(2))) {
             addMessage("Line 3: unknown format for second header line");
             return;
@@ -154,7 +173,8 @@ public class PmdLoader extends AbstractFileLoader {
             final Vec3 formationCorrected = sampleCorrected.correctForm(
                     toRadians(headerLine.formationStrike + 90),
                     toRadians(headerLine.formationDip));
-            final String location = String.format("file %s, line %d", fileIdentifier, lineIndex+1);
+            final String location = String.format("file %s, line %d",
+                    fileIdentifier, lineIndex+1);
             checkConsistency(location, sampleCorrected.getDecDeg(),
                     dataLine.sampleCorrectedDeclination, 0.3);
             checkConsistency(location, sampleCorrected.getIncDeg(),
@@ -163,17 +183,20 @@ public class PmdLoader extends AbstractFileLoader {
                     dataLine.formationCorrectedDeclination, 0.3);
             checkConsistency(location, formationCorrected.getIncDeg(),
                     dataLine.formationCorrectedInclination, 0.3);
-            checkConsistency(location, step.getIntensity(), dataLine.magnetization, 
-                    Math.max(step.getIntensity(), dataLine.magnetization)/100);
+            checkConsistency(location, step.getIntensity(),
+                    dataLine.magnetization, 
+                    Math.max(step.getIntensity(), dataLine.magnetization)
+                            / 100);
             addTreatmentStep(step);
         }
     }
     
     private void checkConsistency(String location, double expected,
             double actual, double tolerance) {
-        /* PMD files converted from JR6 files by Remasoft 3 don't always
-         * include all the polar treatmentSteps, so identify these by their
-         * first-line comment and skip the consistency checks for them.
+        /*
+         * PMD files converted from JR6 files by Remasoft 3 don't always include
+         * all the polar treatmentSteps, so identify these by their first-line
+         * comment and skip the consistency checks for them.
          */
         if (!"JR6 file".equals(firstLineComment) &&
                 Math.abs(expected - actual) > tolerance) {

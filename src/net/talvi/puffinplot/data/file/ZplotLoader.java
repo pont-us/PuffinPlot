@@ -80,7 +80,7 @@ public class ZplotLoader extends AbstractFileLoader {
     }
 
     private void readFile() throws IOException {
-        // Check first line for magic string
+        // Check first line for magic string.
         final String firstLine = reader.readLine();
         if (firstLine == null) {
             addMessage("%s is empty", file.getName());
@@ -91,12 +91,12 @@ public class ZplotLoader extends AbstractFileLoader {
             return;
         }
         
-        // skip ancestor file, date, user name, project
+        // Skip ancestor file, date, user name, and project.
         for (int i = 0; i < 4; i++) {
             reader.readLine();
         }
 
-        // read the study type from the last header line
+        // Read the study type from the last header line.
         studyType = reader.readLine();
 
         String headerLine;
@@ -114,18 +114,16 @@ public class ZplotLoader extends AbstractFileLoader {
         if (headers.length < 7 || headers.length > 8) {
             addMessage("Wrong number of header fields in Zplot file %s: " +
                     "expected 7 or 8, got %s", file.getName(), headers.length);
-            // return;
         }
         for (int i = 0; i < HEADERS.size(); i++) {
             if (!HEADERS.get(i).matcher(headers[i]).matches()) {
                 addMessage("Unknown header field %s in file %s.",
                         headers[i], file.getName());
-                // return;
             }
         }
         String line;
         while ((line = reader.readLine()) != null) {
-            TreatmentStep step = lineToTreatmentStep(line);
+            final TreatmentStep step = lineToTreatmentStep(line);
             if (step != null) {
                 treatmentSteps.add(step);
             }
