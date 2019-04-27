@@ -16,24 +16,39 @@
  */
 package net.talvi.puffinplot.data.file;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import net.talvi.puffinplot.data.TreatmentStep;
 
 /**
  *
  * @author pont
  */
-public interface FileLoader2 {
- 
-    LoadedData readFile(File file, Map<String, Object> options);
-    
-    default LoadedData readFile(File file) {
-        return readFile(file, Collections.emptyMap());
-    }
+public class EmptyLoadedData implements LoadedData {
 
-    default List<OptionDefinition> getOptionDefinitions() {
+    private final List<String> messages;
+
+    public EmptyLoadedData(String message) {
+        this.messages = Collections.singletonList(message);
+    }
+    
+    public EmptyLoadedData() {
+        this.messages = Collections.emptyList();
+    }
+    
+    @Override
+    public List<TreatmentStep> getTreatmentSteps() {
         return Collections.emptyList();
     }
+
+    @Override
+    public List<String> getMessages() {
+        return messages;
+    }
+
+    @Override
+    public List<String> getExtraLines() {
+        return Collections.emptyList();
+    }
+    
 }
