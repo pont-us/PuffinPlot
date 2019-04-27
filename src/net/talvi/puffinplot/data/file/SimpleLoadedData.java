@@ -26,7 +26,7 @@ import net.talvi.puffinplot.data.TreatmentStep;
  */
 public class SimpleLoadedData implements LoadedData {
 
-    private final List<TreatmentStep> treatmentSteps = new ArrayList<>();
+    private List<TreatmentStep> treatmentSteps = new ArrayList<>();
     private final List<String> messages = new ArrayList<>();
     private final List<String> extraLines = new ArrayList<>();
     
@@ -56,6 +56,9 @@ public class SimpleLoadedData implements LoadedData {
     public void addExtraLine(String extraLine) {
         extraLines.add(extraLine);
     }
-    
+
+    public void setTreatmentSteps(List<TreatmentStep> steps) {
+        this.treatmentSteps = steps;
+    }
     
 }
