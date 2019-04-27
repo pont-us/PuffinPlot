@@ -49,8 +49,8 @@ public class SimpleLoadedData implements LoadedData {
         treatmentSteps.add(step);
     }
     
-    public void addMessage(String message) {
-        messages.add(message);
+    public void addMessage(String message, Object... args) {
+        messages.add(String.format(message, args));
     }
     
     public void addExtraLine(String extraLine) {

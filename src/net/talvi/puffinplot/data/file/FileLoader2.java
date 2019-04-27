@@ -27,7 +27,7 @@ import java.util.Map;
  */
 public interface FileLoader2 {
  
-    LoadedData readFile(File file, Map<String, Object> options);
+    LoadedData readFile(File file, Map<Object, Object> options);
     
     default LoadedData readFile(File file) {
         return readFile(file, Collections.emptyMap());

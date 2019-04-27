@@ -60,7 +60,7 @@ public class CaltechLoader2 implements FileLoader2 {
     private final Pattern pattern = Pattern.compile(patternString);
 
     @Override
-    public LoadedData readFile(File file, Map<String, Object> options) {
+    public LoadedData readFile(File file, Map<Object, Object> options) {
         final File parentDir = file.getParentFile();
         try (LineNumberReader reader =
                 new LineNumberReader(new FileReader(file))) {
