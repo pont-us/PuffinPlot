@@ -23,6 +23,8 @@ import java.util.regex.Pattern;
 import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.Vec3;
 
+import static java.lang.Double.doubleToLongBits;
+
 /**
  * A line of data (corresponding to a treatment step) in a PMD file.
  */
@@ -36,7 +38,8 @@ class PmdDataLine {
             "^(.....)%s %s %s %s %s %s %s %s ([ 0-9]\\d[.]\\d) (.*)$",
             NUM_REGEX_1, NUM_REGEX_1, NUM_REGEX_1, NUM_REGEX_1,
             NUM_REGEX_2, NUM_REGEX_3, NUM_REGEX_2, NUM_REGEX_3);
-    private static final Pattern LINE_REGEX = Pattern.compile(LINE_REGEX_STRING);
+    private static final Pattern LINE_REGEX =
+            Pattern.compile(LINE_REGEX_STRING);
     public final TreatmentType treatmentType;
     public final int treatmentLevel;
     public final Vec3 moment;
@@ -57,11 +60,13 @@ class PmdDataLine {
         private static final Pattern REGEX_2 =
                 Pattern.compile("(\\d{1,3})M(T ?)? ");
         
-        /* Format 3: thermal treatment with "°C" suffix.
-         * I've only seen this format in PMD files exported by Remasoft 3.
-         * The regular expression also allows "░" for the degree symbol,
-         * since this is produced if an ISO-8859-1 file is read using the
-         * CP437 encoding. See comment in PmdLoader class for more details.
+        /*
+         * Format 3: thermal treatment with "°C" suffix.
+         *
+         * I've only seen this format in PMD files exported by Remasoft 3. The
+         * regular expression also allows "░" for the degree symbol, since this
+         * is produced if an ISO-8859-1 file is read using the CP437 encoding.
+         * See comment in PmdLoader class for more details.
          */
         private static final Pattern REGEX_3 =
                 Pattern.compile("(\\d{1,3})[░°]C {0,2}");
@@ -111,16 +116,16 @@ class PmdDataLine {
     }
     
     public PmdDataLine(TreatmentType treatmentType, int treatmentLevel,
-                       double[] d, String comment) {
+                       double[] values, String comment) {
         this.treatmentType = treatmentType;
         this.treatmentLevel = treatmentLevel;
-        this.moment = new Vec3(d[0], d[1], d[2]);
-        this.magnetization = d[3];
-        this.sampleCorrectedDeclination = d[4];
-        this.sampleCorrectedInclination = d[5];
-        this.formationCorrectedDeclination = d[6];
-        this.formationCorrectedInclination = d[7];
-        this.alpha95 = d[8];
+        this.moment = new Vec3(values[0], values[1], values[2]);
+        this.magnetization = values[3];
+        this.sampleCorrectedDeclination = values[4];
+        this.sampleCorrectedInclination = values[5];
+        this.formationCorrectedDeclination = values[6];
+        this.formationCorrectedInclination = values[7];
+        this.alpha95 = values[8];
         this.comment = comment;
     }
     
@@ -129,12 +134,12 @@ class PmdDataLine {
         if (!matcher.matches()) {
             throw new IllegalArgumentException();
         }
-        final double[] d = new double[9];
-        for (int i=0; i<9; i++) {
-            d[i] = Double.parseDouble(matcher.group(i+2));
+        final double[] values = new double[9];
+        for (int i = 0; i < 9; i++) {
+            values[i] = Double.parseDouble(matcher.group(i + 2));
         }
         final PmdTreatment treatment = PmdTreatment.parse(matcher.group(1));
-        return new PmdDataLine(treatment.type, treatment.level, d,
+        return new PmdDataLine(treatment.type, treatment.level, values,
                 matcher.group(11));
     }
     
@@ -156,7 +161,8 @@ class PmdDataLine {
                 magnetization == pdl.magnetization &&
                 sampleCorrectedDeclination == pdl.sampleCorrectedDeclination &&
                 sampleCorrectedInclination == pdl.sampleCorrectedInclination &&
-                formationCorrectedDeclination == pdl.formationCorrectedDeclination &&
+                formationCorrectedDeclination
+                    == pdl.formationCorrectedDeclination &&
                 alpha95 == pdl.alpha95 &&
                 comment.equals(pdl.comment);
     }
@@ -167,13 +173,20 @@ class PmdDataLine {
         hash = 83 * hash + Objects.hashCode(this.treatmentType);
         hash = 83 * hash + this.treatmentLevel;
         hash = 83 * hash + Objects.hashCode(this.moment);
-        hash = 83 * hash + (int) (Double.doubleToLongBits(this.magnetization) ^ (Double.doubleToLongBits(this.magnetization) >>> 32));
-        hash = 83 * hash + (int) (Double.doubleToLongBits(this.sampleCorrectedDeclination) ^ (Double.doubleToLongBits(this.sampleCorrectedDeclination) >>> 32));
-        hash = 83 * hash + (int) (Double.doubleToLongBits(this.sampleCorrectedInclination) ^ (Double.doubleToLongBits(this.sampleCorrectedInclination) >>> 32));
-        hash = 83 * hash + (int) (Double.doubleToLongBits(this.formationCorrectedDeclination) ^ (Double.doubleToLongBits(this.formationCorrectedDeclination) >>> 32));
-        hash = 83 * hash + (int) (Double.doubleToLongBits(this.alpha95) ^ (Double.doubleToLongBits(this.alpha95) >>> 32));
+        hash = 83 * hash + (int) (doubleToLongBits(this.magnetization)
+                ^ (doubleToLongBits(this.magnetization) >>> 32));
+        hash = 83 * hash
+                + (int) (doubleToLongBits(this.sampleCorrectedDeclination)
+                ^ (doubleToLongBits(this.sampleCorrectedDeclination) >>> 32));
+        hash = 83 * hash
+                + (int) (doubleToLongBits(this.sampleCorrectedInclination)
+                ^ (doubleToLongBits(this.sampleCorrectedInclination) >>> 32));
+        hash = 83 * hash
+                + (int) (doubleToLongBits(this.formationCorrectedDeclination)
+                ^ (doubleToLongBits(this.formationCorrectedDeclination) >>> 32));
+        hash = 83 * hash + (int) (doubleToLongBits(this.alpha95)
+                ^ (doubleToLongBits(this.alpha95) >>> 32));
         hash = 83 * hash + Objects.hashCode(this.comment);
         return hash;
     }
-    
 }

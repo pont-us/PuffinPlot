@@ -85,11 +85,16 @@ class PmdHeaderLine {
     public int hashCode() {
         int hash = 3;
         hash = 47 * hash + Objects.hashCode(this.name);
-        hash = 47 * hash + (int) (Double.doubleToLongBits(this.sampleAzimuth) ^ (Double.doubleToLongBits(this.sampleAzimuth) >>> 32));
-        hash = 47 * hash + (int) (Double.doubleToLongBits(this.sampleHade) ^ (Double.doubleToLongBits(this.sampleHade) >>> 32));
-        hash = 47 * hash + (int) (Double.doubleToLongBits(this.formationStrike) ^ (Double.doubleToLongBits(this.formationStrike) >>> 32));
-        hash = 47 * hash + (int) (Double.doubleToLongBits(this.formationDip) ^ (Double.doubleToLongBits(this.formationDip) >>> 32));
-        hash = 47 * hash + (int) (Double.doubleToLongBits(this.volume) ^ (Double.doubleToLongBits(this.volume) >>> 32));
+        hash = 47 * hash + (int) (Double.doubleToLongBits(this.sampleAzimuth)
+                ^ (Double.doubleToLongBits(this.sampleAzimuth) >>> 32));
+        hash = 47 * hash + (int) (Double.doubleToLongBits(this.sampleHade)
+                ^ (Double.doubleToLongBits(this.sampleHade) >>> 32));
+        hash = 47 * hash + (int) (Double.doubleToLongBits(this.formationStrike)
+                ^ (Double.doubleToLongBits(this.formationStrike) >>> 32));
+        hash = 47 * hash + (int) (Double.doubleToLongBits(this.formationDip)
+                ^ (Double.doubleToLongBits(this.formationDip) >>> 32));
+        hash = 47 * hash + (int) (Double.doubleToLongBits(this.volume)
+                ^ (Double.doubleToLongBits(this.volume) >>> 32));
         return hash;
     }
 

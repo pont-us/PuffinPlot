@@ -51,13 +51,13 @@ public final class FileFormat {
     private final List<Integer> columnWidths;
     private final MomentUnit momentUnit;
     private final FieldUnit fieldUnit;
-    private final static String prefsPrefix = "fileformat";
-    private final static String[] emptyStringArray = {};
+    private final static String PREFS_PREFIX = "fileformat";
+    private final static String[] EMPTY_STRING_ARRAY = {};
     private final boolean specifiesVolume;
     
     /**
      * Creates a new file format with the specified parameters.
-     * 
+     *
      * @param columnMap a mapping from column numbers (0-indexed) to data fields
      * @param headerLines number of header lines to skip
      * @param measurementType type of all measurements in file
@@ -65,13 +65,15 @@ public final class FileFormat {
      * @param separator column separator for non-fixed-width-column formats
      * @param useFixedWidthColumns whether this format uses fixed-width columns
      * @param columnWidths the widths of columns for fixed-width-column formats
-     * @param momentUnit units in which magnetic moment per unit volume is expressed
+     * @param momentUnit units in which magnetic moment per unit volume is
+     * expressed
      * @param fieldUnit units in which magnetic field strength is expressed
      */
-    public FileFormat(Map<Integer, TreatmentParameter> columnMap, int headerLines,
-                      MeasurementType measurementType, TreatmentType treatmentType,
-                      String separator, boolean useFixedWidthColumns,
-                      List<Integer> columnWidths, MomentUnit momentUnit, FieldUnit fieldUnit) {
+    public FileFormat(Map<Integer, TreatmentParameter> columnMap,
+            int headerLines, MeasurementType measurementType,
+            TreatmentType treatmentType, String separator,
+            boolean useFixedWidthColumns, List<Integer> columnWidths,
+            MomentUnit momentUnit, FieldUnit fieldUnit) {
         this.columnMap = new HashMap<>(columnMap);
         this.headerLines = headerLines;
         this.separator = separator;
@@ -81,7 +83,8 @@ public final class FileFormat {
         this.columnWidths = columnWidths;
         this.momentUnit = momentUnit;
         this.fieldUnit = fieldUnit;
-        this.specifiesVolume = columnMap.values().contains(TreatmentParameter.VOLUME);
+        this.specifiesVolume =
+                columnMap.values().contains(TreatmentParameter.VOLUME);
     }
     
     private String[] splitLine(String line) {
@@ -92,15 +95,16 @@ public final class FileFormat {
                 result.add(line.substring(start, start+width));
                 start += width;
             }
-            return result.toArray(emptyStringArray);
+            return result.toArray(EMPTY_STRING_ARRAY);
         } else {
             return line.split(separator);
         }
     }
     
     /**
-     * Creates a {@link TreatmentStep} from a line formatted according to this format.
-     * 
+     * Creates a {@link TreatmentStep} from a line formatted according to this
+     * format.
+     *
      * @param line a line formatted according this this format
      * @return the datum defined by the supplied line
      */
@@ -116,7 +120,7 @@ public final class FileFormat {
         treatmentStep.setFormAz(0);
         treatmentStep.setFormDip(0);
         double dec = Double.NaN, inc = Double.NaN, intensity = Double.NaN;
-        for (int i=0; i<fieldStrings.length; i++) {
+        for (int i = 0; i < fieldStrings.length; i++) {
             if (!columnMap.containsKey(i)) {
                 continue;
             }
@@ -172,29 +176,33 @@ public final class FileFormat {
      * @return the data defined by the lines (in the same order)
      */
     public List<TreatmentStep> readLines(List<String> lines) {
-        final List<TreatmentStep> data = new ArrayList<>(lines.size() - headerLines);
+        final List<TreatmentStep> steps =
+                new ArrayList<>(lines.size() - headerLines);
         for (int i=headerLines; i<lines.size(); i++) {
-            data.add(readLine(lines.get(i)));
+            steps.add(readLine(lines.get(i)));
         }
-        return data;
+        return steps;
     }
     
     /**
      * Turns a string containing comma-separated decimal integers into a
      * {@link List} of {@link Integer}s.
      * 
-     * @param widthString a string of comma-separated decimal integers
+     * @param widthsString a string of comma-separated decimal integers
      * @return the list of integers defined by the input string
      */
-    public static List<Integer> convertStringToColumnWidths(String widthString) {
-        String[] widths = widthString.trim().split(" *, *");
-        List<Integer> result = new ArrayList<>(widths.length);
-        for (String wString: widths) {
-            if ("".equals(wString)) continue;
+    public static List<Integer> convertStringToColumnWidths(
+            String widthsString) {
+        final String[] widths = widthsString.trim().split(" *, *");
+        final List<Integer> result = new ArrayList<>(widths.length);
+        for (String thisWidth: widths) {
+            if ("".equals(thisWidth)) {
+                continue;
+            }
             try {
-                result.add(Integer.parseInt(wString));
+                result.add(Integer.parseInt(thisWidth));
             } catch (NumberFormatException ex) {
-                // ignore ill-formed fields
+                // ignore malformed fields
             }
         }
         return result;
@@ -221,7 +229,7 @@ public final class FileFormat {
      * @param prefs the preferences to which to save this format
      */
     public void writeToPrefs(Preferences prefs) {
-        final String pp = prefsPrefix;
+        final String pp = PREFS_PREFIX;
         prefs.put(pp+".separator", separator);
         prefs.putInt(pp+".headerLines", headerLines);
         prefs.put(pp+".measType", measurementType.toString());
@@ -249,17 +257,21 @@ public final class FileFormat {
      * @return the corresponding format
      */
     public static FileFormat readFromPrefs(Preferences prefs) {
-        final String pp = prefsPrefix;
-        final String separator = prefs.get(pp+".separator", "\t");
-        final int headerLines = prefs.getInt(pp+".headerLines", 0);
+        final String pp = PREFS_PREFIX;
+        final String separator = prefs.get(pp + ".separator", "\t");
+        final int headerLines = prefs.getInt(pp + ".headerLines", 0);
         final MeasurementType measurementType =
-                MeasurementType.valueOf(prefs.get(pp+".measType", "CONTINUOUS"));
+                MeasurementType.valueOf(
+                        prefs.get(pp + ".measType", "CONTINUOUS"));
         final TreatmentType treatmentType =
-                TreatmentType.valueOf(prefs.get(pp+".treatType", "DEGAUSS_XYZ"));
-        final boolean useFixedWidth = prefs.getBoolean(pp+".useFixedWidth", false);
+                TreatmentType.valueOf(prefs.get(
+                        pp + ".treatType", "DEGAUSS_XYZ"));
+        final boolean useFixedWidth = prefs.getBoolean(
+                pp + ".useFixedWidth", false);
         final List<Integer> columnWidths =
-                convertStringToColumnWidths(prefs.get(pp+".columnWidths", ""));
-        final String columnString = prefs.get(pp+".columnMap", "");
+                convertStringToColumnWidths(
+                        prefs.get(pp + ".columnWidths", ""));
+        final String columnString = prefs.get(pp + ".columnMap", "");
         final String[] columnDefs = columnString.split("\t");
         final Map<Integer, TreatmentParameter> columnMap =
                 new LinkedHashMap<>(columnDefs.length);
@@ -267,15 +279,17 @@ public final class FileFormat {
             if ("".equals(columnDef)) continue;
             final String[] parts = columnDef.split(",");
             final int column = Integer.parseInt(parts[0]);
-            final TreatmentParameter field = TreatmentParameter.valueOf(parts[1]);
+            final TreatmentParameter field =
+                    TreatmentParameter.valueOf(parts[1]);
             columnMap.put(column, field);
         }
         final MomentUnit momentUnit =
                 MomentUnit.valueOf(prefs.get(pp+".momentUnit", "AM"));
         final FieldUnit fieldUnit =
                 FieldUnit.valueOf(prefs.get(pp+".fieldUnit", "TESLA"));
-        return new FileFormat(columnMap, headerLines, measurementType, treatmentType,
-                separator, useFixedWidth, columnWidths, momentUnit, fieldUnit);
+        return new FileFormat(columnMap, headerLines, measurementType,
+                treatmentType, separator, useFixedWidth, columnWidths,
+                momentUnit, fieldUnit);
     }
 
     /**
@@ -326,7 +340,8 @@ public final class FileFormat {
      * For a full magnetization vector, the format must contain either
      * all three Cartesian co-ordinates, or all three polar co-ordinates.
      * 
-     * @return {@code true} iff this format specifies a full magnetization vector
+     * @return {@code true} iff this format specifies a full magnetization
+     * vector
      */
     public boolean specifiesFullVector() {
         return (columnMap.containsValue(TreatmentParameter.X_MOMENT) &&
@@ -344,7 +359,8 @@ public final class FileFormat {
      * all three Cartesian co-ordinates, or both inclination and declination
      * fields.
      * 
-     * @return {@code true} iff this format specifies a three-dimensional direction
+     * @return {@code true} iff this format specifies a three-dimensional
+     * direction
      */
     public boolean specifiesDirection() {
         return specifiesFullVector() ||
