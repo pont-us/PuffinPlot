@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
-import java.util.LinkedList;
 import java.util.Map;
 
 import net.talvi.puffinplot.data.MeasurementType;

@@ -107,8 +107,6 @@ public class TwoGeeLoader2 implements FileLoader2 {
      *
      * @param file the file to read
      */
-    //public TwoGeeLoader2(File file, Protocol protocol, Vec3 sensorLengths,
-    //        boolean usePolarMoment) {
     @Override
     public LoadedData readFile(File file, Map<Object, Object> options) {
         Objects.requireNonNull(file);

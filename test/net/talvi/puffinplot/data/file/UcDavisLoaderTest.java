@@ -17,7 +17,6 @@
 package net.talvi.puffinplot.data.file;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -34,7 +33,6 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
@@ -109,7 +107,7 @@ public class UcDavisLoaderTest {
         suite = new Suite(getClass().getSimpleName());
         
         suite.readFiles(Arrays.asList(new File[] { file } ),
-                null, TwoGeeLoader.Protocol.NORMAL, true,
+                null, TwoGeeLoader2.Protocol.NORMAL, true,
                 FileType.UCDAVIS, null, options);
         
         for (int i=0; i<FILE_DATA.length; i++) {

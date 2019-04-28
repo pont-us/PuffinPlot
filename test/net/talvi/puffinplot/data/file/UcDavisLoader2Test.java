@@ -103,7 +103,7 @@ public class UcDavisLoader2Test {
         suite = new Suite(getClass().getSimpleName());
         
         suite.readFiles(Arrays.asList(new File[] { file } ),
-                null, TwoGeeLoader.Protocol.NORMAL, true,
+                null, TwoGeeLoader2.Protocol.NORMAL, true,
                 FileType.UCDAVIS, null, new HashMap<>());
         
         for (int i=0; i<FILE_DATA.length; i++) {

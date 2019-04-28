@@ -55,12 +55,13 @@ import net.talvi.puffinplot.PuffinActions;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.PuffinPrefs;
 import net.talvi.puffinplot.data.SensorLengths;
-import net.talvi.puffinplot.data.file.TwoGeeLoader;
+import net.talvi.puffinplot.data.file.TwoGeeLoader2;
 import net.talvi.puffinplot.plots.Plot;
 
 import static java.awt.GridBagConstraints.LINE_START;
 import static java.awt.GridBagConstraints.LINE_END;
 import static java.awt.GridBagConstraints.BOTH;
+import net.talvi.puffinplot.data.file.TwoGeeLoader2;
 
 /**
  * A window which allows the user to change PuffinPlot's preferences.
@@ -155,8 +156,8 @@ public class PrefsWindow extends JFrame {
         gbConstraints.gridwidth = 1;
         gbConstraints.weightx = 0.25;
         gbConstraints.anchor = LINE_END;
-        final TwoGeeLoader.Protocol[] protocolValues =
-                TwoGeeLoader.Protocol.values();
+        final TwoGeeLoader2.Protocol[] protocolValues =
+                TwoGeeLoader2.Protocol.values();
         final String[] protocolStrings = new String[protocolValues.length];
         for (int i=0; i<protocolValues.length; i++) {
             protocolStrings[i] = protocolValues[i].name();
@@ -352,7 +353,7 @@ public class PrefsWindow extends JFrame {
     
     private void applySettings() {
         presetsBox.applySettings();
-        prefs.set2gProtocol(TwoGeeLoader.Protocol.valueOf(
+        prefs.set2gProtocol(TwoGeeLoader2.Protocol.valueOf(
                 prefs.getPrefs().get("measurementProtocol", "NORMAL")));
         /*
          * PlotBox settings are applied instantly so we don't need to apply

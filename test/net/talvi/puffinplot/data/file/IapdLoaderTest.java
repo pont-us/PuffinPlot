@@ -219,7 +219,7 @@ public class IapdLoaderTest {
     
     private void readFile(File file) throws IOException {
         suite.readFiles(Arrays.asList(new File[] { file }),
-                null, TwoGeeLoader.Protocol.NORMAL, true,
+                null, TwoGeeLoader2.Protocol.NORMAL, true,
                 FileType.IAPD, null, options);
     }
 

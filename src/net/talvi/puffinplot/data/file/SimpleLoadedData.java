@@ -18,6 +18,7 @@ package net.talvi.puffinplot.data.file;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import net.talvi.puffinplot.data.TreatmentStep;
 
 /**
@@ -50,7 +51,7 @@ public class SimpleLoadedData implements LoadedData {
     }
     
     public void addMessage(String message, Object... args) {
-        messages.add(String.format(message, args));
+        messages.add(String.format(Locale.ENGLISH, message, args));
     }
     
     public void addExtraLine(String extraLine) {

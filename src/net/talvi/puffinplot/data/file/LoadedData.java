@@ -23,7 +23,7 @@ import net.talvi.puffinplot.data.TreatmentStep;
  *
  * @author pont
  */
-interface LoadedData {
+public interface LoadedData {
     
     List<TreatmentStep> getTreatmentSteps();
     

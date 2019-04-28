@@ -53,7 +53,6 @@ public class PmdLoader2 implements FileLoader2 {
         "STEP  Xc (Am2)  Yc (Am2)  Zc (Am2)  MAG(A/m)   Dg    Ig    Ds    Is   a95 "
     });
 
-    private final String fileIdentifier;
     private String firstLineComment = "";
 
     /**
@@ -112,7 +111,7 @@ public class PmdLoader2 implements FileLoader2 {
              */
             final List<String> lines =
                     reader.lines().collect(Collectors.toList());
-            processLines(lines, loadedData);
+            processLines(lines, loadedData, fileId);
         } catch (IOException | UncheckedIOException ex) {
             loadedData.addMessage("Error reading file %s", fileId);
         } finally {
@@ -121,11 +120,8 @@ public class PmdLoader2 implements FileLoader2 {
 
     }
 
-    private PmdLoader2() {
-        fileIdentifier = "";
-    }
-
-    private void processLines(List<String> lines, SimpleLoadedData loadedData) {
+    private void processLines(List<String> lines, SimpleLoadedData loadedData,
+            String fileId) {
         // Line 0 contains an optional comment.
         firstLineComment = lines.get(0);
         // Line 1 is the first of two header lines.
@@ -180,7 +176,7 @@ public class PmdLoader2 implements FileLoader2 {
                     toRadians(headerLine.formationStrike + 90),
                     toRadians(headerLine.formationDip));
             final String location = String.format("file %s, line %d",
-                    fileIdentifier, lineIndex+1);
+                    fileId, lineIndex+1);
             checkConsistency(location, sampleCorrected.getDecDeg(),
                     dataLine.sampleCorrectedDeclination, 0.3,
                     loadedData);

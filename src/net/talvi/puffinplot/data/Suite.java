@@ -46,17 +46,18 @@ import java.util.stream.Collectors;
 
 import net.talvi.puffinplot.PuffinUserException;
 import net.talvi.puffinplot.data.file.AmsLoader;
-import net.talvi.puffinplot.data.file.CaltechLoader;
+import net.talvi.puffinplot.data.file.CaltechLoader2;
 import net.talvi.puffinplot.data.file.FileFormat;
-import net.talvi.puffinplot.data.file.FileLoader;
-import net.talvi.puffinplot.data.file.IapdLoader;
-import net.talvi.puffinplot.data.file.Jr6Loader;
-import net.talvi.puffinplot.data.file.PmdLoader;
-import net.talvi.puffinplot.data.file.PplLoader;
-import net.talvi.puffinplot.data.file.TabularFileLoader;
-import net.talvi.puffinplot.data.file.TwoGeeLoader;
-import net.talvi.puffinplot.data.file.UcDavisLoader;
-import net.talvi.puffinplot.data.file.ZplotLoader;
+import net.talvi.puffinplot.data.file.FileLoader2;
+import net.talvi.puffinplot.data.file.IapdLoader2;
+import net.talvi.puffinplot.data.file.Jr6Loader2;
+import net.talvi.puffinplot.data.file.LoadedData;
+import net.talvi.puffinplot.data.file.PmdLoader2;
+import net.talvi.puffinplot.data.file.PplLoader2;
+import net.talvi.puffinplot.data.file.TabularFileLoader2;
+import net.talvi.puffinplot.data.file.TwoGeeLoader2;
+import net.talvi.puffinplot.data.file.UcDavisLoader2;
+import net.talvi.puffinplot.data.file.ZplotLoader2;
 
 /**
  * A suite of data, containing a number of samples. This will usually correspond
@@ -470,7 +471,7 @@ public final class Suite implements SampleGroup {
      * Convenience method for reading PuffinPlot files.
      *
      * This method is a wrapper for the fully specified method 
-     * {@code ReadFiles(List<File>, SensorLengths, TwoGeeLoader.Protocol, boolean, FileType, FileFormat, Map<Object,Object>)}
+     * {@code ReadFiles(List<File>, SensorLengths, TwoGeeLoader2.Protocol, boolean, FileType, FileFormat, Map<Object,Object>)}
      * which provides defaults for all the arguments except for the list of file
      * names. The filetype is set to PUFFINPLOT_NEW.
        * 
@@ -479,7 +480,7 @@ public final class Suite implements SampleGroup {
      */
     public void readFiles(List<File> files) throws IOException {
         readFiles(files, SensorLengths.fromPresetName("1:1:1"),
-                TwoGeeLoader.Protocol.NORMAL, false,
+                TwoGeeLoader2.Protocol.NORMAL, false,
                 FileType.PUFFINPLOT_NEW, null,
                 Collections.emptyMap());
     }
@@ -504,7 +505,7 @@ public final class Suite implements SampleGroup {
      * @throws IOException if an I/O error occurred while reading the files 
      */
     public void readFiles(List<File> files, SensorLengths sensorLengths,
-            TwoGeeLoader.Protocol protocol, boolean usePolarMoment,
+            TwoGeeLoader2.Protocol protocol, boolean usePolarMoment,
             FileType fileType, FileFormat format,
             Map<Object,Object> importOptions) throws IOException {
         Objects.requireNonNull(files, "files may not be null");
@@ -555,45 +556,62 @@ public final class Suite implements SampleGroup {
                 continue;
             }
 
-            FileLoader loader = null;
+            FileLoader2 loader;
+            final Map<Object, Object> options = new HashMap<>(importOptions);
+            LoadedData loadedData = null;
             switch (fileType) {
             case TWOGEE:
-                TwoGeeLoader twoGeeLoader =
-                        new TwoGeeLoader(file, protocol,
-                                sensorLengths.toVector(), usePolarMoment);
-                loader = twoGeeLoader;
+                loader = new TwoGeeLoader2();
+                options.put("protocol", protocol);
+                options.put("sensor_lengths", sensorLengths.toVector());
+                options.put("use_polar_moment", usePolarMoment);
+                loadedData = loader.readFile(file, options);
                 break;
             case PUFFINPLOT_OLD:
-                TwoGeeLoader oldPuffinLoader =
-                        new TwoGeeLoader(file, protocol,
-                                sensorLengths.toVector(), usePolarMoment);
-                loader = oldPuffinLoader;
-                if (files.size()==1) puffinFile = file;
+                loader = new TwoGeeLoader2();
+                options.put("protocol", protocol);
+                options.put("sensor_lengths", sensorLengths.toVector());
+                options.put("use_polar_moment", usePolarMoment);
+                loadedData = loader.readFile(file, options);
+                if (files.size() == 1) {
+                    puffinFile = file;
+                }
                 break;
             case PUFFINPLOT_NEW:
-                loader = new PplLoader(file);
-                if (files.size()==1) puffinFile = file;
+                loader = new PplLoader2();
+                loadedData = loader.readFile(file, options);
+                if (files.size() == 1) {
+                    puffinFile = file;
+                }
                 break;
             case ZPLOT:
-                loader = new ZplotLoader(file);
+                loader = new ZplotLoader2();
+                loadedData = loader.readFile(file, options);
                 break;
             case CALTECH:
-                loader = new CaltechLoader(file);
+                loader = new CaltechLoader2();
+                loadedData = loader.readFile(file, options);
                 break;
             case IAPD:
-                loader = new IapdLoader(file, importOptions);
+                loader = new IapdLoader2();
+                loadedData = loader.readFile(file, options);
                 break;
             case UCDAVIS:
-                loader = new UcDavisLoader(file, importOptions);
+                loader = new UcDavisLoader2();
+                loadedData = loader.readFile(file, options);
                 break;
             case CUSTOM_TABULAR:
-                loader = new TabularFileLoader(file, format);
+                loader = new TabularFileLoader2();
+                options.put("format", format);
+                loadedData = loader.readFile(file, options);
                 break;
             case PMD_ENKIN:
-                loader = PmdLoader.readFile(file, importOptions);
+                loader = new PmdLoader2();
+                loadedData = loader.readFile(file, options);
                 break;
             case JR6:
-                loader = Jr6Loader.readFile(file, importOptions);
+                loader = new Jr6Loader2();
+                loadedData = loader.readFile(file, options);
                 break;
             case DIRECTIONS:
                 readDirectionalData(files);
@@ -604,11 +622,12 @@ public final class Suite implements SampleGroup {
                 break;
             }
             
-            if (loader != null) {
-                final List<TreatmentStep> loadedData = loader.getTreatmentSteps();
+            if (loadedData != null) {
+                final List<TreatmentStep> loadedSteps =
+                        loadedData.getTreatmentSteps();
                 
                 final Set<MeasurementType> measTypes =
-                        TreatmentStep.collectMeasurementTypes(loadedData);
+                        TreatmentStep.collectMeasurementTypes(loadedSteps);
                 
                 boolean dataIsOk = true;
                 if (measTypes.contains(MeasurementType.DISCRETE) &&
@@ -643,13 +662,13 @@ public final class Suite implements SampleGroup {
                 
                 if (dataIsOk) {
                     tempDataList.ensureCapacity(tempDataList.size() +
-                            loadedData.size());
-                    for (TreatmentStep step: loadedData) {
+                            loadedSteps.size());
+                    for (TreatmentStep step: loadedSteps) {
                         // TODO: check for matching measurement type here
                         if (!step.ignoreOnLoading()) addTreatmentStep(step);
                     }
-                    loadWarnings.addAll(loader.getMessages());
-                    puffinLines = loader.getExtraLines();
+                    loadWarnings.addAll(loadedData.getMessages());
+                    puffinLines = loadedData.getExtraLines();
                 }
             }
             
