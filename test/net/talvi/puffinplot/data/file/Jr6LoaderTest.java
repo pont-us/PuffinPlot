@@ -42,7 +42,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class Jr6Loader2Test {
+public class Jr6LoaderTest {
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
@@ -669,7 +669,7 @@ public class Jr6Loader2Test {
         final InputStream stream =
                 TestFileLocator.class.getResourceAsStream(filename);
         
-        final Jr6Loader2 jr6loader = new Jr6Loader2();
+        final Jr6Loader jr6loader = new Jr6Loader();
         final LoadedData loadedData =
                 jr6loader.readStream(stream, filename, TreatmentType.THERMAL);
         assertFalse(loadedData.getTreatmentSteps().isEmpty());
@@ -741,7 +741,7 @@ public class Jr6Loader2Test {
     
     @Test
     public void testNonExistentFile() {
-        final Jr6Loader2 jr6Loader = new Jr6Loader2();
+        final Jr6Loader jr6Loader = new Jr6Loader();
         final LoadedData loadedData = jr6Loader.readFile(
                 temporaryFolder.getRoot().toPath().resolve("nonexistent")
                         .toFile(),
@@ -757,7 +757,7 @@ public class Jr6Loader2Test {
          * IOException will be thrown when the constructor tries to read from
          * it.
          */
-        final Jr6Loader2 jr6Loader = new Jr6Loader2();
+        final Jr6Loader jr6Loader = new Jr6Loader();
         final LoadedData loadedData = jr6Loader.readStream(new PipedInputStream(), "test",
                         TreatmentType.THERMAL);
         assertEquals(0, loadedData.getTreatmentSteps().size());
@@ -771,7 +771,7 @@ public class Jr6Loader2Test {
         fileWriter.write("Re01      NRM       8.07-22.02 22.21  -4 156  "
                 + "78   0   0   0   0  6  0  6  0   1\n");
         fileWriter.close();
-        final Jr6Loader2 jr6Loader = new Jr6Loader2();
+        final Jr6Loader jr6Loader = new Jr6Loader();
         jr6Loader.readFile(output, Collections.emptyMap());
         /*
          * Contents not checked -- that's done in the readStream tests.

@@ -46,18 +46,18 @@ import java.util.stream.Collectors;
 
 import net.talvi.puffinplot.PuffinUserException;
 import net.talvi.puffinplot.data.file.AmsLoader;
-import net.talvi.puffinplot.data.file.CaltechLoader2;
+import net.talvi.puffinplot.data.file.CaltechLoader;
 import net.talvi.puffinplot.data.file.FileFormat;
-import net.talvi.puffinplot.data.file.FileLoader2;
-import net.talvi.puffinplot.data.file.IapdLoader2;
-import net.talvi.puffinplot.data.file.Jr6Loader2;
+import net.talvi.puffinplot.data.file.IapdLoader;
+import net.talvi.puffinplot.data.file.Jr6Loader;
 import net.talvi.puffinplot.data.file.LoadedData;
-import net.talvi.puffinplot.data.file.PmdLoader2;
-import net.talvi.puffinplot.data.file.PplLoader2;
-import net.talvi.puffinplot.data.file.TabularFileLoader2;
-import net.talvi.puffinplot.data.file.TwoGeeLoader2;
-import net.talvi.puffinplot.data.file.UcDavisLoader2;
-import net.talvi.puffinplot.data.file.ZplotLoader2;
+import net.talvi.puffinplot.data.file.PmdLoader;
+import net.talvi.puffinplot.data.file.PplLoader;
+import net.talvi.puffinplot.data.file.TabularFileLoader;
+import net.talvi.puffinplot.data.file.TwoGeeLoader;
+import net.talvi.puffinplot.data.file.UcDavisLoader;
+import net.talvi.puffinplot.data.file.ZplotLoader;
+import net.talvi.puffinplot.data.file.FileLoader;
 
 /**
  * A suite of data, containing a number of samples. This will usually correspond
@@ -471,7 +471,7 @@ public final class Suite implements SampleGroup {
      * Convenience method for reading PuffinPlot files.
      *
      * This method is a wrapper for the fully specified method 
-     * {@code ReadFiles(List<File>, SensorLengths, TwoGeeLoader2.Protocol, boolean, FileType, FileFormat, Map<Object,Object>)}
+     * {@code ReadFiles(List<File>, SensorLengths, TwoGeeLoader.Protocol, boolean, FileType, FileFormat, Map<Object,Object>)}
      * which provides defaults for all the arguments except for the list of file
      * names. The filetype is set to PUFFINPLOT_NEW.
        * 
@@ -480,7 +480,7 @@ public final class Suite implements SampleGroup {
      */
     public void readFiles(List<File> files) throws IOException {
         readFiles(files, SensorLengths.fromPresetName("1:1:1"),
-                TwoGeeLoader2.Protocol.NORMAL, false,
+                TwoGeeLoader.Protocol.NORMAL, false,
                 FileType.PUFFINPLOT_NEW, null,
                 Collections.emptyMap());
     }
@@ -505,7 +505,7 @@ public final class Suite implements SampleGroup {
      * @throws IOException if an I/O error occurred while reading the files 
      */
     public void readFiles(List<File> files, SensorLengths sensorLengths,
-            TwoGeeLoader2.Protocol protocol, boolean usePolarMoment,
+            TwoGeeLoader.Protocol protocol, boolean usePolarMoment,
             FileType fileType, FileFormat format,
             Map<Object,Object> importOptions) throws IOException {
         Objects.requireNonNull(files, "files may not be null");
@@ -556,19 +556,19 @@ public final class Suite implements SampleGroup {
                 continue;
             }
 
-            FileLoader2 loader;
+            FileLoader loader;
             final Map<Object, Object> options = new HashMap<>(importOptions);
             LoadedData loadedData = null;
             switch (fileType) {
             case TWOGEE:
-                loader = new TwoGeeLoader2();
+                loader = new TwoGeeLoader();
                 options.put("protocol", protocol);
                 options.put("sensor_lengths", sensorLengths.toVector());
                 options.put("use_polar_moment", usePolarMoment);
                 loadedData = loader.readFile(file, options);
                 break;
             case PUFFINPLOT_OLD:
-                loader = new TwoGeeLoader2();
+                loader = new TwoGeeLoader();
                 options.put("protocol", protocol);
                 options.put("sensor_lengths", sensorLengths.toVector());
                 options.put("use_polar_moment", usePolarMoment);
@@ -578,39 +578,39 @@ public final class Suite implements SampleGroup {
                 }
                 break;
             case PUFFINPLOT_NEW:
-                loader = new PplLoader2();
+                loader = new PplLoader();
                 loadedData = loader.readFile(file, options);
                 if (files.size() == 1) {
                     puffinFile = file;
                 }
                 break;
             case ZPLOT:
-                loader = new ZplotLoader2();
+                loader = new ZplotLoader();
                 loadedData = loader.readFile(file, options);
                 break;
             case CALTECH:
-                loader = new CaltechLoader2();
+                loader = new CaltechLoader();
                 loadedData = loader.readFile(file, options);
                 break;
             case IAPD:
-                loader = new IapdLoader2();
+                loader = new IapdLoader();
                 loadedData = loader.readFile(file, options);
                 break;
             case UCDAVIS:
-                loader = new UcDavisLoader2();
+                loader = new UcDavisLoader();
                 loadedData = loader.readFile(file, options);
                 break;
             case CUSTOM_TABULAR:
-                loader = new TabularFileLoader2();
+                loader = new TabularFileLoader();
                 options.put("format", format);
                 loadedData = loader.readFile(file, options);
                 break;
             case PMD_ENKIN:
-                loader = new PmdLoader2();
+                loader = new PmdLoader();
                 loadedData = loader.readFile(file, options);
                 break;
             case JR6:
-                loader = new Jr6Loader2();
+                loader = new Jr6Loader();
                 loadedData = loader.readFile(file, options);
                 break;
             case DIRECTIONS:

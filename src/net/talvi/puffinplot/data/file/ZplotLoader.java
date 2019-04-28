@@ -41,7 +41,7 @@ import static net.talvi.puffinplot.data.file.TwoGeeHelper.oerstedToTesla;
  * 
  * @author pont
  */
-public class ZplotLoader2 implements FileLoader2 {
+public class ZplotLoader implements FileLoader {
 
     private LineNumberReader reader;
     private File file;

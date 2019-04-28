@@ -46,14 +46,14 @@ public class TwoGeeLoader2Test {
     private static final double DELTA = 1e-15;
     
     private final Map<Object, Object> defaultOptions =
-            makeOptions(TwoGeeLoader2.Protocol.NORMAL, true, 1, 1, 1);
+            makeOptions(TwoGeeLoader.Protocol.NORMAL, true, 1, 1, 1);
     
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Test
     public void testWithNonexistentFile() throws IOException {
-        final TwoGeeLoader2 loader = new TwoGeeLoader2();
+        final TwoGeeLoader loader = new TwoGeeLoader();
         final LoadedData loadedData = loader.readFile(
                 temporaryFolder.getRoot().toPath().resolve("nonexistent").
                         toFile(), defaultOptions);
@@ -65,7 +65,7 @@ public class TwoGeeLoader2Test {
     public void testWithEmptyFile() throws IOException {
         final File file = TestUtils.writeStringToTemporaryFile(
                 "EMPTY.DAT", null, temporaryFolder);
-        final TwoGeeLoader2 loader = new TwoGeeLoader2();
+        final TwoGeeLoader loader = new TwoGeeLoader();
         final LoadedData loadedData = loader.readFile(file,
                 defaultOptions);
         assertTrue(loadedData.getTreatmentSteps().isEmpty());
@@ -78,7 +78,7 @@ public class TwoGeeLoader2Test {
                         "MALFORMED.DAT",
                         "This is not a 2G file.\r\nLine 2\r\n",
                         temporaryFolder);
-        final TwoGeeLoader2 loader = new TwoGeeLoader2();
+        final TwoGeeLoader loader = new TwoGeeLoader();
         final LoadedData loadedData = loader.readFile(file, defaultOptions);
         /*
          * At present, TwoGeeLoader makes a best effort even in this hopeless
@@ -109,11 +109,11 @@ public class TwoGeeLoader2Test {
     @Test
     public void testWithSg12_7() throws IOException {
         final Map<Object, Object> options = new HashMap<>();
-        options.put("protocol", TwoGeeLoader2.Protocol.NORMAL);
+        options.put("protocol", TwoGeeLoader.Protocol.NORMAL);
         options.put("sensor_lengths", new Vec3(1, 1, 1));
         for (boolean polar: new boolean[] {false, true}) {
             options.put("use_polar_moment", polar);
-            final TwoGeeLoader2 loader = new TwoGeeLoader2();
+            final TwoGeeLoader loader = new TwoGeeLoader();
             final LoadedData loadedData =
                     loader.readFile(copyFile("SG12-7.DAT"),
                     options);
@@ -185,7 +185,7 @@ public class TwoGeeLoader2Test {
     @Test
     public void testThermal1posMagSus() throws IOException {
         checkThermalFile("FQ0101.1.DAT", expected_fq0101_1,
-                TwoGeeLoader2.Protocol.NORMAL, 10.0, 132, 19);
+                TwoGeeLoader.Protocol.NORMAL, 10.0, 132, 19);
     }
 
     private static final double[][] expected_ccb0101_1_tray_normal = {
@@ -215,7 +215,7 @@ public class TwoGeeLoader2Test {
     @Test
     public void testTrayNormal() throws IOException {
         checkThermalFile("CCB0101.1.DAT", expected_ccb0101_1_tray_normal,
-                TwoGeeLoader2.Protocol.TRAY_NORMAL, 10.3, 255, 3);
+                TwoGeeLoader.Protocol.TRAY_NORMAL, 10.3, 255, 3);
     }
     
     private static final double[][] expected_ccb0101_1_normal_tray = {
@@ -245,7 +245,7 @@ public class TwoGeeLoader2Test {
          * than the sample moments) but it's fine for testing purposes.
          */
         checkThermalFile("CCB0101.1.DAT", expected_ccb0101_1_normal_tray,
-                TwoGeeLoader2.Protocol.NORMAL_TRAY, 10.3, 255, 3);        
+                TwoGeeLoader.Protocol.NORMAL_TRAY, 10.3, 255, 3);        
     }
 
     private static final double[][] expected_ccb0101_1_tray_first = {
@@ -290,7 +290,7 @@ public class TwoGeeLoader2Test {
          * subsequent tray measurements are treated like sample measurements.
          */
         checkThermalFile("CCB0101.1.DAT", expected_ccb0101_1_tray_first,
-                TwoGeeLoader2.Protocol.TRAY_FIRST, 10.3, 255, 3);
+                TwoGeeLoader.Protocol.TRAY_FIRST, 10.3, 255, 3);
     }
     
     private static final double[][] expected_fqk0618_1_yflip = {
@@ -312,7 +312,7 @@ public class TwoGeeLoader2Test {
     @Test
     public void testTrayNormalYflip() throws IOException {
         checkThermalFile("FQK0618.1.DAT", expected_fqk0618_1_yflip,
-                TwoGeeLoader2.Protocol.TRAY_NORMAL_YFLIP, 10.3, 107, 45);
+                TwoGeeLoader.Protocol.TRAY_NORMAL_YFLIP, 10.3, 107, 45);
     }
 
     private static final double[][] expected_ccb0101_1_ignore = {
@@ -337,13 +337,13 @@ public class TwoGeeLoader2Test {
     @Test
     public void testTrayNormalIgnore() throws IOException {
         checkThermalFile("CCB0101.1.DAT", expected_ccb0101_1_ignore,
-                TwoGeeLoader2.Protocol.TRAY_NORMAL_IGNORE, 10.3, 255, 3);        
+                TwoGeeLoader.Protocol.TRAY_NORMAL_IGNORE, 10.3, 255, 3);        
     }
     
     private void checkThermalFile(String filename, double[][] expected,
-            TwoGeeLoader2.Protocol protocol,
+            TwoGeeLoader.Protocol protocol,
             double volume, double sampAz, double sampDip) throws IOException {
-        final TwoGeeLoader2 loader = new TwoGeeLoader2();
+        final TwoGeeLoader loader = new TwoGeeLoader();
         final LoadedData loadedData = loader.readFile(copyFile(filename),
                 makeOptions(protocol, false, 4.628, -4.404, -6.280));
         assertEquals(expected.length, loadedData.getTreatmentSteps().size());
@@ -411,9 +411,9 @@ public class TwoGeeLoader2Test {
         final File file = copyFile("C8G-EDITED.DAT");
         for (boolean polar: new boolean[] {false, true}) {
             final Map<Object, Object> options =
-                    makeOptions(TwoGeeLoader2.Protocol.NORMAL, polar,
+                    makeOptions(TwoGeeLoader.Protocol.NORMAL, polar,
                             4.09, 4.16, 6.67);
-            final TwoGeeLoader2 loader = new TwoGeeLoader2();
+            final TwoGeeLoader loader = new TwoGeeLoader();
             final LoadedData loadedData = loader.readFile(file, options);
             assertTrue(loadedData.getMessages().isEmpty());
             assertEquals(92, loadedData.getTreatmentSteps().size());
@@ -458,7 +458,7 @@ public class TwoGeeLoader2Test {
     }
     
     private static Map<Object, Object> makeOptions(
-            TwoGeeLoader2.Protocol protocol, boolean usePolarMoment,
+            TwoGeeLoader.Protocol protocol, boolean usePolarMoment,
             double x, double y, double z) {
         final Map<Object, Object> options = new HashMap<>();
         options.put("protocol", protocol);

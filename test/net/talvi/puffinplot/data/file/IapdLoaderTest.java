@@ -42,7 +42,7 @@ import static org.junit.Assert.assertTrue;
  *
  * @author pont
  */
-public class IapdLoader2Test {
+public class IapdLoaderTest {
     
     private static final String FILE_TEXT =
             "   TG1H1  299.0 71.0   0.0   0.0   11.20  1    1\r\n"
@@ -93,7 +93,7 @@ public class IapdLoader2Test {
     
     @Test
     public void testWithMissingFile() throws IOException {
-        final IapdLoader2 loader = new IapdLoader2();
+        final IapdLoader loader = new IapdLoader();
         final LoadedData loadedData = loader.readFile(
                 temporaryFolder.getRoot().toPath().resolve("nonexistent")
                         .toFile(),
@@ -220,7 +220,7 @@ public class IapdLoader2Test {
     
     private void readFile(File file) throws IOException {
         suite.readFiles(Arrays.asList(new File[] { file }),
-                null, TwoGeeLoader2.Protocol.NORMAL, true,
+                null, TwoGeeLoader.Protocol.NORMAL, true,
                 FileType.IAPD, null, options);
     }
 

@@ -38,7 +38,7 @@ import org.junit.rules.TemporaryFolder;
  *
  * @author pont
  */
-public class TabularFileLoader2Test {
+public class TabularFileLoaderTest {
     
     private static final double DELTA = 1e-20;
     
@@ -59,7 +59,7 @@ public class TabularFileLoader2Test {
                 MeasurementType.DISCRETE,
                 TreatmentType.DEGAUSS_XYZ, " ", false, null, MomentUnit.AM,
                 FieldUnit.MILLITESLA);
-        final TabularFileLoader2 loader = new TabularFileLoader2();
+        final TabularFileLoader loader = new TabularFileLoader();
         final LoadedData loadedData = loader.readFile(file, makeOptions(format));
         assertEquals(1, loadedData.getMessages().size());
         assertEquals(0, loadedData.getTreatmentSteps().size());
@@ -81,7 +81,7 @@ public class TabularFileLoader2Test {
         final File file = TestUtils.writeStringToTemporaryFile("test1",
                 "5 1 2 -3 \"sample1\"\n",
                 temporaryFolder);
-        final TabularFileLoader2 loader = new TabularFileLoader2();
+        final TabularFileLoader loader = new TabularFileLoader();
         final LoadedData loadedData = loader.readFile(file, makeOptions(format));
         assertEquals(1, loadedData.getTreatmentSteps().size());
         final TreatmentStep step = loadedData.getTreatmentSteps().get(0);
@@ -107,7 +107,7 @@ public class TabularFileLoader2Test {
         final File file = TestUtils.writeStringToTemporaryFile("test1",
                 "17\n",
                 temporaryFolder);
-        final TabularFileLoader2 loader = new TabularFileLoader2();
+        final TabularFileLoader loader = new TabularFileLoader();
         final LoadedData loadedData =
                 loader.readFile(file, makeOptions(format));
         assertEquals(1, loadedData.getMessages().size());
@@ -130,7 +130,7 @@ public class TabularFileLoader2Test {
         final File file = TestUtils.writeStringToTemporaryFile("test1",
                 "23 42\n",
                 temporaryFolder);
-        final TabularFileLoader2 loader = new TabularFileLoader2();
+        final TabularFileLoader loader = new TabularFileLoader();
         final LoadedData loadedData =
                 loader.readFile(file, makeOptions(format));
         assertEquals(1, loadedData.getMessages().size());

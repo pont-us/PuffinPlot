@@ -43,7 +43,7 @@ import static org.junit.Assert.assertTrue;
  *
  * @author pont
  */
-public class CaltechLoader2Test {
+public class CaltechLoaderTest {
     
     private static final double DELTA = 1e-10;
     
@@ -104,7 +104,7 @@ public class CaltechLoader2Test {
         }
 
         // Instantiating the loader reads the files.
-        final CaltechLoader2 loader = new CaltechLoader2();
+        final CaltechLoader loader = new CaltechLoader();
         final File file = tempPath.resolve(samFileName).toFile();
         final LoadedData loadedData = loader.readFile(file);
         final List<TreatmentStep> data = loadedData.getTreatmentSteps();

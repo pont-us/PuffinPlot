@@ -42,7 +42,7 @@ import static org.junit.Assert.fail;
  * Test loading of text-based PMD (Enkin) format files.
  * 
  */
-public class PmdLoader2Test {
+public class PmdLoaderTest {
     
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
@@ -138,7 +138,7 @@ public class PmdLoader2Test {
             double[][] numericalData) {
         final InputStream stream =
                 TestFileLocator.class.getResourceAsStream(filenameAndData[0]);
-        final PmdLoader2 pmdLoader = new PmdLoader2();
+        final PmdLoader pmdLoader = new PmdLoader();
         final LoadedData loadedData =
                 pmdLoader.readStream(stream, Collections.emptyMap(), filenameAndData[0]);
         if (!loadedData.getMessages().isEmpty()){
@@ -176,7 +176,7 @@ public class PmdLoader2Test {
     
     @Test
     public void testNonExistentFile() {
-        final PmdLoader2 loader = new PmdLoader2();
+        final PmdLoader loader = new PmdLoader();
         final LoadedData loadedData = loader.readFile(
                 temporaryFolder.getRoot().toPath().resolve("nonexistent")
                         .toFile(),
@@ -190,7 +190,7 @@ public class PmdLoader2Test {
         final InputStream stream = TestFileLocator.class.
                 getResourceAsStream(FILENAMES_AND_DATA[0][0]);
             stream.close();
-        final PmdLoader2 loader = new PmdLoader2();
+        final PmdLoader loader = new PmdLoader();
         final LoadedData loadedData = loader.readStream(
                 stream, Collections.emptyMap(), FILENAMES_AND_DATA[0][0]);
         assertTrue(loadedData.getMessages().size() > 0);
@@ -203,7 +203,7 @@ public class PmdLoader2Test {
                         + "d=  0.0   v=11.0E-6m3  06/18/2003 12:00\n"
                         + "Malformed header line here\n").
                         getBytes(StandardCharsets.US_ASCII));
-        final PmdLoader2 loader = new PmdLoader2();
+        final PmdLoader loader = new PmdLoader();
         final LoadedData loadedData = loader.readStream(
                 inputStream, Collections.emptyMap(), "test");
         assertTrue(loadedData.getMessages().size() > 0);
@@ -218,7 +218,7 @@ public class PmdLoader2Test {
                 "NRM   2.45E-05 -3.13E-05 -2.01E-05  4.05E+00 240.8 -39.6 240.8 -59.6  0.0 1\n";
         final InputStream inputStream = new ByteArrayInputStream(
                 fileContents.getBytes(StandardCharsets.US_ASCII));
-        final PmdLoader2 loader = new PmdLoader2();
+        final PmdLoader loader = new PmdLoader();
         final LoadedData loadedData = loader.readStream(
             inputStream, Collections.emptyMap(), "test");
         assertTrue(loadedData.getMessages().size() > 0);
@@ -236,7 +236,7 @@ public class PmdLoader2Test {
                 + "STEP  Xc (Am2)  Yc (Am2)  Zc (Am2)  MAG(A/m)   Dg    Ig    Ds    Is   a95 \n"
                 + "NRM   8.80E-09 -1.60E-07 -5.06E-08  1.52E-02 214.7   2.4   0.0   0.0  1.0 ");
         fileWriter.close();
-        final PmdLoader2 loader = new PmdLoader2();
+        final PmdLoader loader = new PmdLoader();
         loader.readFile(pmdFile, Collections.emptyMap());
         /*
          * Data not checked -- this method just tests that file loading doesn't

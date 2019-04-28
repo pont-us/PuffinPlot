@@ -43,10 +43,10 @@ import static net.talvi.puffinplot.data.file.TwoGeeHelper.gaussToAm;
  *
  * @author pont
  */
-public class CaltechLoader2 implements FileLoader2 {
+public class CaltechLoader implements FileLoader {
 
     private static final Logger logger
-            = Logger.getLogger(CaltechLoader2.class.getName());
+            = Logger.getLogger(CaltechLoader.class.getName());
 
     /*
      * NB: this probably won't work for Caltech "NRM" files, which apparently

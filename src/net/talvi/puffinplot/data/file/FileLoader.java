@@ -25,7 +25,7 @@ import java.util.Map;
  *
  * @author pont
  */
-public interface FileLoader2 {
+public interface FileLoader {
  
     LoadedData readFile(File file, Map<Object, Object> options);
     

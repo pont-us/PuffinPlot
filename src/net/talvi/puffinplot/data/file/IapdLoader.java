@@ -32,7 +32,7 @@ import net.talvi.puffinplot.data.Vec3;
  * 
  * @author pont
  */
-public class IapdLoader2 implements FileLoader2 {
+public class IapdLoader implements FileLoader {
     
     /**
      * Reads an IAPD file.

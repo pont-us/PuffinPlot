@@ -37,7 +37,7 @@ import net.talvi.puffinplot.data.TreatmentType;
  * 
  * @author pont
  */
-public class Jr6Loader2 implements FileLoader2 {
+public class Jr6Loader implements FileLoader {
 
     /**
      * Create a new JR6 loader for a specified input stream.

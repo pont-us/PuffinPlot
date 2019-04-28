@@ -73,7 +73,7 @@ public class ZplotLoader2Test {
     @Test
     public void testLoadContinuousAf() throws IOException {
         final File testFile = copyTestData("zplot-af-1.txt");
-        final ZplotLoader2 loader = new ZplotLoader2();
+        final ZplotLoader loader = new ZplotLoader();
         final LoadedData loadedData = loader.readFile(testFile);
         final List<TreatmentStep> steps = loadedData.getTreatmentSteps();
         assertEquals(expectedAf.length, steps.size());
@@ -134,7 +134,7 @@ public class ZplotLoader2Test {
     @Test
     public void testLoadDiscreteThermal() throws IOException {
         final File testFile = copyTestData("zplot-thermal-1.txt");
-        final ZplotLoader2 loader = new ZplotLoader2();
+        final ZplotLoader loader = new ZplotLoader();
         final LoadedData loadedData = loader.readFile(testFile);
         final List<TreatmentStep> steps = loadedData.getTreatmentSteps();
         assertEquals(expectedDiscreteThermal.length, steps.size());
@@ -155,7 +155,7 @@ public class ZplotLoader2Test {
     public void testEmptyFile() throws IOException {
         final File file = TestUtils.writeStringToTemporaryFile("empty.txt", "",
                 temporaryFolder);
-        final ZplotLoader2 loader = new ZplotLoader2();
+        final ZplotLoader loader = new ZplotLoader();
         final LoadedData loadedData = loader.readFile(file);
         assertTrue(loadedData.getTreatmentSteps().isEmpty());
         assertEquals(1, loadedData.getMessages().size());
@@ -167,7 +167,7 @@ public class ZplotLoader2Test {
                 "invalid.txt",
                 "This is not a valid Zplot file.",
                 temporaryFolder);
-        final ZplotLoader2 loader = new ZplotLoader2();
+        final ZplotLoader loader = new ZplotLoader();
         final LoadedData loadedData = loader.readFile(file);
         assertTrue(loadedData.getTreatmentSteps().isEmpty());
         assertEquals(1, loadedData.getMessages().size());
@@ -179,7 +179,7 @@ public class ZplotLoader2Test {
                 "invalid.txt",
                 "This\nis\nnot\na\nvalid\nZplot\nfile.",
                 temporaryFolder);
-        final ZplotLoader2 loader = new ZplotLoader2();
+        final ZplotLoader loader = new ZplotLoader();
         final LoadedData loadedData = loader.readFile(file);
         assertTrue(loadedData.getTreatmentSteps().isEmpty());
         assertEquals(1, loadedData.getMessages().size());
@@ -193,7 +193,7 @@ public class ZplotLoader2Test {
                         "The first line was valid, but this is" +
                         "nevertheless not a valid Zplot file.",
                 temporaryFolder);
-        final ZplotLoader2 loader = new ZplotLoader2();
+        final ZplotLoader loader = new ZplotLoader();
         final LoadedData loadedData = loader.readFile(file);
         assertTrue(loadedData.getTreatmentSteps().isEmpty());
         assertEquals(1, loadedData.getMessages().size());
@@ -203,7 +203,7 @@ public class ZplotLoader2Test {
     public void testNonexistentFile() {
         final File file = temporaryFolder.getRoot().toPath().
                 resolve("nonexistent.txt").toFile();
-        final ZplotLoader2 loader = new ZplotLoader2();
+        final ZplotLoader loader = new ZplotLoader();
         final LoadedData loadedData = loader.readFile(file);
         assertTrue(loadedData.getTreatmentSteps().isEmpty());
         assertEquals(1, loadedData.getMessages().size());

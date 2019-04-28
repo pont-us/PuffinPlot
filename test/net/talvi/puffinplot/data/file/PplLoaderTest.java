@@ -37,7 +37,7 @@ import org.junit.rules.TemporaryFolder;
  *
  * @author pont
  */
-public class PplLoader2Test {
+public class PplLoaderTest {
     
     private static final double DELTA = 1e-10;
     private static final double[][] expectedTable = {
@@ -63,7 +63,7 @@ public class PplLoader2Test {
     
     @Test
     public void testWithEmptyFile() throws IOException {
-        final PplLoader2 loader = new PplLoader2();
+        final PplLoader loader = new PplLoader();
         final LoadedData data = loader.readFile(
                 writeStringToTemporaryFile("empty.ppl", null, temporaryFolder));
         checkEmptyWithMessage(data);
@@ -71,7 +71,7 @@ public class PplLoader2Test {
     
     @Test
     public void testWithInvalidFile() throws IOException {
-        final PplLoader2 loader = new PplLoader2();
+        final PplLoader loader = new PplLoader();
                 final LoadedData data = loader.readFile(
                 writeStringToTemporaryFile("invalid.ppl",
                         "Not a PuffinPlot file.", temporaryFolder));
@@ -81,7 +81,7 @@ public class PplLoader2Test {
 
     @Test
     public void testWithNoData() throws IOException {
-        final PplLoader2 loader = new PplLoader2();
+        final PplLoader loader = new PplLoader();
         final LoadedData data = loader.readFile(
                 writeStringToTemporaryFile("invalid.ppl",
                         "PuffinPlot file. Version 3\n", temporaryFolder));
@@ -90,7 +90,7 @@ public class PplLoader2Test {
 
     @Test
     public void testWithFutureVersion() throws IOException {
-        final PplLoader2 loader = new PplLoader2();
+        final PplLoader loader = new PplLoader();
         final LoadedData data = loader.readFile(
                 writeStringToTemporaryFile("invalid.ppl",
                         "PuffinPlot file. Version 9\n", temporaryFolder));
@@ -110,9 +110,9 @@ public class PplLoader2Test {
                 temporaryFolder.getRoot().toPath().resolve(filename);
         Files.copy(TestFileLocator.class.getResourceAsStream(filename),
                 filePath);
-        final PplLoader2 loader = new PplLoader2();
+        final PplLoader loader = new PplLoader();
         final LoadedData data = loader.readFile(filePath.toFile());
-        data.getTreatmentSteps().forEach(PplLoader2Test::checkConstantValues);
+        data.getTreatmentSteps().forEach(PplLoaderTest::checkConstantValues);
         assertEquals(96, data.getTreatmentSteps().size());
         assertEquals(6, data.getExtraLines().size());
         assertTrue(data.getMessages().isEmpty());
@@ -189,7 +189,7 @@ public class PplLoader2Test {
                 temporaryFolder.getRoot().toPath().resolve(filename);
         Files.copy(TestFileLocator.class.getResourceAsStream(filename),
                 filePath);
-        final PplLoader2 loader = new PplLoader2();
+        final PplLoader loader = new PplLoader();
         final LoadedData data = loader.readFile(filePath.toFile());
         for (int i=0; i<expectedVersion2.length; i++) {
             final double[] expected = expectedVersion2[i];

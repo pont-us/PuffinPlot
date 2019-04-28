@@ -78,7 +78,7 @@ public class UcDavisLoader2Test {
 
     @Test
     public void testWithNonexistentFile() throws IOException {
-        final UcDavisLoader2 loader = new UcDavisLoader2();
+        final UcDavisLoader loader = new UcDavisLoader();
         final LoadedData loadedData = loader.readFile(
                 temporaryFolder.getRoot().toPath().resolve("nonexistent").
                         toFile());
@@ -88,7 +88,7 @@ public class UcDavisLoader2Test {
     
     @Test
     public void tetWithEmptyFile() throws IOException {
-        final UcDavisLoader2 loader = new UcDavisLoader2();
+        final UcDavisLoader loader = new UcDavisLoader();
                 final LoadedData loadedData = 
                         loader.readFile(TestUtils.writeStringToTemporaryFile(
                         "empty", null, temporaryFolder));
@@ -103,7 +103,7 @@ public class UcDavisLoader2Test {
         suite = new Suite(getClass().getSimpleName());
         
         suite.readFiles(Arrays.asList(new File[] { file } ),
-                null, TwoGeeLoader2.Protocol.NORMAL, true,
+                null, TwoGeeLoader.Protocol.NORMAL, true,
                 FileType.UCDAVIS, null, new HashMap<>());
         
         for (int i=0; i<FILE_DATA.length; i++) {
@@ -127,14 +127,14 @@ public class UcDavisLoader2Test {
 
     @Test
     public void testColumnDefEquals() {
-        final UcDavisLoader2.ColumnDef x0a =
-                UcDavisLoader2.ColumnDef.fromHeader("X(0)");
-        final UcDavisLoader2.ColumnDef x0b =
-                UcDavisLoader2.ColumnDef.fromHeader("X(0)");
-        final UcDavisLoader2.ColumnDef y0 =
-                UcDavisLoader2.ColumnDef.fromHeader("Y(0)");
-        final UcDavisLoader2.ColumnDef x20 =
-                UcDavisLoader2.ColumnDef.fromHeader("X(20)");
+        final UcDavisLoader.ColumnDef x0a =
+                UcDavisLoader.ColumnDef.fromHeader("X(0)");
+        final UcDavisLoader.ColumnDef x0b =
+                UcDavisLoader.ColumnDef.fromHeader("X(0)");
+        final UcDavisLoader.ColumnDef y0 =
+                UcDavisLoader.ColumnDef.fromHeader("Y(0)");
+        final UcDavisLoader.ColumnDef x20 =
+                UcDavisLoader.ColumnDef.fromHeader("X(20)");
         
         assertFalse(x0a.equals(null));
         assertFalse(x0a.equals(new Object()));

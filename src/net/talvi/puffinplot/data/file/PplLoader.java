@@ -43,10 +43,10 @@ import static net.talvi.puffinplot.data.file.TwoGeeHelper.treatTypeFromString;
  * @author pont
  */
 
-public class PplLoader2 implements FileLoader2 {
+public class PplLoader implements FileLoader {
 
     private static final Logger LOGGER =
-            Logger.getLogger(PplLoader2.class.getName());
+            Logger.getLogger(PplLoader.class.getName());
     private static final Pattern PUFFIN_HEADER =
             Pattern.compile("^PuffinPlot file. Version (\\d+)");
     private LineNumberReader reader;

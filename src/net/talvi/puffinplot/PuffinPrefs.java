@@ -29,7 +29,7 @@ import java.util.prefs.InvalidPreferencesFormatException;
 import java.util.prefs.Preferences;
 
 import net.talvi.puffinplot.data.SensorLengths;
-import net.talvi.puffinplot.data.file.TwoGeeLoader2;
+import net.talvi.puffinplot.data.file.TwoGeeLoader;
 
 /**
  * PuffinPrefs stores, loads, and saves PuffinPlot's user preferences. It is
@@ -47,7 +47,7 @@ public final class PuffinPrefs {
     private final Preferences prefs =
             Preferences.userNodeForPackage(PuffinPrefs.class);
     private SensorLengths sensorLengths;
-    private TwoGeeLoader2.Protocol twoGeeProtocol;
+    private TwoGeeLoader.Protocol twoGeeProtocol;
 
     /**
      * Instantiates a set of PuffinPlot preferences for the specified
@@ -158,7 +158,7 @@ public final class PuffinPrefs {
         app.setRecentFiles(
                 new RecentFileList(key -> getPrefs().get(key, null)));
         setSensorLengths(SensorLengths.fromPrefs(getPrefs()));
-        twoGeeProtocol = TwoGeeLoader2.Protocol.
+        twoGeeProtocol = TwoGeeLoader.Protocol.
                 valueOf(prefs.get("measurementProtocol", "NORMAL"));
     }
     
@@ -217,7 +217,7 @@ public final class PuffinPrefs {
      *
      * @return the measurement protocol used when opening 2G data files
      */
-    public TwoGeeLoader2.Protocol get2gProtocol() {
+    public TwoGeeLoader.Protocol get2gProtocol() {
         return twoGeeProtocol;
     }
 
@@ -227,7 +227,7 @@ public final class PuffinPrefs {
      * @param protocol the measurement protocol to use when opening 2G data
      * files
      */
-    public void set2gProtocol(TwoGeeLoader2.Protocol protocol) {
+    public void set2gProtocol(TwoGeeLoader.Protocol protocol) {
         this.twoGeeProtocol = protocol;
     }
 }

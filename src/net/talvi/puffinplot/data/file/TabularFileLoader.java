@@ -35,7 +35,7 @@ import java.util.Map;
  * 
  * @author pont
  */
-public class TabularFileLoader2 implements FileLoader2 {
+public class TabularFileLoader implements FileLoader {
     
     /**
      * Reads a file.

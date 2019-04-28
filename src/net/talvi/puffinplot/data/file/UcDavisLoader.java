@@ -45,7 +45,7 @@ import net.talvi.puffinplot.data.Vec3;
  *
  * @author pont
  */
-public class UcDavisLoader2 implements FileLoader2 {
+public class UcDavisLoader implements FileLoader {
 
     private LoadedData readFile(LineNumberReader reader, String filename)
             throws IOException {

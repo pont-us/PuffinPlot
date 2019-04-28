@@ -42,7 +42,7 @@ import static java.lang.Math.toRadians;
  *
  * @author pont
  */
-public class PmdLoader2 implements FileLoader2 {
+public class PmdLoader implements FileLoader {
     
     private static final List<String> VALID_HEADERS =
             Arrays.asList(new String[] {

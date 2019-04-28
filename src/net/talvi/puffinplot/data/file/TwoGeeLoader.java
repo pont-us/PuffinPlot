@@ -51,7 +51,7 @@ import static net.talvi.puffinplot.data.file.TwoGeeHelper.treatTypeFromString;
  *
  * @author pont
  */
-public class TwoGeeLoader2 implements FileLoader2 {
+public class TwoGeeLoader implements FileLoader {
 
     private static final Logger LOGGER
             = Logger.getLogger("net.talvi.puffinplot");

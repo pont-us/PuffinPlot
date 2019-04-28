@@ -50,7 +50,7 @@ import java.util.stream.Stream;
 import net.talvi.puffinplot.PuffinUserException;
 import net.talvi.puffinplot.TestUtils;
 import net.talvi.puffinplot.TestUtils.ListHandler;
-import net.talvi.puffinplot.data.file.TwoGeeLoader2;
+import net.talvi.puffinplot.data.file.TwoGeeLoader;
 import net.talvi.puffinplot.data.file.testdata.TestFileLocator;
 import org.junit.Assume;
 import org.junit.Before;
@@ -1299,7 +1299,7 @@ public class SuiteTest {
         final Suite suite = new Suite("SuiteTest");
         suite.readFiles(Collections.singletonList(puffinFile1),
                 SensorLengths.fromPresetName("1:1:1"),
-                TwoGeeLoader2.Protocol.NORMAL, false,
+                TwoGeeLoader.Protocol.NORMAL, false,
                 FileType.UNKNOWN, null,
                 Collections.EMPTY_MAP);
         assertEquals(1, suite.getLoadWarnings().size());
