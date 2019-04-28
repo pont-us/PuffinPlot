@@ -127,14 +127,14 @@ public class UcDavisLoader2Test {
 
     @Test
     public void testColumnDefEquals() {
-        final UcDavisLoader.ColumnDef x0a =
-                UcDavisLoader.ColumnDef.fromHeader("X(0)");
-        final UcDavisLoader.ColumnDef x0b =
-                UcDavisLoader.ColumnDef.fromHeader("X(0)");
-        final UcDavisLoader.ColumnDef y0 =
-                UcDavisLoader.ColumnDef.fromHeader("Y(0)");
-        final UcDavisLoader.ColumnDef x20 =
-                UcDavisLoader.ColumnDef.fromHeader("X(20)");
+        final UcDavisLoader2.ColumnDef x0a =
+                UcDavisLoader2.ColumnDef.fromHeader("X(0)");
+        final UcDavisLoader2.ColumnDef x0b =
+                UcDavisLoader2.ColumnDef.fromHeader("X(0)");
+        final UcDavisLoader2.ColumnDef y0 =
+                UcDavisLoader2.ColumnDef.fromHeader("Y(0)");
+        final UcDavisLoader2.ColumnDef x20 =
+                UcDavisLoader2.ColumnDef.fromHeader("X(20)");
         
         assertFalse(x0a.equals(null));
         assertFalse(x0a.equals(new Object()));
