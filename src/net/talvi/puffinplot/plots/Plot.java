@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -66,8 +65,15 @@ public abstract class Plot
     protected final PlotParams params;
     /** the plot's dimensions */
     protected Rectangle2D dimensions;
-    /** the data points displayed by the plot */
-    List<PlotPoint> points = new LinkedList<>();
+
+    /**
+     * The data points displayed by the plot.
+     * 
+     * The default size of 32 should accommodate the vast majority of
+     * real-world demagnetization data sets without needing to be resized.
+     */
+    List<PlotPoint> points = new ArrayList<>(32);
+
     private Stroke stroke, dashedStroke;
     private float unitSize;
     private String fontFamily;
@@ -160,7 +166,7 @@ public abstract class Plot
                 final double h = scanner.nextDouble();
                 dimensions = new Rectangle2D.Double(x, y, w, h);
             } else {
-                for (int i=0; i<5; i++) {
+                for (int i = 0; i < 5; i++) {
                     scanner.next();
                 }
             }
@@ -297,19 +303,19 @@ public abstract class Plot
     /**
      * Writes an attributed text string onto this plot.
      *
-     * @param g the graphics object to which to write the
+     * @param graphics the graphics object to which to write the
      * @param as the text to write
      * @param x the x co-ordinate of the text
      * @param y the y co-ordinate of the text
      */
-    protected void writeString(Graphics2D g, AttributedString as,
+    protected void writeString(Graphics2D graphics, AttributedString as,
             float x, float y) {
         applyTextAttributes(as);
         /*
          * Don't use TextLayout.draw, since it draw with a GlyphVector and we'd
          * get shapes rather than text in SVG export etc.
          */
-        g.drawString(as.getIterator(), x, y);
+        graphics.drawString(as.getIterator(), x, y);
     }
 
     /**
@@ -322,13 +328,13 @@ public abstract class Plot
      *
      * @param significand the significand of the number
      * @param exponent the exponent of the number
-     * @param g a graphics context
+     * @param graphics a graphics context
      * @return an attributed string representing the number in scientific
      * notation
      */
     protected AttributedString timesTenToThe(String significand,
-            String exponent, Graphics2D g) {
-        if (!g.getRenderingHints()
+            String exponent, Graphics2D graphics) {
+        if (!graphics.getRenderingHints()
                 .containsKey(PuffinRenderingHints.KEY_E_NOTATION)) {
             String text = significand;
             // 00D7 is the multiplication sign
@@ -357,33 +363,33 @@ public abstract class Plot
      * 
      * @param significand the significand of the number
      * @param exponent the exponent of the number
-     * @param g a graphics context
+     * @param graphics a graphics context
      * @return an attributed string representing the number in scientific
      * notation
      */
     protected AttributedString timesTenToThe(String significand, int exponent,
-            Graphics2D g) {
-        return timesTenToThe(significand, Integer.toString(exponent), g);
+            Graphics2D graphics) {
+        return timesTenToThe(significand, Integer.toString(exponent), graphics);
     }
 
     /**
      * Returns a cropped version of a specified rectangle.
      *
-     * @param r a rectangle
+     * @param rectangle a rectangle
      * @param left the amount to crop at the left
      * @param right the amount to crop at the right
      * @param top the amount to crop at the top
      * @param bottom the amount to crop at the bottom
      * @return the cropped rectangle
      */
-    protected Rectangle2D cropRectangle(Rectangle2D r, double left,
+    protected Rectangle2D cropRectangle(Rectangle2D rectangle, double left,
             double right, double top, double bottom) {
-        final double u = getUnitSize();
+        final double unit = getUnitSize();
         return new Rectangle2D.Double(
-                r.getMinX() + left * u,
-                r.getMinY() + top * u,
-                r.getWidth() - (left + right) * u,
-                r.getHeight() - (top + bottom) * u);
+                rectangle.getMinX() + left * unit,
+                rectangle.getMinY() + top * unit,
+                rectangle.getWidth() - (left + right) * unit,
+                rectangle.getHeight() - (top + bottom) * unit);
     }
 
     /**
@@ -438,11 +444,11 @@ public abstract class Plot
             final Point2D centre = prevPoint.getCentre();
             final List<Point2D> others = new ArrayList<>(2);
             others.add(points.get(nPoints - 1).getCentre());
-            if (nPoints>2) {
+            if (nPoints > 2) {
                 others.add(points.get(nPoints - 3).getCentre());
             }
-            ((ShapePoint)prevPoint).
-                    setLabelPos(Direction.safeDirection(centre, others));
+            ((ShapePoint) prevPoint)
+                    .setLabelPos(Direction.safeDirection(centre, others));
         }
         return pp;
     }
@@ -636,8 +642,8 @@ public abstract class Plot
     public TreatmentStep getTreatmentStepForPosition(Point2D position) {
         for (PlotPoint point: points) {
             final TreatmentStep step = point.getTreatmentStep();
-            if (step != null && !step.isHidden() &&
-                    point.getShape().contains(position)) {
+            if (step != null && !step.isHidden()
+                    && point.getShape().contains(position)) {
                 return step;
             }
         }
@@ -654,9 +660,9 @@ public abstract class Plot
      */
     public void selectByRectangle(Rectangle2D rectangle, boolean state) {
         for (PlotPoint point: points) {
-            if (point.getTreatmentStep() != null &&
-                    !point.getTreatmentStep().isHidden() &&
-                    point.getShape().intersects(rectangle)) {
+            if (point.getTreatmentStep() != null
+                    && !point.getTreatmentStep().isHidden()
+                    && point.getShape().intersects(rectangle)) {
                 point.getTreatmentStep().setSelected(state);
             }
         }
