@@ -36,7 +36,7 @@ import org.junit.rules.TemporaryFolder;
  *
  * @author pont
  */
-public class ZplotLoader2Test {
+public class ZplotLoaderTest {
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();

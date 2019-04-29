@@ -40,7 +40,7 @@ import org.junit.rules.TemporaryFolder;
  *
  * @author pont
  */
-public class TwoGeeLoader2Test {
+public class TwoGeeLoaderTest {
 
     
     private static final double DELTA = 1e-15;

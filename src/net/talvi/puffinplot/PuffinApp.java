@@ -621,7 +621,8 @@ public class PuffinApp {
          */
         recentFiles.add(files);
         
-        final boolean reallyCreateNewSuite = createNewSuite || getCurrentSuite()==null;
+        final boolean reallyCreateNewSuite =
+                createNewSuite || getCurrentSuite() == null;
 
         try {
             final FileType guessedType = FileType.guess(files.get(0));
@@ -653,6 +654,7 @@ public class PuffinApp {
                         return;
                     }
                     format.writeToPrefs(getPrefs().getPrefs());
+                    importOptions.put("format", format);
                     break;
                 case IAPD:
                     final IapdImportDialog iapdDialog =
@@ -674,6 +676,16 @@ public class PuffinApp {
                     importOptions.put(TreatmentType.class,
                             defaultTreatmentType);
                     break;
+                case TWOGEE:
+                case PUFFINPLOT_OLD:
+                    importOptions.put("protocol", prefs.get2gProtocol());
+                    importOptions.put("sensor_lengths",
+                            prefs.getSensorLengths().toVector());
+                    importOptions.put("use_polar_moment",
+                            !"X/Y/Z".equals(prefs.getPrefs().
+                                    get("readTwoGeeMagFrom", "X/Y/Z")));
+                    break;
+
             }
             
             final Suite suite;
@@ -683,11 +695,7 @@ public class PuffinApp {
             } else {
                 suite = getCurrentSuite();
             }
-            suite.readFiles(files, prefs.getSensorLengths(),
-                    prefs.get2gProtocol(),
-                    !"X/Y/Z".equals(prefs.getPrefs().
-                            get("readTwoGeeMagFrom", "X/Y/Z")),
-                    fileType, format, importOptions);
+            suite.readFiles(files, fileType, importOptions);
             suite.doAllCalculations(getCorrection(),
                     getGreatCirclesValidityCondition());
             final List<String> warnings = suite.getLoadWarnings();
@@ -718,12 +726,12 @@ public class PuffinApp {
                     nWarnings++;
                 }
                 errorDialog(warnings.size() == 1 ?
-                        "Error during file opening" :
-                        "Errors during file opening", sb.toString());
+                        "Problem during file opening" :
+                        "Problems during file opening", sb.toString());
             }
             
             if (suite.getNumSamples() == 0) {
-                errorDialog("Error during file loading",
+                errorDialog("Error during file opening",
                         "The selected file(s) contained no readable data.");
             } else {
                 if (reallyCreateNewSuite) {

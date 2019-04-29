@@ -1298,10 +1298,7 @@ public class SuiteTest {
     public void testReadFileInUnknownFormat() throws IOException {
         final Suite suite = new Suite("SuiteTest");
         suite.readFiles(Collections.singletonList(puffinFile1),
-                SensorLengths.fromPresetName("1:1:1"),
-                TwoGeeLoader.Protocol.NORMAL, false,
-                FileType.UNKNOWN, null,
-                Collections.EMPTY_MAP);
+                FileType.UNKNOWN, Collections.emptyMap());
         assertEquals(1, suite.getLoadWarnings().size());
         assertEquals(0, suite.getNumSamples());
     }

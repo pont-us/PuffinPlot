@@ -62,7 +62,7 @@ public class TwoGeeLoader implements FileLoader {
     private File file;
     private LineNumberReader reader;
     private Protocol protocol;
-    private Set<String> requestedFields = new HashSet<>();
+    private final Set<String> requestedFields = new HashSet<>();
     private boolean usePolarMoment; // use d/i/i rather than x/y/z fields
 
     /**
@@ -103,9 +103,11 @@ public class TwoGeeLoader implements FileLoader {
     }
 
     /**
-     * Creates a new 2G loader using the supplied parameters.
-     *
+     * Reads a file in 2G format.
+     * 
      * @param file the file to read
+     * @param options file loading options
+     * @return the data contained in the file
      */
     @Override
     public LoadedData readFile(File file, Map<Object, Object> options) {
@@ -249,6 +251,13 @@ public class TwoGeeLoader implements FileLoader {
         }
         correlateFields();
         loadedData.setTreatmentSteps(treatmentSteps);
+        if ((!usePolarMoment) && sensorLengths.equals(new Vec3(1, 1, 1))) {
+            loadedData.addMessage(
+                    "Reading vector long core data with unset sensor\n"
+                    + "lengths! Magnetization vectors may be incorrect. See\n"
+                    + "PuffinPlot manual for details.");
+        }
+
         return loadedData;
     }
 
@@ -636,4 +645,5 @@ public class TwoGeeLoader implements FileLoader {
         step.setZDrift(r.getDouble("Z drift", step.getZDrift()));
         return step;
     }
+    
 }

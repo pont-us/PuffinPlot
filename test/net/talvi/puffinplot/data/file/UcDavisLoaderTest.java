@@ -35,7 +35,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
-public class UcDavisLoader2Test {
+public class UcDavisLoaderTest {
 
     private File file;
     private Suite suite;
@@ -103,10 +103,9 @@ public class UcDavisLoader2Test {
         suite = new Suite(getClass().getSimpleName());
         
         suite.readFiles(Arrays.asList(new File[] { file } ),
-                null, TwoGeeLoader.Protocol.NORMAL, true,
-                FileType.UCDAVIS, null, new HashMap<>());
+                FileType.UCDAVIS, new HashMap<>());
         
-        for (int i=0; i<FILE_DATA.length; i++) {
+        for (int i = 0; i < FILE_DATA.length; i++) {
             final double[] dataline = FILE_DATA[i];
             final String depthString = String.format(Locale.ENGLISH,
                     "%.5f", dataline[0]);

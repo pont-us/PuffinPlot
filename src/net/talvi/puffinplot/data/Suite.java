@@ -479,34 +479,20 @@ public final class Suite implements SampleGroup {
      * @throws IOException if an exception occurs during file reading
      */
     public void readFiles(List<File> files) throws IOException {
-        readFiles(files, SensorLengths.fromPresetName("1:1:1"),
-                TwoGeeLoader.Protocol.NORMAL, false,
-                FileType.PUFFINPLOT_NEW, null,
-                Collections.emptyMap());
+        readFiles(files, FileType.PUFFINPLOT_NEW, Collections.emptyMap());
     }
 
     /**
-     * Reads data into this suite from the specified files.
-     * 
-     * After readFiles returns, #getLoadWarnings() can be used
-     * to return a list of problems that occurred during file reading.
+     * Reads data into this suite from the specified files. After readFiles
+     * returns, #getLoadWarnings() can be used to return a list of problems 
+     * that occurred during file reading.
      * 
      * @param files the files from which to read the data (non-null, non-empty)
-     * @param sensorLengths for 2G long core files only: the effective lengths 
-     * of the magnetometer's SQUID sensors,
-     * used to correct Cartesian magnetic moment data
-     * @param protocol for 2G files only: the measurement protocol used
-     * @param usePolarMoment for 2G files only: use polar (dec/inc/int)
-     * data fields instead of Cartesian ones (X/Y/Z) to determine magnetic
-     * moment
      * @param fileType type of the specified files
-     * @param format explicitly specified custom tabular file format
      * @param importOptions extra options passed to file importers
      * @throws IOException if an I/O error occurred while reading the files 
      */
-    public void readFiles(List<File> files, SensorLengths sensorLengths,
-            TwoGeeLoader.Protocol protocol, boolean usePolarMoment,
-            FileType fileType, FileFormat format,
+    public void readFiles(List<File> files, FileType fileType,
             Map<Object,Object> importOptions) throws IOException {
         Objects.requireNonNull(files, "files may not be null");
         if (files.isEmpty()) {
@@ -537,7 +523,7 @@ public final class Suite implements SampleGroup {
         files = expandDirs(files);
         final ArrayList<TreatmentStep> tempDataList = new ArrayList<>();
         List<String> puffinLines = Collections.emptyList();
-        boolean sensorLengthWarning = false;
+
         /*
          * If fileType is PUFFINPLOT_NEW, originalFileType can be overwritten by
          * value specified in file.
@@ -562,16 +548,10 @@ public final class Suite implements SampleGroup {
             switch (fileType) {
             case TWOGEE:
                 loader = new TwoGeeLoader();
-                options.put("protocol", protocol);
-                options.put("sensor_lengths", sensorLengths.toVector());
-                options.put("use_polar_moment", usePolarMoment);
                 loadedData = loader.readFile(file, options);
                 break;
             case PUFFINPLOT_OLD:
                 loader = new TwoGeeLoader();
-                options.put("protocol", protocol);
-                options.put("sensor_lengths", sensorLengths.toVector());
-                options.put("use_polar_moment", usePolarMoment);
                 loadedData = loader.readFile(file, options);
                 if (files.size() == 1) {
                     puffinFile = file;
@@ -602,7 +582,6 @@ public final class Suite implements SampleGroup {
                 break;
             case CUSTOM_TABULAR:
                 loader = new TabularFileLoader();
-                options.put("format", format);
                 loadedData = loader.readFile(file, options);
                 break;
             case PMD_ENKIN:
@@ -671,32 +650,21 @@ public final class Suite implements SampleGroup {
                     puffinLines = loadedData.getExtraLines();
                 }
             }
-            
-            if (fileType == FileType.TWOGEE &&
-                    measurementType.isContinuous() &&
-                    "1:1:1".equals(sensorLengths.getPreset()) &&
-                    !usePolarMoment) {
-                sensorLengthWarning = true;
-            }
-        }
-        
-        if (sensorLengthWarning) {
-            loadWarnings.add(
-                    "Reading vector long core data with unset sensor\n" +
-                    "lengths! Magnetization vectors may be incorrect. See\n" +
-                    "PuffinPlot manual for details.");
         }
         
         setCurrentSampleIndex(0);
-        if (hasUnknownTreatType)
+        if (hasUnknownTreatType) {
             loadWarnings.add(
                     "One or more treatment types were not recognized.");
+        }
         if (measurementType.isDiscrete()) {
             emptyTraySamples = new ArrayList<>();
             int slot = 1;
             while (true) {
-                String slotId = "TRAY" + slot;
-                if (!samplesById.containsKey(slotId)) break;
+                final String slotId = "TRAY" + slot;
+                if (!samplesById.containsKey(slotId)) {
+                    break;
+                }
                 emptyTraySamples.add(samplesById.get(slotId));
                 slot++;
             }
