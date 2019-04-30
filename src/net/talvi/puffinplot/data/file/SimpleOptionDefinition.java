@@ -17,8 +17,8 @@
 package net.talvi.puffinplot.data.file;
 
 /**
- *
- * @author pont
+ * A simple implementation of the {@link OptionDefinition}
+ * interface.
  */
 public class SimpleOptionDefinition implements OptionDefinition {
 
@@ -27,13 +27,20 @@ public class SimpleOptionDefinition implements OptionDefinition {
     private final Class type;
     private final Object defaultValue;
     
+    /**
+     * @param identifier short option identifier
+     * @param description user-friendly option description
+     * @param type the class of the values taken by this option
+     * @param defaultValue the default value. It must be an instance
+     *   of {@code type}
+     */
     public SimpleOptionDefinition(String identifier, String description,
             Class type, Object defaultValue) {
         this.identifier = identifier;
         this.description = description;
         this.type = type;
         this.defaultValue = defaultValue;
-        if (type.isAssignableFrom(defaultValue.getClass())) {
+        if (!type.isAssignableFrom(defaultValue.getClass())) {
             throw new IllegalArgumentException(
                     "Default value doesn't match type.");
         }

@@ -27,6 +27,8 @@ import java.util.Map;
 import net.talvi.puffinplot.TestUtils;
 import net.talvi.puffinplot.data.ArmAxis;
 import net.talvi.puffinplot.data.MeasurementType;
+import net.talvi.puffinplot.data.SensorLengths;
+import net.talvi.puffinplot.data.SensorLengthsTest;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.Vec3;
@@ -110,7 +112,7 @@ public class TwoGeeLoaderTest {
     public void testWithSg12_7() throws IOException {
         final Map<Object, Object> options = new HashMap<>();
         options.put("protocol", TwoGeeLoader.Protocol.NORMAL);
-        options.put("sensor_lengths", new Vec3(1, 1, 1));
+        options.put("sensor_lengths", SensorLengths.fromPresetName("1:1:1"));
         for (boolean polar: new boolean[] {false, true}) {
             options.put("use_polar_moment", polar);
             final TwoGeeLoader loader = new TwoGeeLoader();
@@ -462,8 +464,11 @@ public class TwoGeeLoaderTest {
             double x, double y, double z) {
         final Map<Object, Object> options = new HashMap<>();
         options.put("protocol", protocol);
-        options.put("sensor_lengths", new Vec3(x, y, z));
-        options.put("use_polar_moment", usePolarMoment);
+        options.put("sensor_lengths", SensorLengths.fromStrings(
+                Double.toString(x), Double.toString(y), Double.toString(z)));
+        options.put("read_moment_from", usePolarMoment
+                ? TwoGeeLoader.MomentFields.POLAR
+                : TwoGeeLoader.MomentFields.CARTESIAN);
         return options;
     }
     

@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
 import net.talvi.puffinplot.data.ArmAxis;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.MeasurementType;
+import net.talvi.puffinplot.data.SensorLengths;
 import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.Vec3;
@@ -64,6 +65,7 @@ public class TwoGeeLoader implements FileLoader {
     private Protocol protocol;
     private final Set<String> requestedFields = new HashSet<>();
     private boolean usePolarMoment; // use d/i/i rather than x/y/z fields
+    private final List<OptionDefinition> optionDefinitions;
 
     /**
      * A measurement protocol. A protocol defines the order in which sample
@@ -101,7 +103,44 @@ public class TwoGeeLoader implements FileLoader {
          */
         TRAY_NORMAL_IGNORE;
     }
+    
+    /**
+     * The fields from which to read the magnetic moment (Cartesian or Polar).
+     * Crucially, in a 2G continuous file the polar fields are corrected for
+     * sensor length but the Cartesian fields are not, so if the sensor lengths
+     * are unknown it is vital to use polar fields when reading a continuous
+     * file.
+     */
+    public static enum MomentFields {
+        
+        /**
+         * X / Y / Z
+         */
+        CARTESIAN,
+        
+        /**
+         * Declination / inclination / intensity
+         */
+        POLAR;
+    }
 
+    public TwoGeeLoader() {
+        optionDefinitions = new ArrayList<>(3);
+        optionDefinitions.add(new SimpleOptionDefinition("protocol",
+                "Measurement protocol", Protocol.class, Protocol.NORMAL));
+        optionDefinitions.add(new SimpleOptionDefinition("sensor_lengths",
+                "Sensor lengths", SensorLengths.class,
+                SensorLengths.fromPresetName("1:1:1")));
+        optionDefinitions.add(new SimpleOptionDefinition("read_moment_from",
+                "Read magnetic moment from", MomentFields.class,
+                MomentFields.POLAR));
+    }
+    
+    @Override
+    public List<OptionDefinition> getOptionDefinitions() {
+        return optionDefinitions;
+    }
+    
     /**
      * Reads a file in 2G format.
      * 
@@ -115,8 +154,11 @@ public class TwoGeeLoader implements FileLoader {
         Objects.requireNonNull(options);
         this.file = file;
         this.protocol = (Protocol) options.get("protocol");
-        this.sensorLengths = (Vec3) options.get("sensor_lengths");
-        this.usePolarMoment = (Boolean) options.get("use_polar_moment");
+        this.sensorLengths =
+                ((SensorLengths) options.get("sensor_lengths")).toVector();
+        this.usePolarMoment =
+                ((MomentFields) options.get("read_moment_from"))
+                    == MomentFields.POLAR;
         setSensorLengths(sensorLengths);
         try (LineNumberReader r = new LineNumberReader(new FileReader(file))) {
             reader = r;

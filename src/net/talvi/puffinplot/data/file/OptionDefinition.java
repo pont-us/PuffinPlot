@@ -17,17 +17,37 @@
 package net.talvi.puffinplot.data.file;
 
 /**
- *
+ * A definition of an option which is accepted by a file loader class.
+ * If a class implements the {@code FileLoader} interface and accepts
+ * any options for file loading, its {@code getOptionDefinitions}
+ * method should return a list of {@code OptionDefinition} instances
+ * giving details of the expected options.
+ * 
+ * @see FileLoader
+ * 
  * @author pont
  */
-interface OptionDefinition<T> {
+public interface OptionDefinition {
     
+    /**
+     * @return a short, unique identifier for the option
+     */
     String getIdentifier();
     
+    /**
+     * @return a user-friendly description of the option
+     */
     String getDescription();
     
+    /**
+     * @return the class of the option's value
+     */
     Class getType();
     
+    /**
+     * @return the default value of the option. The default value must
+     * be an instance of the class returned by {@code getType()}.
+     */
     Object getDefaultValue();
     
 }

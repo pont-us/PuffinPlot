@@ -111,6 +111,7 @@ import net.talvi.puffinplot.window.TabularImportWindow;
 import org.freehep.graphicsbase.util.UserProperties;
 
 import static net.talvi.puffinplot.Util.runningOnOsX;
+import net.talvi.puffinplot.data.file.TwoGeeLoader;
 import net.talvi.puffinplot.window.RpiDialog;
 
 /**
@@ -680,10 +681,12 @@ public class PuffinApp {
                 case PUFFINPLOT_OLD:
                     importOptions.put("protocol", prefs.get2gProtocol());
                     importOptions.put("sensor_lengths",
-                            prefs.getSensorLengths().toVector());
-                    importOptions.put("use_polar_moment",
-                            !"X/Y/Z".equals(prefs.getPrefs().
-                                    get("readTwoGeeMagFrom", "X/Y/Z")));
+                            prefs.getSensorLengths());
+                    importOptions.put("read_moment_from",
+                            ("X/Y/Z".equals(prefs.getPrefs().
+                                    get("readTwoGeeMagFrom", "X/Y/Z"))
+                                    ? TwoGeeLoader.MomentFields.CARTESIAN
+                                    : TwoGeeLoader.MomentFields.POLAR));
                     break;
 
             }
