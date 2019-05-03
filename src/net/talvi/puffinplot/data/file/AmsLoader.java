@@ -35,36 +35,41 @@ import static java.lang.Double.parseDouble;
 
 public class AmsLoader {
     private final File ascFile;
-    private static final Pattern lastLine =
+    private static final Pattern LAST_LINE =
             Pattern.compile("^\\d\\d-\\d\\d-\\d\\d\\d\\d$");
 
-    /** Creates a new AMS loader for a specified file. 
-     * @param ascFile the file for which to create the loader */
+    /**
+     * Creates a new AMS loader for a specified file.
+     *
+     * @param ascFile the file for which to create the loader
+     */
     public AmsLoader(File ascFile) {
         this.ascFile = ascFile;
     }
 
     /**
-     * Reads a chunk of a file and splits it into fields.
-     * Fields are delimited by whitespace. The chunk itself is
-     * delimited by the lastLine pattern. If a line begins with
-     * whitespace, field 0 for that line will be an empty string,
-     * with the first non-whitespace content assigned to field 1.
-     * 
+     * Reads a chunk of a file and splits it into fields. Fields are delimited
+     * by whitespace. The chunk itself is delimited by the lastLine pattern. If
+     * a line begins with whitespace, field 0 for that line will be an empty
+     * string, with the first non-whitespace content assigned to field 1.
+     *
      * @param reader the reader from which to take the data
-     * @return an array of arrays of strings. Each sub-array
-     * contains the string values of the fields in the corresponding
-     * line.
-     * @throws IOException 
+     * @return an array of arrays of strings. Each sub-array contains the string
+     * values of the fields in the corresponding line.
+     * @throws IOException
      */
     private String[][] readFileChunk(BufferedReader reader) throws IOException {
-        ArrayList<String[]> result = new ArrayList<>(64);
+        final ArrayList<String[]> result = new ArrayList<>(64);
         do {
             String line = reader.readLine();
-            if (line==null) break;
+            if (line == null) {
+                break;
+            }
             line = line.replace("\f", "");
             result.add(line.split("\\s+"));
-            if (lastLine.matcher(line).matches()) break;
+            if (LAST_LINE.matcher(line).matches()) {
+                break;
+            }
         } while (true);
         return result.toArray(new String[][] {});
     }
@@ -81,26 +86,28 @@ public class AmsLoader {
         final List<AmsData> result = new ArrayList<>();
         do {
             final String[][] chunk = readFileChunk(reader);
-            if (chunk.length<39) break;
+            if (chunk.length < 39) {
+                break;
+            }
             
             int tensorHeader = -1; // line number of tensor header
-            for (int i=0; i<chunk.length; i++) {
+            for (int i = 0; i < chunk.length; i++) {
                 // Find the tensor header in the file.
-                if (chunk[i].length >= 5 &&
-                        "Normed".equals(chunk[i][3]) &&
-                        "tensor".equals(chunk[i][4])) {
+                if (chunk[i].length >= 5
+                        && "Normed".equals(chunk[i][3])
+                        && "tensor".equals(chunk[i][4])) {
                     tensorHeader = i;
                     break;
                 }
             }
             
             int fTestHeader = -1; // line number of f-test header
-            for (int i=0; i<chunk.length; i++) {
+            for (int i = 0; i < chunk.length; i++) {
                 // Find the F-test header in the file.
-                if (chunk[i].length == 8 &&
-                        "F".equals(chunk[i][5]) &&
-                        "F12".equals(chunk[i][6]) &&
-                        "F23".equals(chunk[i][7])) {
+                if (chunk[i].length == 8
+                        && "F".equals(chunk[i][5])
+                        && "F12".equals(chunk[i][6])
+                        && "F23".equals(chunk[i][7])) {
                     fTestHeader = i;
                     break;
                 }
@@ -111,13 +118,13 @@ public class AmsLoader {
                         "in file " + ascFile.getName());
             }
             
-            if (chunk[tensorHeader + 2].length != 8 ||
-                chunk[tensorHeader + 3].length != 8 ||
-                chunk[0].length < 1 || // sample name
-                chunk[3].length < 2 || // sample azimuth
-                chunk[5].length < 2 || // sample dip
-                chunk[10].length < 6 || // foliations / lineations
-                chunk[fTestHeader+2].length < 7) {
+            if (chunk[tensorHeader + 2].length != 8
+                || chunk[tensorHeader + 3].length != 8
+                || chunk[0].length < 1 // sample name
+                || chunk[3].length < 2 // sample azimuth
+                || chunk[5].length < 2 // sample dip
+                || chunk[10].length < 6 // foliations / lineations
+                || chunk[fTestHeader + 2].length < 7) {
                 // The fields we need aren't in the expected positions.
                 throw new IOException("Data fields not found "+
                         "in file " + ascFile.getName());
@@ -141,6 +148,12 @@ public class AmsLoader {
                     throw new IOException("Malformed foliation \"" +
                             foliation1 + "\"");
                 }
+                
+                /*
+                 * We count backwards from the end of the line for the F-test
+                 * result (fTestLine.length - 3), because SAFYR has 7 fields in
+                 * this line (plus the initial blank) but SUSAR has only 6.
+                 */
                 final AmsData amsData = new AmsData(
                         chunk[0][0], // sample name
                         tensor,
@@ -148,12 +161,7 @@ public class AmsLoader {
                         parseDouble(chunk[5][1]), // sample dip
                         parseDouble(foliationMatch.group(1)), // fol. dip dir.
                         parseDouble(foliationMatch.group(2)), // fol. dip
-                        parseDouble(fTestLine[fTestLine.length-3])
-                        /* We count backwards from the end of the line for
-                           the F-test result, because SAFYR has 7 fields
-                           in this line (plus the initial blank) but 
-                           SUSAR has only 6. */
-                        );
+                        parseDouble(fTestLine[fTestLine.length - 3])                        );
                 result.add(amsData);
             } catch (NumberFormatException exception) {
                 throw new IOException("Malformed data "+

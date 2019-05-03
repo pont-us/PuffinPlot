@@ -320,14 +320,14 @@ public class OrientationParameters {
     public VectorAndOrientations convertToPuffinPlotConvention(
             VectorAndOrientations vectorAndOrientations) {
         final Vec3 vector = p1.rotateForP1(vectorAndOrientations.vector);
-        final double sampleDip = p2 == DipParameter.D90 ?
-                vectorAndOrientations.sampleDip :
-                90 - vectorAndOrientations.sampleDip;
+        final double sampleDip = p2 == DipParameter.D90
+                ? vectorAndOrientations.sampleDip
+                : 90 - vectorAndOrientations.sampleDip;
         final double sampleAzimuth = p3.rotateSampleAzimuthForP3(
                 vectorAndOrientations.sampleAzimuth);
-        final double formationAzimuth = p4 == DipParameter.D0 ?
-                vectorAndOrientations.formationAzimuth :
-                (vectorAndOrientations.formationAzimuth + 90) % 360;
+        final double formationAzimuth = p4 == DipParameter.D0
+                ? vectorAndOrientations.formationAzimuth
+                : (vectorAndOrientations.formationAzimuth + 90) % 360;
         return new VectorAndOrientations(vector, sampleAzimuth, sampleDip,
                 formationAzimuth, vectorAndOrientations.formationDip);
     }
