@@ -20,6 +20,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
+import net.talvi.puffinplot.data.file.OrientationParameters;
+import net.talvi.puffinplot.data.file.OrientationParameters.AzimuthParameter;
+import net.talvi.puffinplot.data.file.OrientationParameters.DipParameter;
+
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,25 +37,28 @@ import static org.junit.Assert.assertEquals;
 public class AmsDataTest {
     
     private final String expectedName;
+    private final OrientationParameters expectedOrientationParameters;
     private final double[] expectedTensor;
     private final double expectedSampleAz, expectedSampleDip;
     private final double expectedFormAz, expectedFormDip;
     private final double expectedFTest;
     private final AmsData amsData;
     
-    public AmsDataTest(String name, List<Double> tensorList, double sampleAz,
+    public AmsDataTest(String name, OrientationParameters orientationParameters,
+            List<Double> tensorList, double sampleAz,
             double sampleDip, double formAz, double formDip, double fTest) {
         final double[] tensor =
                 tensorList.stream().mapToDouble(Double::doubleValue).toArray();
         this.expectedName = name;
+        this.expectedOrientationParameters = orientationParameters;
         this.expectedTensor = tensor;
         this.expectedSampleAz = sampleAz;
         this.expectedSampleDip = sampleDip;
         this.expectedFormAz = formAz;
         this.expectedFormDip = formDip;
         this.expectedFTest = fTest;
-        this.amsData = new AmsData(name, tensor, sampleAz, sampleDip,
-                formAz, formDip, fTest);
+        this.amsData = new AmsData(name, orientationParameters, tensor,
+                sampleAz, sampleDip, formAz, formDip, fTest);
     }
     
     private static List<Double> listOf(double x0, double x1, double x2,
@@ -67,14 +74,17 @@ public class AmsDataTest {
         
         final Object[][] dataArray = new Object[nTests][];
         
-        for (int i=0; i<nTests; i++) {
+        for (int i = 0; i < nTests; i++) {
             dataArray[i] = new Object[] {
-              "test"+i,
-               listOf(rnd.nextDouble(), rnd.nextDouble(), rnd.nextDouble(),
+                "test" + i,
+                OrientationParameters.read(rnd.nextInt(4) * 3 + 3,
+                        rnd.nextInt(2) * 90, rnd.nextInt(4) * 3 + 3,
+                        rnd.nextInt(2) * 90),
+                listOf(rnd.nextDouble(), rnd.nextDouble(), rnd.nextDouble(),
                       rnd.nextDouble(), rnd.nextDouble(), rnd.nextDouble()),
-               rnd.nextDouble(), rnd.nextDouble(),
-               rnd.nextDouble(), rnd.nextDouble(),
-               rnd.nextDouble()
+                rnd.nextDouble(), rnd.nextDouble(),
+                rnd.nextDouble(), rnd.nextDouble(),
+                rnd.nextDouble()
             };
         }
         
@@ -114,5 +124,11 @@ public class AmsDataTest {
     @Test
     public void testGetfTest() {
         assertEquals(expectedFTest, amsData.getfTest(), 0);
+    }
+    
+    @Test
+    public void testGetOrientationParameters() {
+        assertEquals(expectedOrientationParameters,
+                amsData.getOrientationParameters());
     }
 }

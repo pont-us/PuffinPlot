@@ -16,6 +16,8 @@
  */
 package net.talvi.puffinplot.data;
 
+import net.talvi.puffinplot.data.file.OrientationParameters;
+
 /**
  * This class holds AMS (anisotropy of magnetic susceptibility) data for a named
  * sample. It is a simple container class, and does not process the data in any
@@ -26,6 +28,7 @@ package net.talvi.puffinplot.data;
 public final class AmsData {
 
     private final String name;
+    private final OrientationParameters orientationParameters;
     private final double[] tensor;
     private final double sampleAz, sampleDip;
     private final double formAz, formDip;
@@ -35,6 +38,9 @@ public final class AmsData {
      * Creates a new AMS data set with the data provided.
      * 
      * @param name the name of the sample
+     * @param orientationParameters the orientation parameters defining the
+     *   interpretation of the sample and formation orientations (currently
+     *   ignored)
      * @param tensor the orientation tensor representing the sample's
      * susceptibility anisotropy
      * @param sampleAz the azimuth of the sample's dip, in degrees
@@ -43,10 +49,13 @@ public final class AmsData {
      * @param formDip the value of formDip
      * @param fTest the F-test value as defined by Jelínek
      */
-    public AmsData(String name, double[] tensor,
+    public AmsData(String name,
+            OrientationParameters orientationParameters,
+            double[] tensor,
             double sampleAz, double sampleDip,
             double formAz, double formDip, double fTest) {
         this.name = name;
+        this.orientationParameters = orientationParameters;
         this.tensor = tensor;
         this.sampleAz = sampleAz;
         this.sampleDip = sampleDip;
@@ -62,6 +71,13 @@ public final class AmsData {
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * @return the orientation parameters
+     */
+    public OrientationParameters getOrientationParameters() {
+        return orientationParameters;
     }
 
     /**

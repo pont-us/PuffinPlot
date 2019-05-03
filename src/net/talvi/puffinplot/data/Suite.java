@@ -1159,6 +1159,11 @@ public final class Suite implements SampleGroup {
     /**
      * Imports AMS data from ASC files in the format produced by Agico's SAFYR
      * and SUSAR programs.
+     * 
+     * Note that the {@code overwriteSampleCorrection} and {@code
+     * overwriteFormationCorrection} arguments only have an effect when
+     * importing into an existing sample; if a new sample is created for
+     * AMS data, the orientations in the ASC file will always be used.
      *
      * @param files the ASC files to read
      * @param magneticNorth {@code true} if the sample and formation dip

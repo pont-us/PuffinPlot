@@ -90,6 +90,10 @@ public class AmsLoader {
                 break;
             }
             
+            final OrientationParameters orientationParameters =
+                    OrientationParameters.read(
+                            chunk[3][4], chunk[3][5], chunk[3][6], chunk[3][7]);
+            
             int tensorHeader = -1; // line number of tensor header
             for (int i = 0; i < chunk.length; i++) {
                 // Find the tensor header in the file.
@@ -156,12 +160,13 @@ public class AmsLoader {
                  */
                 final AmsData amsData = new AmsData(
                         chunk[0][0], // sample name
+                        orientationParameters,
                         tensor,
                         parseDouble(chunk[3][1]), // sample azimuth
                         parseDouble(chunk[5][1]), // sample dip
                         parseDouble(foliationMatch.group(1)), // fol. dip dir.
                         parseDouble(foliationMatch.group(2)), // fol. dip
-                        parseDouble(fTestLine[fTestLine.length - 3])                        );
+                        parseDouble(fTestLine[fTestLine.length - 3]));
                 result.add(amsData);
             } catch (NumberFormatException exception) {
                 throw new IOException("Malformed data "+

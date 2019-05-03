@@ -1164,7 +1164,7 @@ public class SuiteTest {
     
     @Test
     public void testImportAmsFromAsc() throws IOException {
-        Path filePath = extractAscFileFromResources();
+        Path filePath = extractAscFileFromResources("LPA03091.ASC");
         
         /*
          * Import to a sample that doesn't exist yet, with directions
@@ -1195,9 +1195,9 @@ public class SuiteTest {
         
         /*
          * To exercise some more code paths, we now import again to the same
-         * (existing) sample, after adding a TreatmentStep with orientation parameters
-         * to it. This time we specify magnetic rather than geographic north
-         * (although in this case it's the same anyway).
+         * (existing) sample, after adding a TreatmentStep with orientation
+         * parameters to it. This time we specify magnetic rather than
+         * geographic north (although in this case it's the same anyway).
          */
         final TreatmentStep treatmentStep = new TreatmentStep();
         treatmentStep.setSampAz(0);
@@ -1245,9 +1245,38 @@ public class SuiteTest {
         assertEquals(0, sample.getFormAz(), delta);
         assertEquals(0, sample.getFormDip(), delta);
     }
+    
+    @Test
+    public void testImportAmsFromAscWithOrientation() throws IOException {
 
-    private Path extractAscFileFromResources() throws IOException {
-        final String filename = "LPA03091.ASC";
+        syntheticSuite2.importAmsFromAsc(
+                Collections.singletonList(
+                        extractAscFileFromResources("DIP00A.ASC").toFile()),
+                true, true, false);
+        assertEquals(11, syntheticSuite2.getNumSamples());
+
+        /*
+         * Values generated from a previous run, but checked against
+         * pre-computed transformed tensor in the file itself.
+         */
+        assertEquals("0.80855 0.96290 1.22865 -0.03522 0.08915 0.18489",
+                syntheticSuite2.getSampleByName("DIP00A").getAms()
+                        .toTensorComponentString());
+        
+//        syntheticSuite2.importAmsFromAsc(
+//                Collections.singletonList(
+//                        extractAscFileFromResources("YF-TRUNCATED.ASC")
+//                                .toFile()),
+//                true, true, false);
+//        assertEquals(12, syntheticSuite2.getNumSamples());
+//        
+//        assertEquals("1.0183 1.0089 0.9728 0.0032 -0.0061 -0.0062",
+//                syntheticSuite2.getSampleByName("YF1.1A").getAms()
+//                        .toTensorComponentString());
+    }
+
+    private Path extractAscFileFromResources(String filename)
+            throws IOException {
         final InputStream dataStream =
                 TestFileLocator.class.getResourceAsStream(filename);
         final Path filePath =

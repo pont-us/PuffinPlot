@@ -35,7 +35,7 @@ public class AmsLoaderTest {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
     
-    private static final double delta = 1e-10;
+    private static final double DELTA = 1e-10;
     
     @Test
     public void testReadFile() throws Exception {
@@ -49,14 +49,14 @@ public class AmsLoaderTest {
         assertEquals(1, amsDataList.size());
         final AmsData amsData = amsDataList.get(0);
         assertEquals("LPA0309.1", amsData.getName());
-        assertEquals(28, amsData.getSampleAz(), delta);
-        assertEquals(0, amsData.getSampleDip(), delta);
-        assertEquals(0, amsData.getFormAz(), delta);
-        assertEquals(0, amsData.getFormDip(), delta);
-        assertEquals(4.7, amsData.getfTest(), delta);
+        assertEquals(28, amsData.getSampleAz(), DELTA);
+        assertEquals(0, amsData.getSampleDip(), DELTA);
+        assertEquals(0, amsData.getFormAz(), DELTA);
+        assertEquals(0, amsData.getFormDip(), DELTA);
+        assertEquals(4.7, amsData.getfTest(), DELTA);
         assertArrayEquals(
                 new double[] {0.9948, 1.004, 1.0012, 0.0016, 0.0106, -0.0047},
-                amsData.getTensor(), delta);
+                amsData.getTensor(), DELTA);
     }
     
 }

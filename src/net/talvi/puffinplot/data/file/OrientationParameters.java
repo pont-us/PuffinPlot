@@ -88,9 +88,8 @@ public class OrientationParameters {
         A12(12);
         
         /**
-         * An index for an azimuthal parameter value
-         * (3, 6, 9, or 12), corresponding to an angle on a
-         * clock face.
+         * An index for an azimuthal parameter value (3, 6, 9, or 12),
+         * corresponding to an angle on a clock face.
          */
         public final int index;
         
@@ -128,19 +127,27 @@ public class OrientationParameters {
 
         private Vec3 rotateForP1(Vec3 vector) {
             switch (this) {
-                case A3: return vector.rotZ(toRadians(90));
-                case A6: return vector.rotZ(toRadians(180));
-                case A9: return vector.rotZ(toRadians(270));
-                default: return vector;
+                case A3:
+                    return vector.rotZ(toRadians(90));
+                case A6:
+                    return vector.rotZ(toRadians(180));
+                case A9:
+                    return vector.rotZ(toRadians(270));
+                default:
+                    return vector;
             }
         }
         
         private double rotateSampleAzimuthForP3(double azimuthDegrees) {
             switch (this) {
-                case A3: return (azimuthDegrees + 270) % 360;
-                case A6: return (azimuthDegrees + 180) % 360;
-                case A9: return (azimuthDegrees + 90) % 360;
-                default: return azimuthDegrees;
+                case A3:
+                    return (azimuthDegrees + 270) % 360;
+                case A6:
+                    return (azimuthDegrees + 180) % 360;
+                case A9:
+                    return (azimuthDegrees + 90) % 360;
+                default:
+                    return azimuthDegrees;
             }
         }
     }
@@ -168,7 +175,6 @@ public class OrientationParameters {
          * (valid values are 0 and 90).
          */
         public final int index;
-        
 
         private DipParameter(int index) {
             this.index = index;
@@ -201,6 +207,31 @@ public class OrientationParameters {
             throw new IllegalArgumentException(
                     "Unknown dip parameter index \"" + index + "\"");
         }
+        
+        /**
+         * Taking this parameter as P2, converts a dip to the "P2=90"
+         * convention.
+         * 
+         * @param original the dip according to "P2 = this object" convention
+         * @return the dip according to "P2 = 90" convention
+         */
+        public double correctSampleDipForP2(double original) {
+            return this == D90 ? original : 90 - original;
+        }
+        
+        /**
+         * Taking this parameter as P4, converts a formation dip direction to
+         * the "P4=0" convention.
+         *
+         * @param original the formation dip direction according to "P4 = this
+         * object" convention
+         * @return the formation dip direction according to "P4 = 0" convention
+         */
+
+        public double correctFormationDipDirectionForP4(double original) {
+            return this == D0 ? original : (original + 90) % 360;
+        }
+
     }
     
     /**
@@ -309,7 +340,7 @@ public class OrientationParameters {
      * PuffinPlot's own orientation parameter convention is: 
      * P1=12, P2=90, P3=12, P4=0.
      * 
-     * @param vectorAndOrientations a vector and orientations, to be
+     * @param original a vector and orientations, to be
      *   interpreted according to the orientation parameters represented
      *   by this object
      * @return a vector and orientations which, when interpeted
@@ -318,18 +349,15 @@ public class OrientationParameters {
      *   
      */
     public VectorAndOrientations convertToPuffinPlotConvention(
-            VectorAndOrientations vectorAndOrientations) {
-        final Vec3 vector = p1.rotateForP1(vectorAndOrientations.vector);
-        final double sampleDip = p2 == DipParameter.D90
-                ? vectorAndOrientations.sampleDip
-                : 90 - vectorAndOrientations.sampleDip;
-        final double sampleAzimuth = p3.rotateSampleAzimuthForP3(
-                vectorAndOrientations.sampleAzimuth);
-        final double formationAzimuth = p4 == DipParameter.D0
-                ? vectorAndOrientations.formationAzimuth
-                : (vectorAndOrientations.formationAzimuth + 90) % 360;
+            VectorAndOrientations original) {
+        final Vec3 vector = p1.rotateForP1(original.vector);
+        final double sampleDip = p2.correctSampleDipForP2(original.sampleDip);
+        final double sampleAzimuth =
+                p3.rotateSampleAzimuthForP3(original.sampleAzimuth);
+        final double formationAzimuth =
+                p4.correctFormationDipDirectionForP4(original.formationAzimuth);
         return new VectorAndOrientations(vector, sampleAzimuth, sampleDip,
-                formationAzimuth, vectorAndOrientations.formationDip);
+                formationAzimuth, original.formationDip);
     }
     
     /**
