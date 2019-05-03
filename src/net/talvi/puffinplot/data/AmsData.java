@@ -28,7 +28,6 @@ import net.talvi.puffinplot.data.file.OrientationParameters;
 public final class AmsData {
 
     private final String name;
-    private final OrientationParameters orientationParameters;
     private final double[] tensor;
     private final double sampleAz, sampleDip;
     private final double formAz, formDip;
@@ -37,29 +36,36 @@ public final class AmsData {
     /**
      * Creates a new AMS data set with the data provided.
      * 
+     * Note that the directional data is not copied directly into the newly
+     * created object, but interpreted and converted from the orientation
+     * system given by the {@code orientationParameters} argument to
+     * PuffinPlot's own orientation system (P1=12, P2=90, P3=12, P4=0).
+     * Thus the tensor, sample orientation, and formation orientation returned
+     * by the class's getters might not match the values passed to its
+     * constructor.
+     * 
      * @param name the name of the sample
      * @param orientationParameters the orientation parameters defining the
-     *   interpretation of the sample and formation orientations (currently
-     *   ignored)
+     *   interpretation of the directional data
      * @param tensor the orientation tensor representing the sample's
-     * susceptibility anisotropy
-     * @param sampleAz the azimuth of the sample's dip, in degrees
-     * @param sampleDip the sample's dip, in degrees
-     * @param formAz the value of formAz
-     * @param formDip the value of formDip
+     *   susceptibility anisotropy
+     * @param sampleAz the sample azimuth in degrees
+     * @param sampleDip the sample dip in degrees
+     * @param formAz the formation azimuth in degrees
+     * @param formDip the formation dip in degrees
      * @param fTest the F-test value as defined by Jelínek
      */
-    public AmsData(String name,
-            OrientationParameters orientationParameters,
-            double[] tensor,
-            double sampleAz, double sampleDip,
+    public AmsData(String name, OrientationParameters orientationParameters,
+            double[] tensor, double sampleAz, double sampleDip,
             double formAz, double formDip, double fTest) {
         this.name = name;
-        this.orientationParameters = orientationParameters;
-        this.tensor = tensor;
-        this.sampleAz = sampleAz;
-        this.sampleDip = sampleDip;
-        this.formAz = formAz;
+        this.tensor = orientationParameters.p1.rotateForP1(tensor);
+        this.sampleAz =
+                orientationParameters.p3.rotateSampleAzimuthForP3(sampleAz);
+        this.sampleDip =
+                orientationParameters.p2.correctSampleDipForP2(sampleDip);
+        this.formAz = orientationParameters
+                .p4.correctFormationDipDirectionForP4(formAz);
         this.formDip = formDip;
         this.fTest = fTest;
     }
@@ -71,13 +77,6 @@ public final class AmsData {
      */
     public String getName() {
         return name;
-    }
-
-    /**
-     * @return the orientation parameters
-     */
-    public OrientationParameters getOrientationParameters() {
-        return orientationParameters;
     }
 
     /**

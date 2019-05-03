@@ -51,7 +51,13 @@ public class AmsLoaderTest {
         assertEquals("LPA0309.1", amsData.getName());
         assertEquals(28, amsData.getSampleAz(), DELTA);
         assertEquals(0, amsData.getSampleDip(), DELTA);
-        assertEquals(0, amsData.getFormAz(), DELTA);
+        
+        /*
+         * Rotated 90° from the value in the file, since the file uses
+         * the P4=90 orientation convention (strike) and PuffinPlot uses
+         * P4=0 (down-dip direction).
+         */
+        assertEquals(90, amsData.getFormAz(), DELTA);
         assertEquals(0, amsData.getFormDip(), DELTA);
         assertEquals(4.7, amsData.getfTest(), DELTA);
         assertArrayEquals(

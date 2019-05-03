@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import net.talvi.puffinplot.data.file.OrientationParameters;
-import net.talvi.puffinplot.data.file.OrientationParameters.AzimuthParameter;
 import net.talvi.puffinplot.data.file.OrientationParameters.DipParameter;
 
 
@@ -37,7 +36,6 @@ import static org.junit.Assert.assertEquals;
 public class AmsDataTest {
     
     private final String expectedName;
-    private final OrientationParameters expectedOrientationParameters;
     private final double[] expectedTensor;
     private final double expectedSampleAz, expectedSampleDip;
     private final double expectedFormAz, expectedFormDip;
@@ -50,11 +48,15 @@ public class AmsDataTest {
         final double[] tensor =
                 tensorList.stream().mapToDouble(Double::doubleValue).toArray();
         this.expectedName = name;
-        this.expectedOrientationParameters = orientationParameters;
-        this.expectedTensor = tensor;
-        this.expectedSampleAz = sampleAz;
-        this.expectedSampleDip = sampleDip;
-        this.expectedFormAz = formAz;
+        
+        this.expectedTensor =
+                orientationParameters.p1.rotateForP1(tensor);
+        this.expectedSampleAz =
+                orientationParameters.p3.rotateSampleAzimuthForP3(sampleAz);
+        this.expectedSampleDip =
+                orientationParameters.p2.correctSampleDipForP2(sampleDip);
+        this.expectedFormAz =
+                orientationParameters.p4.correctFormationDipDirectionForP4(formAz);
         this.expectedFormDip = formDip;
         this.expectedFTest = fTest;
         this.amsData = new AmsData(name, orientationParameters, tensor,
@@ -124,11 +126,5 @@ public class AmsDataTest {
     @Test
     public void testGetfTest() {
         assertEquals(expectedFTest, amsData.getfTest(), 0);
-    }
-    
-    @Test
-    public void testGetOrientationParameters() {
-        assertEquals(expectedOrientationParameters,
-                amsData.getOrientationParameters());
     }
 }

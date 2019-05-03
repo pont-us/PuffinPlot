@@ -22,6 +22,7 @@ import org.junit.Test;
 import static java.lang.Math.toRadians;
 import static net.talvi.puffinplot.data.file.OrientationParameters.AzimuthParameter;
 import static net.talvi.puffinplot.data.file.OrientationParameters.DipParameter;
+import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
@@ -180,6 +181,19 @@ public class OrientationParametersTest {
         assertNotEquals(same0, "x");
         
         assertEquals(same0.hashCode(), same1.hashCode());
+    }
+    
+    @Test
+    public void testRotateForP1() {
+        final double[] elts = {2, 3, 4, 5, 6, 7};
+        Assert.assertArrayEquals(elts,
+                AzimuthParameter.A12.rotateForP1(elts), 0);
+        Assert.assertArrayEquals(new double[] {3, 2, 4, -5, 7, -6},
+                AzimuthParameter.A3.rotateForP1(elts), 1e-10);
+        Assert.assertArrayEquals(new double[] {2, 3, 4, 5, -6, -7},
+                AzimuthParameter.A6.rotateForP1(elts), 1e-10);
+        Assert.assertArrayEquals(new double[] {3, 2, 4, -5, -7, 6},
+                AzimuthParameter.A9.rotateForP1(elts), 1e-10);
     }
     
 }

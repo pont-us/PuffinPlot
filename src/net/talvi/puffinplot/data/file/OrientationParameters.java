@@ -16,11 +16,13 @@
  */
 package net.talvi.puffinplot.data.file;
 
+import Jama.Matrix;
 import java.util.Objects;
 
 import net.talvi.puffinplot.data.Vec3;
 
 import static java.lang.Math.toRadians;
+import net.talvi.puffinplot.data.Tensor;
 
 /**
  * A set of parameters defining conventions for orienting a sample.
@@ -125,7 +127,7 @@ public class OrientationParameters {
                     "Unknown azimuthal parameter index \"" + index + "\"");
         }
 
-        private Vec3 rotateForP1(Vec3 vector) {
+        public Vec3 rotateForP1(Vec3 vector) {
             switch (this) {
                 case A3:
                     return vector.rotZ(toRadians(90));
@@ -138,7 +140,21 @@ public class OrientationParameters {
             }
         }
         
-        private double rotateSampleAzimuthForP3(double azimuthDegrees) {
+        public double[] rotateForP1(double[] tensorElements) {
+            switch (this) {
+                case A3:
+                    return rotZ(tensorElements, toRadians(90));
+                case A6:
+                    return rotZ(tensorElements, toRadians(180));
+                case A9:
+                    return rotZ(tensorElements, toRadians(270));
+                default:
+                    return tensorElements;
+            }
+        }
+
+        
+        public double rotateSampleAzimuthForP3(double azimuthDegrees) {
             switch (this) {
                 case A3:
                     return (azimuthDegrees + 270) % 360;
@@ -149,6 +165,17 @@ public class OrientationParameters {
                 default:
                     return azimuthDegrees;
             }
+        }
+        
+        private static double[] rotZ(double[] k, double radians) {
+            final double[] elts =
+                {k[0], k[3], k[5], k[3], k[1], k[4], k[5], k[4], k[2]};
+            final Matrix m = new Matrix(elts, 3);
+            final Matrix rotation = new Matrix(Vec3.getZRotationMatrix(radians));
+            final Matrix rotated = rotation.times(m).times(rotation.transpose());
+            final double[][] out = rotated.getArray();
+            return new double[]
+            {out[0][0], out[1][1], out[2][2], out[0][1], out[1][2], out[0][2]};
         }
     }
     

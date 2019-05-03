@@ -1242,7 +1242,15 @@ public class SuiteTest {
                         toTensorComponentString());
         assertEquals(28, sample.getSampAz(), delta);
         assertEquals(0, sample.getSampDip(), delta);
-        assertEquals(0, sample.getFormAz(), delta);
+        
+        /*
+         * The formation orientation in the file is 0/0, but the orientation
+         * parameters there have P4=90 (formation dip direction is strike).
+         * PuffinPlot converts this to its own convention of P4=0 (formation
+         * dip direction is down-dip azimuth), producing an azimuth of 90.
+         */
+        assertEquals(90, sample.getFormAz(), delta);
+
         assertEquals(0, sample.getFormDip(), delta);
     }
     
@@ -1263,16 +1271,16 @@ public class SuiteTest {
                 syntheticSuite2.getSampleByName("DIP00A").getAms()
                         .toTensorComponentString());
         
-//        syntheticSuite2.importAmsFromAsc(
-//                Collections.singletonList(
-//                        extractAscFileFromResources("YF-TRUNCATED.ASC")
-//                                .toFile()),
-//                true, true, false);
-//        assertEquals(12, syntheticSuite2.getNumSamples());
-//        
-//        assertEquals("1.0183 1.0089 0.9728 0.0032 -0.0061 -0.0062",
-//                syntheticSuite2.getSampleByName("YF1.1A").getAms()
-//                        .toTensorComponentString());
+        syntheticSuite2.importAmsFromAsc(
+                Collections.singletonList(
+                        extractAscFileFromResources("YF-TRUNCATED.ASC")
+                                .toFile()),
+                true, true, false);
+        assertEquals(12, syntheticSuite2.getNumSamples());
+        
+        assertEquals("1.01830 1.00885 0.97285 0.00328 -0.00613 -0.00620",
+                syntheticSuite2.getSampleByName("YF1.1A").getAms()
+                        .toTensorComponentString());
     }
 
     private Path extractAscFileFromResources(String filename)

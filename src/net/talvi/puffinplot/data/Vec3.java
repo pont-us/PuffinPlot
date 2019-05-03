@@ -476,16 +476,34 @@ public class Vec3 {
     /**
      * Rotates this vector about the z axis.
      *
+     * The rotation direction is clockwise as viewed from above (i.e. from (0,
+     * 0, -∞). For example, {@code rotZ(π/2)} called on the eastward-pointing
+     * vector (0, 1, 0) would produce the southward-pointing vector (-1, 0, 0).
+     *
      * @param angle an angle in radians
      * @return a new vector equal to this vector rotated {@code angle} radians
      * about the z axis
      */
     public Vec3 rotZ(double angle) {
-        final double[][] m =
-         {{ cos(angle), -sin(angle),  0 },
-         {  sin(angle),  cos(angle),  0 },
-         {           0,           0,  1 }};
-        return transform(m);
+        return transform(getZRotationMatrix(angle));
+    }
+    
+    /**
+     * Returns a matrix for a rotation about the z axis.
+     * 
+     * The rotation direction is clockwise as viewed from above (i.e.
+     * from (0, 0, -∞). For example, {@code getZRotationMatrix(π/2)}
+     * applied to the eastward-pointing vector (0, 1, 0) would produce
+     * the southward-pointing vector (-1, 0, 0).
+     *
+     * @param angle an angle in radians
+     * @return a matrix which rotates {@code angle} radians about the z axis
+     */
+    public static double[][] getZRotationMatrix(double angle) {
+        return new double[][]
+            {{ cos(angle), -sin(angle),  0 },
+            {  sin(angle),  cos(angle),  0 },
+            {           0,           0,  1 }};
     }
 
     /**
