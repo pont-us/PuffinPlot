@@ -37,6 +37,7 @@ import static java.lang.Double.parseDouble;
 import static java.lang.Math.abs;
 import static java.lang.Math.toRadians;
 import java.util.function.Consumer;
+import java.util.function.ObjDoubleConsumer;
 
 /**
  * This class represents a sample on which measurements have been made. It may
@@ -473,6 +474,10 @@ public class Sample {
     /**
      * Adds a treatment step to this sample.
      * 
+     * If this sample contains no treatment steps, its sample and formation
+     * orientations and magnetic deviation will be set from the values in
+     * the added treatment step.
+     * 
      * @param treatmentStep a treatment step to add to this sample
      */
     public void addTreatmentStep(TreatmentStep treatmentStep) {
@@ -485,7 +490,9 @@ public class Sample {
             setMagDev(treatmentStep.getMagDev());
         }
         treatmentSteps.add(treatmentStep);
-        if (treatmentStep.hasMagSus()) hasMsData = true;
+        if (treatmentStep.hasMagSus()) {
+            hasMsData = true;
+        }
         treatmentStep.setSample(this);
     }
 
@@ -1097,6 +1104,7 @@ public class Sample {
     private void setSampAz(double sampAz) {
         touch();
         this.sampAz = sampAz;
+        setForAllSteps(TreatmentStep::setSampAz, this.sampAz);
     }
 
     /**
@@ -1111,6 +1119,7 @@ public class Sample {
     private void setSampDip(double sampDip) {
         touch();
         this.sampDip = sampDip;
+        setForAllSteps(TreatmentStep::setSampDip, this.sampDip);
     }
     
     /**
@@ -1125,6 +1134,7 @@ public class Sample {
     private void setSampHade(double sampHade) {
         touch();
         this.sampDip = 90 - sampHade;
+        setForAllSteps(TreatmentStep::setSampDip, this.sampDip);
     }
 
     /**
@@ -1139,6 +1149,7 @@ public class Sample {
     private void setFormAz(double formAz) {
         touch();
         this.formAz = formAz;
+        setForAllSteps(TreatmentStep::setFormAz, this.formAz);
     }
     
     /**
@@ -1148,15 +1159,20 @@ public class Sample {
      */
     public double getFormStrike() {
         double strike = formAz - 90;
-        if (strike < 0) strike += 360;
+        if (strike < 0) {
+            strike += 360;
+        }
         return strike;
     }
 
     private void setFormStrike(double formStrike) {
         touch();
         double az = formStrike + 90;
-        if (az > 360) az -= 360;
+        if (az > 360) {
+            az -= 360;
+        }
         this.formAz = az;
+        setForAllSteps(TreatmentStep::setFormAz, this.formAz);
     }
 
     /**
@@ -1171,6 +1187,7 @@ public class Sample {
     private void setFormDip(double formDip) {
         touch();
         this.formDip = formDip;
+        setForAllSteps(TreatmentStep::setFormDip, this.formDip);
     }
 
     /**
@@ -1185,6 +1202,13 @@ public class Sample {
     private void setMagDev(double magDev) {
         touch();
         this.magDev = magDev;
+        setForAllSteps(TreatmentStep::setMagDev, this.magDev);
+    }
+    
+    private void setForAllSteps(ObjDoubleConsumer<TreatmentStep> setter,
+            double value) {
+        getTreatmentSteps().stream()
+                .forEach(step -> setter.accept(step, value));
     }
 
     /**
@@ -1197,13 +1221,27 @@ public class Sample {
     public void setValue(TreatmentParameter field, String value) {
         touch();
         switch (field) {
-            case SAMPLE_AZ: setSampAz(parseDouble(value)); break;
-            case SAMPLE_DIP: setSampDip(parseDouble(value)); break;
-            case VIRT_SAMPLE_HADE: setSampHade(parseDouble(value)); break;
-            case FORM_AZ: setFormAz(parseDouble(value)); break;
-            case FORM_DIP: setFormDip(parseDouble(value)); break;
-            case VIRT_FORM_STRIKE: setFormStrike(parseDouble(value)); break;
-            case MAG_DEV: setMagDev(parseDouble(value)); break;
+            case SAMPLE_AZ:
+                setSampAz(parseDouble(value));
+                break;
+            case SAMPLE_DIP:
+                setSampDip(parseDouble(value));
+                break;
+            case VIRT_SAMPLE_HADE:
+                setSampHade(parseDouble(value));
+                break;
+            case FORM_AZ:
+                setFormAz(parseDouble(value));
+                break;
+            case FORM_DIP:
+                setFormDip(parseDouble(value));
+                break;
+            case VIRT_FORM_STRIKE:
+                setFormStrike(parseDouble(value));
+                break;
+            case MAG_DEV:
+                setMagDev(parseDouble(value));
+                break;
             default:
                 LOGGER.log(Level.WARNING, "Unhandled TreatmentStep field: {0}",
                         field.name());

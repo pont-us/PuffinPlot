@@ -1240,7 +1240,7 @@ public class PuffinApp {
     private boolean showErrorIfNoSuite() {
         if (getCurrentSuite() == null) {
             errorDialog("No data file open",
-                    "You must open a data file\n"
+                    "You must open a data file "
                     + "before you can perform this operation.");
             return true;
         } else {
