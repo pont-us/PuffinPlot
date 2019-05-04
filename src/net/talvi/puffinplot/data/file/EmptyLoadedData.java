@@ -21,17 +21,31 @@ import java.util.List;
 import net.talvi.puffinplot.data.TreatmentStep;
 
 /**
- *
- * @author pont
+ * A trivial implementation of the {@link LoadedData} interface, which
+ * contains no data, only an optional single message.
+ * <p>
+ * The class is intended to provide a convenient "null object" which can
+ * be returned when file loading fails entirely, hopefully containing an
+ * explanation of <i>why</i> it failed entirely.
+ * 
  */
 public class EmptyLoadedData implements LoadedData {
 
     private final List<String> messages;
 
+    /**
+     * Instantiate an {@code EmptyLoadedData} object with a single message.
+     * The message will be returned in a list by {@code getMessages()}.
+     * 
+     * @param message the message with which to populate this object
+     */
     public EmptyLoadedData(String message) {
         this.messages = Collections.singletonList(message);
     }
     
+    /**
+     * Instantiate an {@code EmptyLoadedData} object with no message.
+     */
     public EmptyLoadedData() {
         this.messages = Collections.emptyList();
     }

@@ -22,8 +22,9 @@ import java.util.Locale;
 import net.talvi.puffinplot.data.TreatmentStep;
 
 /**
- *
- * @author pont
+ * A simple implementation of the {@link LoadedData} interface. It caches
+ * treatment steps, messages, and extra lines, and returns those cached
+ * lists via the getters in the interface.
  */
 public class SimpleLoadedData implements LoadedData {
 
@@ -46,18 +47,45 @@ public class SimpleLoadedData implements LoadedData {
         return extraLines;
     }
     
+    /**
+     * Add a treatment step to the internal cache.
+     * 
+     * @param step the treatment step to add.
+     */
     public void addTreatmentStep(TreatmentStep step) {
         treatmentSteps.add(step);
     }
     
+    /**
+     * Add a formatted message to the internal message cache. The message is
+     * formatted using the {@link Locale#ENGLISH} locale. Formatting
+     * is done with {@code String.format}.
+     * 
+     * @see String#format(java.util.Locale, java.lang.String, java.lang.Object...) 
+     *
+     * @param message the message to add, as a format string
+     * @param args arguments referenced by the format specifiers in the format
+     * string
+     */
     public void addMessage(String message, Object... args) {
         messages.add(String.format(Locale.ENGLISH, message, args));
     }
     
+    /**
+     * Add a line to the internal extra line cache
+     * 
+     * @param extraLine the line to add
+     */
     public void addExtraLine(String extraLine) {
         extraLines.add(extraLine);
     }
 
+    /**
+     * Replace the current treatment step cache with a supplied list.
+     * The existing cached list is discarded.
+     * 
+     * @param steps the treatment steps with which to replace the current cache
+     */
     public void setTreatmentSteps(List<TreatmentStep> steps) {
         this.treatmentSteps = steps;
     }

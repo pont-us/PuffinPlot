@@ -56,9 +56,11 @@ public class PplLoader implements FileLoader {
     private List<String> extraLines = Collections.emptyList();
 
     /**
-     * Creates a PuffinPlot file loader for the specified file.
+     * Reads data from a specified PuffinPlot file.
      * 
      * @param file the file from which to read data
+     * @param options load options (currently unused)
+     * @return the data from the file
      */
     @Override
     public LoadedData readFile(File file, Map<Object, Object> options) {
