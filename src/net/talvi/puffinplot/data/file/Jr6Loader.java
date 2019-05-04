@@ -40,13 +40,14 @@ import net.talvi.puffinplot.data.TreatmentType;
 public class Jr6Loader implements FileLoader {
 
     /**
-     * Create a new JR6 loader for a specified input stream.
+     * Read JR6 data from a specified input stream.
      * 
      * @param inputStream a stream of JR6 file contents
      * @param fileIdentifier an identifier for the file
      *   (only used in load messages)
      * @param defaultTreatmentType the treatment type to use for lines which
      *   don't specify one explicitly
+     * @return the data read from the stream
      */
     public LoadedData readStream(InputStream inputStream, String fileIdentifier,
             TreatmentType defaultTreatmentType) {
@@ -70,20 +71,19 @@ public class Jr6Loader implements FileLoader {
     /**
      * Return a JR6 loader for the specified file.
      * <p>
-     * Currently one load option can be supplied: if the option map
-     * contains the key {@code TreatmentType.class} with an associated
-     * value of type {@code TreatmentType}, that value will be used as the
-     * default treatment type for the data in the file. Otherwise,
-     * treatment type will default to thermal. The default treatment type
-     * is only used for data lines which do not explicitly specify a treatment
-     * type.
+     * Currently one load option can be supplied: if the option map contains the
+     * key {@code TreatmentType.class} with an associated value of type
+     * {@code TreatmentType}, that value will be used as the default treatment
+     * type for the data in the file. Otherwise, treatment type will default to
+     * thermal. The default treatment type is only used for data lines which do
+     * not explicitly specify a treatment type.
      * 
      * @param file a JR6 file to read
      * @param importOptions load options (see method description for details)
      * @return a JR6 loader for the specified file
      */
-    public LoadedData readFile(File file,
-            Map<Object, Object> importOptions) {
+    @Override
+    public LoadedData readFile(File file, Map<Object, Object> importOptions) {
         try {
             final Object specifiedTreatmentType =
                     importOptions.get(TreatmentType.class);
@@ -109,7 +109,6 @@ public class Jr6Loader implements FileLoader {
     }
 
     private TreatmentStep makeTreatmentStep(Jr6DataLine dataLine) {
-
         final VectorAndOrientations vectorAndOrientations =
                 dataLine.getOrientationParameters().
                         convertToPuffinPlotConvention(
@@ -131,11 +130,11 @@ public class Jr6Loader implements FileLoader {
             case ARM:
                 step.setAfX(dataLine.getTreatmentLevel() / 1000.);
                 step.setAfY(dataLine.getTreatmentLevel() / 1000.);
+                // Deliberate fall-through to next case
             case DEGAUSS_Z:
                 step.setAfZ(dataLine.getTreatmentLevel() / 1000.);
                 break;
         }
         return step;
     }
-
 }

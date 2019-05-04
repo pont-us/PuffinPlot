@@ -9,7 +9,6 @@ Installation requirements
 
 -   PuffinPlot now requires Java 8 or higher.
 
-
 Data manipulation
 -----------------
 
@@ -22,7 +21,6 @@ Data manipulation
     other.
 -   Allow user to remove samples outside a specified depth range.
 -   Allow user to remove samples with a specified treatment type.
-
 
 Calculations
 ------------
@@ -78,9 +76,13 @@ Data import
 -   When importing from a custom file format, PuffinPlot now sets
     default values for the sample and formation corrections if these
 	are not specified in the file.
--   When importing AMS data, PuffinPlot can now read a formation correction
-    from the ASC file. It can also, optionally, overwrite existing sample
-    and formation corrections with values read from the ASC file.
+-   When importing AMS data from an Agico ASC file, PuffinPlot can now
+    read a formation correction from the file. All possible orientation
+    conventions are now supported on ASC file import; if necessary,
+    orientations are converted to PuffinPlot's conventions using the
+    orientation parameters stored in the file. Optionally, existing
+    sample and formation corrections can be overwritten with values read
+    from the ASC file.
 -   Import from Caltech (CIT) files has been improved: demagnetization
     levels for thermal treatment are now read correctly, as is the "NRM"
     treatment code.
@@ -93,8 +95,8 @@ Data export
 -   Precision of exported parameters increased to four decimal places.
 -   PuffinPlot can now export a bundle containing both data and a
     processing script, allowing analyses to be reproduced automatically.
--   In exported site data, write field strengths for minimum and maximum
-	great-circle steps in millitesla rather than tesla.
+-   In exported site data, field strengths for minimum and maximum
+	great-circle steps are written in millitesla rather than tesla.
 
 Miscellaneous bug fixes
 -----------------------
@@ -123,8 +125,9 @@ Developer notes
     PuffinPlot's data processing, and to avoid the introduction of
     bugs during future development.
 -   PuffinPlot's version control has been migrated from Mercurcial
-    to Git, and the main repository from Bitbucket to GitHub.
-    
+    to Git, and the main repository from Bitbucket to GitHub. (The
+	Bitbucket repository has been retained as a mirror.)
+
 
 PuffinPlot 1.03 release notes
 =============================

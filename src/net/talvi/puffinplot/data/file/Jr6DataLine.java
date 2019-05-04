@@ -24,8 +24,7 @@ import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.Vec3;
 
 /**
- *
- * @author pont
+ * A representation of the data contained in one line of a JR6 file.
  */
 class Jr6DataLine {
 
@@ -68,7 +67,7 @@ class Jr6DataLine {
         treatmentLevel = readTreatmentLevel(matcher.group(2));
         magnetization = readMagnetization(matcher);
         final IntFunction<Integer> readInt =
-                (index) -> Integer.parseInt(matcher.group(index).trim());
+                index -> Integer.parseInt(matcher.group(index).trim());
         azimuth = readInt.apply(7);
         dip = readInt.apply(8);
         foliationAzimuth = readInt.apply(9);
@@ -134,10 +133,6 @@ class Jr6DataLine {
         return INT_PATTERN.matcher(s).matches();
     }
 
-    public static Jr6DataLine read(String string) {
-        return read(string, TreatmentType.THERMAL);
-    }
-
     /**
      * Read a line with a default treatment type; the supplied treatment type
      * is only used if none is specified in the line itself.
@@ -152,53 +147,89 @@ class Jr6DataLine {
         return new Jr6DataLine(string, defaultTreatmentType);
     }
 
+    /**
+     * @return the sample name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @return the treatment type specified in the line, or (if there is none)
+     * the default treatment type supplied to the constructor
+     */
     public TreatmentType getTreatmentType() {
         return treatmentType;
     }
 
+    /**
+     * @return treatment level (°C or millitesla)
+     */
     public int getTreatmentLevel() {
         return treatmentLevel;
     }
 
+    /**
+     * @return the magnetization vector
+     */
     public Vec3 getMagnetization() {
         return magnetization;
     }
 
+    /**
+     * @return the sample azimuth in degrees
+     */
     public int getAzimuth() {
         return azimuth;
     }
 
+    /**
+     * @return the sample dip in degrees
+     */
     public int getDip() {
         return dip;
     }
 
+    /**
+     * @return the foliation azimuth in degrees
+     */
     public int getFoliationAzimuth() {
         return foliationAzimuth;
     }
 
+    /**
+     * @return the foliation dip in degrees
+     */
     public int getFoliationDip() {
         return foliationDip;
     }
 
+    /**
+     * @return the lineation trend in degrees
+     */
     public int getLineationTrend() {
         return lineationTrend;
     }
 
+    /**
+     * @return the lineation plunge in degrees
+     */
     public int getLineationPlunge() {
         return lineationPlunge;
     }
 
+    /**
+     * @return the orientation parameters defined in this line
+     */
     public OrientationParameters getOrientationParameters() {
         return orientationParameters;
     }
     
+    /**
+     * @return the magnetization vector and sample and foliation orientations
+     */
     public VectorAndOrientations getVectorAndOrientations() {
         return new VectorAndOrientations(magnetization, azimuth, dip,
                 foliationAzimuth, foliationDip);
     }
-
 }

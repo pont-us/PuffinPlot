@@ -34,7 +34,8 @@ public class Jr6DataLineTest {
                 "BC0101A1  NRM       0.08 -1.45 -0.46  -2"
                 + " 107  88  11  12  13  14 12  0 12  0   1";
         
-        final Jr6DataLine line = Jr6DataLine.read(string);
+        final Jr6DataLine line =
+                Jr6DataLine.read(string, TreatmentType.THERMAL);
         assertEquals("BC0101A1", line.getName());
         assertEquals(TreatmentType.NONE, line.getTreatmentType());
         assertEquals(0, line.getTreatmentLevel());
@@ -64,7 +65,8 @@ public class Jr6DataLineTest {
         final String string =
                 "BC0101A1  M50       0.08 -1.45 -0.46  -2"
                 + " 107  88  11  12  13  14 12  0 12  0   1";
-        final Jr6DataLine line = Jr6DataLine.read(string);
+        final Jr6DataLine line =
+                Jr6DataLine.read(string, TreatmentType.THERMAL);
         assertEquals("BC0101A1", line.getName());
         assertEquals(TreatmentType.ARM, line.getTreatmentType());
         assertEquals(50, line.getTreatmentLevel());
@@ -135,13 +137,14 @@ public class Jr6DataLineTest {
         final String string =
                 "BC0101A1  X50       0.08 -1.45 -0.46  -2"
                 + " 107  88  11  12  13  14 12  0 12  0   1";
-        Jr6DataLine.read(string);
+        Jr6DataLine.read(string, TreatmentType.THERMAL);
     }
 
     
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidLineFormat() {
-        Jr6DataLine.read("This string doesn't match the required format.");
+        Jr6DataLine.read("This string doesn't match the required format.",
+                TreatmentType.THERMAL);
     }
     
 

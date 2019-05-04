@@ -422,7 +422,7 @@ public class TreatmentStep {
     }
 
     /**
-     * For AF or ARM treatment, returns the AF field strength in the x axis.
+     * For AF or ARM treatment, returns the x-axis AF field strength in tesla.
      *
      * @return for AF or ARM treatment, the AF field strength in the x axis
      */
@@ -431,7 +431,7 @@ public class TreatmentStep {
     }
 
     /**
-     * For AF or ARM treatment, sets the AF field strength in the x axis.
+     * For AF or ARM treatment, sets the x-axis AF field strength in tesla.
      *
      * @param v for AF or ARM treatment, the AF field strength in the x axis
      */
@@ -441,7 +441,7 @@ public class TreatmentStep {
     }
 
     /**
-     * For AF or ARM treatment, returns the AF field strength in the y axis.
+     * For AF or ARM treatment, returns the y-axis AF field strength in tesla.
      *
      * @return for AF or ARM treatment, the AF field strength in the y axis
      */
@@ -450,7 +450,7 @@ public class TreatmentStep {
     }
 
     /**
-     * For AF or ARM treatment, sets the AF field strength in the y axis.
+     * For AF or ARM treatment, sets the y-axis AF field strength in tesla.
      *
      * @param v for AF or ARM treatment, the AF field strength in the y axis
      */
@@ -460,7 +460,7 @@ public class TreatmentStep {
     }
 
     /**
-     * For AF or ARM treatment, returns the AF field strength in the z axis.
+     * For AF or ARM treatment, returns the z-axis AF field strength in tesla.
      *
      * @return for AF or ARM treatment, the AF field strength in the z axis
      */
@@ -469,7 +469,7 @@ public class TreatmentStep {
     }
 
     /**
-     * For AF or ARM treatment, sets the AF field strength in the z axis.
+     * For AF or ARM treatment, sets the z-axis AF field strength in tesla.
      *
      * @param v for AF or ARM treatment, the AF field strength in the z axis
      */
@@ -479,7 +479,7 @@ public class TreatmentStep {
     }
 
     /**
-     * For IRM treatment, returns the IRM field strength.
+     * For IRM treatment, returns the IRM field strength in tesla.
      *
      * @return for IRM treatment, the IRM field strength
      */
@@ -488,7 +488,7 @@ public class TreatmentStep {
     }
 
     /**
-     * For IRM treatment, sets the IRM field strength.
+     * For IRM treatment, sets the IRM field strength in tesla.
      *
      * @param field for IRM treatment, the IRM field strength
      */
