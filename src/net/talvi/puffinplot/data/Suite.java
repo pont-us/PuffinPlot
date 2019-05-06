@@ -77,7 +77,6 @@ public final class Suite implements SampleGroup {
     private String name;
     private List<Sample> emptyTraySamples;
     private SuiteCalcs suiteCalcs;
-    private final List<String> loadWarnings = new ArrayList<>();
     private boolean hasUnknownTreatType = false;
     private static final Logger logger =
             Logger.getLogger("net.talvi.puffinplot");
@@ -96,17 +95,6 @@ public final class Suite implements SampleGroup {
     private final String suiteCreator;
     private String fileCreator;
     private final Set<SavedListener> savedListenerSet = new HashSet<>();
-
-    /**
-     * Get the list of warnings produced when data was being loaded from one or
-     * more files.
-     *
-     * @return the list of warnings produced when data was being loaded from one
-     * or more files
-     */
-    public List<String> getLoadWarnings() {
-        return Collections.unmodifiableList(loadWarnings);
-    }
 
     /**
      * Update this suit's internal index mapping samples to their indices
@@ -468,35 +456,39 @@ public final class Suite implements SampleGroup {
     }
     
     /**
-     * Convenience method for reading PuffinPlot files.
+     * Convenience method for reading PuffinPlot files.This method is a wrapper
+     * for the fully specified method {@link #ReadFiles(List<File>,
+     * SensorLengths, TwoGeeLoader.Protocol, boolean, FileType, FileFormat,
+     * Map<Object, Object>)} which provides defaults for all the arguments
+     * except for the list of file names.
      *
-     * This method is a wrapper for the fully specified method 
-     * {@code ReadFiles(List<File>, SensorLengths, TwoGeeLoader.Protocol, boolean, FileType, FileFormat, Map<Object,Object>)}
-     * which provides defaults for all the arguments except for the list of file
-     * names. The filetype is set to PUFFINPLOT_NEW.
-       * 
+     * The filetype is set to PUFFINPLOT_NEW.
+     *
      * @param files files to read
+     * @return a (possibly empty) list of messages generated during loading
      * @throws IOException if an exception occurs during file reading
      */
-    public void readFiles(List<File> files) throws IOException {
-        readFiles(files, FileType.PUFFINPLOT_NEW, Collections.emptyMap());
+    public List<String> readFiles(List<File> files) throws IOException {
+        return readFiles(files, FileType.PUFFINPLOT_NEW,
+                Collections.emptyMap());
     }
 
     /**
-     * Reads data into this suite from the specified files. After readFiles
-     * returns, #getLoadWarnings() can be used to return a list of problems 
-     * that occurred during file reading.
+     * Reads data into this suite from the specified files.After readFiles
+ returns, #getLoadWarnings() can be used to return a list of problems 
+ that occurred during file reading.
      * 
      * @param files the files from which to read the data (non-null, non-empty)
      * @param fileType type of the specified files
      * @param importOptions extra options passed to file importers
+     * @return a (possibly empty) list of messages generated during loading
      * @throws IOException if an I/O error occurred while reading the files 
      */
-    public void readFiles(List<File> files, FileType fileType,
+    public List<String> readFiles(List<File> files, FileType fileType,
             Map<Object,Object> importOptions) throws IOException {
         Objects.requireNonNull(files, "files may not be null");
         if (files.isEmpty()) {
-            throw new IllegalArgumentException("File list may not be empty.");
+            throw new IllegalArgumentException("File list must be non-empty.");
         }
 
         if (isEmpty()) { // only set the name if suite is empty
@@ -512,13 +504,7 @@ public final class Suite implements SampleGroup {
          * correctly set the saved state later.
          */
         final boolean wasEmpty = isEmpty();
-        
-        /*
-         * Clear any existing load warnings: if we're appending data to a suite
-         * with existing data, it may contain warnings from a previous readFiles
-         * call.
-         */
-        loadWarnings.clear();
+        final List<String> loadWarnings = new ArrayList<>();
         
         files = expandDirs(files);
         final ArrayList<TreatmentStep> tempDataList = new ArrayList<>();
@@ -593,8 +579,7 @@ public final class Suite implements SampleGroup {
                 loadedData = loader.readFile(file, options);
                 break;
             case DIRECTIONS:
-                readDirectionalData(files);
-                return; // NB: return, not break
+                return readDirectionalData(files); // NB: return, not break
             default:
                 loadWarnings.add(String.format(Locale.ENGLISH,
                         "%s is of unknown file type.", file.getName()));
@@ -677,6 +662,7 @@ public final class Suite implements SampleGroup {
          * was loaded.
          */
         setSaved(wasEmpty);
+        return loadWarnings;
     }
 
     /**
@@ -691,16 +677,20 @@ public final class Suite implements SampleGroup {
     }
     
     /**
-     * Reads sample direction data from text files.
-     * 
-     * Text files should have no header lines. Columns should be separated by
-     * commas, spaces, or tabs. Column 1 is sample name, column 2 is declination
-     * in degrees, column 3 is inclination in degrees.
-     * 
+     * Reads sample direction data from text files.Text files should have no
+     * header lines.
+     *
+     * Columns should be separated by commas, spaces, or tabs. Column 1 is
+     * sample name, column 2 is declination in degrees, column 3 is inclination
+     * in degrees.
+     *
      * @param files files from which to read
+     * @return a (possibly empty) list of messages generated during loading
      * @throws IOException if an error occurred while reading the files
      */
-    public void readDirectionalData(Collection<File> files) throws IOException {
+    public List<String> readDirectionalData(Collection<File> files)
+            throws IOException {
+        final List<String> loadWarnings = new ArrayList<>();
         for (File file: files) {
             try (BufferedReader br = new BufferedReader(new FileReader(file))) {
                 String line;
@@ -714,6 +704,9 @@ public final class Suite implements SampleGroup {
                     sample.setImportedDirection(v);
                     addSample(sample, sampleName);
                 }
+            } catch (NumberFormatException exception) {
+                loadWarnings.add(String.format("Unreadable data in file \"%s\"",
+                        file.getName()));
             }
         }
         measurementType = MeasurementType.CONTINUOUS;
@@ -726,6 +719,7 @@ public final class Suite implements SampleGroup {
             }
         }
         updateReverseIndex();
+        return loadWarnings;
     }
 
     void addSample(Sample sample, final String sampleName) {

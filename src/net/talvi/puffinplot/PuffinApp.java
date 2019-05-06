@@ -698,10 +698,10 @@ public class PuffinApp {
             } else {
                 suite = getCurrentSuite();
             }
-            suite.readFiles(files, fileType, importOptions);
+            final List<String> warnings =
+                    suite.readFiles(files, fileType, importOptions);
             suite.doAllCalculations(getCorrection(),
                     getGreatCirclesValidityCondition());
-            final List<String> warnings = suite.getLoadWarnings();
             if (warnings.size() > 0) {
                 final StringBuilder sb =
                         new StringBuilder(warnings.size() == 1 ? "" :

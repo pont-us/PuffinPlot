@@ -21,6 +21,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import net.talvi.puffinplot.data.Correction;
@@ -106,26 +107,28 @@ public class IapdLoaderTest {
     @Test
     public void testWithEmptyFile() throws IOException {
         final File file = makeFile("EMPTY.DAT", null);
-        readFile(file);
+        final List<String> messages = readFile(file);
         // Check for empty file warning.
-        assertEquals(1, suite.getLoadWarnings().size());
+        assertEquals(1, messages.size());
         // Check for empty suite.
         assertTrue(suite.getSamples().isEmpty());
     }
     
     @Test
     public void testWithHighA95() throws IOException {
-        readFile(makeFile("HIGH_A95.DAT", MINIMAL_FILE));
-        assertEquals(1, suite.getLoadWarnings().size());
+        final List<String> messages =
+                readFile(makeFile("HIGH_A95.DAT", MINIMAL_FILE));
+        assertEquals(1, messages.size());
         assertEquals(1, suite.getSampleByIndex(0).getTreatmentSteps().size());
     }
     
     @Test
     public void testWithMissingSampleName() throws IOException {
-        readFile(makeFile("NO_SAMPLE_NAME.DAT",
+        final List<String> messages =
+                readFile(makeFile("NO_SAMPLE_NAME.DAT",
                 " " + FILE_TEXT.substring(FILE_TEXT.indexOf("\n"))));
         // Should have "No sample name" and "Malformed header" warnings
-        assertEquals(2, suite.getLoadWarnings().size());
+        assertEquals(2, messages.size());
         // The sample should load, albeit with default orientation
         assertEquals(1, suite.getSamples().size());
         assertEquals(16, suite.getSampleByIndex(0).getTreatmentSteps().size());
@@ -133,8 +136,10 @@ public class IapdLoaderTest {
     
     @Test
     public void testWithMalformedData() throws IOException {
-        readFile(makeFile("BAD_DATA.DAT", FILE_TEXT + "malformed line\r\n"));
-        assertEquals(1, suite.getLoadWarnings().size());
+        final List<String> messages =
+                readFile(makeFile("BAD_DATA.DAT",
+                        FILE_TEXT + "malformed line\r\n"));
+        assertEquals(1, messages.size());
         /*
          * The malformed line should also be loaded as a treatment step, with
          * default values for the missing data.
@@ -164,7 +169,8 @@ public class IapdLoaderTest {
         options.put(TreatmentType.class, TreatmentType.DEGAUSS_XYZ);
         options.put(MeasurementType.class, MeasurementType.DISCRETE);
 
-        readFile(makeFile("IAPD-loader-test.DAT", FILE_TEXT));
+        final List<String> messages =
+                readFile(makeFile("IAPD-loader-test.DAT", FILE_TEXT));
         final Sample sample = suite.getSampleByName("TG1H1");
         final Correction sampCorr =
                 new Correction(false, false, Correction.Rotation.SAMPLE, false);
@@ -201,7 +207,7 @@ public class IapdLoaderTest {
             assertEquals(decRaw, step.getMoment(noCorr).getDecDeg(), 0.05);
             assertEquals(incRaw, step.getMoment(noCorr).getIncDeg(), 0.05);
         }
-        assertEquals(0, suite.getLoadWarnings().size());
+        assertEquals(0, messages.size());
     }
 
     private File makeFile(String name, String contents) throws IOException {
@@ -218,8 +224,8 @@ public class IapdLoaderTest {
         return file;
     }
     
-    private void readFile(File file) throws IOException {
-        suite.readFiles(Arrays.asList(new File[] { file }),
+    private List<String> readFile(File file) throws IOException {
+        return suite.readFiles(Arrays.asList(new File[] { file }),
                 FileType.IAPD, options);
     }
 

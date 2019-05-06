@@ -384,18 +384,15 @@ public class SuiteTest {
     }
     
     @Test
-    public void testNonExistentFile() {
+    public void testNonExistentFile() throws IOException {
+        final Suite suite = new Suite("test");
         final File file = temporaryFolder.getRoot().toPath().
                 resolve("nonexistent").toFile();
-        try {
-            Suite suite = new Suite("test");
-            suite.readFiles(Collections.singletonList(file));
-            assertTrue(suite.isEmpty());
-            assertEquals(1, suite.getLoadWarnings().size());
-        } catch (IOException ex) {
-            Logger.getLogger(SuiteTest.class.getName()).log(Level.SEVERE, null, ex);
-            fail();
-        }
+
+        final List<String> messages =
+                suite.readFiles(Collections.singletonList(file));
+        assertTrue(suite.isEmpty());
+        assertEquals(1, messages.size());
     }
     
     /**
@@ -1326,25 +1323,28 @@ public class SuiteTest {
     public void testReadUnreadableFile() throws IOException {
         final Suite suite = new Suite("SuiteTest");
         puffinFile1.setReadable(false);
-        suite.readFiles(Collections.singletonList(puffinFile1));
-        assertEquals(1, suite.getLoadWarnings().size());
+        final List<String> messages =
+            suite.readFiles(Collections.singletonList(puffinFile1));
+        assertEquals(1, messages.size());
         assertEquals(0, suite.getNumSamples());
     }
     
     @Test
     public void testReadFileInUnknownFormat() throws IOException {
         final Suite suite = new Suite("SuiteTest");
-        suite.readFiles(Collections.singletonList(puffinFile1),
+        final List<String> messages =
+                suite.readFiles(Collections.singletonList(puffinFile1),
                 FileType.UNKNOWN, Collections.emptyMap());
-        assertEquals(1, suite.getLoadWarnings().size());
+        assertEquals(1, messages.size());
         assertEquals(0, suite.getNumSamples());
     }
     
     @Test
     public void testReadDiscreteDataIntoContinuousSuite() throws IOException {
         final int initialNumberOfSamples = syntheticSuite1.getNumSamples();
-        syntheticSuite1.readFiles(Collections.singletonList(puffinFile1));
-        assertEquals(1, syntheticSuite1.getLoadWarnings().size());
+        final List<String> messages =
+            syntheticSuite1.readFiles(Collections.singletonList(puffinFile1));
+        assertEquals(1, messages.size());
         assertEquals(initialNumberOfSamples, syntheticSuite1.getNumSamples());
     }
     
