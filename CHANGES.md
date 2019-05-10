@@ -27,6 +27,8 @@ Calculations
 
 -   RPI calculation implemented, using normalization to ARM, IRM, or
     magnetic susceptibility.
+-   Arason-Levi inclination-only statistics implemented, but currently
+	only accessible via the API, not the GUI.
 
 Scripting
 ---------
@@ -75,7 +77,7 @@ Data import
     supported by programs including REMA6W, Remasoft, and Paleomac.
 -   When importing from a custom file format, PuffinPlot now sets
     default values for the sample and formation corrections if these
-	are not specified in the file.
+    are not specified in the file.
 -   When importing AMS data from an Agico ASC file, PuffinPlot can now
     read a formation correction from the file. All possible orientation
     conventions are now supported on ASC file import; if necessary,
@@ -96,7 +98,7 @@ Data export
 -   PuffinPlot can now export a bundle containing both data and a
     processing script, allowing analyses to be reproduced automatically.
 -   In exported site data, field strengths for minimum and maximum
-	great-circle steps are written in millitesla rather than tesla.
+    great-circle steps are written in millitesla rather than tesla.
 
 Miscellaneous bug fixes
 -----------------------
@@ -111,9 +113,9 @@ Miscellaneous bug fixes
     makes use of it if present, and defaults to a volume of 1 cm³
     if it is not present.
 -   In demagnetization / intensity plots with AF treatment type, data
-	points for magnetic susceptibility measurements (if present) could
-	sometimes be plotted with an incorrect x position. This has now been
-	corrected.
+    points for magnetic susceptibility measurements (if present) could
+    sometimes be plotted with an incorrect x position. This has now been
+    corrected.
 
 Developer notes
 ---------------
@@ -126,7 +128,7 @@ Developer notes
     bugs during future development.
 -   PuffinPlot's version control has been migrated from Mercurcial
     to Git, and the main repository from Bitbucket to GitHub. (The
-	Bitbucket repository has been retained as a mirror.)
+    Bitbucket repository has been retained as a mirror.)
 
 
 PuffinPlot 1.03 release notes
