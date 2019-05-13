@@ -25,10 +25,6 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-/**
- *
- * @author pont
- */
 public class MomentUnitTest {
 
     @Test
@@ -37,20 +33,23 @@ public class MomentUnitTest {
                 new HashSet<>(Arrays.asList(MomentUnit.values()));
         assertTrue(values.contains(MomentUnit.AM));
         assertTrue(values.contains(MomentUnit.MILLIAM));
-        assertEquals(2, values.size());
+        assertTrue(values.contains(MomentUnit.KILOAM));
+        assertEquals(3, values.size());
     }
 
     @Test
     public void testValueOf() {
         assertEquals(MomentUnit.AM, MomentUnit.valueOf("AM"));
         assertEquals(MomentUnit.MILLIAM, MomentUnit.valueOf("MILLIAM"));
+        assertEquals(MomentUnit.KILOAM, MomentUnit.valueOf("KILOAM"));
     }
 
     @Test
     public void testGetFactorForAm() {
         // 1 can be represented exactly in IEEE-754, so we don't need a tolerance.
         assertEquals(1, MomentUnit.AM.getFactorForAm(), 0);
-        assertEquals(0.001, MomentUnit.MILLIAM.getFactorForAm(), 1e-8);
+        assertEquals(0.001, MomentUnit.MILLIAM.getFactorForAm(), 1e-20);
+        assertEquals(1000, MomentUnit.KILOAM.getFactorForAm(), 1e-20);
     }
     
 }

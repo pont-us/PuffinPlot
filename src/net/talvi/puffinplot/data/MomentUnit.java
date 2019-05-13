@@ -17,18 +17,18 @@
 package net.talvi.puffinplot.data;
 
 /**
- * <p>This enum represents a unit in which magnetic moment per
- * unit volume can be measured. It is intended for use in
- * the tabular file importer.</p>
- * 
- * @author pont
+ * This enum represents a unit in which magnetic dipole moment per unit volume
+ * can be measured. It is intended for use in the tabular file importer.
  */
 public enum MomentUnit {
     
     /** amperes per metre (A/m) */
     AM(1),
     /** milliamperes per metre (mA/m) */
-    MILLIAM(0.001);
+    MILLIAM(0.001),
+    /** kiloamperes per metre (kA/m); equivalent to emu/cm³ */
+    KILOAM(1000)
+    ;
     
     private final double factor;
     

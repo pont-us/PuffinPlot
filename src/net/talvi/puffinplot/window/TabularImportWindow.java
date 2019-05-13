@@ -108,8 +108,9 @@ public class TabularImportWindow extends JDialog {
                 initialFormat.getTreatmentType());
         firstPanel.add(treatTypeChooser);
         momentUnitChooser = new EnumChooser<>("Unit for magnetic moment",
-                new String[] {"A/m", "mA/m"},
-                new MomentUnit[] {MomentUnit.AM, MomentUnit.MILLIAM},
+                new String[] {"A/m", "mA/m", "kA/m (= emu)"},
+                new MomentUnit[] {MomentUnit.AM, MomentUnit.MILLIAM,
+                                  MomentUnit.KILOAM},
                 initialFormat.getMomentUnit());
         firstPanel.add(momentUnitChooser);
         fieldUnitChooser = new EnumChooser<>("Unit for AF field",
@@ -199,7 +200,7 @@ public class TabularImportWindow extends JDialog {
             comboBox = new JComboBox<>(labels);
             this.values = values;
             label.setLabelFor(comboBox);
-            for (int i=0; i<values.length; i++) {
+            for (int i = 0; i < values.length; i++) {
                 if (values[i].equals(initialValue)) {
                     comboBox.setSelectedIndex(i);
                 }
