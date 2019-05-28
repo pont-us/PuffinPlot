@@ -67,7 +67,6 @@ public class CsvWriter implements Closeable {
     public CsvWriter(Writer writer) {
         this(writer, ",");
     }
-
     
     /**
      * Turns an object into a CSV-friendly string. If the object's string
@@ -106,10 +105,10 @@ public class CsvWriter implements Closeable {
      */
     public void writeCsv(Object... objects) throws IOException {
         final StringBuilder sb = new StringBuilder();
-        for (Object o: objects) {
+        for (Object o : objects) {
             if (o instanceof List) {
                 final List list = (List) o;
-                for (Object p: list) {
+                for (Object p : list) {
                     sb.append(makeCsvString(p));
                     sb.append(separator);
                 }
@@ -128,6 +127,7 @@ public class CsvWriter implements Closeable {
      * 
      * @throws IOException if an I/O error occurs
      */
+    @Override
     public void close() throws IOException {
         writer.close();
     }

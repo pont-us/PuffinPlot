@@ -31,8 +31,8 @@ public enum ArmAxis {
     UNKNOWN;
     
     /**
-     * <p>Creates an {@link ArmAxis} from the supplied string. The values
-     * produced are as follows:</p>
+     * Creates an {@link ArmAxis} from the supplied string. The values
+     * produced are as follows:
      * 
      * <table>
      * <caption>ArmAxis values</caption>

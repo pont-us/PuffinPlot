@@ -336,7 +336,7 @@ public class Site implements SampleGroup {
         String[] parts = string.split("\t", -1);
         switch (parts[0]) {
             case "HEIGHT":
-            height = Double.parseDouble(parts[1]);
+                height = Double.parseDouble(parts[1]);
                 break;
             case "LOCATION":
                 location = Location.fromDegrees(Double.parseDouble(parts[1]),

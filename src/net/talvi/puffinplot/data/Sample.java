@@ -1012,11 +1012,11 @@ public class Sample {
      * @return a list of Strings representing data pertaining to this sample
      */
     public List<String> toStrings() {
-        List<String> result = new ArrayList<>();
-        if (customFlags.size()>0) {
+        final List<String> result = new ArrayList<>();
+        if (customFlags.size() > 0) {
             result.add("CUSTOM_FLAGS\t" + customFlags.exportAsString());
         }
-        if (customNotes.size()>0) {
+        if (customNotes.size() > 0) {
             result.add("CUSTOM_NOTES\t" + customNotes.exportAsString());
         }
         if (site != null) {
@@ -1042,16 +1042,18 @@ public class Sample {
                 string.split("\t", -1); // don't discard trailing empty strings
         switch (parts[0]) {
             case "CUSTOM_FLAGS":
-                final List<Boolean> flags = new ArrayList<>(parts.length-1);
-                for (int i=1; i<parts.length; i++) {
+                final List<Boolean> flags = new ArrayList<>(parts.length - 1);
+                for (int i = 1; i < parts.length; i++) {
                     flags.add(Boolean.parseBoolean(parts[i]));
-                }   customFlags = new CustomFields<>(flags);
+                }
+                customFlags = new CustomFields<>(flags);
                 break;
             case "CUSTOM_NOTES":
-                final List<String> notes = new ArrayList<>(parts.length-1);
-                for (int i=1; i<parts.length; i++) {
+                final List<String> notes = new ArrayList<>(parts.length - 1);
+                for (int i = 1; i < parts.length; i++) {
                     notes.add(parts[i]);
-                }   customNotes = new CustomFields<>(notes);
+                }
+                customNotes = new CustomFields<>(notes);
                 break;
             case "SITE":
                 final Site mySite = suite.getOrCreateSite(parts[1]);

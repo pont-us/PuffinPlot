@@ -1431,7 +1431,9 @@ public class TreatmentStep {
          */
         public Reader(List<String> headers) {
             fields = new ArrayList<>(headers.size());
-            for (String s: headers) fields.add(TreatmentParameter.valueOf(s));
+            for (String s : headers) {
+                fields.add(TreatmentParameter.valueOf(s));
+            }
         }
 
         /**
@@ -1445,7 +1447,7 @@ public class TreatmentStep {
          */
         public TreatmentStep fromStrings(List<String> strings) {
             final TreatmentStep step = new TreatmentStep(Vec3.ORIGIN);
-            for (int i=0; i<strings.size(); i++) {
+            for (int i = 0; i < strings.size(); i++) {
                 step.setValue(fields.get(i), strings.get(i), 1.);
             }
             return step;

@@ -18,9 +18,13 @@ package net.talvi.puffinplot.data;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -275,12 +279,12 @@ public final class Suite implements SampleGroup {
             throws PuffinUserException {
         final List<String> fields = TreatmentParameter.getRealFieldStrings();
 
-        FileWriter fileWriter = null;
-        CsvWriter csvWriter = null;
-        try {
-            fileWriter = new FileWriter(file);
-            fileWriter.write("PuffinPlot file. Version 3\n");
-            csvWriter = new CsvWriter(fileWriter, "\t");
+        try (OutputStream stream = new FileOutputStream(file);
+                OutputStreamWriter writer =
+                        new OutputStreamWriter(stream, StandardCharsets.UTF_8);
+                CsvWriter csvWriter = new CsvWriter(writer, "\t");) {
+            
+            writer.write("PuffinPlot file. Version 3\n");
             csvWriter.writeCsv(fields);
 
             for (Sample sample : getSamples()) {
@@ -288,44 +292,36 @@ public final class Suite implements SampleGroup {
                     csvWriter.writeCsv(treatmentStep.toStrings());
                 }
             }
-            // csvWriter.close();
-            fileWriter.write("\n");
-            for (Sample sample: getSamples()) {
+
+            writer.write("\n");
+            for (Sample sample : getSamples()) {
                 List<String> lines = sample.toStrings();
-                for (String line: lines) {
+                for (String line : lines) {
                     String w = String.format(Locale.ENGLISH, "SAMPLE\t%s\t%s\n",
                             sample.getNameOrDepth(), line);
-                    fileWriter.write(w);
+                    writer.write(w);
                 }
             }
-            for (Site site: getSites()) {
+            for (Site site : getSites()) {
                 List<String> lines = site.toStrings();
-                for (String line: lines) {
+                for (String line : lines) {
                     String w = String.format(Locale.ENGLISH, "SITE\t%s\t%s\n",
                             site.getName(), line);
-                    fileWriter.write(w);
+                    writer.write(w);
                 }
             }
             if (!saved) {
                 modificationDate = new Date();
             }
-            for (String line: toStrings()) {
-                fileWriter.write(String.format(Locale.ENGLISH, "SUITE\t%s\n",
+            for (String line : toStrings()) {
+                writer.write(String.format(Locale.ENGLISH, "SUITE\t%s\n",
                         line));
             }
-            fileWriter.close();
             puffinFile = file;
             name = file.getName();
             setSaved(true);
         } catch (IOException ex) {
             throw new PuffinUserException(ex);
-        } finally {
-            try {
-                if (fileWriter != null) fileWriter.close();
-                if (csvWriter != null) csvWriter.close();
-            } catch (IOException ex) {
-                throw new PuffinUserException(ex);
-            }
         }
     }
 

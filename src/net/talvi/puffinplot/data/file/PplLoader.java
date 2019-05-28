@@ -17,14 +17,14 @@
 package net.talvi.puffinplot.data.file;
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,6 +32,7 @@ import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.TreatmentStep;
 
 import static java.lang.Double.isNaN;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import static net.talvi.puffinplot.data.file.TwoGeeHelper.gaussToAm;
 import static net.talvi.puffinplot.data.file.TwoGeeHelper.oerstedToTesla;
@@ -45,15 +46,8 @@ import static net.talvi.puffinplot.data.file.TwoGeeHelper.treatTypeFromString;
 
 public class PplLoader implements FileLoader {
 
-    private static final Logger LOGGER =
-            Logger.getLogger(PplLoader.class.getName());
     private static final Pattern PUFFIN_HEADER =
             Pattern.compile("^PuffinPlot file. Version (\\d+)");
-    private LineNumberReader reader;
-    private TreatmentStep.Reader stepReader;
-    private int treatmentField;
-    private int version;
-    private List<String> extraLines = Collections.emptyList();
 
     /**
      * Reads data from a specified PuffinPlot file.
@@ -64,8 +58,10 @@ public class PplLoader implements FileLoader {
      */
     @Override
     public LoadedData readFile(File file, Map<Object, Object> options) {
-        try (LineNumberReader r = new LineNumberReader(new FileReader(file))) {
-            reader = r;
+        try (InputStream stream = new FileInputStream(file);
+                InputStreamReader isReader =
+                        new InputStreamReader(stream, StandardCharsets.UTF_8);
+                LineNumberReader reader = new LineNumberReader(isReader)) {
             final String firstLine = reader.readLine();
             if (firstLine == null) {
                 throw new IOException(file + " is empty.");
@@ -76,28 +72,31 @@ public class PplLoader implements FileLoader {
                         + "PuffinPlot file.");
             }
             final String versionString = matcher.group(1);
-            version = Integer.parseInt(versionString);
+            int version = Integer.parseInt(versionString);
             if (version != 2 && version != 3) {
                 throw new IOException(String.format(Locale.ENGLISH,
                         "%s is of version %d, which cannot be "
                         + "loaded by this version of PuffinPlot.",
                         file, version));
             }
-            final String headerLine = reader.readLine();
-            if (headerLine == null) {
-                throw new IOException(file + " contains no headers or data.");
-            }
-            final List<String> headers = Arrays.asList(headerLine.split("\t"));
-            treatmentField = headers.indexOf("TREATMENT");
-            stepReader = new TreatmentStep.Reader(headers);
-            return readFile(reader, file.getName());
+
+            return readData(reader, file.getName(), version);
         } catch (IOException | MalformedFileException exception) {
             return new EmptyLoadedData(exception.getMessage());
         }
     }
 
-    private LoadedData readFile(LineNumberReader reader, String filename)
+    private LoadedData readData(LineNumberReader reader, String filename,
+            int version)
             throws IOException, MalformedFileException {
+        final String headerLine = reader.readLine();
+        if (headerLine == null) {
+            throw new IOException(filename + " contains no headers or data.");
+        }
+        final List<String> headers = Arrays.asList(headerLine.split("\t"));
+        final int treatmentField = headers.indexOf("TREATMENT");
+        final TreatmentStep.Reader stepReader =
+                new TreatmentStep.Reader(headers);
         final SimpleLoadedData loadedData = new SimpleLoadedData();
         String line;
         while ((line = reader.readLine()) != null) {
