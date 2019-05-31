@@ -43,7 +43,6 @@ def make_date_string():
 
     committer_line = \
         [line for line in lines if line.startswith("committer ")][0]
-    print(committer_line)
     unix_seconds = int(
         re.search(r" (\d+) [+-]\d\d\d\d$", committer_line).group(1))
     datetime_object = datetime.datetime.fromtimestamp(unix_seconds)

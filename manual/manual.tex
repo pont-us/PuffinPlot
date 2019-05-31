@@ -2097,6 +2097,220 @@ The data bundle is a zip archive containing the following files:
   
 \end{description}
 
+\section{PuffinPlot file format}
+
+\subsection{General information}
+
+PuffinPlot files use a text-based format in UTF-8 encoding. The line separator
+is a single newline (character number 10). Fields within a line are separated
+by tabs (character number 9). At the time of writing, PuffinPlot uses version 3
+of its file format. Versions 1 and 2 were only used in pre-release versions of
+PuffinPlot, and may therefore be safely ignored.
+
+The main part of the PuffinPlot file is a sequence of lines containing treatment
+step data, one step to a line. The sequence of data fields is not fixed; rather,
+it is defined by a header line at the start of the treatment step section.
+
+\subsection{Sections}
+
+\begin{enumerate}
+
+\item The file identifier line, consisting of the exact string
+  \verb|PuffinPlot file. Version 3|
+\item The header line, containing a tab-separated sequence of field identifiers.
+  This line defines the interpretation of the treatment step lines which
+  follow.
+\item Any number of treatment step lines. These must contain the same number
+  of fields as the header line. The interpretation of each field is
+  determined by the field identifier string in the corresponding position
+  in the header line.
+\item A blank line, indicating the end of the treatment step section.
+\item A sequence of lines containing sample, site, and suite data. There may
+  be any number of these (including zero), and they may occur in any
+  order.
+
+\end{enumerate}
+
+\subsection{Treatment step fields}
+
+Treatment step fields are detailed in Table~\ref{tbl:treatment-step-fields}.
+
+\begin{table}
+\makebox[\textwidth][c]{
+\begin{tabular}{lllp{10cm}} \toprule
+Identifier & Type / Unit & Default & Description \\ \midrule
+\ppcmd{DISCRETE\_ID} & string & \ppcmd{UNSET} & The discrete sample identifier (sample name). \\
+\ppcmd{DEPTH} & unspecified & null &
+The depth of this sample in a core. Note that PuffinPlot does not assume any explicit 
+unit for depth: any saved or exported data will simply use the same depth values without any 
+attempt to interpret them in a unit system. \\
+\ppcmd{RUN\_NUMBER} & integer & $-1$ &
+The sequential number of the magnetometer run which measured this treatment step. \\
+\ppcmd{TIMESTAMP} & string & \ppcmd{UNSET} &
+The time at which this measurement was made. PuffinPlot doesn't process this field, 
+so the format is undefined. \\
+\ppcmd{SLOT\_NUMBER} & integer & $-1$ &
+For discrete measurements on a multi-sample tray, the number of the tray slot containing 
+the sample. \\
+\ppcmd{MEAS\_TYPE} & string & \ppcmd{UNSET} & Measurement type. Must be \ppcmd{DISCRETE} or \ppcmd{CONTINUOUS}. This field is required. \\
+\ppcmd{X\_MOMENT} & A/m & 0 &
+The x component of the sample's magnetic dipole moment per unit volume in the
+uncorrected sample co-ordinate system. \\
+\ppcmd{Y\_MOMENT} & A/m & 0 &
+The y component of the sample's magnetic dipole moment per unit volume in the
+uncorrected sample co-ordinate system. \\
+\ppcmd{Z\_MOMENT} & A/m & 0 &
+The z component of the sample's magnetic dipole moment per unit volume in the
+uncorrected sample co-ordinate system. \\
+\ppcmd{MAG\_SUS} & unspecified & NaN &
+The sample's magnetic susceptibility at this treatment step. PuffinPlot does not specify any unit for susceptibility and treats it as a relative value. \\
+\ppcmd{VOLUME} & cm${}^3$ & 10.8 & The volume of a discrete sample. \\
+\ppcmd{AREA} & cm${}^2$ & 4 & The cross-sectional area of a long core sample. \\
+\ppcmd{SAMPLE\_AZ} & \textdegree{} & NaN & The azimuth (i.e. down-dip direction) of a sample's field orientation. \\
+\ppcmd{SAMPLE\_DIP} & \textdegree{} & NaN & The dip of a sample's field orientation. \\
+\ppcmd{FORM\_AZ} & \textdegree{} & NaN &
+The azimuth (i.e. down-dip direction) of the formation from which the
+sample was taken. \\
+\ppcmd{FORM\_DIP} & \textdegree{} & NaN & The dip of the formation from which the sample was taken. \\
+\ppcmd{MAG\_DEV} & \textdegree{} & 0 & The magnetic declination at the sampling site, i.e. the declination of the magnetic field direction relative to geographic north. \\
+\ppcmd{TREATMENT} & string & \ppcmd{UNKNOWN} & The type of treatment applied to the sample. Must be one of \ppcmd{NONE}, \ppcmd{DEGAUSS\_XYZ}, \ppcmd{DEGAUSS\_Z}, \ppcmd{ARM}, \ppcmd{IRM}, or \ppcmd{THERMAL}. \\
+\ppcmd{AF\_X} & tesla & NaN & The x component of an alternating magnetic field treatment. \\
+\ppcmd{AF\_Y} & tesla & NaN & The y component of an alternating magnetic field treatment. \\
+\ppcmd{AF\_Z} & tesla & NaN & The z component of an alternating magnetic field treatment. \\
+\ppcmd{TEMPERATURE} & \textdegree{}C & NaN & The peak temperature of a thermal treatment. \\
+\ppcmd{IRM\_FIELD} & tesla & NaN & The intensity of an applied IRM treatment. \\
+\ppcmd{ARM\_FIELD} & tesla & NaN & The intensity of the DC field in an ARM treatment. \\
+\ppcmd{ARM\_AXIS} & string & \ppcmd{UNKNOWN} &
+The axis along which an ARM was applied. Must be one of \ppcmd{AXIAL}, \ppcmd{NONE}, or \ppcmd{UNKNOWN}. \\
+\ppcmd{PP\_SELECTED} & boolean & false & Whether this step is selected in PuffinPlot. \\
+\ppcmd{PP\_ANCHOR\_PCA} & boolean & false & Whether PCA calculations for this step should be anchored. \\
+\ppcmd{PP\_HIDDEN} & boolean & false & Whether this step is hidden in the PuffinPlot GUI. \\
+\ppcmd{PP\_ONCIRCLE} & boolean & false & Whether this step is included in great-circle fits. \\
+\ppcmd{PP\_INPCA} & boolean & false & Whether this step is included in PCA fits. \\
+\bottomrule
+\end{tabular}
+}
+\caption{Treatment step fields in the PuffinPlot file
+  format\label{tbl:treatment-step-fields}}
+\end{table}
+
+\subsection{Required fields}
+
+The only required treatment step field in a PuffinPlot file is \ppcmd{MEAS\_TYPE}.
+The minimal valid PuffinPlot file is thus:
+
+\begin{quotation}
+\noindent
+\verb|PuffinPlot file. Version 3|$\hookleftarrow$\\
+\verb|MEAS_TYPE|$\hookleftarrow$
+\end{quotation}
+
+\noindent (Here, $\hookleftarrow$ represents the newline character.) This
+file contains no lines beyond the header line, and therefore no data. The
+minimal file containing data is:
+
+\begin{quotation}
+\noindent
+\verb|PuffinPlot file. Version 3|$\hookleftarrow$\\
+\verb|MEAS_TYPE|$\hookleftarrow$\\
+\verb|DISCRETE|$\hookleftarrow$
+\end{quotation}
+
+\noindent This file contains a single treatment step, which specifies no
+data except that the sample is discrete. Loading this file into PuffinPlot
+will create a suite with a single discrete treatment step with all other
+fields set to their default values.
+
+\subsection{Suite lines}
+
+A suite line has \ppcmd{SITE} as the first field and follows one of the following formats:
+
+\begin{description}
+
+\item[\ppcmd{SUITE MEASUREMENT\_TYPE $\langle$type$\rangle$ }] The measurement type of this suite. Must be one
+of \ppcmd{DISCRETE} or \ppcmd{CONTINUOUS}.
+
+\item[\ppcmd{SUITE CUSTOM\_FLAG\_NAMES $\langle$flag-name$\rangle$  ...}] A list of names for user-defined flags
+containing sample information. Each sample can store a true/false value for each
+flag.
+
+\item[\ppcmd{SUITE CUSTOM\_NOTE\_NAMES $\langle$note-name$\rangle$  ...}] A list of names for user-defined notes
+containing sample information. Each sample can store a string value for each
+note.
+
+\item[\ppcmd{SUITE CREATION\_DATE $\langle$date$\rangle$ }] The date and time at which the suite was created.
+The format is ISO-8601 with date, time, milliseconds, and timezone, e.g.
+\ppcmd{2019-03-12T16:17:34.347+01:00}.
+
+\item[\ppcmd{SUITE MODIFICATION\_DATE $\langle$date$\rangle$ }] The date and time at which the suite was last
+modified. Format is as for \ppcmd{CREATION\_DATE}.
+
+\item[\ppcmd{SUITE ORIGINAL\_FILE\_TYPE $\langle$string$\rangle$ }] The type of the file(s)
+  from which the data for this suite was originally read. Must be one of
+  \ppcmd{TWOGEE}, \ppcmd{ZPLOT}, \ppcmd{PUFFINPLOT\_OLD},
+  \ppcmd{PUFFINPLOT\_NEW}, \ppcmd{CALTECH}, \ppcmd{IAPD}, \ppcmd{UCDAVIS},
+  \ppcmd{DIRECTIONS}, \ppcmd{CUSTOM\_TABULAR}, \ppcmd{PMD\_ENKIN},
+  \ppcmd{JR6}, or \ppcmd{UNKNOWN}.
+
+\item[\ppcmd{SUITE ORIGINAL\_CREATOR\_PROGRAM $\langle$string$\rangle$ }] The name and version of the program which
+originally created the suite.
+
+\item[\ppcmd{SUITE SAVED\_BY\_PROGRAM $\langle$string$\rangle$ }] The name and version of the program which saved
+this file.
+
+\end{description}
+
+\noindent (For convenience, fields are shown separated with spaces in this listing;
+in reality they are separated with tab characters.)
+
+
+\subsection{Site lines}
+
+A site line has \ppcmd{SITE} as the first field and a site identifier string as the second
+field. The line follows one of the following formats:
+
+\begin{description}
+
+\item[\ppcmd{SITE $\langle$site-id$\rangle$  HEIGHT $\langle$height$\rangle$ }] A decimal number representing the height of the site.
+Units are unspecified.
+
+\item[\ppcmd{SITE $\langle$site-id$\rangle$  LOCATION $\langle$latitude$\rangle$  $\langle$longitude$\rangle$ }] Two decimal numbers giving the latitude
+and longitude of the site in degrees.
+
+\end{description}
+
+\noindent (For convenience, fields are shown separated with spaces in this listing;
+in reality they are separated with tab characters.)
+
+\subsection{Sample lines}
+
+A sample line has \ppcmd{SAMPLE} as the first field and a sample identifier (discrete sample
+name or depth in a continuous core). The line follows one of the following formats:
+
+\begin{description}
+
+\item[\ppcmd{SAMPLE $\langle$sample-id$\rangle$  CUSTOM\_FLAGS $\langle$flag-value$\rangle$  ...}] The values of any
+custom flags defined for this suite. The number of values must match the number of
+custom flags defined in the \ppcmd{SUITE CUSTOM\_FLAG\_NAMES} line. Possible values are
+\ppcmd{true} and \ppcmd{false}.
+
+\item[\ppcmd{SAMPLE $\langle$sample-id$\rangle$  CUSTOM\_NOTES $\langle$note-content$\rangle$  ...}] The values of any
+custom note defined for this suite. The number of values must match the number of
+custom note defined in the \ppcmd{SUITE CUSTOM\_NOTE\_NAMES} line.
+
+\item[\ppcmd{SAMPLE $\langle$sample-id$\rangle$  SITE $\langle$site-id$\rangle$ }] The identifier of the site which contains this
+sample.
+
+\item[\ppcmd{SAMPLE $\langle$sample-id$\rangle$  IMPORTED\_DIRECTION $\langle$declination$\rangle$  $\langle$inclination$\rangle$ }] The palaeomagnetic
+direction of this sample. In most cases this direction is not explicitly stored, but
+recalculated from the treatment step data when PuffinPlot loads the file. Using an
+\ppcmd{IMPORTED\_DIRECTION} line allows PuffinPlot to deal with samples that have defined directions but lack treatment step data.
+
+\end{description}
+
+\noindent (For convenience, fields are shown separated with spaces in this listing;
+in reality they are separated with tab characters.)
+
 
 \section{Acknowledgements}
 
@@ -2265,8 +2479,6 @@ used by bibliography management software.
 
 \section{Release notes}
 
-No release notes are available for PuffinPlot versions prior to 1.03.
-
 \subsection*{PuffinPlot 1.03 release notes}
 \label{sec-1}
 \subsubsection*{Calculations}
@@ -2362,6 +2574,11 @@ directions are cleared.
 \item PuffinPlot is now hosted on BitBucket, due to the imminent demise
   of Google Code.
 \end{itemize}
+
+\vspace{2cm}
+
+\noindent No release notes are available for PuffinPlot versions prior to
+1.03.
 
 % Define the heading of the bibliography to be empty, so I can put a proper
 % Section heading which will be included in the ToC.
