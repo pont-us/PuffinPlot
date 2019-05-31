@@ -4,13 +4,14 @@
 
 set -e
 
-# Remove various LaTeX-generated auxiliary files
+# Remove various automatically generated auxiliary files
 
 for ext in aux log 4ct 4tc bbl blg tmp xref out idv lg css dvi html pdf toc; do
   rm -f manual.$ext;
 done
 rm -f manual?x.png
 rm -f missfont.log
+rm -f changes.tex
 
 # Create commands to insert version control information
 
@@ -34,6 +35,20 @@ inkscape --export-area-page --without-gui \
 inkscape --export-area-page --without-gui \
 	 --export-png=figures/annot-scrnshot.pdf \
 	 fig-src/annot-screenshot/annot-screenshot.svg
+
+# Convert Markdown changelog in parent directory to LaTeX for inclusion
+# in the manual
+
+pandoc -r markdown-auto_identifiers \
+       ../CHANGES.md \
+       -o changes.tex
+
+# Demote and denumber the sections in the changelog
+
+sed -i \
+    -e 's/^\\subsection/\\subsubsection*/' \
+    -e 's/^\\section/\\subsection*/' \
+    changes.tex 
 
 # Generate PDF manual
 

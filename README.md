@@ -61,6 +61,7 @@ also given.
 * pdflatex : texlive-latex-base
 * htlatex : tex4ht
 * inkscape : inkscape
+* pandoc : pandoc
 
 #### TeX Packages
 
