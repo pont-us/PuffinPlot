@@ -37,7 +37,7 @@ import static net.talvi.puffinplot.Util.parseDoubleSafely;
 import static net.talvi.puffinplot.data.file.TwoGeeHelper.gaussToAm;
 
 /**
- * A file loader for CIT (Caltech) treatmentSteps files. This code is informed
+ * A file loader for CIT (Caltech) data files. This code is informed
  * in part by the file format description at
  * http://cires1.colorado.edu/people/jones.craig/PMag_Formats.html .
  *
@@ -59,6 +59,13 @@ public class CaltechLoader implements FileLoader {
             + "(.........)(.........)(...........)(........)";
     private final Pattern pattern = Pattern.compile(patternString);
 
+    /**
+     * Read a file into a data object containing treatment steps.
+     * 
+     * @param file the file to read
+     * @param options import options; none are currently implemented
+     * @return a data object containing the treatment 
+     */
     @Override
     public LoadedData readFile(File file, Map<Object, Object> options) {
         final File parentDir = file.getParentFile();
@@ -66,7 +73,8 @@ public class CaltechLoader implements FileLoader {
                 new LineNumberReader(new FileReader(file))) {
             return readFile(reader, parentDir);
         } catch (IOException e) {
-            logger.log(Level.WARNING, "Exception reading file "+file.getAbsolutePath(), e);
+            logger.log(Level.WARNING, "Exception reading file " +
+                    file.getAbsolutePath(), e);
             return new EmptyLoadedData(e.getLocalizedMessage());
         }
     }
@@ -94,9 +102,10 @@ public class CaltechLoader implements FileLoader {
     }
 
 
-    private void readSubFile(File file, SimpleLoadedData data) throws IOException {
-        try (BufferedReader subReader
-                = new BufferedReader(new FileReader(file))) {
+    private void readSubFile(File file, SimpleLoadedData data)
+            throws IOException {
+        try (BufferedReader subReader =
+                new BufferedReader(new FileReader(file))) {
             String line;
             /*
              * "In the first line the first four characters are the locality id,
@@ -149,9 +158,7 @@ public class CaltechLoader implements FileLoader {
                 final TreatmentStep step = linetoTreatmentStep(line, file.getName());
                 if (step != null) {
                     step.setDiscreteId(sampleName);
-                    //d.setSampAz((coreStrike + 90) % 360);
                     step.setSampAz((coreStrike + 270) % 360);
-                    //d.setSampDip(coreDip);
                     step.setSampHade(coreDip);
                     step.setFormAz((bedStrike + 90) % 360);
                     step.setFormDip(bedDip);

@@ -193,7 +193,7 @@ Bug fixes
 Documentation
 -------------
 
--   All new features are fully documented in the updated user manual
+-   All new features are fully documented in the updated user manual.
 
 Miscellaneous new features
 --------------------------
@@ -202,10 +202,10 @@ Miscellaneous new features
     change.
 -   Site directions cleared automatically when all their sample
     directions are cleared.
--   Warning when closing a file or quitting with unsaved data
--   Clearer error messages and warnings when reading corrupted files
--   Treatment type can be set manually
--   Site definitions can be cleared
+-   Warning when closing a file or quitting with unsaved data.
+-   Clearer error messages and warnings when reading corrupted files.
+-   Treatment type can be set manually.
+-   Site definitions can be cleared.
 -   Treatment steps can be deselected by dragging a box.
 -   PuffinPlot will ask for confirmation before overwriting files.
 -   Native file open dialog is now used on Mac OS X.

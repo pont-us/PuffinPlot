@@ -76,13 +76,15 @@ public class PmdLoader implements FileLoader {
     }
     
     /**
-     * Create a new PmdLoader containing the treatmentSteps from the supplied
+     * Return a data object containing the treatment steps from a supplied
      * input stream.
      *
      * @param inputStream the input stream from which to read the PMD file
      * @param importOptions import options (currently not used)
      * @param fileIdentifier an optional identifier for the file being read. It
      * is only used in constructing warning and error messages.
+     * @return a data object containing the treatment steps specified in
+     * the supplied input stream
      */
     public LoadedData readStream(InputStream inputStream,
             Map<Object, Object> importOptions,

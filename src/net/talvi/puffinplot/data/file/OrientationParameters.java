@@ -22,7 +22,6 @@ import java.util.Objects;
 import net.talvi.puffinplot.data.Vec3;
 
 import static java.lang.Math.toRadians;
-import net.talvi.puffinplot.data.Tensor;
 
 /**
  * A set of parameters defining conventions for orienting a sample.

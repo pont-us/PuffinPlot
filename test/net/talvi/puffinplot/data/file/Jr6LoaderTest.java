@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.util.Collections;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.MeasurementType;
@@ -40,7 +38,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class Jr6LoaderTest {
 

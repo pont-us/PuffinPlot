@@ -35,21 +35,23 @@ import net.talvi.puffinplot.data.Vec3;
 public class IapdLoader implements FileLoader {
     
     /**
-     * Reads an IAPD file.
-     *
-     * Valid import option keys are:
+     * Reads an IAPD file. Valid import option keys are:
      *
      * {@code TreatmentType.class}; value must be an instance of
      * {@link TreatmentType}
+     *
      * {@code MeasurementType.class}; value must be an instance of
      * {@link MeasurementType}
      *
      * These keys respectively specify the treatment type and measurement type
-     * for the treatmentSteps in the file. If they are omitted, defaults will be
-     * used.
+     * for the treatmentSteps in the file.
      *
-     * @param file the file from which to read treatmentSteps
-     * @param importOptions import options for reading the treatmentSteps
+     * If they are omitted, defaults will be used.
+     *
+     * @param file the file from which to read treatment steps
+     * @param importOptions import options (see method description)
+     * @return a laoded data object containing the treatment steps specified
+     *   in the supplied file
      */
     @Override
     public LoadedData readFile(File file, Map<Object,Object> importOptions) {
@@ -75,7 +77,7 @@ public class IapdLoader implements FileLoader {
                 int startAt) {
             boolean success = true;
             double[] values = new double[defaults.length];
-            for (int i=startAt; i<defaults.length; i++) {
+            for (int i = startAt; i < defaults.length; i++) {
                 values[i] = defaults[i];
                 try {
                     values[i] = Double.parseDouble(strings[i]);
