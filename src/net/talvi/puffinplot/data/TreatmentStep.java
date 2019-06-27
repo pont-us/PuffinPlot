@@ -1243,12 +1243,14 @@ public class TreatmentStep {
     }
 
     /**
-     * Sets the value of a specified treatment parameter using a string. * For
+     * Sets the value of a specified treatment parameter using a string. For
      * double values, the field is set to the parsed value multiplied by the
      * conversion factor. The parameter {@code TreatmentParameter.DEPTH} is
      * handled as a string, not a double; additionally, supplying a string
      * containing the text {@code "null"} as a value for the depth will set the
-     * depth to an actual null, not to the string {@code "null"}.
+     * depth to an actual null, not to the string {@code "null"}. For double
+     * and integer fields, the special string "NA" will set the field to
+     * its default value.
      * 
      * @param field the field to set the value of (non-null)
      * @param value a string representation of the value to set the field to
@@ -1302,12 +1304,29 @@ public class TreatmentStep {
         final Class type = field.getType();
         boolean boolVal = false;
         int intVal = 0;
+        /*
+         * We check explicitly for "NA" values in double and integer fields.
+         * Without the check, the parsing would throw a NumberFormatException.
+         * setValue would catch this and set the field to a default value
+         * anyway, but there can be a lot of "NA"s in a file, so we want
+         * to avoid a catch-throw and log message on every occurrence. (Since
+         * "NA" is a known possible value, handling it via exception is bad
+         * form in any case.)
+         */
         if (type == double.class) {
-            doubleVal = parseDouble(s) * factor;
+            if ("NA".equals(s)) {
+                doubleVal = parseDouble(field.getDefaultValue());
+            } else {
+                doubleVal = parseDouble(s) * factor;
+            }
         } else if (type == boolean.class) {
             boolVal = Boolean.parseBoolean(s);
         } else if (type == int.class) {
-            intVal = Integer.parseInt(s);
+            if ("NA".equals(s)) {
+                intVal = Integer.parseInt(field.getDefaultValue());
+            } else {
+                intVal = Integer.parseInt(s);
+            }
         }
         switch (field) {
             case AF_X:
