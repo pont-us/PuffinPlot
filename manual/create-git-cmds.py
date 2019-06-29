@@ -27,7 +27,8 @@ def make_version_string():
     modified = len(status) > 0
 
     if tag.startswith("HEAD tags/version_"):
-        version_string = tag[18:]
+        version_string_suffixed = tag[18:]
+        version_string = re.sub(r"\^0$", "", version_string_suffixed)
     else:
         version_string = rev_id[:12]
 

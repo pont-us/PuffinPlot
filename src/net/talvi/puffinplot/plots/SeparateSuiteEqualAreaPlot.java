@@ -36,7 +36,7 @@ import net.talvi.puffinplot.data.Vec3;
 /**
  * An equal-area plot showing suite-level Fisher statistics.
  * This plot is only used in the special Fisher plot window; 
- * {@link SuiteEqAreaPlot} is used in the main window.
+ * {@link SuiteEqualAreaPlot} is used in the main window.
  * 
  * @author pont
  */

@@ -453,11 +453,10 @@ public final class Suite implements SampleGroup {
     
     /**
      * Convenience method for reading PuffinPlot files.This method is a wrapper
-     * for the fully specified method {@link #ReadFiles(List<File>,
-     * SensorLengths, TwoGeeLoader.Protocol, boolean, FileType, FileFormat,
-     * Map<Object, Object>)} which provides defaults for all the arguments
+     * for the fully specified method {@link #readFiles(List, FileType,
+     * Map)} which provides defaults for all the arguments
      * except for the list of file names.
-     *
+     * <p>
      * The filetype is set to PUFFINPLOT_NEW.
      *
      * @param files files to read
@@ -470,10 +469,10 @@ public final class Suite implements SampleGroup {
     }
 
     /**
-     * Reads data into this suite from the specified files.After readFiles
- returns, #getLoadWarnings() can be used to return a list of problems 
- that occurred during file reading.
-     * 
+     * Reads data into this suite from the specified files. After readFiles
+     * returns, #getLoadWarnings() can be used to return a list of problems that
+     * occurred during file reading.
+     *
      * @param files the files from which to read the data (non-null, non-empty)
      * @param fileType type of the specified files
      * @param importOptions extra options passed to file importers

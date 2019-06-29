@@ -757,7 +757,7 @@ public abstract class Plot
      * Adds a listener for visibility changes to this plot.
      *
      * @see
-     * Plot#removeVisibilityChangedListener(Consumer<Boolean>)
+     * Plot#removeVisibilityChangedListener(Consumer)
      *
      * @param listener the listener to add
      */
@@ -768,7 +768,7 @@ public abstract class Plot
     /**
      * Removes a listener for visibility changes to this plot.
      *
-     * @see Plot#addVisibilityChangedListener(Consumer<Boolean>)
+     * @see Plot#addVisibilityChangedListener(Consumer)
      *
      * @param listener the listener to remove
      */
