@@ -1942,7 +1942,12 @@ public final class Suite implements SampleGroup {
         removeSamples(samplesToRemove);
     }
     
-    private void removeSamples(Collection<Sample> samplesToRemove) {
+    /**
+     * Removes the specified samples from this suite.
+     *
+     * @param samplesToRemove the samples to remove
+     */
+    public void removeSamples(Collection<Sample> samplesToRemove) {
         samples.removeAll(samplesToRemove);
         samplesToRemove.forEach(s -> samplesById.remove(s.getNameOrDepth()));
         updateReverseIndex();

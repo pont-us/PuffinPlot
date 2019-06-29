@@ -2055,12 +2055,12 @@ suite.saveCalcsSample(output_file)
 # For any treatment step that doesn't have a magnetic susceptibility
 # measurement, it sets the magnetic susceptibility to zero.
 
-suite = puffin_app.getSuite()         # Find the current suite.
+suite = puffin_app.getCurrentSuite()        # Find the current suite.
 
-for sample in suite.getSamples():     # For every sample in the suite,
-    for step in sample.getData():     # and for every step in the sample,
-        if not step.hasMagSus():      # if it doesn't have a m.s. value,
-            step.setMagSus(0)         # set the m.s. to 0.
+for sample in suite.getSamples():           # For every sample in the suite,
+    for step in sample.getTreatmentSteps(): # and for every step in the sample,
+        if not step.hasMagSus():            # if it doesn't have a m.s. value,
+            step.setMagSus(0)               # set the mag. sus. to 0.
 \end{lstlisting}
 \end{figure}
 

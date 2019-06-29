@@ -32,7 +32,7 @@ import static net.talvi.puffinplot.data.CoreSection.End;
  * implement useful operations on groups of {@code CoreSection}s.
  * 
  */
-class CoreSections {
+public class CoreSections {
 
     private final LinkedHashMap<String,CoreSection> sections;
     
@@ -148,6 +148,13 @@ class CoreSections {
                 collect(Collectors.toSet());
     }
 
+    /**
+     * Reports whether all samples within section ends have a defined direction.
+     * 
+     * @param margin number of samples in a section end
+     * @return {@code true} if and only if every sample in every section end
+     *   has a defined direction
+     */
     public boolean areSectionEndDirectionsDefined(int margin) {
         return getEndSamples(margin).stream().
                 allMatch(s -> s.getDirection() != null);
