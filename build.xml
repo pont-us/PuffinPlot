@@ -66,10 +66,18 @@
         <condition property="git.dirty" value="true" else="false">
             <length string="${git.status}" when="greater" length="0"/>
         </condition>
-        <exec dir="${basedir}" executable="git" outputproperty="git.tag">
+        <exec dir="${basedir}" executable="git">
             <arg value="name-rev"/>
             <arg value="--tags"/>
             <arg value="HEAD"/>
+            <redirector outputproperty="git.tag">
+                <outputfilterchain>
+                    <linecontainsregexp>
+                        <regexp pattern="\^0$"/>
+                    </linecontainsregexp>
+                    <replaceregex pattern="\^0$" replace="" flags=""/>
+                </outputfilterchain>
+            </redirector>
         </exec>
         <exec dir="${basedir}" executable="git" outputproperty="git.hash">
             <arg value="show-ref"/>
