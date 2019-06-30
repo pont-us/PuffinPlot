@@ -28,7 +28,7 @@ Calculations
 -   RPI calculation implemented, using normalization to ARM, IRM, or
     magnetic susceptibility.
 -   Arason-Levi inclination-only statistics implemented, but currently
-	only accessible via the API, not the GUI.
+    only accessible via the API, not the GUI.
 
 Scripting
 ---------

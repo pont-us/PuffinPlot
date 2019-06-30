@@ -51,7 +51,6 @@ import java.util.stream.Collectors;
 import net.talvi.puffinplot.PuffinUserException;
 import net.talvi.puffinplot.data.file.AmsLoader;
 import net.talvi.puffinplot.data.file.CaltechLoader;
-import net.talvi.puffinplot.data.file.FileFormat;
 import net.talvi.puffinplot.data.file.IapdLoader;
 import net.talvi.puffinplot.data.file.Jr6Loader;
 import net.talvi.puffinplot.data.file.LoadedData;
@@ -724,7 +723,7 @@ public final class Suite implements SampleGroup {
     
     /**
      * Performs all possible sample and site calculations. Intended to be called
-     * after instantiating a new Suite from a file.
+     * after loading suite data from a file.
      *
      * @param correction the correction to apply to the magnetic moment data
      * when performing the calculations
