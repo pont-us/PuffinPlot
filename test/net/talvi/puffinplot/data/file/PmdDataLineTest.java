@@ -67,6 +67,12 @@ public class PmdDataLineTest {
             1.55E-03, 252.7,  11.2, 252.7,  11.2,  0.0}, "JR5-2"),
                 PmdDataLine.read("100M  1.75E-09 -5.21E-09  5.46E-09  "
                         + "1.55E-03 252.7  11.2 252.7  11.2  0.0 JR5-2"));
+        
+        assertEquals(new PmdDataLine(TreatmentType.THERMAL, 350, new double[]
+            {2.17E-07,  3.35E-08,  2.78E-08,  2.01E-02, 283.1,  71.2, 355.4, 
+             72.0,  0.1}, "Jack"),
+                PmdDataLine.read("350C  2.17E-07  3.35E-08  2.78E-08  2.01E-02 "
+                        + "283.1  71.2 355.4  72.0  0.1 Jack"));
     }
     
     @Test(expected = IllegalArgumentException.class)

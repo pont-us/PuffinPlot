@@ -52,6 +52,10 @@ class PmdDataLine {
     public final String comment;
     
     private static class PmdTreatment {
+        /* Strings representing no treatment (NRM) */
+        private static final Pattern REGEX_NRM =
+                Pattern.compile("NRM *|0* * ");
+        
         /* Format 1: treatment type before number */
         private static final Pattern REGEX_1 =
                 Pattern.compile("([HMT])(\\d\\d\\d) ");
@@ -61,15 +65,15 @@ class PmdDataLine {
                 Pattern.compile("(\\d{1,3})M(T ?)? ");
         
         /*
-         * Format 3: thermal treatment with "°C" suffix.
+         * Format 3: thermal treatment with "C" or "°C" suffix.
          *
-         * I've only seen this format in PMD files exported by Remasoft 3. The
+         * I've only seen the "°C" format in PMD files exported by Remasoft 3. The
          * regular expression also allows "░" for the degree symbol, since this
          * is produced if an ISO-8859-1 file is read using the CP437 encoding.
          * See comment in PmdLoader class for more details.
          */
         private static final Pattern REGEX_3 =
-                Pattern.compile("(\\d{1,3})[░°]C {0,2}");
+                Pattern.compile("(\\d{1,3})[░°]?C {0,3}");
 
         public final TreatmentType type;
         public final int level;
@@ -80,7 +84,7 @@ class PmdDataLine {
         }
         
         public static PmdTreatment parse(String s) {
-            if ("NRM  ".equals(s)) {
+            if (REGEX_NRM.matcher(s).matches()) {
                 return new PmdTreatment(TreatmentType.NONE, 0);
             }
             final Matcher matcher1 = REGEX_1.matcher(s);

@@ -48,9 +48,10 @@ public class PmdLoader implements FileLoader {
             Arrays.asList(new String[] {
         " PAL  Xc (Am2)  Yc (Am2)  Zc (Am2)  MAG(A/m)   Dg    Ig    Ds    Is   a95 ",
         "STEP  Xc [Am2]  Yc [Am2]  Zc [Am2]  MAG[A/m]   Dg    Ig    Ds    Is  a95 ",
+        "STEP  Xc [Am2]  Yc [Am2]  Zc [Am2]  MAG[A/m]   Dg    Ig    Ds    Is   a95",
         "STEP  Xc (Am2)  Yc (Am2)  Zc (Am2)  MAG(A/m)   GDEC  GINC  SDEC  SINC a95 ",
         "STEP  Xc [Am²]  Yc [Am²]  Zc [Am²]  MAG[A/m]   Dg    Ig    Ds    Is  a95 ",
-        "STEP  Xc (Am2)  Yc (Am2)  Zc (Am2)  MAG(A/m)   Dg    Ig    Ds    Is   a95 "
+        "STEP  Xc (Am2)  Yc (Am2)  Zc (Am2)  MAG(A/m)   Dg    Ig    Ds    Is   a95 ",
     });
 
     private String firstLineComment = "";
@@ -180,16 +181,16 @@ public class PmdLoader implements FileLoader {
             final String location = String.format("file %s, line %d",
                     fileId, lineIndex+1);
             checkConsistency(location, sampleCorrected.getDecDeg(),
-                    dataLine.sampleCorrectedDeclination, 0.3,
+                    dataLine.sampleCorrectedDeclination, 0.5,
                     loadedData);
             checkConsistency(location, sampleCorrected.getIncDeg(),
-                    dataLine.sampleCorrectedInclination, 0.3,
+                    dataLine.sampleCorrectedInclination, 0.5,
                     loadedData);
             checkConsistency(location, formationCorrected.getDecDeg(),
-                    dataLine.formationCorrectedDeclination, 0.3,
+                    dataLine.formationCorrectedDeclination, 0.5,
                     loadedData);
             checkConsistency(location, formationCorrected.getIncDeg(),
-                    dataLine.formationCorrectedInclination, 0.3,
+                    dataLine.formationCorrectedInclination, 0.5,
                     loadedData);
             checkConsistency(location, step.getIntensity(),
                     dataLine.magnetization, 

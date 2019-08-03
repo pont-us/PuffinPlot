@@ -49,12 +49,19 @@ public class PmdLoaderTest {
     
     private final static TreatmentType[] TREATMENT_TYPES =
         {TreatmentType.NONE, TreatmentType.DEGAUSS_XYZ, TreatmentType.THERMAL};
+    
+    /**
+     * The first field in the pair is the filename; the second is the expected
+     * value of the sample ID recorded in the file.
+     */
     private final static String[][] FILENAMES_AND_DATA = {
         {"CO-17E.PMD", "CO-17E"},
         {"IPG_AF.PMD", "26a"},
         {"IPG_Thermal.PMD", "42-297"},
         {"ss0202a.pmd", "ss0202a"},
-        {"BC0101A1.pmd", "BC0101A1"}
+        {"BC0101A1.pmd", "BC0101A1"},
+        {"18R203C.pmd", "18R203C"},
+        {"BCK011A.PMD", "BCK011A"}
     };
     private final static double[][][] NUMERICAL_DATA = {
         {{296.0, 57.0, 90.0,  0.0, 5.0E-6}, // CO-17E.PMD
@@ -125,6 +132,43 @@ public class PmdLoaderTest {
             {2, 540, 5.21E-08,  1.09E-07, -1.14E-08},
             {2, 560,-2.31E-08, -2.23E-08, -4.70E-08},
             {2, 580, 7.15E-09,  6.60E-09,  5.65E-08}},
+        {{46.5, 56.0, 280.0, 15.0, 10.5E-6}, // 18R203C
+            {0, 0,   2.50E-09, -2.62E-09,  5.86E-09},
+            {1, 100, 3.24E-09, -2.73E-09,  4.26E-09},
+            {1, 150, 3.90E-09, -2.63E-09,  2.99E-09},
+            {1, 200, 4.07E-09, -2.54E-09,  1.71E-09},
+            {1, 250, 4.27E-09, -2.43E-09,  1.05E-09},
+            {1, 300, 4.60E-09, -2.42E-09,  2.01E-10},
+            {1, 350, 4.83E-09, -2.40E-09, -2.29E-10},
+            {1, 400, 4.92E-09, -2.25E-09, -6.04E-10},
+            {1, 450, 4.79E-09, -2.35E-09, -8.42E-10},
+            {1, 500, 4.75E-09, -1.95E-09, -1.44E-09},
+            {1, 550, 4.46E-09, -2.07E-09, -1.77E-09},
+            {1, 575, 4.95E-09, -1.46E-09, -1.10E-09},
+            {1, 600, 4.56E-09, -2.10E-09, -2.22E-09},
+            {1, 620, 4.27E-09, -1.58E-09, -1.44E-09},
+            {1, 630, 3.89E-09, -1.37E-09, -6.83E-10},
+            {1, 640, 4.20E-09, -1.16E-09, -1.16E-10},
+            {1, 650, 3.31E-09, -8.47E-10,  4.27E-10},
+            {1, 655, 4.10E-09, -1.21E-09,  4.52E-10},
+            {1, 660, 3.63E-09, -1.36E-09, -5.71E-10},
+            {1, 665, 3.62E-09, -1.43E-09, -6.12E-10},
+            {1, 670, 4.15E-09, -1.40E-09,  1.35E-09},
+            {1, 675, 3.42E-09, -4.01E-11, -9.43E-11},
+            {1, 680, 3.85E-09, -2.00E-10,  1.04E-09},
+            {1, 685, 3.89E-09, -1.11E-10,  2.25E-09},
+            {1, 690, 7.78E-11, -6.32E-10,  1.24E-09}},
+        {{255.0, -66.0, 320.8, 22.2, 11.0E-6}, // BCK011A
+            {0, 0,   7.88E-07,  3.86E-07,  6.20E-07},
+            {2, 100, 5.85E-07,  2.39E-07,  3.45E-07},
+            {2, 200, 3.72E-07,  1.24E-07,  1.67E-07},
+            {2, 300, 2.54E-07,  2.50E-08,  6.97E-08},
+            {2, 350, 2.17E-07,  3.35E-08,  2.78E-08},
+            {2, 400, 1.99E-07,  2.17E-08,  2.55E-08},
+            {2, 500, 1.59E-07,  1.56E-08, -1.10E-09},
+            {2, 550, 1.05E-07,  5.28E-09,  1.79E-08},
+            {2, 575, 6.77E-08, -1.42E-08,  2.02E-08},
+            {2, 600, 1.69E-08, -1.53E-08, -3.85E-10}},
     };
     
     @Test
@@ -137,15 +181,18 @@ public class PmdLoaderTest {
     private void testLoadOneFile(String[] filenameAndData,
             double[][] numericalData) {
         final InputStream stream =
-                TestFileLocator.class.getResourceAsStream(filenameAndData[0]);
+                TestFileLocator.class.getResourceAsStream(
+                        "pmd/" + filenameAndData[0]);
         final PmdLoader pmdLoader = new PmdLoader();
         final LoadedData loadedData =
-                pmdLoader.readStream(stream, Collections.emptyMap(), filenameAndData[0]);
+                pmdLoader.readStream(stream, Collections.emptyMap(),
+                        filenameAndData[0]);
         if (!loadedData.getMessages().isEmpty()){
             System.out.println(loadedData.getMessages());
             fail();
         }
-        checkData(numericalData, filenameAndData, loadedData.getTreatmentSteps());
+        checkData(numericalData, filenameAndData,
+                loadedData.getTreatmentSteps());
     }
     
     private void checkData(double[][] expected, String[] expectedStrings,
@@ -188,7 +235,7 @@ public class PmdLoaderTest {
     @Test
     public void testClosedStream() throws IOException {
         final InputStream stream = TestFileLocator.class.
-                getResourceAsStream(FILENAMES_AND_DATA[0][0]);
+                getResourceAsStream("pmd/" + FILENAMES_AND_DATA[0][0]);
             stream.close();
         final PmdLoader loader = new PmdLoader();
         final LoadedData loadedData = loader.readStream(
