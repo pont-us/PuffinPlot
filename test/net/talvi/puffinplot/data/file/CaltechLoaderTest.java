@@ -92,7 +92,7 @@ public class CaltechLoaderTest {
          * Copy the resource streams into temporary files, since
          * CaltechLoader can't load from a stream.
          */
-        final List<String> filenames = new ArrayList<String>();
+        final List<String> filenames = new ArrayList<>();
         filenames.addAll(Arrays.asList(dataFileNames));
         filenames.add(samFileName);
         for (String filename: filenames) {

@@ -108,7 +108,7 @@ public class PmdLoaderTest {
             {1, 45, -7.67E-06, -3.42E-06, +1.27E-05},
             {1, 80, -5.77E-06, -2.58E-06, +9.61E-06},
             {1, 190, -2.96E-06, -1.28E-06, +4.98E-06}},
-        {{287.0, -88.0, 0.0, 0.0, 11.0E-6},
+        {{287.0, -88.0, 0.0, 0.0, 11.0E-6}, // BC0101A1
             {0,   0, 8.80E-09, -1.60E-07, -5.06E-08},
             {2, 100, 9.90E-09, -1.55E-07, -4.95E-08},
             {2, 150, 1.10E-08, -1.52E-07, -4.95E-08},
@@ -192,7 +192,8 @@ public class PmdLoaderTest {
             stream.close();
         final PmdLoader loader = new PmdLoader();
         final LoadedData loadedData = loader.readStream(
-                stream, Collections.emptyMap(), FILENAMES_AND_DATA[0][0]);
+                stream, Collections.emptyMap(),
+                "pmd/" + FILENAMES_AND_DATA[0][0]);
         assertTrue(loadedData.getMessages().size() > 0);
     }
     
