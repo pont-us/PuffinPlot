@@ -90,9 +90,17 @@ public class MedianDestructiveField {
         }
         // i can't be <=1 at this point, so we're safe doing get(i-2)
         final TreatmentStep previousStep = steps.get(i-2);
-        final double demagLevel = interpolate(previousStep.getTreatmentLevel(),
-                step.getTreatmentLevel(), step.getIntensity(),
-                previousStep.getIntensity(), halfIntensity);
+
+        /*
+         * If the half-intensity was never reached, the MDF is undefined.
+         * We set it to 0 as a marker value, because that's an impossible value
+         * for a real MDF.
+         */
+        final double demagLevel = halfIntReached
+                ? interpolate(previousStep.getTreatmentLevel(),
+                        step.getTreatmentLevel(), step.getIntensity(),
+                        previousStep.getIntensity(), halfIntensity)
+                : 0;
         return new MedianDestructiveField(demagLevel, halfIntensity,
                 halfIntReached);
     }

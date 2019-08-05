@@ -78,7 +78,7 @@ public class MedianDestructiveFieldTest {
         {
             { {{0, 100}, {10, 50}, {20, 20}}, {{10, 50, 1}} },
             { {{0, 140}, {59, 71}, {61, 69}}, {{60, 70, 1}} },
-            { {{0, 100}, {10, 60}, {20, 51}}, {{-1, -1, 0}} }
+            { {{0, 100}, {10, 60}, {20, 51}}, {{0,  50, 0}} }
         };
         
         for (double[][][] inputAndOutput: inputsAndOutputs) {
@@ -96,14 +96,9 @@ public class MedianDestructiveFieldTest {
             List<TreatmentStep> input, double[] output) {
         final MedianDestructiveField mdf =
                 MedianDestructiveField.calculate(input);
-        
-        final boolean isHalfIntReached = (output[2] > 0.99);
-        
-        assertEquals(isHalfIntReached, mdf.isHalfIntReached());
-        if (isHalfIntReached) {
-            assertEquals(output[0], mdf.getDemagLevel(), 1e-6);
-            assertEquals(output[1], mdf.getIntensity(), 1e-6);
-        }
+        assertEquals(output[0], mdf.getDemagLevel(), 1e-6);
+        assertEquals(output[1], mdf.getIntensity(), 1e-6);
+        assertEquals(output[2] > 0, mdf.isHalfIntReached());
     }
 
     private static List<TreatmentStep> makeTreatmentStepList(

@@ -62,7 +62,6 @@
 % For Pandoc's lists converted from Markdown
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
-\setcounter{secnumdepth}{0}
 
 \newcommand{\ppcmd}[1]{\textsf{#1}} % For `computer' text
 \newcommand{\caps}[1]{\MakeTextUppercase{#1}} % for acronyms and initialisms
@@ -538,8 +537,10 @@ all steps between the first and last were selected for \caps{pca};
 indicating goodness of fit (smaller is better). See section~\ref{sec:plot-types} for more details. \\
 \caps{GC} npoints & the number of points used for the great-circle fit \\
 \caps{mdf} half-intensity (A/m)  & half of the \caps{nrm} (in A/m) \\
-\caps{mdf} demagnetization (degC or mT) & the demagnetization treatment level
-at which the \caps{nrm} was reduced to half (in \textdegree C or mT) \\
+\caps{mdf} demagnetization (degC or mT) & the treatment level
+at which the intensity of the sample's remanence was reduced to half the
+\caps{nrm} (in \textdegree C or mT). If half-intensity was not reached,
+this column contains 0. \\
 \caps{mdf} midpoint reached & `Y' if magnetization
 intensity reached half the \caps{nrm} intensity during demagnetization;
 `N' otherwise \\
@@ -986,7 +987,10 @@ all the selected samples, not just the current sample.
   selected samples. This is the field (or temperature) at which the intensity
   of the sample's remanence has been reduced to half of its initial value.
   Once calculated, it is displayed on the demagnetization-intensity plot, and
-  can be saved as part of the exported sample data.
+  can be saved as part of the exported sample data. If the sample never
+  reaches half-intensity during treatment, the MDF is undefined; in this
+  case, it is not shown on the plot, and an MDF value of 0 is used in
+  the exported sample data file.
 
 \item[Calculations\submenu Clear sample calculations] de-selects all the
   points in all the selected samples, and clears the results of any
