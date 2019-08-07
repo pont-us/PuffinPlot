@@ -172,8 +172,8 @@
             signature="Pont"
             shortversion="${release.version}"
             copyright="${copyright_msg}"
-            identifier="net.talvi.puffinplot.PuffinApp"
-            mainclassname="net.talvi.puffinplot.PuffinApp">
+            identifier="net.talvi.puffinplot"
+            mainclassname="net.talvi.puffinplot.Main">
             <option value="-Xdock:name=${ant.project.name}" />
             <option value="-Dapple.awt.application.name=${ant.project.name}" />
             <classpath file="${basedir}/dist/single-jar/${ant.project.name}.jar" />
