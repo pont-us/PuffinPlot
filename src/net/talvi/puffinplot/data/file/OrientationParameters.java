@@ -126,6 +126,16 @@ public class OrientationParameters {
                     "Unknown azimuthal parameter index \"" + index + "\"");
         }
 
+        /**
+         * Rotates a vector from a P1=this system to a P1=12 system.
+         * This method takes a vector defining a direction in a system
+         * where P1 has the value of this object. It returns a vector
+         * defining the same direction in a system where P1=12.
+         * 
+         * @param vector a vector in a P1=this system
+         * @return a vector in a P1=12 system, representing the same
+         *         direction as the input vector
+         */
         public Vec3 rotateForP1(Vec3 vector) {
             switch (this) {
                 case A3:
@@ -139,6 +149,15 @@ public class OrientationParameters {
             }
         }
         
+        /**
+         * Rotates a tensor from a P1=this system to a P1=12 system. This method
+         * takes a tensor defined in a system where P1 has the value of this
+         * object. It returns an equivalent vector defined in a system where
+         * P1=12.
+         *
+         * @param tensorElements a tensor in a P1=this system
+         * @return a tensor in a P1=12 system, equivalent to the input vector
+         */
         public double[] rotateForP1(double[] tensorElements) {
             switch (this) {
                 case A3:
@@ -152,7 +171,16 @@ public class OrientationParameters {
             }
         }
 
-        
+        /**
+         * Rotates a sample azimuth from a P3=this system to a P3=12 system.
+         * 
+         * This method takes a sample azimuth defined in a system where P3 has
+         * the value of this object. It returns an equivalent azimuth defined in
+         * a system where P3=12.
+         * 
+         * @param azimuthDegrees a sample azimuth in a P3=this system
+         * @return the equivalent sample azimuth in a P3=12 system
+         */
         public double rotateSampleAzimuthForP3(double azimuthDegrees) {
             switch (this) {
                 case A3:

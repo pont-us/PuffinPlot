@@ -70,6 +70,8 @@ public class EditSampleParametersWindow extends JFrame {
 
     /**
      * Creates a new correction window.
+     * 
+     * @param app the PuffinApp instance with which the window is associated
      */
     public EditSampleParametersWindow(PuffinApp app) {
         super("Edit sample parameters");

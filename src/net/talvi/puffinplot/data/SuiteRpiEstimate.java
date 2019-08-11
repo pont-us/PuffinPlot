@@ -53,6 +53,12 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
         this.rpis = rpis;
     }
     
+    /**
+     * Write this RPI estimate to a CSV file.
+     * 
+     * @param path the path of the file to which to write the data
+     * @throws IOException if an error occurred while writing the file
+     */
     public void writeToFile(String path) throws IOException {
         final File outFile = new File(path);
         try (FileWriter writer = new FileWriter(outFile)) {

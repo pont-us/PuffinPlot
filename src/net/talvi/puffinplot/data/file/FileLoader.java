@@ -29,7 +29,9 @@ import java.util.Map;
 public interface FileLoader {
  
     /**
-     * Read a file using a specified set of options.
+     * Read a file using a specified set of options. The supported options
+     * should correspond to the option definitions returned by
+     * {@link #getOptionDefinitions() }.
      * 
      * @param file the file to read
      * @param options file reading options
@@ -37,10 +39,20 @@ public interface FileLoader {
      */
     LoadedData readFile(File file, Map<Object, Object> options);
     
+    /**
+     * Reads a file without any specified options. The implementer is
+     * expected to use default options.
+     * 
+     * @param file the file to read
+     * @return a representation of the data within the specified file
+     */
     default LoadedData readFile(File file) {
         return readFile(file, Collections.emptyMap());
     }
 
+    /**
+     * @return a list defining the options supported by this loader
+     */
     default List<OptionDefinition> getOptionDefinitions() {
         return Collections.emptyList();
     }

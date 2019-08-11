@@ -24,6 +24,9 @@ import java.util.logging.Logger;
 
 import net.talvi.puffinplot.PuffinApp;
 
+/**
+ * A dialog for importing AMS data from files.
+ */
 public class ImportAmsDialog extends javax.swing.JDialog {
 
     private static final Logger LOGGER =
@@ -32,7 +35,9 @@ public class ImportAmsDialog extends javax.swing.JDialog {
     private final PuffinApp app;
 
     /**
-     * Creates new form ImportAmsDialog
+     * Creates a new AMS import dialog.
+     * 
+     * @param app the PuffinApp instance with which to associate the dialog
      */
     public ImportAmsDialog(PuffinApp app) {
         super(app.getMainWindow(), true);

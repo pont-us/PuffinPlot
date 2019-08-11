@@ -89,10 +89,27 @@ public interface PlotParams {
      */
     public List<Sample> getAllSamplesInSelectedSites();
 
+    /**
+     * Gets the string value of a named setting.
+     * 
+     * @param key the name of a string-valued setting
+     * @param def a default value
+     * @return the value of the setting, or {@code def} if it has no value
+     */
     public String getSetting(String key, String def);
     
+    /**
+     * Gets the boolean value of a named setting.
+     * 
+     * @param key the name of a boolean-valued setting
+     * @param def a default value
+     * @return  the value of the setting, of {@code def} if it has no value
+     */
     public boolean getSettingBoolean(String key, boolean def);
     
+    /**
+     * @return the measurement unit size for this plot
+     */
     public float getUnitSize();
 
 }

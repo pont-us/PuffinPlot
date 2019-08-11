@@ -490,6 +490,8 @@ public class Util {
      *
      * @param url the URL to use as a data source
      * @param outputPath the file to which to save the data found at the URL
+     * @throws java.io.IOException if an error occurs while downloading
+     *         or saving
      */
     public static void downloadUrlToFile(String url, Path outputPath)
             throws IOException {

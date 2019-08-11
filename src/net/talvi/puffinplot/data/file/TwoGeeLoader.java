@@ -124,6 +124,9 @@ public class TwoGeeLoader implements FileLoader {
         POLAR;
     }
 
+    /**
+     * Creates a new 2G loader.
+     */
     public TwoGeeLoader() {
         optionDefinitions = new ArrayList<>(3);
         optionDefinitions.add(new SimpleOptionDefinition("protocol",

@@ -20,12 +20,19 @@ package net.talvi.puffinplot.window;
 import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.Util;
 
+/**
+ * A dialog for removing samples within a specified depth range.
+ */
 public class RemoveByDepthRangeDialog extends javax.swing.JDialog {
 
     private final PuffinApp app;
 
     /**
-     * Creates new form RemoveByDepthRangeDialog
+     * Creates a new remove depth range dialog
+     * 
+     * @param parent the frame to use as a parent for this dialog
+     * @param modal whether this dialog is to be modal
+     * @param app the PuffinApp instance with which to associate this dialog
      */
     public RemoveByDepthRangeDialog(java.awt.Frame parent, boolean modal,
             PuffinApp app) {

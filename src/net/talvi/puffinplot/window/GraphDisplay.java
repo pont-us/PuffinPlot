@@ -154,8 +154,9 @@ public abstract class GraphDisplay extends JPanel implements Printable {
     }
     
     /**
-     * Returns the plot with a specified class name.
+     * Returns the plot with a specified class.
      * 
+     * @param plotClass a plot class
      * @return the plot with the given class, or {@code null} if there is none
      */
     public Plot getPlotByClass(Class plotClass) {
