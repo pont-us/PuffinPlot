@@ -181,10 +181,14 @@ public class AlignDeclinationsDialog extends javax.swing.JDialog {
     private void alignButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alignButtonActionPerformed
         final Integer endLength = Util.tryToParseInteger(
                 app.getMainWindow(), endLengthTextField.getText());
-        if (endLength == null) return;
+        if (endLength == null) {
+            return;
+        }
         final Double topDeclination = Util.tryToParseDouble(
                         app.getMainWindow(), topDecTextField.getText());
-        if (topDeclination == null) return;
+        if (topDeclination == null) {
+            return;
+        }
         if (canAlignSectionDeclinations()) {
             if (canAlignSectionDeclinations()) {
                 app.getCurrentSuite().

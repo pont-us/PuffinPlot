@@ -22,11 +22,19 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * An interface implemented by PuffinPlot file loaders. It provides
+ * methods for producing a {@link LoadedData} object from a file.
  *
- * @author pont
  */
 public interface FileLoader {
  
+    /**
+     * Read a file using a specified set of options.
+     * 
+     * @param file the file to read
+     * @param options file reading options
+     * @return a representation of the data within the specified file
+     */
     LoadedData readFile(File file, Map<Object, Object> options);
     
     default LoadedData readFile(File file) {

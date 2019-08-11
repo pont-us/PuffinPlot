@@ -49,6 +49,9 @@ public enum RpiEstimateType {
         this.name = name;
     }
     
+    /**
+     * @return a user-friendly name for this estimate type
+     */
     public String getNiceName() {
         return name;
     }

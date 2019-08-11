@@ -672,7 +672,18 @@ public final class ArasonLevi {
      */
     public final static class ArithMean {
 
-        public final double inc, kappa, t63, a95;
+        /** mean inclination estimate in degrees */
+        public final double inc;
+
+        /** kappa value associated with the estimate */
+        public final double kappa;
+        
+        /** θ63, the angular standard deviation, in degrees */
+        public final double t63;
+        
+        /** α95, the 95% confidence interval, in degrees*/
+        public final double a95;
+        
         private final int n;
     
         private ArithMean(int n, double inc, double kappa,
@@ -724,6 +735,12 @@ public final class ArasonLevi {
             return a95;
         }
         
+        /**
+         * Calculate the arithmetic mean of a collection of inclinations.
+         * 
+         * @param inclinations a collection of inclinations, in degrees
+         * @return the arithmetic mean of the supplied inclinations
+         */
         public static ArithMean calculate(Collection<Double> inclinations) {
             final double[] inc =
                     inclinations.stream().mapToDouble(x->x).toArray();

@@ -98,7 +98,8 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
      * stepwise demagnetized remanence (ARM or IRM).
      * 
      * @param nrmSuite suite containing NRM data
-     * @param normalizerSuite suite containing ARM normalizer data
+     * @param normalizerSuite suite containing AF demagnetization normalizer
+     *        data
      * @param minLevel lowest AF treatment level to consider
      * @param maxLevel highest AF treatment level to consider
      * @return a collection of RPI estimates
@@ -187,13 +188,27 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
         return new SuiteRpiEstimate<>(treatmentLevels, rpis);
     }
 
-    /* TODO: there is a lot of duplicated code between calculateWithStepwiseARM
-     * and calculateWithStepwiseAf -- factor it out.
-        * 
-         */
+    /**
+     * Estimate RPI by normalizing a stepwise demagnetized NRM to a
+     * stepwise imparted ARM. For a stepwise <i>demagnetized</i>
+     * ARM, {@link #calculateWithStepwiseAF(net.talvi.puffinplot.data.Suite, net.talvi.puffinplot.data.Suite, double, double) }
+     * should be used.
+     *
+     * @param nrmSuite suite containing NRM data
+     * @param normalizerSuite suite containing ARM acquisition normalizer data
+     * @param minLevel lowest ARM treatment level to consider (AF intensity)
+     * @param maxLevel highest ARM treatment level to consider (AF intensity)
+     * @return a collection of RPI estimates
+     */
     public static SuiteRpiEstimate<StepwiseSampleRpiEstimate>
             calculateWithStepwiseARM(Suite nrmSuite,
                     Suite normalizerSuite, double minLevel, double maxLevel) {
+        /*
+         * TODO: there is a lot of duplicated code between
+         * calculateWithStepwiseARM and calculateWithStepwiseAF -- factor it
+         * out.
+         */
+                
         final double[] allTreatmentLevels
                 = nrmSuite.getSamples().get(0).getTreatmentLevels();
 
