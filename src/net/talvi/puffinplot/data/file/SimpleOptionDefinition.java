@@ -40,7 +40,7 @@ public class SimpleOptionDefinition implements OptionDefinition {
         this.description = description;
         this.type = type;
         this.defaultValue = defaultValue;
-        if (!type.isAssignableFrom(defaultValue.getClass())) {
+        if (defaultValue != null && !type.isInstance(defaultValue)) {
             throw new IllegalArgumentException(
                     "Default value doesn't match type.");
         }

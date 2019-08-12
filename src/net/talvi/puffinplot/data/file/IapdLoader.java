@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -37,21 +37,17 @@ import net.talvi.puffinplot.data.Vec3;
  */
 public class IapdLoader implements FileLoader {
     
-    private final List<OptionDefinition> optionDefinitions;
-    
-    /**
-     * Create a new IAPD loader.
-     */
-    public IapdLoader() {
-        final ArrayList<OptionDefinition> modifiable = new ArrayList<>();
-        modifiable.add(new SimpleOptionDefinition("treatment_type",
-                "treatment type for all steps in this file",
-                TreatmentType.class, TreatmentType.DEGAUSS_XYZ));
-        modifiable.add(new SimpleOptionDefinition("measurement_type",
-                "measurement type for all steps in this file",
-                MeasurementType.class, MeasurementType.DISCRETE));
-        optionDefinitions = Collections.unmodifiableList(modifiable);
-    }
+    private final OptionDefinition treatmentTypeOption =
+            new SimpleOptionDefinition("treatment_type",
+                    "treatment type for all steps in this file",
+                    TreatmentType.class, TreatmentType.DEGAUSS_XYZ);
+    private final OptionDefinition measurementTypeOption =
+            new SimpleOptionDefinition("measurement_type",
+                    "measurement type for all steps in this file",
+                    MeasurementType.class, MeasurementType.DISCRETE);
+    private final List<OptionDefinition> optionDefinitions =
+            Collections.unmodifiableList(Arrays.asList(
+                    treatmentTypeOption, measurementTypeOption));
     
     /**
      * Reads an IAPD file. Valid import option keys are:
@@ -119,11 +115,9 @@ public class IapdLoader implements FileLoader {
         final SimpleLoadedData loadedData = new SimpleLoadedData();
         
         final TreatmentType treatmentType =
-                (TreatmentType) importOptions.getOrDefault(
-                        "treatment_type", TreatmentType.DEGAUSS_XYZ);
+                (TreatmentType) treatmentTypeOption.getValue(importOptions);
         final MeasurementType measurementType =
-                (MeasurementType) importOptions.getOrDefault(
-                        "measurement_type", MeasurementType.DISCRETE);
+                (MeasurementType) measurementTypeOption.getValue(importOptions);
         
         final String headerLine = reader.readLine();
         if (headerLine == null) {

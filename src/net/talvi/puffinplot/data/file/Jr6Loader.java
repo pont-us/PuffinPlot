@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -41,18 +40,12 @@ import net.talvi.puffinplot.data.TreatmentType;
  */
 public class Jr6Loader implements FileLoader {
 
-    private final List<OptionDefinition> optionDefinitions;
-    
-    /**
-     * Creates a new JR6 loader.
-     */
-    public Jr6Loader() {
-        final ArrayList<OptionDefinition> modifiable = new ArrayList<>();
-        modifiable.add(new SimpleOptionDefinition("default_treatment_type",
-                "default treatment type (used when none specified in file)",
-                TreatmentType.class, TreatmentType.DEGAUSS_XYZ));
-        optionDefinitions = Collections.unmodifiableList(modifiable);
-    }
+    OptionDefinition treatmentTypeOption =
+            new SimpleOptionDefinition("default_treatment_type",
+                    "default treatment type (used when none specified in file)",
+                    TreatmentType.class, TreatmentType.DEGAUSS_XYZ);
+    private final List<OptionDefinition> optionDefinitions =
+            Collections.singletonList(treatmentTypeOption);
     
     /**
      * Reads JR6 data from a specified input stream.
@@ -100,12 +93,8 @@ public class Jr6Loader implements FileLoader {
     @Override
     public LoadedData readFile(File file, Map<String, Object> importOptions) {
         try {
-            final Object specifiedTreatmentType =
-                    importOptions.get("default_treatment_type");
-            final TreatmentType defaultTreatmentType = 
-                    (specifiedTreatmentType instanceof TreatmentType)
-                    ? ((TreatmentType) specifiedTreatmentType)
-                    : TreatmentType.DEGAUSS_XYZ;
+            final TreatmentType defaultTreatmentType =
+                    (TreatmentType) treatmentTypeOption.getValue(importOptions);
             final FileInputStream fis = new FileInputStream(file);
             return readStream(fis, file.getName(), defaultTreatmentType);
         } catch (IOException ex) {

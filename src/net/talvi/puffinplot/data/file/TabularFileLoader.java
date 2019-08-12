@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -37,29 +38,33 @@ import java.util.Map;
  */
 public class TabularFileLoader implements FileLoader {
     
+    private final OptionDefinition formatOption =
+            new SimpleOptionDefinition(
+                    "format", "a description of the file format",
+                    FileFormat.class, null);
+    private final List<OptionDefinition> optionDefinitions =
+            Collections.singletonList(formatOption);
+    
     /**
      * Reads a file. The loader supports one option, {@code format},
      * which is required. The value of this option must be a
      * {@link FileFormat} object describing the format of the file to be
-     * loaded.
+     * loaded, and may not be {@code null}.
      * 
      * @param file the file from which to read data
      * @param options file loading options (see description)
      */
     @Override
     public LoadedData readFile(File file, Map<String, Object> options) {
-        
-        if (options == null || !options.containsKey("format")
-                || !(options.get("format") instanceof FileFormat)) {
+        final FileFormat format = (FileFormat) formatOption.getValue(options);
+        if (format == null) {
             /*
-             * An exception is more appropriate than an empty LoadedData
-             * object with a message here: absence of a FileFormat
-             * is a program error, not a user action or file reading problem.
+             * An exception is more appropriate than an empty LoadedData object
+             * with a message here: absence of a FileFormat is a program error,
+             * not a user action or file reading problem.
              */
             throw new IllegalArgumentException("No file format supplied");
-        }
-        final FileFormat format = (FileFormat) options.get("format");
-        final SimpleLoadedData loadedData = new SimpleLoadedData();
+        }        final SimpleLoadedData loadedData = new SimpleLoadedData();
         if (!format.specifiesFullVector()) {
             if (!format.specifiesDirection()) {
                 loadedData.addMessage(
@@ -89,5 +94,10 @@ public class TabularFileLoader implements FileLoader {
         } finally {
             return loadedData;
         }
+    }
+    
+    @Override
+    public List<OptionDefinition> getOptionDefinitions() {
+        return optionDefinitions;
     }
 }

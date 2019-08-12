@@ -66,7 +66,23 @@ public class TwoGeeLoader implements FileLoader {
     private Protocol protocol;
     private final Set<String> requestedFields = new HashSet<>();
     private boolean usePolarMoment; // use d/i/i rather than x/y/z fields
-    private final List<OptionDefinition> optionDefinitions;
+    
+    private final OptionDefinition protocolOption =
+            new SimpleOptionDefinition("protocol",
+                "Measurement protocol", Protocol.class, Protocol.NORMAL);
+    private final OptionDefinition sensorLengthOption =
+            new SimpleOptionDefinition("sensor_lengths",
+                "Sensor lengths", SensorLengths.class,
+                SensorLengths.fromPresetName("1:1:1"));
+    private final OptionDefinition readMomentFromOption =
+            new SimpleOptionDefinition("read_moment_from",
+                "Read magnetic moment from", MomentFields.class,
+                MomentFields.POLAR);
+   
+    private final List<OptionDefinition> optionDefinitions =
+            Collections.unmodifiableList(Arrays.asList(
+                    protocolOption, sensorLengthOption, readMomentFromOption
+            ));
 
     /**
      * A measurement protocol. A protocol defines the order in which sample
@@ -129,16 +145,7 @@ public class TwoGeeLoader implements FileLoader {
      * Creates a new 2G loader.
      */
     public TwoGeeLoader() {
-        final List<OptionDefinition> modifiable = new ArrayList<>(3);
-        modifiable.add(new SimpleOptionDefinition("protocol",
-                "Measurement protocol", Protocol.class, Protocol.NORMAL));
-        modifiable.add(new SimpleOptionDefinition("sensor_lengths",
-                "Sensor lengths", SensorLengths.class,
-                SensorLengths.fromPresetName("1:1:1")));
-        modifiable.add(new SimpleOptionDefinition("read_moment_from",
-                "Read magnetic moment from", MomentFields.class,
-                MomentFields.POLAR));
-        optionDefinitions = Collections.unmodifiableList(modifiable);
+
     }
     
     @Override
@@ -158,11 +165,12 @@ public class TwoGeeLoader implements FileLoader {
         Objects.requireNonNull(file);
         Objects.requireNonNull(options);
         this.file = file;
-        this.protocol = (Protocol) options.get("protocol");
+        this.protocol = (Protocol) protocolOption.getValue(options);
         this.sensorLengths =
-                ((SensorLengths) options.get("sensor_lengths")).toVector();
+                ((SensorLengths) sensorLengthOption.getValue(options))
+                        .toVector();
         this.usePolarMoment =
-                ((MomentFields) options.get("read_moment_from"))
+                ((MomentFields) readMomentFromOption.getValue(options))
                     == MomentFields.POLAR;
         setSensorLengths(sensorLengths);
         try (LineNumberReader r = new LineNumberReader(new FileReader(file))) {
