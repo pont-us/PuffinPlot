@@ -38,12 +38,16 @@ import java.util.Map;
 public class TabularFileLoader implements FileLoader {
     
     /**
-     * Reads a file.
+     * Reads a file. The loader supports one option, {@code format},
+     * which is required. The value of this option must be a
+     * {@link FileFormat} object describing the format of the file to be
+     * loaded.
      * 
      * @param file the file from which to read data
+     * @param options file loading options (see description)
      */
     @Override
-    public LoadedData readFile(File file, Map<Object, Object> options) {
+    public LoadedData readFile(File file, Map<String, Object> options) {
         
         if (options == null || !options.containsKey("format")
                 || !(options.get("format") instanceof FileFormat)) {

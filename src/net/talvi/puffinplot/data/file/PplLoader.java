@@ -57,7 +57,7 @@ public class PplLoader implements FileLoader {
      * @return the data from the file
      */
     @Override
-    public LoadedData readFile(File file, Map<Object, Object> options) {
+    public LoadedData readFile(File file, Map<String, Object> options) {
         try (InputStream stream = new FileInputStream(file);
                 InputStreamReader isReader =
                         new InputStreamReader(stream, StandardCharsets.UTF_8);

@@ -139,7 +139,7 @@ public class TabularFileLoaderTest {
         assertTrue(Vec3.fromPolarDegrees(1, 42, 23).equals(step.getMoment()));
     }
     
-    private static Map<Object, Object> makeOptions(FileFormat format) {
+    private static Map<String, Object> makeOptions(FileFormat format) {
         return Collections.singletonMap("format", format);
     }
 

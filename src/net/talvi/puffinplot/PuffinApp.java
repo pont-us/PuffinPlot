@@ -642,7 +642,7 @@ public class PuffinApp {
             }
 
             FileFormat format = null;
-            final java.util.Map<Object,Object> importOptions =
+            final java.util.Map<String, Object> importOptions =
                     new java.util.HashMap<>();
             switch (fileType) {
                 case CUSTOM_TABULAR:
@@ -663,9 +663,9 @@ public class PuffinApp {
                     if (!iapdDialog.wasOkPressed()) {
                         return;
                     }
-                    importOptions.put(TreatmentType.class,
+                    importOptions.put("treatment_type",
                             iapdDialog.getTreatmentType());
-                    importOptions.put(MeasurementType.class,
+                    importOptions.put("measurement_type",
                             iapdDialog.getMeasurementType());
                     break;
                 case JR6:
@@ -674,7 +674,7 @@ public class PuffinApp {
                     if (defaultTreatmentType == null) {
                         return;
                     }
-                    importOptions.put(TreatmentType.class,
+                    importOptions.put("default_treatment_type",
                             defaultTreatmentType);
                     break;
                 case TWOGEE:

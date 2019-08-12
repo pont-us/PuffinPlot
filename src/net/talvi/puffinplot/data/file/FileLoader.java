@@ -37,7 +37,7 @@ public interface FileLoader {
      * @param options file reading options
      * @return a representation of the data within the specified file
      */
-    LoadedData readFile(File file, Map<Object, Object> options);
+    LoadedData readFile(File file, Map<String, Object> options);
     
     /**
      * Reads a file without any specified options. The implementer is
@@ -56,4 +56,6 @@ public interface FileLoader {
     default List<OptionDefinition> getOptionDefinitions() {
         return Collections.emptyList();
     }
+    
+    
 }

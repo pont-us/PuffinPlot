@@ -20,6 +20,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import net.talvi.puffinplot.data.MeasurementType;
@@ -34,14 +37,30 @@ import net.talvi.puffinplot.data.Vec3;
  */
 public class IapdLoader implements FileLoader {
     
+    private final List<OptionDefinition> optionDefinitions;
+    
+    /**
+     * Create a new IAPD loader.
+     */
+    public IapdLoader() {
+        final ArrayList<OptionDefinition> modifiable = new ArrayList<>();
+        modifiable.add(new SimpleOptionDefinition("treatment_type",
+                "treatment type for all steps in this file",
+                TreatmentType.class, TreatmentType.DEGAUSS_XYZ));
+        modifiable.add(new SimpleOptionDefinition("measurement_type",
+                "measurement type for all steps in this file",
+                MeasurementType.class, MeasurementType.DISCRETE));
+        optionDefinitions = Collections.unmodifiableList(modifiable);
+    }
+    
     /**
      * Reads an IAPD file. Valid import option keys are:
      *
-     * {@code TreatmentType.class}; value must be an instance of
-     * {@link TreatmentType}
+     * {@code treatment_type}; value must be an instance of
+     * {@link TreatmentType}; default: 3-axis AF
      *
-     * {@code MeasurementType.class}; value must be an instance of
-     * {@link MeasurementType}
+     * {@code measurement_type}; value must be an instance of
+     * {@link MeasurementType}; default: discrete
      *
      * These keys respectively specify the treatment type and measurement type
      * for the treatmentSteps in the file.
@@ -50,11 +69,11 @@ public class IapdLoader implements FileLoader {
      *
      * @param file the file from which to read treatment steps
      * @param importOptions import options (see method description)
-     * @return a laoded data object containing the treatment steps specified
+     * @return a loaded data object containing the treatment steps specified
      *   in the supplied file
      */
     @Override
-    public LoadedData readFile(File file, Map<Object,Object> importOptions) {
+    public LoadedData readFile(File file, Map<String, Object> importOptions) {
         try (LineNumberReader reader =
                 new LineNumberReader(new FileReader(file))) {
             return readFile(reader, importOptions, file.getName());
@@ -95,16 +114,16 @@ public class IapdLoader implements FileLoader {
     }
 
     private LoadedData readFile(LineNumberReader reader,
-            Map<Object, Object> importOptions, String filename)
+            Map<String, Object> importOptions, String filename)
             throws IOException {
         final SimpleLoadedData loadedData = new SimpleLoadedData();
         
         final TreatmentType treatmentType =
                 (TreatmentType) importOptions.getOrDefault(
-                        TreatmentType.class, TreatmentType.DEGAUSS_XYZ);
+                        "treatment_type", TreatmentType.DEGAUSS_XYZ);
         final MeasurementType measurementType =
                 (MeasurementType) importOptions.getOrDefault(
-                        MeasurementType.class, MeasurementType.DISCRETE);
+                        "measurement_type", MeasurementType.DISCRETE);
         
         final String headerLine = reader.readLine();
         if (headerLine == null) {
@@ -197,5 +216,10 @@ public class IapdLoader implements FileLoader {
                     filename, a95max);
         }
         return loadedData;
+    }
+    
+    @Override
+    public List<OptionDefinition> getOptionDefinitions() {
+        return optionDefinitions;
     }
 }

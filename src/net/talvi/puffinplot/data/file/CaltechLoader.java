@@ -67,7 +67,7 @@ public class CaltechLoader implements FileLoader {
      * @return a data object containing the treatment 
      */
     @Override
-    public LoadedData readFile(File file, Map<Object, Object> options) {
+    public LoadedData readFile(File file, Map<String, Object> options) {
         final File parentDir = file.getParentFile();
         try (LineNumberReader reader =
                 new LineNumberReader(new FileReader(file))) {

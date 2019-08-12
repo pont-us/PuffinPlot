@@ -222,7 +222,7 @@ public class UcDavisLoader implements FileLoader {
      * @return the data from the file
      */
     @Override
-    public LoadedData readFile(File file, Map<Object, Object> importOptions) {
+    public LoadedData readFile(File file, Map<String, Object> importOptions) {
         try (LineNumberReader reader =
                 new LineNumberReader(new FileReader(file))) {
             return readFile(reader, file.getName());

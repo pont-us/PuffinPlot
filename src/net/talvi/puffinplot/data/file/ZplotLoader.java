@@ -21,7 +21,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -43,7 +42,6 @@ import static net.talvi.puffinplot.data.file.TwoGeeHelper.oerstedToTesla;
  */
 public class ZplotLoader implements FileLoader {
 
-    private LineNumberReader reader;
     private File file;
     private String studyType;
     private MeasurementType measurementType = MeasurementType.UNSET;
@@ -72,7 +70,7 @@ public class ZplotLoader implements FileLoader {
      * @return the data in the file
      */
     @Override
-    public LoadedData readFile(File file, Map<Object, Object> options) {
+    public LoadedData readFile(File file, Map<String, Object> options) {
         this.file = file;
         try (LineNumberReader reader =
                 new LineNumberReader(new FileReader(file))) {

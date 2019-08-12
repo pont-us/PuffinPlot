@@ -65,8 +65,7 @@ public class PmdLoader implements FileLoader {
      * @return a PmdLoader to read data from the specified file
      */
     @Override
-    public LoadedData readFile(File file,
-            Map<Object, Object> importOptions) {
+    public LoadedData readFile(File file, Map<String, Object> importOptions) {
         try {
             final FileInputStream fis = new FileInputStream(file);
             return readStream(fis, importOptions, file.getName());
@@ -88,7 +87,7 @@ public class PmdLoader implements FileLoader {
      * the supplied input stream
      */
     public LoadedData readStream(InputStream inputStream,
-            Map<Object, Object> importOptions,
+            Map<String, Object> importOptions,
             String fileIdentifier) {
         final String fileId = (fileIdentifier == null) ?
                 "UNKNOWN" : fileIdentifier;

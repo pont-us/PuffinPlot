@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -128,15 +129,16 @@ public class TwoGeeLoader implements FileLoader {
      * Creates a new 2G loader.
      */
     public TwoGeeLoader() {
-        optionDefinitions = new ArrayList<>(3);
-        optionDefinitions.add(new SimpleOptionDefinition("protocol",
+        final List<OptionDefinition> modifiable = new ArrayList<>(3);
+        modifiable.add(new SimpleOptionDefinition("protocol",
                 "Measurement protocol", Protocol.class, Protocol.NORMAL));
-        optionDefinitions.add(new SimpleOptionDefinition("sensor_lengths",
+        modifiable.add(new SimpleOptionDefinition("sensor_lengths",
                 "Sensor lengths", SensorLengths.class,
                 SensorLengths.fromPresetName("1:1:1")));
-        optionDefinitions.add(new SimpleOptionDefinition("read_moment_from",
+        modifiable.add(new SimpleOptionDefinition("read_moment_from",
                 "Read magnetic moment from", MomentFields.class,
                 MomentFields.POLAR));
+        optionDefinitions = Collections.unmodifiableList(modifiable);
     }
     
     @Override
@@ -152,7 +154,7 @@ public class TwoGeeLoader implements FileLoader {
      * @return the data contained in the file
      */
     @Override
-    public LoadedData readFile(File file, Map<Object, Object> options) {
+    public LoadedData readFile(File file, Map<String, Object> options) {
         Objects.requireNonNull(file);
         Objects.requireNonNull(options);
         this.file = file;

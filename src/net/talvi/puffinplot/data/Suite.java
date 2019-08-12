@@ -479,7 +479,7 @@ public final class Suite implements SampleGroup {
      * @throws IOException if an I/O error occurred while reading the files 
      */
     public List<String> readFiles(List<File> files, FileType fileType,
-            Map<Object,Object> importOptions) throws IOException {
+            Map<String, Object> importOptions) throws IOException {
         Objects.requireNonNull(files, "files may not be null");
         if (files.isEmpty()) {
             throw new IllegalArgumentException("File list must be non-empty.");
@@ -523,7 +523,7 @@ public final class Suite implements SampleGroup {
             }
 
             FileLoader loader;
-            final Map<Object, Object> options = new HashMap<>(importOptions);
+            final Map<String, Object> options = new HashMap<>(importOptions);
             LoadedData loadedData = null;
             switch (fileType) {
             case TWOGEE:

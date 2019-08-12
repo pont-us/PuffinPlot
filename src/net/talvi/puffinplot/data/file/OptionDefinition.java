@@ -47,6 +47,8 @@ public interface OptionDefinition {
     /**
      * @return the default value of the option. The default value must
      * be an instance of the class returned by {@code getType()}.
+     * The implementer should return either an immutable value or a defensive
+     * copy.
      */
     Object getDefaultValue();
     

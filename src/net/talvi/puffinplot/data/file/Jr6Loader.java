@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -39,8 +41,21 @@ import net.talvi.puffinplot.data.TreatmentType;
  */
 public class Jr6Loader implements FileLoader {
 
+    private final List<OptionDefinition> optionDefinitions;
+    
     /**
-     * Read JR6 data from a specified input stream.
+     * Creates a new JR6 loader.
+     */
+    public Jr6Loader() {
+        final ArrayList<OptionDefinition> modifiable = new ArrayList<>();
+        modifiable.add(new SimpleOptionDefinition("default_treatment_type",
+                "default treatment type (used when none specified in file)",
+                TreatmentType.class, TreatmentType.DEGAUSS_XYZ));
+        optionDefinitions = Collections.unmodifiableList(modifiable);
+    }
+    
+    /**
+     * Reads JR6 data from a specified input stream.
      * 
      * @param inputStream a stream of JR6 file contents
      * @param fileIdentifier an identifier for the file
@@ -69,28 +84,28 @@ public class Jr6Loader implements FileLoader {
     }
 
     /**
-     * Return a JR6 loader for the specified file.
+     * Returns a JR6 loader for the specified file.
      * <p>
      * Currently one load option can be supplied: if the option map contains the
-     * key {@code TreatmentType.class} with an associated value of type
+     * key {@code default_treatment_type} with an associated value of type
      * {@code TreatmentType}, that value will be used as the default treatment
      * type for the data in the file. Otherwise, treatment type will default to
-     * thermal. The default treatment type is only used for data lines which do
-     * not explicitly specify a treatment type.
+     * 3-axis AF. The default treatment type is only used for data lines which
+     * do not explicitly specify a treatment type.
      * 
      * @param file a JR6 file to read
      * @param importOptions load options (see method description for details)
      * @return a JR6 loader for the specified file
      */
     @Override
-    public LoadedData readFile(File file, Map<Object, Object> importOptions) {
+    public LoadedData readFile(File file, Map<String, Object> importOptions) {
         try {
             final Object specifiedTreatmentType =
-                    importOptions.get(TreatmentType.class);
+                    importOptions.get("default_treatment_type");
             final TreatmentType defaultTreatmentType = 
                     (specifiedTreatmentType instanceof TreatmentType)
                     ? ((TreatmentType) specifiedTreatmentType)
-                    : TreatmentType.THERMAL;
+                    : TreatmentType.DEGAUSS_XYZ;
             final FileInputStream fis = new FileInputStream(file);
             return readStream(fis, file.getName(), defaultTreatmentType);
         } catch (IOException ex) {
@@ -137,4 +152,10 @@ public class Jr6Loader implements FileLoader {
         }
         return step;
     }
+
+    @Override
+    public List<OptionDefinition> getOptionDefinitions() {
+        return optionDefinitions;
+    }
+
 }

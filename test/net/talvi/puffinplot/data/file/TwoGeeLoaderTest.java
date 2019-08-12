@@ -28,10 +28,8 @@ import net.talvi.puffinplot.TestUtils;
 import net.talvi.puffinplot.data.ArmAxis;
 import net.talvi.puffinplot.data.MeasurementType;
 import net.talvi.puffinplot.data.SensorLengths;
-import net.talvi.puffinplot.data.SensorLengthsTest;
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.TreatmentType;
-import net.talvi.puffinplot.data.Vec3;
 import net.talvi.puffinplot.data.file.testdata.TestFileLocator;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -47,7 +45,7 @@ public class TwoGeeLoaderTest {
     
     private static final double DELTA = 1e-15;
     
-    private final Map<Object, Object> defaultOptions =
+    private final Map<String, Object> defaultOptions =
             makeOptions(TwoGeeLoader.Protocol.NORMAL, true, 1, 1, 1);
     
     @Rule
@@ -110,7 +108,7 @@ public class TwoGeeLoaderTest {
     
     @Test
     public void testWithSg12_7() throws IOException {
-        final Map<Object, Object> options = new HashMap<>();
+        final Map<String, Object> options = new HashMap<>();
         options.put("protocol", TwoGeeLoader.Protocol.NORMAL);
         options.put("sensor_lengths", SensorLengths.fromPresetName("1:1:1"));
         for (boolean polar: new boolean[] {false, true}) {
@@ -412,7 +410,7 @@ public class TwoGeeLoaderTest {
          */
         final File file = copyFile("C8G-EDITED.DAT");
         for (boolean polar: new boolean[] {false, true}) {
-            final Map<Object, Object> options =
+            final Map<String, Object> options =
                     makeOptions(TwoGeeLoader.Protocol.NORMAL, polar,
                             4.09, 4.16, 6.67);
             final TwoGeeLoader loader = new TwoGeeLoader();
@@ -459,10 +457,10 @@ public class TwoGeeLoaderTest {
         return filePath.toFile();
     }
     
-    private static Map<Object, Object> makeOptions(
+    private static Map<String, Object> makeOptions(
             TwoGeeLoader.Protocol protocol, boolean usePolarMoment,
             double x, double y, double z) {
-        final Map<Object, Object> options = new HashMap<>();
+        final Map<String, Object> options = new HashMap<>();
         options.put("protocol", protocol);
         options.put("sensor_lengths", SensorLengths.fromStrings(
                 Double.toString(x), Double.toString(y), Double.toString(z)));

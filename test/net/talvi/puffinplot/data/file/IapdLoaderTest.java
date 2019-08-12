@@ -86,7 +86,7 @@ public class IapdLoaderTest {
         {200,   1121.1160,   158.2,59.5,  0.2,   206.2,  43.4},
         {500,   725.0541,    153.7,52.7,  0.2,   205.3,  36.2}};
     
-    private Map<Object, Object> options = new HashMap<>();
+    private Map<String, Object> options = new HashMap<>();
     private Suite suite = new Suite(getClass().getSimpleName());;
     
     @Rule
@@ -156,8 +156,8 @@ public class IapdLoaderTest {
             if (tType == TreatmentType.NONE || tType == TreatmentType.UNKNOWN) {
                 continue;
             }
-            options.put(TreatmentType.class, tType);
-            suite = new Suite(getClass().getSimpleName());;
+            options.put("treatment_type", tType);
+            suite = new Suite(getClass().getSimpleName());
             readFile(makeFile("TREATMENT_TYPE.DAT", MINIMAL_FILE));
             assertEquals(tType, suite.getSampleByIndex(0).
                     getTreatmentStepByIndex(0).getTreatmentType());
@@ -166,8 +166,8 @@ public class IapdLoaderTest {
 
     @Test
     public void testWithValidData() throws IOException {
-        options.put(TreatmentType.class, TreatmentType.DEGAUSS_XYZ);
-        options.put(MeasurementType.class, MeasurementType.DISCRETE);
+        options.put("treatment_type", TreatmentType.DEGAUSS_XYZ);
+        options.put("measurement_type", MeasurementType.DISCRETE);
 
         final List<String> messages =
                 readFile(makeFile("IAPD-loader-test.DAT", FILE_TEXT));
