@@ -41,7 +41,7 @@ public class TabularFileLoader implements FileLoader {
     private final OptionDefinition formatOption =
             new SimpleOptionDefinition(
                     "format", "a description of the file format",
-                    FileFormat.class, null);
+                    FileFormat.class, null, true);
     private final List<OptionDefinition> optionDefinitions =
             Collections.singletonList(formatOption);
     

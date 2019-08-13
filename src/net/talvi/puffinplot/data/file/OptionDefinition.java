@@ -20,11 +20,13 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * A definition of an option which is accepted by a file loader class.
- * If a class implements the {@code FileLoader} interface and accepts
- * any options for file loading, its {@code getOptionDefinitions}
- * method should return a list of {@code OptionDefinition} instances
- * giving details of the expected options.
+ * A definition of an option which is accepted by a file loader class. If a
+ * class implements the {@code FileLoader} interface and accepts any options for
+ * file loading, its {@code getOptionDefinitions} method should return a list of
+ * {@code OptionDefinition} instances giving details of the expected options.
+ * <p>
+ * {@code null} is treated as a valid value throughout the loader options API,
+ * but classes implementing this interface may choose to disallow it.
  * 
  * @see FileLoader
  * 
@@ -48,12 +50,30 @@ public interface OptionDefinition {
     Class getType();
     
     /**
-     * @return the default value of the option. The default value must
-     * be an instance of the class returned by {@code getType()}.
-     * The implementer should return either an immutable value or a defensive
-     * copy.
+     * Returns a default value for the option. The default value must be an
+     * instance of the class returned by {@code getType()}. The implementer
+     * should return either an immutable value or a defensive copy.
+     * {@code null} is a valid return value, and is returned by the default
+     * implementation. If this is a required option, the return value of this
+     * method should never be used; in this case, {@code null} is probably the
+     * most appropriate value to return.
+     * 
+     * @return the default value of the option
      */
-    Object getDefaultValue();
+    default Object getDefaultValue() {
+        return null;
+    }
+    
+    /**
+     * Returns {@code true} if and only if this option is required. The
+     * default implementation returns {@code false}.
+     * 
+     * @return {@code true} if this is a required (compulsory) option;
+     * {@code false} otherwise
+     */
+    default boolean isRequired() {
+        return false;
+    }
     
     /**
      * Returns the value of this option in a supplied option map. This is
@@ -63,11 +83,14 @@ public interface OptionDefinition {
      * value is used). If this option's identifier is not present as a key in
      * the supplied map, the default value will be returned. If the option map
      * is null, or if the option is present but has the wrong class, an
-     * {@link IllegalArgumentException} will be thrown. If this method does
-     * return a value rather than throwing an exception, that value is
-     * guaranteed to be an instance of the class returned by {@link getType()},
-     * and may therefore be safely cast to that class. Note that the returned
-     * value may be {@code null}.
+     * {@link IllegalArgumentException} will be thrown. If the option is absent
+     * from the option map and is a required option (as determined by
+     * {@link #isRequired()}, a {@link IllegalArgumentException} will be thrown.
+     *
+     * If this method does return a value rather than throwing an exception,
+     * that value is guaranteed to be an instance of the class returned by
+     * {@link getType()}, and may therefore be safely cast to that class. Note
+     * that the returned value may be {@code null}.
      *
      * @param optionMap a non-null map of option identifiers to values
      * @return the value of this option in the map, if it is present there;
@@ -98,7 +121,13 @@ public interface OptionDefinition {
                 ));
             }
         } else {
-            return defaultValue;
+            if (isRequired()) {
+                throw new IllegalArgumentException(String.format(
+                        "Required option %s was not supplied.", getIdentifier()
+                ));
+            } else {
+                return defaultValue;
+            }
         }
     }
     

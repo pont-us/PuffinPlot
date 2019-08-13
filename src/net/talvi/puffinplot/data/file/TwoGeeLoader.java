@@ -69,15 +69,15 @@ public class TwoGeeLoader implements FileLoader {
     
     private final OptionDefinition protocolOption =
             new SimpleOptionDefinition("protocol",
-                "Measurement protocol", Protocol.class, Protocol.NORMAL);
+                "Measurement protocol", Protocol.class, Protocol.NORMAL, false);
     private final OptionDefinition sensorLengthOption =
             new SimpleOptionDefinition("sensor_lengths",
                 "Sensor lengths", SensorLengths.class,
-                SensorLengths.fromPresetName("1:1:1"));
+                SensorLengths.fromPresetName("1:1:1"), false);
     private final OptionDefinition readMomentFromOption =
             new SimpleOptionDefinition("read_moment_from",
                 "Read magnetic moment from", MomentFields.class,
-                MomentFields.POLAR);
+                MomentFields.POLAR, false);
    
     private final List<OptionDefinition> optionDefinitions =
             Collections.unmodifiableList(Arrays.asList(

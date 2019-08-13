@@ -26,6 +26,7 @@ public class SimpleOptionDefinition implements OptionDefinition {
     private final String description;
     private final Class type;
     private final Object defaultValue;
+    private final boolean required;
     
     /**
      * @param identifier short option identifier
@@ -33,13 +34,15 @@ public class SimpleOptionDefinition implements OptionDefinition {
      * @param type the class of the values taken by this option
      * @param defaultValue the default value. It must be an instance
      *   of {@code type}
+     * @param required whether this option is required
      */
     public SimpleOptionDefinition(String identifier, String description,
-            Class type, Object defaultValue) {
+            Class type, Object defaultValue, boolean required) {
         this.identifier = identifier;
         this.description = description;
         this.type = type;
         this.defaultValue = defaultValue;
+        this.required = required;
         if (defaultValue != null && !type.isInstance(defaultValue)) {
             throw new IllegalArgumentException(
                     "Default value doesn't match type.");
@@ -66,4 +69,8 @@ public class SimpleOptionDefinition implements OptionDefinition {
         return defaultValue;
     }
     
+    @Override
+    public boolean isRequired() {
+        return required;
+    }
 }

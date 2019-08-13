@@ -43,7 +43,7 @@ public class Jr6Loader implements FileLoader {
     OptionDefinition treatmentTypeOption =
             new SimpleOptionDefinition("default_treatment_type",
                     "default treatment type (used when none specified in file)",
-                    TreatmentType.class, TreatmentType.DEGAUSS_XYZ);
+                    TreatmentType.class, TreatmentType.DEGAUSS_XYZ, false);
     private final List<OptionDefinition> optionDefinitions =
             Collections.singletonList(treatmentTypeOption);
     

@@ -40,11 +40,11 @@ public class IapdLoader implements FileLoader {
     private final OptionDefinition treatmentTypeOption =
             new SimpleOptionDefinition("treatment_type",
                     "treatment type for all steps in this file",
-                    TreatmentType.class, TreatmentType.DEGAUSS_XYZ);
+                    TreatmentType.class, TreatmentType.DEGAUSS_XYZ, false);
     private final OptionDefinition measurementTypeOption =
             new SimpleOptionDefinition("measurement_type",
                     "measurement type for all steps in this file",
-                    MeasurementType.class, MeasurementType.DISCRETE);
+                    MeasurementType.class, MeasurementType.DISCRETE, false);
     private final List<OptionDefinition> optionDefinitions =
             Collections.unmodifiableList(Arrays.asList(
                     treatmentTypeOption, measurementTypeOption));
