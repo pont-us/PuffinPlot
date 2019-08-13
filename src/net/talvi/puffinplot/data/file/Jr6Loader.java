@@ -92,6 +92,7 @@ public class Jr6Loader implements FileLoader {
      */
     @Override
     public LoadedData readFile(File file, Map<String, Object> importOptions) {
+        checkOptions(importOptions);
         try {
             final TreatmentType defaultTreatmentType =
                     (TreatmentType) treatmentTypeOption.getValue(importOptions);

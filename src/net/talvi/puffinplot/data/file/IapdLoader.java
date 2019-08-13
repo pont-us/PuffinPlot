@@ -112,6 +112,7 @@ public class IapdLoader implements FileLoader {
     private LoadedData readFile(LineNumberReader reader,
             Map<String, Object> importOptions, String filename)
             throws IOException {
+        checkOptions(importOptions);
         final SimpleLoadedData loadedData = new SimpleLoadedData();
         
         final TreatmentType treatmentType =

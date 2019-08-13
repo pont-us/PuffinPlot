@@ -35,6 +35,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
+import net.talvi.puffinplot.data.file.TwoGeeLoader.MomentFields;
 
 /**
  *
@@ -111,8 +112,9 @@ public class TwoGeeLoaderTest {
         final Map<String, Object> options = new HashMap<>();
         options.put("protocol", TwoGeeLoader.Protocol.NORMAL);
         options.put("sensor_lengths", SensorLengths.fromPresetName("1:1:1"));
-        for (boolean polar: new boolean[] {false, true}) {
-            options.put("use_polar_moment", polar);
+        for (MomentFields momentFields : new MomentFields[]
+                { MomentFields.CARTESIAN, MomentFields.POLAR}) {
+            options.put("read_moment_from", momentFields);
             final TwoGeeLoader loader = new TwoGeeLoader();
             final LoadedData loadedData =
                     loader.readFile(copyFile("SG12-7.DAT"),

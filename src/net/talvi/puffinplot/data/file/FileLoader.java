@@ -20,6 +20,9 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * An interface implemented by PuffinPlot file loaders. It provides
@@ -57,5 +60,67 @@ public interface FileLoader {
         return Collections.emptyList();
     }
     
-    
+    /**
+     * Check that a set of options is valid for this file loader. The options
+     * map must be non-null. All required options must be present. No unknown
+     * options may be present. Every value must be of the correct class. If any
+     * of these checks fail, an {@link IllegalArgumentException} is thrown.
+     * Additionally, the default values of the options are checked. If any of
+     * them is of the wrong class, an {@link IllegalStateException} is thrown.
+     *
+     * @param options the options to check
+     */
+    default void checkOptions(Map<String, Object> options) {
+        Objects.requireNonNull(options);
+
+        for (OptionDefinition od : getOptionDefinitions()) {
+            final Object defaultValue = od.getDefaultValue();
+            if (defaultValue != null
+                    && !od.getType().isInstance(defaultValue)) {
+                throw new IllegalStateException(String.format(
+                        "Default value %s for option %s has wrong class "
+                        + "(should be %s)",
+                        defaultValue.toString(), od.getIdentifier(),
+                        od.getType().toString()
+                ));
+            }
+        }
+        
+        final Set<String> validKeys = getOptionDefinitions().stream()
+                .map(OptionDefinition::getIdentifier)
+                .collect(Collectors.toSet());
+        final Set<String> requiredKeys = getOptionDefinitions().stream()
+                .filter(OptionDefinition::isRequired)
+                .map(OptionDefinition::getIdentifier)
+                .collect(Collectors.toSet());
+        final Set<String> suppliedKeys = options.keySet();
+        if (!validKeys.containsAll(suppliedKeys)) {
+            throw new IllegalArgumentException("Unknown option(s) supplied: "
+                    + suppliedKeys.stream()
+                            .filter(key -> !validKeys.contains(key))
+                            .collect(Collectors.joining(", ")));
+        }
+        if (!suppliedKeys.containsAll(requiredKeys)) {
+            throw new IllegalArgumentException("Required option(s) missing: "
+                    + requiredKeys.stream()
+                            .filter(key -> !suppliedKeys.contains(key))
+                            .collect(Collectors.joining(", ")));
+        }
+        
+        final Map<String, Class> optionClasses = getOptionDefinitions().stream()
+                .collect(Collectors.toMap(OptionDefinition::getIdentifier,
+                        OptionDefinition::getType));
+        for (Map.Entry<String, Object> entry : options.entrySet()) {
+            final Object value = entry.getValue();
+            final String key = entry.getKey();
+            final Class expectedClass = optionClasses.get(key);
+            if (value != null && !expectedClass.isInstance(value)) {
+                throw new IllegalStateException(String.format(
+                        "Supplied value %s for option %s has wrong class "
+                        + "(should be %s)",
+                        value.toString(), key, expectedClass.toString()
+                ));
+            }
+        }
+    }
 }

@@ -163,7 +163,7 @@ public class TwoGeeLoader implements FileLoader {
     @Override
     public LoadedData readFile(File file, Map<String, Object> options) {
         Objects.requireNonNull(file);
-        Objects.requireNonNull(options);
+        checkOptions(options);
         this.file = file;
         this.protocol = (Protocol) protocolOption.getValue(options);
         this.sensorLengths =

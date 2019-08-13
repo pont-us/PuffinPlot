@@ -56,6 +56,7 @@ public class TabularFileLoader implements FileLoader {
      */
     @Override
     public LoadedData readFile(File file, Map<String, Object> options) {
+        checkOptions(options);
         final FileFormat format = (FileFormat) formatOption.getValue(options);
         if (format == null) {
             /*
