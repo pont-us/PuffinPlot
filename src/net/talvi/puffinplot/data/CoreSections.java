@@ -34,9 +34,9 @@ import static net.talvi.puffinplot.data.CoreSection.End;
  */
 public class CoreSections {
 
-    private final LinkedHashMap<String,CoreSection> sections;
+    private final LinkedHashMap<String, CoreSection> sections;
     
-    private CoreSections(LinkedHashMap<String,CoreSection> sections) {
+    private CoreSections(LinkedHashMap<String, CoreSection> sections) {
         this.sections = sections;
     }
     
@@ -92,28 +92,40 @@ public class CoreSections {
     }
 
     /**
-     * Aligns the declinations of these core sections from the top
-     * down. For each core section, the "top declination" and "bottom
-     * declination" are determined from the Fisherian mean of the directions
-     * of the topmost or bottommost samples. The number of samples used
-     * for this calculation is determined by the value of the
-     * {@code margin} argument. The initial declination is given as the
-     * {@code topAlignment} argument. First, the magnetizations in the
-     * top section are rotated by an equal amount around the vertical
-     * axis, in such a way that the top declination of the top section
-     * equals {@code topAlignment}. The next section down is rotated in
-     * a similar way, except that in this case its top declination is
-     * brought into alignment with the top section's (rotated) bottom
-     * declination. This process is repeated down the core, with the
-     * each section being rotated as a whole in order align its top declination
-     * with the bottom declination of the section above it.
-     * 
-     * @param topAlignment target declination for top of core, in degrees
+     * Aligns the declinations of these core sections from the top down. For
+     * each core section, the "top declination" and "bottom declination" are
+     * determined from the Fisherian mean of the directions of the topmost or
+     * bottommost samples. The number of samples used for this calculation is
+     * determined by the value of the {@code margin} argument. The declinations
+     * of each core section are rotated as a block, in such a way that the top
+     * declination of each section matches the bottom declination of the section
+     * above it, producing a record without discontinuities between the
+     * sections. Additionally, the declinations of the core as a whole are
+     * rotated so that either the top declination of the topmost section or the
+     * mean declination of the entire core match a specified target declination.
+     *
      * @param margin number of samples to use in determining top and bottom
-     * declinations
+     *        declinations
+     * @param targetDeclination the target declination to which to align the
+     *        core, in degrees
+     * @param alignWith core declination which should be aligned with
+     *        the target declination
      */
-    public void alignSections(double topAlignment, int margin) {
-        double alignTo = topAlignment;
+    public void alignSections(int margin, double targetDeclination,
+            TargetDeclinationType alignWith) {
+        
+        /*
+         * If we're aligning to the mean, there will be an extra alignment
+         * pass afterwards so the initial target alignment is arbitrary --
+         * but it still feels cleaner to use 0 as the top target.
+         */
+        double alignTo =
+                alignWith == TargetDeclinationType.TOP
+                ? targetDeclination
+                : 0;
+        
+        // Align the sections with each other, from the top down.
+        
         for (CoreSection section: sections.values()) {
             section.getSamples().forEach(s -> s.doPca(Correction.NONE));
             final double topDeclination = section.
@@ -125,6 +137,25 @@ public class CoreSections {
             alignTo = section.
                     getDirectionNearEnd(CoreSection.End.BOTTOM, margin).
                     getDecDeg();
+        }
+        
+        /*
+         * If necessary, calculate the mean declination and rotate the whole
+         * core.
+         */
+        
+        if (alignWith == TargetDeclinationType.MEAN) {
+            final double initialMean =
+                    FisherValues.calculate(getSections().values().stream()
+                            .flatMap(s -> s.getSamples().stream())
+                            .map(s -> s.getDirection())
+                            .collect(Collectors.toList()))
+                            .getMeanDirection().getDecDeg();
+            final double offset = targetDeclination - initialMean;
+            for (CoreSection section: sections.values()) {
+                section.rotateDeclinations(offset);
+                section.getSamples().forEach(s -> s.doPca(Correction.NONE));
+            }
         }
     }
 
@@ -158,5 +189,23 @@ public class CoreSections {
     public boolean areSectionEndDirectionsDefined(int margin) {
         return getEndSamples(margin).stream().
                 allMatch(s -> s.getDirection() != null);
+    }
+    
+    /**
+     * The declination which should be aligned with a reference alignment
+     * passed to
+     * {@link #alignSections(int, double, net.talvi.puffinplot.data.CoreSections.ReferenceAlignmentType) ).
+     */
+    public static enum TargetDeclinationType {
+
+        /**
+         * Align top declination to reference declination.
+         */
+        TOP,
+        
+        /**
+         * Align mean declination to reference declination.
+         */
+        MEAN;
     }
 }

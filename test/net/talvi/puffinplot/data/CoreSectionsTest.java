@@ -76,7 +76,7 @@ public class CoreSectionsTest {
         final CoreSections cs =
                 CoreSections.fromSampleListByDiscreteId(samples);
         final double topAlignment = 17;
-        cs.alignSections(topAlignment, 1);
+        cs.alignSections(1, topAlignment, CoreSections.TargetDeclinationType.TOP);
         assertTrue(samples.stream().allMatch(s -> Math.abs(s.getDirection().
                         getDecDeg() - topAlignment) < delta));
         assertArrayEquals(
@@ -104,27 +104,63 @@ public class CoreSectionsTest {
             {0, 45, 90, 315, 270, 0},
             {315, 270, 0, 225, 225, 225}
         };
+        
+        // Top alignment test
+        
+        final double topAlignment = 315;
+        final CoreSections csTop = makeSectionsFromArrays(inputDecs);
+        csTop.alignSections(3, topAlignment,
+                CoreSections.TargetDeclinationType.TOP);
+        checkDirections(expectedOutput, csTop, 0);
+        
+        // Mean alignment test
+        
+        final List<Vec3> expectedDirections =
+                Arrays.stream(expectedOutput)
+                        .flatMapToDouble(a -> Arrays.stream(a))
+                        .mapToObj(d -> Vec3.fromPolarDegrees(1, 0, d))
+                        .collect(Collectors.toList());
+        final double meanExpectedDeclination =
+                FisherValues.calculate(expectedDirections)
+                        .getMeanDirection().getDecDeg();
+        final double targetMeanDeclination = 42;
+        final CoreSections csMean = makeSectionsFromArrays(inputDecs);
+        csMean.alignSections(3, targetMeanDeclination,
+                CoreSections.TargetDeclinationType.MEAN);
+        assertEquals(targetMeanDeclination,
+                FisherValues.calculate(csMean.getSections().values().stream()
+                        .flatMap(s -> s.getSamples().stream())
+                        .map(s -> s.getDirection())
+                .collect(Collectors.toList())).getMeanDirection().getDecDeg(),
+                delta);
+        checkDirections(expectedOutput, csMean,
+                targetMeanDeclination - meanExpectedDeclination);
+    }
+    
+    private CoreSections makeSectionsFromArrays(double[][] inputDecs) {
         final List<Sample> samples = new ArrayList<>();
         int depth = 0;
         for (int i = 0; i < inputDecs.length; i += 1) {
-            samples.addAll(makeFlatSamples(inputDecs[i], "part"+i, depth));
+            samples.addAll(makeFlatSamples(inputDecs[i], "part" + i, depth));
             depth += inputDecs[i].length;
         }
-        final CoreSections cs =
-                CoreSections.fromSampleListByDiscreteId(samples);
-        final double topAlignment = 315;
-        cs.alignSections(topAlignment, 3);
+        return CoreSections.fromSampleListByDiscreteId(samples);
+    }
+
+    private void checkDirections(double[][] expectedOutput, CoreSections cs,
+            double offset) {
         final Iterator<String> csIterator =
                 cs.getSections().keySet().iterator();
-        for (int i = 0; i < inputDecs.length; i += 1) {
+        for (int i = 0; i < expectedOutput.length; i += 1) {
             final double[] expected = expectedOutput[i];
             final double[] actual =
                     cs.getSections().get(csIterator.next()).getSamples().
                             stream().mapToDouble(s -> s.getDirection().
-                                    getDecDeg()).
-                            map(d -> d > 360-delta ? d-360 : d).toArray();
+                            getDecDeg() - offset).
+                            map(d -> d > 360 - delta ? d - 360 : d).toArray();
             assertArrayEquals(expected, actual, delta);
         }
+
     }
     
     @Test

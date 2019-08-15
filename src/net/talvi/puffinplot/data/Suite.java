@@ -1497,7 +1497,8 @@ public final class Suite implements SampleGroup {
     public void alignSectionDeclinations(double topDeclination, int margin) {
         final CoreSections coreSections =
                 CoreSections.fromSampleListByDiscreteId(getSamples());
-        coreSections.alignSections(topDeclination, margin);
+        coreSections.alignSections(margin, topDeclination,
+                CoreSections.TargetDeclinationType.TOP);
     }
     
     /**
