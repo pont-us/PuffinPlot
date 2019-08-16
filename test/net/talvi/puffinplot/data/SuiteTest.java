@@ -1642,7 +1642,7 @@ public class SuiteTest {
         
         final double topDeclination = 45;
         
-        suite.alignSectionDeclinations(topDeclination, 1);
+        suite.alignSectionDeclinations(1, topDeclination, CoreSections.TargetDeclinationType.TOP);
         
         assertTrue(suite.getSamples().stream().allMatch(
                 sample -> sample.getTreatmentSteps().stream().allMatch(

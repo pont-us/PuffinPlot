@@ -201,11 +201,21 @@ public class CoreSections {
         /**
          * Align top declination to reference declination.
          */
-        TOP,
+        TOP("Top of core"),
         
         /**
          * Align mean declination to reference declination.
          */
-        MEAN;
+        MEAN("Core mean declination");
+
+        private final String niceName;
+        
+        private TargetDeclinationType(String niceName) {
+            this.niceName = niceName;
+        }
+        
+        public String getNiceName() {
+            return niceName;
+        }
     }
 }

@@ -1483,21 +1483,22 @@ public final class Suite implements SampleGroup {
     }
     
     /**
-     * Align the declinations of core sections in this suite. It is assumed
-     * that the suite is continuous; the discrete IDs of samples are
-     * interpreted as core section identifiers.
-     * 
-     * @param topDeclination the declination to which to align the topmost
-     *     sample(s)
-     * @param margin the number of samples to average at the end of each
-     *     section to determine the declination
-     * 
-     * @see CoreSections#alignSections(double, int)
+     * Align the declinations of core sections in this suite.It is assumed that
+     * the suite is continuous; the discrete IDs of samples are interpreted as
+     * core section identifiers.
+     *
+     * @param margin the number of samples to average at the end of each section
+     * to determine the declination
+     * @param targetDeclination the declination to which to align the core
+     * @param targetType the core declination to align with the target
+     *
+     * @see CoreSections#alignSections(int, double, net.talvi.puffinplot.data.CoreSections.TargetDeclinationType) 
      */
-    public void alignSectionDeclinations(double topDeclination, int margin) {
+    public void alignSectionDeclinations(int margin, double targetDeclination,
+            CoreSections.TargetDeclinationType targetType) {
         final CoreSections coreSections =
                 CoreSections.fromSampleListByDiscreteId(getSamples());
-        coreSections.alignSections(margin, topDeclination,
+        coreSections.alignSections(margin, targetDeclination,
                 CoreSections.TargetDeclinationType.TOP);
     }
     

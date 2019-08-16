@@ -1148,8 +1148,7 @@ public class PuffinActions {
             if (alignDeclinationsDialog == null) {
                 alignDeclinationsDialog = new AlignDeclinationsDialog(app);
             }
-            alignDeclinationsDialog.setLocationRelativeTo(app.getMainWindow());
-            alignDeclinationsDialog.setVisible(true);
+            alignDeclinationsDialog.show();
         }
     };
     

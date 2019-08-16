@@ -8,158 +8,149 @@
  *
  * PuffinPlot is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with PuffinPlot.  If not, see <http://www.gnu.org/licenses/>.
+ * along with PuffinPlot. If not, see <http://www.gnu.org/licenses/>.
  */
 package net.talvi.puffinplot.window;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.util.stream.Stream;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-
+import javax.swing.JPanel;
 import net.talvi.puffinplot.PuffinApp;
-import net.talvi.puffinplot.Util;
+
+import static javax.swing.SwingConstants.TRAILING;
+import static java.awt.GridBagConstraints.LINE_START;
+import static java.awt.GridBagConstraints.LINE_END;
+import static java.awt.GridBagConstraints.BOTH;
+import javax.swing.JTextField;
+import net.talvi.puffinplot.data.CoreSections;
 import net.talvi.puffinplot.data.MeasurementType;
 import net.talvi.puffinplot.data.Suite;
 
 /**
- * A dialog allowing the user to perform declination alignment between
- * core sections.
+ * A dialog allowing the user to perform declination alignment between core
+ * sections.
+ *
+ * This class is not a JDialog subclass; it just implements a {@code show()}
+ * method which displays a dialog using a {@code JOptionPane} static method,
+ * and getters to retrieve results stored after showing the dialog.
  * 
  * @author pont
  */
-public class AlignDeclinationsDialog extends javax.swing.JDialog {
+public class AlignDeclinationsDialog {
 
+    private final JFrame parentFrame;
     private final PuffinApp app;
-
+    private int endLength;
+    private double targetDeclination;
+    private CoreSections.TargetDeclinationType targetType;
+    
     /**
-     * Creates new form AlignDeclinationsDialog
+     * Create a new declination alignment dialog.
      * 
-     * @param app the application with which to associate the dialog
+     * @param app the PuffinPlot application with which this dialog is
+     * associated
      */
     public AlignDeclinationsDialog(PuffinApp app) {
         this.app = app;
-        initComponents();
+        this.parentFrame = app.getMainWindow();
+    }
+    
+    /**
+     * Show the dialog, and perform the alignment if appropriate.
+     * This method will block until the dialog is closed.
+     */
+    public void show() {
+        if (!canAlignSectionDeclinations()) {
+            return;
+        }
+        
+        final JTextField endLengthField =
+                new JTextField("5");
+        final JTextField targetDeclinationField =
+                new JTextField("0");
+        final JComboBox<String> targetTypeComboBox = new JComboBox<>(
+                Stream.of(CoreSections.TargetDeclinationType.values())
+                        .map(ret -> ret.getNiceName()).toArray(String[]::new));
+        targetTypeComboBox.setSelectedIndex(0);
+        
+        final JPanel panel = new JPanel();
+        final Insets insets = new Insets(4, 4, 4, 4);
+        panel.setLayout(new GridBagLayout());
+        panel.add(new JLabel("Core end length", TRAILING),
+                new GridBagConstraints(0, 0, 1, 1, 0.5, 0.5,
+                        LINE_END, BOTH, insets, 0, 0));
+        panel.add(new JLabel("Target declination", TRAILING),
+                new GridBagConstraints(0, 1, 1, 1, 0.5, 0.5,
+                        LINE_END, BOTH, insets, 0, 0));
+        panel.add(new JLabel("Target aligns with", TRAILING),
+                new GridBagConstraints(0, 2, 1, 1, 0.5, 0.5,
+                        LINE_END, BOTH, insets, 0, 0));
+        panel.add(endLengthField,
+                new GridBagConstraints(1, 0, 1, 1, 0.5, 0.5,
+                        LINE_START, BOTH, insets, 0, 0));
+        panel.add(targetDeclinationField,
+                new GridBagConstraints(1, 1, 1, 1, 0.5, 0.5,
+                        LINE_START, BOTH, insets, 0, 0));
+        panel.add(targetTypeComboBox,
+                new GridBagConstraints(1, 2, 1, 1, 0.5, 0.5,
+                        LINE_START, BOTH, insets, 0, 0));
+        
+        final int userChoice = JOptionPane.showConfirmDialog(
+                parentFrame, panel, "Align declinations",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE);
+
+        endLength = parseEndLength(endLengthField.getText());
+        targetDeclination = parseTarget(targetDeclinationField.getText());
+
+        if (userChoice == JOptionPane.CANCEL_OPTION
+                || endLength == -1 || Double.isNaN(targetDeclination)
+                || targetTypeComboBox.getSelectedIndex() == -1) {
+            return;
+        }
+        
+        targetType = CoreSections.TargetDeclinationType.values()[
+                targetTypeComboBox.getSelectedIndex()];
+        
+        app.getCurrentSuite().alignSectionDeclinations(endLength,
+                targetDeclination, targetType);
+        JOptionPane.showMessageDialog(app.getMainWindow(),
+                "Core section declinations successfully aligned.",
+                "Core sections aligned",
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
-
-        jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        endLengthTextField = new javax.swing.JTextField();
-        topDecLabel = new javax.swing.JLabel();
-        topDecTextField = new javax.swing.JTextField();
-        alignButton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
-
-        setTitle("Align core declinations");
-        setResizable(false);
-        addComponentListener(new java.awt.event.ComponentAdapter() {
-            public void componentShown(java.awt.event.ComponentEvent evt) {
-                formComponentShown(evt);
-            }
-        });
-
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel1.setLabelFor(endLengthTextField);
-        jLabel1.setText("Core end length");
-        jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-
-        endLengthTextField.setText("1");
-        endLengthTextField.setNextFocusableComponent(topDecTextField);
-
-        topDecLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        topDecLabel.setLabelFor(topDecTextField);
-        topDecLabel.setText("Top declination");
-
-        topDecTextField.setText("0");
-        topDecTextField.setNextFocusableComponent(cancelButton);
-
-        alignButton.setText("Align");
-        alignButton.setNextFocusableComponent(endLengthTextField);
-        alignButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                alignButtonActionPerformed(evt);
-            }
-        });
-
-        cancelButton.setText("Cancel");
-        cancelButton.setNextFocusableComponent(alignButton);
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
-                            .addComponent(topDecLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(endLengthTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE)
-                            .addComponent(topDecTextField)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(cancelButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(alignButton)))
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(endLengthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(topDecLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(topDecTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(alignButton)
-                    .addComponent(cancelButton))
-                .addContainerGap())
-        );
-
-        topDecLabel.getAccessibleContext().setAccessibleName("Top declination ");
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(8, 8, 8))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
-
+    private double parseTarget(String s) {
+        try {
+            return Double.parseDouble(s);
+        } catch (NumberFormatException e) {
+            PuffinApp.errorDialog("Invalid target declination",
+                    String.format("‘%s’ is not a valid declination", s),
+                    parentFrame);
+            return Double.NaN;
+        }
+    }
+    
+    private int parseEndLength(String s) {
+        try {
+            return Integer.parseInt(s);
+        } catch (NumberFormatException e) {
+            PuffinApp.errorDialog("Invalid end length",
+                    String.format("‘%s’ is not a valid length", s),
+                    parentFrame);
+            return -1;
+        }
+    }
 
     private boolean canAlignSectionDeclinations() {
         final Suite suite = app.getCurrentSuite();
@@ -172,53 +163,9 @@ public class AlignDeclinationsDialog extends javax.swing.JDialog {
         if (suite.getMeasurementType() != MeasurementType.CONTINUOUS) {
             app.errorDialog("Can't align core sections",
                     "Core section alignment can only be done on continuous "
-                            + "suites.");
+                    + "suites.");
             return false;
         }
         return true;
     }
-    
-    private void alignButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alignButtonActionPerformed
-        final Integer endLength = Util.tryToParseInteger(
-                app.getMainWindow(), endLengthTextField.getText());
-        if (endLength == null) {
-            return;
-        }
-        final Double topDeclination = Util.tryToParseDouble(
-                        app.getMainWindow(), topDecTextField.getText());
-        if (topDeclination == null) {
-            return;
-        }
-        if (canAlignSectionDeclinations()) {
-            if (canAlignSectionDeclinations()) {
-                app.getCurrentSuite().
-                        alignSectionDeclinations(topDeclination, endLength);
-                JOptionPane.showMessageDialog(app.getMainWindow(),
-                        "Core section declinations successfully aligned.",
-                        "Core sections aligned",
-                        JOptionPane.INFORMATION_MESSAGE);
-            }
-            setVisible(false);
-        }
-    }//GEN-LAST:event_alignButtonActionPerformed
-
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        setVisible(false);
-    }//GEN-LAST:event_cancelButtonActionPerformed
-
-    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
-        if (!canAlignSectionDeclinations()) {
-            setVisible(false);
-        }
-    }//GEN-LAST:event_formComponentShown
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton alignButton;
-    private javax.swing.JButton cancelButton;
-    private javax.swing.JTextField endLengthTextField;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JLabel topDecLabel;
-    private javax.swing.JTextField topDecTextField;
-    // End of variables declaration//GEN-END:variables
 }
