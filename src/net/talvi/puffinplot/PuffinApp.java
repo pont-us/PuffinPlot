@@ -81,7 +81,6 @@ import net.talvi.puffinplot.data.AmsCalculationType;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.CsvWriter;
 import net.talvi.puffinplot.data.FileType;
-import net.talvi.puffinplot.data.MeasurementType;
 import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Site;
@@ -94,7 +93,6 @@ import net.talvi.puffinplot.plots.SampleClickListener;
 import net.talvi.puffinplot.plots.SampleParamsTable;
 import net.talvi.puffinplot.plots.SiteParamsTable;
 import net.talvi.puffinplot.plots.VgpTable;
-import net.talvi.puffinplot.window.AboutBox;
 import net.talvi.puffinplot.window.CustomFieldEditor;
 import net.talvi.puffinplot.window.FiletypeDialog;
 import net.talvi.puffinplot.window.IapdImportDialog;
@@ -112,6 +110,7 @@ import org.freehep.graphicsbase.util.UserProperties;
 
 import static net.talvi.puffinplot.Util.runningOnOsX;
 import net.talvi.puffinplot.data.file.TwoGeeLoader;
+import net.talvi.puffinplot.window.AboutBox;
 import net.talvi.puffinplot.window.RpiDialog;
 
 /**
