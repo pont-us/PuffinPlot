@@ -1950,8 +1950,14 @@ public final class Suite implements SampleGroup {
     public void removeSamples(Collection<Sample> samplesToRemove) {
         samples.removeAll(samplesToRemove);
         samplesToRemove.forEach(s -> samplesById.remove(s.getNameOrDepth()));
+        ensureCurrentSampleIndexValid();
         updateReverseIndex();
         setSaved(false);
+    }
+    
+    private void ensureCurrentSampleIndexValid() {
+        currentSampleIndex = Math.max(0,
+                Math.min(getCurrentSampleIndex(), getNumSamples() - 1));
     }
     
     /**
