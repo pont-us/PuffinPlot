@@ -1144,7 +1144,8 @@ public class PuffinActions {
             null, false, KeyEvent.VK_A) {
         private static final long serialVersionUID = 1L;
         private AlignDeclinationsDialog alignDeclinationsDialog;
-        @Override public void actionPerformed(ActionEvent e) {
+        @Override
+        public void actionPerformed(ActionEvent e) {
             if (alignDeclinationsDialog == null) {
                 alignDeclinationsDialog = new AlignDeclinationsDialog(app);
             }
@@ -1161,14 +1162,13 @@ public class PuffinActions {
             null, false, KeyEvent.VK_D) {
         private static final long serialVersionUID = 1L;
         private RemoveByDepthRangeDialog removeByDepthRangeDialog;
-        @Override public void actionPerformed(ActionEvent e) {
+        @Override
+        public void actionPerformed(ActionEvent e) {
             if (removeByDepthRangeDialog == null) {
                 removeByDepthRangeDialog =
-                        new RemoveByDepthRangeDialog(app.getMainWindow(), true,
-                                app);
+                        new RemoveByDepthRangeDialog(app);
             }
-            removeByDepthRangeDialog.setLocationRelativeTo(app.getMainWindow());
-            removeByDepthRangeDialog.setVisible(true);
+            removeByDepthRangeDialog.showOverMainWindow();
         }
     };
 
