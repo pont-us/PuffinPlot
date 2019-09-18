@@ -214,6 +214,17 @@ public class VgpMap extends Plot {
         path.moveTo(startPoint.getX() * R + xo, startPoint.getY() * R + yo);
         Point2D previous = startPoint;
         for (Point2D v: outline.subList(1, outline.size())) {
+            /*
+             * This is a bit of a hack for avoiding awkward bits in the
+             * coastline data -- mainly where a path crosses the 180° meridian,
+             * which can result in two "adjacent" points at opposite sides of
+             * the plot. We take a lazy, pragmatic approach to this: a
+             * contiguous coastline shape has closely spaced points, so if the
+             * distance between two adjacent points is too great we just do a
+             * move instead of a line. This can be overridden for the purpose
+             * of drawing lines of latitude.
+             */
+
             if (previous.distance(v) < 0.1 || includeLongSegments) {
                 path.lineTo(v.getX() * R + xo, v.getY() * R + yo);
             } else {
