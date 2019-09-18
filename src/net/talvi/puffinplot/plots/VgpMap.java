@@ -46,19 +46,37 @@ import net.talvi.puffinplot.data.VGP;
  */
 public class VgpMap extends Plot {
 
-    private final List<List<Vec3>> outlines;
+    /**
+     * A collection of pre-projected, unscaled coastline shapes.
+     * The Mollweide projection is relatively computationally expensive,
+     * so it makes sense to cache the results for the background map.
+     */
+    private final List<List<Point2D>> outlines;
     
+    /**
+     * Instantiates a new VGP map.
+     * 
+     * @param params the plot parameters controlling this plot's content
+     */
     public VgpMap(PlotParams params) {
         super(params);
         try {
-            outlines = readOutlines();
+            outlines = readAndProjectOutlines();
         } catch (IOException e) {
             throw new Error(e);
         }
     }
     
-    private static List<List<Vec3>> readOutlines() throws IOException {
-        final List<List<Vec3>> outlines = new ArrayList<>();
+    /**
+     * Reads map outlines and return an unscaled, projected version of them.
+     * The projection has a radius of 1 and origin of (0, 0).
+     * 
+     * @return the projected outlines
+     * @throws IOException if there was an error reading the map data
+     */
+    private static List<List<Point2D>> readAndProjectOutlines()
+            throws IOException {
+        final List<List<Point2D>> outlines = new ArrayList<>();
         try (InputStream stream =
                 VgpMap.class.getResourceAsStream("map-data.csv");
                 Reader isr = new InputStreamReader(stream);
@@ -69,13 +87,14 @@ public class VgpMap extends Plot {
                 break;
             }
             final String[] parts = line.split(", ");
-            final List<Vec3> outline = new ArrayList<>();
+            final List<Point2D> outline = new ArrayList<>();
             outlines.add(outline);
             for (int i = 0; i < parts.length; i += 2) {
                 final Vec3 v = Vec3.fromPolarDegrees(1,
                         Double.parseDouble(parts[i+1]),
                         Double.parseDouble(parts[i]));
-                outline.add(v);
+                final Point2D v2 = project(v, 1, 0, 0);
+                outline.add(v2);
             }
             }
         }
@@ -96,21 +115,20 @@ public class VgpMap extends Plot {
     public void draw(Graphics2D graphics) {
         clearPoints();
         final Rectangle2D dims = getDimensions();
-        final double xo = dims.getMinX();
-        final double yo = dims.getMaxY();
         final double w = dims.getWidth();
         final double h = dims.getHeight();
+        final double xo = dims.getMinX() + w / 2;
+        final double yo = dims.getMaxY() - h / 2;
         final double R = min(w / (4 * sqrt(2)), h / (2 * sqrt(2)));
         
         graphics.setColor(Color.GRAY);
         graphics.setStroke(getStroke());
-        // graphics.draw(new Rectangle2D.Double(xo, yo-h, w, h));
-        graphics.draw(new Ellipse2D.Double(xo + w / 2 - 2 * R * sqrt(2), 
-                yo - h / 2 - R * sqrt(2), 4 * R * sqrt(2), 2 * R * sqrt(2)));
+        final double scale = R * sqrt(2);
+        graphics.draw(new Ellipse2D.Double(xo - 2 * scale, 
+                yo - scale, 4 * scale, 2 * scale));
         
-        for (List<Vec3> outline: outlines) {
-            graphics.draw(project(outline));
-        }
+        outlines.forEach(outline -> graphics.draw(
+                outlineToPath(outline, xo, yo, R)));
 
         final Sample sample = params.getSample();
         if (sample == null) {
@@ -126,44 +144,43 @@ public class VgpMap extends Plot {
         for (Site site: sites) {
             final VGP vgp = site.getVgp();
             if (vgp != null) {
-                points.add(ShapePoint.build(this,
-                        mollweide(site.getVgp().getLocation().toVec3(),
-                                  R, xo + w/2, yo - h/2)).circle().filled(true).build());
+                points.add(ShapePoint
+                        .build(this, project(vgp.getLocation().toVec3(),
+                                  R, xo, yo))
+                        .circle().filled(true).build());
             }
         }
         drawPoints(graphics);
-        
-
     }
     
-    private Path2D project(List<Vec3> outline) {
-        final Rectangle2D dims = getDimensions();
-        final double w = dims.getWidth();
-        final double h = dims.getHeight();
-        final double xo = dims.getMinX() + w / 2;
-        final double yo = dims.getMaxY() - h / 2;
-        final Path2D.Double path = new Path2D.Double();
-        final double R = min(w / (4 * sqrt(2)), h / (2 * sqrt(2)));
-        //path.moveTo(xo + outline.get(0).getDecDeg(),
-        //        yo - outline.get(0).getIncDeg());
-        final Point2D startPoint = mollweide(outline.get(0), R, xo, yo);
-        path.moveTo(startPoint.getX(), startPoint.getY());
+    private static Path2D outlineToPath(List<Point2D> outline,
+            double xo, double yo, double R) {
+        final Path2D.Double path =
+                new Path2D.Double(Path2D.WIND_NON_ZERO, outline.size());
+        final Point2D startPoint = outline.get(0);
+        path.moveTo(startPoint.getX() * R + xo, startPoint.getY() * R + yo);
         Point2D previous = startPoint;
-        for (Vec3 v: outline.subList(1, outline.size())) {
-            // path.lineTo(xo + v.getDecDeg(), yo - v.getIncDeg());
-            final Point2D p = mollweide(v, R, xo, yo);
-            if (previous.distance(p) < R / 10) {
-                path.lineTo(p.getX(), p.getY());
+        for (Point2D v: outline.subList(1, outline.size())) {
+            if (previous.distance(v) < 0.1) {
+                path.lineTo(v.getX() * R + xo, v.getY() * R + yo);
             } else {
-                path.moveTo(p.getX(), p.getY());
+                path.moveTo(v.getX() * R + xo, v.getY() * R + yo);
             }
-            previous = p;
+            previous = v;
         }
-        // path.closePath();
         return path;
     }
     
-    private static Point2D mollweide(Vec3 v, double R, double x0, double y0) {
+    /**
+     * Projects a vector using the Mollweide projection.
+     * 
+     * @param v the vector to project
+     * @param R the radius of the projection
+     * @param xo the x origin of the projection
+     * @param yo the y origin of the projection
+     * @return the co-ordinates of the projected vector
+     */
+    private static Point2D project(Vec3 v, double R, double xo, double yo) {
         double lambda = v.getDecRad();
         if (lambda > PI) {
             lambda -= 2 * PI;
@@ -174,9 +191,18 @@ public class VgpMap extends Plot {
         final double x =
                 R * (2 * sqrt(2) / PI) * (lambda - lambda0) * cos(theta);
         final double y = R * sqrt(2) * sin(theta);
-        return new Point2D.Double(x0 + x, y0 - y);
+        return new Point2D.Double(xo + x, yo - y);
     }
-    
+
+    /**
+     * Calculates a Mollweide θ value for a given latitude.
+     * 
+     * Given a latitude φ, calculate θ such that
+     * 2θ + sin 2θ = π sin φ
+     * 
+     * @param phi latitude φ in radians
+     * @return θ such that 2θ + sin 2θ = π sin φ
+     */
     private static double theta(double phi) {
         final double delta = 1e-6;
         if (phi > PI / 2 - delta) {
@@ -185,7 +211,6 @@ public class VgpMap extends Plot {
         if (phi < -PI / 2 + delta) {
             return -PI / 2;
         }
-        
         double theta = phi;
         final double max_iterations = 100;
         for (int i = 0; i < max_iterations; i++) {
@@ -199,5 +224,4 @@ public class VgpMap extends Plot {
         }
         return theta;
     }
-    
 }

@@ -50,7 +50,8 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
         SiteParamsLegend.class, AmsPlot.class, TernaryPlot.class,
         SiteEqualAreaPlot.class, SuiteEqualAreaPlot.class,
         SampleParamsTable.class, SiteParamsTable.class, NrmHistogram.class,
-        VgpTable.class, SuiteParamsTable.class, DepthPlot.class
+        VgpTable.class, SuiteParamsTable.class, DepthPlot.class,
+        VgpMap.class
     };
 
     private final PlotParams params;

@@ -109,7 +109,8 @@ public abstract class Plot
             "nrm_histogram false 771 542 226 115 " +
             "zplotlegend true 779 7 156 58 " +
             "suite_table false 636 76 297 91 " +
-            "depth false 50 50 300 200 ";
+            "depth false 50 50 300 200 " +
+            "vgpmap false 50 50 300 200 ";
 
     /**
      * Creates a plot with the supplied parameters.
