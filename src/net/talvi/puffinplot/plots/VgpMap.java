@@ -19,6 +19,7 @@ package net.talvi.puffinplot.plots;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -36,6 +37,7 @@ import static java.lang.Math.sqrt;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.min;
+import java.util.stream.Collectors;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Site;
 import net.talvi.puffinplot.data.Suite;
@@ -52,6 +54,7 @@ public class VgpMap extends Plot {
      * so it makes sense to cache the results for the background map.
      */
     private final List<List<Point2D>> outlines;
+    private final List<List<Point2D>> linesofLongitude;
     
     /**
      * Instantiates a new VGP map.
@@ -62,6 +65,7 @@ public class VgpMap extends Plot {
         super(params);
         try {
             outlines = readAndProjectOutlines();
+            linesofLongitude = createLinesOfLongitude();
         } catch (IOException e) {
             throw new Error(e);
         }
@@ -91,16 +95,35 @@ public class VgpMap extends Plot {
             outlines.add(outline);
             for (int i = 0; i < parts.length; i += 2) {
                 final Vec3 v = Vec3.fromPolarDegrees(1,
-                        Double.parseDouble(parts[i+1]),
+                        Double.parseDouble(parts[i + 1]),
                         Double.parseDouble(parts[i]));
                 final Point2D v2 = project(v, 1, 0, 0);
                 outline.add(v2);
             }
             }
         }
+        
         return outlines;
     }
+    
+    /**
+     * Precalculate and project lines of longitude.
+     * 
+     * @return projected, unscaled lines of longitude
+     */
+    private static List<List<Point2D>> createLinesOfLongitude() {
+        final List<List<Point2D>> grid = new ArrayList<>();
+        
+        grid.add(project(Vec3.DOWN.greatCirclePoints(60, true)));
 
+        for (int longitude = 30; longitude <= 330; longitude += 30) {
+            Vec3 v = Vec3.fromPolarDegrees(1, 0, longitude);
+            grid.add(project(v.greatCirclePoints(180, true)));
+        }
+        return grid;
+    }
+
+    
     @Override
     public String getName() {
         return "vgpmap";
@@ -121,6 +144,8 @@ public class VgpMap extends Plot {
         final double yo = dims.getMaxY() - h / 2;
         final double R = min(w / (4 * sqrt(2)), h / (2 * sqrt(2)));
         
+        // Draw coastlines.
+        
         graphics.setColor(Color.GRAY);
         graphics.setStroke(getStroke());
         final double scale = R * sqrt(2);
@@ -128,8 +153,25 @@ public class VgpMap extends Plot {
                 yo - scale, 4 * scale, 2 * scale));
         
         outlines.forEach(outline -> graphics.draw(
-                outlineToPath(outline, xo, yo, R)));
+                outlineToPath(outline, xo, yo, R, false)));
 
+        // Draw lines of longitude.
+        
+        graphics.setColor(Color.LIGHT_GRAY);
+        linesofLongitude.forEach(outline -> graphics.draw(
+                outlineToPath(outline, xo, yo, R, true)));
+
+        // Draw lines of latitude.
+        
+        for (int lat = -60; lat <= 60; lat += 30) {
+            graphics.draw(new Line2D.Double(
+                    project(Vec3.fromPolarDegrees(1, lat, -179.99), R, xo, yo),
+                    project(Vec3.fromPolarDegrees(1, lat, 179.99), R, xo, yo)
+            ));
+        }
+        
+        // Draw VGPs (if any).
+        
         final Sample sample = params.getSample();
         if (sample == null) {
             return;
@@ -153,15 +195,26 @@ public class VgpMap extends Plot {
         drawPoints(graphics);
     }
     
+    /**
+     * Creates a translated, scaled path from an unscaled list of points.
+     * 
+     * @param outline points to scale
+     * @param xo x origin
+     * @param yo y origin
+     * @param R radius of plot
+     * @param includeLongSegments plot segments even when they have length >0.1
+     *        (otherwise they are omitted)
+     * @return 
+     */
     private static Path2D outlineToPath(List<Point2D> outline,
-            double xo, double yo, double R) {
+            double xo, double yo, double R, boolean includeLongSegments) {
         final Path2D.Double path =
                 new Path2D.Double(Path2D.WIND_NON_ZERO, outline.size());
         final Point2D startPoint = outline.get(0);
         path.moveTo(startPoint.getX() * R + xo, startPoint.getY() * R + yo);
         Point2D previous = startPoint;
         for (Point2D v: outline.subList(1, outline.size())) {
-            if (previous.distance(v) < 0.1) {
+            if (previous.distance(v) < 0.1 || includeLongSegments) {
                 path.lineTo(v.getX() * R + xo, v.getY() * R + yo);
             } else {
                 path.moveTo(v.getX() * R + xo, v.getY() * R + yo);
@@ -192,6 +245,19 @@ public class VgpMap extends Plot {
                 R * (2 * sqrt(2) / PI) * (lambda - lambda0) * cos(theta);
         final double y = R * sqrt(2) * sin(theta);
         return new Point2D.Double(xo + x, yo - y);
+    }
+    
+    /**
+     * Projects a list of vectors using the Mollweide projection.
+     * The projection uses a radius of 1 and origin of (0, 0).
+     * 
+     * @param vs vectors to project
+     * @return projected vectors
+     */
+    private static List<Point2D> project(List<Vec3> vs) {
+        return vs.stream()
+                .map(v -> project(v, 1, 0, 0))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -224,4 +290,5 @@ public class VgpMap extends Plot {
         }
         return theta;
     }
+
 }
