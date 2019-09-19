@@ -83,6 +83,9 @@ public class NrmHistogram extends Plot {
                 nrms.add(sample.getNrm());
             }
         }
+        if (nrms.isEmpty()) {
+            return;
+        }
         final double minimum = 0; //Collections.min(nrms);
         final double maximum = Collections.max(nrms);
         final double range = maximum-minimum;

@@ -121,7 +121,7 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
                 filter(x -> x >= minLevel-1e-10 && x <= maxLevel+1e-10).
                 collect(Collectors.toList());
         final int nLevels = treatmentLevels.size();
-        
+            
         /*
          * We have to get steps by treatment type as well as level, to avoid
          * accidentally retrieving the initial remanence-application step when
@@ -219,9 +219,10 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
                 = nrmSuite.getSamples().get(0).getTreatmentLevels();
 
         final List<Double> treatmentLevels
-                = Arrays.stream(allTreatmentLevels).boxed().
-                        filter(x -> x >= minLevel - 1e-10 && x <= maxLevel + 1e-10).
-                        collect(Collectors.toList());
+                = Arrays.stream(allTreatmentLevels).boxed()
+                        .filter(x ->
+                                x >= minLevel - 1e-10 && x <= maxLevel + 1e-10)
+                        .collect(Collectors.toList());
         final int nLevels = treatmentLevels.size();
 
         /*
