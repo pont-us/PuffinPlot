@@ -1070,7 +1070,8 @@ all the selected samples, not just the current sample.
 \item[Calculate RPI\ldots] calculates relative palaeointensity using two
   open suites. One suite provides the \caps{nrm}, the other provides the
   normalizing value from \caps{arm} or magnetic susceptibility.
-  \caps{Rpi} calculations are saved directly to a \caps{csv} file.
+  \caps{Rpi} calculations are saved directly to a \caps{csv} file;
+  the RPI estimate can also be shown in the RPI plot.
 
 \end{menuitemlist}
 
@@ -1328,6 +1329,28 @@ listed below include textual elements such as legends and tables.
 
 \begin{menuitemlist}
 
+\item[\caps{Ams}] is a lower-hemisphere equal-area plot of \caps{ams} data,
+  if any has been imported. Maximum, intermediate, and minimum anisotropy
+  axes are shown as squares, triangles, and circles respectively. If
+  \caps{ams} statistics have been calculated (see
+  section~\ref{sec:functions-calcs}), the mean directions and confidence
+  ellipses are also shown.
+
+\item[Data table] is a table in which each row represents one demagnetization
+  step for the current sample. The columns, from left to right, give the
+  demagnetization step, declination, inclination, intensity, and magnetic
+  susceptibility. Selected points are denoted by an asterisk (*) to their
+  left; hidden points are denoted by a dash (--) to their left.
+
+\item[Demag.] is a plot of treatment level (in mT or \textdegree C) versus
+  intensity of magnetization (in A/m), shown as a line of filled points.
+  If magnetic susceptibility measurements have been taken, they are
+  overlaid on the same plot as unfilled points, with the scale shown on
+  the right of the graph. If PuffinPlot cannot find any data describing
+  the demagnetization treatment (i.e. AF field strength or temperature),
+  the X axis will be labelled `measurement number', and the X values will
+  correspond to the sequence of the data in the file.
+
 \item[Equal-area (sample)] is a Lambert azimuthal equal-area projection
   showing the directions of the current sample's magnetization vectors.
   Successive points are connected by great-circle segments. Points in the
@@ -1337,33 +1360,25 @@ listed below include textual elements such as legends and tables.
   is shown on this plot, and the pole to the great circle is shown as a
   triangle.
 
-\item[Zplot] is a Zijderveld plot, overlaying an orthographic projection in
-  the horizontal plane with an orthographic projection in a chosen vertical
-  plane. The vertical plane can be controlled using the chooser on the
-  toolbar; see section~\ref{sec:toolbar} for details. The horizontal
-  projection is shown with filled points, and the vertical projection with
-  unfilled points. If a \caps{pca} fit has been calculated for this sample,
-  the two projections of the \caps{pca} lines are overlaid on the plot in
-  blue. (If the \ppcmd{V vs. H} vertical projection is selected, only the
-  horizontal projection of the \caps{pca} line is shown, since \ppcmd{V vs.
-    H} effectively uses a different vertical projection for each point.) The
-  appearance of the \caps{pca} lines can be changed using the Preferences dialog
-  (see section~\ref{sec:prefs-misc}).
+\item[Equal-area (site)] shows all the great circles fitted at the current
+  sample's site, along with a best-fit direction calculated by the method of
+  \cite{mcfadden1988circles}. On this plot, the calculated site direction is
+  shown as a circle. Any sample PCA directions are shown as diamonds.
+  Demagnetization steps used for the great-circle fits are shown as squares.
+  Poles to the great circles are shown as triangles.
 
-\item[Demag.] is a plot of demagnetization step (in mT or \textdegree C)
-  versus intensity of magnetization (in A/m), shown as a line of filled
-  points. If magnetic susceptibility measurements have been taken, they are
-  overlaid on the same plot as unfilled points, with the scale shown on the
-  right of the graph. If PuffinPlot cannot find any data describing the
-  demagnetization treatment (i.e. AF field strength or temperature),
-  the X axis will be labelled `measurement number', and the X values
-  will correspond to the sequence of the data in the file.
+\item[Equal-area (suite)] shows all the site means for the suite, and a
+  Fisherian mean and 95\% confidence interval for them. If two polarities are
+  present in the suite, two means are calculated and shown. If no sites
+  are defined, individual sample \caps{pca} directions and their means
+  are plotted instead. Note that, for site means calculated by great-circle
+  analysis, only valid means are shown. See section~\ref{sec:prefs-misc}
+  for details on how validity is determined.
 
-\item[Data table] is a table in which each row represents one demagnetization
-  step for the current sample. The columns, from left to right, give the
-  demagnetization step, declination, inclination, intensity, and magnetic
-  susceptibility. Selected points are denoted by an asterisk (*) to their
-  left; hidden points are denoted by a dash (--) to their left.
+\item[\caps{Nrm} Histogram] shows a histogram of \caps{nrm} intensities
+  across the whole suite.
+
+\item[RPI Plot] plots the current RPI estimate (if any) against depth.
 
 \item[Sample parameters] shows the results of \caps{pca} and/or great-circle
   fits for data in the current sample. If neither of these calculations has
@@ -1419,50 +1434,11 @@ listed below include textual elements such as legends and tables.
   a line within the site parameter table will jump to the first sample
   of the corresponding site.
 
-\item[Title] shows the name of the current sample and the current site,
-  for a discrete suite. For a continuous (long core) suite, it shows the
-  current depth. This plot also shows suite-level Fisher statistics
-  calculated over samples and over sites, if these are available (see
-  the \ppcmd{Calculate\submenu Suite means} function in
-  section~\ref{sec:functions-calcs}).
-
 \item[Site parameters] shows the site mean direction as calculated either by
   Fisher statistics or by the great-circle technique of
   \cite{mcfadden1988circles}. It gives the mean inclination and declination
   and the \alnifi{} and $k$ parameters. If no site mean direction has been
   calculated for the current site, this plot is invisible.
-
-\item[Equal-area (site)] shows all the great circles fitted at the current
-  sample's site, along with a best-fit direction calculated by the method of
-  \cite{mcfadden1988circles}. On this plot, the calculated site direction is
-  shown as a circle. Any sample PCA directions are shown as diamonds.
-  Demagnetization steps used for the great-circle fits are shown as squares.
-  Poles to the great circles are shown as triangles.
-
-\item[Equal-area (suite)] shows all the site means for the suite, and a
-  Fisherian mean and 95\% confidence interval for them. If two polarities are
-  present in the suite, two means are calculated and shown. If no sites
-  are defined, individual sample \caps{pca} directions and their means
-  are plotted instead. Note that, for site means calculated by great-circle
-  analysis, only valid means are shown. See section~\ref{sec:prefs-misc}
-  for details on how validity is determined.
-
-\item[VGP table] is a table showing virtual geomagnetic pole (VGP) data
-  for each site in the current suite. The columns are: site name, $\phi$
-  (site latitude), $\lambda$ (site longitude), VGP $\phi$ (VGP
-  latitude), VGP $\lambda$ (VGP longitude), dp (first semi-axis of VGP
-  confidence ellipse), and dm (second semi-axis of VGP confidence
-  ellipse). VGPs can only be calculated for sites whose location has
-  been set; See \emph{Import site locations\ldots} in
-  Section~\ref{sec:menu-file} for details on reading site locations from
-  a \caps{csv} file.
-
-\item[VGP map] is a world map (using a Mollweide projection) showing the
-  locations of virtual geomagnetic poles (VGPs) for each site in the
-  current suite. VGPs can only be calculated for sites whose location has
-  been set; See \emph{Import site locations\ldots} in
-  Section~\ref{sec:menu-file} for details on reading site locations from a
-  \caps{csv} file.
 
 \item[Suite table] is a table showing suite-level mean direction and VGP
   data. See the entry on \ppcmd{Site parameter table} for explanations
@@ -1475,20 +1451,6 @@ listed below include textual elements such as legends and tables.
   are calculated using only the samples and sites selected at the time
   the calculation is done.
 
-\item[Zplot key] is a legend for the Zijderveld plot, showing the
-  interpretations of the filled and unfilled points and giving the units in
-  which the axes are calibrated.
-
-\item[\caps{Nrm} Histogram] shows a histogram of \caps{nrm} intensities
-  across the whole suite.
-
-\item[\caps{Ams}] is a lower-hemisphere equal-area plot of \caps{ams} data,
-  if any has been imported. Maximum, intermediate, and minimum anisotropy
-  axes are shown as squares, triangles, and circles respectively. If
-  \caps{ams} statistics have been calculated (see
-  section~\ref{sec:functions-calcs}), the mean directions and confidence
-  ellipses are also shown.
-
 \item[Ternary demag.] is an experimental ternary plot designed to
   display data from triaxial \caps{irm} demagnetization experiments
   conducted according to the method of \cite{lowrie1990identification}.
@@ -1498,6 +1460,47 @@ listed below include textual elements such as legends and tables.
   successive demagnetization steps thus shows the relative effects of
   thermal unblocking (and possibly thermal alteration) on these
   components.
+
+\item[Title] shows the name of the current sample and the current site,
+  for a discrete suite. For a continuous (long core) suite, it shows the
+  current depth. This plot also shows suite-level Fisher statistics
+  calculated over samples and over sites, if these are available (see
+  the \ppcmd{Calculate\submenu Suite means} function in
+  section~\ref{sec:functions-calcs}).
+
+\item[VGP map] is a world map (using a Mollweide projection) showing the
+  locations of virtual geomagnetic poles (VGPs) for each site in the
+  current suite. VGPs can only be calculated for sites whose location has
+  been set; See \emph{Import site locations\ldots} in
+  Section~\ref{sec:menu-file} for details on reading site locations from a
+  \caps{csv} file.
+
+\item[VGP table] is a table showing virtual geomagnetic pole (VGP) data
+  for each site in the current suite. The columns are: site name, $\phi$
+  (site latitude), $\lambda$ (site longitude), VGP $\phi$ (VGP
+  latitude), VGP $\lambda$ (VGP longitude), dp (first semi-axis of VGP
+  confidence ellipse), and dm (second semi-axis of VGP confidence
+  ellipse). VGPs can only be calculated for sites whose location has
+  been set; See \emph{Import site locations\ldots} in
+  Section~\ref{sec:menu-file} for details on reading site locations from
+  a \caps{csv} file.
+
+\item[Zplot] is a Zijderveld plot, overlaying an orthographic projection in
+  the horizontal plane with an orthographic projection in a chosen vertical
+  plane. The vertical plane can be controlled using the chooser on the
+  toolbar; see section~\ref{sec:toolbar} for details. The horizontal
+  projection is shown with filled points, and the vertical projection with
+  unfilled points. If a \caps{pca} fit has been calculated for this sample,
+  the two projections of the \caps{pca} lines are overlaid on the plot in
+  blue. (If the \ppcmd{V vs. H} vertical projection is selected, only the
+  horizontal projection of the \caps{pca} line is shown, since \ppcmd{V vs.
+    H} effectively uses a different vertical projection for each point.) The
+  appearance of the \caps{pca} lines can be changed using the Preferences dialog
+  (see section~\ref{sec:prefs-misc}).
+
+\item[Zplot key] is a legend for the Zijderveld plot, showing the
+  interpretations of the filled and unfilled points and giving the units in
+  which the axes are calibrated.
 
 \end{menuitemlist}
 
