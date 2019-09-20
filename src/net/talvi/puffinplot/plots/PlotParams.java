@@ -21,6 +21,7 @@ import java.util.List;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;
+import net.talvi.puffinplot.data.SuiteRpiEstimate;
 
 /**
  * The current parameters for a plot. This interface provides a way for a plot
@@ -111,5 +112,10 @@ public interface PlotParams {
      * @return the measurement unit size for this plot
      */
     public float getUnitSize();
+    
+    /**
+     * @return the current suite RPI estimate, or {@code null} if there is none
+     */
+    public SuiteRpiEstimate getSuiteRpiEstimate();
 
 }

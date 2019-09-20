@@ -38,6 +38,7 @@ public class MagSusSampleRpiEstimate implements SampleRpiEstimate {
     /**
      * @return the sample giving the NRM intensity
      */
+    @Override
     public Sample getNrmSample() {
         return nrmSample;
     }
@@ -61,7 +62,8 @@ public class MagSusSampleRpiEstimate implements SampleRpiEstimate {
         final StringBuilder builder = new StringBuilder();
         builder.append(getNrmSample().getTreatmentSteps().get(0).getDepth());
 
-        final TreatmentStep normalizerTreatmentStep = normalizer.getTreatmentStepByIndex(0);
+        final TreatmentStep normalizerTreatmentStep =
+                normalizer.getTreatmentStepByIndex(0);
         final double normalizerMagSus = normalizerTreatmentStep.getMagSus();
         builder.append(String.format(Locale.ENGLISH, ",%g,%g",
                 getRatio(), normalizerMagSus));
@@ -72,6 +74,11 @@ public class MagSusSampleRpiEstimate implements SampleRpiEstimate {
     @Override
     public String getCommaSeparatedHeader() {
         return "ratio,MS";
+    }
+
+    @Override
+    public double getEstimate() {
+        return getEstimate();
     }
     
 }

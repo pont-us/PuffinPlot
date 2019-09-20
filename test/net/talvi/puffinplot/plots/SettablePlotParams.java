@@ -22,6 +22,7 @@ import java.util.Map;
 import net.talvi.puffinplot.data.Correction;
 import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;
+import net.talvi.puffinplot.data.SuiteRpiEstimate;
 
 /**
  * A simple configurable PlotParams implementation intended for testing.
@@ -130,6 +131,11 @@ public class SettablePlotParams implements PlotParams {
 
     public Map<String, Boolean> getSettingsMapBoolean() {
         return settingsMapBoolean;
+    }
+
+    @Override
+    public SuiteRpiEstimate getSuiteRpiEstimate() {
+        return null;
     }
 
 }

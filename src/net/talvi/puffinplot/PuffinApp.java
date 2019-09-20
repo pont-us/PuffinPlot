@@ -151,6 +151,8 @@ public class PuffinApp {
     private SuiteCalcs multiSuiteCalcs;
     private ScriptEngine pythonEngine = null;
     private final Version version;
+    private SuiteRpiEstimate rpis = null;
+
     
     /*
      * I don't use IdToFileMap for lastUsedSaveDirectories, because I think it's
@@ -250,6 +252,11 @@ public class PuffinApp {
             public boolean getSettingBoolean(String key, boolean def) {
                 return PuffinApp.this.getPrefs().getPrefs().
                         getBoolean(key, def);
+            }
+
+            @Override
+            public SuiteRpiEstimate getSuiteRpiEstimate() {
+                return rpis;
             }
             
         };
@@ -1999,7 +2006,6 @@ public class PuffinApp {
         if (destinationPath == null) {
             return;
         }
-        SuiteRpiEstimate rpis = null;
         switch (rpiDialog.getEstimateType()) {
             case ARM_DEMAG:
             case IRM_DEMAG:

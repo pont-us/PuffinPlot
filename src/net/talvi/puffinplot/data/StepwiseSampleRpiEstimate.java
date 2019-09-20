@@ -48,6 +48,7 @@ public class StepwiseSampleRpiEstimate implements SampleRpiEstimate {
     /**
      * @return the sample giving the NRM intensity
      */
+    @Override
     public Sample getNrmSample() {
         return nrmSample;
     }
@@ -115,6 +116,14 @@ public class StepwiseSampleRpiEstimate implements SampleRpiEstimate {
     @Override
     public String getCommaSeparatedHeader() {
         return "mean ratio,slope,r,r-squared,normalizer";
+    }
+
+    /**
+     * @return the sample RPI as estimated by the best-fit slope
+     */
+    @Override
+    public double getEstimate() {
+        return getSlope();
     }
     
 }

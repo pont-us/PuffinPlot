@@ -46,11 +46,13 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
             Logger.getLogger("net.talvi.puffinplot");
     private final List<Double> treatmentLevels;
     private final List<EstimateType> rpis;
+    private final Suite nrmSuite;
         
     private SuiteRpiEstimate(List<Double> treatmentLevels,
-            List<EstimateType> rpis) {
+            List<EstimateType> rpis, Suite nrmSuite) {
         this.treatmentLevels = treatmentLevels;
         this.rpis = rpis;
+        this.nrmSuite = nrmSuite;
     }
     
     /**
@@ -96,7 +98,8 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
                 rpis.add(new MagSusSampleRpiEstimate(nrmSample, msSample, rpi));
             }
         }
-        return new SuiteRpiEstimate<>(Collections.emptyList(), rpis);
+        return new SuiteRpiEstimate<>(Collections.emptyList(), rpis,
+                nrmSuite);
     }
     
     /**
@@ -191,7 +194,7 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
                         regression.getRSquare()));
             }
         }
-        return new SuiteRpiEstimate<>(treatmentLevels, rpis);
+        return new SuiteRpiEstimate<>(treatmentLevels, rpis, nrmSuite);
     }
 
     /**
@@ -286,20 +289,28 @@ public class SuiteRpiEstimate<EstimateType extends SampleRpiEstimate> {
                         regression.getRSquare()));
             }
         }
-        return new SuiteRpiEstimate<>(treatmentLevels, rpis);
+        return new SuiteRpiEstimate<>(treatmentLevels, rpis, nrmSuite);
     }
         
     /**
-     * @return the treatment levels
+     * @return the treatment levels from which this RPI estimate was calculated
      */
     public List<Double> getTreatmentLevels() {
         return treatmentLevels;
     }
 
     /**
-     * @return the RPIs
+     * @return the RPI estimates for the individual samples
      */
     public List<EstimateType> getRpis() {
         return rpis;
+    }
+    
+    /**
+     * @return suite containing NRM values from which this RPI estimate
+     * was calculated
+     */
+    public Suite getNrmSuite() {
+        return nrmSuite;
     }
 }

@@ -24,7 +24,7 @@ public interface SampleRpiEstimate {
     /**
      *
      * @return a string of comma-separated values representing an RPI
-     * estimate for a sample
+     * estimate (and any associated data) for a sample
      * 
      * @see #getCommaSeparatedHeader() 
      */
@@ -38,4 +38,15 @@ public interface SampleRpiEstimate {
      * @see #toCommaSeparatedString()
      */
     String getCommaSeparatedHeader();
+    
+    /**
+     *
+     * @return an estimate of the sample's RPI
+     */
+    double getEstimate();
+    
+    /**
+     * @return the depth of the sample
+     */
+    Sample getNrmSample();
 }
