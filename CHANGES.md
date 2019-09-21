@@ -1,3 +1,41 @@
+PuffinPlot 1.4.1 release notes
+==============================
+
+This is a minor release which fixes some bugs in version 1.4 and
+adds two new plot types.
+
+Data manipulation
+-----------------
+
+ -   Declination realignment can now align to a mean declination as
+     well as to a top declination. 
+
+Graphing and data display
+-------------------------
+
+ -   Added a VGP map plot.
+ -   Added an RPI/depth plot.
+
+Calculations
+------------
+
+ -   PuffinPlot no longer calculates an MDF values for samples which
+     never reach half-intensity, since the MDF is undefined in this case.
+
+Data import
+-----------
+
+ -   Added support for more PMD file format variants.
+
+Bug fixes
+---------
+
+ -   Fixed a bug which prevented the Mac OS X app from starting.
+ -   Re-enabled section numbering in the manual (accidentally disabled
+     in version 1.4).
+ -   Deleting the current sample previously caused an error; now fixed.
+
+
 PuffinPlot 1.4 release notes
 ============================
 
