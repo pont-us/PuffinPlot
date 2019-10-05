@@ -313,7 +313,7 @@ public class ZPlot extends Plot {
          * Now try to find an East (==MeasurementAxis.Y) axis adjacent to the
          * North axis.
          */
-        int direction = 0;
+        int direction;
         if (axes[(northIndex + 3) % 4] == MeasurementAxis.Y) {
             direction = -1; // East axis anticlockwise of North axis
         } else if (axes[(northIndex + 1) % 4] == MeasurementAxis.Y) {

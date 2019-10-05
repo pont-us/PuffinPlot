@@ -52,17 +52,18 @@ final class PlotAxis {
     }
 
     static PlotAxis[] makeMatchingAxes(AxisParameters[] params, Plot plot) {
-        List<Double> stepSizes = new ArrayList<>(params.length);
-        List<Integer> magnitudes = new ArrayList<>(params.length);
+        final List<Double> stepSizes = new ArrayList<>(params.length);
+        final List<Integer> magnitudes = new ArrayList<>(params.length);
         for (AxisParameters p: params)
             stepSizes.add(calculateStepSize(p.extent));
         double stepSize = Collections.max(stepSizes);
         for (AxisParameters p : params)
-            magnitudes.add(calculateMagnitude(roundUpToNextStep(p.extent, stepSize)));
+            magnitudes.add(
+                    calculateMagnitude(roundUpToNextStep(p.extent, stepSize)));
         int magnitude = Collections.max(magnitudes);
 
-        List<PlotAxis> axes = new ArrayList<>(params.length);
-        for (AxisParameters p: params) {
+        final List<PlotAxis> axes = new ArrayList<>(params.length);
+        for (AxisParameters p : params) {
             AxisParameters newP = new AxisParameters(p);
             newP.stepSize = stepSize;
             newP.magnitude = magnitude;
@@ -132,7 +133,6 @@ final class PlotAxis {
     }
 
     private static double calculateStepSize(double extent) {
-        // if (extent==0) extent=1;
         final double scaleFactor =
                 Math.pow(10, 1-Math.floor(Math.log10(extent)));
         final double extentScaledTo100 = extent * scaleFactor;
@@ -158,7 +158,7 @@ final class PlotAxis {
     }
 
     private static int calculateNumSteps(double extent, double stepSize) {
-        return (int) (Math.ceil(extent/stepSize));
+        return (int) (Math.ceil(extent / stepSize));
     }
 
     private static double roundUpToNextStep(double extent, double stepSize) {
@@ -216,8 +216,8 @@ final class PlotAxis {
             }
         }
         
-        final double xLen = x*getLength()*scale;
-        final double yLen = y*getLength()*scale;
+        final double xLen = x * getLength() * scale;
+        final double yLen = y * getLength() * scale;
         graphics.draw(new Line2D.Double(xOrig, yOrig, xOrig+xLen, yOrig+yLen));
         if (getLength() != 0) {
             if (ap.markedPosition != null) {

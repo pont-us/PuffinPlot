@@ -89,7 +89,7 @@ public interface OptionDefinition {
      *
      * If this method does return a value rather than throwing an exception,
      * that value is guaranteed to be an instance of the class returned by
-     * {@link getType()}, and may therefore be safely cast to that class. Note
+     * {@link #getType()}, and may therefore be safely cast to that class. Note
      * that the returned value may be {@code null}.
      *
      * @param optionMap a non-null map of option identifiers to values

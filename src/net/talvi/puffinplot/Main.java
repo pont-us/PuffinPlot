@@ -97,30 +97,29 @@ public class Main {
     
     @SuppressWarnings("static-access")
     private static Options createOptions() {
-        final Option helpOpt = new Option("help", "print this message");
-        final Option scriptOpt = Option.builder("script")
+        final Options options = new Options();
+        options.addOption(new Option("help", "print this message"));
+        options.addOption(
+                Option.builder("script")
                 .hasArg().argName("file").desc("run specified script")
-                .build();
-        final Option scriptLangOpt = Option.builder("scriptlanguage")
+                .build());
+        options.addOption(
+                Option.builder("scriptlanguage")
                 .hasArg().argName("language")
                 .desc("language for script (javascript or python)")
-                .build();
-        final Option installJythonOpt = Option.builder("installjython")
+                .build());
+        options.addOption(
+                Option.builder("installjython")
                 .desc("download and install Jython")
-                .build();
-        final Option processOpt = Option.builder("process")
+                .build());
+        options.addOption(
+                new Option("withapp",
+                "create a Puffin application (script mode only)"));
+        options.addOption(
+                Option.builder("process")
                 .hasArg().argName("file")
                 .desc("process given ppl file and save results")
-                .build();
-        final Option withAppOpt = new Option("withapp",
-                "create a Puffin application (script mode only)");
-        final Options options = new Options();
-        options.addOption(helpOpt);
-        options.addOption(scriptOpt);
-        options.addOption(scriptLangOpt);
-        options.addOption(installJythonOpt);
-        options.addOption(withAppOpt);
-        options.addOption(processOpt);
+                .build());
         return options;
     }
     

@@ -194,7 +194,7 @@ public class CoreSections {
     /**
      * The declination which should be aligned with a reference alignment
      * passed to
-     * {@link #alignSections(int, double, net.talvi.puffinplot.data.CoreSections.ReferenceAlignmentType) ).
+     * {@link #alignSections(int, double, net.talvi.puffinplot.data.CoreSections.ReferenceAlignmentType)}.
      */
     public static enum TargetDeclinationType {
 
@@ -214,6 +214,9 @@ public class CoreSections {
             this.niceName = niceName;
         }
         
+        /**
+         * @return a human-readable name for this target declination type
+         */
         public String getNiceName() {
             return niceName;
         }
