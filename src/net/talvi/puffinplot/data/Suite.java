@@ -583,7 +583,6 @@ public final class Suite implements SampleGroup {
             if (loadedData != null) {
                 final List<TreatmentStep> loadedSteps =
                         loadedData.getTreatmentSteps();
-                
                 final Set<MeasurementType> measTypes =
                         TreatmentStep.collectMeasurementTypes(loadedSteps);
                 

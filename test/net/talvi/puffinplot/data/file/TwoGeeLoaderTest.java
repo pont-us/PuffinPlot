@@ -444,6 +444,45 @@ public class TwoGeeLoaderTest {
         }
     }
     
+    /**
+     * Test that the sensor length warning is always given when appropriate,
+     * and never when inappropriate.
+     */
+    @Test
+    public void testSensorLengthWarning() throws IOException {
+        final SensorLengths unset = SensorLengths.fromPresetName("1:1:1");
+        final SensorLengths set =
+                SensorLengths.fromStrings("1.1", "1.2", "1.3");
+        final MomentFields cartesian = MomentFields.CARTESIAN;
+        final MomentFields polar = MomentFields.POLAR;
+        final String discrete = "FQ0101.1";
+        final String continuous = "C8G-EDITED";
+
+        checkSensorLengthWarning(false, discrete,   unset, cartesian);
+        checkSensorLengthWarning(false, discrete,   unset, polar);
+        checkSensorLengthWarning(false, discrete,   set,   cartesian);
+        checkSensorLengthWarning(false, discrete,   set,   polar);
+        checkSensorLengthWarning(true,  continuous, unset, cartesian);
+        checkSensorLengthWarning(false, continuous, unset, polar);
+        checkSensorLengthWarning(false, continuous, set,   cartesian);
+        checkSensorLengthWarning(false, continuous, set,   polar);
+    }
+
+    private void checkSensorLengthWarning(boolean warningExpected,
+            String filename, SensorLengths lengths,
+            MomentFields momentFields) throws IOException {
+        final Map<String, Object> options = new HashMap<>();
+        options.put("sensor_lengths", lengths);
+        options.put("read_moment_from", momentFields);
+        final TwoGeeLoader loader = new TwoGeeLoader();
+        final File file = copyFile(filename + ".DAT");
+        final LoadedData loadedData = loader.readFile(file, options);
+        final boolean warningFound =
+                loadedData.getMessages().stream()
+                        .anyMatch(s -> s.contains("unset sensor lengths"));
+        assertEquals(warningExpected, warningFound);
+    }
+    
     private static final void approxEquals(double expected, double actual,
             double precision) {
         assertEquals(expected, actual, Math.abs(expected / precision));

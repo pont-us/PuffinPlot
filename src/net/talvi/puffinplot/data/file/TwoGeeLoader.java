@@ -306,10 +306,15 @@ public class TwoGeeLoader implements FileLoader {
         }
         correlateFields();
         loadedData.setTreatmentSteps(treatmentSteps);
-        if ((!usePolarMoment) && sensorLengths.equals(new Vec3(1, 1, 1))) {
+        final boolean anyContinuousSamples =
+                loadedData.getTreatmentSteps().stream()
+                        .map(step -> step.getMeasurementType())
+                        .anyMatch(mt -> mt.isContinuous());
+        if (anyContinuousSamples && (!usePolarMoment)
+                && sensorLengths.equals(new Vec3(1, 1, 1))) {
             loadedData.addMessage(
-                    "Reading vector long core data with unset sensor\n"
-                    + "lengths! Magnetization vectors may be incorrect. See\n"
+                    "Reading vector long core data with unset sensor "
+                    + "lengths! Magnetization vectors may be incorrect. See "
                     + "PuffinPlot manual for details.");
         }
 
