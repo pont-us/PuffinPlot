@@ -33,6 +33,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import net.talvi.puffinplot.data.ArmAxis;
 import net.talvi.puffinplot.data.Correction;
@@ -304,7 +305,7 @@ public class TwoGeeLoader implements FileLoader {
                 break;
             }
         }
-        correlateFields();
+        correlateFields(loadedData);
         loadedData.setTreatmentSteps(treatmentSteps);
         final boolean anyContinuousSamples =
                 loadedData.getTreatmentSteps().stream()
@@ -385,21 +386,37 @@ public class TwoGeeLoader implements FileLoader {
 
     /**
      * Cross-correlate which fields have been requested during loading with
-     * which fields were present in the file, to produce a report on which
-     * fields which were (1) in the file but not requested and (2) requested but
-     * not found
+     * which fields were provided in the file. Log the intersection and
+     * relative complements of the requested and provided fields, and
+     * issue a warning to the user if the intersection has size < 4.
+     * 
+     * @param loadedData the data object to which to write any warnings
      */
-    private void correlateFields() {
+    private void correlateFields(LoadedData loadedData) {
         final Set<String> fileFieldSet = new HashSet<>(fields.keySet());
         final Set<String> notUsed = new HashSet<>(fileFieldSet);
         notUsed.removeAll(requestedFields);
         final Set<String> notInFile = new HashSet<>(requestedFields);
         notInFile.removeAll(fileFieldSet);
+        final Set<String> requestedAndSupplied =
+                requestedFields.stream().filter(s -> fileFieldSet.contains(s))
+                .collect(Collectors.toSet());
         LOGGER.info(String.format(Locale.ENGLISH,
                 "Field headers in file %s\n"
-                + "Not found in file: %s\nIn file but ignored: %s", file,
+                + "Not found in file: %s\nIn file but ignored: %s\n"
+                + "In file and recognized: %s", file,
                 Arrays.toString(notInFile.toArray()),
-                Arrays.toString(notUsed.toArray())));
+                Arrays.toString(notUsed.toArray()),
+                Arrays.toString(requestedAndSupplied.toArray())));
+        if (requestedAndSupplied.isEmpty()) {
+            loadedData.getMessages().add("No column headers were recognized! "+
+                    "This file is probably corrupted, or not in 2G format.");
+        } else if (requestedAndSupplied.size() < 4) {
+            loadedData.getMessages().add(String.format(
+                    "Only %d column headers were recognized! "
+                    + "This file is probably corrupted, or not in 2G format.",
+                    requestedAndSupplied.size()));
+        }
     }
 
     private void setSensorLengths(Vec3 v) {

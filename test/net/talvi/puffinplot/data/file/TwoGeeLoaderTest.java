@@ -85,10 +85,11 @@ public class TwoGeeLoaderTest {
          * At present, TwoGeeLoader makes a best effort even in this hopeless
          * case: the second line is read in as a treatment step, but since
          * none of the data is interpretable, it is initialized with default
-         * values.
+         * values. A warning is generated about the fact that no valid
+         * column headers were found.
          */
         assertEquals(1, loadedData.getTreatmentSteps().size());
-        assertTrue(loadedData.getMessages().isEmpty());
+        assertEquals(1, loadedData.getMessages().size());
     }
 
     private static final double[][] expected_sg12_7 = {
@@ -483,6 +484,22 @@ public class TwoGeeLoaderTest {
         assertEquals(warningExpected, warningFound);
     }
     
+    @Test
+    public void checkNoValidFieldsWarning() throws IOException {
+        final LoadedData data =
+                new TwoGeeLoader().readFile(copyFile("no-valid-fields.dat"));
+        assertTrue(data.getMessages().stream()
+                .anyMatch(s -> s.contains("probably corrupted")));
+    }
+    
+    @Test
+    public void checkFewValidFieldsWarning() throws IOException {
+        final LoadedData data =
+                new TwoGeeLoader().readFile(copyFile("two-valid-fields.dat"));
+        assertTrue(data.getMessages().stream()
+                .anyMatch(s -> s.contains("probably corrupted")));
+    }
+
     private static final void approxEquals(double expected, double actual,
             double precision) {
         assertEquals(expected, actual, Math.abs(expected / precision));
