@@ -1,3 +1,10 @@
+Next release
+============
+
+ -   Demagnetization plot: include a tick and label at 0 on the x axis.
+     If there is no magnetic susceptibility data to plot, include a
+     tick and label at 0 on the y axis too.
+
 PuffinPlot 1.4.1 release notes
 ==============================
 

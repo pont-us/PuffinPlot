@@ -64,7 +64,7 @@ final class PlotAxis {
 
         final List<PlotAxis> axes = new ArrayList<>(params.length);
         for (AxisParameters p : params) {
-            AxisParameters newP = new AxisParameters(p);
+            final AxisParameters newP = new AxisParameters(p);
             newP.stepSize = stepSize;
             newP.magnitude = magnitude;
             axes.add(new PlotAxis(newP, plot));
@@ -89,6 +89,7 @@ final class PlotAxis {
         public boolean farSide = false;
         public boolean numberEachTick = false;
         public double startValue = 0;
+        public boolean hasTickAtZero = false;
         
         public AxisParameters(double extent, Direction direction) {
             this.extent = extent;
@@ -108,6 +109,7 @@ final class PlotAxis {
             markedPosition = other.markedPosition;
             farSide = other.farSide;
             numberEachTick = other.numberEachTick;
+            hasTickAtZero = other.hasTickAtZero;
         }
         
         public AxisParameters withEndLabel(String endLabel) {
@@ -127,6 +129,11 @@ final class PlotAxis {
         
         public AxisParameters withStartValue(double startValue) {
             this.startValue = startValue;
+            return this;
+        }
+        
+        public AxisParameters withTickAtZero() {
+            this.hasTickAtZero = true;
             return this;
         }
         
@@ -194,7 +201,7 @@ final class PlotAxis {
                 break;
         }
 
-        for (int i=1; i<=ap.numSteps; i++) {
+        for (int i = ap.hasTickAtZero ? 0 : 1; i <= ap.numSteps; i++) {
             double pos = i * getStepSize() * scale;
             graphics.draw(new Line2D.Double(
                     xOrig + x * pos + y * t, yOrig + y * pos + x * t,

@@ -124,7 +124,7 @@ public class DemagPlot extends Plot {
         
         final AxisParameters xAxisParams = 
                 new AxisParameters(xAxisLength * demagRescale, Direction.RIGHT).
-                withLabel(xAxisLabel).withNumberEachTick();
+                withLabel(xAxisLabel).withNumberEachTick().withTickAtZero();
         
         final MedianDestructiveField midpoint = sample.getMdf();
         if (midpoint != null && midpoint.isHalfIntReached()) {
@@ -133,10 +133,16 @@ public class DemagPlot extends Plot {
         }
         
         final PlotAxis xAxis = new PlotAxis(xAxisParams, this);
-        final PlotAxis yAxis = new PlotAxis(
+        final AxisParameters yAxisParameters =
                 new AxisParameters(correctedMaxIntensity(steps), Direction.UP).
-                        withLabel(vAxisLabel()).withNumberEachTick(),
-                this);
+                withLabel(vAxisLabel()).withNumberEachTick();
+        /*
+         * If there's mag sus data, we omit the tick (and, more importantly,
+         * the label) at zero to make room for a legend point making it clear
+         * which point style represents remanence.
+         */
+        yAxisParameters.hasTickAtZero = !sample.hasMagSusData();
+        final PlotAxis yAxis = new PlotAxis(yAxisParameters, this);
 
         final Rectangle2D dim = cropRectangle(getDimensions(),
                 320, 320, 50, 290);
@@ -144,8 +150,7 @@ public class DemagPlot extends Plot {
         final double yScale = dim.getHeight() / yAxis.getLength();
         yAxis.draw(g, yScale, (int) dim.getMinX(), (int) dim.getMaxY());
         xAxis.draw(g, xScale, (int) dim.getMinX(), (int) dim.getMaxY());
-        addPoint(null, new Point2D.Double(dim.getMinX()-10, dim.getMaxY()),
-                true, false, false);
+        
         
         int i = 0;
         for (TreatmentStep step: steps) {
@@ -154,7 +159,7 @@ public class DemagPlot extends Plot {
                     (xBySequence ? (i + 1) : demagLevel) * xScale;
             addPoint(step, new Point2D.Double(xPos,
                     dim.getMaxY() - step.getIntensity() * yScale),
-                    true, false, i>0);
+                    true, false, i > 0);
             i++;
         }
 
@@ -165,14 +170,22 @@ public class DemagPlot extends Plot {
                     dim.getMaxY() - midpoint.getIntensity() * yScale;
             g.draw(new Line2D.Double(dim.getMinX(), yPos,
                     xPos, yPos));
-            g.draw(new Line2D.Double(xPos, dim.getMaxY()-getFontSize()*1.5,
+            g.draw(new Line2D.Double(xPos, dim.getMaxY() - getFontSize() * 1.5,
                     xPos, yPos));
         }
 
         if (sample.hasMagSusData()) {
+            /*
+             * Add legend points on the left and right axes to show which
+             * point type is associated with which data set.
+             */
+            addPoint(null,
+                    new Point2D.Double(dim.getMinX() - 10, dim.getMaxY()),
+                    true, false, false);
             addPoint(null,
                     new Point2D.Double(dim.getMaxX() + 10, dim.getMaxY()),
                     false, false, false);
+            
             final PlotAxis msAxis = makeMagSusAxis(steps);
             final double msScale = dim.getHeight() / msAxis.getLength();
             msAxis.draw(g, msScale, (int) dim.getMaxX(), (int) dim.getMaxY());
