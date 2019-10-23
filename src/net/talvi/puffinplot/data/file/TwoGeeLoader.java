@@ -59,7 +59,7 @@ public class TwoGeeLoader implements FileLoader {
     private static final Logger LOGGER
             = Logger.getLogger("net.talvi.puffinplot");
     private Vec3 sensorLengths = new Vec3(1, 1, 1);
-    private Map<String, Integer> fields;
+    private Map<String, Integer> fieldsInFile;
     private static final Pattern EMPTY_LINE = Pattern.compile("^\\s*$");
     private static final int MAX_WARNINGS = 10;
     private File file;
@@ -146,7 +146,6 @@ public class TwoGeeLoader implements FileLoader {
      * Creates a new 2G loader.
      */
     public TwoGeeLoader() {
-
     }
     
     @Override
@@ -192,10 +191,10 @@ public class TwoGeeLoader implements FileLoader {
             loadedData.addMessage("%s is empty.", fileName);
             return loadedData; // The caller should close the reader for us.
         } else {
-            fields = new HashMap<>();
+            fieldsInFile = new HashMap<>();
             final String[] fieldNames = fieldsLine.split(("\\t"));
             for (int i = 0; i < fieldNames.length; i++) {
-                fields.put(fieldNames[i], i);
+                fieldsInFile.put(fieldNames[i], i);
             }
         }
         final List<TreatmentStep> treatmentSteps = new ArrayList<>();
@@ -309,16 +308,40 @@ public class TwoGeeLoader implements FileLoader {
         loadedData.setTreatmentSteps(treatmentSteps);
         final boolean anyContinuousSamples =
                 loadedData.getTreatmentSteps().stream()
-                        .map(step -> step.getMeasurementType())
-                        .anyMatch(mt -> mt.isContinuous());
+                        .map(TreatmentStep::getMeasurementType)
+                        .anyMatch(MeasurementType::isContinuous);
+        final boolean anyDiscreteSamples =
+                loadedData.getTreatmentSteps().stream()
+                        .map(TreatmentStep::getMeasurementType)
+                        .anyMatch(MeasurementType::isDiscrete);
         if (anyContinuousSamples && (!usePolarMoment)
                 && sensorLengths.equals(new Vec3(1, 1, 1))) {
             loadedData.addMessage(
-                    "Reading vector long core data with unset sensor "
+                    "Reading long core data from Cartesian components "
+                            + "with unset sensor "
                     + "lengths! Magnetization vectors may be incorrect. See "
                     + "PuffinPlot manual for details.");
         }
-
+        if (anyContinuousSamples && (!usePolarMoment) &&
+                !fieldsInFile.containsKey("Area")) {
+            // Using %s rather than %f to truncate trailing zeros.
+            loadedData.addMessage(
+                    "Reading long core data from Cartesian components with "
+                            + "unset cross-sectional area! "
+                            + "Using default area of %s cm².",
+                TreatmentStep.getDefaultArea()
+            );
+        }
+        if (anyDiscreteSamples && (!usePolarMoment)
+                && !fieldsInFile.containsKey("Volume")) {
+            // Using %s rather than %f to truncate trailing zeros.
+            loadedData.addMessage(
+                    "Reading discrete data from Cartesian components with "
+                    + "unset sample volume! "
+                    + "Using default volume of %s cm³.",
+                    TreatmentStep.getDefaultVolume()
+            );
+        }
         return loadedData;
     }
 
@@ -393,7 +416,7 @@ public class TwoGeeLoader implements FileLoader {
      * @param loadedData the data object to which to write any warnings
      */
     private void correlateFields(LoadedData loadedData) {
-        final Set<String> fileFieldSet = new HashSet<>(fields.keySet());
+        final Set<String> fileFieldSet = new HashSet<>(fieldsInFile.keySet());
         final Set<String> notUsed = new HashSet<>(fileFieldSet);
         notUsed.removeAll(requestedFields);
         final Set<String> notInFile = new HashSet<>(requestedFields);
@@ -446,7 +469,7 @@ public class TwoGeeLoader implements FileLoader {
 
     private boolean fieldExists(String name) {
         requestedFields.add(name);
-        return fields.containsKey(name);
+        return fieldsInFile.containsKey(name);
     }
 
     private class FieldReader {
@@ -461,7 +484,7 @@ public class TwoGeeLoader implements FileLoader {
             if (!fieldExists(name)) {
                 return defaultValue;
             }
-            String v = values[fields.get(name)];
+            final String v = values[fieldsInFile.get(name)];
             // Catch the common case without using an expensive exception.
             if ("NA".equals(v)) {
                 return Double.NaN;
@@ -478,7 +501,7 @@ public class TwoGeeLoader implements FileLoader {
                 return false;
             }
             try {
-                Double.parseDouble(values[fields.get(name)]);
+                Double.parseDouble(values[fieldsInFile.get(name)]);
                 return true;
             } catch (NumberFormatException e) {
                 return false;
@@ -489,7 +512,7 @@ public class TwoGeeLoader implements FileLoader {
             if (!fieldExists(name)) {
                 return defaultValue;
             }
-            final String value = values[fields.get(name)];
+            final String value = values[fieldsInFile.get(name)];
             // Catch the common case without using an expensive exception.
             if ("NA".equals(value)) {
                 return 0;
@@ -505,7 +528,7 @@ public class TwoGeeLoader implements FileLoader {
             if (!fieldExists(name)) {
                 return defaultValue;
             }
-            return values[fields.get(name)];
+            return values[fieldsInFile.get(name)];
         }
     }
 
@@ -559,9 +582,9 @@ public class TwoGeeLoader implements FileLoader {
         }
 
         /*
-         * Default values for area and volume are hard-coded in the
-         * TreatmentStep class, and will be used here if nothing is specified in
-         * the file.
+         * The TreatmentStep class is instantiated with the volume and area set
+         * to hard-coded default values. These values will be used here if
+         * nothing is specified in the file.
          */
         step.setArea(r.getDouble("Area", step.getArea()));
         step.setVolume(r.getDouble("Volume", step.getVolume()));

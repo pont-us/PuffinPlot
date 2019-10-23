@@ -499,6 +499,38 @@ public class TwoGeeLoaderTest {
         assertTrue(data.getMessages().stream()
                 .anyMatch(s -> s.contains("probably corrupted")));
     }
+    
+    @Test
+    public void checkNoVolumeInDiscreteFileWarning() throws IOException {
+        final Map<String, Object> options = new HashMap<>();
+        options.put("read_moment_from", MomentFields.CARTESIAN);
+        final LoadedData dataCartesian =
+                new TwoGeeLoader().readFile(copyFile("FQ0101.1-NO-VOLUME.DAT"),
+                        options);
+        assertTrue(dataCartesian.getMessages().stream()
+                .anyMatch(s -> s.contains("unset sample volume")));
+        options.put("read_moment_from", MomentFields.POLAR);
+        final LoadedData dataPolar =
+                new TwoGeeLoader().readFile(copyFile("FQ0101.1-NO-VOLUME.DAT"),
+                        options);
+        assertTrue(dataPolar.getMessages().isEmpty());
+    }    
+
+    @Test
+    public void checkNoAreaInContinuousFileWarning() throws IOException {
+        final Map<String, Object> options = new HashMap<>();
+        options.put("read_moment_from", MomentFields.CARTESIAN);
+        final LoadedData dataCartesian =
+                new TwoGeeLoader().readFile(copyFile("CC8G-EDITED-NO-AREA.DAT"),
+                        options);
+        assertTrue(dataCartesian.getMessages().stream()
+                .anyMatch(s -> s.contains("unset cross-sectional area")));
+        options.put("read_moment_from", MomentFields.POLAR);
+        final LoadedData dataPolar =
+                new TwoGeeLoader().readFile(copyFile("CC8G-EDITED-NO-AREA.DAT"),
+                        options);
+        assertTrue(dataPolar.getMessages().isEmpty());
+    }
 
     private static final void approxEquals(double expected, double actual,
             double precision) {

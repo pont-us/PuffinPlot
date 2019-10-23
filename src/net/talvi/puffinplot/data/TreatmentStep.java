@@ -58,6 +58,7 @@ import java.util.logging.Level;
  * @author pont
  */
 public class TreatmentStep {
+
     private static final Logger logger =
             Logger.getLogger("net.talvi.puffinplot");
     private static final double
@@ -77,8 +78,8 @@ public class TreatmentStep {
     private ArmAxis armAxis = ArmAxis.UNKNOWN;
     private Vec3 moment = null;
     private int runNumber = -1;
-    private double volume = DEFAULT_VOLUME;
-    private double area = DEFAULT_AREA;
+    private double volume = getDefaultVolume();
+    private double area = getDefaultArea();
     private String timestamp = "UNSET";
     private double xDrift, yDrift, zDrift;
     private int slotNumber = -1;
@@ -1606,4 +1607,19 @@ public class TreatmentStep {
                 magSusString
                 );
     }
+
+    /**
+     * @return the default cross-sectional area for a long core, in cm²
+     */
+    public static double getDefaultArea() {
+        return DEFAULT_AREA;
+    }
+
+    /**
+     * @return the default volume for a discrete sample, in cm³
+     */
+    public static double getDefaultVolume() {
+        return DEFAULT_VOLUME;
+    }
+
 }
