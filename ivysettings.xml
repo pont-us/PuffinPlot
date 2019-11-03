@@ -1,13 +1,16 @@
 <ivysettings>
-        
     <settings defaultResolver="chain"/>
     <resolvers>
         <chain name="chain">
-            <ibiblio name="central" m2compatible="true"/>
-            <ibiblio name="Maven FreeHEP" m2compatible="true" root="http://java.freehep.org/maven2"/>
-            <!-- Boundless is the only Maven repo I can find with Oracle's appbundler. -->
-            <ibiblio name="Boundless" m2compatible="true" root="https://repo.boundlessgeo.com/main/"/>
+          <ibiblio name="central" m2compatible="true"/>
+	  <!-- freehep-export, freehep-swing, freehep-util, and
+	       freehep-xml are not on Maven Central, so we have to add the
+	       FreeHEP repository to use them. -->
+          <ibiblio name="Maven FreeHEP" m2compatible="true" root="http://java.freehep.org/maven2" />
+          <!-- Boundless is the only Maven repo I can find with Oracle's
+               appbundler. -->
+          <ibiblio name="Boundless" m2compatible="true"
+		   root="https://repo.boundlessgeo.com/main/"/>
         </chain>
     </resolvers>
-
 </ivysettings>

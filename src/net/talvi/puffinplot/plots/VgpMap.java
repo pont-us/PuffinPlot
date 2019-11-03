@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.List;
 import net.talvi.puffinplot.data.Vec3;
@@ -63,12 +64,8 @@ public class VgpMap extends Plot {
      */
     public VgpMap(PlotParams params) {
         super(params);
-        try {
-            outlines = readAndProjectOutlines();
-            linesofLongitude = createLinesOfLongitude();
-        } catch (IOException e) {
-            throw new Error(e);
-        }
+        outlines = readAndProjectOutlines();
+        linesofLongitude = createLinesOfLongitude();
     }
     
     /**
@@ -78,14 +75,34 @@ public class VgpMap extends Plot {
      * @return the projected outlines
      * @throws IOException if there was an error reading the map data
      */
-    private static List<List<Point2D>> readAndProjectOutlines()
-            throws IOException {
-        final List<List<Point2D>> outlines = new ArrayList<>();
+    private static List<List<Point2D>> readAndProjectOutlines() {
         try (InputStream stream =
-                VgpMap.class.getResourceAsStream("map-data.csv");
-                Reader isr = new InputStreamReader(stream);
-                BufferedReader reader = new BufferedReader(isr)) {
-            while (true) {
+                VgpMap.class.getResourceAsStream("map-data.csv")) {
+            if (stream == null) {
+                throw new IOException(
+                        "Couldn't open VGP map data resource.");
+            }
+            try (Reader isr = new InputStreamReader(stream);
+                    BufferedReader reader = new BufferedReader(isr)) {
+                return readAndProjectOutlines(reader);
+            } catch (NumberFormatException nfException) {
+                final NumberFormatException wrapped =
+                        new NumberFormatException(
+                                "Unparseable number in VGP map data");
+                wrapped.initCause(nfException);
+                throw wrapped;
+            }
+        } catch (IOException ex) {
+            throw new UncheckedIOException(
+                    "IO exception while reading VGP map data", ex);
+        }
+    }
+
+    private static List<List<Point2D>>
+        readAndProjectOutlines(BufferedReader reader)
+            throws IOException, NumberFormatException {
+        final List<List<Point2D>> outlines = new ArrayList<>();
+        while (true) {
             final String line = reader.readLine();
             if (line == null) {
                 break;
@@ -100,9 +117,7 @@ public class VgpMap extends Plot {
                 final Point2D v2 = project(v, 1, 0, 0);
                 outline.add(v2);
             }
-            }
         }
-        
         return outlines;
     }
     
@@ -117,7 +132,7 @@ public class VgpMap extends Plot {
         grid.add(project(Vec3.DOWN.greatCirclePoints(60, true)));
 
         for (int longitude = 30; longitude <= 330; longitude += 30) {
-            Vec3 v = Vec3.fromPolarDegrees(1, 0, longitude);
+            final Vec3 v = Vec3.fromPolarDegrees(1, 0, longitude);
             grid.add(project(v.greatCirclePoints(180, true)));
         }
         return grid;

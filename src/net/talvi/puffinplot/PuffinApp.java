@@ -365,28 +365,32 @@ public class PuffinApp {
         }
     }
 
+    /**
+     * Load build properties from resource file. If the file is not found,
+     * or if there is an exception while loading, the error will be logged
+     * and the method will return without setting {@code buildProperties}.
+     * Other methods in PuffinApp must handle a null value for
+     * {@code buildProperties} gracefully.
+     */
     private void loadBuildProperties() {
-        InputStream propStream = null;
-        try {
-            propStream =
-                    PuffinApp.class.getResourceAsStream("build.properties");
-            buildProperties = new Properties();
-            buildProperties.load(propStream);
+        final String resourceName = "build.properties";
+        try (InputStream propStream =
+                PuffinApp.class.getResourceAsStream(resourceName)) {
+            if (propStream != null) {
+                buildProperties = new Properties();
+                buildProperties.load(propStream);
+            } else {
+                LOGGER.log(Level.WARNING,
+                        "Build properties resource \"{0}\" not found.",
+                        resourceName);
+            }
         } catch (IOException ex) {
-            LOGGER.log(Level.WARNING, "Failed to get build date", ex);
+            LOGGER.log(Level.WARNING, "Exception loading build properties.",
+                    ex);
             /*
              * The only effect of this on the user is a lack of build date in
              * the about box, so we can get away with just logging it.
              */
-        } finally {
-            if (propStream != null) {
-                try {
-                    propStream.close();
-                } catch (IOException ex) {
-                    LOGGER.log(Level.WARNING, "Error closing property stream",
-                            ex);
-                }                
-            }
         }
         LOGGER.log(Level.INFO, "Build date: {0}",
                 getBuildProperty("build.date"));
