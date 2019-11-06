@@ -46,56 +46,37 @@
     </target>    
     
     <target name="-pre-jar">
-        <exec dir="${basedir}" executable="git">
+        <propertyfile
+            file="build/classes/net/talvi/puffinplot/build.properties">
+            <entry key="build.date" type="date" value="now"
+                   pattern="yyyy-MM-dd HH:mm"/>
+            <entry key="build.release.version" value="${release.version}"/>
+        </propertyfile>
+        <exec dir="${basedir}" executable="git"
+              output="build/classes/net/talvi/puffinplot/git-output-commit">
             <arg value="cat-file"/> 
             <arg value="commit"/> 
             <arg value="HEAD"/>
-            <redirector outputproperty="build.git.committerdate">
-                <outputfilterchain>
-                    <linecontainsregexp>
-                        <regexp pattern="^committer "/>
-                    </linecontainsregexp>
-                    <replaceregex pattern="^committer .* (\d+ [+-]\d\d\d\d$)" replace="\1" flags=""/>
-                </outputfilterchain>
-            </redirector>
         </exec>
-        <exec dir="${basedir}" executable="git" outputproperty="git.status">
+        <exec dir="${basedir}" executable="git"
+              output="build/classes/net/talvi/puffinplot/git-output-status">
             <arg value="status"/>
             <arg value="--porcelain"/>
         </exec>
-        <condition property="git.dirty" value="true" else="false">
-            <length string="${git.status}" when="greater" length="0"/>
-        </condition>
-        <exec dir="${basedir}" executable="git">
+        <exec dir="${basedir}" executable="git"
+              output="build/classes/net/talvi/puffinplot/git-output-tag">
             <arg value="name-rev"/>
             <arg value="--tags"/>
             <arg value="HEAD"/>
-            <redirector outputproperty="git.tag">
-                <outputfilterchain>
-                    <linecontainsregexp>
-                        <regexp pattern="\^0$"/>
-                    </linecontainsregexp>
-                    <replaceregex pattern="\^0$" replace="" flags=""/>
-                </outputfilterchain>
-            </redirector>
         </exec>
-        <exec dir="${basedir}" executable="git" outputproperty="git.hash">
+        <exec dir="${basedir}" executable="git"
+              output="build/classes/net/talvi/puffinplot/git-output-hash">
             <arg value="show-ref"/>
             <arg value="--head"/>
             <arg value="--hash"/>
-            <arg value="HEAD"/>
+            <arg value="^HEAD$"/>
         </exec>
 
-        <propertyfile file="build/classes/net/talvi/puffinplot/build.properties">
-            <entry key="build.date" type="date" value="now" pattern="yyyy-MM-dd HH:mm"/>
-            <entry key="build.year" type="date" value="now" pattern="yyyy"/>
-            <entry key="build.release.version" value="${release.version}"/>
-            <entry key="build.git.committerdate" value="${build.git.committerdate}"/>
-            <entry key="build.git.tag" value="${git.tag}"/>
-            <entry key="build.git.hash" value="${git.hash}"/>
-            <entry key="build.git.dirty" value="${git.dirty}"/>
-        </propertyfile>
-        
     </target>
     
     <target name="combined-jar" depends="jar"

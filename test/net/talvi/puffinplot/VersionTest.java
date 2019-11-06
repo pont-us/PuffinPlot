@@ -16,14 +16,15 @@
  */
 package net.talvi.puffinplot;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.UnaryOperator;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import net.talvi.puffinplot.testdata.TestFileLocator;
 
 public class VersionTest {
     
@@ -143,6 +144,17 @@ public class VersionTest {
                 " (date of build; revision date not available)",
                 version.getDateString());
         assertEquals("1.4.1", version.getVersionString());
+        assertEquals("2012–2019", version.getYearRange());
+    }
+    
+    @Test
+    public void testFromGitFiles() throws IOException {
+        final Version version = Version.fromGitFiles(TestFileLocator.class,
+                "git-output-commit", "git-output-tag", "git-output-hash",
+                "git-output-status", "2019-11-05T13:19:14Z");
+        assertNotNull(version);
+        assertEquals("2019.11.06 08:45 UTC", version.getDateString());
+        assertEquals("c3bef92ca522 (modified)", version.getVersionString());
         assertEquals("2012–2019", version.getYearRange());
     }
 

@@ -196,7 +196,9 @@ public class PuffinApp {
         System.setProperty("com.apple.mrj.application.apple.menu.about.name",
                 "PuffinPlot");
         loadBuildProperties();
-        version = Version.fromGitProperties(this::getBuildProperty);
+        version = Version.fromGitFiles(this.getClass(),
+                "git-output-commit", "git-output-tag", "git-output-hash",
+                "git-output-status", getBuildProperty("build.date"));
         prefs = new PuffinPrefs(this);
         lastUsedFileOpenDirs = new IdToFileMap(
                 key -> prefs.getPrefs().get(key, ""),
@@ -398,8 +400,7 @@ public class PuffinApp {
     
     /**
      * Reads values from the {@code build.properties} file. This is a properties
-     * file written into the PuffinPlot jar at build time, and currently
-     * contains the keys {@code build.date} and {@code build.year}.
+     * file written into the PuffinPlot jar at build time.
      *
      * @param key the property key to read
      * @return the value of the key

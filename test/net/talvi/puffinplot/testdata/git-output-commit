@@ -1,0 +1,16 @@
+tree bce71730c757c823bbb828f2fd53a42ad08e9bad
+parent fe12703f2d2e16345ba3177096e457cf055f5bce
+author Pontus Lurcock <pont@talvi.net> 1573029915 +0100
+committer Pontus Lurcock <pont@talvi.net> 1573029915 +0100
+
+Add a fromGitOutput factory method to Version
+
+Currently, a Version object is instantiated at run time from properties
+which the Ant build process sets from git output. I have now added a
+Version::fromGitOutput factory method which instantiates a Version
+directly from the git output, allowing its post-processing to be moved
+from build time to run time. At present, the raw git output is not written
+at build time and the fromGitOutput factory method is therefore not yet
+used. Its main purpose is to ease the future transition from Ant to Maven,
+since the latter makes it more difficult to do this kind of processing at
+build time.

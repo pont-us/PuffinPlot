@@ -16,6 +16,11 @@
  */
 package net.talvi.puffinplot;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.DateTimeException;
@@ -23,11 +28,12 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import static java.util.Arrays.stream;
 import java.util.Date;
 import java.util.Optional;
 import java.util.TimeZone;
 import java.util.function.UnaryOperator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,6 +42,9 @@ import java.util.regex.Pattern;
  */
 public class Version {
 
+    private static final Logger LOGGER =
+            Logger.getLogger("net.talvi.puffinplot");
+    
     private final String versionString;
     private final String dateString;
     private final String yearRange;
@@ -132,6 +141,66 @@ public class Version {
         
         return fromGitProperties(rawTag, shortHash, rawBuildDate,
                 rawCommitterDate, modified);
+    }
+    
+    /**
+     * Provides a version object from resources containing git command output.
+     *
+     * This method takes as its arguments four strings identifying resources
+     * which contain the output of git commands, as well as one string
+     * containing a build date, and returns a version object corresponding to
+     * the data provided in those strings. The resources are resolved relative
+     * to a supplied class.
+     *
+     * @param locator the class relative to which the resource names are
+     * resolved
+     * @param commitFile name of resource containing the output of
+     * {@code git cat-file commit HEAD}
+     * @param tagsFile name of resource containing the output of
+     * {@code git name-rev --tags HEAD}
+     * @param hashFile name of resource containing the output of
+     * {@code git show-ref --head --hash ^HEAD$}
+     * @param statusFile name of resource containing the output of
+     * {@code git status --porcelain}
+     * @param buildDate a build date string, used as a fallback date if the date
+     * cannot be determined from the {@code commit} argument. The format of this
+     * string is not specified; it will be used as is, without any attempt at
+     * parsing.
+     * @return
+     */
+
+    public static Version fromGitFiles(Class locator,
+            String commitFile, String tagsFile,
+            String hashFile, String statusFile, String buildDate) {
+        try {
+            return fromGitOutput(
+                    getResourceContents(locator, commitFile),
+                    getResourceContents(locator, tagsFile),
+                    getResourceContents(locator, hashFile),
+                    getResourceContents(locator, statusFile),
+                    buildDate);
+        } catch (IOException exception) {
+            LOGGER.log(Level.SEVERE, "Error reading version information",
+                    exception);
+        }
+        return new Version(
+                "Unknown (error reading version information)",
+                "Unknown (error reading version information)",
+                "Unknown (error reading version information)");
+    }
+    
+    private static String getResourceContents(Class locator, String name)
+            throws IOException {
+        try (InputStream is = locator.getResourceAsStream(name)) {
+            BufferedInputStream bis = new BufferedInputStream(is);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            int result = bis.read();
+            while (result != -1) {
+                baos.write((byte) result);
+                result = bis.read();
+            }
+            return baos.toString(StandardCharsets.UTF_8.name());
+        }
     }
     
     /**
