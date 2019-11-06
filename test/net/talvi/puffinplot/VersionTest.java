@@ -23,6 +23,7 @@ import java.util.function.UnaryOperator;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class VersionTest {
     
@@ -101,6 +102,48 @@ public class VersionTest {
             map.put(values[i], values[i+1]);
         }
         return s -> map.get(s);
+    }
+    
+    @Test
+    public void testFromGitOutput1() {
+        final String commit =
+                "tree cd3a763feb7cc288327c93ed024b832d3307cc99\n"
+                + "parent df9e490523f1ea329a8249c5906dc28542dfdcb8\n"
+                + "author Pontus Lurcock <pont@talvi.net> 1572778467 +0100\n"
+                + "committer Pontus Lurcock <pont@talvi.net> 1572778467 +0100\n"
+                + "\n"
+                + "First line of commit message\n"
+                + "\n"
+                + "More lines of commit message. Let's include the string \"\n"
+                + "committer \" at the start of a line to make sure it's\n"
+                + "handled correctly.\n";
+        final String tag = "HEAD undefined";
+        final String hash = "fe12703f2d2e16345ba3177096e457cf055f5bce";
+        final String status = "?? wibble";
+        final String buildDate = "2019-11-05T13:19:14Z";
+        final Version version =
+                Version.fromGitOutput(commit, tag, hash, status, buildDate);
+        assertNotNull(version);
+        assertEquals("2019.11.03 10:54 UTC", version.getDateString());
+        assertEquals("fe12703f2d2e (modified)", version.getVersionString());
+        assertEquals("2012–2019", version.getYearRange());
+    }
+
+    @Test
+    public void testFromGitOutput2() {
+        final String commit = "deliberately malformed commit data";
+        final String tag = "HEAD tags/version_1.4.1^0";
+        final String hash = "f2aafaaa1b26d9bdccbfb1615334f4c3cdeaf033";
+        final String status = "";
+        final String buildDate = "2019-11-05T13:19:14Z";
+        final Version version =
+                Version.fromGitOutput(commit, tag, hash, status, buildDate);
+        assertNotNull(version);
+        assertEquals(buildDate +
+                " (date of build; revision date not available)",
+                version.getDateString());
+        assertEquals("1.4.1", version.getVersionString());
+        assertEquals("2012–2019", version.getYearRange());
     }
 
 }

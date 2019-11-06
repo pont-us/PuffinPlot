@@ -22,9 +22,14 @@ import java.time.DateTimeException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import static java.util.Arrays.stream;
 import java.util.Date;
+import java.util.Optional;
 import java.util.TimeZone;
 import java.util.function.UnaryOperator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A class containing information about PuffinPlot's version.
@@ -125,22 +130,69 @@ public class Version {
         final boolean modified = Boolean.parseBoolean(rawDirtyFlag);
         final String shortHash = rawHash.substring(0, 12);
         
+        return fromGitProperties(rawTag, shortHash, rawBuildDate,
+                rawCommitterDate, modified);
+    }
+    
+    /**
+     * Provides a version object corresponding to the output of git commands.
+     * 
+     * This method takes as its arguments four strings containing the output
+     * of git commands, as well as one string containing a build date, and
+     * returns a version object corresponding to the data provided in those
+     * strings.
+     * 
+     * @param commit the output of {@code git cat-file commit HEAD}
+     * @param tags the output of {@code git name-rev --tags HEAD}
+     * @param hash the output of {@code git show-ref --head --hash ^HEAD$}
+     * @param status the output of {@code git status --porcelain}
+     * @param buildDate a build date string, used as a fallback date if
+     *        the date cannot be determined from the {@code commit} argument.
+     *        The format of this string is not specified; it will be used
+     *        as is, without any attempt at parsing.
+     * @return
+     */
+    public static Version fromGitOutput(String commit, String tags,
+            String hash, String status, String buildDate) {
+        final Optional<String> committerOptional =
+                Arrays.stream(commit.split("\\r?\\n"))
+                        .filter(s -> s.startsWith("committer "))
+                        .findFirst();
+        final String committerDate = committerOptional.isPresent()
+            ? extractDateFromCommitterLine(committerOptional.get())
+            : "";
+        final String tagsWithoutSuffix = tags.replaceFirst("\\^0$", "");
+        final boolean modified = !status.isEmpty();
+        return fromGitProperties(tagsWithoutSuffix,
+                hash.substring(0, 12), buildDate,
+                committerDate, modified);
+    }
+    
+    private static String extractDateFromCommitterLine(String line) {
+        final Pattern p =
+                Pattern.compile("^committer .* (\\d+ [+-]\\d\\d\\d\\d$)");
+        final Matcher m = p.matcher(line);
+        return m.matches() ? m.group(1) : "";
+    }
+    
+    private static Version fromGitProperties(String rawTag, String shortHash,
+            String rawBuildDate, String rawCommitterDate, boolean modified) {
         final String versionString =
-                rawTag.startsWith("HEAD tags/version_") && !modified ?
-                rawTag.substring(18) :
-                shortHash + (modified ? " (modified)" : "");
-        
-        String dateString = rawBuildDate +
-                " (date of build; revision date not available)";
+                rawTag.startsWith("HEAD tags/version_") && !modified
+                ? rawTag.substring(18)
+                : shortHash + (modified ? " (modified)" : "");
+
+        String dateString = rawBuildDate
+                + " (date of build; revision date not available)";
         try {
             final ZonedDateTime date = Util.parseGitTimestamp(rawCommitterDate);
-            dateString = date.format(DateTimeFormatter.
-                    ofPattern("yyyy.MM.dd HH:mm 'UTC'").
-                    withZone(ZoneId.of("Z")));
+            dateString = date.format(DateTimeFormatter
+                    .ofPattern("yyyy.MM.dd HH:mm 'UTC'")
+                    .withZone(ZoneId.of("Z")));
         } catch (IllegalArgumentException | DateTimeException e) {
             // Do nothing -- fallback date string will be retained.
         }
-        
+
         return new Version(versionString, dateString,
                 makeYearRange(dateString));
     }
