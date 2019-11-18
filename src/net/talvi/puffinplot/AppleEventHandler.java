@@ -129,11 +129,12 @@ public class AppleEventHandler implements
     public void handleQuitRequestWith(QuitEvent event, QuitResponse response) {
         if (puffinApp != null) {
             puffinApp.quit();
-            // If the quit is successful, PuffinApp will do it with a 
-            // System.exit so we won't get past the call to quit().
-            // If we do get here, it means the quit was aborted by the user
-            // after a warning about unsaved data. In this case, we cancel
-            // the quit.
+            /*
+             * If the quit is successful, PuffinApp will do it with a
+             * System.exit so we won't get past the call to quit(). If we do get
+             * here, it means the quit was aborted by the user after a warning
+             * about unsaved data. In this case, we cancel the quit.
+             */
             response.cancelQuit();
         } else {
             throw new IllegalStateException(

@@ -2,9 +2,9 @@ Archive contents:
 
 PuffinPlot.jar	PuffinPlot program as a jar file
 PuffinPlot.app	PuffinPlot program as a Mac OS X application
-Example-data	Example data files, readable by PuffinPlot
+Examples	Example data files, readable by PuffinPlot
 Manual		User manuals
-JavaDoc		Internal documentation
+Javadoc		Internal documentation
 README		This file
 LICENCE		The licence under which PuffinPlot is distributed
 

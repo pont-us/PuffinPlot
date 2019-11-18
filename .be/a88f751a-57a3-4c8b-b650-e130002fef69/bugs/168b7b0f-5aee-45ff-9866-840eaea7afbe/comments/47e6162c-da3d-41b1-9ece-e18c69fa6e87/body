@@ -1,0 +1,10 @@
+On consideration, the options of course can't be supplied via the
+constructor, because getOptionDefinitions is an instance method. Also,
+plots already have a basic general-purpose options API, in the form of the
+getSetting and getSettingBoolean methods in the PlotParams interface. This
+could be harmonized the the FileLoader options scheme by replacing them
+both with a generalized getOption(String, Object) to be used in
+accordance with a getOptionDefinitions implementation by the plot.
+This would allow getCorrection and the get*axis methods in PlotParams
+to be replaced with options defined by ZPlot.
+

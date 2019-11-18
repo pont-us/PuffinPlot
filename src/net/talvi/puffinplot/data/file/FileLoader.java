@@ -61,7 +61,7 @@ public interface FileLoader {
     }
     
     /**
-     * Check that a set of options is valid for this file loader. The options
+     * Checks that a set of options is valid for this file loader. The options
      * map must be non-null. All required options must be present. No unknown
      * options may be present. Every value must be of the correct class. If any
      * of these checks fail, an {@link IllegalArgumentException} is thrown.

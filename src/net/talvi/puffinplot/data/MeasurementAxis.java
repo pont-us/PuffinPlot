@@ -37,9 +37,12 @@ public enum MeasurementAxis {
     MINUSY(Direction.LEFT),
     /** the inverted z axis */
     MINUSZ(null),
-    /** a virtual axis used in the modified Zijderveld plot, corresponding
-     to the direction of the horizontal component of a data point.
-     @see net.talvi.puffinplot.plots.ZPlot */
+    /**
+     * a virtual axis used in the modified Zijderveld plot, corresponding to the
+     * direction of the horizontal component of a data point.
+     *
+     * @see net.talvi.puffinplot.plots.ZPlot
+     */
     H(null);
     
     private MeasurementAxis opposite;

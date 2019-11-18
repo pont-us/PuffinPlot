@@ -172,7 +172,7 @@
         <property name="release.pathname" value="${basedir}/dist/puffinplot-${release.version}"/>
         <delete dir="${release.pathname}.zip" />
         <zip destfile="${release.pathname}.zip">
-            <zipfileset dir="${basedir}/dist/javadoc" prefix="JavaDoc" />
+            <zipfileset dir="${basedir}/dist/javadoc" prefix="Javadoc" />
             <zipfileset dir="${basedir}/dist/${ant.project.name}.app"
                 prefix="${ant.project.name}.app"
                 excludes="Contents/MacOS/JavaAppLauncher"/>
