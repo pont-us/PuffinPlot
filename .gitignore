@@ -4,3 +4,4 @@
 /dist/
 /lib/
 .be/id-cache
+target/

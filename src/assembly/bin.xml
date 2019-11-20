@@ -1,0 +1,58 @@
+<assembly>
+  <id>bin</id>
+  <formats>
+  <format>zip</format>
+</formats>
+<fileSets>
+  <fileSet>
+    <includes>
+      <include>PuffinPlot.app/**</include>
+    </includes>
+    <directory>target/puffinplot-${pom.version}</directory>
+    <outputDirectory>.</outputDirectory>
+  </fileSet>
+  <fileSet>
+    <includes>
+      <include>manual.pdf</include>
+      <include>manual.html</include>
+      <include>manual.css</include>      
+      <include>figures/*.png</include>
+      <include>figures/*.jpeg</include>
+    </includes>
+    <directory>src/main/latex</directory>
+    <outputDirectory>Manual</outputDirectory>
+  </fileSet>
+  <fileSet>
+    <includes>
+      <include>**</include>
+    </includes>
+    <directory>target/site/apidocs</directory>
+    <outputDirectory>JavaDoc</outputDirectory>
+  </fileSet>
+  <fileSet>
+    <includes>
+      <include>**</include>
+    </includes>
+    <directory>examples</directory>
+    <outputDirectory>Examples</outputDirectory>
+  </fileSet>
+</fileSets>
+<files>
+  <file>
+    <source>target/puffinplot-${pom.version}.jar</source>
+    <fileMode>0755</fileMode>
+    <destName>PuffinPlot.jar</destName>
+    <outputDirectory>.</outputDirectory>
+  </file>
+  <file>
+    <source>src/main/text/release-readme.txt</source>
+    <destName>README</destName>
+    <outputDirectory>.</outputDirectory>
+  </file>
+  <file>
+    <source>LICENCE</source>
+    <destName>LICENCE</destName>
+    <outputDirectory>.</outputDirectory>
+  </file>
+</files>
+</assembly>

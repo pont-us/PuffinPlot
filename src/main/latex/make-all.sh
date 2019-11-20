@@ -40,7 +40,7 @@ inkscape --export-area-page --without-gui \
 # in the manual
 
 pandoc -r markdown-auto_identifiers \
-       ../CHANGES.md \
+       ../../../CHANGES.md \
        -o changes.tex
 
 # Demote and denumber the sections in the changelog
