@@ -94,7 +94,7 @@ public class NrmHistogram extends Plot {
                 cropRectangle(getDimensions(), 270, 200, 50, 250);
         final List<Integer> buckets =
                 new ArrayList<>(Collections.nCopies(nBuckets, 0));
-        for (double nrm: nrms) {
+        for (double nrm : nrms) {
             int bucket = (int) Math.round(nBuckets * (nrm-minimum)/range);
             if (bucket == nBuckets) {
                 bucket--;  // rightmost edge of rightmost bucket
@@ -119,7 +119,6 @@ public class NrmHistogram extends Plot {
         for (int i = 0; i < nBuckets; i++) {
             double xPos = dim.getMinX() + 
                     (((double) i) / (double) nBuckets) * range * hScale;
-            //double yPos = dim.getMaxY() - buckets.get(i) * vScale;
             Rectangle2D r = new Rectangle2D.Double(xPos,
                     dim.getMaxY() - buckets.get(i) * vScale,
                     range * hScale/(double)nBuckets,
@@ -127,7 +126,5 @@ public class NrmHistogram extends Plot {
             graphics.setColor(Color.gray);
             graphics.fill(r);
         }
-
-        //drawPoints(g);
     }
 }

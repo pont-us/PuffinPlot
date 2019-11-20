@@ -41,15 +41,15 @@ import static java.lang.Math.toRadians;
  * @author pont
  */
 public abstract class EqualAreaPlot extends Plot {
-    private static final int decTickStep = 10;
-    private static final int incTickNum = 9;
+    private static final int DEC_TICK_STEP = 10;
+    private static final int INC_TICK_NUM = 9;
     
     /**
      * The graphics object to which the plot is currently being drawn. It is set
      * by {@link #updatePlotDimensions(Graphics2D)} at the start of the drawing
- process, and is then available as a convenience to both EqualAreaPlot and
- its subclasses, as an alternative to explicitly passing the current
- Graphics object around.
+     * process, and is then available as a convenience to both EqualAreaPlot and
+     * its subclasses, as an alternative to explicitly passing the current
+     * Graphics object around.
      */
     protected Graphics2D cachedGraphics;
     
@@ -81,9 +81,9 @@ public abstract class EqualAreaPlot extends Plot {
     }
     
     /**
-     * Sets the fields {@link #cachedGraphics}, {@link #radius}, {@link #xo}, and {@link #yo}
-     * according to the supplied argument and the current plot dimensions. This
-     * method should be called before redrawing the plot.
+     * Sets the fields {@link #cachedGraphics}, {@link #radius}, {@link #xo},
+     * and {@link #yo} according to the supplied argument and the current plot
+     * dimensions. This method should be called before redrawing the plot.
      *
      * @param g the field {@link #cachedGraphics} will be set to this value
      */
@@ -104,7 +104,7 @@ public abstract class EqualAreaPlot extends Plot {
         cachedGraphics.drawArc(xo - radius, yo - radius,
                 radius * 2, radius * 2, 0, 360);
         final double r = radius;
-        for (int theta = 0; theta < 360; theta += decTickStep) {
+        for (int theta = 0; theta < 360; theta += DEC_TICK_STEP) {
             final double x = cos(toRadians(theta));
             final double y = sin(toRadians(theta));
             cachedGraphics.draw(new Line2D.Double(xo + x * r, yo + y * r,
@@ -113,9 +113,9 @@ public abstract class EqualAreaPlot extends Plot {
         }
 
         final double l = getTickLength() / 2.0;
-        for (int i = 0; i < incTickNum; i++) {
+        for (int i = 0; i < INC_TICK_NUM; i++) {
             final Point2D p =  project(Vec3.fromPolarDegrees(
-                    1., 90 - i * (90./(double)incTickNum), 90.));
+                    1., 90 - i * (90./(double)INC_TICK_NUM), 90.));
             final double x = p.getX();
             cachedGraphics.draw(new Line2D.Double(x, yo - l, x, yo + l));
         }
@@ -134,7 +134,7 @@ public abstract class EqualAreaPlot extends Plot {
      * @return a path containing the projected vectors
      */
     protected Path2D.Double vectorsToPath(List<Vec3> vectors) {
-        Path2D.Double path = new Path2D.Double();
+        final Path2D.Double path = new Path2D.Double();
         boolean first = true;
         for (Vec3 v: vectors) {
             assert(v != null);
@@ -182,10 +182,9 @@ public abstract class EqualAreaPlot extends Plot {
      }
 
      private LineCache projectLineSegments(List<Vec3> vs) {
-        final List<List<Vec3>> vss;
-        vss = Vec3.interpolateEquatorPoints(vs);
-        final LineCache lineCache = new LineCache(getStroke(), getDashedStroke());
-        for (List<Vec3> part: vss) {
+        final LineCache lineCache =
+                new LineCache(getStroke(), getDashedStroke());
+        for (List<Vec3> part : Vec3.interpolateEquatorPoints(vs)) {
             projectLineSegments(part, lineCache);
         }
         return lineCache;
@@ -246,16 +245,16 @@ public abstract class EqualAreaPlot extends Plot {
      * @param drawPole {@code true} to mark the pole on the plot
      */
     protected void drawGreatCircle(Vec3 pole, boolean drawPole) {
-        int n = 64;
+        final int n = 64;
         List<Vec3> vs = pole.greatCirclePoints(n, true);
         drawLineSegments(vs);
    }
 
     /**
      * Projects the direction of a three-dimensional vector into plot
-     * co-ordinates. The supplied vector must be well-formed (i.e. its
-     * components must be finite numbers rather than NaN or infinite values).
-       * 
+     * co-ordinates. The supplied vector must be finite (i.e. its components
+     * must be finite numbers rather than NaN or infinite values).
+     *
      * @param v a well-formed vector
      * @return the projection of the supplied vector onto this plot
      */

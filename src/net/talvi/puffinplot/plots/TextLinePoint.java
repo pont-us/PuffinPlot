@@ -62,7 +62,7 @@ class TextLinePoint implements PlotPoint {
         double xPos = 10;
         xMin = plot.getDimensions().getMinX();
         final FontMetrics metrics = graphics.getFontMetrics();
-        for (int i=0; i<values.size(); i++) {
+        for (int i = 0; i < values.size(); i++) {
             final String s = values.get(i);
             final double space = xSpacing.get(i);
             final AttributedString as = new AttributedString(s);
@@ -96,7 +96,7 @@ class TextLinePoint implements PlotPoint {
         }
 
         double x = xMin + 10;
-        for (int i=0; i<strings.size(); i++) {
+        for (int i = 0; i < strings.size(); i++) {
             final AttributedCharacterIterator s = strings.get(i);
             /*
              * Note: TextLayout is more accurate than

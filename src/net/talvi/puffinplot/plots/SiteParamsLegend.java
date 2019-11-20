@@ -94,8 +94,6 @@ public class SiteParamsLegend extends Plot {
             as.addAttribute(TextAttribute.SIZE, getFontSize()+.00001f,
                     position, position+1);
         }
-        final FontRenderContext frc = graphics.getFontRenderContext();
-        // return new TextLayout(as.getIterator(), frc);
         return as.getIterator();
     }
     
@@ -114,12 +112,10 @@ public class SiteParamsLegend extends Plot {
         final FisherParams[] fisherParams =
                 {site.getFisherValues(), site.getGreatCircles()};
         float yPos = 0;
-        for (int i=0; i<fisherParams.length; i++) {
+        for (int i = 0; i < fisherParams.length; i++) {
             FisherParams fp = fisherParams[i];
             if (fp != null) {
                 yPos += getFontSize() * 1.2;
-                //layoutFisherParams(g, PARAM_NAMES[i], fp).
-                //        draw(g, xOrig, yOrig + yPos);
                 g.drawString(layoutFisherParams(g, PARAM_NAMES[i], fp),
                         xOrig, yOrig + yPos);
             }

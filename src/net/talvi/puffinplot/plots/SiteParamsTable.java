@@ -77,11 +77,11 @@ public class SiteParamsTable extends Plot {
     public void draw(Graphics2D graphics) {
         clearPoints();
         final Sample sample = params.getSample();
-        if (sample==null) {
+        if (sample == null) {
             return;
         }
         final Suite suite = sample.getSuite();
-        if (suite==null) {
+        if (suite == null) {
             return;
         }
         final List<Site> sites = suite.getSites();
@@ -94,7 +94,7 @@ public class SiteParamsTable extends Plot {
                 Color.RED : Color.BLACK;
         final int columns = headers.size();
         float yPos = 2 * ySpacing;
-        for (Site site: sites) {
+        for (Site site : sites) {
             if (yPos > getDimensions().getHeight()) {
                 break;
             }

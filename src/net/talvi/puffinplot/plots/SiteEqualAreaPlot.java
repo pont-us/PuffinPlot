@@ -100,7 +100,9 @@ public class SiteEqualAreaPlot extends EqualAreaPlot {
     
     private void drawGreatCircles(Site site) {
         final GreatCircles circles = site.getGreatCircles();
-        if (circles == null) return;
+        if (circles == null) {
+            return;
+        }
         final Vec3 meanDir = circles.getMeanDirection();
         assert(meanDir.isFinite());
         double maxRadius = 0;
@@ -119,14 +121,15 @@ public class SiteEqualAreaPlot extends EqualAreaPlot {
             for (Vec3 p: circle.getPoints()) {
                 ShapePoint.build(this, project(p)).
                         scale(0.8).filled(p.z>=0).build().draw(cachedGraphics);
-                //addPoint(null, project(p), p.z>=0, false, false);
                 final LineCache lineCache =
                         projectGreatCircleSegment(p, pole.nearestOnCircle(p));
                 lineCache.draw(cachedGraphics);
             }
             final Vec3 nearestPoint = pole.nearestOnCircle(meanDir);
             final double thisRadius = Math.abs(meanDir.angleTo(nearestPoint));
-            if (thisRadius > maxRadius) maxRadius = thisRadius;
+            if (thisRadius > maxRadius) {
+                maxRadius = thisRadius;
+            }
             if (true || !gcCache.containsKey(circle)) {
                 final LineCache lineCache =
                         projectGreatCircleSegment(meanDir, nearestPoint);
@@ -138,8 +141,8 @@ public class SiteEqualAreaPlot extends EqualAreaPlot {
             cachedGraphics.setColor(Color.BLACK);
         }
         
-        final PlotPoint meanPoint = ShapePoint.build(this, project(meanDir)).
-                circle().scale(1.5).filled(meanDir.z>0).build();
+        final PlotPoint meanPoint = ShapePoint.build(this, project(meanDir))
+                .circle().scale(1.5).filled(meanDir.z>0).build();
         meanPoint.draw(cachedGraphics);
         if (!(Double.isNaN(circles.getA95()) ||
                 Double.isInfinite(circles.getA95()))) {
@@ -150,7 +153,7 @@ public class SiteEqualAreaPlot extends EqualAreaPlot {
                         Vec3.interpolateEquatorPoints(smallCircle);
                 drawLineSegments(smallCircle);
                 gcsLineCache = new LineCache(getStroke(), getDashedStroke());
-                for (List<Vec3> part: segments) {
+                for (List<Vec3> part : segments) {
                     projectLineSegments(part, gcsLineCache);
                 }
                 gcsCache = circles;
@@ -179,13 +182,13 @@ public class SiteEqualAreaPlot extends EqualAreaPlot {
         }
         
         final List<Vec3> sampleDirs = new ArrayList<>(samples.size());
-        for (Sample sample: samples) {
+        for (Sample sample : samples) {
             if (sample.getDirection() != null) {
                 final Vec3 v = sample.getDirection();
                 sampleDirs.add(v);
                 final PlotPoint point =
-                        ShapePoint.build(this, project(v)).
-                        diamond().filled(v.z>0).build();
+                        ShapePoint.build(this, project(v))
+                        .diamond().filled(v.z > 0).build();
                 cachedGraphics.setColor(sample == params.getSample() ?
                         getHighlightColour() : Color.BLACK);
                 point.draw(cachedGraphics);
@@ -221,7 +224,7 @@ public class SiteEqualAreaPlot extends EqualAreaPlot {
                             meanDir.makeSmallCircle(fisherMean.getA95());
                     final List<List<Vec3>> segments =
                             Vec3.interpolateEquatorPoints(smallCircle);
-                    for (List<Vec3> part: segments) {
+                    for (List<Vec3> part : segments) {
                         projectLineSegments(part, fisherLineCache);
                     }
                 }
@@ -237,7 +240,7 @@ public class SiteEqualAreaPlot extends EqualAreaPlot {
         drawAxes();
         clearPoints();
         final Sample sample = params.getSample();
-        if (sample==null) {
+        if (sample == null) {
             return;
         }
         final Site site = sample.getSite();

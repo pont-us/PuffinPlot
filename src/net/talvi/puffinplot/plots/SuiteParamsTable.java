@@ -37,8 +37,8 @@ public class SuiteParamsTable extends Plot {
 
     private final double us = getUnitSize();
     private final List<Double> xSpacing =
-            Arrays.asList(600*us, 400*us, 400*us, 400*us,
-                    400*us, 350*us, 550*us);
+            Arrays.asList(600 * us, 400 * us, 400 * us, 400 * us,
+                    400 * us, 350 * us, 550 * us);
     private final int ySpacing = (int) (120 * getUnitSize());
     private final List<String> headers = 
             Arrays.asList(new String[] {"Param", "dec/φ", "inc/λ", "α95",
@@ -80,11 +80,17 @@ public class SuiteParamsTable extends Plot {
     public void draw(Graphics2D g) {
         clearPoints();
         final Sample sample = params.getSample();
-        if (sample==null) return;
+        if (sample == null) {
+            return;
+        }
         final Suite suite = sample.getSuite();
-        if (suite==null) return;
+        if (suite == null) {
+            return;
+        }
         final SuiteCalcs suiteCalcs = suite.getSuiteMeans();
-        if (suiteCalcs==null) return;
+        if (suiteCalcs == null) {
+            return;
+        }
         
         points.add(new TextLinePoint(this, g, 10, null, null, headers,
                 xSpacing, Color.BLACK));
@@ -92,21 +98,21 @@ public class SuiteParamsTable extends Plot {
         final int columns = headers.size();
         float yPos = 2 * ySpacing;
 
-        for (int type=0; type<2; type++) {
-            for (int grouping=0; grouping<2; grouping++) {
+        for (int type = 0; type < 2; type++) {
+            for (int grouping = 0; grouping < 2; grouping++) {
                 final SuiteCalcs.Means means;
-                if (type==0 /* direction */) {
-                    means = grouping==0 ?
+                if (type == 0 /* direction */) {
+                    means = grouping == 0 ?
                             suiteCalcs.getDirsBySite() :
                             suiteCalcs.getDirsBySample();
                 } else /* VGP */ {
-                    means = grouping==0 ?
+                    means = grouping == 0 ?
                             suiteCalcs.getVgpsBySite() :
                             suiteCalcs.getVgpsBySample();
                 }
                 final List<String> values = new ArrayList<>(columns);
                 values.addAll(Collections.nCopies(columns, "--"));
-                values.set(0, (grouping==0 ? "Site " : "Sample ") +
+                values.set(0, (grouping == 0 ? "Site " : "Sample ") +
                         (type==0 ? "dir" : "VGP"));
                 
                 if (means != null && means.getAll() != null &&

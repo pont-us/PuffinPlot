@@ -74,8 +74,8 @@ public class TernaryPlot extends Plot {
     private static Point2D.Double projectNormalized(double a, double b,
             double xo, double yo, double scale) {
         final double y = yo - a * scale;
-        final double w = (2/sqrt(3) - a);
-        final double x = xo + ((a/2) * (2/sqrt(3))  + w * b) * scale;
+        final double w = (2 / sqrt(3) - a);
+        final double x = xo + ((a / 2) * (2 / sqrt(3)) + w * b) * scale;
         return new Point2D.Double(x, y);
     }
 
@@ -104,9 +104,11 @@ public class TernaryPlot extends Plot {
         drawAxes(g);
         final Rectangle2D dims = getDimensions();
         double h = dims.getWidth() * (sqrt(3)/2);
-        Sample sample = params.getSample();
-        if (sample==null) return;
-        for (TreatmentStep step: sample.getTreatmentSteps()) {
+        final Sample sample = params.getSample();
+        if (sample == null) {
+            return;
+        }
+        for (TreatmentStep step : sample.getTreatmentSteps()) {
             final Vec3 v = step.getMoment(params.getCorrection());
             addPoint(step, projectThreeValues(v.x, v.y, v.z,
                     dims.getMinX(), dims.getMaxY(), h), false, false, true);

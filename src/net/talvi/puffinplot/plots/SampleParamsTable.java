@@ -81,7 +81,7 @@ public class SampleParamsTable extends Plot {
     public void draw(Graphics2D graphics) {
         clearPoints();
         final Sample selectedSample = params.getSample();
-        if (selectedSample==null) {
+        if (selectedSample == null) {
             return;
         }
         
@@ -99,7 +99,7 @@ public class SampleParamsTable extends Plot {
                 Color.RED : Color.BLACK;
         
         float yPos = 2 * ySpacing;
-        for (Sample sample: samples) {
+        for (Sample sample : samples) {
             if (yPos > getDimensions().getHeight()) {
                 break;
             }

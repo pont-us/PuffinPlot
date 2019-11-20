@@ -81,7 +81,9 @@ public class SampleParamsLegend extends Plot {
     @Override
     public void draw(Graphics2D g) {
         final Sample sample = params.getSample();
-        if (sample==null) return;
+        if (sample == null) {
+            return;
+        }
        
         final List<String> strings = new ArrayList<>(10);
         
@@ -121,7 +123,7 @@ public class SampleParamsLegend extends Plot {
         if (!strings.isEmpty()) {
             g.setColor(Color.BLACK);
             final Rectangle2D dims = getDimensions();
-            for (int i=0; i<strings.size(); i++) {
+            for (int i = 0; i < strings.size(); i++) {
               writeString(g, strings.get(i),
                       (int) dims.getMinX(),
                       (int) (dims.getMinY() + (i+1) * getFontSize() * 1.2));
