@@ -380,7 +380,7 @@
           <version>2.2.1</version>
           <configuration>
             <descriptor>src/assembly/bin.xml</descriptor>
-	    <finalname>puffinplot-${pom.version}</finalname>
+	    <finalname>puffinplot-${project.version}</finalname>
           </configuration>
           <executions>
             <execution>

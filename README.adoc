@@ -1,0 +1,79 @@
+= PuffinPlot development notes
+
+PuffinPlot is a program for palaeomagnetic data plotting and analysis,
+written by Pontus Lurcock. This readme describes the requirements for
+building PuffinPlot and its documentation from source, and is intended
+for developers rather than users. Users are advised to download the
+latest PuffinPlot release from the project website at
+http://talvi.net/puffinplot/ and consult the included user manual.
+
+== Building PuffinPlot
+
+PuffinPlot is structured as a Maven project, and can be built by running
+`mvn package` in the root directory. Most dependencies will be automatically
+downloaded and installed by Maven, but the manual is written in LaTeX and
+therefore requires manual installation of some additional tools and libraries.
+
+PuffinPlot is currently developed mainly in
+https://netbeans.apache.org/[Apache Netbeans], and the `nbactions.xml` file
+provides some NetBeans-specific Maven actions, but development is not tied
+to any specific IDE. In particular, PuffinPlot's Swing GUI does not make use of
+the NetBeans Matisse GUI designer.
+
+PuffinPlot can optionally make use of Jython; the required Jython package can be
+dynamically downloaded, installed, and used by PuffinPlot at runtime, but it is
+not a build-time dependency.
+
+=== Dependencies: user manual
+
+The manual is typeset as PDF and HTML using LaTeX. Some PDF and PNG
+figures for the manual are automatically generated from SVG sources
+using Inkscape when the manual is built.
+
+On most Debian-based operating systems, all the TeX dependencies should
+be installable with the command
+
+----
+sudo apt install tex4ht texlive-fonts-extra texlive-fonts-recommended texlive-latex-base texlive-latex-extra texlive-latex-recommended inkscape
+----
+
+The following programs and packages are required to build the manual. For each
+program or package name, the name of the Debian package containing it is
+also given.
+
+==== Programs
+
+* pdflatex : texlive-latex-base
+* htlatex : tex4ht
+* inkscape : inkscape
+* pandoc : pandoc
+
+==== TeX Packages
+
+* babel : texlive-latex-base
+* geometry : texlive-latex-base
+* ifpdf : texlive-latex-base
+* calc : texlive-latex-base
+* fontenc : texlive-latex-base
+* mathdesign : texlive-fonts-extra
+* natbib : texlive-latex-base
+* inputenc : texlive-latex-base
+* url : texlive-latex-recommended
+* graphicx : texlive-latex-base
+* placeins : texlive-latex-extra
+* booktabs : texlive-latex-recommended
+* listings : texlive-latex-recommended
+* textcase : texlive-latex-recommended
+* color : texlive-latex-base
+* textcomp : texlive-latex-base
+* hyperref : texlive-latex-base
+
+==== Fonts
+
+* Bitstream Charter : texlive-fonts-recommended
+
+== Bug tracking
+
+PuffinPlot uses the Bugs Everywhere bug-tracking system; the bug
+database lives within the repository itself, in the `.be` folder. Bugs
+Everywhere is available from http://www.bugseverywhere.org/ .
