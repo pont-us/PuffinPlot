@@ -100,14 +100,16 @@ public class Vec3 {
      * to the declination.
      *
      * @param angle the angle in radians to add to the declination
+     *              (must be finite)
      * @return a new vector equal to this vector with the specified angle added
      * to the declination
      */
     public Vec3 addDecRad(double angle) {
+        requireFinite(angle, "angle");
         final double[][] matrix =
-        {{ cos(angle), -sin(angle), 0},
-         { sin(angle), cos(angle),  0},
-         { 0,          0,           1}};
+            {{ cos(angle), -sin(angle), 0},
+             { sin(angle), cos(angle),  0},
+             { 0,          0,           1}};
         return transform(matrix);
     }
     
@@ -116,14 +118,16 @@ public class Vec3 {
      * to the inclination.
      *
      * @param angle the angle in radians to add to the inclination
+     *              (must be finite)
      * @return a new vector equal to this vector with the specified angle added
      * to the inclination
      */
     public Vec3 addIncRad(double angle) {
+        requireFinite(angle, "angle");
         final double sini = -sin(angle);
-        final double sind = y/sqrt(y*y+x*x); // sine of -declination
+        final double sind = y / sqrt(y * y + x * x); // sine of -declination
         final double cosi = cos(angle);
-        final double cosd = x/sqrt(y*y+x*x); // cosine of -declination
+        final double cosd = x / sqrt(y * y + x * x); // cosine of -declination
         
         double[][] matrix =
             {{cosd*cosi*cosd+sind*sind, cosi*sind*cosd-sind*cosd, sini*cosd},
@@ -159,22 +163,19 @@ public class Vec3 {
     /**
      * Returns the unit vector on the intersection of the equator (z=0 line)
      * and the great circle between the supplied points. The supplied 
-     * vectors must be finite. and in opposite hemispheres.
+     * vectors must be finite and in opposite hemispheres.
      * 
-     * @param v0 a vector specifying a direction
-     * @param v1 a vector specifying a direction
+     * @param v0 a non-null, finite vector specifying a direction
+     * @param v1 a non-null, finite vector specifying a direction
      * @return a unit vector {@code v} for which {@code v.z==0}, which lies
      * on the shortest great-circle path between the normalizations of
      * {@code v0} and {@code v1}
      */
     public static Vec3 equatorPoint(Vec3 v0, Vec3 v1) {
-        if (!v0.isFinite()) {
-            throw new IllegalArgumentException("v0 is not finite.");
-        }
-        if (!v1.isFinite()) {
-            throw new IllegalArgumentException("v1 is not finite.");
-        }
-        if ((v0.z>0 && v1.z>0) || (v0.z<0 && v1.z<0)) {
+        requireNonNullAndFinite(v0, "v0");
+        requireNonNullAndFinite(v1, "v1");
+
+        if ((v0.z > 0 && v1.z > 0) || (v0.z < 0 && v1.z < 0)) {
             throw new IllegalArgumentException(
                     "Vectors must be in opposite hemispheres.");
         }
@@ -380,7 +381,14 @@ public class Vec3 {
                     "%s = %s is not finite", name, v.toString()));
         }
     }
-    
+
+    private static void requireFinite(Double d, String name) {
+        if (!Double.isFinite(d)) {
+            throw new IllegalArgumentException(String.format(
+                    "%s = %s is not finite", name, Double.toString(d)));
+        }
+    }
+
     private static List<Vec3> concatenateWithoutCentre(List<Vec3> list0,
             List<Vec3> list1) {
         final List<Vec3> combined =
@@ -461,15 +469,16 @@ public class Vec3 {
     /**
      * Rotates this vector about the y axis.
      *
-     * @param angle an angle in radians
+     * @param angle a finite angle in radians
      * @return a new vector equal to this vector rotated {@code angle} radians
      * about the y axis
      */
     public Vec3 rotY(double angle) {
+        requireFinite(angle, "angle");
         final double[][] m =
-         {{  cos(angle),  0, sin(angle) },
-          {           0,  1,          0 },
-          { -sin(angle),  0, cos(angle) }};
+            {{  cos(angle),  0, sin(angle) },
+             {           0,  1,          0 },
+             { -sin(angle),  0, cos(angle) }};
         return transform(m);
     }
     
@@ -480,11 +489,12 @@ public class Vec3 {
      * 0, -∞). For example, {@code rotZ(π/2)} called on the eastward-pointing
      * vector (0, 1, 0) would produce the southward-pointing vector (-1, 0, 0).
      *
-     * @param angle an angle in radians
+     * @param angle a finite angle in radians
      * @return a new vector equal to this vector rotated {@code angle} radians
      * about the z axis
      */
     public Vec3 rotZ(double angle) {
+        requireFinite(angle, "angle");
         return transform(getZRotationMatrix(angle));
     }
     
@@ -496,10 +506,11 @@ public class Vec3 {
      * applied to the eastward-pointing vector (0, 1, 0) would produce
      * the southward-pointing vector (-1, 0, 0).
      *
-     * @param angle an angle in radians
+     * @param angle a finite angle in radians
      * @return a matrix which rotates {@code angle} radians about the z axis
      */
     public static double[][] getZRotationMatrix(double angle) {
+        requireFinite(angle, "angle");
         return new double[][]
             {{ cos(angle), -sin(angle),  0 },
             {  sin(angle),  cos(angle),  0 },
@@ -509,16 +520,18 @@ public class Vec3 {
     /**
      * Returns a matrix to correct a vector for a given sample orientation.
      *
-     * @param az the sample dip azimuth in radians
-     * @param dip the sample dip angle in radians
+     * @param az the sample dip azimuth in radians (must be finite)
+     * @param dip the sample dip angle in radians (must be finite)
      * @return a matrix to transform vectors from sample co-ordinates to
      * geographic co-ordinates
      */
     public static double[][] getSampleCorrectionMatrix(double az, double dip) {
+        requireFinite(az, "az");
+        requireFinite(dip, "dip");
         final double[][] matrix =
-        {{ sin(dip)*cos(az) , -sin(az) , cos(dip)*cos(az)  },
-         { sin(dip)*sin(az) ,  cos(az) , cos(dip)*sin(az)  },
-         { -cos(dip)        , 0        , sin(dip)          }};
+            {{ sin(dip)*cos(az) , -sin(az) , cos(dip)*cos(az)  },
+             { sin(dip)*sin(az) ,  cos(az) , cos(dip)*sin(az)  },
+             { -cos(dip)        , 0        , sin(dip)          }};
         return matrix;
     }
 
@@ -526,12 +539,14 @@ public class Vec3 {
      * Applies a sample correction to this vector. This transforms the data from
      * sample (laboratory) co-ordinates to geographic (field) co-ordinates.
      *
-     * @param az the sample dip azimuth in radians
-     * @param dip the sample dip angle in radians
+     * @param az the sample dip azimuth in radians (must be finite)
+     * @param dip the sample dip angle in radians (must be finite)
      * @return this vector, transformed from sample co-ordinates to geographic
      * co-ordinates
      */
     public Vec3 correctSample(double az, double dip) {
+        requireFinite(az, "az");
+        requireFinite(dip, "dip");
         return transform(Vec3.getSampleCorrectionMatrix(az, dip));
     }
     
@@ -539,12 +554,14 @@ public class Vec3 {
      * Applies a sample correction to this vector. This transforms the data from
      * geographic (field) co-ordinates to tectonic (pre-tilting) co-ordinates.
      *
-     * @param az the formation dip azimuth in radians
-     * @param dip the formation dip angle in radians
+     * @param az the formation dip azimuth in radians (must be finite)
+     * @param dip the formation dip angle in radians (must be finite)
      * @return this vector, transformed from geographic co-ordinates to tectonic
      * co-ordinates
      */
     public Vec3 correctForm(double az, double dip) {
+        requireFinite(az, "az");
+        requireFinite(dip, "dip");
     /*
      * We can derive a matrix for the formation correction in three
      * steps:
@@ -584,37 +601,44 @@ public class Vec3 {
      * Returns a list of equally spaced points around a great circle having this
      * vector as its pole. Assumes that this is a unit vector.
      *
-     * @param n number of points to return
+     * @param n number of points to return (must be >0)
      * @param closed if true, first point will also be appended to end of list,
      * giving n+1 points, but only n unique ones, creating a closed circle.
      * @return list of points on great circle
      */
     public List<Vec3> greatCirclePoints(int n, boolean closed) {
-        final List<Vec3> points = new ArrayList<>(n+1);
-        for (int i=0; i<n; i++) {
-            points.add(correctTilt(Vec3.fromPolarRadians(1, 0, 2*PI*i/n)));
+        if (n < 1) {
+            throw new IllegalArgumentException(
+                    String.format("n must be >0 (supplied value: %d", n));
         }
-        if (closed) points.add(points.get(0));
+        final List<Vec3> points = new ArrayList<>(n+1);
+        for (int i = 0; i < n; i++) {
+            points.add(correctTilt(Vec3.fromPolarRadians(
+                    1, 0, 2 * PI * i / n)));
+        }
+        if (closed) {
+            points.add(points.get(0));
+        }
         return points;
     }
     
-    /*
+    /**
      * Rotates the supplied vector by the same rotation which would
      * rotate the DOWN vector to align with this vector (i.e. the
      * enclosing vector of the method). This is a private helper method
      * for greatCirclePoints, so has not been extensively tested with
      * arbitrary data.
      *
-     * @param v vector to rotate
+     * @param v vector to rotate (non-null and finite)
      * @return rotated vector
      */
     private Vec3 correctTilt(Vec3 v) {
-        assert(v.isFinite());
+        requireNonNullAndFinite(v, "v");
         final double d = sqrt(x*x + y*y);
         Vec3 result;
-        if (d==0) {
+        if (d == 0) {
             // Vector is purely vertical
-            if (z<0) {
+            if (z < 0) {
                 // This vector is already pointing down: no rotation needed.
                 result = v;
             } else {
@@ -626,31 +650,41 @@ public class Vec3 {
                 result = v.rot180(MeasurementAxis.X);
             }
         } else {
-            result = v.correctPlane(d, y/d, z, x/d);
+            result = v.correctPlane(d, y / d, z, x / d);
         }
         assert(result.isFinite());
         return result;
     }
     
     private Vec3 correctPlane(double sd, double sa, double cd, double ca) {
+        requireFinite(sd, "sd");
+        requireFinite(sa, "sa");
+        requireFinite(cd, "cd");
+        requireFinite(ca, "ca");
         return transform(Vec3.getPlaneCorrectionMatrix(sd, sa, cd, ca));
     }
 
     /**
      * Returns a matrix to correct a vector for a given formation orientation.
      *
-     * @param az the formation dip azimuth in radians
-     * @param dip the formation dip angle in radians
+     * @param az the formation dip azimuth in radians (must be finite)
+     * @param dip the formation dip angle in radians (must be finite)
      * @return a matrix to transform vectors from geographic co-ordinates to
      * tectonic co-ordinates
      */
     public static double[][] getFormationCorrectionMatrix(double az,
             double dip) {
+        requireFinite(az, "az");
+        requireFinite(dip, "dip");
         return getPlaneCorrectionMatrix(sin(dip), sin(az), cos(dip), cos(az));
     }
 
     private static double[][] getPlaneCorrectionMatrix(double sd, double sa,
             double cd, double ca) {
+        requireFinite(sd, "sd");
+        requireFinite(sa, "sa");
+        requireFinite(cd, "cd");
+        requireFinite(ca, "ca");
         final double[][] matrix =
             {{ ca*cd*ca+sa*sa,  cd*sa*ca-sa*ca, sd*ca},
             {  sa*cd*ca-ca*sa,  cd*sa*sa+ca*ca, sd*sa},
@@ -860,9 +894,10 @@ public class Vec3 {
      * @return the orientation tensor of this vector
      */
     public Matrix oTensor() {
-        return new Matrix(new double[][]{{x * x, x * y, x * z},
-            {y * x, y * y, y * z},
-            {z * x, z * y, z * z}});
+        return new Matrix(new double[][]
+                {{x * x, x * y, x * z},
+                 {y * x, y * y, y * z},
+                 {z * x, z * y, z * z}});
     }
 
     /**
@@ -876,8 +911,12 @@ public class Vec3 {
         // Uses a cross product to get a signed angle.
         final Vec3 cross = cross(v);
         double sign = cross.z;
-        if (sign == 0) sign = cross.y;
-        if (sign == 0) sign = cross.x;
+        if (sign == 0) {
+            sign = cross.y;
+        }
+        if (sign == 0) {
+            sign = cross.x;
+        }
         double magnitude = cross.mag();
         if (magnitude > 1) {
             /*
@@ -1015,7 +1054,7 @@ public class Vec3 {
      */
     public static Vec3 sum(Collection<Vec3> vectors) {
         double xs = 0, ys = 0, zs = 0;
-        for (Vec3 p: vectors) {
+        for (Vec3 p : vectors) {
             xs += p.x;
             ys += p.y;
             zs += p.z;
@@ -1032,8 +1071,7 @@ public class Vec3 {
     public static Vec3 meanDirection(Collection<Vec3> points) {
         return sum(points).normalize();
     }
-    
-    
+
     /**
      * Returns the mean of a collection of vectors.
      *
@@ -1153,8 +1191,8 @@ public class Vec3 {
                     theta + etaDirTop.getDecRad());
 
             // Check whether to skip this point.
-            if (vPrev==null || abs(vPrev.angleTo(vUnrot)) > stepLimit ||
-                        (theta - thetaPrev) > thetaLimit) {
+            if (vPrev == null || abs(vPrev.angleTo(vUnrot)) > stepLimit ||
+                    (theta - thetaPrev) > thetaLimit) {
                 // Rotate the point into position.
                 Vec3 vRotated = vUnrot.rotZ(-centre.getDecRad()).
                         rotY(PI / 2. - centre.getIncRad()).
@@ -1264,7 +1302,7 @@ public class Vec3 {
     public boolean equals(Vec3 v, double precision) {
         final double mag0 = mag();
         final double mag1 = v.mag();
-        if (mag0==0 && mag1==0) {
+        if (mag0 == 0 && mag1 == 0) {
             return true;
         }
         final double delta = Double.max(mag0, mag1) * precision;
