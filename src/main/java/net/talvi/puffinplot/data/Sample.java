@@ -264,7 +264,7 @@ public class Sample {
      */
     public void hideAndDeselectSelectedPoints() {
         touch();
-        for (TreatmentStep step: getTreatmentSteps()) {
+        for (TreatmentStep step : getTreatmentSteps()) {
             if (step.isSelected()) {
                 step.setSelected(false);
                 step.setHidden(true);
@@ -290,7 +290,7 @@ public class Sample {
      */
     public void selectVisible() {
         touch();
-        for (TreatmentStep step: getTreatmentSteps()) {
+        for (TreatmentStep step : getTreatmentSteps()) {
             if (!step.isHidden()) {
                 step.setSelected(true);
             }
@@ -687,8 +687,10 @@ public class Sample {
      */
     public List<Vec3> getCirclePoints(Correction correction) {
         final List<Vec3> result = new ArrayList<>(getTreatmentSteps().size());
-        for (TreatmentStep step: getTreatmentSteps()) {
-            if (step.isOnCircle()) result.add(step.getMoment(correction));
+        for (TreatmentStep step : getTreatmentSteps()) {
+            if (step.isOnCircle()) {
+                result.add(step.getMoment(correction));
+            }
         }
         return result;
     }
@@ -1249,7 +1251,7 @@ public class Sample {
                         field.name());
                 break;
         }
-        for (TreatmentStep step: getTreatmentSteps()) {
+        for (TreatmentStep step : getTreatmentSteps()) {
             step.setValue(field, value, 1);
         }
     }
@@ -1273,7 +1275,7 @@ public class Sample {
     public void calculateFisher(Correction correction) {
         final List<TreatmentStep> selection = getSelectedTreatmentSteps();
         final List<Vec3> directions = new ArrayList<>(selection.size());
-        for (TreatmentStep step: selection) {
+        for (TreatmentStep step : selection) {
             directions.add(step.getMoment(correction));
         }
         fisherValues = FisherValues.calculate(directions);
@@ -1364,7 +1366,7 @@ public class Sample {
     public Set<TreatmentStep> mergeDuplicateTreatmentSteps() {
         final Map<TreatmentTypeAndLevel, List<TreatmentStep>> treatmentMap =
                 new HashMap<>();
-        for (TreatmentStep step: this.getTreatmentSteps()) {
+        for (TreatmentStep step : this.getTreatmentSteps()) {
             final TreatmentTypeAndLevel key = new TreatmentTypeAndLevel(step);
             if (!treatmentMap.containsKey(key)) {
                 treatmentMap.put(key, new ArrayList<>());
@@ -1376,7 +1378,7 @@ public class Sample {
          * needlessly creating a new object.
          */
         boolean anyMergables = false;
-        for (List<TreatmentStep> steps: treatmentMap.values()) {
+        for (List<TreatmentStep> steps : treatmentMap.values()) {
             if (steps.size() > 1) {
                 anyMergables = true;
                 break;
@@ -1386,7 +1388,7 @@ public class Sample {
             return Collections.emptySet();
         }
         final Set<TreatmentStep> toRemove = new HashSet<>(treatmentMap.size());
-        for (TreatmentStep step: this.getTreatmentSteps()) {
+        for (TreatmentStep step : this.getTreatmentSteps()) {
             final List<TreatmentStep> duplicates =
                     treatmentMap.get(new TreatmentTypeAndLevel(step));
             if (duplicates.get(0) == step) {
@@ -1413,7 +1415,7 @@ public class Sample {
             return;
         }
         final Sample firstSample = samples.get(0);
-        for (Sample sample: samples.subList(1, samples.size())) {
+        for (Sample sample : samples.subList(1, samples.size())) {
             sample.getTreatmentSteps().
                     forEach(step -> firstSample.addTreatmentStep(step));
         }

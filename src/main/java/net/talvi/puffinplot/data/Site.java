@@ -87,7 +87,7 @@ public class Site implements SampleGroup {
     public void calculateFisherStats(Correction correction) {
         final Collection<Vec3> directions =
                 new ArrayList<>(getSamples().size());
-        for (Sample sample: getSamples()) {
+        for (Sample sample : getSamples()) {
             sample.doPca(correction);
             if (sample.getDirection() != null) {
                 directions.add(sample.getDirection());
@@ -134,7 +134,7 @@ public class Site implements SampleGroup {
             String validityCondition) {
         final List<Vec3> endpoints = new LinkedList<>();
         final LinkedList<GreatCircle> circles = new LinkedList<>();
-        for (Sample sample: getSamples()) {
+        for (Sample sample : getSamples()) {
             /*
              * We assume that if there's a great circle then it should be used
              * (and that if a PCA fit is present for the same site, it's not
@@ -251,7 +251,7 @@ public class Site implements SampleGroup {
     public List<String> getGreatCircleLimitStrings() {
         final List<Double> firsts = new ArrayList<>(samples.size());
         final List<Double> lasts = new ArrayList<>(samples.size());
-        for (Sample sample: samples) {
+        for (Sample sample : samples) {
             final double first = sample.getFirstGcStepLevel();
             if (first != -1) {
                 firsts.add(first);
@@ -273,7 +273,7 @@ public class Site implements SampleGroup {
     }
 
     void addSample(Sample sample) {
-        if (sample==null) {
+        if (sample == null) {
             logger.warning("null sample passed to Site.addSample.");
             return;
         }
@@ -284,7 +284,7 @@ public class Site implements SampleGroup {
     }
     
     void removeSample(Sample sample) {
-        if (sample==null) {
+        if (sample == null) {
             logger.warning("null sample passed to Site.removeSample.");
             return;
         }

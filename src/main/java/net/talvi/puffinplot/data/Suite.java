@@ -74,14 +74,13 @@ public final class Suite implements SampleGroup {
     private LinkedHashMap<String, Sample> samplesById =
             new LinkedHashMap<>(); // name or depth as appropriate
     private HashMap<Sample, Integer> indicesBySample; // maps sample to index
-    private final Map<Integer, Line> dataByLine = new HashMap<>();
     private int currentSampleIndex = -1;
     private MeasurementType measurementType = MeasurementType.UNSET;
     private String name;
     private List<Sample> emptyTraySamples;
     private SuiteCalcs suiteCalcs;
     private boolean hasUnknownTreatType = false;
-    private static final Logger logger =
+    private static final Logger LOGGER =
             Logger.getLogger("net.talvi.puffinplot");
     private CustomFlagNames customFlagNames =
             new CustomFlagNames(Collections.<String>emptyList());
@@ -92,7 +91,7 @@ public final class Suite implements SampleGroup {
     private boolean saved = true;
     private Date creationDate;
     private FileType originalFileType = FileType.UNKNOWN;
-    private static final DateFormat iso8601format =
+    private static final DateFormat ISO_8601_FORMAT =
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
     private Date modificationDate;
     private final String suiteCreator;
@@ -108,7 +107,7 @@ public final class Suite implements SampleGroup {
      */
     public void updateReverseIndex() {
         indicesBySample = new HashMap<>(getNumSamples());
-        for (int i=0; i<samples.size(); i++) {
+        for (int i = 0; i < samples.size(); i++) {
             indicesBySample.put(samples.get(i), i);
         }
     }
@@ -129,20 +128,20 @@ public final class Suite implements SampleGroup {
     private static SuiteCalcs doCalculateSuiteMeans(List<Sample> selSamples,
             List<Site> selSites) {
         final List<Vec3> sampleDirs = new ArrayList<>(selSamples.size());
-        for (Sample sample: selSamples) {
+        for (Sample sample : selSamples) {
             if (sample.getDirection() != null) {
                 sampleDirs.add(sample.getDirection());
             }
         }
         final List<Vec3> siteDirs = new ArrayList<>(selSamples.size());
-        for (Site site: selSites) {
+        for (Site site : selSites) {
             final FisherParams fp = site.getFisherParams();
             if (fp != null) {
                 siteDirs.add(fp.getMeanDirection());
             }
         }
         final List<Vec3> sampleVgps = new ArrayList<>(selSamples.size());
-        for (Sample sample: selSamples) {
+        for (Sample sample : selSamples) {
             if (sample.getSite() != null &&
                     sample.getSite().getLocation() != null &&
                     sample.getDirection() != null &&
@@ -153,7 +152,7 @@ public final class Suite implements SampleGroup {
             }
         }
         final List<Vec3> siteVgps = new ArrayList<>(selSamples.size());
-        for (Site site: selSites) {
+        for (Site site : selSites) {
             if (site.getVgp() != null) {
                 siteVgps.add(site.getVgp().getLocation().toVec3());
             }
@@ -176,7 +175,7 @@ public final class Suite implements SampleGroup {
     public static SuiteCalcs calculateMultiSuiteMeans(List<Suite> suites) {
         final List<Sample> selSamps = new ArrayList<>();
         final List<Site> selSites = new ArrayList<>();
-        for (Suite suite: suites) {
+        for (Suite suite : suites) {
             selSamps.addAll(suite.getSamples());
             selSites.addAll(suite.getSites());
         }
@@ -193,8 +192,8 @@ public final class Suite implements SampleGroup {
     public static List<FisherValues> doReversalTest(List<Suite> suites) {
         final List<Vec3> normal = new ArrayList<>(),
                 reversed = new ArrayList<>();
-        for (Suite suite: suites) {
-            for (Sample sample: suite.getSamples()) {
+        for (Suite suite : suites) {
+            for (Sample sample : suite.getSamples()) {
                 final Vec3 vector = sample.getDirection();
                 if (vector != null) {
                     (vector.z > 0 ? normal : reversed).add(vector);
@@ -225,7 +224,7 @@ public final class Suite implements SampleGroup {
      */
     public void calculateSiteFishers(Correction correction) {
         setSaved(false);
-        for (Site site: getSites()) {
+        for (Site site : getSites()) {
             site.calculateFisherStats(correction);
         }
     }
@@ -238,7 +237,7 @@ public final class Suite implements SampleGroup {
      */
     public List<FisherValues> getSiteFishers() {
         final List<FisherValues> result = new ArrayList<>(getSites().size());
-        for (Site site: getSites()) {
+        for (Site site : getSites()) {
             if (site.getFisherValues() != null) {
                 result.add(site.getFisherValues());
             }
@@ -370,10 +369,12 @@ public final class Suite implements SampleGroup {
 
     private List<File> expandDirs(List<File> files) {
         final List<File> result = new ArrayList<>();
-        for (File file: files) {
-            if (file.isDirectory())
+        for (File file : files) {
+            if (file.isDirectory()) {
                 result.addAll(expandDirs(Arrays.asList(file.listFiles())));
-            else result.add(file);
+            } else {
+                result.add(file);
+            }
         }
         Collections.sort(result);
         return result;
@@ -391,7 +392,7 @@ public final class Suite implements SampleGroup {
      */
     public void doSampleCalculations(Correction correction) {
         setSaved(false);
-        for (Sample sample: getSamples()) {
+        for (Sample sample : getSamples()) {
             sample.doPca(correction);
             sample.fitGreatCircle(correction);
             sample.calculateMagSusJump();
@@ -417,7 +418,7 @@ public final class Suite implements SampleGroup {
         setSaved(false);
         // TODO we can use getSites for this now!
         final Set<Site> sitesDone = new HashSet<>();
-        for (Sample sample: getSamples()) {
+        for (Sample sample : getSamples()) {
             final Site site = sample.getSite();
             if (site == null) {
                 continue;
@@ -620,7 +621,7 @@ public final class Suite implements SampleGroup {
                 if (dataIsOk) {
                     tempDataList.ensureCapacity(tempDataList.size() +
                             loadedSteps.size());
-                    for (TreatmentStep step: loadedSteps) {
+                    for (TreatmentStep step : loadedSteps) {
                         // TODO: check for matching measurement type here
                         if (!step.ignoreOnLoading()) addTreatmentStep(step);
                     }
@@ -684,7 +685,7 @@ public final class Suite implements SampleGroup {
     public List<String> readDirectionalData(Collection<File> files)
             throws IOException {
         final List<String> loadWarnings = new ArrayList<>();
-        for (File file: files) {
+        for (File file : files) {
             try (BufferedReader br = new BufferedReader(new FileReader(file))) {
                 String line;
                 while ((line = br.readLine()) != null) {
@@ -979,7 +980,7 @@ public final class Suite implements SampleGroup {
      * @return strings representing data about this suite
      */
     public List<String> toStrings() {
-        List<String> result = new ArrayList<>();
+        final List<String> result = new ArrayList<>();
         result.add("MEASUREMENT_TYPE\t" + getMeasurementType().name());
         if (customFlagNames.size()>0) {
             result.add("CUSTOM_FLAG_NAMES\t"+customFlagNames.exportAsString());
@@ -987,9 +988,9 @@ public final class Suite implements SampleGroup {
         if (customNoteNames.size()>0) {
             result.add("CUSTOM_NOTE_NAMES\t"+customNoteNames.exportAsString());
         }
-        result.add("CREATION_DATE\t" + iso8601format.format(creationDate));
+        result.add("CREATION_DATE\t" + ISO_8601_FORMAT.format(creationDate));
         result.add("MODIFICATION_DATE\t" +
-                iso8601format.format(modificationDate));
+                ISO_8601_FORMAT.format(modificationDate));
         if (originalFileType != null) {
             result.add("ORIGINAL_FILE_TYPE\t" + originalFileType.name());
         }
@@ -1021,16 +1022,16 @@ public final class Suite implements SampleGroup {
                     break;
                 case "CREATION_DATE":
                     try {
-                        creationDate = iso8601format.parse(parts[1]);
+                        creationDate = ISO_8601_FORMAT.parse(parts[1]);
                     } catch (ParseException ex) {
-                        logger.log(Level.SEVERE, null, ex);
+                        LOGGER.log(Level.SEVERE, null, ex);
                     }
                     break;
                 case "MODIFICATION_DATE":
                     try {
-                        modificationDate = iso8601format.parse(parts[1]);
+                        modificationDate = ISO_8601_FORMAT.parse(parts[1]);
                     } catch (ParseException ex) {
-                        logger.log(Level.SEVERE, null, ex);
+                        LOGGER.log(Level.SEVERE, null, ex);
                     }
                     break;
                 case "ORIGINAL_FILE_TYPE":
@@ -1044,7 +1045,7 @@ public final class Suite implements SampleGroup {
                      * There's no need to store the value of this field --
                      * it will be overwritten in any case if the file is saved.
                      */
-                    logger.log(Level.INFO, "File saved by: {0}", parts[1]);
+                    LOGGER.log(Level.INFO, "File saved by: {0}", parts[1]);
                     break;
             }
         }
@@ -1052,7 +1053,7 @@ public final class Suite implements SampleGroup {
     
     private void setMeasurementType(MeasurementType measurementType) {
         this.measurementType = measurementType;
-        for (Sample sample: getSamples()) {
+        for (Sample sample : getSamples()) {
             for (TreatmentStep treatmentStep : sample.getTreatmentSteps()) {
                 treatmentStep.setMeasurementType(measurementType);
             }
@@ -1250,14 +1251,14 @@ public final class Suite implements SampleGroup {
     public void exportToFiles(File directory, List<TreatmentParameter> fields) {
         if (directory.exists()) {
             if (!directory.isDirectory()) {
-                logger.warning(String.format(Locale.ENGLISH,
+                LOGGER.warning(String.format(Locale.ENGLISH,
                         "exportToFiles: %s is not a directory",
                         directory.toString()));
                 return;
             }
         } else {
             if (!directory.mkdirs()) {
-                logger.warning(String.format(Locale.ENGLISH,
+                LOGGER.warning(String.format(Locale.ENGLISH,
                         "exportToFiles: couldn't create %s",
                         directory.toString()));
                 return;
@@ -1274,13 +1275,13 @@ public final class Suite implements SampleGroup {
                     fw.write("\n");
                 }
             } catch (IOException e) {
-                logger.log(Level.WARNING,
+                LOGGER.log(Level.WARNING,
                         "exportToFiles: exception writing file.", e);
             } finally {
                 try {
                     if (fw != null) fw.close();
                 } catch (IOException e2) {
-                    logger.log(Level.WARNING, 
+                    LOGGER.log(Level.WARNING, 
                             "exportToFiles: exception closing file.", e2);
                 }
             }
@@ -1569,19 +1570,23 @@ public final class Suite implements SampleGroup {
         @Override
         public void add(int position, String value) {
             super.add(position, value);
-            for (Sample s: getSamples())
+            for (Sample s : getSamples()) {
                 s.getCustomFlags().add(position, Boolean.FALSE);
+            }
         }
         @Override
         public void remove(int position) {
             super.remove(position);
-            for (Sample s: getSamples()) s.getCustomFlags().remove(position);
+            for (Sample s : getSamples()) {
+                s.getCustomFlags().remove(position);
+            }
         }
         @Override
         public void swapAdjacent(int position) {
             super.swapAdjacent(position);
-            for (Sample s: getSamples())
+            for (Sample s : getSamples()) {
                 s.getCustomFlags().swapAdjacent(position);
+            }
         }
     }
 
@@ -1592,12 +1597,16 @@ public final class Suite implements SampleGroup {
         @Override
         public void add(int position, String value) {
             super.add(position, value);
-            for (Sample s: getSamples()) s.getCustomNotes().add(position, "");
+            for (Sample s : getSamples()) {
+                s.getCustomNotes().add(position, "");
+            }
         }
         @Override
         public void remove(int position) {
             super.remove(position);
-            for (Sample s: getSamples()) s.getCustomNotes().remove(position);
+            for (Sample s : getSamples()) {
+                s.getCustomNotes().remove(position);
+            }
         }
         @Override
         public void swapAdjacent(int position) {
@@ -1684,9 +1693,9 @@ public final class Suite implements SampleGroup {
             return Double.NaN;
         }
         double minimum = Double.POSITIVE_INFINITY;
-        for (Sample sample: getSamples()) {
+        for (Sample sample : getSamples()) {
             final double depth = sample.getDepth();
-            if (depth<minimum) {
+            if (depth < minimum) {
                 minimum = depth;
             }
         }
@@ -1704,7 +1713,7 @@ public final class Suite implements SampleGroup {
             return Double.NaN;
         }
         double maximum = Double.NEGATIVE_INFINITY;
-        for (Sample sample: getSamples()) {
+        for (Sample sample : getSamples()) {
             final double depth = sample.getDepth();
             if (depth > maximum) {
                 maximum = depth;
@@ -1735,9 +1744,9 @@ public final class Suite implements SampleGroup {
          * ordering of any two samples s1 and s2 such that s1 ∈ S1 and s2 ∈ S2.
          * (More loosely: sites will be ordered like their samples.)
          */
-        sites = getSamples().stream().map(sample -> sample.getSite()).
-                filter(Objects::nonNull).distinct().
-                collect(Collectors.toList());
+        sites = getSamples().stream().map(sample -> sample.getSite())
+                .filter(Objects::nonNull).distinct()
+                .collect(Collectors.toList());
     }
     
     /**
@@ -1768,7 +1777,7 @@ public final class Suite implements SampleGroup {
     public void setSitesForSamples(Collection<Sample> samples,
             SiteNamer siteNamer) {
         setSaved(false);
-        for (Sample sample: samples) {
+        for (Sample sample : samples) {
             final Site oldSite = sample.getSite();
             final Site newSite = getOrCreateSite(siteNamer.siteName(sample));
             if (oldSite != null) {
@@ -1891,7 +1900,7 @@ public final class Suite implements SampleGroup {
      */
     public void rescaleMagSus(double factor) {
         setSaved(false);
-        for (Sample sample: samples) {
+        for (Sample sample : samples) {
             for (TreatmentStep treatmentStep : sample.getTreatmentSteps()) {
                 treatmentStep.setMagSus(treatmentStep.getMagSus() * factor);
             }
@@ -1998,7 +2007,7 @@ public final class Suite implements SampleGroup {
         }
         setMeasurementType(MeasurementType.CONTINUOUS);
         samplesById = new LinkedHashMap<>();
-        for (Sample sample: getSamples()) {
+        for (Sample sample : getSamples()) {
             final String newSampleName =
                     nameToDepth.get(sample.getNameOrDepth());
             sample.setNameOrDepth(newSampleName);

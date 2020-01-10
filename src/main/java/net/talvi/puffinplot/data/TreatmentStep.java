@@ -815,11 +815,11 @@ public class TreatmentStep {
      */
     public void setFormStrike(double strikeDeg) {
         touch();
-        double az = strikeDeg + 90;
-        if (az > 360) {
-            az -= 360;
+        double azimuth = strikeDeg + 90;
+        if (azimuth > 360) {
+            azimuth -= 360;
         }
-        formAz = az;
+        formAz = azimuth;
     }
 
     /**
@@ -1067,7 +1067,7 @@ public class TreatmentStep {
     public static double maxTreatmentLevel(Collection<TreatmentStep> data) {
         requireNonNull(data, "data must be non-null");
         double max = 0;
-        for (TreatmentStep step: data) {
+        for (TreatmentStep step : data) {
             final double level = step.getTreatmentLevel();
             if (level > max) {
                 max = level;
@@ -1088,10 +1088,10 @@ public class TreatmentStep {
     public static double maxIntensity(Collection<TreatmentStep> data) {
         requireNonNull(data, "data must be non-null");
         double max = 0;
-        for (TreatmentStep step: data) {
-            final double i = step.getIntensity();
-            if (i > max) {
-                max = i;
+        for (TreatmentStep step : data) {
+            final double intensity = step.getIntensity();
+            if (intensity > max) {
+                max = intensity;
             }
         }
         return max;
@@ -1109,7 +1109,7 @@ public class TreatmentStep {
     public static double maxMagSus(Collection<TreatmentStep> data) {
         requireNonNull(data, "data must be non-null");
         double max = 0;
-        for (TreatmentStep step: data) {
+        for (TreatmentStep step : data) {
             final double level = step.getMagSus();
             if (!Double.isNaN(level) && level > max) {
                 max = level;
@@ -1504,8 +1504,10 @@ public class TreatmentStep {
             String delimiter) {
         final StringBuilder sb = new StringBuilder();
         boolean first = true;
-        for (TreatmentParameter field: fields) {
-            if (!first) sb.append(delimiter);
+        for (TreatmentParameter field : fields) {
+            if (!first) {
+                sb.append(delimiter);
+            }
             sb.append(getValue(field));
             first = false;
         }
@@ -1590,11 +1592,11 @@ public class TreatmentStep {
                 break;
             case IRM:
                 treatmentLevel = String.format(Locale.ENGLISH, ", %.0f mT",
-                        getIrmField()*1000);
+                        getIrmField() * 1000);
                 break;
             default:
                 treatmentLevel = String.format(Locale.ENGLISH, ", %.0f mT",
-                        getAfZ()*1000);
+                        getAfZ() * 1000);
         }
         
         return String.format("Step %s | %s%s | Dec: %s° | Inc: %s° |"
