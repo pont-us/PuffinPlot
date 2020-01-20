@@ -50,12 +50,13 @@ public class CoreSectionTest {
     
     static List<Sample> makeSampleList() {
         final List<Sample> samples = new ArrayList<>(10);
-        for (int depth=0; depth<10; depth++) {
+        for (int depth = 0; depth < 10; depth++) {
             final String depthString = String.format("%d", depth);
             final Sample sample = new Sample(depthString, null);
-            for (int demag=0; demag<100; demag += 10) {
-                final TreatmentStep d = new TreatmentStep((depth+1.)*(100.-demag),
-                        depth*50, demag);
+            for (int demag = 0; demag < 100; demag += 10) {
+                final TreatmentStep d
+                        = new TreatmentStep((depth + 1.) * (100. - demag),
+                                depth * 50, demag);
                 d.setDepth(depthString);
                 d.setMeasurementType(MeasurementType.CONTINUOUS);
                 d.setAfX(demag);
@@ -190,12 +191,12 @@ public class CoreSectionTest {
         final List<Sample> samples = makeSampleListDirectionsOnly();
         samples.get(0).setImportedDirection(null);
         samples.get(1).setImportedDirection(null);
-        final CoreSection section = CoreSection.fromSamples(samples);
-        assertFalse(section.isDirectionDefinedNearEnd(End.TOP, 1));
-        assertFalse(section.isDirectionDefinedNearEnd(End.TOP, 2));
-        assertTrue(section.isDirectionDefinedNearEnd(End.TOP, 3));
-        assertTrue(section.isDirectionDefinedNearEnd(End.BOTTOM, 3));
-        assertTrue(section.isDirectionDefinedNearEnd(End.BOTTOM, 4));
+        final CoreSection missingTop = CoreSection.fromSamples(samples);
+        assertFalse(missingTop.isDirectionDefinedNearEnd(End.TOP, 1));
+        assertFalse(missingTop.isDirectionDefinedNearEnd(End.TOP, 2));
+        assertTrue(missingTop.isDirectionDefinedNearEnd(End.TOP, 3));
+        assertTrue(missingTop.isDirectionDefinedNearEnd(End.BOTTOM, 3));
+        assertTrue(missingTop.isDirectionDefinedNearEnd(End.BOTTOM, 4));
     }
     
     @Test

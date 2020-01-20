@@ -19,6 +19,7 @@ package net.talvi.puffinplot.data;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -35,9 +36,17 @@ import static net.talvi.puffinplot.data.CoreSection.End;
 public class CoreSections {
 
     private final LinkedHashMap<String, CoreSection> sections;
+    private final int minimumSectionLength;
     
     private CoreSections(LinkedHashMap<String, CoreSection> sections) {
-        this.sections = sections;
+        this.sections = Objects.requireNonNull(sections);
+        if (sections.isEmpty()) {
+            throw new IllegalArgumentException("sections must be non-empty");
+        }
+        minimumSectionLength =
+                sections.values().stream()
+                        .mapToInt(s -> s.getSamples().size())
+                        .min().getAsInt();
     }
     
     /**
@@ -47,15 +56,16 @@ public class CoreSections {
      * ordering of the core sections, and of the samples within them,
      * corresponds to the original order of the supplied samples.
      * 
-     * @param sampleList samples to split
+     * @param sampleList samples to split (non-null)
      * @return a hash of core sections indexed by discrete ID
      */
     public static CoreSections fromSampleListByDiscreteId(
             List<Sample> sampleList) {
+        Objects.requireNonNull(sampleList, "sampleList must be non-null.");
         final LinkedHashMap<String,List<Sample>> sublists =
                 new LinkedHashMap<>();
         String previousId = null;
-        for (Sample sample: sampleList) {
+        for (Sample sample : sampleList) {
             final String thisId = sample.getDiscreteId();
             if (thisId == null) {
                 continue;
@@ -69,7 +79,7 @@ public class CoreSections {
         
         final LinkedHashMap<String,CoreSection> sectionsTmp =
                 new LinkedHashMap<>();
-        for (String discreteId: sublists.keySet()) {
+        for (String discreteId : sublists.keySet()) {
             sectionsTmp.put(discreteId,
                     CoreSection.fromSamples(sublists.get(discreteId)));
         }
@@ -105,7 +115,8 @@ public class CoreSections {
      * mean declination of the entire core match a specified target declination.
      *
      * @param margin number of samples to use in determining top and bottom
-     *        declinations
+     *        declinations. The margin must be at least 1 and may not exceed the
+     *        number of samples in any section.
      * @param targetDeclination the target declination to which to align the
      *        core, in degrees
      * @param alignWith core declination which should be aligned with
@@ -113,7 +124,7 @@ public class CoreSections {
      */
     public void alignSections(int margin, double targetDeclination,
             TargetDeclinationType alignWith) {
-        
+        checkMarginIsValid(1, margin);
         /*
          * If we're aligning to the mean, there will be an extra alignment
          * pass afterwards so the initial target alignment is arbitrary --
@@ -126,7 +137,7 @@ public class CoreSections {
         
         // Align the sections with each other, from the top down.
         
-        for (CoreSection section: sections.values()) {
+        for (CoreSection section : sections.values()) {
             section.getSamples().forEach(s -> s.doPca(Correction.NONE));
             final double topDeclination = section.
                     getDirectionNearEnd(CoreSection.End.TOP, margin).
@@ -152,7 +163,7 @@ public class CoreSections {
                             .collect(Collectors.toList()))
                             .getMeanDirection().getDecDeg();
             final double offset = targetDeclination - initialMean;
-            for (CoreSection section: sections.values()) {
+            for (CoreSection section : sections.values()) {
                 section.rotateDeclinations(offset);
                 section.getSamples().forEach(s -> s.doPca(Correction.NONE));
             }
@@ -166,11 +177,14 @@ public class CoreSections {
      * as being "near the end".
      * 
      * @param margin the number of samples from each end of each section
-     *   to include in the returned set of samples
+     *   to include in the returned set of samples. The margin must be
+     *   at least 0 and may not exceed the number of samples in any
+     *   section.
      * @return all the samples which are within {@code margin} samples
      *   of the end of any section within this group
      */
     public Set<Sample> getEndSamples(int margin) {
+        checkMarginIsValid(0, margin);
         return getSections().values().stream().
                 map(s -> Stream.concat(
                         s.getSamplesNearEnd(End.TOP, margin).stream(),
@@ -182,13 +196,15 @@ public class CoreSections {
     /**
      * Reports whether all samples within section ends have a defined direction.
      * 
-     * @param margin number of samples in a section end
+     * @param margin number of samples in a section end. The margin must be at
+     *   least 0 and may not exceed the number of samples in any section.
      * @return {@code true} if and only if every sample in every section end
      *   has a defined direction
      */
     public boolean areSectionEndDirectionsDefined(int margin) {
-        return getEndSamples(margin).stream().
-                allMatch(s -> s.getDirection() != null);
+        checkMarginIsValid(0, margin);
+        return getEndSamples(margin).stream()
+                .allMatch(s -> s.getDirection() != null);
     }
     
     /**
@@ -219,6 +235,21 @@ public class CoreSections {
          */
         public String getNiceName() {
             return niceName;
+        }
+    }
+    
+    private void checkMarginIsValid(int minimum, int margin) {
+        if (margin < minimum) {
+            throw new IllegalArgumentException(
+                    String.format("Illegal value %d given for margin "
+                                  + "(must be >=%d).", margin, minimum));
+        }
+        if (margin > minimumSectionLength) {
+            throw new IllegalArgumentException(
+                    String.format("Illegal value %d given for margin "
+                            + "(must be <=%d, since this is the "
+                            + "minimum section length).",
+                            margin, minimumSectionLength));
         }
     }
 }

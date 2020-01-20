@@ -130,7 +130,7 @@ public class SensorLengths {
      * Creates a new sensor lengths object from a string definition. The
      * definition must be in the format produced by {@link #toString()}.
      *
-     * @param string a string definition
+     * @param string a string definition (non-null)
      * @return the sensor lengths specified in the string
      * @throws IllegalArgumentException if the string is not recognized
      */

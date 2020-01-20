@@ -50,7 +50,7 @@ public class CoreSectionsTest {
         final List<String> expectedPartition =
                 Arrays.asList("0,1,2", "3,5", "6,7,8", "9");
         final List<String> actualPartition = new ArrayList<>();
-        for (CoreSection section: sections.getSections().values()) {
+        for (CoreSection section : sections.getSections().values()) {
             final String actualSampleDepths = section.getSamples().stream().
                     map(Sample::getNameOrDepth).
                     collect(Collectors.joining(","));
@@ -205,16 +205,7 @@ public class CoreSectionsTest {
     
     @Test
     public void testGetSectionEndSamplesWithMarginOf3() {
-        final List<Sample> samples = new ArrayList<>(30);
-        for (int depth=0; depth<30; depth++) {
-            final String depthString = String.format("%d", depth);
-            final Sample sample = new Sample(depthString, null);
-            final TreatmentStep d = new TreatmentStep();
-            d.setDepth(depthString);
-            d.setDiscreteId(String.format("%d", depth / 10));
-            sample.addTreatmentStep(d);
-            samples.add(sample);
-        }
+        final List<Sample> samples = createMinimalTestSamples();
         final CoreSections sections =
                 CoreSections.fromSampleListByDiscreteId(samples);
         final Set<Sample> expected = Arrays.asList(
@@ -225,4 +216,31 @@ public class CoreSectionsTest {
         final Set<Sample> actual = sections.getEndSamples(3);
         assertEquals(expected, actual);
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void throwsExceptionWhenMarginTooSmall() {
+        CoreSections.fromSampleListByDiscreteId(createMinimalTestSamples())
+                .getEndSamples(-1);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void throwsExceptionWhenMarginTooLarge() {
+        CoreSections.fromSampleListByDiscreteId(createMinimalTestSamples())
+                .getEndSamples(11);
+    }
+
+    private List<Sample> createMinimalTestSamples() {
+        final List<Sample> samples = new ArrayList<>(30);
+        for (int depth = 0; depth < 30; depth++) {
+            final String depthString = String.format("%d", depth);
+            final Sample sample = new Sample(depthString, null);
+            final TreatmentStep d = new TreatmentStep();
+            d.setDepth(depthString);
+            d.setDiscreteId(String.format("%d", depth / 10));
+            sample.addTreatmentStep(d);
+            samples.add(sample);
+        }
+        return samples;
+    }
+
 }

@@ -48,7 +48,7 @@ public class CoreSection implements SampleGroup {
     }
   
     private CoreSection(List<Sample> samples) {
-        this.samples = samples;
+        this.samples = Objects.requireNonNull(samples);
     }
 
     /**
@@ -57,11 +57,10 @@ public class CoreSection implements SampleGroup {
      * {@code CoreSection} contains references to the original samples,
      * so operations upon it may modify them.
      * 
-     * @param samples a list of samples
+     * @param samples a non-null list of samples
      * @return a core section containing the provided samples
      */
     public static CoreSection fromSamples(List<Sample> samples) {
-        Objects.requireNonNull(samples);
         return new CoreSection(samples);
     }
 
@@ -83,7 +82,7 @@ public class CoreSection implements SampleGroup {
         getSamples().forEach(s -> s.getTreatmentSteps().forEach(
                 d -> d.setMoment(d.getMoment().
                         rotZ(Math.toRadians(clockwiseDegrees)))));
-        for (Sample s: getSamples()) {
+        for (Sample s : getSamples()) {
             if (s.getImportedDirection() != null) {
                 s.setImportedDirection(s.getImportedDirection().
                         rotZ(Math.toRadians(clockwiseDegrees)));
