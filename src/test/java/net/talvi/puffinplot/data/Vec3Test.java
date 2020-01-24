@@ -528,6 +528,21 @@ public class Vec3Test {
         }
     }
     
+    @Test(expected = IllegalArgumentException.class)
+    public void equalsThrowsExceptionForNonFinitePrecision() {
+        Vec3.ORIGIN.equals(Vec3.ORIGIN, Double.NaN);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void equalsThrowsExceptionForNegativePrecision() {
+        Vec3.ORIGIN.equals(Vec3.ORIGIN, -0.1);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void equalsThrowsExceptionForNonFiniteOtherVector() {
+        Vec3.ORIGIN.equals(new Vec3(Double.NaN, 0, 0), 0.1);
+    }
+
     @Test
     public void testToString() {
         testVectors.forEach((vec3) -> {
@@ -739,6 +754,11 @@ public class Vec3Test {
             final long numberOf2s = s.chars().filter((x) -> x == '2').count();
             assertEquals(3*dp, numberOf2s);
         }
+    }
+    
+    @Test(expected = NullPointerException.class)
+    public void makeEllipseThrowsExceptionForNull() {
+        Vec3.makeEllipse(null);
     }
     
     @Test
@@ -1024,6 +1044,16 @@ public class Vec3Test {
     @Test
     public void testNormalizeInfinite() {
         new Vec3(Double.POSITIVE_INFINITY, 1, 1).normalize();
+    }
+    
+    @Test(expected = NullPointerException.class)
+    public void distanceThrowsExceptionForNull() {
+        Vec3.ORIGIN.distance(null);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void distanceThrowsExceptionForNonFinite() {
+        Vec3.ORIGIN.distance(new Vec3(Double.NaN, 0, 0));
     }
     
     private static double getVectorComponent(Vec3 v, int i) {

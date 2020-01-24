@@ -323,7 +323,7 @@ public class Vec3 {
         }
         if (dotProduct <= -1) {
             // Antiparallel vectors: we need to pick an arbitrary direction.
-            if (Math.abs(v0.dot(Vec3.NORTH)) < 0.99) {
+            if (abs(v0.dot(Vec3.NORTH)) < 0.99) {
                 /*
                  * If vectors aren't parallel to north, interpolate through
                  * north.
@@ -375,18 +375,26 @@ public class Vec3 {
     }
 
     private static void requireNonNullAndFinite(Vec3 v, String name) {
-        Objects.requireNonNull(v, name+" must be non-null");
+        Objects.requireNonNull(v, name + " must be non-null");
         if (!v.isFinite()) {
             throw new IllegalArgumentException(String.format(
                     "%s = %s is not finite", name, v.toString()));
         }
     }
 
-    private static void requireFinite(Double d, String name) {
+    private static void requireFinite(double d, String name) {
         if (!Double.isFinite(d)) {
             throw new IllegalArgumentException(String.format(
                     "%s = %s is not finite", name, Double.toString(d)));
         }
+    }
+
+    private static void requireFiniteAndNonNegative(double d, String name) {
+        requireFinite(d, name);
+        if (d < 0) {
+            throw new IllegalArgumentException(String.format(
+                    "%s = %s is negative", name, Double.toString(d)));
+        }        
     }
 
     private static List<Vec3> concatenateWithoutCentre(List<Vec3> list0,
@@ -1135,7 +1143,7 @@ public class Vec3 {
         final List<Vec3> result = new ArrayList<>();
         for (double dec = 0; dec < 360; dec += 5) {
             final Vec3 v1 = Vec3.fromPolarDegrees(1, 90 - radiusDegrees, dec);
-            final Vec3 v2 = v1.rotY(Math.PI / 2 - getIncRad());
+            final Vec3 v2 = v1.rotY(PI / 2 - getIncRad());
             final Vec3 v3 = v2.rotZ(getDecRad());
             assert(v3.isFinite());
             result.add(v3);
@@ -1148,10 +1156,11 @@ public class Vec3 {
      * Returns a list of points outlining the confidence ellipse for a supplied
      * set of Kent statistical parameters.
      *
-     * @param kentParams a set of Kent parameters
+     * @param kentParams a non-null set of Kent parameters
      * @return the confidence ellipse of the supplied parameters
      */
     public static List<Vec3> makeEllipse(KentParams kentParams) {
+        Objects.requireNonNull(kentParams);
         final double eta = kentParams.getEtaMag();
         final double zeta = kentParams.getZetaMag();
         final List<Vec3> vs = new ArrayList<>(1000);
@@ -1176,16 +1185,16 @@ public class Vec3 {
         // skip projected steps smaller than this...
         final double stepLimit = 1e-2;
         // ... unless unprojected step larger than this
-        final double thetaLimit = 2*PI/50.;
+        final double thetaLimit = 2 * PI / 50.;
         // the last projected vector we created
         Vec3 vPrev = null;
         // the last theta at which we created a vector
         double thetaPrev = -100;
 
-        for (double theta=0; theta<2*PI; theta += stepSize) {
-            final double a = eta*sin(theta);
-            final double b = zeta*cos(theta);
-            final double r = eta*zeta/sqrt(a*a+b*b);
+        for (double theta = 0; theta < 2 * PI; theta += stepSize) {
+            final double a = eta * sin(theta);
+            final double b = zeta * cos(theta);
+            final double r = eta * zeta / sqrt(a * a + b * b);
             // Calculate a point centred around zero.
             final Vec3 vUnrot = Vec3.fromPolarRadians(1., 0.5*PI-r,
                     theta + etaDirTop.getDecRad());
@@ -1278,10 +1287,11 @@ public class Vec3 {
     /**
      * Returns the distance between two vectors.
      * 
-     * @param v the vector with which to compare this one
+     * @param v a non-null, finite vector with which to compare this one
      * @return the distance between this vector and {@code v}
      */
     public double distance(Vec3 v) {
+        requireNonNullAndFinite(v, "v");
         return abs(this.minus(v).mag());
     }
     
@@ -1294,12 +1304,15 @@ public class Vec3 {
      * between the vectors must be less than {@code precision * max(m1, m2)}
      * where {@code m1} and {@code m2} are the lengths of the two vectors.
      *
-     * @param v the vector with which to compare this one
-     * @param precision the precision parameter for the comparison
+     * @param v a non-null, finite vector with which to compare this one
+     * @param precision a finite, non-negative precision parameter for the
+     *        comparison
      * @return {@code true} iff the vectors are equal to within the specified
      * precision
      */
     public boolean equals(Vec3 v, double precision) {
+        requireFiniteAndNonNegative(precision, "precision");
+        requireNonNullAndFinite(v, "v");
         final double mag0 = mag();
         final double mag1 = v.mag();
         if (mag0 == 0 && mag1 == 0) {
