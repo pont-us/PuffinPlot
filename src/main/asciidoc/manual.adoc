@@ -6,14 +6,17 @@
 
 == Introduction
 
+_α_~95~
+
 This manual gives a practical guide to the usage of the PuffinPlot
-palaeomagnetic data analysis program. Note that it does not elucidate
-the principles of the analysis techniques themselves, and a working
-knowledge of palaeomagnetic procedures is assumed. For excellent
-introductions to palaeomagnetic analysis, see or .
+palaeomagnetic data analysis program. Note that it does not elucidate the
+principles of the analysis techniques themselves, and a working knowledge
+of palaeomagnetic procedures is assumed. For excellent introductions to
+palaeomagnetic analysis, see FIXME:TAUXE or FIXME:BUTLER.
 
 If you use PuffinPlot in the creation of published work, please cite the
-PuffinPlot paper . See <<sec:citing-puffinplot>> for further details.
+PuffinPlot paper (FIXME: citation). See <<sec:citing-puffinplot>> for
+further details.
 
 PuffinPlot is free software, distributed under the GNU General Public
 License. Please see the LICENCE file in the PuffinPlot archive for
@@ -313,24 +316,24 @@ arrow keys to change the sample.
 The toolbar displays various data and provides several controls. From
 left to right, these are:
 
-Suite chooser.::
+Suite chooser::
   This shows the name of the current suite of data. If more than one
   suite of data has been opened, the suite chooser allows you to switch
   between them.
-Orientation correction chooser.::
+Orientation correction chooser::
   This chooser allows you to choose whether data is displayed in
   laboratory co-ordinates (uncorrected), in field co-ordinates,
   corrected for sample orientation (samp. corr.), or in tectonic
   co-ordinates, corrected for both sample orientation and bedding
   orientation (form. corr.).
-Zijderveld vertical projection (‘V vs. …’).::
+Zijderveld vertical projection (‘V vs. …’)::
   This chooser controls the vertical projection used in the Zijderveld
   plot. The _y_ axis always corresponds to the vertical direction; the
   chooser controls the _x_ axis, which may correspond to North (V vs. N)
   or East (V vs. E). The third option, V vs. H, projects each data point
   separately, in the plane containing itself and the origin; this is
   sometimes referred to as a ‘modified Zijderveld’ plot.
-Zijderveld horizontal projection (‘N is up’/‘W is up’).::
+Zijderveld horizontal projection (‘N is up’/‘W is up’)::
   This chooser controls the horizontal projection used in the Zijderveld
   plot. The upward direction on the plot can correspond to either north
   or west.
@@ -377,34 +380,41 @@ files.
 
  +
 
+File → Open…::
 reads one or more files of demagnetization data into PuffinPlot as a new
 suite. See <<sec:file-types>> for details of
 supported filetypes.
 
+File → Open folder…::
 reads a whole folder of data files into PuffinPlot. This menu item only
 appears on OS X; on other operating systems, the Open… menu item also
 allows selection of entire folders.
 
+File → Open recent file::
 is a submenu which contains the names of the last eight files which have
 been opened in PuffinPlot, allowing them to be opened again with a
 single click.
 
+File → Save::
 saves the current suite as a PuffinPlot file. If the suite was opened
 from a PuffinPlot file or if it has been previously saved as a
 PuffinPlot file, it will immediately be saved to that file. If no
 PuffinPlot file is associated with this suite yet, a standard ‘save
 file’ dialog box will prompt you for a file name and location.
 
+File → Save as…::
 allows you to save the current suite to a different filename or
 location.
 
+File → Close::
 closes the current suite, removing it from PuffinPlot’s data display.
 
+File → Export data::
 is a submenu allowing the export of various kinds of data to CSV files.
 
+File → Export data → Export sample calculations…::
 saves a file containing all the data associated with individual samples.
-<<tbl:export-sample>> describes the fields which
-make up the file.
+<<tbl:export-sample>> describes the fields which make up the file.
 
 [[tbl:export-sample,List of fields in exported sample data file]]
 .List of fields in exported sample data file. Note that, in addition to the predefined fields, any custom user annotations (see <<sec:annotations>>) will also be exported in this file.
@@ -471,40 +481,26 @@ mT). If half-intensity was not reached, this column contains 0.
 NRM intensity during demagnetization; ‘N’ otherwise
 
 |Fisher dec. |Mean declination of treatment step directions ()
-
 |Fisher inc. |Mean inclination of treatment step directions ()
-
-|Fisher a95 |latexmath:[$\alpha_{95}$] of mean treatment step direction
-()
-
+|Fisher a95 |_α_~95~ of mean treatment step direction ()
 |Fisher k |_k_-value of mean treatment step direction
-
 |Fisher nDirs |number of directions used to calculate mean
-
 |Fisher R |length of sum of directions used to calculate mean
-
 |AMS dec1 |declination of major axis of AMS tensor
-
 |AMS inc1 |inclination of major axis of AMS tensor
-
 |AMS dec2 |declination of intermediate axis of AMS tensor
-
 |AMS inc2 |inclination of intermediate axis of AMS tensor
-
 |AMS dec3 |declination of minor axis of AMS tensor
-
 |AMS inc3 |inclination of minor axis of AMS tensor
-
 |Initial MS |magnetic susceptibility at the first treatment step
-
 |_[annotations]_ |Any user-defined annotations are also exported as part
 of the sample export file. See
 <<sec:annotations>> for details.
 |=======================================================================
 
-saves a file containing (for suites with discrete samples) all the data
-associated with sites. <<tbl:export-site>>
-describes the fields which make up this file.
+File → Export data → Export site calculations…::
+saves a file containing all the data associated with sites.
+<<tbl:export-site>> describes the fields which make up this file.
 
 [[tbl:export-site]]
 .List of fields in exported site data file
@@ -512,60 +508,37 @@ describes the fields which make up this file.
 |=======================================================================
 |Field name |Description
 |Site |Name of site
-
 |Samples |Number of samples at this site
-
 |Fisher dec. |Mean declination of sample directions ()
-
 |Fisher inc. |Mean inclination of sample directions ()
-
-|Fisher a95 |latexmath:[$\alpha_{95}$] of mean sample direction ()
-
+|Fisher a95 |_α_~95~ of mean sample direction ()
 |Fisher k |_k_-value of mean sample direction
-
 |Fisher nDirs |number of directions used to calculate site mean
-
 |Fisher R |length of sum of unit direction vectors
-
 |GC valid |‘Y’ if the great-circle fit is valid, ‘N’ otherwise. See
 <<sec:prefs-misc>> for details on the validity
 test and how it may be customized.
 
 |GC dec. (deg) |Declination of great-circle direction ()
-
 |GC inc. (deg) |Inclination of great-circle direction ()
-
-|GC a95 (deg) |latexmath:[$\alpha_{95}$] for great-circle direction ()
-
+|GC a95 (deg) |_α_~95~ for great-circle direction ()
 |GC k |_k_-value for great-circle direction
-
 |GC N |Number of great circles used in great-circle fit
-
 |GC M |Number of PCA directions used in great-circle fit
-
 |GC R |length of sum of direction vectors in great-circle fit
 
 |GC min points |the smallest number of treatment steps used to define
 any of the great circles fitted at this site
 
 |T1min |See note below
-
 |T1max |See note below
-
 |T2min |See note below
-
 |T2max |See note below
-
 |Lat (deg) |Site latitude
-
 |Long (deg) |Site longitude
-
 |VGP lat (deg) |VGP latitude
-
 |VGP long (deg) |VGP longitude
-
 |VGP dp (deg) |_dp_, the first semi-axis of the VGP confidence ellipse
-
 |VGP dm (deg) |_dm_, the second semi-axis of the VGP confidence ellipse
 |=======================================================================
 
@@ -577,39 +550,47 @@ across all the circles for the site, and T1max the maximum. Similarly,
 T2 denotes the last step used in a single circle, and T2min–T2max is the
 range of its values across all the samples at a site.
 
+File → Export data → Export suite calculations…::
 saves a CSV file containing the Fisherian parameters for mean directions
 calculated across the entire suite; see the documentation for the
 Calculate → Suite means menu item
 (<<sec:functions-calcs>>) for details.
 
+File → Export data → Export multi-suite calculations…::
 saves a CSV file containing the Fisherian parameters for mean directions
 calculated across all the currently open suites; see the documentation
 for the Calculate → Multi-suite means menu item
 (<<sec:functions-calcs>>) for details.
 
+File → Export data → Export IRM data…::
 saves files containing IRM acquisition data. It produces a folder of
 files, one for each sample in the suite. Each file is in tab-delimited
 text format, and each line within the file contains the IRM field
 strength and the magnetization intensity of the sample after application
 of that field.
 
+File → Export data → Create bundle…::
 creates a _data bundle_ from the current suite. This is a zip archive
 containing the suite data and analysis parameters, calculation results,
 and other files useful for exploring or reproducing the results. Data
 bundles are described in more detail in
 <<sec:bundle>>.
 
+File → Export graphics::
 is a submenu with various options for exporting the plots for the
 current and selected samples. See
 <<sec:graphics-export>> for full details.
 
+File → Import data::
 is a submenu with functions to import additional data into the current
 suite.
 
+File → Import data → Append more palaeomagnetic data…::
 reads a palaeomgnetic data file, like the Open… function in the main
 File menu. The difference is that this function will append the data to
 the current suite, rather than creating a new suite for it.
 
+File → Import data → Import site locations…::
 imports co-ordinates (latitude and longitude) for sites in the suite.
 These co-ordinates are used to calculate virtual geomagnetic poles from
 site directions. The location file should be in CSV (comma-separated
@@ -617,6 +598,7 @@ value) format with no header line. Column 1 contains the site name,
 column 2 the latitude (degrees north from equator, negative for southern
 hemisphere), and column 3 the longitude (degrees east of Greenwich).
 
+File → Import data → Import AMS…::
 imports AMS data from a file and adds it to the current suite. The file
 must be in the .ASC format produced by the SAFYR and SUSAR programs
 distributed with AGICO kappabridges. (AMS import has been tested with
@@ -633,9 +615,11 @@ or to replace one or both of them with the values read from the ASC
 file. AMS data is not displayed by default; the equal-area plot of AMS
 data can be activated from the Preferences window.
 
+File → Page Setup…::
 opens a window allowing you to change the paper size, orientation, and
 margins for printing.
 
+File → Print…::
 opens a window allowing you to print the selected samples. Note that
 _only_ the selected samples will be printed, so if you wish to print the
 whole suite use Edit → Select all first. On most systems this will also
@@ -643,26 +627,32 @@ allow you to print to a PDF file; Windows users may need to install a
 virtual PDF printer, such as CutePDF Writer or Bullzip PDF Printer, in
 order to produce PDF files.
 
+File → Print suite EA window…::
 prints the contents of a separate window showing an equal-are plot of
 sample/site directions through the suite; see
 <<sec:menu-window>> for more details.
 
+File → Print site EA window…::
 prints the contents of a separate window showing an equal-area plot of
 directions at the current site; see
 <<sec:menu-window>> for more details.
 
+File → Run JavaScript script…::
 runs a user-specified external script written in the JavaScript
 programming language. See <<sec:scripting>> for
 details.
 
+File → Run Python script…::
 runs a user-specified external script written in the Python programming
 language. See <<sec:scripting>> for details.
 
+File → Preferences…::
 opens the preferences window. See
 <<sec:preferences>> for details. On Mac OS X,
 this item is found on the PuffinPlot menu to the left of the File menu,
 rather than on the File menu.
 
+File → Quit::
 terminates PuffinPlot. On Mac OS X, this item is found on the PuffinPlot
 menu to the left of the File menu, rather than on the File menu.
 
@@ -670,21 +660,25 @@ menu to the left of the File menu, rather than on the File menu.
 
 The Edit menu contains functions related to the manipulation of data.
 
- +
-
+Edit → Edit layout::
 allows you to reposition and resize the plots in the main display area.
 See <<sec:edit-layout>> for details.
 
+Edit → Reset layout::
 resets the sizes and positions of all the plots to their default values.
 
+Edit → Treatment steps::
 is a submenu containing editing functions related to treatment steps
 within a sample.
 
+Edit → Treatment steps → Select all steps::
 selects all the treatment steps in all the selected samples, excluding
 treatment steps which have been hidden (see Hide steps below).
 
+Edit → Treatment steps → Clear step selection::
 de-selects all the treatment steps in all the selected samples.
 
+Edit → Treatment steps → Copy step selection::
 copies the selected treatment steps for the current sample to an
 invisible ‘clipboard’. The selection can be pasted from the clipboard to
 other samples (see Paste point selection), selecting the same
@@ -692,10 +686,12 @@ demagnetization steps in those samples. This is useful for selecting the
 same treatment steps in a large number of samples without having to
 manually select them for each sample.
 
+Edit → Treatment steps → Paste step selection::
 takes the selected treatment steps from the clipboard (see Copy step
 selection) and selects the corresponding treatment steps in all the
 selected samples.
 
+Edit → Treatment steps → Hide steps::
 hides all the selected treatment steps in all the selected samples. This
 removes them from all the graphical plots (which will be rescaled to
 avoid unnecessary blank space), but not from the data table in the main
@@ -703,8 +699,10 @@ plot window; on the data table, hidden treatment steps are marked with a
 dash symbol (–) to their left. Hidden steps can be restored using the
 Show all steps menu item.
 
+Edit → Treatment steps → Show all steps::
 restores all hidden treatment steps in all the selected samples.
 
+Edit → Treatment steps → Merge duplicate steps::
 A treatment step is considered a duplicate of another if they are both
 in the same sample and have the same treatment type and level. This
 function will replace each group of duplicate steps within the selected
@@ -713,8 +711,10 @@ is calculated as the arithmetic mean of the moments of the duplicate
 steps. Other treatment step data, such as magnetic susceptibility, is
 taken from the first step in each group of duplicates.
 
+Edit → Samples::
 is a submenu containing editing functions related to whole samples.
 
+Edit → Samples → Edit sample parameters…::
 opens a window which allows you to change the sample volume, sample
 orientation, formation orientation, and local magnetic declination for
 all the selected samples. Each parameter type can be individually
@@ -724,6 +724,7 @@ is possible but pointless to enter values for both of these parameters,
 since one will overwrite the other. Similarly, formation orientation can
 be specified using either dip azimuth or strike.
 
+Edit → Samples → Set treatment type…::
 opens a window which allows you to change the treatment type for the
 selected samples. Normally, the treatment type will be automatically
 determined on opening a data file. If the file does not specify the
@@ -732,25 +733,31 @@ allows you to set the treatment type explicitly in cases where
 PuffinPlot guesses wrong, or where the wrong treatment type is given in
 the data file.
 
+Edit → Samples → Rotate/invert samples::
 is a submenu allowing the demagnetization data from the selected samples
 to be rotated 180 around a selected axis. Such functionality is rarely
 required but can be useful, for example, when it is found that a sample
 has been incorrectly oriented during measurement, or when converting
 between different orientation conventions.
 
+Edit → Samples → Rotate/invert samples → Flip samples around X axis::
 rotates the magnetic moment values for all selected samples 180 around
 the X axis.
 
+Edit → Samples → Rotate/invert samples → Flip samples around Y axis::
 rotates the magnetic moment values for all selected samples 180 around
 the Y axis.
 
+Edit → Samples → Rotate/invert samples → Flip samples around Z axis::
 rotates the magnetic moment values for all selected samples 180 around
 the Z axis.
 
+Edit → Samples → Rotate/invert samples → Invert sample directions::
 Inverts every magnetization vector in every selected sample. (Each of
 the x, y, and z co-ordinates of each vector is negated; this corresponds
 to a point reflection through the origin.)
 
+Edit → Samples → Rotate/invert samples → Align core section declinations…::
 operates on continuous suites made up of core sections with no absolute
 azimuthal alignment. The alignment is carried out using PCA directions,
 which must be calculated before carrying out the alignment. The top core
@@ -761,29 +768,36 @@ aligns with the PCA direction at the bottom of the core section above
 it. The number of samples averaged at the core ends to produce the ‘top’
 and ‘bottom’ directions can be specified.
 
+Edit → Samples → Remove samples by depth…::
 removes from the current suite all the samples outside a specified depth
 range.
 
+Edit → Samples → Remove samples by treatment type…::
 removes from the current suite all the selected samples with a specified
 treatment type. A sample will be removed if _any_ of its treatment steps
 is of the specified type.
 
+Edit → Samples → Merge duplicate samples…::
 combines any selected samples that have the same name or depth. Each
 merged sample will contain all the treatment steps in all the duplicate
 samples; if any of the treatment steps are duplicated, they will be
 merged as described for the Merge duplicate treatment steps function.
 
+Edit → Samples → Rescale susceptibility…::
 scales all the magnetic susceptibility values for the suite by a
 specified factor. This is useful since magnetic susceptibility meters
 typically do not report values in standard S.I. units. Note that, unlike
 many PuffinPlot operations, the scaling is applied to the _entire
 suite_, not just the selected samples.
 
+Edit → Sites::
 is a submenu allowing site names to be modified for samples in various
 ways.
 
+Edit → Sites → Set site name…::
 allows a single site name to be set for all the selected samples.
 
+Edit → Sites → Set sites from sample names…::
 sets site names for the selected samples by taking specified characters
 from the sample names. The characters to use are specified by a list of
 comma-separated numbers and number ranges; for example, entering 1,3,5-8
@@ -801,22 +815,28 @@ table below gives some further examples.
 |CiLpA-10-53 |3-4,9-11 |Lp-53
 |=====================================================
 
+Edit → Sites → Set sites by depth…::
 sets site names in continuous suites using the depths of the individual
 samples. PuffinPlot asks for a thickness value, and groups the samples
 within the core into sites of that thickness, effectively ‘slicing’ the
 core into equally thick sites. Each site is named after the shallowest
 depth within it.
 
+Edit → Sites → Clear sites::
 removes all site names in the current suite.
 
+Edit → Suite::
 is a submenu of functions which affect the whole suite.
 
+Edit → Suite → Edit custom flags…::
 allows you to add or remove user-defined flags for the suite; see
 <<sec:annotations>> for details.
 
+Edit → Suite → Edit custom notes…::
 allows you to add or remove user-defined note categories for the suite;
 see <<sec:annotations>> for details.
 
+Edit → Suite → Discrete to continuous…::
 lets you convert a discrete suite to a continuous one by replacing each
 sample name with an associated depth. Selecting this item brings up a
 dialog which lets you choose a CSV file to open. The CSV file must
@@ -830,14 +850,15 @@ The calculations menu provides facilities for calculating magnetic
 parameters and directions. Note that most calculations operate on all
 the selected samples, not just the current sample.
 
- +
-
+Calculations → Calculate \caps{pca}::
 calculates a best-fitting line to all the selected points in all the
-selected samples, using principal component analysis . The PCA direction
+selected samples, using principal component analysis (FIXME:KIRSCHVINK).
+The PCA direction
 is projected onto the Zijderveld plot. If the ‘PCA anchored’ menu item
 (below) is ticked, the resulting PCA fit line will be anchored to the
 origin; if ‘PCA anchored’ is not ticked, the PCA fit will be unanchored.
 
+Calculations → \caps{pca} anchored::
 is a menu item which may be toggled on or off. When it is on, a tick
 mark appears next to it, and PCA analyses are constrained to pass
 through the origin. In general, it is appropriate to anchor the PCA if
@@ -848,9 +869,11 @@ rather than an offset in the true magnetization vectors. Leaving PCA
 unanchored allows analysis of a non-final component, provided that it is
 sufficiently well separated from other components.
 
+Calculations → Fisher by site::
 calculates a Fisherian mean direction for each selected site using the
 PCA directions of its samples.
 
+Calculations → Fisher on sample::
 calculates a direction for each selected sample using the Fisherian mean
 of the directions for the selected treatment steps. PCA is almost always
 preferable for establishing a reliable sample direction, but this
@@ -862,6 +885,7 @@ Fisherian mean and associated parameters are, however, included in
 exported sample data files (see
 <<tbl:export-sample>>).
 
+Calculations → Suite means::
 calculates Fisherian means across all the selected samples. Two sets of
 means are actually calculated: one set is calculated from the PCA
 directions of individual samples, and the other from the site mean
@@ -881,6 +905,7 @@ functions) this feature operates on all the _selected_ samples; to
 calculate means for the entire suite you must first select all the
 samples.
 
+Calculations → MDF::
 calculates the Median Destructive Field (or, for thermal
 demagnetization, the Median Destructive Temperature) of the selected
 samples. This is the field (or temperature) at which the intensity of
@@ -891,52 +916,62 @@ never reaches half-intensity during treatment, the MDF is undefined; in
 this case, it is not shown on the plot, and an MDF value of 0 is used in
 the exported sample data file.
 
+Calculations → Clear sample calculations::
 de-selects all the points in all the selected samples, and clears the
 results of any calculations done on them, such as PCA or great-circle
 analysis.
 
+Calculations → Clear sample PCAs::
 clears any PCA calculations for the currently selected samples.
 
+Calculations → Clear sample GC fits::
 clears any great-circle fits on them for the currently selected samples.
 
+Calculations → Fit great circle::
 calculates and displays a best-fitting great circle for all the selected
 points in all the selected samples.
 
+Calculations → Great circles::
 calculates a best-fitting direction for all the great circles fitted at
 the sites corresponding to the currently selected samples, using the
-algorithm of . For any sample which has a PCA direction but no fitted
+algorithm of FIXME:MCFADDEN. For any sample which has a PCA direction but no fitted
 great circle, the PCA direction will be used as an endpoint. The
 great-circle fit is shown both in the Equal-area (site) plot in the main
 window (if the plot has been activated in the preferences), and in a
 separate window which is opened automatically.
 
+Calculations → Clear site calculations::
 clears the results of any calculations associated with the selected
 _sites_ (as opposed to samples); at present, this amounts to clearing
 the best-fit great-circle direction for each selected site.
 
+Calculations → Multi-suite means::
 calculates Fisherian means across all the samples in _all_ the currently
 opened suites. the results are not plotted, but they are shown in a
 pop-up window and can be saved using the File → Export data → Export
 multi-suite calculations… menu item.
 
+Calculations → AMS::
 is a submenu containing various functions for AMS calculation.
 PuffinPlot can show the results of statistical calculations on AMS
 tensors, giving mean directions and confidence ellipses for the
 principal axes by one of three methods; at present, however, these
 calculations cannot be performed by PuffinPlot itself. Instead, it makes
-use of two Python scripts from the PmagPy suite , bootams.py and
+use of two Python scripts from the PmagPy suite (FIXME:TAUXE), bootams.py and
 s_hext.py. In order to calculate AMS statistics, these scripts must
 first be installed on the computer running PuffinPlot, and the folder
 containing them must be specified in the Preferences window. The PmagPy
 programs may be obtained from http://earthref.org/PMagPy/. All AMS
 calculations operate on the currently selected samples, except for Clear
-AMS, which operates on the entire suite. and chapter 13 of give more
+AMS, which operates on the entire suite. FIXME and chapter 13 of FIXME give more
 details of tensor statistics, particularly with regard to the
 application of bootstrap methods.
 
+Calculations → \caps{ams} → Calculate bootstrap AMS::
 calculates bootstrap statistics using the bootams.py program, producing
 Kent error ellipses which are shown on the AMS plot in the main window.
 
+Calculations → \caps{ams} → Parametric bootstrap AMS::
 calculates bootstrap statistics using the bootams.py program, producing
 Kent error ellipses which are shown on the AMS plot. It differs from the
 previous function in employing a parametric bootstrap, which can provide
@@ -944,11 +979,14 @@ more realistic confidence intervals for small numbers of samples on the
 (often reasonable) assumption that measurement uncertainties are
 normally distributed across the selected samples.
 
-calculates statistics using the s_hext.py program and displays the mean
+Calculations → \caps{ams} → Calculate Hext on AMS::
+calculates FIXME:HEXT statistics using the s_hext.py program and displays the mean
 directions and error ellipses on the AMS plot.
 
+Calculations → \caps{ams} → Clear AMS calculations::
 Clears any previously done bootstrap and Hext calculations.
 
+Calculate RPI…::
 calculates relative palaeointensity using two open suites. One suite
 provides the NRM, the other provides the normalizing value from ARM or
 magnetic susceptibility. RPI calculations are saved directly to a CSV
@@ -958,14 +996,14 @@ file; the RPI estimate can also be shown in the RPI plot.
 
 This menu allows you to open or close auxiliary windows.
 
- +
-
+Window → Data table::
 opens (or closes) a window showing all the demagnetization data for the
 current sample as a table. This table is far more extensive than the
 brief table displayed in the main window, and allows data to be selected
 and copied to the clipboard so that it can be pasted into a spreadsheet
 or text editor.
 
+Window → Site equal-area plot::
 opens (or closes) a window containing an equal-area plot for the current
 site; the plot is created by selecting the Calculations → Fisher by site
 or Calculations → Great circles menu items, and may be printed using the
@@ -974,6 +1012,7 @@ provides a similar plot; this window can be useful for a quick
 inspection of site data at a larger scale without editing the main plot
 layout.
 
+Window → Suite equal-area plot::
 opens (or closes) a window containing an equal-area plot of sample or
 site directions across the whole suite; the plot is created by selecting
 the Calculations → Suite means menu item, and may be printed using the
@@ -984,13 +1023,14 @@ layout.
 
 ==== Help menu
 
- +
-
+Help → PuffinPlot website::
 opens the PuffinPlot website using the default web browser.
 
-opens a window containing information on the PuffinPlot paper and how to
+Help → Cite PuffinPlot…::
+opens a window containing information on the PuffinPlot paper (FIXME:CITE) and how to
 cite it.
 
+Help → About PuffinPlot::
 displays some brief information about PuffinPlot, including the version.
 On Mac OS X, this item is also present on the PuffinPlot menu.
 
@@ -1014,7 +1054,7 @@ Old PuffinPlot format::
 Caltech (CIT)::
   (filename suffix sam, with associated data files in same folder):
   format used at the Caltech Paleomagnetics Laboratory and supported by
-  the ‘Paleomag’ program of .
+  the ‘Paleomag’ program of FIXME:JONES.
 IAPD::
   (filename suffix dat): format used by the IAPD program and its
   successors, developed by T. H. Torsvik et al. and used at the
@@ -1179,8 +1219,7 @@ is used rather loosely in this manual to refer to any movable element
 displaying data within the main window. Thus, the ‘plots’ listed below
 include textual elements such as legends and tables.
 
- +
-
+AMS::
 is a lower-hemisphere equal-area plot of AMS data, if any has been
 imported. Maximum, intermediate, and minimum anisotropy axes are shown
 as squares, triangles, and circles respectively. If AMS statistics have
@@ -1188,12 +1227,14 @@ been calculated (see
 <<sec:functions-calcs>>), the mean
 directions and confidence ellipses are also shown.
 
+Data table::
 is a table in which each row represents one demagnetization step for the
 current sample. The columns, from left to right, give the
 demagnetization step, declination, inclination, intensity, and magnetic
 susceptibility. Selected points are denoted by an asterisk (*) to their
 left; hidden points are denoted by a dash (–) to their left.
 
+Demag.::
 is a plot of treatment level (in mT or C) versus intensity of
 magnetization (in A/m), shown as a line of filled points. If magnetic
 susceptibility measurements have been taken, they are overlaid on the
@@ -1203,6 +1244,7 @@ treatment (i.e. AF field strength or temperature), the X axis will be
 labelled ‘measurement number’, and the X values will correspond to the
 sequence of the data in the file.
 
+Equal-area (sample)::
 is a Lambert azimuthal equal-area projection showing the directions of
 the current sample’s magnetization vectors. Successive points are
 connected by great-circle segments. Points in the upper hemisphere are
@@ -1211,13 +1253,15 @@ lower hemisphere are filled (black) and connected by dashed lines. If a
 great circle fit has been calculated for the sample, it is shown on this
 plot, and the pole to the great circle is shown as a triangle.
 
+Equal-area (site)::
 shows all the great circles fitted at the current sample’s site, along
-with a best-fit direction calculated by the method of . On this plot,
+with a best-fit direction calculated by the method of FIXME . On this plot,
 the calculated site direction is shown as a circle. Any sample PCA
 directions are shown as diamonds. Demagnetization steps used for the
 great-circle fits are shown as squares. Poles to the great circles are
 shown as triangles.
 
+Equal-area (suite)::
 shows all the site means for the suite, and a Fisherian mean and 95%
 confidence interval for them. If two polarities are present in the
 suite, two means are calculated and shown. If no sites are defined,
@@ -1226,10 +1270,13 @@ Note that, for site means calculated by great-circle analysis, only
 valid means are shown. See <<sec:prefs-misc>> for
 details on how validity is determined.
 
+NRM Histogram::
 shows a histogram of NRM intensities across the whole suite.
 
+RPI Plot::
 plots the current RPI estimate (if any) against depth.
 
+Sample parameters::
 shows the results of PCA and/or great-circle fits for data in the
 current sample. If neither of these calculations has been done, this
 plot is invisible. When visible, it shows the inclination and
@@ -1239,13 +1286,14 @@ least-squares linear fit. It also shows the maximum angular deviation
 (smaller is better). The MAD1 value gives an indication of how nearly
 the points lie in a single plane; the MAD3 value gives an indication of
 how nearly they lie along a single line. PCA analysis and MAD values are
-explained in and in section 9.7 of . The plot also show the Cartesian
+explained in FIXME and in section 9.7 of FIXME. The plot also show the Cartesian
 equation of the PCA best-fit line. For the great-circle fit, the plot
 gives the inclination and declination of one of the great circle’s
 poles, and the MAD1 value indicating the goodness of fit of the great
 circle. (Note that this may be different from the MAD1 for the PCA fit,
 since different sets of points may be used for the two fits.)
 
+Sample parameter table::
 shows a summary of parameters for each sample within the current site:
 declination, inclination, and type of analysis (‘PCAa’ and ‘PCAu’ for
 anchored and unanchored PCA respectively, and ‘GC’ for great circle).
@@ -1257,6 +1305,7 @@ chooser. If no sites are defined, this table shows the sample parameters
 for the entire suite (or as many of them as will fit within the table’s
 current dimensions).
 
+Site parameter table::
 shows a summary of parameters for each site within the current suite.
 The columns are:
 
@@ -1273,12 +1322,12 @@ dec.::
 inc.::
   the inclination of the site mean direction
 a95::
-  the latexmath:[$\alpha_{95}$] value of the site mean direction
+  the _α_~95~ value of the site mean direction
 R::
   the total length of the sum of the direction unit vectors
 type::
-  the type of analysis used: ‘Fshr’ for analysis on PCA directions; ‘GC’
-  for great-circle analysis . ‘GC’ is suffixed with either ‘v’ for valid
+  the type of analysis used: ‘Fshr’ for FIXME:FISHER analysis on PCA directions; ‘GC’
+  for great-circle analysis (FIXME:MCFADDEN). ‘GC’ is suffixed with either ‘v’ for valid
   or ‘i’ for invalid. See <<sec:prefs-misc>> for
   details on the validity test and how it may be customized.
 
@@ -1287,12 +1336,14 @@ for a site, only the great-circle direction will be shown. Clicking on a
 line within the site parameter table will jump to the first sample of
 the corresponding site.
 
+Site parameters::
 shows the site mean direction as calculated either by Fisher statistics
-or by the great-circle technique of . It gives the mean inclination and
-declination and the latexmath:[$\alpha_{95}$] and latexmath:[$k$]
+or by the great-circle technique of FIXME. It gives the mean inclination and
+declination and the _α_~95~ and _k_
 parameters. If no site mean direction has been calculated for the
 current site, this plot is invisible.
 
+Suite table::
 is a table showing suite-level mean direction and VGP data. See the
 entry on Site parameter table for explanations of the Fisher parameters
 associated with each mean direction. The directions shown are: ‘Site
@@ -1303,8 +1354,9 @@ VGPs corresponding to individual sample directions. As with most
 PuffinPlot operations, the parameters shown are calculated using only
 the samples and sites selected at the time the calculation is done.
 
+Ternary demag.::
 is an experimental ternary plot designed to display data from triaxial
-IRM demagnetization experiments conducted according to the method of .
+IRM demagnetization experiments conducted according to the method of FIXME.
 The position of a point on the plot reflects the relative strengths of
 the three axes of magnetization, which in turn correspond to high,
 medium, and low coercivity components. The path produced by points at
@@ -1312,6 +1364,7 @@ successive demagnetization steps thus shows the relative effects of
 thermal unblocking (and possibly thermal alteration) on these
 components.
 
+Title::
 shows the name of the current sample and the current site, for a
 discrete suite. For a continuous (long core) suite, it shows the current
 depth. This plot also shows suite-level Fisher statistics calculated
@@ -1319,22 +1372,25 @@ over samples and over sites, if these are available (see the Calculate →
 Suite means function in
 <<sec:functions-calcs>>).
 
+VGP map::
 is a world map (using a Mollweide projection) showing the locations of
 virtual geomagnetic poles (VGPs) for each site in the current suite.
 VGPs can only be calculated for sites whose location has been set; See
 _Import site locations…_ in <<sec:menu-file>> for
 details on reading site locations from a CSV file.
 
+VGP table::
 is a table showing virtual geomagnetic pole (VGP) data for each site in
-the current suite. The columns are: site name, latexmath:[$\phi$] (site
-latitude), latexmath:[$\lambda$] (site longitude), VGP
-latexmath:[$\phi$] (VGP latitude), VGP latexmath:[$\lambda$] (VGP
+the current suite. The columns are: site name, _φ_ (site
+latitude), _λ_ (site longitude), VGP _φ_
+ (VGP latitude), VGP _λ_ (VGP
 longitude), dp (first semi-axis of VGP confidence ellipse), and dm
 (second semi-axis of VGP confidence ellipse). VGPs can only be
 calculated for sites whose location has been set; See _Import site
 locations…_ in <<sec:menu-file>> for details on
 reading site locations from a CSV file.
 
+Zplot::
 is a Zijderveld plot, overlaying an orthographic projection in the
 horizontal plane with an orthographic projection in a chosen vertical
 plane. The vertical plane can be controlled using the chooser on the
@@ -1348,6 +1404,7 @@ effectively uses a different vertical projection for each point.) The
 appearance of the PCA lines can be changed using the Preferences dialog
 (see <<sec:prefs-misc>>).
 
+Zplot key::
 is a legend for the Zijderveld plot, showing the interpretations of the
 filled and unfilled points and giving the units in which the axes are
 calibrated.
@@ -1388,13 +1445,14 @@ buttons at the bottom.
 
 ==== The action buttons
 
- +
-
+Clear::
 clears all changed preferences, resetting them to their default values.
 
+Import::
 sets your preferences from a file saved using Export preferences. See
 the description of Export preferences for details.
 
+Export::
 saves your current preferences to a file. In conjunction with the Import
 preferences feature, this allows you to transfer your preferences from
 one computer to another. It also allows you to keep multiple sets of
@@ -1402,6 +1460,7 @@ preferences and switch between them as needed. Probably the most useful
 application is to save different plot layouts for different sets of
 data.
 
+Close::
 closes the Preferences window.
 
 ==== The 2G import tab [[sec:prefs-2g-import]]
@@ -1409,8 +1468,7 @@ closes the Preferences window.
 This tab contains options connected with reading data from .DAT files
 produced by the 2G ‘Long Core’ software.
 
- +
-
+Read magnetization from.::
 This setting controls whether PuffinPlot reads a sample’s magnetic
 moment from the fields giving the Cartesian components of the
 magnetization vector (X/Y/Z) or whether it reads the polar
@@ -1426,6 +1484,7 @@ the magnetization vector. If these are not present, it falls back to ‘X
 mean’/‘Y mean’/‘Z mean’, then to ‘X intensity’/‘Y intensity’/‘Z
 intensity’.
 
+SQUID sensor lengths.::
 As described above, the Cartesian magnetization components in long core
 files are not corrected for effective sensor length, which is determined
 by the response function of each SQUID and must be determined
@@ -1434,6 +1493,7 @@ vector for long core files when using the ‘X/Y/Z’ setting, PuffinPlot
 corrects the SQUID readings for these configured sensor lengths when
 opening the file.
 
+Protocol::
 gives the measurement protocol used in taking the readings. A protocol
 is a particular sequence of empty tray measurements and sample
 measurements in defined orientations, undertaken for each set of
@@ -1454,7 +1514,7 @@ required.) If the sensor lengths are not known, use the
 ‘Dec/Inc/Intensity’ setting in the 2G import tab. Failing to correct for
 sensor length is particularly dangerous because the deviations from the
 correct vectors are often small enough not to be immediately obvious.
-See Section 3 of for a fuller discussion of sensor response functions.
+See Section 3 of FIXME for a fuller discussion of sensor response functions.
 
 [[tbl:import-protocols]]
 .Measurement protocols for 2G data files
@@ -1505,22 +1565,25 @@ the plot names. The plot types are detailed in
 
 ==== The Misc. tab [[sec:prefs-misc]]
 
- +
-
+Label equal-area plots::
 If this box is ticked, the equal-area plots (sample, site, suite, and
 AMS) will be shown with text labels at the bottom right, making them
 easier to distinguish from one another.
 
+Label treatment steps::
 If this box is ticked, each point on the demagnetization plots
 (Zijderveld and equal-area) will be labelled with the appropriate
 treatment step (AF intensity or temperature).
 
+Label samples in site plots::
 If this box is ticked, sample directions (PCA or Fisher) will be
 labelled with the sample’s name or depth in the site equal-area plot.
 
+Label points in suite plots::
 If this box is ticked, sample and site directions will be labelled with
 the appropriate name or depth in the suite equal-area plot.
 
+Highlight current sample/site::
 If this box is ticked, the current sample and site data will be shown in
 red on the site and suite equal-area plots and on the sample and site
 parameter tables. This feature makes it easier to pick out the current
@@ -1528,21 +1591,25 @@ sample and site in the context of larger-scale analyses, and is useful
 for exploring data, particularly in conjunction with the ability to jump
 to a sample or site by clicking on its line in a parameter table.
 
+Show site α95s on suite plot::
 If this box is ticked, any site direction shown on the suite equal-area
 plot will be plotted along with a projected small circle denoting the
-latexmath:[$\alpha_{95}$] interval. The site latexmath:[$\alpha_{95}$]
+_α_~95~ interval. The site _α_~95~
 circles are plotted in blue, to distinguish them from the suite
-latexmath:[$\alpha_{95}$]s (plotted in black).
+_α_~95~s (plotted in black).
 
+Bedding is vs. magnetic north.::
 If this box is ticked, the bedding azimuth for formation orientation
 correction is assumed to be relative to magnetic north, and a correction
 is applied for local magnetic deviation. (The sample azimuth is always
 assumed to be relative to magnetic north; if it is relative to
 geographic north, a magnetic declination of zero can be specified.)
 
+Demag. y-axis label::
 allows to you customize the text which labels the _y_ axis of the
 demagnetization-intensity plot.
 
+PmagPy folder::
 sets the location of the PmagPy programs. If you wish to do calculations
 of AMS statistics within PuffinPlot, it is necessary to have the PmagPy
 programs bootams.py and s_hext.py installed (see
@@ -1550,11 +1617,13 @@ programs bootams.py and s_hext.py installed (see
 box allows you to specify to PuffinPlot the folder in which the programs
 are installed.
 
+Font::
 allows you to change the font used in the plots: enter a font family
 name into the box. PuffinPlot must be restarted for the change to take
 effect. If the specified font cannot be found, a default fallback font
 is used.
 
+Look and feel::
 controls the appearance of PuffinPlot’s windows and menus. (It has no
 effect on the functionality of the program.) _Native_ gives an
 appearance intended to harmonize with other programs on the operating
@@ -1565,6 +1634,7 @@ the current operating system; in most cases this will be the same as
 _Native_ for Mac OS X and Windows, and _Metal_ for Linux. Changes to
 this option will not take effect until PuffinPlot is restarted.
 
+GC validity::
 allows you to customize the conditions under which a site mean
 calculated by great-circle intersection is considered valid. The
 validity test is used in several ways:
@@ -1585,10 +1655,10 @@ M::
 N::
   the number of great circles used in the fit
 a95::
-  the latexmath:[$\alpha_{95}$] value (semiangle of the 95% confidence
+  the _α_~95~ value (semiangle of the 95% confidence
   region)
 k::
-  the latexmath:[$k$]-value (estimate for latexmath:[$\kappa$])
+  the _k_-value (estimate for _κ_)
 
 The most useful components for constructing validity expressions are the
 comparison operators `<`, `<=`, `>=`, `>`, the logical operators `&&`
@@ -1598,13 +1668,14 @@ parentheses. A typical expression might be
 `a95<3 && k>5 && (M>=3 || N>=5)`
 
 which means that a great-circle fit will be considered valid if it has
-an latexmath:[$\alpha_{95}$] below 3, a latexmath:[$k$] above five, and
+an _α_~95~ below 3, a _k_ above five, and
 either at least three endpoints or at least five circles. The default
 value of this setting is `true`, which causes all great-circle fits to
 be considered valid. If there is an error in the expression (i.e. if it
 isn’t a valid JavaScript expression, or if it doesn’t produce a
 true/false value), it will be evaluated as false.
 
+Zplot PCA display::
 controls the manner in which PCA directions are shown on the Zijderveld
 plot (see <<sec:plot-types>>). The available
 settings are:
@@ -1619,10 +1690,12 @@ Short::
 None::
   No PCA lines will be shown.
 
+Sample orientation::
 controls how sample orientation is displayed at the top of the main
 window: it can be shown either as azimuth and dip angle, or as azimuth
 and hade (the complement of the dip angle).
 
+Formation orientation::
 controls how formation orientation is displayed at the top of the main
 window: it can be shown either as dip azimuth and dip angle, or as
 strike and dip angle.
@@ -1772,7 +1845,7 @@ capabilities, integrate it conveniently with other programs, or process
 large amounts of data without manual intervention. The Java platform
 upon which PuffinPlot is built supports a number of scripting languages
 which can easily interface with PuffinPlot. Perhaps most usefully, an
-implementation of the Python programming language – named Jython – has
+implementation of the Python programming language – named Jython (FIXME:CITE) – has
 been developed for the Java platform. Since Python is widely used in
 scientific programming and scripting, and familiar to a large number of
 scientists, this provides a convenient route for anyone wishing to
@@ -1945,25 +2018,109 @@ order.
 Treatment step fields are detailed in
 <<tbl:treatment-step-fields>>.
 
+[[tbl:treatment-step-fields]]
+.Treatment step fields in the PuffinPlot file format
+[cols="1,1,1,3",options="header",]
+|=======================================================================
+| Identifier | Type / Unit | Default | Description
+|`DISCRETE_ID` | string | `UNSET` | The discrete sample identifier (sample name).
+
+|`DEPTH` | unspecified | null |
+The depth of this sample in a core. Note that PuffinPlot does not assume any explicit 
+unit for depth: any saved or exported data will simply use the same depth values without any 
+attempt to interpret them in a unit system.
+
+|`RUN_NUMBER` | integer | −1 |
+The sequential number of the magnetometer run which measured this treatment step.
+
+|`TIMESTAMP` | string | `UNSET` |
+The time at which this measurement was made. PuffinPlot doesn't process this field, 
+so the format is undefined.
+
+|`SLOT_NUMBER` | integer | −1 |
+For discrete measurements on a multi-sample tray, the number of the tray slot containing 
+the sample.
+
+|`MEAS_TYPE` | string | `UNSET` | Measurement type. Must be `DISCRETE` or `CONTINUOUS`. This field is required.
+
+|`X_MOMENT` | A/m | 0 |
+The x component of the sample's magnetic dipole moment per unit volume in the
+uncorrected sample co-ordinate system.
+
+|`Y_MOMENT` | A/m | 0 |
+The y component of the sample's magnetic dipole moment per unit volume in the
+uncorrected sample co-ordinate system.
+
+|`Z_MOMENT` | A/m | 0 |
+The z component of the sample's magnetic dipole moment per unit volume in the
+uncorrected sample co-ordinate system.
+
+|`MAG_SUS` | unspecified | NaN |
+The sample's magnetic susceptibility at this treatment step. PuffinPlot does not specify any unit for susceptibility and treats it as a relative value.
+
+|`VOLUME` | cm^3^ | 10.8 | The volume of a discrete sample.
+
+|`AREA` | cm^2^ | 4 | The cross-sectional area of a long core sample.
+
+|`SAMPLE_AZ` | ° | NaN | The azimuth (i.e. down-dip direction) of a sample's field orientation.
+
+|`SAMPLE_DIP` | ° | NaN | The dip of a sample's field orientation.
+
+|`FORM_AZ` | ° | NaN |
+The azimuth (i.e. down-dip direction) of the formation from which the
+sample was taken.
+
+|`FORM_DIP` | ° | NaN | The dip of the formation from which the sample was taken.
+
+|`MAG_DEV` | ° | 0 | The magnetic declination at the sampling site, i.e. the declination of the magnetic field direction relative to geographic north.
+
+|`TREATMENT` | string | `UNKNOWN` | The type of treatment applied to the sample. Must be one of `NONE`, `DEGAUSS_XYZ`, `DEGAUSS_Z`, `ARM`, `IRM`, or `THERMAL`.
+
+|`AF_X` | tesla | NaN | The x component of an alternating magnetic field treatment.
+
+|`AF_Y` | tesla | NaN | The y component of an alternating magnetic field treatment.
+
+|`AF_Z` | tesla | NaN | The z component of an alternating magnetic field treatment.
+
+|`TEMPERATURE` | °C | NaN | The peak temperature of a thermal treatment.
+
+|`IRM_FIELD` | tesla | NaN | The intensity of an applied IRM treatment.
+
+|`ARM_FIELD` | tesla | NaN | The intensity of the DC field in an ARM treatment.
+
+|`ARM_AXIS` | string | `UNKNOWN` |
+The axis along which an ARM was applied. Must be one of `AXIAL`, `NONE`, or `UNKNOWN`.
+
+|`PP_SELECTED` | boolean | false | Whether this step is selected in PuffinPlot.
+
+|`PP_ANCHOR_PCA` | boolean | false | Whether PCA calculations for this step should be anchored.
+
+|`PP_HIDDEN` | boolean | false | Whether this step is hidden in the PuffinPlot GUI.
+
+|`PP_ONCIRCLE` | boolean | false | Whether this step is included in great-circle fits.
+
+|`PP_INPCA` | boolean | false | Whether this step is included in PCA fits.
+|=======================================================================
+
+
 === Required fields
 
 The only required treatment step field in a PuffinPlot file is
 MEAS_TYPE. The minimal valid PuffinPlot file is thus:
 
-__________________________________________________________
-`PuffinPlot file. Version 3`latexmath:[$\hookleftarrow$] +
-`MEAS_TYPE`latexmath:[$\hookleftarrow$]
-__________________________________________________________
+[literal]
+PuffinPlot file. Version 3⏎
+MEAS_TYPE⏎
 
-(Here, latexmath:[$\hookleftarrow$] represents the newline character.)
+
+(Here, ⏎ represents the newline character.)
 This file contains no lines beyond the header line, and therefore no
 data. The minimal file containing data is:
 
-__________________________________________________________
-`PuffinPlot file. Version 3`latexmath:[$\hookleftarrow$] +
-`MEAS_TYPE`latexmath:[$\hookleftarrow$] +
-`DISCRETE`latexmath:[$\hookleftarrow$]
-__________________________________________________________
+[literal]
+PuffinPlot file. Version 3⏎
+MEAS_TYPE⏎
+DISCRETE⏎
 
 This file contains a single treatment step, which specifies no data
 except that the sample is discrete. Loading this file into PuffinPlot
@@ -1975,37 +2132,31 @@ fields set to their default values.
 A suite line has SITE as the first field and follows one of the
 following formats:
 
-SUITE MEASUREMENT_TYPE latexmath:[$\langle$]typelatexmath:[$\rangle$] ::
+SUITE MEASUREMENT_TYPE <type> ::
   The measurement type of this suite. Must be one of DISCRETE or
   CONTINUOUS.
-SUITE CUSTOM_FLAG_NAMES
-latexmath:[$\langle$]flag-namelatexmath:[$\rangle$] ...::
+SUITE CUSTOM_FLAG_NAMES <flag-name> ...::
   A list of names for user-defined flags containing sample information.
   Each sample can store a true/false value for each flag.
-SUITE CUSTOM_NOTE_NAMES
-latexmath:[$\langle$]note-namelatexmath:[$\rangle$] ...::
+SUITE CUSTOM_NOTE_NAMES <note-name> ...::
   A list of names for user-defined notes containing sample information.
   Each sample can store a string value for each note.
-SUITE CREATION_DATE latexmath:[$\langle$]datelatexmath:[$\rangle$] ::
+SUITE CREATION_DATE <date> ::
   The date and time at which the suite was created. The format is
   ISO-8601 with date, time, milliseconds, and timezone, e.g.
   2019-03-12T16:17:34.347+01:00.
-SUITE MODIFICATION_DATE latexmath:[$\langle$]datelatexmath:[$\rangle$]
-::
+SUITE MODIFICATION_DATE <date>::
   The date and time at which the suite was last modified. Format is as
   for CREATION_DATE.
-SUITE ORIGINAL_FILE_TYPE
-latexmath:[$\langle$]stringlatexmath:[$\rangle$] ::
+SUITE ORIGINAL_FILE_TYPE <string> ::
   The type of the file(s) from which the data for this suite was
   originally read. Must be one of TWOGEE, ZPLOT, PUFFINPLOT_OLD,
   PUFFINPLOT_NEW, CALTECH, IAPD, UCDAVIS, DIRECTIONS, CUSTOM_TABULAR,
   PMD_ENKIN, JR6, or UNKNOWN.
-SUITE ORIGINAL_CREATOR_PROGRAM
-latexmath:[$\langle$]stringlatexmath:[$\rangle$] ::
+SUITE ORIGINAL_CREATOR_PROGRAM <string> ::
   The name and version of the program which originally created the
   suite.
-SUITE SAVED_BY_PROGRAM latexmath:[$\langle$]stringlatexmath:[$\rangle$]
-::
+SUITE SAVED_BY_PROGRAM <string>::
   The name and version of the program which saved this file.
 
 (For convenience, fields are shown separated with spaces in this
@@ -2016,13 +2167,10 @@ listing; in reality they are separated with tab characters.)
 A site line has SITE as the first field and a site identifier string as
 the second field. The line follows one of the following formats:
 
-SITE latexmath:[$\langle$]site-idlatexmath:[$\rangle$] HEIGHT
-latexmath:[$\langle$]heightlatexmath:[$\rangle$] ::
+SITE <site-id> HEIGHT <height> ::
   A decimal number representing the height of the site. Units are
   unspecified.
-SITE latexmath:[$\langle$]site-idlatexmath:[$\rangle$] LOCATION
-latexmath:[$\langle$]latitudelatexmath:[$\rangle$]
-latexmath:[$\langle$]longitudelatexmath:[$\rangle$] ::
+SITE <site-id> LOCATION <latitude> <longitude> ::
   Two decimal numbers giving the latitude and longitude of the site in
   degrees.
 
@@ -2035,22 +2183,17 @@ A sample line has SAMPLE as the first field and a sample identifier
 (discrete sample name or depth in a continuous core). The line follows
 one of the following formats:
 
-SAMPLE latexmath:[$\langle$]sample-idlatexmath:[$\rangle$] CUSTOM_FLAGS
-latexmath:[$\langle$]flag-valuelatexmath:[$\rangle$] ...::
+SAMPLE <sample-id> CUSTOM_FLAGS <flag-value> ...::
   The values of any custom flags defined for this suite. The number of
   values must match the number of custom flags defined in the SUITE
   CUSTOM_FLAG_NAMES line. Possible values are true and false.
-SAMPLE latexmath:[$\langle$]sample-idlatexmath:[$\rangle$] CUSTOM_NOTES
-latexmath:[$\langle$]note-contentlatexmath:[$\rangle$] ...::
+SAMPLE <sample-id> CUSTOM_NOTES <note-content> ...::
   The values of any custom note defined for this suite. The number of
   values must match the number of custom note defined in the SUITE
   CUSTOM_NOTE_NAMES line.
-SAMPLE latexmath:[$\langle$]sample-idlatexmath:[$\rangle$] SITE
-latexmath:[$\langle$]site-idlatexmath:[$\rangle$] ::
+SAMPLE <sample-id> SITE <site-id> ::
   The identifier of the site which contains this sample.
-SAMPLE latexmath:[$\langle$]sample-idlatexmath:[$\rangle$]
-IMPORTED_DIRECTION latexmath:[$\langle$]declinationlatexmath:[$\rangle$]
-latexmath:[$\langle$]inclinationlatexmath:[$\rangle$] ::
+SAMPLE <sample-id> IMPORTED_DIRECTION <declination> <inclination> ::
   The palaeomagnetic direction of this sample. In most cases this
   direction is not explicitly stored, but recalculated from the
   treatment step data when PuffinPlot loads the file. Using an
