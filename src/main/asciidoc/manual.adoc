@@ -1,4 +1,8 @@
-image:figures/Fratercula_arctica.jpeg[image,width=264]
+= PuffinPlot User Manual
+:numbered:
+:xrefstyle: full
+
+// image:figures/Fratercula_arctica.jpeg[image,width=264]
 
 == Introduction
 
@@ -9,13 +13,11 @@ knowledge of palaeomagnetic procedures is assumed. For excellent
 introductions to palaeomagnetic analysis, see or .
 
 If you use PuffinPlot in the creation of published work, please cite the
-PuffinPlot paper . See
-Appendix #sec:citing-puffinplot[[sec:citing-puffinplot]] for further
-details.
+PuffinPlot paper . See <<sec:citing-puffinplot>> for further details.
 
 PuffinPlot is free software, distributed under the GNU General Public
 License. Please see the LICENCE file in the PuffinPlot archive for
-details. PuffinPlot is copyright 2012–2017 by Pontus Lurcock. The
+details. PuffinPlot is copyright 2012–2020 by Pontus Lurcock. The
 PuffinPlot website is located at http://talvi.net/puffinplot.
 
 == Installation
@@ -39,38 +41,37 @@ Java 5.)
 
 === Obtaining and installing PuffinPlot
 
-You may download the latest version of PuffinPlot from
-https://github.com/pont-us/PuffinPlot/releases. PuffinPlot is
-distributed as a single zip archive file containing the program itself
-(in two different variants, as detailed below) and documentation. The
-documentation consists of this manual (in both HTML and PDF format) and
-a JavaDoc folder, containing documentation for PuffinPlot’s source code.
-The JavaDoc is only of interest to users wishing to write scripts which
-interface directly with PuffinPlot’s internal data structures (see
-section #sec:scripting[[sec:scripting]]).
-Table #tbl:archive-contents[[tbl:archive-contents]] lists the contents
-of the PuffinPlot archive. After downloading the archive, move it to the
-folder where you would like PuffinPlot installed and extract its
-contents there.
+You may download the latest version of PuffinPlot
+from https://github.com/pont-us/PuffinPlot/releases.
+PuffinPlot is distributed
+as a single zip archive file
+containing the program itself
+(in two different variants, as detailed below)
+and documentation.
+The documentation consists of this manual
+(in both HTML and PDF format)
+and a JavaDoc folder,
+containing documentation for PuffinPlot’s source code.
+The JavaDoc is only of interest
+to users wishing to write scripts
+which interface directly
+with PuffinPlot’s internal data structures (see <<sec:scripting>>).
+<<tbl:archive-contents>> lists the contents of the PuffinPlot archive.
+After downloading the archive,
+move it to the folder where you would like PuffinPlot installed
+and extract its contents there.
 
-.[[tbl:archive-contents]][tbl:archive-contents] The contents of the
-PuffinPlot archive file.
+[[tbl:archive-contents]]
+.The contents of the PuffinPlot archive file
 [cols="<,<",options="header",]
 |=======================================================================
 |File |Description
 |README |A text file briefly describing the archive.
-
-|PuffinPlot.jar |The PuffinPlot program (suitable for all operating
-systems)
-
+|PuffinPlot.jar |The PuffinPlot program (suitable for all operating systems)
 |PuffinPlot.app |The PuffinPlot program (tailored for Mac OS X)
-
 |Manual |Folder containing this manual in PDF and HTML format
-
 |JavaDoc |Folder containing internal documentation for PuffinPlot
-
 |Examples |Folder containing example data files and scripts
-
 |LICENCE |The licence under which PuffinPlot is distributed
 |=======================================================================
 
@@ -85,8 +86,8 @@ operating systems, but double-clicking on the file PuffinPlot.jar is the
 most common method. In some cases it may be necessary to right-click on
 the file and select _Open with Java runtime_ or some similar text from a
 menu. PuffinPlot can also be started from a terminal prompt by setting
-the current folder to the one containing PuffinPlot, and typing java
--jar PuffinPlot.jar.
+the current folder to the one containing PuffinPlot, and typing `java
+-jar PuffinPlot.jar`.
 
 *Note for Windows users.* Under Windows, other programs may occasionally
 interfere with the Java platform; if you have the Java platform
@@ -101,7 +102,7 @@ The PuffinPlot archive also contains a special variant of the program
 for Mac OS X. This variant is packaged as a standard OS X application
 and conforms more nearly to OS X user interface standards than the
 cross-platform version described in the previous section. It is named
-`PuffinPlot.app', although the extension `.app' is usually hidden by Mac
+‘PuffinPlot.app’, although the extension ‘.app’ is usually hidden by Mac
 OS X.
 
 In the extracted archive contents, the PuffinPlot application is shown
@@ -110,10 +111,10 @@ _Fratercula arctica_). This application may be dragged into the
 Applications folder, or any other convenient place.
 
 PuffinPlot is started by double-clicking on its application icon. Recent
-versions of Mac OS X include a security feature called `Gatekeeper',
+versions of Mac OS X include a security feature called ‘Gatekeeper’,
 which may prevent PuffinPlot from running. The Apple support note at
 http://support.apple.com/en-gb/HT202491 gives instructions for
-configuring Gatekeeper to allow the execution of an `unidentified'
+configuring Gatekeeper to allow the execution of an ‘unidentified’
 application such as PuffinPlot.
 
 == Basic usage
@@ -137,7 +138,7 @@ To open a file, select Open… from the File menu. This will allow you to
 choose one or more files to open from a standard file selection window.
 You may also select an entire folder; in this case every file within the
 folder will be opened and combined into a single suite. (On Mac OS X,
-you can’t choose a folder in the normal `Open file' dialog; you have to
+you can’t choose a folder in the normal ‘Open file’ dialog; you have to
 select the Open folder… menu item instead.) You can also open a file,
 folder, or group of files by dragging them onto the main PuffinPlot
 window. *Note:* if you open multiple files or a whole folder, they must
@@ -246,7 +247,7 @@ cycle, and is also stored as part of the step.
 === Main window features
 
 This section describes the parts and functions of the main PuffinPlot
-window, as shown in figure #fig:screenshot[[fig:screenshot]].
+window, as shown in <<fig:screenshot>>.
 
 ==== Plot area
 
@@ -255,9 +256,9 @@ the current sample using various plots. By default, four plots are
 shown: a demagnetization-intensity biplot, a Zijderveld plot, an
 equal-area projection, and a table of demagnetization steps. The plots
 can be moved and resized (see
-section #sec:edit-layout[[sec:edit-layout]]). Other plots are also
+<<sec:edit-layout>>). Other plots are also
 available, and the preferences window can be used to control which plots
-are displayed (see section #sec:preferences[[sec:preferences]]).
+are displayed (see <<sec:preferences>>).
 
 ==== Sample chooser
 
@@ -307,7 +308,7 @@ Use Ctrl-B and Ctrl-N to change the current sample. Use Ctrl-A to select
 all the samples in the current suite. You can also use the up and down
 arrow keys to change the sample.
 
-==== [[sec:toolbar]][sec:toolbar]Toolbar
+==== Toolbar [[sec:toolbar]]
 
 The toolbar displays various data and provides several controls. From
 left to right, these are:
@@ -322,14 +323,14 @@ Orientation correction chooser.::
   corrected for sample orientation (samp. corr.), or in tectonic
   co-ordinates, corrected for both sample orientation and bedding
   orientation (form. corr.).
-Zijderveld vertical projection (`V vs. …').::
+Zijderveld vertical projection (‘V vs. …’).::
   This chooser controls the vertical projection used in the Zijderveld
   plot. The _y_ axis always corresponds to the vertical direction; the
   chooser controls the _x_ axis, which may correspond to North (V vs. N)
   or East (V vs. E). The third option, V vs. H, projects each data point
   separately, in the plane containing itself and the origin; this is
-  sometimes referred to as a `modified Zijderveld' plot.
-Zijderveld horizontal projection (`N is up'/`W is up').::
+  sometimes referred to as a ‘modified Zijderveld’ plot.
+Zijderveld horizontal projection (‘N is up’/‘W is up’).::
   This chooser controls the horizontal projection used in the Zijderveld
   plot. The upward direction on the plot can correspond to either north
   or west.
@@ -337,7 +338,7 @@ Sample orientation::
   (Samp). The first number is the azimuth of the sample orientation; the
   second is its either its dip angle or its hade, depending on the
   current setting in the user preferences (see
-  section #sec:prefs-misc[[sec:prefs-misc]]). By default, PuffinPlot
+  <<sec:prefs-misc>>). By default, PuffinPlot
   uses dip angle rather than hade. For a long core, the azimuth and dip
   will usually be 0 and 90 respectively throughout the core.
 Formation orientation::
@@ -345,10 +346,10 @@ Formation orientation::
   bedding, or its strike; the second is the dip angle. By default
   PuffinPlot uses the dip azimuth rather than the strike, but this can
   be changed in the preferences window (see
-  section #sec:prefs-misc[[sec:prefs-misc]]).
+  <<sec:prefs-misc>>).
 Magnetic declination::
   (Dev). This is the angle between magnetic north and true north at the
-  sampling site. (It is abbreviated `Dev' (for `deviation') to avoid any
+  sampling site. (It is abbreviated ‘Dev’ (for ‘deviation’) to avoid any
   possible confusion with the declinations of sample magnetizations.)
 Select all::
   selects all the treatment steps in the current sample.
@@ -369,7 +370,7 @@ This section gives a methodical account of PuffinPlot’s features.
 This section lists all the items in PuffinPlot’s menus, giving a brief
 description of the functionality associated with each one.
 
-==== [[sec:menu-file]][sec:menu-file]File menu
+==== File menu [[sec:menu-file]]
 
 This menu contains functions connected with opening, closing, and saving
 files.
@@ -377,7 +378,7 @@ files.
  +
 
 reads one or more files of demagnetization data into PuffinPlot as a new
-suite. See section #sec:file-types[[sec:file-types]] for details of
+suite. See <<sec:file-types>> for details of
 supported filetypes.
 
 reads a whole folder of data files into PuffinPlot. This menu item only
@@ -391,8 +392,8 @@ single click.
 saves the current suite as a PuffinPlot file. If the suite was opened
 from a PuffinPlot file or if it has been previously saved as a
 PuffinPlot file, it will immediately be saved to that file. If no
-PuffinPlot file is associated with this suite yet, a standard `save
-file' dialog box will prompt you for a file name and location.
+PuffinPlot file is associated with this suite yet, a standard ‘save
+file’ dialog box will prompt you for a file name and location.
 
 allows you to save the current suite to a different filename or
 location.
@@ -402,44 +403,35 @@ closes the current suite, removing it from PuffinPlot’s data display.
 is a submenu allowing the export of various kinds of data to CSV files.
 
 saves a file containing all the data associated with individual samples.
-Table #tbl:export-sample[[tbl:export-sample]] describes the fields which
+<<tbl:export-sample>> describes the fields which
 make up the file.
 
-.[[tbl:export-sample]][tbl:export-sample] List of fields in exported
-sample data file, Note that, in addition to the predefined fields, any
-custom user annotations (see
-section #sec:annotations[[sec:annotations]]) will also be exported in
-this file.
+[[tbl:export-sample,List of fields in exported sample data file]]
+.List of fields in exported sample data file. Note that, in addition to the predefined fields, any custom user annotations (see <<sec:annotations>>) will also be exported in this file.
 [cols="<,<",options="header",]
 |=======================================================================
 |Field name |Description
 |Suite |Suite name
-
 |Sample |Sample name (only present in discrete files)
-
 |Depth |Depth in core (only present in long core files)
-
 |NRM intensity (A/m) |NRM intensity in A/m
-
 |MS jump temp. (degC) |For thermal demagnetization, the temperature step
 at which the first jump in magnetic susceptibility occurs. A jump is
 defined as a susceptibility of at least 2.5 times the previous value.
 
 |Steps |Number of treatment steps for this sample
-
 |PCA dec. (deg) |Declination of PCA direction ()
-
 |PCA inc. (deg) |Inclination of PCA direction ()
 
 |PCA MAD1 |The Maximum Angle of Deviation for the planar PCA fit; the
 smaller the value, the more coplanar the points. See
-section #sec:plot-types[[sec:plot-types]] for more details.
+<<sec:plot-types>> for more details.
 
 |PCA MAD3 |The Maximum Angle of Deviation for the linear PCA fit; the
 smaller the value, the more collinear the points. See
-section #sec:plot-types[[sec:plot-types]] for more details.
+<<sec:plot-types>> for more details.
 
-|PCA anchored |`Y' if the PCA fit was anchored; `N' if not
+|PCA anchored |‘Y’ if the PCA fit was anchored; ‘N’ if not
 
 |PCA equation |The Cartesian equation of the PCA best-fit line
 
@@ -449,8 +441,8 @@ demagnetization step used for PCA analysis
 |PCA end (degC or mT) |Field (in mT) or temperature (in C) of last
 demagnetization step used for PCA analysis
 
-|PCA contiguous |`Y' if all steps between the first and last were
-selected for PCA; `N' if any were omitted
+|PCA contiguous |‘Y’ if all steps between the first and last were
+selected for PCA; ‘N’ if any were omitted
 
 |GC dec (deg) |the declination of the pole to the fitted great circle,
 if any
@@ -465,7 +457,7 @@ any
 
 |GC MAD1 |the MAD1 value for the great circle fit, indicating goodness
 of fit (smaller is better). See
-section #sec:plot-types[[sec:plot-types]] for more details.
+<<sec:plot-types>> for more details.
 
 |GC npoints |the number of points used for the great-circle fit
 
@@ -475,8 +467,8 @@ section #sec:plot-types[[sec:plot-types]] for more details.
 intensity of the sample’s remanence was reduced to half the NRM (in C or
 mT). If half-intensity was not reached, this column contains 0.
 
-|MDF midpoint reached |`Y' if magnetization intensity reached half the
-NRM intensity during demagnetization; `N' otherwise
+|MDF midpoint reached |‘Y’ if magnetization intensity reached half the
+NRM intensity during demagnetization; ‘N’ otherwise
 
 |Fisher dec. |Mean declination of treatment step directions ()
 
@@ -507,15 +499,15 @@ NRM intensity during demagnetization; `N' otherwise
 
 |_[annotations]_ |Any user-defined annotations are also exported as part
 of the sample export file. See
-section #sec:annotations[[sec:annotations]] for details.
+<<sec:annotations>> for details.
 |=======================================================================
 
 saves a file containing (for suites with discrete samples) all the data
-associated with sites. Table #tbl:export-site[[tbl:export-site]]
+associated with sites. <<tbl:export-site>>
 describes the fields which make up this file.
 
-.[[tbl:export-site]][tbl:export-site] List of fields in exported site
-data file
+[[tbl:export-site]]
+.List of fields in exported site data file
 [cols="<,<",options="header",]
 |=======================================================================
 |Field name |Description
@@ -535,8 +527,8 @@ data file
 
 |Fisher R |length of sum of unit direction vectors
 
-|GC valid |`Y' if the great-circle fit is valid, `N' otherwise. See
-section #sec:prefs-misc[[sec:prefs-misc]] for details on the validity
+|GC valid |‘Y’ if the great-circle fit is valid, ‘N’ otherwise. See
+<<sec:prefs-misc>> for details on the validity
 test and how it may be customized.
 
 |GC dec. (deg) |Declination of great-circle direction ()
@@ -588,12 +580,12 @@ range of its values across all the samples at a site.
 saves a CSV file containing the Fisherian parameters for mean directions
 calculated across the entire suite; see the documentation for the
 Calculate → Suite means menu item
-(section #sec:functions-calcs[[sec:functions-calcs]]) for details.
+(<<sec:functions-calcs>>) for details.
 
 saves a CSV file containing the Fisherian parameters for mean directions
 calculated across all the currently open suites; see the documentation
 for the Calculate → Multi-suite means menu item
-(section #sec:functions-calcs[[sec:functions-calcs]]) for details.
+(<<sec:functions-calcs>>) for details.
 
 saves files containing IRM acquisition data. It produces a folder of
 files, one for each sample in the suite. Each file is in tab-delimited
@@ -605,11 +597,11 @@ creates a _data bundle_ from the current suite. This is a zip archive
 containing the suite data and analysis parameters, calculation results,
 and other files useful for exploring or reproducing the results. Data
 bundles are described in more detail in
-Section #sec:bundle[[sec:bundle]].
+<<sec:bundle>>.
 
 is a submenu with various options for exporting the plots for the
 current and selected samples. See
-section #sec:graphics-export[[sec:graphics-export]] for full details.
+<<sec:graphics-export>> for full details.
 
 is a submenu with functions to import additional data into the current
 suite.
@@ -634,7 +626,7 @@ the sample names specified in the ASC file with the sample names for the
 demagnetization data. If the AMS file contains data for samples not in
 the suite, these samples will be created and added to the suite.
 PuffinPlot reads the sample correction from the ASC file; it also reads
-the F1 (`foliation 1') orientation and uses it as the formation
+the F1 (‘foliation 1’) orientation and uses it as the formation
 correction. If ASC data is being imported for existing samples, you can
 choose either to keep the pre-existing sample and formation corrections,
 or to replace one or both of them with the values read from the ASC
@@ -653,21 +645,21 @@ order to produce PDF files.
 
 prints the contents of a separate window showing an equal-are plot of
 sample/site directions through the suite; see
-section #sec:menu-window[[sec:menu-window]] for more details.
+<<sec:menu-window>> for more details.
 
 prints the contents of a separate window showing an equal-area plot of
 directions at the current site; see
-section #sec:menu-window[[sec:menu-window]] for more details.
+<<sec:menu-window>> for more details.
 
 runs a user-specified external script written in the JavaScript
-programming language. See section #sec:scripting[[sec:scripting]] for
+programming language. See <<sec:scripting>> for
 details.
 
 runs a user-specified external script written in the Python programming
-language. See section #sec:scripting[[sec:scripting]] for details.
+language. See <<sec:scripting>> for details.
 
 opens the preferences window. See
-section #sec:preferences[[sec:preferences]] for details. On Mac OS X,
+<<sec:preferences>> for details. On Mac OS X,
 this item is found on the PuffinPlot menu to the left of the File menu,
 rather than on the File menu.
 
@@ -681,7 +673,7 @@ The Edit menu contains functions related to the manipulation of data.
  +
 
 allows you to reposition and resize the plots in the main display area.
-See section #sec:edit-layout[[sec:edit-layout]] for details.
+See <<sec:edit-layout>> for details.
 
 resets the sizes and positions of all the plots to their default values.
 
@@ -694,7 +686,7 @@ treatment steps which have been hidden (see Hide steps below).
 de-selects all the treatment steps in all the selected samples.
 
 copies the selected treatment steps for the current sample to an
-invisible `clipboard'. The selection can be pasted from the clipboard to
+invisible ‘clipboard’. The selection can be pasted from the clipboard to
 other samples (see Paste point selection), selecting the same
 demagnetization steps in those samples. This is useful for selecting the
 same treatment steps in a large number of samples without having to
@@ -766,8 +758,8 @@ section is rotated so that the PCA direction at the top aligns with a
 specified reference direction; for each core section below the top
 section, the section is rotated so that the PCA direction at its top
 aligns with the PCA direction at the bottom of the core section above
-it. The number of samples averaged at the core ends to produce the `top'
-and `bottom' directions can be specified.
+it. The number of samples averaged at the core ends to produce the ‘top’
+and ‘bottom’ directions can be specified.
 
 removes from the current suite all the samples outside a specified depth
 range.
@@ -811,7 +803,7 @@ table below gives some further examples.
 
 sets site names in continuous suites using the depths of the individual
 samples. PuffinPlot asks for a thickness value, and groups the samples
-within the core into sites of that thickness, effectively `slicing' the
+within the core into sites of that thickness, effectively ‘slicing’ the
 core into equally thick sites. Each site is named after the shallowest
 depth within it.
 
@@ -820,10 +812,10 @@ removes all site names in the current suite.
 is a submenu of functions which affect the whole suite.
 
 allows you to add or remove user-defined flags for the suite; see
-section #sec:annotations[[sec:annotations]] for details.
+<<sec:annotations>> for details.
 
 allows you to add or remove user-defined note categories for the suite;
-see section #sec:annotations[[sec:annotations]] for details.
+see <<sec:annotations>> for details.
 
 lets you convert a discrete suite to a continuous one by replacing each
 sample name with an associated depth. Selecting this item brings up a
@@ -832,7 +824,7 @@ consist of two columns. The first column contains sample names, and the
 second column contains the associated depths. The CSV file must contain
 a row for every sample in the suite.
 
-==== [[sec:functions-calcs]][sec:functions-calcs]Calculations menu
+==== Calculations menu [[sec:functions-calcs]]
 
 The calculations menu provides facilities for calculating magnetic
 parameters and directions. Note that most calculations operate on all
@@ -842,9 +834,9 @@ the selected samples, not just the current sample.
 
 calculates a best-fitting line to all the selected points in all the
 selected samples, using principal component analysis . The PCA direction
-is projected onto the Zijderveld plot. If the `PCA anchored' menu item
+is projected onto the Zijderveld plot. If the ‘PCA anchored’ menu item
 (below) is ticked, the resulting PCA fit line will be anchored to the
-origin; if `PCA anchored' is not ticked, the PCA fit will be unanchored.
+origin; if ‘PCA anchored’ is not ticked, the PCA fit will be unanchored.
 
 is a menu item which may be toggled on or off. When it is on, a tick
 mark appears next to it, and PCA analyses are constrained to pass
@@ -868,14 +860,14 @@ saved as part of the PuffinPlot file, although they can easily be
 recalculated if the selected demagnetization points are not changed. The
 Fisherian mean and associated parameters are, however, included in
 exported sample data files (see
-Table #tbl:export-sample[[tbl:export-sample]]).
+<<tbl:export-sample>>).
 
 calculates Fisherian means across all the selected samples. Two sets of
 means are actually calculated: one set is calculated from the PCA
 directions of individual samples, and the other from the site mean
 directions (if any have been computed). Note that, if there are site
 means computed by great-circle intersection, only those considered valid
-are used; see section #sec:prefs-misc[[sec:prefs-misc]] for details of
+are used; see <<sec:prefs-misc>> for details of
 the validity test. If a site has both a valid great-circle direction and
 a Fisherian direction calculated from PCAs, the great-circle direction
 will be used. Each set of means consists of an overall mean and
@@ -962,7 +954,7 @@ provides the NRM, the other provides the normalizing value from ARM or
 magnetic susceptibility. RPI calculations are saved directly to a CSV
 file; the RPI estimate can also be shown in the RPI plot.
 
-==== [[sec:menu-window]][sec:menu-window]Window menu
+==== Window menu [[sec:menu-window]]
 
 This menu allows you to open or close auxiliary windows.
 
@@ -1006,7 +998,7 @@ On Mac OS X, this item is also present on the PuffinPlot menu.
 
 This section presents PuffinPlot’s features in moderate detail.
 
-==== [[sec:file-types]][sec:file-types]Supported file types
+==== Supported file types [[sec:file-types]]
 
 PuffinPlot can read a number of commonly used palaeomagnetic data
 formats:
@@ -1017,16 +1009,16 @@ Old PuffinPlot format::
   (filename suffix ppl): an earlier version of the PuffinPlot format,
   produced by older releases of the program.
 2G::
-  (filename suffix dat): files produced by the `Long Core' program used
+  (filename suffix dat): files produced by the ‘Long Core’ program used
   with 2G Enterprises cryomagnetometers.
 Caltech (CIT)::
   (filename suffix sam, with associated data files in same folder):
   format used at the Caltech Paleomagnetics Laboratory and supported by
-  the `Paleomag' program of .
+  the ‘Paleomag’ program of .
 IAPD::
   (filename suffix dat): format used by the IAPD program and its
   successors, developed by T. H. Torsvik et al. and used at the
-  Geological Survey of Norway. IAPD files contain an `a95' value for
+  Geological Survey of Norway. IAPD files contain an ‘a95’ value for
   each treatment step which gives an indication of the measurement’s
   reliability. PuffinPlot does not import these values, but will show a
   warning if any of them has a value of 5 or greater.
@@ -1039,7 +1031,7 @@ UC Davis (old)::
   : format used with 2G cryomagnetometer measurements at UC Davis during
   the 1990s.
 Zplot::
-  (filename suffix txt): format used by the `Zplot' program developed by
+  (filename suffix txt): format used by the ‘Zplot’ program developed by
   Steve Hurst at Woods Hole.
 JR6::
   (filename suffix jr6): a format developed by AGICO and supported by
@@ -1056,10 +1048,10 @@ Custom formats::
   This option imports data from a file format freely defined by the
   user, within certain limits. Custom formats allow PuffinPlot to read a
   large variety of textual, tabular data formats. See
-  section #sec:import-data[[sec:import-data]] for details.
+  <<sec:import-data>> for details.
 
 Note that there are different ways to read 2G data files: users are
-encouraged to read section #sec:prefs-2g-import[[sec:prefs-2g-import]]
+encouraged to read <<sec:prefs-2g-import>>
 and ensure that the preferences are correctly set for their needs. (In
 particular, *magnetization vectors may be read incorrectly from 2G long
 core files if the wrong import settings are used*, so it is important to
@@ -1069,7 +1061,7 @@ In general, support for other file formats is straighforward to add, and
 most tabular textual file formats can be opened using the File → Import
 data… function.
 
-==== [[sec:import-data]][sec:import-data]Importing data in a custom format
+==== Importing data in a custom format [[sec:import-data]]
 
 When you open a file and select the Custom format filetype, PuffinPlot
 opens a dialog box allowing you to describe a text-based, tabular file
@@ -1085,7 +1077,7 @@ This part describes parameters relating to the file as a whole, rather
 than individual columns.
 
 Number of header lines to skip::
-  Data files may include extra data (`header lines') at the start of the
+  Data files may include extra data (‘header lines’) at the start of the
   file, most often a line containing textual descriptions of the
   columns. This field lets you specify how many lines PuffinPlot should
   ignore at the start of the file, letting it skip over them.
@@ -1098,7 +1090,7 @@ Treatment type::
 Column separator::
   For files which do not use fixed-width columns (for example, CSV
   files), this drop-down lets you select the character used to separate
-  the columns. If `Use fixed-width columns' is selected, the column
+  the columns. If ‘Use fixed-width columns’ is selected, the column
   separator is not used.
 Use fixed-width columns::
   Tabular text files usually use one of two conventions for separating
@@ -1177,14 +1169,14 @@ This will immediately perform PCA on all 50 selected samples.
 
 === Plots and other data displays
 
-==== [[sec:plot-types]][sec:plot-types]Available plot types
+==== Available plot types [[sec:plot-types]]
 
 This section lists and briefly describes the available plot types in
 PuffinPlot. Some of them are not displayed by default, but these may be
 activated via the preferences window (see
-section #sec:preferences[[sec:preferences]]). Note that the term `plot'
+<<sec:preferences>>). Note that the term ‘plot’
 is used rather loosely in this manual to refer to any movable element
-displaying data within the main window. Thus, the `plots' listed below
+displaying data within the main window. Thus, the ‘plots’ listed below
 include textual elements such as legends and tables.
 
  +
@@ -1193,7 +1185,7 @@ is a lower-hemisphere equal-area plot of AMS data, if any has been
 imported. Maximum, intermediate, and minimum anisotropy axes are shown
 as squares, triangles, and circles respectively. If AMS statistics have
 been calculated (see
-section #sec:functions-calcs[[sec:functions-calcs]]), the mean
+<<sec:functions-calcs>>), the mean
 directions and confidence ellipses are also shown.
 
 is a table in which each row represents one demagnetization step for the
@@ -1208,7 +1200,7 @@ susceptibility measurements have been taken, they are overlaid on the
 same plot as unfilled points, with the scale shown on the right of the
 graph. If PuffinPlot cannot find any data describing the demagnetization
 treatment (i.e. AF field strength or temperature), the X axis will be
-labelled `measurement number', and the X values will correspond to the
+labelled ‘measurement number’, and the X values will correspond to the
 sequence of the data in the file.
 
 is a Lambert azimuthal equal-area projection showing the directions of
@@ -1231,7 +1223,7 @@ confidence interval for them. If two polarities are present in the
 suite, two means are calculated and shown. If no sites are defined,
 individual sample PCA directions and their means are plotted instead.
 Note that, for site means calculated by great-circle analysis, only
-valid means are shown. See section #sec:prefs-misc[[sec:prefs-misc]] for
+valid means are shown. See <<sec:prefs-misc>> for
 details on how validity is determined.
 
 shows a histogram of NRM intensities across the whole suite.
@@ -1255,8 +1247,8 @@ circle. (Note that this may be different from the MAD1 for the PCA fit,
 since different sets of points may be used for the two fits.)
 
 shows a summary of parameters for each sample within the current site:
-declination, inclination, and type of analysis (`PCAa' and `PCAu' for
-anchored and unanchored PCA respectively, and `GC' for great circle).
+declination, inclination, and type of analysis (‘PCAa’ and ‘PCAu’ for
+anchored and unanchored PCA respectively, and ‘GC’ for great circle).
 For PCA analysis, the declination and inclination give the first
 principal component; for great-circle analysis, they give the pole to
 the circle. Clicking on a line within this table will show the
@@ -1285,9 +1277,9 @@ a95::
 R::
   the total length of the sum of the direction unit vectors
 type::
-  the type of analysis used: `Fshr' for analysis on PCA directions; `GC'
-  for great-circle analysis . `GC' is suffixed with either `v' for valid
-  or `i' for invalid. See section #sec:prefs-misc[[sec:prefs-misc]] for
+  the type of analysis used: ‘Fshr’ for analysis on PCA directions; ‘GC’
+  for great-circle analysis . ‘GC’ is suffixed with either ‘v’ for valid
+  or ‘i’ for invalid. See <<sec:prefs-misc>> for
   details on the validity test and how it may be customized.
 
 If both a valid great-circle direction and a Fisherian direction exist
@@ -1303,10 +1295,10 @@ current site, this plot is invisible.
 
 is a table showing suite-level mean direction and VGP data. See the
 entry on Site parameter table for explanations of the Fisher parameters
-associated with each mean direction. The directions shown are: `Site
-dir', the mean direction calculated from site mean directions; `Sample
-dir', the mean direction calculated from sample mean directions; `Site
-VGP', the mean of the VGPs of sites; and `Sample VGP', the mean of the
+associated with each mean direction. The directions shown are: ‘Site
+dir’, the mean direction calculated from site mean directions; ‘Sample
+dir’, the mean direction calculated from sample mean directions; ‘Site
+VGP’, the mean of the VGPs of sites; and ‘Sample VGP’, the mean of the
 VGPs corresponding to individual sample directions. As with most
 PuffinPlot operations, the parameters shown are calculated using only
 the samples and sites selected at the time the calculation is done.
@@ -1325,12 +1317,12 @@ discrete suite. For a continuous (long core) suite, it shows the current
 depth. This plot also shows suite-level Fisher statistics calculated
 over samples and over sites, if these are available (see the Calculate →
 Suite means function in
-section #sec:functions-calcs[[sec:functions-calcs]]).
+<<sec:functions-calcs>>).
 
 is a world map (using a Mollweide projection) showing the locations of
 virtual geomagnetic poles (VGPs) for each site in the current suite.
 VGPs can only be calculated for sites whose location has been set; See
-_Import site locations…_ in Section #sec:menu-file[[sec:menu-file]] for
+_Import site locations…_ in <<sec:menu-file>> for
 details on reading site locations from a CSV file.
 
 is a table showing virtual geomagnetic pole (VGP) data for each site in
@@ -1340,13 +1332,13 @@ latexmath:[$\phi$] (VGP latitude), VGP latexmath:[$\lambda$] (VGP
 longitude), dp (first semi-axis of VGP confidence ellipse), and dm
 (second semi-axis of VGP confidence ellipse). VGPs can only be
 calculated for sites whose location has been set; See _Import site
-locations…_ in Section #sec:menu-file[[sec:menu-file]] for details on
+locations…_ in <<sec:menu-file>> for details on
 reading site locations from a CSV file.
 
 is a Zijderveld plot, overlaying an orthographic projection in the
 horizontal plane with an orthographic projection in a chosen vertical
 plane. The vertical plane can be controlled using the chooser on the
-toolbar; see section #sec:toolbar[[sec:toolbar]] for details. The
+toolbar; see <<sec:toolbar>> for details. The
 horizontal projection is shown with filled points, and the vertical
 projection with unfilled points. If a PCA fit has been calculated for
 this sample, the two projections of the PCA lines are overlaid on the
@@ -1354,28 +1346,28 @@ plot in blue. (If the V vs. H vertical projection is selected, only the
 horizontal projection of the PCA line is shown, since V vs. H
 effectively uses a different vertical projection for each point.) The
 appearance of the PCA lines can be changed using the Preferences dialog
-(see section #sec:prefs-misc[[sec:prefs-misc]]).
+(see <<sec:prefs-misc>>).
 
 is a legend for the Zijderveld plot, showing the interpretations of the
 filled and unfilled points and giving the units in which the axes are
 calibrated.
 
-==== [[sec:edit-layout]][sec:edit-layout]Arranging the plots
+==== Arranging the plots [[sec:edit-layout]]
 
 PuffinPlot allows the plots to be freely rearranged and resized within
 the display area; they can also be switched on and off as required (see
-section #sec:preferences[[sec:preferences]]). To arrange the plots,
+<<sec:preferences>>). To arrange the plots,
 select Edit layout from the Edit menu. This puts PuffinPlot temporarily
 into a special mode where plots become moveable. A tick appears next to
 the menu item, and the plots are overlaid by pale orange rectangles,
 allowing you to manipulate them. Each plot is also annotated with its
 name, which helps to identify plots that are not currently displaying
-any data (e.g. the `PCA directions' display if no PCA has been
+any data (e.g. the ‘PCA directions’ display if no PCA has been
 performed). To resize a plot, click and hold on an edge or corner of its
 rectangle, then drag it to the desired size. To move a plot, click and
 hold in its central area and drag it to the desired location. Plots may
 be overlapped freely. When you click in an area where two or more plots
-overlap, the smallest plot is treated as the `topmost', and this is the
+overlap, the smallest plot is treated as the ‘topmost’, and this is the
 one which will be moved or resized.
 
 Once the plots are arranged to your satisfaction, click Edit layout on
@@ -1387,9 +1379,9 @@ original layout using the Reset layout menu item.
 
 Sometimes it can be useful to save and restore different plot layouts.
 This can be done using the Export preferences… and Import preferences…
-menu items (see section #sec:menu-file[[sec:menu-file]]).
+menu items (see <<sec:menu-file>>).
 
-=== [[sec:preferences]][sec:preferences]The preferences window
+=== The preferences window [[sec:preferences]]
 
 The preferences window is divided into three tabs, with four action
 buttons at the bottom.
@@ -1412,10 +1404,10 @@ data.
 
 closes the Preferences window.
 
-==== [[sec:prefs-2g-import]][sec:prefs-2g-import]The 2G import tab
+==== The 2G import tab [[sec:prefs-2g-import]]
 
 This tab contains options connected with reading data from .DAT files
-produced by the 2G `Long Core' software.
+produced by the 2G ‘Long Core’ software.
 
  +
 
@@ -1428,17 +1420,17 @@ using them is preferable when possible. However, if the Cartesian
 components are used when reading a long-core file, they must usually be
 corrected for the effective sensor lengths (see below). If the sensor
 lengths are unknown, reading data from the polar fields can be a useful
-fallback. When reading a file using the `X/Y/Z' setting, PuffinPlot
-first looks for the `X corr', `Y corr', and `Z corr' fields to determine
-the magnetization vector. If these are not present, it falls back to `X
-mean'/`Y mean'/`Z mean', then to `X intensity'/`Y intensity'/`Z
-intensity'.
+fallback. When reading a file using the ‘X/Y/Z’ setting, PuffinPlot
+first looks for the ‘X corr’, ‘Y corr’, and ‘Z corr’ fields to determine
+the magnetization vector. If these are not present, it falls back to ‘X
+mean’/‘Y mean’/‘Z mean’, then to ‘X intensity’/‘Y intensity’/‘Z
+intensity’.
 
 As described above, the Cartesian magnetization components in long core
 files are not corrected for effective sensor length, which is determined
 by the response function of each SQUID and must be determined
 empirically when setting up the machine. To produce a magnetization
-vector for long core files when using the `X/Y/Z' setting, PuffinPlot
+vector for long core files when using the ‘X/Y/Z’ setting, PuffinPlot
 corrects the SQUID readings for these configured sensor lengths when
 opening the file.
 
@@ -1450,7 +1442,7 @@ PuffinPlot as it reads the file, providing a more accurate, corrected
 moment measurement for each sample. (Magnetic susceptibility
 measurements, if present, are also automatically associated with the
 preceding magnetic moment measurement or measurements.)
-Table #tbl:import-protocols[[tbl:import-protocols]] describes the
+<<tbl:import-protocols>> describes the
 available protocols.
 
 *Warning: incorrectly set sensor lengths can produce erroneous data!*
@@ -1459,13 +1451,13 @@ correctly set in PuffinPlot’s preferences before importing 2G long core
 data from the X/Y/Z vector components. (When importing discrete data, or
 reading from the polar fields in the 2G file, sensor lengths are not
 required.) If the sensor lengths are not known, use the
-`Dec/Inc/Intensity' setting in the 2G import tab. Failing to correct for
+‘Dec/Inc/Intensity’ setting in the 2G import tab. Failing to correct for
 sensor length is particularly dangerous because the deviations from the
 correct vectors are often small enough not to be immediately obvious.
 See Section 3 of for a fuller discussion of sensor response functions.
 
-.[[tbl:import-protocols]][tbl:import-protocols]Measurement protocols for
-2G data files
+[[tbl:import-protocols]]
+.Measurement protocols for 2G data files
 [cols="<,<",options="header",]
 |=======================================================================
 |Protocol |Description
@@ -1509,9 +1501,9 @@ which it is unnecessary.
 This tab shows a list of plots which PuffinPlot can display. You can
 control which plots are shown by ticking and unticking the boxes next to
 the plot names. The plot types are detailed in
-section #sec:plot-types[[sec:plot-types]].
+<<sec:plot-types>>.
 
-==== [[sec:prefs-misc]][sec:prefs-misc]The Misc. tab
+==== The Misc. tab [[sec:prefs-misc]]
 
  +
 
@@ -1554,7 +1546,7 @@ demagnetization-intensity plot.
 sets the location of the PmagPy programs. If you wish to do calculations
 of AMS statistics within PuffinPlot, it is necessary to have the PmagPy
 programs bootams.py and s_hext.py installed (see
-section #sec:functions-calcs[[sec:functions-calcs]] for details). This
+<<sec:functions-calcs>> for details). This
 box allows you to specify to PuffinPlot the folder in which the programs
 are installed.
 
@@ -1600,7 +1592,7 @@ k::
 
 The most useful components for constructing validity expressions are the
 comparison operators `<`, `<=`, `>=`, `>`, the logical operators `&&`
-and `||` (corresponding to `and' and `or' respectively), and
+and `||` (corresponding to ‘and’ and ‘or’ respectively), and
 parentheses. A typical expression might be
 
 `a95<3 && k>5 && (M>=3 || N>=5)`
@@ -1614,13 +1606,13 @@ isn’t a valid JavaScript expression, or if it doesn’t produce a
 true/false value), it will be evaluated as false.
 
 controls the manner in which PCA directions are shown on the Zijderveld
-plot (see section #sec:plot-types[[sec:plot-types]]). The available
+plot (see <<sec:plot-types>>). The available
 settings are:
 
 Full::
   PCA lines will extend right to the edges of the Zijderveld plot.
 Long::
-  PCA lines will be shortened by 10% from the `Full' length.
+  PCA lines will be shortened by 10% from the ‘Full’ length.
 Short::
   PCA lines will only extend through the points used to calculate the
   PCA.
@@ -1635,17 +1627,17 @@ controls how formation orientation is displayed at the top of the main
 window: it can be shown either as dip azimuth and dip angle, or as
 strike and dip angle.
 
-=== [[sec:annotations]][sec:annotations]Annotations
+=== Annotations [[sec:annotations]]
 
 Annotations are a feature allowing short, categorized notes to be added
 to each sample in a suite. The categories can be freely chosen.
 Annotations come in two varieties, _custom flags_ and _custom notes_.
 Custom flags embody a true/false value and are intended to record
-whether a sample fulfils some criterion – for example, `messy',
-`low-temperature alteration', or `multiple components'. Custom notes are
+whether a sample fulfils some criterion – for example, ‘messy’,
+‘low-temperature alteration’, or ‘multiple components’. Custom notes are
 intended for adding short items of information which are not
-automatically inferred by PuffinPlot – for example, `number of
-components' or `behaviour type'.
+automatically inferred by PuffinPlot – for example, ‘number of
+components’ or ‘behaviour type’.
 
 *Adding annotation categories*
 
@@ -1666,7 +1658,7 @@ Annotations are saved with the rest of the data in the PuffinPlot file;
 they are also exported in the sample data CSV file produced by the File
 → Export data → Export sample calculations menu item.
 
-=== [[sec:graphics-export]][sec:graphics-export]Exporting graphics
+=== Exporting graphics [[sec:graphics-export]]
 
 ==== Introduction
 
@@ -1700,7 +1692,7 @@ different graphics export options, as detailed in the next section.
 ==== Graphics export options
 
 All of these export functions may be found in the Export graphics
-submenu of the File menu, except for the `Print to PDF' option.
+submenu of the File menu, except for the ‘Print to PDF’ option.
 
 Export SVG (Batik)::
   saves the current contents of the main data display as an SVG file
@@ -1730,7 +1722,7 @@ programs. If, for example, you find that another program has trouble
 reading the SVG file produced using the Batik option, you may find that
 if FreeHEP option produces better results.
 
-=== [[sec:command-line]][sec:command-line]Running PuffinPlot from the command line
+=== Running PuffinPlot from the command line [[sec:command-line]]
 
 In addition to its graphical user interface, PuffinPlot has a simple
 command line interface, allowing some operations to be performed from a
@@ -1761,17 +1753,17 @@ usage: java -jar PuffinPlot.jar <options>
   folder containing the original PuffinPlot file.
 -script <file>::
   runs the specified Python or JavaScript script. See
-  Section #sec:scripting[[sec:scripting]] for more details.
+  <<sec:scripting>> for more details.
 -scriptlanguage::
-  can only be used in conjuction with `-script', and specifies the
-  language in which the script was written. Allowed values are `python'
-  and `javascript'. The default value is `python'.
+  can only be used in conjuction with `-script`, and specifies the
+  language in which the script was written. Allowed values are `python`
+  and `javascript`. The default value is `python`.
 -withapp::
-  can only be used in conjuction with `-script'. If this argument is
+  can only be used in conjuction with `-script`. If this argument is
   provided, a PuffinPlot object will be created and assigned to a
   variable named puffin_app.
 
-=== [[sec:scripting]][sec:scripting]Scripting
+=== Scripting [[sec:scripting]]
 
 PuffinPlot’s graphical desktop interface is intended to be the primary
 way to interact with the program. However, it is often useful to be able
@@ -1827,7 +1819,7 @@ directly from the command line, the -withapp argument must be specified
 to create this variable.) This variable can be used, for example, to
 gain access to any data already loaded into PuffinPlot.
 
-Figure #fig:script-example-1[[fig:script-example-1]] shows a simple
+<<fig:script-example-1>> shows a simple
 script demonstrating the use of PuffinPlot from within an external
 Jython interpreter (although it can also be run directly from within
 PuffinPlot). The script opens a data file, calculates the mean NRM, and
@@ -1951,7 +1943,7 @@ order.
 === Treatment step fields
 
 Treatment step fields are detailed in
-Table #tbl:treatment-step-fields[[tbl:treatment-step-fields]].
+<<tbl:treatment-step-fields>>.
 
 === Required fields
 
@@ -2154,7 +2146,7 @@ screenshot.
 The more detail you include, the easier it will be to find and fix the
 bug quickly.
 
-== Citing PuffinPlot[[sec:citing-puffinplot]][sec:citing-puffinplot]
+== Citing PuffinPlot [[sec:citing-puffinplot]]
 
 PuffinPlot was introduced and described in a 2012 paper published in
 _Geochemistry, Geophysics, Geosystems_. If you make use of PuffinPlot in
@@ -2264,7 +2256,7 @@ immediate successor of 1.03.
 
 ==== Data manipulation
 
-* ``Discrete to continuous'' feature implemented, allowing conversion of
+* ‘Discrete to continuous’ feature implemented, allowing conversion of
 discrete suites to continuous suites using a supplementary CSV file
 containing a sample-to-depth map.
 * Automatic realignment of declination data, allowing reconstruction of
@@ -2298,12 +2290,12 @@ versions may have to be updated to work with the new API.
 ==== User interface
 
 * Files can now be opened by dragging them to the main window.
-* Current suite name and ``unsaved'' indicator added to the title bar.
+* Current suite name and ‘unsaved’ indicator added to the title bar.
 * When saving files, PuffinPlot now defaults to the last-used folder.
 * Status bar added to main window. When the mouse pointer is over a data
 point representing a demagnetization step, the status bar shows details
 of this step.
-* The ``Edit'' menu has been divided into more submenus to more
+* The ‘Edit’ menu has been divided into more submenus to more
 conveniently accommodate the newly added functions.
 
 ==== Graphing and data display
@@ -2331,12 +2323,12 @@ orientation parameters stored in the file. Optionally, existing sample
 and formation corrections can be overwritten with values read from the
 ASC file.
 * Import from Caltech (CIT) files has been improved: demagnetization
-levels for thermal treatment are now read correctly, as is the ``NRM''
+levels for thermal treatment are now read correctly, as is the ‘NRM’
 treatment code.
 
 ==== Data export
 
-* Degree signs in exported data replaced with ``deg'', to accommodate
+* Degree signs in exported data replaced with ‘deg’, to accommodate
 software that has trouble with non-ASCII character sets.
 * Precision of exported parameters increased to four decimal places.
 * PuffinPlot can now export a bundle containing both data and a
@@ -2350,7 +2342,7 @@ great-circle steps are written in millitesla rather than tesla.
 * PDF export no longer produces an extra page.
 * Display is now updated automatically when sites are edited.
 * Formatting of PCA equations in exported CSV files is now
-locale-independent, so will always use ``.'' rather than ``,'' as the
+locale-independent, so will always use ‘.’ rather than ‘,’ as the
 decimal separator.
 * Custom file import used to ignore the sample volume field; it now
 makes use of it if present, and defaults to a volume of 1 cm³ if it is
@@ -2441,8 +2433,8 @@ are cleared.
 * Treatment steps can be deselected by dragging a box.
 * PuffinPlot will ask for confirmation before overwriting files.
 * Native file open dialog is now used on Mac OS X.
-* Added ``invert sample moment'' feature.
-* ``Open file'' dialogs now remember the last used folder.
+* Added ‘invert sample moment’ feature.
+* ‘Open file’ dialogs now remember the last used folder.
 * Sample volume can be edited.
 
 ==== Other notes
