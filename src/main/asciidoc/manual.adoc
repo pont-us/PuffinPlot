@@ -1,12 +1,15 @@
 = PuffinPlot User Manual
+Pontus Lurcock <pont@talvi.net>
 :numbered:
 :xrefstyle: full
+:title-logo-image: image::./figures/Fratercula_arctica.jpeg[width=300,align=center]
+:doctype: book
+:encoding: utf-8
+:lang: en
 
 // image:figures/Fratercula_arctica.jpeg[image,width=264]
 
 == Introduction
-
-_α_~95~
 
 This manual gives a practical guide to the usage of the PuffinPlot
 palaeomagnetic data analysis program. Note that it does not elucidate the
@@ -15,8 +18,8 @@ of palaeomagnetic procedures is assumed. For excellent introductions to
 palaeomagnetic analysis, see FIXME:TAUXE or FIXME:BUTLER.
 
 If you use PuffinPlot in the creation of published work, please cite the
-PuffinPlot paper (FIXME: citation). See <<sec:citing-puffinplot>> for
-further details.
+PuffinPlot paper (<<lurcock2012puffinplot,Lurcock and Wilson, 2012>>). See
+<<sec:citing-puffinplot>> for further details.
 
 PuffinPlot is free software, distributed under the GNU General Public
 License. Please see the LICENCE file in the PuffinPlot archive for
@@ -377,8 +380,6 @@ description of the functionality associated with each one.
 
 This menu contains functions connected with opening, closing, and saving
 files.
-
- +
 
 File → Open…::
 reads one or more files of demagnetization data into PuffinPlot as a new
@@ -850,7 +851,7 @@ The calculations menu provides facilities for calculating magnetic
 parameters and directions. Note that most calculations operate on all
 the selected samples, not just the current sample.
 
-Calculations → Calculate \caps{pca}::
+Calculations → Calculate PCA::
 calculates a best-fitting line to all the selected points in all the
 selected samples, using principal component analysis (FIXME:KIRSCHVINK).
 The PCA direction
@@ -858,7 +859,7 @@ is projected onto the Zijderveld plot. If the ‘PCA anchored’ menu item
 (below) is ticked, the resulting PCA fit line will be anchored to the
 origin; if ‘PCA anchored’ is not ticked, the PCA fit will be unanchored.
 
-Calculations → \caps{pca} anchored::
+Calculations → PCA anchored::
 is a menu item which may be toggled on or off. When it is on, a tick
 mark appears next to it, and PCA analyses are constrained to pass
 through the origin. In general, it is appropriate to anchor the PCA if
@@ -967,11 +968,11 @@ AMS, which operates on the entire suite. FIXME and chapter 13 of FIXME give more
 details of tensor statistics, particularly with regard to the
 application of bootstrap methods.
 
-Calculations → \caps{ams} → Calculate bootstrap AMS::
+Calculations → AMS → Calculate bootstrap AMS::
 calculates bootstrap statistics using the bootams.py program, producing
 Kent error ellipses which are shown on the AMS plot in the main window.
 
-Calculations → \caps{ams} → Parametric bootstrap AMS::
+Calculations → AMS → Parametric bootstrap AMS::
 calculates bootstrap statistics using the bootams.py program, producing
 Kent error ellipses which are shown on the AMS plot. It differs from the
 previous function in employing a parametric bootstrap, which can provide
@@ -979,11 +980,11 @@ more realistic confidence intervals for small numbers of samples on the
 (often reasonable) assumption that measurement uncertainties are
 normally distributed across the selected samples.
 
-Calculations → \caps{ams} → Calculate Hext on AMS::
+Calculations → AMS → Calculate Hext on AMS::
 calculates FIXME:HEXT statistics using the s_hext.py program and displays the mean
 directions and error ellipses on the AMS plot.
 
-Calculations → \caps{ams} → Clear AMS calculations::
+Calculations → AMS → Clear AMS calculations::
 Clears any previously done bootstrap and Hext calculations.
 
 Calculate RPI…::
@@ -1044,40 +1045,40 @@ PuffinPlot can read a number of commonly used palaeomagnetic data
 formats:
 
 PuffinPlot::
-  (filename suffix ppl): PuffinPlot’s own file format.
+  (filename suffix `ppl`): PuffinPlot’s own file format.
 Old PuffinPlot format::
-  (filename suffix ppl): an earlier version of the PuffinPlot format,
+  (filename suffix `ppl`): an earlier version of the PuffinPlot format,
   produced by older releases of the program.
 2G::
-  (filename suffix dat): files produced by the ‘Long Core’ program used
+  (filename suffix `dat`): files produced by the ‘Long Core’ program used
   with 2G Enterprises cryomagnetometers.
 Caltech (CIT)::
-  (filename suffix sam, with associated data files in same folder):
+  (filename suffix `sam`, with associated data files in same folder):
   format used at the Caltech Paleomagnetics Laboratory and supported by
   the ‘Paleomag’ program of FIXME:JONES.
 IAPD::
-  (filename suffix dat): format used by the IAPD program and its
+  (filename suffix `dat`): format used by the IAPD program and its
   successors, developed by T. H. Torsvik et al. and used at the
   Geological Survey of Norway. IAPD files contain an ‘a95’ value for
   each treatment step which gives an indication of the measurement’s
   reliability. PuffinPlot does not import these values, but will show a
   warning if any of them has a value of 5 or greater.
 PMD (Enkin)::
-  (filename suffix pmd): a text-based format used by the PMGSC program
+  (filename suffix `pmd`): a text-based format used by the PMGSC program
   of R. Enkin et al., and supported by other paleomagnetic software
   including Paleomac and Remasoft. Not to be confused with the binary
   PMD format native to Paleomac.
 UC Davis (old)::
-  : format used with 2G cryomagnetometer measurements at UC Davis during
+  A format used for 2G cryomagnetometer measurements at UC Davis during
   the 1990s.
 Zplot::
-  (filename suffix txt): format used by the ‘Zplot’ program developed by
+  (filename suffix `txt`): format used by the ‘Zplot’ program developed by
   Steve Hurst at Woods Hole.
 JR6::
-  (filename suffix jr6): a format developed by AGICO and supported by
+  (filename suffix `jr6`): a format developed by AGICO and supported by
   the REMA6W and Remasoft programs, among others.
 Sample directions::
-  (filename suffix txt): a file of sample-level directional data. This
+  (filename suffix `txt`): a file of sample-level directional data. This
   lets you use PuffinPlot to analyse directions even when no
   demagnetization data is available (or when the data is not
   palaeomagnetic in origin). Input files must contain three fields per
@@ -1098,8 +1099,8 @@ core files if the wrong import settings are used*, so it is important to
 check the settings before importing data.)
 
 In general, support for other file formats is straighforward to add, and
-most tabular textual file formats can be opened using the File → Import
-data… function.
+most tabular textual file formats can be opened using the '`File → Import
+data…`' function.
 
 ==== Importing data in a custom format [[sec:import-data]]
 
@@ -2306,8 +2307,7 @@ downloaded by visiting http://dx.doi.org/10.1029/2012GC004098. A PDF of
 the paper can also be downloaded directly from the Otago University
 research archive at
 https://ourarchive.otago.ac.nz/bitstream/handle/10523/3651/2012GC004098.pdf
-[https://ourarchive.otago.ac.nz/bitstream/handle/10523/3651/2012GC004098.pdf
-].
+.
 
 For convenience, citation data is provided below in two formats commonly
 used by bibliography management software.
@@ -2588,4 +2588,60 @@ Google Code.
 
 No release notes are available for PuffinPlot versions prior to 1.03.
 
+[bibliography]
 == References
+
+ - [[[butler1992paleomagnetism]]] Butler, R. F. (1992). Paleomagnetism:
+Magnetic Domains to Geologic Terranes. Blackwell Scientific, Oxford.
+
+ - [[[fisher1953sphere]]] Fisher, R. (1953). Dispersion on a sphere.
+Proceedings of the Royal Society of London. Series A, Mathematical and
+Physical Sciences, 217:295–305.
+
+ - [[[hext1963tensors]]] Hext, G. R. (1963). The estimation of
+second-order tensors, with related tests and designs. Biometrika,
+50(3-4):353–373. Available from:
+http://biomet.oxfordjournals.org/content/50/3-4/353.abstract[http://biomet.oxfordjournals.org/content/50/3-_4/353.abstract].
+
+ - [[[jones2002paleomag]]] Jones, C. H. (2002). User-driven integrated
+software lives: “Paleomag” paleomagnetics analysis on the Macintosh.
+Computers & Geosciences, 28:1145–1151.
+
+ - [[[juneau2009jython]]] Juneau, J., Baker, J., Munoz, L. S.,
+Wierzbicki, F., and Ng, V. (2009). The Definitive Guide to Jython.
+Apress, New York.
+
+ - [[[kirschvink1980least]]] Kirschvink, J. L. (1980). The least-squares
+line and plane and the analysis of palaeomagnetic data. Geophysical
+Journal of the Royal Astronomical Society, 62(3):699–718.
+
+ - [[[lowrie1990identification]]] Lowrie, W. (1990). Identification of
+ferromagnetic minerals in a rock by coercivity and unblocking
+temperature properties. Geophysical Research Letters, 17(2):159–162.
+Available from:
+http://dx.doi.org/10.1029/GL017i002p00159[http://dx.doi.org/10.1029/GL017i002p00159].
+
+ - [[[lurcock2012puffinplot]]] Lurcock, P. C. and Wilson, G. S. (2012).
+Puffinplot: A versatile, user-friendly program for paleomagnetic
+analysis. Geochemistry, Geophysics, Geosystems, 13:Q06Z45. Available
+from:
+http://dx.doi.org/10.1029/2012GC004098[http://dx.doi.org/10.1029/2012GC004098].
+
+ - [[[mcfadden1988circles]]] McFadden, P. L. and McElhinny, M. W.
+(1988). The combined analysis of remagnetization circles and direct
+observations in palaeomagnetism. Earth and Planetary Science Letters,
+87:161–172.
+
+ - [[[roberts2006high]]] Roberts, A. P. (2006). High-resolution magnetic
+analysis of sediment cores: Strengths, limitations and strategies for
+maximizing the value of long-core magnetic data. Physics of the Earth
+and Planetary Interiors, 156(3–4):162 – 178.
+
+ - [[[tauxe2010paleomagnetism]]] Tauxe, L., Butler, R. F., Banerjee,
+S. K., and Van der Voo, R. (2010). Essentials of paleomagnetism.
+University of California Press, Berkeley.
+
+ - [[[tauxe1998directions]]] Tauxe, L., Gee, J. S., and Staudigel, H.
+(1998). Flow directions in dikes from anisotropy of magnetic
+susceptibility data: the bootstrap way. Journal of Geophysical Research,
+103(B8):17775–17790.
