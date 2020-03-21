@@ -16,6 +16,10 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <build.date>${maven.build.timestamp}</build.date>
+    <asciidoctor.maven.plugin.version>2.0.0-RC.1</asciidoctor.maven.plugin.version>
+    <asciidoctorj.pdf.version>1.5.0-beta.8</asciidoctorj.pdf.version>
+    <asciidoctorj.version>2.2.0</asciidoctorj.version>
+    <jruby.version>9.2.9.0</jruby.version>
   </properties>
 
   <repositories>
@@ -409,6 +413,82 @@
               <goals>
                 <goal>report</goal>
               </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.asciidoctor</groupId>
+          <artifactId>asciidoctor-maven-plugin</artifactId>
+          <version>${asciidoctor.maven.plugin.version}</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.asciidoctor</groupId>
+              <artifactId>asciidoctorj-pdf</artifactId>
+              <version>${asciidoctorj.pdf.version}</version>
+            </dependency>
+            <!-- Comment this section to use the default jruby artifact provided by the plugin -->
+            <dependency>
+              <groupId>org.jruby</groupId>
+              <artifactId>jruby-complete</artifactId>
+              <version>${jruby.version}</version>
+            </dependency>
+            <!-- Comment this section to use the default AsciidoctorJ artifact provided by the plugin -->
+            <dependency>
+              <groupId>org.asciidoctor</groupId>
+              <artifactId>asciidoctorj</artifactId>
+              <version>${asciidoctorj.version}</version>
+            </dependency>
+          </dependencies>
+          <configuration>
+            <sourceDirectory>src/main/asciidoc</sourceDirectory>
+            <!-- Attributes common to all output formats -->
+            <attributes>
+              <sourcedir>${project.build.sourceDirectory}</sourcedir>
+            </attributes>
+          </configuration>
+          <executions>
+            <execution>
+              <id>generate-pdf-doc-default-theme</id>
+              <phase>prepare-package</phase>
+              <goals>
+                <goal>process-asciidoc</goal>
+              </goals>
+              <configuration>
+                <backend>pdf</backend>
+                <outputDirectory>${project.build.directory}/manual-default-theme</outputDirectory>
+                <sourceHighlighter>coderay</sourceHighlighter>
+                <doctype>book</doctype>
+                <attributes>
+                  <icons>font</icons>
+                  <pagenums/>
+                  <toc/>
+                  <idprefix/>
+                  <idseparator>-</idseparator>
+                </attributes>
+              </configuration>
+            </execution>
+            <execution>
+              <id>generate-pdf-doc-custom-theme</id>
+              <phase>prepare-package</phase>
+              <goals>
+                <goal>process-asciidoc</goal>
+              </goals>
+              <configuration>
+                <backend>pdf</backend>
+                <outputDirectory>${project.build.directory}/manual-custom-theme</outputDirectory>
+                <sourceHighlighter>coderay</sourceHighlighter>
+                <!-- Use `book` docType to enable title page generation -->
+                <doctype>book</doctype>
+                <attributes>
+                  <pdf-stylesdir>${project.basedir}/src/main/asciidoc/theme</pdf-stylesdir>
+                  <pdf-style>custom</pdf-style>
+                  <icons>font</icons>
+                  <pagenums/>
+                  <toc/>
+                  <idprefix/>
+                  <idseparator>-</idseparator>
+                </attributes>
+              </configuration>
             </execution>
           </executions>
         </plugin>

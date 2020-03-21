@@ -69,7 +69,7 @@ and extract its contents there.
 
 [[tbl:archive-contents]]
 .The contents of the PuffinPlot archive file
-[cols="<,<",options="header",]
+[%autowidth.stretch,cols="<,<",options="header"]
 |=======================================================================
 |File |Description
 |README |A text file briefly describing the archive.
@@ -431,8 +431,8 @@ at which the first jump in magnetic susceptibility occurs. A jump is
 defined as a susceptibility of at least 2.5 times the previous value.
 
 |Steps |Number of treatment steps for this sample
-|PCA dec. (deg) |Declination of PCA direction ()
-|PCA inc. (deg) |Inclination of PCA direction ()
+|PCA dec. (deg) |Declination of PCA direction (°)
+|PCA inc. (deg) |Inclination of PCA direction (°)
 
 |PCA MAD1 |The Maximum Angle of Deviation for the planar PCA fit; the
 smaller the value, the more coplanar the points. See
@@ -481,9 +481,9 @@ mT). If half-intensity was not reached, this column contains 0.
 |MDF midpoint reached |'`Y`' if magnetization intensity reached half the
 NRM intensity during demagnetization; '`N`' otherwise
 
-|Fisher dec. |Mean declination of treatment step directions ()
-|Fisher inc. |Mean inclination of treatment step directions ()
-|Fisher a95 |_α_~95~ of mean treatment step direction ()
+|Fisher dec. |Mean declination of treatment step directions (°)
+|Fisher inc. |Mean inclination of treatment step directions (°)
+|Fisher a95 |_α_~95~ of mean treatment step direction (°)
 |Fisher k |_k_-value of mean treatment step direction
 |Fisher nDirs |number of directions used to calculate mean
 |Fisher R |length of sum of directions used to calculate mean
@@ -510,9 +510,9 @@ saves a file containing all the data associated with sites.
 |Field name |Description
 |Site |Name of site
 |Samples |Number of samples at this site
-|Fisher dec. |Mean declination of sample directions ()
-|Fisher inc. |Mean inclination of sample directions ()
-|Fisher a95 |_α_~95~ of mean sample direction ()
+|Fisher dec. |Mean declination of sample directions (°)
+|Fisher inc. |Mean inclination of sample directions (°)
+|Fisher a95 |_α_~95~ of mean sample direction (°)
 |Fisher k |_k_-value of mean sample direction
 |Fisher nDirs |number of directions used to calculate site mean
 |Fisher R |length of sum of unit direction vectors
@@ -520,9 +520,9 @@ saves a file containing all the data associated with sites.
 <<sec:prefs-misc>> for details on the validity
 test and how it may be customized.
 
-|GC dec. (deg) |Declination of great-circle direction ()
-|GC inc. (deg) |Inclination of great-circle direction ()
-|GC a95 (deg) |_α_~95~ for great-circle direction ()
+|GC dec. (deg) |Declination of great-circle direction (°)
+|GC inc. (deg) |Inclination of great-circle direction (°)
+|GC a95 (deg) |_α_~95~ for great-circle direction (°)
 |GC k |_k_-value for great-circle direction
 |GC N |Number of great circles used in great-circle fit
 |GC M |Number of PCA directions used in great-circle fit
