@@ -1153,7 +1153,7 @@ public final class Suite implements SampleGroup {
      * importing into an existing sample; if a new sample is created for
      * AMS data, the orientations in the ASC file will always be used.
      *
-     * @param files the ASC files to read
+     * @param files the ASC files to read (non-null)
      * @param magneticNorth {@code true} if the sample and formation dip
      * azimuths in the file
      * are relative to magnetic north; {@code false} if they are relative to
@@ -1167,20 +1167,24 @@ public final class Suite implements SampleGroup {
      * in the ASC file. Otherwise, retain the values already set for the
      * sample.
      * @throws IOException if an I/O error occurred while reading the file
+     * @throws NullPointerException if {@code files} is null
      */
     public void importAmsFromAsc(List<File> files, boolean magneticNorth,
             boolean overwriteSampleCorrection,
             boolean overwriteFormationCorrection)
             throws IOException {
+        Objects.requireNonNull(files);
         setSaved(false);
         final List<AmsData> allData = new ArrayList<>();
-        for (File file: files) {
+        for (File file : files) {
             final AmsLoader amsLoader = new AmsLoader(file);
             allData.addAll(amsLoader.readFile());
         }
-        for (AmsData amsData: allData) {
+        for (AmsData amsData : allData) {
             final String sampleName = amsData.getName();
-            if (amsData.getfTest() < 3.9715) continue;
+            if (amsData.getfTest() < 3.9715) {
+                continue;
+            }
             if (!containsSample(sampleName)) {
                 insertNewSample(sampleName);
             }
@@ -1232,7 +1236,7 @@ public final class Suite implements SampleGroup {
      * in this suite, or 0 if there are none
      */
     private double getFirstValidMagneticDeviation() {
-        for (Sample sample: samples) {
+        for (Sample sample : samples) {
             final double v = sample.getMagDev();
             if (!Double.isNaN(v)) {
                 return v;
@@ -1245,10 +1249,14 @@ public final class Suite implements SampleGroup {
      * Exports a subset of this suite's data to multiple files, one file per
      * sample. The files are in a tab-delimited text format.
      *
-     * @param directory the directory in which to create the files
-     * @param fields the fields to export
+     * @param directory the directory in which to create the files (non-null)
+     * @param fields the fields to export (non-null)
+     * 
+     * @throws NullPointerException if either argument is null
      */
     public void exportToFiles(File directory, List<TreatmentParameter> fields) {
+        Objects.requireNonNull(directory);
+        Objects.requireNonNull(fields);
         if (directory.exists()) {
             if (!directory.isDirectory()) {
                 LOGGER.warning(String.format(Locale.ENGLISH,
@@ -1264,7 +1272,7 @@ public final class Suite implements SampleGroup {
                 return;
             }
         }
-        for (Sample s: getSamples()) {
+        for (Sample s : getSamples()) {
             final List<String> lines = s.exportFields(fields);
             final File outFile = new File(directory, s.getNameOrDepth());
             FileWriter fw = null;
@@ -1279,7 +1287,9 @@ public final class Suite implements SampleGroup {
                         "exportToFiles: exception writing file.", e);
             } finally {
                 try {
-                    if (fw != null) fw.close();
+                    if (fw != null) {
+                        fw.close();
+                    }
                 } catch (IOException e2) {
                     LOGGER.log(Level.WARNING, 
                             "exportToFiles: exception closing file.", e2);
@@ -1298,7 +1308,8 @@ public final class Suite implements SampleGroup {
     }
 
     private void processPuffinLines(List<String> lines) {
-        for (String line: lines) {
+        Objects.requireNonNull(lines);
+        for (String line : lines) {
             final String[] parts = line.split("\t");
             switch (parts[0]) {
                 case "SUITE":
@@ -1381,12 +1392,15 @@ public final class Suite implements SampleGroup {
      * Returns a site with the given name, or {@code null} if this suite
      * contains no such site.
      *
-     * @param siteName a site name
+     * @param siteName a site name (non-null)
      * @return a site with the given name, or {@code null} if this suite
      * contains no such site
+     * 
+     * @throws NullPointerException if {@code siteName} is null
      */
     public Site getSiteByName(String siteName) {
-        for (Site site: sites) {
+        Objects.requireNonNull(siteName);
+        for (Site site : sites) {
             if (siteName.equals(site.getName())) {
                 return site;
             }
@@ -1432,7 +1446,7 @@ public final class Suite implements SampleGroup {
     public void setSaved(boolean saved) {
         if (this.saved != saved) {
             this.saved = saved;
-            for (SavedListener savedListener: savedListenerSet) {
+            for (SavedListener savedListener : savedListenerSet) {
                 savedListener.savedStateChanged(saved);
             }
         }
@@ -1453,8 +1467,10 @@ public final class Suite implements SampleGroup {
      * there will usually be at most one sample with a given discrete ID.
      * For continuous suites, an entire core section may be returned.
      * 
-     * @param id a discrete ID
+     * @param id a discrete ID (non-null)
      * @return a list of the samples in this Suite with the specified ID
+     * 
+     * @throws NullPointerException if {@code id} is null
      */
     public List<Sample> getSamplesByDiscreteId(String id) {
         Objects.requireNonNull(id);
@@ -1470,7 +1486,7 @@ public final class Suite implements SampleGroup {
      * (clockwise in degrees)
      */
     public void rotateSamplesByDiscreteId(Map<String, Double> rotations) {
-        for (Sample sample: getSamples()) {
+        for (Sample sample : getSamples()) {
             final String discreteId = sample.getDiscreteId();
             if (rotations.containsKey(discreteId)) {
                 final double rotationAngle = rotations.get(discreteId);
@@ -1547,12 +1563,16 @@ public final class Suite implements SampleGroup {
      * order in the event that a suite does get into a funny state.
      *
      * @param samples the collection of samples within which to merge duplicates
+     *                (non-null)
+     * 
+     * @throws NullPointerException is {@code samples} is null
      */
     public void mergeDuplicateSamples(Collection<Sample> samples) {
+        Objects.requireNonNull(samples);
         Map<String, List<Sample>> duplicateGroups = samples.stream().
                 collect(Collectors.groupingBy(Sample::getNameOrDepth));
         
-        for (String id: duplicateGroups.keySet()) {
+        for (String id : duplicateGroups.keySet()) {
             final List<Sample> sampleGroup = duplicateGroups.get(id);
             /*
              * The sample group might only contain one sample, but there's
@@ -1611,7 +1631,7 @@ public final class Suite implements SampleGroup {
         @Override
         public void swapAdjacent(int position) {
             super.swapAdjacent(position);
-            for (Sample s: getSamples()) {
+            for (Sample s : getSamples()) {
                 s.getCustomNotes().swapAdjacent(position);
             }
         }
@@ -1644,7 +1664,7 @@ public final class Suite implements SampleGroup {
          */
         setSaved(false);
         final List<Tensor> tensors = new ArrayList<>();
-        for (Sample s: samples) {
+        for (Sample s : samples) {
             if (s.getAms() != null) tensors.add(s.getAms());
         }
         if (tensors.isEmpty()) {
