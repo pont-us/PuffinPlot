@@ -1,0 +1,41 @@
+extends: default
+title-page:
+  align: center
+page:
+  size: A4
+  layout: portrait
+  margin: [20mm, 30mm, 20mm, 30mm]
+base:
+  font-size: 11
+  line-height: 1.1
+  font-color: #000000
+heading:
+  font-size: 12
+  font-style: bold
+  line-height: 1.2
+link:
+  font-color: #0000A0
+header:
+  height: 20mm
+  line-height: 1
+  recto:
+    right:
+      content: '{document-title}'
+  verso:
+    left:
+      content: '{document-title}'
+footer:
+  height: 20mm
+  line-height: 1
+  recto:
+    right:
+      content: '{chapter-title} | *{page-number}*'
+  verso:
+    left:
+      content: '*{page-number}* | {chapter-title}'
+image:
+  align: center
+caption:
+  align: center
+  font-color: #101010
+  font-size: 10

@@ -448,34 +448,14 @@
           </configuration>
           <executions>
             <execution>
-              <id>generate-pdf-doc-default-theme</id>
+              <id>generate-asciidoc-manual-pdf</id>
               <phase>prepare-package</phase>
               <goals>
                 <goal>process-asciidoc</goal>
               </goals>
               <configuration>
                 <backend>pdf</backend>
-                <outputDirectory>${project.build.directory}/manual-default-theme</outputDirectory>
-                <sourceHighlighter>coderay</sourceHighlighter>
-                <doctype>book</doctype>
-                <attributes>
-                  <icons>font</icons>
-                  <pagenums/>
-                  <toc/>
-                  <idprefix/>
-                  <idseparator>-</idseparator>
-                </attributes>
-              </configuration>
-            </execution>
-            <execution>
-              <id>generate-pdf-doc-custom-theme</id>
-              <phase>prepare-package</phase>
-              <goals>
-                <goal>process-asciidoc</goal>
-              </goals>
-              <configuration>
-                <backend>pdf</backend>
-                <outputDirectory>${project.build.directory}/manual-custom-theme</outputDirectory>
+                <outputDirectory>${project.build.directory}/manual-pdf</outputDirectory>
                 <sourceHighlighter>coderay</sourceHighlighter>
                 <!-- Use `book` docType to enable title page generation -->
                 <doctype>book</doctype>
@@ -487,6 +467,29 @@
                   <toc/>
                   <idprefix/>
                   <idseparator>-</idseparator>
+                </attributes>
+              </configuration>
+            </execution>
+            <execution>
+              <id>generate-asciidoc-manual-html</id>
+              <phase>prepare-package</phase>
+              <goals>
+                <goal>process-asciidoc</goal>
+              </goals>
+              <configuration>
+                <backend>html5</backend>
+                <outputDirectory>${project.build.directory}/manual-html</outputDirectory>
+                <sourceHighlighter>coderay</sourceHighlighter>
+                <embedAssets>true</embedAssets>
+                <attributes>
+                  <imagesdir>images</imagesdir>
+                  <toc>left</toc>
+                  <icons>font</icons>
+                  <sectanchors>true</sectanchors>
+                  <!-- set the idprefix to blank -->
+                  <idprefix/>
+                  <idseparator>-</idseparator>
+                  <docinfo1>true</docinfo1>
                 </attributes>
               </configuration>
             </execution>
