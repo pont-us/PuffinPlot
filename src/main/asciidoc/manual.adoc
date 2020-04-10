@@ -12,16 +12,18 @@ Pontus Lurcock <pont@talvi.net>
 
 == Introduction
 
-This manual gives a practical guide to the usage of the PuffinPlot
-palaeomagnetic data analysis program. Note that it does not elucidate the
-principles of the analysis techniques themselves, and a working knowledge
-of palaeomagnetic procedures is assumed. For excellent introductions to
-palaeomagnetic analysis, see citenp:[tauxe2010paleomagnetism] or
-FIXME:BUTLER.
+This manual gives a practical guide
+to the usage of the PuffinPlot palaeomagnetic data analysis program.
+Note that it does not elucidate the principles
+of the analysis techniques themselves,
+and a working knowledge of palaeomagnetic procedures is assumed.
+For excellent introductions to palaeomagnetic analysis,
+see citenp:[tauxe2010paleomagnetism] or
+citenp:[butler1992paleomagnetism].
 
 If you use PuffinPlot in the creation of published work, please cite the
-PuffinPlot paper (<<lurcock2012puffinplot,Lurcock and Wilson, 2012>>). See
-<<sec:citing-puffinplot>> for further details.
+PuffinPlot paper cite:[lurcock2019new]. See <<sec:citing-puffinplot>> for
+further details.
 
 PuffinPlot is free software, distributed under the GNU General Public
 License. Please see the LICENCE file in the PuffinPlot archive for
@@ -851,8 +853,9 @@ parameters and directions. Note that most calculations operate on all
 the selected samples, not just the current sample.
 
 Calculations → Calculate PCA::
-calculates a best-fitting line to all the selected points in all the
-selected samples, using principal component analysis (FIXME:KIRSCHVINK).
+calculates a best-fitting line to all the selected points
+in all the selected samples,
+using principal component analysis cite:[kirschvink1980least].
 The PCA direction
 is projected onto the Zijderveld plot. If the '`PCA anchored`' menu item
 (below) is ticked, the resulting PCA fit line will be anchored to the
@@ -932,13 +935,16 @@ calculates and displays a best-fitting great circle for all the selected
 points in all the selected samples.
 
 Calculations → Great circles::
-calculates a best-fitting direction for all the great circles fitted at
-the sites corresponding to the currently selected samples, using the
-algorithm of FIXME:MCFADDEN. For any sample which has a PCA direction but no fitted
-great circle, the PCA direction will be used as an endpoint. The
-great-circle fit is shown both in the Equal-area (site) plot in the main
-window (if the plot has been activated in the preferences), and in a
-separate window which is opened automatically.
+calculates a best-fitting direction
+for all the great circles fitted at the sites
+corresponding to the currently selected samples,
+using the algorithm of citenp:[mcfadden1988circles].
+For any sample which has a PCA direction but no fitted great circle,
+the PCA direction will be used as an endpoint.
+The great-circle fit is shown
+both in the Equal-area (site) plot in the main window
+(if this plot has been activated in the preferences),
+and in a separate window which is opened automatically.
 
 Calculations → Clear site calculations::
 clears the results of any calculations associated with the selected
@@ -953,19 +959,27 @@ multi-suite calculations… menu item.
 
 Calculations → AMS::
 is a submenu containing various functions for AMS calculation.
-PuffinPlot can show the results of statistical calculations on AMS
-tensors, giving mean directions and confidence ellipses for the
-principal axes by one of three methods; at present, however, these
-calculations cannot be performed by PuffinPlot itself. Instead, it makes
-use of two Python scripts from the PmagPy suite (FIXME:TAUXE), bootams.py and
-s_hext.py. In order to calculate AMS statistics, these scripts must
-first be installed on the computer running PuffinPlot, and the folder
-containing them must be specified in the Preferences window. The PmagPy
-programs may be obtained from http://earthref.org/PMagPy/. All AMS
-calculations operate on the currently selected samples, except for Clear
-AMS, which operates on the entire suite. FIXME and chapter 13 of FIXME give more
-details of tensor statistics, particularly with regard to the
-application of bootstrap methods.
+PuffinPlot can show the results
+of statistical calculations on AMS tensors,
+giving mean directions and confidence ellipses
+for the principal axes by one of three methods;
+at present, however, these calculations cannot be performed
+by PuffinPlot itself.
+Instead, it makes use of two Python scripts
+from the PmagPy suite cite:[tauxe2010paleomagnetism],
+`bootams.py` and `s_hext.py`.
+In order to calculate AMS statistics,
+these scripts must first be installed
+on the computer running PuffinPlot,
+and the folder containing them must be specified
+in the Preferences window.
+The PmagPy programs may be obtained from http://earthref.org/PMagPy/.
+All AMS calculations operate on the currently selected samples,
+except for '`Clear AMS`', which operates on the entire suite.
+citenp:[tauxe1998directions]
+and chapter 13 of citenp:[tauxe2010paleomagnetism]
+give more details of tensor statistics,
+particularly with regard to the application of bootstrap methods.
 
 Calculations → AMS → Calculate bootstrap AMS::
 calculates bootstrap statistics using the bootams.py program, producing
@@ -980,8 +994,9 @@ more realistic confidence intervals for small numbers of samples on the
 normally distributed across the selected samples.
 
 Calculations → AMS → Calculate Hext on AMS::
-calculates FIXME:HEXT statistics using the s_hext.py program and displays the mean
-directions and error ellipses on the AMS plot.
+calculates citenp:[hext1963tensors] statistics
+using the `s_hext.py` program
+and displays the mean directions and error ellipses on the AMS plot.
 
 Calculations → AMS → Clear AMS calculations::
 Clears any previously done bootstrap and Hext calculations.
@@ -1027,8 +1042,8 @@ Help → PuffinPlot website::
 opens the PuffinPlot website using the default web browser.
 
 Help → Cite PuffinPlot…::
-opens a window containing information on the PuffinPlot paper (FIXME:CITE) and how to
-cite it.
+opens a window containing information on the PuffinPlot papers
+cite:[lurcock2012puffinplot,lurcock2019new] and how to cite them.
 
 Help → About PuffinPlot::
 displays some brief information about PuffinPlot, including the version.
@@ -1054,7 +1069,7 @@ Old PuffinPlot format::
 Caltech (CIT)::
   (filename suffix `sam`, with associated data files in same folder):
   format used at the Caltech Paleomagnetics Laboratory and supported by
-  the '`Paleomag`' program of FIXME:JONES.
+  the '`Paleomag`' program of citenp:[jones2002paleomag].
 IAPD::
   (filename suffix `dat`): format used by the IAPD program and its
   successors, developed by T. H. Torsvik et al. and used at the
@@ -1254,12 +1269,13 @@ great circle fit has been calculated for the sample, it is shown on this
 plot, and the pole to the great circle is shown as a triangle.
 
 Equal-area (site)::
-shows all the great circles fitted at the current sample's site, along
-with a best-fit direction calculated by the method of FIXME . On this plot,
-the calculated site direction is shown as a circle. Any sample PCA
-directions are shown as diamonds. Demagnetization steps used for the
-great-circle fits are shown as squares. Poles to the great circles are
-shown as triangles.
+shows all the great circles fitted at the current sample's site,
+along with a best-fit direction
+calculated by the method of citenp:[mcfadden1988circles].
+On this plot, the calculated site direction is shown as a circle.
+Any sample PCA directions are shown as diamonds.
+Demagnetization steps used for the great-circle fits are shown as squares.
+Poles to the great circles are shown as triangles.
 
 Equal-area (suite)::
 shows all the site means for the suite, and a Fisherian mean and 95%
@@ -1277,20 +1293,26 @@ RPI Plot::
 plots the current RPI estimate (if any) against depth.
 
 Sample parameters::
-shows the results of PCA and/or great-circle fits for data in the
-current sample. If neither of these calculations has been done, this
-plot is invisible. When visible, it shows the inclination and
-declination of the first principal component, which corresponds to a
-least-squares linear fit. It also shows the maximum angular deviation
-(MAD) values MAD1 and MAD3, which function as goodness-of-fit parameters
-(smaller is better). The MAD1 value gives an indication of how nearly
-the points lie in a single plane; the MAD3 value gives an indication of
-how nearly they lie along a single line. PCA analysis and MAD values are
-explained in FIXME and in section 9.7 of FIXME. The plot also show the Cartesian
-equation of the PCA best-fit line. For the great-circle fit, the plot
-gives the inclination and declination of one of the great circle's
-poles, and the MAD1 value indicating the goodness of fit of the great
-circle. (Note that this may be different from the MAD1 for the PCA fit,
+shows the results of PCA and/or great-circle fits
+for data in the current sample.
+If neither of these calculations has been done, this plot is invisible.
+When visible,
+it shows the inclination and declination of the first principal component,
+which corresponds to a least-squares linear fit.
+It also shows the maximum angular deviation (MAD) values MAD1 and MAD3,
+which function as goodness-of-fit parameters (smaller is better).
+The MAD1 value gives an indication
+of how nearly the points lie in a single plane;
+the MAD3 value gives an indication
+of how nearly they lie along a single line.
+PCA analysis and MAD values are explained in citenp:[kirschvink1980least]
+and in section 9.7 of citenp:[tauxe2010paleomagnetism].
+The plot also show the Cartesian equation of the PCA best-fit line.
+For the great-circle fit,
+the plot gives the inclination and declination
+of one of the great circle's poles,
+and the MAD1 value indicating the goodness of fit of the great circle.
+(Note that this may be different from the MAD1 for the PCA fit,
 since different sets of points may be used for the two fits.)
 
 Sample parameter table::
@@ -1326,10 +1348,12 @@ a95::
 R::
   the total length of the sum of the direction unit vectors
 type::
-  the type of analysis used: '`Fshr`' for FIXME:FISHER analysis on PCA directions; '`GC`'
-  for great-circle analysis (FIXME:MCFADDEN). '`GC`' is suffixed with either '`v`' for valid
-  or '`i`' for invalid. See <<sec:prefs-misc>> for
-  details on the validity test and how it may be customized.
+  the type of analysis used:
+  '`Fshr`' for citenp:[fisher1953sphere] analysis on PCA directions;
+  '`GC`' for great-circle analysis cite:[mcfadden1988circles].
+  '`GC`' is suffixed with either '`v`' for valid or '`i`' for invalid.
+  See <<sec:prefs-misc>> for details on the validity test
+  and how it may be customized.
 
 If both a valid great-circle direction and a Fisherian direction exist
 for a site, only the great-circle direction will be shown. Clicking on a
@@ -1338,10 +1362,11 @@ the corresponding site.
 
 Site parameters::
 shows the site mean direction as calculated either by Fisher statistics
-or by the great-circle technique of FIXME. It gives the mean inclination and
-declination and the _α_~95~ and _k_
-parameters. If no site mean direction has been calculated for the
-current site, this plot is invisible.
+or by the great-circle technique of citenp:[mcfadden1988circles].
+It gives the mean inclination and declination
+and the _α_~95~ and _k_ parameters.
+If no site mean direction has been calculated for the current site,
+this plot is invisible.
 
 Suite table::
 is a table showing suite-level mean direction and VGP data. See the
@@ -1355,22 +1380,23 @@ PuffinPlot operations, the parameters shown are calculated using only
 the samples and sites selected at the time the calculation is done.
 
 Ternary demag.::
-is an experimental ternary plot designed to display data from triaxial
-IRM demagnetization experiments conducted according to the method of FIXME.
-The position of a point on the plot reflects the relative strengths of
-the three axes of magnetization, which in turn correspond to high,
-medium, and low coercivity components. The path produced by points at
-successive demagnetization steps thus shows the relative effects of
-thermal unblocking (and possibly thermal alteration) on these
-components.
+is an experimental ternary plot
+designed to display data from triaxial IRM demagnetization experiments
+conducted according to the method of citenp:[lowrie1990identification].
+The position of a point on the plot
+reflects the relative strengths of the three axes of magnetization,
+which in turn correspond to high, medium, and low coercivity components.
+The path produced by points at successive demagnetization steps
+thus shows the relative effects of thermal unblocking
+(and possibly thermal alteration)
+on these components.
 
 Title::
 shows the name of the current sample and the current site, for a
 discrete suite. For a continuous (long core) suite, it shows the current
 depth. This plot also shows suite-level Fisher statistics calculated
-over samples and over sites, if these are available (see the Calculate →
-Suite means function in
-<<sec:functions-calcs>>).
+over samples and over sites, if these are available
+(see the Calculate → Suite means function in <<sec:functions-calcs>>).
 
 VGP map::
 is a world map (using a Mollweide projection) showing the locations of
@@ -1505,16 +1531,23 @@ preceding magnetic moment measurement or measurements.)
 <<tbl:import-protocols>> describes the
 available protocols.
 
-*Warning: incorrectly set sensor lengths can produce erroneous data!*
-The sensor lengths are not written to the 2G file, so they _must_ be
-correctly set in PuffinPlot's preferences before importing 2G long core
-data from the X/Y/Z vector components. (When importing discrete data, or
-reading from the polar fields in the 2G file, sensor lengths are not
-required.) If the sensor lengths are not known, use the
-'`Dec/Inc/Intensity`' setting in the 2G import tab. Failing to correct for
-sensor length is particularly dangerous because the deviations from the
-correct vectors are often small enough not to be immediately obvious.
-See Section 3 of FIXME for a fuller discussion of sensor response functions.
+[WARNING]
+.Warning: incorrectly set sensor lengths can produce erroneous data!
+====
+The sensor lengths are frequently not written to the 2G file,
+so they _must_ be correctly set in PuffinPlot's preferences
+before importing 2G long core data from the X/Y/Z vector components.
+(When importing discrete data,
+or reading from the polar fields in the 2G file,
+sensor lengths are not required.)
+If the sensor lengths are not known,
+use the '`Dec/Inc/Intensity`' setting in the 2G import tab.
+Failing to correct for sensor length is particularly dangerous
+because the deviations from the correct vectors
+are often small enough not to be immediately obvious.
+See Section 3 of citenp:[roberts2006high]
+for a fuller discussion of sensor response functions.
+====
 
 [[tbl:import-protocols]]
 .Measurement protocols for 2G data files
@@ -1838,26 +1871,36 @@ usage: java -jar PuffinPlot.jar <options>
 
 === Scripting [[sec:scripting]]
 
-PuffinPlot's graphical desktop interface is intended to be the primary
-way to interact with the program. However, it is often useful to be able
-to control a program using a scripting language, in order to extend its
-capabilities, integrate it conveniently with other programs, or process
-large amounts of data without manual intervention. The Java platform
-upon which PuffinPlot is built supports a number of scripting languages
-which can easily interface with PuffinPlot. Perhaps most usefully, an
-implementation of the Python programming language – named Jython (FIXME:CITE) – has
-been developed for the Java platform. Since Python is widely used in
-scientific programming and scripting, and familiar to a large number of
-scientists, this provides a convenient route for anyone wishing to
-integrate PuffinPlot with other data processing steps. Using Jython,
-PuffinPlot can be controlled either from a pre-written script, or
-interactively from a command shell which accepts and executes commands
-one at a time from the user. Jython scripts can also be run from within
-PuffinPlot itself, making it easy to perform scripted operations on
-currently open data suites. Jython is not distributed with PuffinPlot,
-but PuffinPlot will automatically download and install it the first time
-it is required. In addition to Python, PuffinPlot directly supports
-scripting in JavaScript.
+PuffinPlot's graphical desktop interface
+is intended to be the primary way to interact with the program.
+However, it is often useful
+to be able to control a program using a scripting language,
+in order to extend its capabilities,
+integrate it conveniently with other programs,
+or process large amounts of data without manual intervention.
+The Java platform upon which PuffinPlot is built
+supports a number of scripting languages
+which can easily interface with PuffinPlot.
+Perhaps most usefully,
+an implementation of the Python programming language
+– named Jython cite:[juneau2009jython] –
+has been developed for the Java platform.
+Since Python is widely used in scientific programming and scripting,
+and familiar to a large number of scientists,
+this provides a convenient route for anyone wishing
+to integrate PuffinPlot with other data processing steps.
+Using Jython,
+PuffinPlot can be controlled either from a pre-written script,
+or interactively from a command shell
+which accepts and executes commands one at a time from the user.
+Jython scripts can also be run from within PuffinPlot itself,
+making it easy to perform scripted operations
+on currently open data suites.
+Jython is not distributed with PuffinPlot,
+but PuffinPlot will automatically download and install it
+the first time it is required.
+In addition to Python,
+PuffinPlot directly supports scripting in JavaScript.
 
 Scripting allows you to extend the functionality of PuffinPlot without
 modifying the main program – for example, to perform extra processing on
@@ -1871,12 +1914,12 @@ JavaScript script… from the File menu to run it. This will give your
 script access to any data which has already been loaded into PuffinPlot.
 2.  Save a script as a file and run PuffinPlot from the command line,
 specifying the name of the script as a parameter using the following
-syntax: java -jar PuffinPlot.jar -script MyScriptName.py, where
+syntax: `java -jar PuffinPlot.jar -script MyScriptName.py`, where
 MyScriptName.py is the filename of the script you wish to run. In this
 case, the script will be run as soon as PuffinPlot starts. A JavaScript
 script can be run in a similar way by specifying the language using
-another command-line argument: java -jar PuffinPlot.jar -script
-MyScriptName.js -scriptlanguage javascript,
+another command-line argument: `java -jar PuffinPlot.jar -script
+MyScriptName.js -scriptlanguage javascript`,
 3.  Use a scripting language interpreter separate from PuffinPlot. In
 this case, you must download and install the language yourself. This
 approach lets you use any language available for the Java platform, not
@@ -2295,61 +2338,106 @@ bug quickly.
 
 == Citing PuffinPlot [[sec:citing-puffinplot]]
 
-PuffinPlot was introduced and described in a 2012 paper published in
-_Geochemistry, Geophysics, Geosystems_. If you make use of PuffinPlot in
-published work, please include the following citation:
+PuffinPlot was introduced and described
+in a 2012 paper published in _Geochemistry, Geophysics, Geosystems_.
+A https://doi.org/10.1029/2019GC008537[2019 follow-up paper]
+in the same journal
+described improvements made since the initial release.
+If you make use of PuffinPlot in published work,
+please use the 2019 paper as the preferred citation:
 
-_________________________________________________________________________________________________________________________________________________________________________________________________
-Lurcock, P. C., and G. S. Wilson (2012), PuffinPlot: A versatile,
-user-friendly program for paleomagnetic analysis, _Geochemistry,
-Geophysics, Geosystems_, 13, Q06Z45, doi:10.1029/2012GC004098.
-_________________________________________________________________________________________________________________________________________________________________________________________________
+____
+Lurcock, P. C., & Florindo, F. (2019).
+New developments in the PuffinPlot paleomagnetic data analysis program.
+_Geochemistry, Geophysics, Geosystems_, 20(11), 5578–5587.
+doi:10.1029/2019GC008537,
+https://doi.org/10.1029/2019GC008537
+____
 
-The PuffinPlot paper is open access, and can be read online or
-downloaded by visiting http://dx.doi.org/10.1029/2012GC004098. A PDF of
-the paper can also be downloaded directly from the Otago University
-research archive at
-https://ourarchive.otago.ac.nz/bitstream/handle/10523/3651/2012GC004098.pdf
-.
+Optionally, you may also cite the 2012 publication:
 
-For convenience, citation data is provided below in two formats commonly
-used by bibliography management software.
+Lurcock, P. C., and G. S. Wilson (2012),
+PuffinPlot: A versatile, user-friendly program for paleomagnetic analysis,
+_Geochemistry, Geophysics, Geosystems_, 13, Q06Z45,
+doi:10.1029/2012GC004098,
+https://doi.org/10.1029/2012GC004098
 
-=== BibTeX citation record
+The 2012 paper is open access, and can be read online or
+downloaded by visiting https://doi.org/10.1029/2012GC004098.
+Under the AGU's rolling free access policy,
+the 2019 paper should become freely available
+at https://doi.org/10.1029/2019GC008537
+from late 2021.
+
+For convenience,
+citation data for both papers is provided below
+in two formats commonly used by bibliography management software.
+
+=== BibTeX citation records
 
 ....
+@article{lurcock2019new,
+  author = {Lurcock, Pontus Conrad and Florindo, Fabio},
+  title = {New developments in the {PuffinPlot} paleomagnetic data
+    analysis program},
+  year = {2019},
+  volume = {20},
+  number = {11},
+  pages = {5578--5587},
+  month = oct,
+  day = {30},
+  journal = {Geochemistry, Geophysics, Geosystems},
+  doi = {10.1029/2019GC008537},
+  url = {https://doi.org/10.1029/2019GC008537}
+}
+
+
 @article{lurcock2012puffinplot,
-   author = {Lurcock, P. C. and Wilson, G. S.},
-   title = {PuffinPlot: A versatile, user-friendly program for
-     paleomagnetic analysis},
-   journal = {Geochemistry, Geophysics, Geosystems},
-   year = {2012},
-   month = {Jun},
-   day = {26},
-   publisher = {AGU},
-   volume = {13},
-   pages = {Q06Z45},
-   issn = {1525-2027},
-   doi = {10.1029/2012GC004098},
-   url = {http://dx.doi.org/10.1029/2012GC004098}
- }
+  author = {Lurcock, P. C. and Wilson, G. S.},
+  title = {PuffinPlot: A versatile, user-friendly program for
+    paleomagnetic analysis},
+  journal = {Geochemistry, Geophysics, Geosystems},
+  year = {2012},
+  month = {Jun},
+  day = {26},
+  publisher = {AGU},
+  volume = {13},
+  pages = {Q06Z45},
+  issn = {1525-2027},
+  doi = {10.1029/2012GC004098},
+  url = {https://doi.org/10.1029/2012GC004098}
+}
 ....
 
-=== RIS citation record
+=== RIS citation records
 
 ....
- TY  - JOUR
- T1  - PuffinPlot: A versatile, user-friendly program for paleomagnetic analysis
- A1  - Lurcock, P. C.
- A1  - Wilson, G. S.
- Y1  - 2012/06/26
- JO  - Geochemistry, Geophysics, Geosystems
- VL  - 13
- SP  - Q06Z45
- SN  - 1525-2027
- UR  - http://dx.doi.org/10.1029/2012GC004098
- DO  - 10.1029/2012GC004098
- PB  - AGU
+TY  - JOUR
+T1  - New Developments in the PuffinPlot Paleomagnetic Data Analysis Program
+AU  - Lurcock, P. C.
+AU  - Florindo, F.
+PY  - 2019
+DO  - 10.1029/2019GC008537
+JO  - Geochemistry, Geophysics, Geosystems
+SP  - 5578
+EP  - 5587
+VL  - 20
+IS  - 11
+SN  - 1525-2027
+UR  - https://doi.org/10.1029/2019GC008537
+
+TY  - JOUR
+T1  - PuffinPlot: A versatile, user-friendly program for paleomagnetic analysis
+A1  - Lurcock, P. C.
+A1  - Wilson, G. S.
+Y1  - 2012/06/26
+JO  - Geochemistry, Geophysics, Geosystems
+VL  - 13
+SP  - Q06Z45
+SN  - 1525-2027
+UR  - http://dx.doi.org/10.1029/2012GC004098
+DO  - 10.1029/2012GC004098
+PB  - AGU
 ....
 
 == Release notes
@@ -2594,4 +2682,4 @@ No release notes are available for PuffinPlot versions prior to 1.03.
 
 == Bibliography
 
-bibliography::manual.bib[apa-6th-edition]
+bibliography::manual.bib[apa]
