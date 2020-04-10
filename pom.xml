@@ -38,6 +38,22 @@
       <name>Boundless</name>
       <url>https://repo.boundlessgeo.com/main/</url>
     </repository>
+    <repository>
+      <!-- This repository provides a Maven proxy for the official
+           RubyGems.org repository, which is needed to build the Asciidoc
+           manual. -->
+      <id>rubygems-proxy</id>
+      <name>Rubygems Proxy</name>
+      <url>http://rubygems-proxy.torquebox.org/releases</url>
+      <layout>default</layout>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
+    </repository>
   </repositories>
 
   <pluginRepositories>
@@ -230,6 +246,41 @@
             </execution>
           </executions>
 	</plugin>
+        <plugin>
+          <!-- A plugin which fetches ruby gems and installs them
+               in the Maven target directory. -->
+          <groupId>de.saumya.mojo</groupId>
+          <artifactId>gem-maven-plugin</artifactId>
+          <version>1.1.8</version>
+          <executions>
+            <execution>
+              <goals>
+                <!-- We use the "sets" goal to explicitly specify versions
+                     of all needed gems (including direct and transitive
+                     dependencies), to avoid problems with automatic
+                     dependency resolution for gems in Maven as described in
+                     https://github.com/asciidoctor/asciidoctor-maven-examples/issues/41#issuecomment-171810511
+                     . Dependencies and their versions were determined by
+                     installing asciidoctor-bibtex using the standard gem
+                     tool and thereafter examining the contents of ~/.gem.
+                -->
+                <goal>sets</goal>
+              </goals>
+              <configuration>
+                <gems>
+                  <asciidoctor-bibtex>0.7.1</asciidoctor-bibtex>
+                  <bibtex-ruby>4.4.7</bibtex-ruby>
+                  <citeproc>1.0.10</citeproc>
+                  <citeproc-ruby>1.1.12</citeproc-ruby>
+                  <csl>1.5.1</csl>
+                  <csl-styles>1.0.1.10</csl-styles>
+                  <latex-decode>0.3.1</latex-decode>
+                  <namae>1.0.1</namae>
+                </gems>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
 	<plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>exec-maven-plugin</artifactId>
@@ -347,6 +398,13 @@
               </transformers>
 	      <minimizeJar>true</minimizeJar>
 	      <createDependencyReducedPom>false</createDependencyReducedPom>
+              <artifactSet>
+                <excludes>
+                  <!-- Don't include any ruby gems in the jar, since they're
+                       only needed at build time. -->
+                  <exclude>rubygems:*</exclude>
+                </excludes>
+              </artifactSet>
             </configuration>
             </execution>
           </executions>
@@ -445,6 +503,8 @@
             <attributes>
               <sourcedir>${project.build.sourceDirectory}</sourcedir>
             </attributes>
+            <gemPath>${project.build.directory}/rubygems</gemPath>
+            <requires>asciidoctor-bibtex</requires>
           </configuration>
           <executions>
             <execution>

@@ -6,6 +6,9 @@ Pontus Lurcock <pont@talvi.net>
 :doctype: book
 :encoding: utf-8
 :lang: en
+:bibtex-file: manual.bib
+:bibtex-order: alphabetical
+:bibtex-style: apa
 
 == Introduction
 
@@ -13,7 +16,8 @@ This manual gives a practical guide to the usage of the PuffinPlot
 palaeomagnetic data analysis program. Note that it does not elucidate the
 principles of the analysis techniques themselves, and a working knowledge
 of palaeomagnetic procedures is assumed. For excellent introductions to
-palaeomagnetic analysis, see FIXME:TAUXE or FIXME:BUTLER.
+palaeomagnetic analysis, see citenp:[tauxe2010paleomagnetism] or
+FIXME:BUTLER.
 
 If you use PuffinPlot in the creation of published work, please cite the
 PuffinPlot paper (<<lurcock2012puffinplot,Lurcock and Wilson, 2012>>). See
@@ -2587,60 +2591,7 @@ Google Code.
 
 No release notes are available for PuffinPlot versions prior to 1.03.
 
-[bibliography]
-== References
 
- - [[[butler1992paleomagnetism]]] Butler, R. F. (1992). Paleomagnetism:
-Magnetic Domains to Geologic Terranes. Blackwell Scientific, Oxford.
+== Bibliography
 
- - [[[fisher1953sphere]]] Fisher, R. (1953). Dispersion on a sphere.
-Proceedings of the Royal Society of London. Series A, Mathematical and
-Physical Sciences, 217:295–305.
-
- - [[[hext1963tensors]]] Hext, G. R. (1963). The estimation of
-second-order tensors, with related tests and designs. Biometrika,
-50(3-4):353–373. Available from:
-http://biomet.oxfordjournals.org/content/50/3-4/353.abstract[http://biomet.oxfordjournals.org/content/50/3-_4/353.abstract].
-
- - [[[jones2002paleomag]]] Jones, C. H. (2002). User-driven integrated
-software lives: “Paleomag” paleomagnetics analysis on the Macintosh.
-Computers & Geosciences, 28:1145–1151.
-
- - [[[juneau2009jython]]] Juneau, J., Baker, J., Munoz, L. S.,
-Wierzbicki, F., and Ng, V. (2009). The Definitive Guide to Jython.
-Apress, New York.
-
- - [[[kirschvink1980least]]] Kirschvink, J. L. (1980). The least-squares
-line and plane and the analysis of palaeomagnetic data. Geophysical
-Journal of the Royal Astronomical Society, 62(3):699–718.
-
- - [[[lowrie1990identification]]] Lowrie, W. (1990). Identification of
-ferromagnetic minerals in a rock by coercivity and unblocking
-temperature properties. Geophysical Research Letters, 17(2):159–162.
-Available from:
-http://dx.doi.org/10.1029/GL017i002p00159[http://dx.doi.org/10.1029/GL017i002p00159].
-
- - [[[lurcock2012puffinplot]]] Lurcock, P. C. and Wilson, G. S. (2012).
-Puffinplot: A versatile, user-friendly program for paleomagnetic
-analysis. Geochemistry, Geophysics, Geosystems, 13:Q06Z45. Available
-from:
-http://dx.doi.org/10.1029/2012GC004098[http://dx.doi.org/10.1029/2012GC004098].
-
- - [[[mcfadden1988circles]]] McFadden, P. L. and McElhinny, M. W.
-(1988). The combined analysis of remagnetization circles and direct
-observations in palaeomagnetism. Earth and Planetary Science Letters,
-87:161–172.
-
- - [[[roberts2006high]]] Roberts, A. P. (2006). High-resolution magnetic
-analysis of sediment cores: Strengths, limitations and strategies for
-maximizing the value of long-core magnetic data. Physics of the Earth
-and Planetary Interiors, 156(3–4):162 – 178.
-
- - [[[tauxe2010paleomagnetism]]] Tauxe, L., Butler, R. F., Banerjee,
-S. K., and Van der Voo, R. (2010). Essentials of paleomagnetism.
-University of California Press, Berkeley.
-
- - [[[tauxe1998directions]]] Tauxe, L., Gee, J. S., and Staudigel, H.
-(1998). Flow directions in dikes from anisotropy of magnetic
-susceptibility data: the bootstrap way. Journal of Geophysical Research,
-103(B8):17775–17790.
+bibliography::manual.bib[apa-6th-edition]
