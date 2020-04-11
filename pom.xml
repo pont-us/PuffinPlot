@@ -354,17 +354,6 @@
 		<workingDirectory>${basedir}</workingDirectory>
               </configuration>
             </execution>
-	    <execution>
-	      <id>build-manual</id>
-	      <phase>prepare-package</phase>
-	      <goals>
-		<goal>exec</goal>
-	      </goals>
-	      <configuration>
-		<executable>${basedir}/src/main/latex/make-all.sh</executable>
-		<workingDirectory>${basedir}/src/main/latex</workingDirectory>
-	      </configuration>
-	    </execution>
           </executions>
         </plugin>
 	<plugin>

@@ -13,17 +13,6 @@
   </fileSet>
   <fileSet>
     <includes>
-      <include>manual.pdf</include>
-      <include>manual.html</include>
-      <include>manual.css</include>      
-      <include>figures/*.png</include>
-      <include>figures/*.jpeg</include>
-    </includes>
-    <directory>src/main/latex</directory>
-    <outputDirectory>Manual</outputDirectory>
-  </fileSet>
-  <fileSet>
-    <includes>
       <include>**</include>
     </includes>
     <directory>target/site/apidocs</directory>
@@ -53,6 +42,16 @@
     <source>LICENCE</source>
     <destName>LICENCE</destName>
     <outputDirectory>.</outputDirectory>
+  </file>
+  <file>
+    <source>target/manual-html/manual.html</source>
+    <destName>manual.html</destName>
+    <outputDirectory>Manual</outputDirectory>
+  </file>
+  <file>
+    <source>target/manual-pdf/manual.pdf</source>
+    <destName>manual.pdf</destName>
+    <outputDirectory>Manual</outputDirectory>
   </file>
 </files>
 </assembly>
