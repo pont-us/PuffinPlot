@@ -115,10 +115,12 @@ cross-platform version described in the previous section. It is named
 '`PuffinPlot.app`', although the extension '`.app`' is usually hidden by Mac
 OS X.
 
-In the extracted archive contents, the PuffinPlot application is shown
-as an icon representing a puffin (specifically, the Atlantic Puffin
-_Fratercula arctica_). This application may be dragged into the
-Applications folder, or any other convenient place.
+In the extracted archive contents,
+the PuffinPlot application is shown
+as an icon depicting a puffin
+(specifically, the Atlantic Puffin _Fratercula arctica_).
+This application may be dragged into the Applications folder,
+or any other convenient place.
 
 PuffinPlot is started by double-clicking on its application icon. Recent
 versions of Mac OS X include a security feature called '`Gatekeeper`',
@@ -388,9 +390,10 @@ suite. See <<sec:file-types>> for details of
 supported filetypes.
 
 File → Open folder…::
-reads a whole folder of data files into PuffinPlot. This menu item only
-appears on OS X; on other operating systems, the Open… menu item also
-allows selection of entire folders.
+reads a whole folder of data files into PuffinPlot.
+This menu item only appears on OS X;
+on other operating systems, the '`Open…`' menu item
+also allows selection of entire folders.
 
 File → Open recent file::
 is a submenu which contains the names of the last eight files which have
@@ -900,13 +903,16 @@ a Fisherian direction calculated from PCAs, the great-circle direction
 will be used. Each set of means consists of an overall mean and
 individual means for the upper and lower hemisphere, to cater for data
 sets containing reversals. Corresponding VGPs are also calculated. All
-these means can be exported as a CSV file using the File → Export Data →
-Export suite calculations… menu item. The overall means and VGPs (but
-not the individual upper/lower hemisphere means) are also shown in the
-Suite table plot if it is active. Note that (like most PuffinPlot
-functions) this feature operates on all the _selected_ samples; to
-calculate means for the entire suite you must first select all the
-samples.
+these means can be exported as a CSV file using the
+'`File → Export Data → Export suite calculations…`'
+menu item.
+The overall means and VGPs
+(but not the individual upper/lower hemisphere means)
+are also shown in the Suite table plot if it is active.
+Note that (like most PuffinPlot functions)
+this feature operates on all the _selected_ samples;
+to calculate means for the entire suite
+you must first select all the samples.
 
 Calculations → MDF::
 calculates the Median Destructive Field (or, for thermal
@@ -1206,19 +1212,22 @@ point within the rectangle.
 
 ==== Working with multiple samples
 
-Since most PuffinPlot operations are automatically applied to all the
-selected samples, repetitive analysis work can often be done
-automatically using the Copy point selection feature. For example, if
-you wish to apply a PCA to the 100–250C demagnetization range of a
-series of 50 samples, it can be done in four quick steps:
+Since most PuffinPlot operations are automatically applied
+to all the selected samples,
+repetitive analysis work can often be done automatically
+using the '`Copy point selection`' feature.
+For example, if you wish to apply a PCA
+to the 100–250°C demagnetization range
+of a series of 50 samples,
+it can be done in four quick steps:
 
-1.  For the first sample, select the points corresponding to the
-100–250C demagnetization range.
-2.  Select the 50 samples using the sample chooser, keeping the first
-sample as the current one.
-3.  Use Copy point selection on the Edit menu (or press Ctrl-Shift-C to
-select the corresponding points in all the selected samples.
-4.  Select PCA from the Calculations menu, or press Ctrl-R.
+. For the first sample, select the points corresponding to the
+  100–250°C demagnetization range.
+. Select the 50 samples using the sample chooser, keeping the first
+  sample as the current one.
+. Use Copy point selection on the Edit menu (or press Ctrl-Shift-C to
+  select the corresponding points in all the selected samples.
+. Select PCA from the Calculations menu, or press Ctrl-R.
 
 This will immediately perform PCA on all 50 selected samples.
 
@@ -1354,7 +1363,7 @@ type::
   '`GC`' is suffixed with either '`v`' for valid or '`i`' for invalid.
   See <<sec:prefs-misc>> for details on the validity test
   and how it may be customized.
-
++
 If both a valid great-circle direction and a Fisherian direction exist
 for a site, only the great-circle direction will be shown. Clicking on a
 line within the site parameter table will jump to the first sample of
@@ -1427,7 +1436,7 @@ this sample, the two projections of the PCA lines are overlaid on the
 plot in blue. (If the V vs. H vertical projection is selected, only the
 horizontal projection of the PCA line is shown, since V vs. H
 effectively uses a different vertical projection for each point.) The
-appearance of the PCA lines can be changed using the Preferences dialog
+appearance of the PCA lines can be changed using the '`Preferences`' dialog
 (see <<sec:prefs-misc>>).
 
 Zplot key::
@@ -1437,10 +1446,12 @@ calibrated.
 
 ==== Arranging the plots [[sec:edit-layout]]
 
-PuffinPlot allows the plots to be freely rearranged and resized within
-the display area; they can also be switched on and off as required (see
-<<sec:preferences>>). To arrange the plots,
-select Edit layout from the Edit menu. This puts PuffinPlot temporarily
+PuffinPlot allows the plots to be freely rearranged
+and resized within the display area;
+they can also be switched on and off as required
+(see <<sec:preferences>>).
+To arrange the plots, select '`Edit layout`' from the '`Edit`' menu.
+This puts PuffinPlot temporarily
 into a special mode where plots become moveable. A tick appears next to
 the menu item, and the plots are overlaid by pale orange rectangles,
 allowing you to manipulate them. Each plot is also annotated with its
@@ -1453,16 +1464,19 @@ be overlapped freely. When you click in an area where two or more plots
 overlap, the smallest plot is treated as the '`topmost`', and this is the
 one which will be moved or resized.
 
-Once the plots are arranged to your satisfaction, click Edit layout on
-the Edit menu again to untick the menu item and resume normal operation.
+Once the plots are arranged to your satisfaction,
+click '`Edit layout`' on the '`Edit`' menu again
+to untick the menu item and resume normal operation.
 
-The plot layout is saved with your other preferences, and will be
-retained if PuffinPlot is closed and restarted. You can restore the
-original layout using the Reset layout menu item.
+The plot layout is saved with your other preferences,
+and will be retained if PuffinPlot is closed and restarted.
+You can restore the original layout using the '`Reset layout`' menu item.
 
-Sometimes it can be useful to save and restore different plot layouts.
-This can be done using the Export preferences… and Import preferences…
-menu items (see <<sec:menu-file>>).
+Sometimes it can be useful
+to save and restore different plot layouts.
+This can be done using
+the '`Export preferences…`' and '`Import preferences…`' menu items
+(see <<sec:menu-file>>).
 
 === The preferences window [[sec:preferences]]
 
@@ -1671,7 +1685,8 @@ GC validity::
 allows you to customize the conditions under which a site mean
 calculated by great-circle intersection is considered valid. The
 validity test is used in several ways:
-
++
+--
 * When site data is exported to a CSV file, one of the exported columns
 gives the result of the validity test.
 * Only valid site mean directions are shown on the suite equal-area
@@ -1707,21 +1722,24 @@ value of this setting is `true`, which causes all great-circle fits to
 be considered valid. If there is an error in the expression (i.e. if it
 isn`'t a valid JavaScript expression, or if it doesn`'t produce a
 true/false value), it will be evaluated as false.
+--
 
 Zplot PCA display::
-controls the manner in which PCA directions are shown on the Zijderveld
-plot (see <<sec:plot-types>>). The available
-settings are:
-
-Full::
-  PCA lines will extend right to the edges of the Zijderveld plot.
-Long::
-  PCA lines will be shortened by 10% from the '`Full`' length.
-Short::
-  PCA lines will only extend through the points used to calculate the
-  PCA.
-None::
-  No PCA lines will be shown.
+controls the manner in which PCA directions are shown
+on the Zijderveld plot (see <<sec:plot-types>>).
+The available settings are as follows.
++
+--
+  Full::
+    PCA lines will extend right to the edges of the Zijderveld plot.
+  Long::
+    PCA lines will be shortened by 10% from the '`Full`' length.
+  Short::
+    PCA lines will only extend through the points used to calculate the
+    PCA.
+  None::
+    No PCA lines will be shown.
+--
 
 Sample orientation::
 controls how sample orientation is displayed at the top of the main
