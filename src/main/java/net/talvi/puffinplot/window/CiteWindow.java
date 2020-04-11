@@ -43,68 +43,52 @@ import net.talvi.puffinplot.PuffinApp;
 public class CiteWindow extends JFrame {
 
     private static final String RIS_TEXT = 
-            "TY  - JOUR\n" +
-            "T1  - PuffinPlot: A versatile, user-friendly program for paleomagnetic analysis\n" +
-            "A1  - Lurcock, P. C.\n" +
-            "A1  - Wilson, G. S.\n" +
-            "Y1  - 2012/06/26\n" +
-            "JO  - Geochem. Geophys. Geosyst.\n" +
-            "VL  - 13\n" +
-            "SP  - Q06Z45\n" +
-            "SN  - 1525-2027\n" +
-            "KW  - graphical data display\n" +
-            "KW  - magnetostratigraphy\n" +
-            "KW  - paleomagnetism\n" +
-            "KW  - data processing\n" +
-            "KW  - u channel\n" +
-            "KW  - computer software\n" +
-            "KW  - 0520 Computational Geophysics: Data analysis: algorithms and implementation\n" +
-            "KW  - 0530 Computational Geophysics: Data presentation and visualization (1994)\n" +
-            "KW  - 1594 Geomagnetism and Paleomagnetism: Instruments and techniques\n" +
-            "N2  - PuffinPlot is a user-friendly desktop application for analysis of paleomagnetic data, offering a unique combination of features. It runs on several operating systems, including Windows, Mac OS X, and Linux; supports both discrete and long core data; and facilitates analysis of very weakly magnetic samples. As well as interactive graphical operation, PuffinPlot offers batch analysis for large volumes of data, and a Python scripting interface for programmatic control of its features. Available data displays include demagnetization/intensity, Zijderveld, equal-area (for sample, site, and suite level demagnetization data, and for magnetic susceptibility anisotropy data), a demagnetization data table, and a natural remanent magnetization intensity histogram. Analysis types include principal component analysis, Fisherian statistics, and great-circle path intersections. The results of calculations can be exported as CSV (comma-separated value) files; graphs can be printed, and can also be saved as publication-quality vector files in SVG or PDF format. PuffinPlot is free, and the program, user manual, and fully documented source code may be downloaded from http://code.google.com/p/puffinplot/.\n" +
-            "UR  - http://dx.doi.org/10.1029/2012GC004098\n" +
-            "DO  - 10.1029/2012GC004098\n" +
-            "PB  - AGU\n";
+            "TY  - JOUR\n"
+            + "T1  - New Developments in the PuffinPlot Paleomagnetic Data Analysis Program\n"
+            + "AU  - Lurcock, P. C.\n"
+            + "AU  - Florindo, F.\n"
+            + "PY  - 2019\n"
+            + "DO  - 10.1029/2019GC008537\n"
+            + "JO  - Geochemistry, Geophysics, Geosystems\n"
+            + "SP  - 5578\n"
+            + "EP  - 5587\n"
+            + "VL  - 20\n"
+            + "IS  - 11\n"
+            + "SN  - 1525-2027\n"
+            + "UR  - https://doi.org/10.1029/2019GC008537\n";
     
     private static final String BIBTEX_TEXT =
-            "@article{lurcock2012puffinplot,\n" +
-            "  author = {Lurcock, P. C. and Wilson, G. S.},\n" +
-            "  title = {PuffinPlot: A versatile, user-friendly program for paleomagnetic\n" +
-            "    analysis},\n" +
-            "  journal = {Geochemistry, Geophysics, Geosystems},\n" +
-            "  year = {2012},\n" +
-            "  month = {Jun},\n" +
-            "  day = {26},\n" +
-            "  publisher = {AGU},\n" +
-            "  volume = {13},\n" +
-            "  pages = {Q06Z45},\n" +
-            "  keywords = {graphical data display; magnetostratigraphy; paleomagnetism;\n" +
-            "    data processing; u channel; computer software; 0520 Computational\n" +
-            "    Geophysics: Data analysis: algorithms and implementation; 0530\n" +
-            "    Computational Geophysics: Data presentation and visualization (1994);\n" +
-            "    1594 Geomagnetism and Paleomagnetism: Instruments and techniques},\n" +
-            "  abstract = {PuffinPlot is a user-friendly desktop application for analysis\n" +
-            "    of paleomagnetic data, offering a unique combination of features. It runs\n" +
-            "    on several operating systems, including Windows, Mac OS X, and Linux;\n" +
-            "    supports both discrete and long core data; and facilitates analysis of\n" +
-            "    very weakly magnetic samples. As well as interactive graphical operation,\n" +
-            "    PuffinPlot offers batch analysis for large volumes of data, and a Python\n" +
-            "    scripting interface for programmatic control of its features. Available\n" +
-            "    data displays include demagnetization/intensity, Zijderveld, equal-area\n" +
-            "    (for sample, site, and suite level demagnetization data, and for magnetic\n" +
-            "    susceptibility anisotropy data), a demagnetization data table, and a\n" +
-            "    natural remanent magnetization intensity histogram. Analysis types\n" +
-            "    include principal component analysis, Fisherian statistics, and\n" +
-            "    great-circle path intersections. The results of calculations can be\n" +
-            "    exported as CSV (comma-separated value) files; graphs can be printed, and\n" +
-            "    can also be saved as publication-quality vector files in SVG or PDF\n" +
-            "    format. PuffinPlot is free, and the program, user manual, and fully\n" +
-            "    documented source code may be downloaded from\n" +
-            "    http://code.google.com/p/puffinplot/.},\n" +
-            "  issn = {1525-2027},\n" +
-            "  doi = {10.1029/2012GC004098},\n" +
-            "  url = {http://dx.doi.org/10.1029/2012GC004098}\n" +
-            "}\n";
+        "@article{lurcock2019new,\n"
+        + "  author = {Lurcock, Pontus Conrad and Florindo, Fabio},\n"
+        + "  title = {New developments in the {PuffinPlot} paleomagnetic data\n"
+        + "    analysis program},\n"
+        + "  year = {2019},\n"
+        + "  volume = {20},\n"
+        + "  number = {11},\n"
+        + "  pages = {5578--5587},\n"
+        + "  month = oct,\n"
+        + "  day = {30},\n"
+        + "  journal = {Geochemistry, Geophysics, Geosystems},\n"
+        + "  doi = {10.1029/2019GC008537},\n"
+        + "  url = {https://doi.org/10.1029/2019GC008537},\n"
+        + "  keywords = {computer software; data processing; graphical data display;\n"
+        + "    magnetostratigraphy; paleomagnetism; reproducible research},\n"
+        + "  abstract = {PuffinPlot is a program for paleomagnetic data analysis and\n"
+        + "    plotting, first released in 2012 and under continuous development\n"
+        + "    since then. It is free, cross-platform software and provides both a\n"
+        + "    graphical desktop interface for interactive use and an\n"
+        + "    application-programmer interface for scripting. We present a major new\n"
+        + "    release of the program, describe significant new features added since\n"
+        + "    the first release, and demonstrate their application to real-world\n"
+        + "    data. New features include automatic magnetic declination realignment,\n"
+        + "    relative paleointensity calculation, virtual geomagnetic pole\n"
+        + "    determination, calculation of inclination-only statistics, support for\n"
+        + "    reproducible research via the export of self-contained data bundles,\n"
+        + "    and support for reading a number of popular paleomagnetic file\n"
+        + "    formats. We also discuss the application of unit tests in ensuring\n"
+        + "    PuffinPlot's long-term reliability and outline directions for future\n"
+        + "    development of the software.}\n"
+        + "}\n";
     
     /**
      * Creates a new CiteWindow.
@@ -128,8 +112,8 @@ public class CiteWindow extends JFrame {
         contentPane.add(heading);
         
         final JLabel introLabel = new JLabel("<html><p>If you make use of "
-                + "PuffinPlot in published work, please cite the "
-                + "PuffinPlot paper:</p></html>");
+                + "PuffinPlot in published work, please cite this "
+                + "paper:</p></html>");
         introLabel.setBorder(new EmptyBorder(12, 0, 12, 0));
         introLabel.setAlignmentX(CENTER_ALIGNMENT);
         contentPane.add(introLabel);
@@ -147,14 +131,14 @@ public class CiteWindow extends JFrame {
         final JTextPane citePane = new JTextPane();
         citePane.setEditable(false);
         citePane.setContentType("text/html");
-        citePane.setText("<html>Lurcock, P. C. and G. S. Wilson (2012), "
-                + "PuffinPlot: A versatile, user-friendly program for "
-                + "paleomagnetic analysis, <i>Geochemistry, Geophysics, "
-                + "Geosystems</i>, 13, Q06Z45, doi:10.1029/2012GC004098."
-                + "<br><br>\nURL: "
-                + "<a href=\"http://doi.org/10.1029/2012GC004098\">"
-                + "http://doi.org/10.1029/2012GC004098</a>"
-                + "</html>");
+        citePane.setText("<html>Lurcock, P. C., & Florindo, F. (2019). "
+                + "New developments in the PuffinPlot "
+                + "paleomagnetic data analysis program. "
+                + "<i>Geochemistry, Geophysics, Geosystems</i>, 20(11), 5578–5587. "
+                + "doi:10.1029/2019GC008537, "
+                + "<a href=\"https://doi.org/10.1029/2019GC008537\">"
+                + "https://doi.org/10.1029/2019GC008537</a></html>"
+        );
         citePane.setPreferredSize(null);
         citePane.addHyperlinkListener(event -> {
             if (HyperlinkEvent.EventType.ACTIVATED == event.getEventType()) {
@@ -174,7 +158,7 @@ public class CiteWindow extends JFrame {
                 "Click here to locate the PuffinPlot paper online.");
         onlinePaperButton.setAlignmentX(CENTER_ALIGNMENT);
         onlinePaperButton.addActionListener(event ->
-            app.openWebPage("http://doi.org/10.1029/2012GC004098")
+            app.openWebPage("https://doi.org/10.1029/2019GC008537")
         );
         contentPane.add(onlinePaperButton);
         contentPane.add(Box.createVerticalGlue());
