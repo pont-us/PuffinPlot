@@ -32,13 +32,6 @@
       <url>http://java.freehep.org/maven2</url>
     </repository>
     <repository>
-      <!-- Boundless is the only Maven repo I can find with Oracle's
-           appbundler. -->
-      <id>boundless</id>
-      <name>Boundless</name>
-      <url>https://repo.boundlessgeo.com/main/</url>
-    </repository>
-    <repository>
       <!-- This repository provides a Maven proxy for the official
            RubyGems.org repository, which is needed to build the Asciidoc
            manual. -->
@@ -173,12 +166,6 @@
       <groupId>com.itextpdf</groupId>
       <artifactId>itextpdf</artifactId>
       <version>5.5.13</version>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>com.oracle</groupId>
-      <artifactId>appbundler</artifactId>
-      <version>1.0ea</version>
       <optional>true</optional>
     </dependency>
     <dependency>
