@@ -481,6 +481,21 @@
             </attributes>
             <gemPath>${project.build.directory}/rubygems</gemPath>
             <requires>asciidoctor-bibtex</requires>
+            <resources>
+              <!-- We don't want to copy any resources. Omitting the resources
+                   section entirely copies all the resources in the asciidoc
+                   source directory. Including a resources section with an
+                   empty resources subsection omits the asciidoc resources but
+                   copies the contents of src/main/java (!). So we need this
+                   resources section which explicitly excludes src/main/java.
+              -->
+              <resource>
+                <directory>src/main/java</directory>
+                <excludes>
+                  <exclude>**/*</exclude>
+                </excludes>
+              </resource>
+            </resources>
           </configuration>
           <executions>
             <execution>
