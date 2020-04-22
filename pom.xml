@@ -186,194 +186,217 @@
       <version>1.0.3</version>
       <optional>true</optional>
     </dependency>
+    <dependency>
+      <!-- jgit is used to extract version information from the
+      git repository without introducing an external dependency on
+      the git executable. -->
+      <groupId>org.eclipse.jgit</groupId>
+      <artifactId>org.eclipse.jgit</artifactId>
+      <version>5.7.0.202003110725-r</version>
+    </dependency>
   </dependencies>
 
   <build>
     <plugins>
-	<plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>properties-maven-plugin</artifactId>
-          <version>1.0.0</version>
-          <executions>
-            <execution>
-	      <id>read-release-properties</id>
-              <phase>initialize</phase>
-              <goals>
-		<goal>read-project-properties</goal>
-              </goals>
-              <configuration>
-		<files>
-                  <file>${basedir}/release.properties</file>
-		</files>
-              </configuration>
-            </execution>
-            <execution>
-	      <id>write-properties-file-1</id>
-              <phase>generate-resources</phase>
-              <goals>
-		<goal>write-project-properties</goal>
-              </goals>
-              <configuration>
-		<outputFile>
-                  ${project.build.outputDirectory}/app.properties
-		</outputFile>
-              </configuration>
-            </execution>
-            <execution>
-	      <id>write-properties-file-2</id>
-              <phase>generate-resources</phase>
-              <goals>
-		<goal>write-project-properties</goal>
-              </goals>
-              <configuration>
-		<outputFile>
-                  ${project.build.outputDirectory}/net/talvi/puffinplot/build.properties
-		</outputFile>
-              </configuration>
-            </execution>
-          </executions>
-	</plugin>
-        <plugin>
-          <!-- A plugin which fetches ruby gems and installs them
-               in the Maven target directory. -->
-          <groupId>de.saumya.mojo</groupId>
-          <artifactId>gem-maven-plugin</artifactId>
-          <version>1.1.8</version>
-          <executions>
-            <execution>
-              <goals>
-                <!-- We use the "sets" goal to explicitly specify versions
-                     of all needed gems (including direct and transitive
-                     dependencies), to avoid problems with automatic
-                     dependency resolution for gems in Maven as described in
-                     https://github.com/asciidoctor/asciidoctor-maven-examples/issues/41#issuecomment-171810511
-                     . Dependencies and their versions were determined by
-                     installing asciidoctor-bibtex using the standard gem
-                     tool and thereafter examining the contents of ~/.gem.
-                -->
-                <goal>sets</goal>
-              </goals>
-              <configuration>
-                <gems>
-                  <asciidoctor-bibtex>0.7.1</asciidoctor-bibtex>
-                  <bibtex-ruby>4.4.7</bibtex-ruby>
-                  <citeproc>1.0.10</citeproc>
-                  <citeproc-ruby>1.1.12</citeproc-ruby>
-                  <csl>1.5.1</csl>
-                  <csl-styles>1.0.1.10</csl-styles>
-                  <latex-decode>0.3.1</latex-decode>
-                  <namae>1.0.1</namae>
-                </gems>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-	<plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>exec-maven-plugin</artifactId>
-          <version>1.1</version>
-          <executions>
-            <execution>
-              <id>run-git-cat-file-commit</id>
-              <phase>validate</phase>
-              <goals>
-                <goal>exec</goal>
-              </goals>
-              <configuration>
-		<executable>git</executable>
-		<outputFile>target/classes/net/talvi/puffinplot/git-output-commit</outputFile>
-		<arguments>
-		  <argument>cat-file</argument>
-		  <argument>commit</argument>
-		  <argument>HEAD</argument>
-		</arguments>
-		<workingDirectory>${basedir}</workingDirectory>
-              </configuration>
-            </execution>
-            <execution>
-              <id>run-git-name-rev-tag</id>
-              <phase>validate</phase>
-              <goals>
-                <goal>exec</goal>
-              </goals>
-              <configuration>
-		<executable>git</executable>
-		<outputFile>target/classes/net/talvi/puffinplot/git-output-tag</outputFile>
-		<arguments>
-		  <argument>name-rev</argument>
-		  <argument>--tags</argument>
-		  <argument>HEAD</argument>
-		</arguments>
-		<workingDirectory>${basedir}</workingDirectory>
-              </configuration>
-            </execution>
-            <execution>
-              <id>run-git-show-ref-hash</id>
-              <phase>validate</phase>
-              <goals>
-                <goal>exec</goal>
-              </goals>
-              <configuration>
-		<executable>git</executable>
-		<outputFile>target/classes/net/talvi/puffinplot/git-output-hash</outputFile>
-		<arguments>
-		  <argument>show-ref</argument>
-		  <argument>--head</argument>
-		  <argument>--hash</argument>
-		  <argument>^HEAD$</argument>
-		</arguments>
-		<workingDirectory>${basedir}</workingDirectory>
-              </configuration>
-            </execution>
-            <execution>
-              <id>run-git-status</id>
-              <phase>validate</phase>
-              <goals>
-                <goal>exec</goal>
-              </goals>
-              <configuration>
-		<executable>git</executable>
-		<outputFile>target/classes/net/talvi/puffinplot/git-output-status</outputFile>
-		<arguments>
-		  <argument>status</argument>
-		  <argument>--porcelain</argument>
-		</arguments>
-		<workingDirectory>${basedir}</workingDirectory>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-	<plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.1.1</version>
-	  <executions>
-            <execution>
-              <phase>package</phase>
-              <goals>
-                <goal>javadoc</goal>
-              </goals>
-            </execution>
-	  </executions>
-	</plugin>
-	<plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-shade-plugin</artifactId>
-          <version>3.2.1</version>
-          <executions>
-            <execution>
-              <phase>package</phase>
-              <goals>
-		<goal>shade</goal>
-              </goals>
-	      <configuration>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>properties-maven-plugin</artifactId>
+        <version>1.0.0</version>
+        <executions>
+          <execution>
+            <id>read-release-properties</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>read-project-properties</goal>
+            </goals>
+            <configuration>
+              <files>
+                <file>${basedir}/release.properties</file>
+              </files>
+            </configuration>
+          </execution>
+          <execution>
+            <id>write-properties-file-1</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>write-project-properties</goal>
+            </goals>
+            <configuration>
+              <outputFile>
+                ${project.build.outputDirectory}/app.properties
+              </outputFile>
+            </configuration>
+          </execution>
+          <execution>
+            <id>write-properties-file-2</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>write-project-properties</goal>
+            </goals>
+            <configuration>
+              <outputFile>
+                ${project.build.outputDirectory}/net/talvi/puffinplot/build.properties
+              </outputFile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <!-- A plugin which fetches ruby gems and installs them
+        in the Maven target directory. -->
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>gem-maven-plugin</artifactId>
+        <version>1.1.8</version>
+        <executions>
+          <execution>
+            <id>install-gems-for-asciidoctor</id>
+            <goals>
+              <!-- We use the "sets" goal to explicitly specify versions
+                   of all needed gems (including direct and transitive
+                   dependencies), to avoid problems with automatic
+                   dependency resolution for gems in Maven as described in
+                   https://github.com/asciidoctor/asciidoctor-maven-examples/issues/41#issuecomment-171810511
+                   . Dependencies and their versions were determined by
+                   installing asciidoctor-bibtex using the standard gem
+                   tool and thereafter examining the contents of ~/.gem.
+              -->
+              <goal>sets</goal>
+            </goals>
+            <configuration>
+              <gems>
+                <asciidoctor-bibtex>0.7.1</asciidoctor-bibtex>
+                <bibtex-ruby>4.4.7</bibtex-ruby>
+                <citeproc>1.0.10</citeproc>
+                <citeproc-ruby>1.1.12</citeproc-ruby>
+                <csl>1.5.1</csl>
+                <csl-styles>1.0.1.10</csl-styles>
+                <latex-decode>0.3.1</latex-decode>
+                <namae>1.0.1</namae>
+              </gems>
+            </configuration>
+          </execution>
+          <execution>
+            <id>run-manual-version-script</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <file>${project.basedir}/src/main/resources/ruby-build-scripts/generate-manual-version-info.rb</file>
+              <execArgLines>
+                <execArgLine>${project.basedir}</execArgLine>
+              </execArgLines>
+              <outputFile>${project.basedir}/src/main/asciidoc/version.adoc</outputFile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.1</version>
+        <executions>
+          <execution>
+            <id>run-git-cat-file-commit</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>git</executable>
+              <outputFile>target/classes/net/talvi/puffinplot/git-output-commit</outputFile>
+              <arguments>
+                <argument>cat-file</argument>
+                <argument>commit</argument>
+                <argument>HEAD</argument>
+              </arguments>
+              <workingDirectory>${basedir}</workingDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>run-git-name-rev-tag</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>git</executable>
+              <outputFile>target/classes/net/talvi/puffinplot/git-output-tag</outputFile>
+              <arguments>
+                <argument>name-rev</argument>
+                <argument>--tags</argument>
+                <argument>HEAD</argument>
+              </arguments>
+              <workingDirectory>${basedir}</workingDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>run-git-show-ref-hash</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>git</executable>
+              <outputFile>target/classes/net/talvi/puffinplot/git-output-hash</outputFile>
+              <arguments>
+                <argument>show-ref</argument>
+                <argument>--head</argument>
+                <argument>--hash</argument>
+                <argument>^HEAD$</argument>
+              </arguments>
+              <workingDirectory>${basedir}</workingDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>run-git-status</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>git</executable>
+              <outputFile>target/classes/net/talvi/puffinplot/git-output-status</outputFile>
+              <arguments>
+                <argument>status</argument>
+                <argument>--porcelain</argument>
+              </arguments>
+              <workingDirectory>${basedir}</workingDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.1.1</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>javadoc</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.2.1</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                   <mainClass>net.talvi.puffinplot.Main</mainClass>
                 </transformer>
               </transformers>
-	      <minimizeJar>true</minimizeJar>
-	      <createDependencyReducedPom>false</createDependencyReducedPom>
+              <minimizeJar>true</minimizeJar>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
               <artifactSet>
                 <excludes>
                   <!-- Don't include any ruby gems in the jar, since they're
@@ -381,171 +404,185 @@
                   <exclude>rubygems:*</exclude>
                 </excludes>
               </artifactSet>
+              <filters>
+                <filter>
+                  <!-- gem-maven-plugin automatically adds any executed ruby
+                       scripts to the project's resources. As far as I can
+                       tell, this can't be disabled, but we can at least
+                       exclude them from the jar.
+                  -->
+                  <artifact>net.talvi.puffinplot:puffinplot</artifact>
+                  <excludes>
+                    <exclude>ruby-build-scripts/**</exclude>
+                  </excludes>
+                </filter>
+              </filters>
             </configuration>
-            </execution>
-          </executions>
-	</plugin>
-	<plugin>
-	  <groupId>sh.tak.appbundler</groupId>
-	  <artifactId>appbundle-maven-plugin</artifactId>
-	  <!-- Versions prior to 1.2.1 don't support excludeDependencies.
-	       -->
-	  <version>1.2.1-SNAPSHOT</version>
-	  <configuration>
-            <mainClass>net.talvi.puffinplot.Main</mainClass>
-            <generateDiskImageFile>false</generateDiskImageFile>
-	    <bundleName>PuffinPlot</bundleName>
-	    <excludeDependencies>true</excludeDependencies>
-	    <!-- Icons path must be relative to project base directory. -->
-	    <iconFile>src/main/resources/net/talvi/puffinplot/icons/PuffinPlot.icns</iconFile>
-	    <jvmOptions>
-	      <jvmOption>-Dapple.awt.application.name=PuffinPlot</jvmOption>
-	    </jvmOptions>
-	    <dictionaryFile>net/talvi/puffinplot/Info.plist.template</dictionaryFile>
-	    <jvmVersion>1.8+</jvmVersion>
-	  </configuration>
-	  <executions>
-            <execution>
-              <phase>package</phase>
-              <goals>
-                <goal>bundle</goal>
-              </goals>
-            </execution>
-	  </executions>
-	</plugin>
-	<plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-assembly-plugin</artifactId>
-          <version>2.2.1</version>
-          <configuration>
-            <descriptor>src/assembly/bin.xml</descriptor>
-	    <finalname>puffinplot-${project.version}</finalname>
-          </configuration>
-          <executions>
-            <execution>
-              <id>make-assembly</id> <!-- for inheritance merges -->
-              <phase>package</phase>
-              <goals>
-                <goal>single</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.jacoco</groupId>
-          <artifactId>jacoco-maven-plugin</artifactId>
-          <version>0.8.5</version>
-          <executions>
-            <execution>
-              <goals>
-                <goal>prepare-agent</goal>
-              </goals>
-            </execution>
-            <execution>
-              <id>report</id>
-              <phase>test</phase>
-              <goals>
-                <goal>report</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.asciidoctor</groupId>
-          <artifactId>asciidoctor-maven-plugin</artifactId>
-          <version>${asciidoctor.maven.plugin.version}</version>
-          <dependencies>
-            <dependency>
-              <groupId>org.asciidoctor</groupId>
-              <artifactId>asciidoctorj-pdf</artifactId>
-              <version>${asciidoctorj.pdf.version}</version>
-            </dependency>
-            <!-- Comment this section to use the default jruby artifact provided by the plugin -->
-            <dependency>
-              <groupId>org.jruby</groupId>
-              <artifactId>jruby-complete</artifactId>
-              <version>${jruby.version}</version>
-            </dependency>
-            <!-- Comment this section to use the default AsciidoctorJ artifact provided by the plugin -->
-            <dependency>
-              <groupId>org.asciidoctor</groupId>
-              <artifactId>asciidoctorj</artifactId>
-              <version>${asciidoctorj.version}</version>
-            </dependency>
-          </dependencies>
-          <configuration>
-            <sourceDirectory>src/main/asciidoc</sourceDirectory>
-            <!-- Attributes common to all output formats -->
-            <attributes>
-              <sourcedir>${project.build.sourceDirectory}</sourcedir>
-            </attributes>
-            <gemPath>${project.build.directory}/rubygems</gemPath>
-            <requires>asciidoctor-bibtex</requires>
-            <resources>
-              <!-- We don't want to copy any resources. Omitting the resources
-                   section entirely copies all the resources in the asciidoc
-                   source directory. Including a resources section with an
-                   empty resources subsection omits the asciidoc resources but
-                   copies the contents of src/main/java (!). So we need this
-                   resources section which explicitly excludes src/main/java.
-              -->
-              <resource>
-                <directory>src/main/java</directory>
-                <excludes>
-                  <exclude>**/*</exclude>
-                </excludes>
-              </resource>
-            </resources>
-          </configuration>
-          <executions>
-            <execution>
-              <id>generate-asciidoc-manual-pdf</id>
-              <phase>prepare-package</phase>
-              <goals>
-                <goal>process-asciidoc</goal>
-              </goals>
-              <configuration>
-                <backend>pdf</backend>
-                <outputDirectory>${project.build.directory}/manual-pdf</outputDirectory>
-                <sourceHighlighter>coderay</sourceHighlighter>
-                <!-- Use `book` docType to enable title page generation -->
-                <doctype>book</doctype>
-                <attributes>
-                  <pdf-stylesdir>${project.basedir}/src/main/asciidoc/theme</pdf-stylesdir>
-                  <pdf-style>custom</pdf-style>
-                  <icons>font</icons>
-                  <pagenums/>
-                  <toc/>
-                  <idprefix/>
-                  <idseparator>-</idseparator>
-                </attributes>
-              </configuration>
-            </execution>
-            <execution>
-              <id>generate-asciidoc-manual-html</id>
-              <phase>prepare-package</phase>
-              <goals>
-                <goal>process-asciidoc</goal>
-              </goals>
-              <configuration>
-                <backend>html5</backend>
-                <outputDirectory>${project.build.directory}/manual-html</outputDirectory>
-                <sourceHighlighter>coderay</sourceHighlighter>
-                <embedAssets>true</embedAssets>
-                <attributes>
-                  <imagesdir>images</imagesdir>
-                  <toc>left</toc>
-                  <icons>font</icons>
-                  <sectanchors>true</sectanchors>
-                  <!-- set the idprefix to blank -->
-                  <idprefix/>
-                  <idseparator>-</idseparator>
-                  <docinfo1>true</docinfo1>
-                </attributes>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>sh.tak.appbundler</groupId>
+        <artifactId>appbundle-maven-plugin</artifactId>
+        <!-- Versions prior to 1.2.1 don't support excludeDependencies.
+        -->
+        <version>1.2.1-SNAPSHOT</version>
+        <configuration>
+          <mainClass>net.talvi.puffinplot.Main</mainClass>
+          <generateDiskImageFile>false</generateDiskImageFile>
+          <bundleName>PuffinPlot</bundleName>
+          <excludeDependencies>true</excludeDependencies>
+          <!-- Icons path must be relative to project base directory. -->
+          <iconFile>src/main/resources/net/talvi/puffinplot/icons/PuffinPlot.icns</iconFile>
+          <jvmOptions>
+            <jvmOption>-Dapple.awt.application.name=PuffinPlot</jvmOption>
+          </jvmOptions>
+          <dictionaryFile>net/talvi/puffinplot/Info.plist.template</dictionaryFile>
+          <jvmVersion>1.8+</jvmVersion>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>bundle</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2.1</version>
+        <configuration>
+          <descriptor>src/assembly/bin.xml</descriptor>
+          <finalname>puffinplot-${project.version}</finalname>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id> <!-- for inheritance merges -->
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.5</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.asciidoctor</groupId>
+        <artifactId>asciidoctor-maven-plugin</artifactId>
+        <version>${asciidoctor.maven.plugin.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.asciidoctor</groupId>
+            <artifactId>asciidoctorj-pdf</artifactId>
+            <version>${asciidoctorj.pdf.version}</version>
+          </dependency>
+          <!-- Comment this section to use the default jruby artifact provided by the plugin -->
+          <dependency>
+            <groupId>org.jruby</groupId>
+            <artifactId>jruby-complete</artifactId>
+            <version>${jruby.version}</version>
+          </dependency>
+          <!-- Comment this section to use the default AsciidoctorJ artifact provided by the plugin -->
+          <dependency>
+            <groupId>org.asciidoctor</groupId>
+            <artifactId>asciidoctorj</artifactId>
+            <version>${asciidoctorj.version}</version>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <sourceDirectory>src/main/asciidoc</sourceDirectory>
+          <!-- Attributes common to all output formats -->
+          <attributes>
+            <sourcedir>${project.build.sourceDirectory}</sourcedir>
+          </attributes>
+          <gemPath>${project.build.directory}/rubygems</gemPath>
+          <requires>asciidoctor-bibtex</requires>
+          <sourceDocumentName>manual.adoc</sourceDocumentName>
+          <resources>
+            <!-- We don't want to copy any resources. Omitting the resources
+                 section entirely copies all the resources in the asciidoc
+                 source directory. Including a resources section with an
+                 empty resources subsection omits the asciidoc resources but
+                 copies the contents of src/main/java (!). So we need this
+                 resources section which explicitly excludes src/main/java.
+            -->
+            <resource>
+              <directory>${project.basedir}/src/main/java</directory>
+              <excludes>
+                <exclude>**/*</exclude>
+              </excludes>
+            </resource>
+          </resources>
+        </configuration>
+        <executions>
+          <execution>
+            <id>generate-asciidoc-manual-pdf</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>process-asciidoc</goal>
+            </goals>
+            <configuration>
+              <backend>pdf</backend>
+              <outputDirectory>${project.build.directory}/manual-pdf</outputDirectory>
+              <sourceHighlighter>coderay</sourceHighlighter>
+              <!-- Use `book` docType to enable title page generation -->
+              <doctype>book</doctype>
+              <attributes>
+                <pdf-stylesdir>${project.basedir}/src/main/asciidoc/theme</pdf-stylesdir>
+                <pdf-style>custom</pdf-style>
+                <icons>font</icons>
+                <pagenums/>
+                <toc/>
+                <idprefix/>
+                <idseparator>-</idseparator>
+              </attributes>
+            </configuration>
+          </execution>
+          <execution>
+            <id>generate-asciidoc-manual-html</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>process-asciidoc</goal>
+            </goals>
+            <configuration>
+              <backend>html5</backend>
+              <outputDirectory>${project.build.directory}/manual-html</outputDirectory>
+              <sourceHighlighter>coderay</sourceHighlighter>
+              <embedAssets>true</embedAssets>
+              <attributes>
+                <imagesdir>images</imagesdir>
+                <toc>left</toc>
+                <icons>font</icons>
+                <sectanchors>true</sectanchors>
+                <!-- set the idprefix to blank -->
+                <idprefix/>
+                <idseparator>-</idseparator>
+                <docinfo1>true</docinfo1>
+              </attributes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
     
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->

@@ -1,5 +1,6 @@
 = PuffinPlot User Manual
 Pontus Lurcock <pont@talvi.net>
+include::version.adoc[]
 :numbered:
 :xrefstyle: short
 :title-logo-image: image::Fratercula_arctica.jpeg[width=300,align=center]
