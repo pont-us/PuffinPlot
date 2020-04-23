@@ -216,6 +216,14 @@ public class UtilTest {
         assertEquals(expected, Util.parseGitTimestamp(gitTimestap));
     }
     
+    @Test
+    public void testParseGitTimestampWithOneField() {
+        final ZonedDateTime expected
+                = ZonedDateTime.parse("2018-10-07T09:09:17+00:00");
+        final String gitTimestap = "1538903357";
+        assertEquals(expected, Util.parseGitTimestamp(gitTimestap));
+    }
+
     @Test(expected = NullPointerException.class)
     public void testParseGitTimestampWithNull() {
         Util.parseGitTimestamp(null);
@@ -229,11 +237,6 @@ public class UtilTest {
     @Test(expected = IllegalArgumentException.class)
     public void testParseGitTimestampWithThreeFields() {
         Util.parseGitTimestamp("1 2 3");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testParseGitTimestampWithOneField() {
-        Util.parseGitTimestamp("1");
     }
 
     @Test(expected = IllegalArgumentException.class)

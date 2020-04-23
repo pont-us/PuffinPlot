@@ -45,7 +45,7 @@ public class VersionTest {
     public void testFromGitPropertiesNoTagClean() {
         final UnaryOperator<String> fetcher = makeFetcher(
                 "build.git.committerdate", "1538903357 +0200",
-                "build.git.tag", "HEAD undefined",
+                "build.git.tag", "undefined",
                 "build.git.hash", "6e856a173a601453ab5736f359bcdf8484029bce",
                 "build.git.dirty", "false"
                 );
@@ -58,8 +58,8 @@ public class VersionTest {
     @Test
     public void testFromGitPropertiesNoTagDirty() {
         final UnaryOperator<String> fetcher = makeFetcher(
-                "build.git.committerdate", "1538903357 +0200",
-                "build.git.tag", "HEAD undefined",
+                "build.git.committerdate", "1538903357",
+                "build.git.tag", "undefined",
                 "build.git.hash", "6e856a173a601453ab5736f359bcdf8484029bce",
                 "build.git.dirty", "true"
                 );
@@ -72,8 +72,8 @@ public class VersionTest {
     @Test
     public void testFromGitPropertiesWithTagClean() {
         final UnaryOperator<String> fetcher = makeFetcher(
-                "build.git.committerdate", "1429795203 +0200",
-                "build.git.tag", "HEAD tags/version_1.03",
+                "build.git.committerdate", "1429795203",
+                "build.git.tag", "version_1.03",
                 "build.git.hash", "cda470416770ba19896dc9a15b34cd99258dbc20",
                 "build.git.dirty", "false"
                 );
@@ -87,7 +87,7 @@ public class VersionTest {
     public void testFromGitPropertiesWithTagDirty() {
         final UnaryOperator<String> fetcher = makeFetcher(
                 "build.git.committerdate", "1429795203 +0200",
-                "build.git.tag", "HEAD tags/version_1.03",
+                "build.git.tag", "version_1.03",
                 "build.git.hash", "cda470416770ba19896dc9a15b34cd99258dbc20",
                 "build.git.dirty", "true"
                 );

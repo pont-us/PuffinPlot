@@ -196,9 +196,8 @@ public class PuffinApp {
         System.setProperty("com.apple.mrj.application.apple.menu.about.name",
                 "PuffinPlot");
         loadBuildProperties();
-        version = Version.fromGitFiles(this.getClass(),
-                "git-output-commit", "git-output-tag", "git-output-hash",
-                "git-output-status", getBuildProperty("build.date"));
+        version = Version.fromGitProperties(key -> getBuildProperty(key));
+        
         prefs = new PuffinPrefs(this);
         lastUsedFileOpenDirs = new IdToFileMap(
                 key -> prefs.getPrefs().get(key, ""),

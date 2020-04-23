@@ -503,16 +503,28 @@ public class Util {
         }
     }
 
+    /**
+     * Expects a decimal representation of a Unix epoch seconds time,
+     * followed by a space and a timezone specifier. Returns a corresponding
+     * 
+     * @param gitTimestap a timestamp as described above
+     * @return a ZonedDateTime corresponding to the timestamp
+     */
     static ZonedDateTime parseGitTimestamp(String gitTimestap) {
         final String[] parts = gitTimestap.split(" ");
-        if (parts.length != 2) {
+        if (parts.length < 1 || parts.length > 2) {
             throw new IllegalArgumentException(String.format(
-                    "Malformed git timestamp \"%s\": should have 2 parts,"
+                    "Malformed git timestamp \"%s\": should have 1 or 2 parts,"
                             + "not %d.", gitTimestap, parts.length));
         }
         final long epochSeconds = Long.parseLong(parts[0]);
-        final String timeZone = parts[1];
-        return Instant.ofEpochSecond(epochSeconds).atZone(ZoneId.of(timeZone));
+        final Instant instant = Instant.ofEpochSecond(epochSeconds);
+        if (parts.length == 1) {
+            return instant.atZone(ZoneId.of("Z"));
+        } else {
+            final String timeZone = parts[1];
+            return instant.atZone(ZoneId.of(timeZone));
+        }
     }
 
     /**

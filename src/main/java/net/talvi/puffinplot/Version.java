@@ -247,7 +247,9 @@ public class Version {
     private static Version fromGitProperties(String rawTag, String shortHash,
             String rawBuildDate, String rawCommitterDate, boolean modified) {
         final String versionString =
-                rawTag.startsWith("HEAD tags/version_") && !modified
+                rawTag.startsWith("version_") && !modified
+                ? rawTag.substring(8)
+                : rawTag.startsWith("HEAD tags/version_") && !modified
                 ? rawTag.substring(18)
                 : shortHash + (modified ? " (modified)" : "");
 

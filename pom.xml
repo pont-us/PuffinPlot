@@ -289,79 +289,18 @@
               <outputFile>${project.basedir}/src/main/asciidoc/version.adoc</outputFile>
             </configuration>
           </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>1.1</version>
-        <executions>
           <execution>
-            <id>run-git-cat-file-commit</id>
-            <phase>validate</phase>
+            <id>run-commit-properties-script</id>
+            <phase>generate-resources</phase>
             <goals>
               <goal>exec</goal>
             </goals>
             <configuration>
-              <executable>git</executable>
-              <outputFile>target/classes/net/talvi/puffinplot/git-output-commit</outputFile>
-              <arguments>
-                <argument>cat-file</argument>
-                <argument>commit</argument>
-                <argument>HEAD</argument>
-              </arguments>
-              <workingDirectory>${basedir}</workingDirectory>
-            </configuration>
-          </execution>
-          <execution>
-            <id>run-git-name-rev-tag</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>git</executable>
-              <outputFile>target/classes/net/talvi/puffinplot/git-output-tag</outputFile>
-              <arguments>
-                <argument>name-rev</argument>
-                <argument>--tags</argument>
-                <argument>HEAD</argument>
-              </arguments>
-              <workingDirectory>${basedir}</workingDirectory>
-            </configuration>
-          </execution>
-          <execution>
-            <id>run-git-show-ref-hash</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>git</executable>
-              <outputFile>target/classes/net/talvi/puffinplot/git-output-hash</outputFile>
-              <arguments>
-                <argument>show-ref</argument>
-                <argument>--head</argument>
-                <argument>--hash</argument>
-                <argument>^HEAD$</argument>
-              </arguments>
-              <workingDirectory>${basedir}</workingDirectory>
-            </configuration>
-          </execution>
-          <execution>
-            <id>run-git-status</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>git</executable>
-              <outputFile>target/classes/net/talvi/puffinplot/git-output-status</outputFile>
-              <arguments>
-                <argument>status</argument>
-                <argument>--porcelain</argument>
-              </arguments>
-              <workingDirectory>${basedir}</workingDirectory>
+              <file>${project.basedir}/src/main/resources/ruby-build-scripts/generate-commit-properties.rb</file>
+              <execArgLines>
+                <execArgLine>${project.basedir}</execArgLine>
+                <execArgLine>${project.build.directory}/classes/net/talvi/puffinplot/build.properties</execArgLine>
+              </execArgLines>
             </configuration>
           </execution>
         </executions>
