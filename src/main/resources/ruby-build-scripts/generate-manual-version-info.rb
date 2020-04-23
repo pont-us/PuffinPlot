@@ -1,8 +1,8 @@
 require "java"
 
 def main
-  # We expect the git working directory to be passed as
-  # the first argument.
+  # We expect the git working directory to be passed as the first
+  # argument.
   worktree = java.io.File.new(ARGV[0])
   repo = org.eclipse.jgit.storage.file
          .FileRepositoryBuilder.new()
@@ -10,12 +10,16 @@ def main
          .build()
   git = org.eclipse.jgit.api.Git.new(repo)
   head_ref = repo.exactRef(org.eclipse.jgit.lib.Constants::HEAD)
-  head_id = head_ref.getObjectId()
 
-  # We write the version line to standard output and rely on
-  # the caller to redirect it appropriately.
-  puts ":revnumber: " + make_version_string(git, head_id)
-  puts ":revdate: " + make_date_string(repo, head_id)
+  # We write the to standard output and rely on the caller to redirect it
+  # appropriately.
+  if head_ref.nil?
+    puts ":revnumber: unknown"
+  else
+    head_id = head_ref.getObjectId()
+    puts ":revnumber: " + make_version_string(git, head_id)
+    puts ":revdate: " + make_date_string(repo, head_id)
+  end
 end
 
 def make_version_string(git, head_id)

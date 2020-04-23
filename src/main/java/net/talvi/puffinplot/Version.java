@@ -246,13 +246,14 @@ public class Version {
     
     private static Version fromGitProperties(String rawTag, String shortHash,
             String rawBuildDate, String rawCommitterDate, boolean modified) {
+        final String fallbackVersion = shortHash.startsWith("unknown") ?
+                "unknown" : shortHash;
         final String versionString =
                 rawTag.startsWith("version_") && !modified
                 ? rawTag.substring(8)
                 : rawTag.startsWith("HEAD tags/version_") && !modified
                 ? rawTag.substring(18)
-                : shortHash + (modified ? " (modified)" : "");
-
+                : fallbackVersion + (modified ? " (modified)" : "");
         String dateString = rawBuildDate
                 + " (date of build; revision date not available)";
         try {
@@ -263,7 +264,6 @@ public class Version {
         } catch (IllegalArgumentException | DateTimeException e) {
             // Do nothing -- fallback date string will be retained.
         }
-
         return new Version(versionString, dateString,
                 makeYearRange(dateString));
     }

@@ -6,20 +6,20 @@ require "java"
 
 def main
   open(ARGV[1], "a") do |fh|
-    write_data(fh)
+    # We expect the git working directory to be passed as
+    # the first argument.
+    worktree = java.io.File.new(ARGV[0])
+    repo = org.eclipse.jgit.storage.file
+           .FileRepositoryBuilder.new()
+           .setWorkTree(worktree)
+           .build()
+    git = org.eclipse.jgit.api.Git.new(repo)
+    head_ref = repo.exactRef(org.eclipse.jgit.lib.Constants::HEAD)
+    write_data(fh, repo, git, head_ref) if head_ref
   end
 end
 
-def write_data(fh)
-  # We expect the git working directory to be passed as
-  # the first argument.
-  worktree = java.io.File.new(ARGV[0])
-  repo = org.eclipse.jgit.storage.file
-         .FileRepositoryBuilder.new()
-         .setWorkTree(worktree)
-         .build()
-  git = org.eclipse.jgit.api.Git.new(repo)
-  head_ref = repo.exactRef(org.eclipse.jgit.lib.Constants::HEAD)
+def write_data(fh, repo, git, head_ref)
   head_id = head_ref.getObjectId()
   commit = repo.parseCommit(head_ref.getObjectId())
   
