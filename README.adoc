@@ -9,20 +9,33 @@ http://talvi.net/puffinplot/ and consult the included user manual.
 
 == Building PuffinPlot
 
+Build requirements:
+
+* A Java Development Kit (JDK), version 8.
+* https://maven.apache.org/[Apache Maven]
+
 PuffinPlot is structured as a Maven project, and can be built by running
-`mvn package` in the root directory. Most dependencies will be automatically
-downloaded and installed by Maven. The only external dependency is git,
-which is used to incorporate version information into the build.
+`mvn package` in the root directory. This will produce the zip package
+`puffinplot-<version>-bin.zip` in the `target` subdirectory. Other than
+the JDK and Maven itself, all dependencies are automatically downloaded
+and cached locally by Maven during the build process. As of 2020-04-24,
+cloning and building PuffinPlot requires around 700 MB of disk space, not
+including the space required for the JDK.
+
+The PuffinPlot build process includes the execution of several hundred
+unit tests. Some of the tests require a desktop environment to execute,
+and if the build is carried out in a headless environment those tests will
+be skipped.
 
 PuffinPlot is currently developed mainly in
-https://netbeans.apache.org/[Apache Netbeans], and the `nbactions.xml` file
-provides some NetBeans-specific Maven actions, but development is not tied
-to any specific IDE. In particular, PuffinPlot's Swing GUI does not make use of
-the NetBeans Matisse GUI designer.
+https://netbeans.apache.org/[Apache Netbeans], and the `nbactions.xml`
+file provides some NetBeans-specific Maven actions, but development is not
+tied to any specific IDE. In particular, PuffinPlot's Swing GUI does not
+make use of the NetBeans Matisse GUI designer.
 
-PuffinPlot can optionally make use of Jython; the required Jython package can be
-dynamically downloaded, installed, and used by PuffinPlot at runtime, but it is
-not a build-time dependency.
+PuffinPlot can optionally make use of Jython; the required Jython package
+can be dynamically downloaded, installed, and used by PuffinPlot at
+runtime, but it is not a build-time dependency.
 
 == Bug tracking
 

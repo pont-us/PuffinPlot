@@ -16,11 +16,13 @@
  */
 package net.talvi.puffinplot;
 
+import java.awt.GraphicsEnvironment;
 import java.util.function.Consumer;
 import net.talvi.puffinplot.data.AmsCalculationType;
 import net.talvi.puffinplot.data.MeasurementAxis;
 import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -29,6 +31,13 @@ public class PuffinActionsTest {
 
     final PuffinApp app = Mockito.mock(PuffinApp.class);
     final PuffinActions actions = new PuffinActions(app);
+
+    @BeforeClass
+    public static void assumeNotHeadless() {
+        org.junit.Assume.assumeFalse(
+                "Can't run PuffinActions tests in a headless environment.",
+                GraphicsEnvironment.isHeadless());
+    }
     
     @Test
     public void testAbout() {
