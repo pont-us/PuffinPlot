@@ -50,7 +50,6 @@ public class DemagTableTest {
     public void testDrawNoSample() throws IOException {
         final String filename = "DemagTable-empty";
         final BufferedImage actual = TestUtils.makeImage(defaultPlot, 512, 512);
-        // TestUtils.saveImage(actual, filename);
         assertTrue(TestUtils.isImageCorrect(filename, actual));
     }
     
@@ -59,7 +58,6 @@ public class DemagTableTest {
         final String filename = "DemagTable-empty";
         params.setSample(new Sample("test", null));
         final BufferedImage actual = TestUtils.makeImage(defaultPlot, 512, 512);
-        // TestUtils.saveImage(actual, filename);
         assertTrue(TestUtils.isImageCorrect(filename, actual));
     }
     
@@ -69,7 +67,6 @@ public class DemagTableTest {
         final Suite suite = TestUtils.createContinuousSuite();
         params.setSample(suite.getSampleByIndex(0));
         final BufferedImage actual = TestUtils.makeImage(makePlot(), 512, 512);
-        // TestUtils.saveImage(actual, filename);
         assertTrue(TestUtils.isImageCorrect(filename, actual));
     }
     
@@ -90,7 +87,6 @@ public class DemagTableTest {
         params.setSample(suite.getSampleByIndex(0));
         final BufferedImage actual =
                 TestUtils.makeImage(new DemagTable(params), 512, 128);
-        // TestUtils.saveImage(actual, filename);
         assertTrue(TestUtils.isImageCorrect(filename, actual));        
     }
         
@@ -103,7 +99,6 @@ public class DemagTableTest {
                 .forEach(step -> step.setTreatmentType(TreatmentType.UNKNOWN));
         params.setSample(suite.getSampleByIndex(0));
         final BufferedImage actual = TestUtils.makeImage(makePlot(), 512, 512);
-        // TestUtils.saveImage(actual, filename);
         assertTrue(TestUtils.isImageCorrect(filename, actual));
     }
     

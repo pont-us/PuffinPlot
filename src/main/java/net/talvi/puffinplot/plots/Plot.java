@@ -122,7 +122,7 @@ public abstract class Plot
         this.params = params;
         final String sizesString =
                 params.getSetting("plotSizes", DEFAULT_PLOT_POSITIONS);
-        fontFamily = params.getSetting("plots.fontFamily", "Arial");
+        fontFamily = params.getSetting("plots.fontFamily", "SansSerif");
         try {
             setDimensionsFromPrefsString(sizesString);
         } catch (NoSuchElementException e) {

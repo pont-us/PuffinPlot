@@ -46,7 +46,6 @@ public class DemagPlotTest {
     public void testDrawNoSample() throws IOException {
         final String filename = "DemagPlot-empty";
         final BufferedImage actual = TestUtils.makeImage(defaultPlot);
-        // TestUtils.saveImage(actual, filename);
         assertTrue(TestUtils.isImageCorrect(filename, actual));
     }
     
@@ -56,7 +55,6 @@ public class DemagPlotTest {
         final Suite suite = TestUtils.createContinuousSuite();
         params.setSample(suite.getSampleByIndex(0));
         final BufferedImage actual = TestUtils.makeImage(makePlot());
-        // TestUtils.saveImage(actual, filename);
         assertTrue(TestUtils.isImageCorrect(filename, actual));
     }
     

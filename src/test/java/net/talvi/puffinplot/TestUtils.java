@@ -196,9 +196,22 @@ public class TestUtils {
             sample.doPca(Correction.NONE);
         });
     }
-
+    
+    /**
+     * The WRITE_IMAGES_WHEN_TESTING flag is here to ease the creation of
+     * "expected image" test data and the debugging of image comparison
+     * test failures. If it is set to true, isImageCorrect will, in addition
+     * to checking the images, write the contents of the actual image
+     * to a file in the home directory with the name given for the expected
+     * image.
+     */
+    public static final boolean WRITE_IMAGES_WHEN_TESTING = false;
+    
     public static boolean isImageCorrect(String expected, BufferedImage actual)
             throws IOException {
+        if (WRITE_IMAGES_WHEN_TESTING) {
+            saveImage(actual, expected);
+        }
         final InputStream stream =
                 TestFileLocator.class.getResourceAsStream(expected + ".png");
         final BufferedImage expectedImage = ImageIO.read(stream);
@@ -213,14 +226,27 @@ public class TestUtils {
         if (image1.getWidth() != image2.getWidth()) {
             return false;
         }
-        for (int y = 0; y < image1.getHeight(); y++) {
-            for (int x = 0; x < image1.getWidth(); x++) {
+        
+        final int height = image1.getHeight();
+        final int width = image1.getWidth();
+        
+        /* At present the threshold is set to 0, meaning that the images
+         * must be completely identical. It may have to be raised at some
+         * point if it turns out that minor rendering differences cause
+         * tests to fail when run on different platforms. (At that point
+         * it would also be a good idea to rename this method.)
+         */
+        final int threshold = (int) (width * height * 0.00);
+        
+        int differences = 0;
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
                 if (image1.getRGB(x, y) != image2.getRGB(x, y)) {
-                    return false;
+                    differences++;
                 }
             }
         }
-        return true;
+        return differences <= threshold;
     }
     
     public static void jitter(Suite suite, Random rnd) {
@@ -299,9 +325,9 @@ public class TestUtils {
     }
     
     public static Vec3 randomVector(Random rnd, double max) {
-        return new Vec3(rnd.nextDouble()*2*max-max,
-                        rnd.nextDouble()*2*max-max,
-                        rnd.nextDouble()*2*max-max);
+        return new Vec3(rnd.nextDouble() * 2 * max - max,
+                rnd.nextDouble() * 2 * max - max,
+                rnd.nextDouble() * 2 * max - max);
     }
 
     public static boolean isPrintableAscii(String string) {
