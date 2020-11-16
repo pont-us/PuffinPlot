@@ -109,7 +109,7 @@ public class SuiteEqualAreaPlotTest {
         params.getSettingsMapBoolean().
                 put("plots.labelPointsInSuitePlots", true);
         BufferedImage actual = TestUtils.makeImage(makePlot());
-        assertTrue(TestUtils.isImageCorrect(filename, actual));        
+        assertTrue(TestUtils.isImageCorrect(filename, actual));
     }
     
     private SuiteEqualAreaPlot makePlot() {

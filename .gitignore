@@ -5,3 +5,5 @@
 /lib/
 .be/id-cache
 target/
+.idea/
+puffinplot.iml
