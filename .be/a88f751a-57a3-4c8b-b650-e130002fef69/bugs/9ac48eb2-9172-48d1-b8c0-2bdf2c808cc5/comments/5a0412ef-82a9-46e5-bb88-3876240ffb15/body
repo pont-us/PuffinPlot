@@ -1,5 +1,0 @@
-Lots of imported files are under-specified, and PuffinPlot has
-to guess or use default values for things like sample volume and
-treatment type. The user should be allowed to configure defaults
-for such values. Implementation shouldn't be too hard using
-DatumField and Sample.setValue -- cf. EditSampleParametersWindow.

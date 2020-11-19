@@ -1,4 +1,0 @@
-If 3-axis demag is chosen when importing, but only the X-axis
-demag level is tied to a column, a zero demag level comes out as
-NaN. I've now fixed this in Datum.getTreatmentLevel(), and added
-a comment to explain how such incomplete data is handled.

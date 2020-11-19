@@ -1,4 +1,0 @@
-Also, is the correct run number being picked for the tray reading?
--- that is, the most recent one before the datum for which the correction
-is needed. I see some odd behaviour when toggling the tray correction for
-the tray samples themselves.

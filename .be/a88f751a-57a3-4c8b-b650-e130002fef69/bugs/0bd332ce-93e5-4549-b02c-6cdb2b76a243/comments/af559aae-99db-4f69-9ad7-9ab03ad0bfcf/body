@@ -1,4 +1,0 @@
-I've added an experimental method
-mergeDuplicateMeasurements(Collection<Sample> samples)
-to Suite, but haven't yet hooked it into the GUI or tested it
-(AT ALL).

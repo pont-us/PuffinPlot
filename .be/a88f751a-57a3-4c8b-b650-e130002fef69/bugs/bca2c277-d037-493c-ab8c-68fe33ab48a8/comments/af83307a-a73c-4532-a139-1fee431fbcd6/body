@@ -1,8 +1,0 @@
-Previously I tried to keep all preferences in PuffinPrefs, and it
-was a pain to keep them in sync with the user controls. Now PuffinPrefs
-asks classes to save their own preferences (e.g. GraphDisplay's plot
-sizes). But there are still vestigial uglinesses like PuffinPrefs's
-copy of the correction value.
-
-Check that everything in PuffinPrefs should be there; if not, move or
-eliminate it.

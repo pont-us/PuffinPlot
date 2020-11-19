@@ -1,8 +1,0 @@
-This turns out on closer inspection to be not one issue but several.
-
-1. Offset point fills seem to be an OS X bug; opened separately as #56.
-2. Jagged confidence ellipses are a result of using java.awt.Polygon,
-   which uses integer coordinates. I will try substituting GeneralPath
-   which should fix it.
-3. All the other drawing, as far as I know, uses float or double co-
-   ordinates, so we shouldn't need to scale it up to get accuracy.

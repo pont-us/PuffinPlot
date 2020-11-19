@@ -1,6 +1,0 @@
-OK, seems that provided we have Java 6 on OS X 10.6, superscript
-rendering finally works. I've retested the workaround on 
-OS X 10.5.8 / Java 1.5 / PPC (works) and proper superscripting on
-OS X 10.6 / Java 1.6 / Intel (also works). PuffinPlot will
-now use proper superscripting on OS X provided that OS X >= 10.6
-and Java >= 1.6.

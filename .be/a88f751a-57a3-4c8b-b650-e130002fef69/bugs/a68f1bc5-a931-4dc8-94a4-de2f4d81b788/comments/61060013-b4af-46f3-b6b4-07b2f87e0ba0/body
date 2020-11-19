@@ -1,6 +1,0 @@
-PCA anchoring should be a sample property, since different samples
-within the same suite can have demagnetization chaarcteristics
-calling for either anchoring or no anchoring. Currently anchoring
-is specified on PCA recalculation and must thus be explicitly specified
-every time. This loses information when recalculating for a whole
-batch of samples.

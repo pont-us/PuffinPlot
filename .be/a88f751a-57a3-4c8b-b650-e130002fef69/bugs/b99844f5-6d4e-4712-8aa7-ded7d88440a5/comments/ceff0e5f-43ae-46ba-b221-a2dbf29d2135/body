@@ -1,4 +1,0 @@
-I've now implemented a simple cache for the suite EA plot, which
-seems to improve reponsiveness a bit when there are a lot of lines
-on it. Sample and suite plots tend to be less busy so I'm leaving them
-for now -- can open another bug if they start causing trouble.

@@ -1,5 +1,0 @@
-Note that this will require Java 6 (see 
-http://docs.oracle.com/javase/6/docs/api/java/awt/Window.html#setIconImage%28java.awt.Image%29 ).
-Shouldn't be a problem -- the only people who can't get Java 6 are on
-PPC or 32-bit Intel Macs, and most of those machines are probably dead
-by now.

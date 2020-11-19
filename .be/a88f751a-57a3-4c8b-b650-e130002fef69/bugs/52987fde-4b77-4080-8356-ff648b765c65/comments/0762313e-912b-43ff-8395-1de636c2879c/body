@@ -1,9 +1,0 @@
-Some progress with this as part of #186 -- means are now
-calculated and stored using both sample PCA directions and site means.
-Calculation and saving to CSV is now comprehensive and rational.
-Still need to do something about the plot, however -- probably just
-tie it into the newly expanded suite means, and plot either
-the overall site mean or the two hemispherical means if they're
-available. Fall back to the sample-level mean if there aren't
-any site means. Ideally it would be configurable but that will have
-to wait.

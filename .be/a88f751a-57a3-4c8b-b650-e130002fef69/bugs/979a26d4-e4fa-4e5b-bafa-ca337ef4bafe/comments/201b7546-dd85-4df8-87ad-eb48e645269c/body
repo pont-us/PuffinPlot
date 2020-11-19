@@ -1,5 +1,0 @@
-iText export is now working properly for multi-page PDF export.
-Improvements are possible: at present page size is fixed, and
-only the standard Java fonts are correctly mapped to PDF.
-But it's good enough to be useful so I will close this ticket
-and open new ones for any future enhancements.

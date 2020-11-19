@@ -1,4 +1,0 @@
-Done. Only demag and zplot needed fixing. Note that this was a 
-fairly quick-and-dirty solution, hardcoding the thickness of the
-extra "furniture". This may fail if changes are ever made to the
-axis labels or suchlike, but such occurrences should be rare.

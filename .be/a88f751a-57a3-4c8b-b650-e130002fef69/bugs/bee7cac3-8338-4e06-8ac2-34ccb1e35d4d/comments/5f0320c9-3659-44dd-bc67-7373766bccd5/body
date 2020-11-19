@@ -1,7 +1,0 @@
-Took out the TextLayout, but I'm suspecting the original profiling
-may have been dodgy since it only shaved a few percent off. Profiling
-again shows fairly even division of painting time between the plots
-and no obvious candidates for easy improvement (drawing points being
-the most evident time sink). Anyway, the TextLayout has been replaced
-with an AttributedCharacterIterator, with a FontMetrics to determine
-the bounding box.

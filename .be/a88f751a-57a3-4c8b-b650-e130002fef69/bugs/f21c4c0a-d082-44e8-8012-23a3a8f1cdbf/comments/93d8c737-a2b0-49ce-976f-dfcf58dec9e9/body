@@ -1,4 +1,0 @@
-If I'm serious about scripting, the Jython interpreter should
-be embedded, otherwise installing it is another barrier to use --
-especially on Windows and Mac where you can't just do it in a couple
-of clicks through the software centre.

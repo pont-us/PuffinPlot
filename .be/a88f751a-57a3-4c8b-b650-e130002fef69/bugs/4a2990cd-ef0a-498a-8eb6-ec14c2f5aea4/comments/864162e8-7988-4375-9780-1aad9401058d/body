@@ -1,3 +1,0 @@
-AsciiDoc looks promising actually -- can generate chunked HTML via
-DocBook. Processing will obviously be a bit heavyweight since it needs
-a DocBook toolchain, but output shouldn't be too big.

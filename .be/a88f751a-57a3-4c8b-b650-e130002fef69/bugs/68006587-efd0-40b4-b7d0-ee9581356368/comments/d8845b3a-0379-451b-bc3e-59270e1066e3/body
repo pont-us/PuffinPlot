@@ -1,4 +1,0 @@
-User needs to be able to save the whole current state -- loaded files,
-selections, calculations, etc. Obviously some careful thought needed
-about how to do this sensibly; it will probably involve packing up
-all the loaded files into a zip, with another file of metadata.

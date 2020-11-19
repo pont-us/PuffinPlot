@@ -1,7 +1,0 @@
-JavaHelp appears to be dead -- last release in 2007, last commit in
-2011, mailing lists dead for years. The possible replacement, Oracle
-Help, has rather murky licensing terms which seem unlikely to be GPL
-compatible. In any case, with an extensive HTML and PDF manual now
-provided both for download and online reading, adding an extra built-in
-manual seems like a poor use of time. I'm closing this as "fixed" on
-the basis of the existing manuals and in-application tooltips.

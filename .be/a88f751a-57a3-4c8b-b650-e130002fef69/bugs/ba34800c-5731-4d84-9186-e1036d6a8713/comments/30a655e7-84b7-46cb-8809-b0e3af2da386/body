@@ -1,6 +1,0 @@
-To reproduce: select TRAY_NORMAL_YFLIP for 2G protocol in
-Preferences. Open a 2G file measured using a single-measurement
-protocol. Expected: PuffinPlot reports an error on reading the
-file and suggests than it might be caused by an incorrect protocol
-selection. Actual: Puffin crashes due to a "null line in readDatum"
-at TwoGeeLoader.java:269.

@@ -1,5 +1,0 @@
-Treatment type is not, alas, always specified in the input file.
-It is probably impossible to construct a 100% reliable heuristic
-to guess it in these cases. For file where the treatment type is
-unspecified or incorrect, it would be useful to have a feature
-whereby the user can set it manually.

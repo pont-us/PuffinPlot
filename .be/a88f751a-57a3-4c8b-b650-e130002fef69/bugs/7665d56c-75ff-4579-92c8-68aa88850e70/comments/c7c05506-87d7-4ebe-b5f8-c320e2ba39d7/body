@@ -1,7 +1,0 @@
-Fisher means are now handled almost as fully as PCA directions.
-They are displayed in plots and used in site- and suite-level means,
-and documented in the manual. However, they are not currently saved
-as part of a PuffinPlot file. This would be a little awkward to
-implement and unless there is urgent demand it would be more
-reasonable to leave it until I implement support for multiple fits
-per sample (issues #247 and #259).

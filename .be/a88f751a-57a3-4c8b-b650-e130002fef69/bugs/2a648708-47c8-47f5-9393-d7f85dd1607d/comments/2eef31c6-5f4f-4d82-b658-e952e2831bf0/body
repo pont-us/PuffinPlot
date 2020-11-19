@@ -1,3 +1,0 @@
-Adrian Muxworthy requested 4 decimal places for R in the site and
-suite parameter tables. May as well increase precision to 4DP for
-all exported parameters in CSV files while I'm at it.

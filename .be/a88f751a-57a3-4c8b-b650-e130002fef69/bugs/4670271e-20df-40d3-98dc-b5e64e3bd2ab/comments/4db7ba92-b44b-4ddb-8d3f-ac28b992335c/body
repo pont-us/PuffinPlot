@@ -1,4 +1,0 @@
-Sample now contains a full GreatCircle object. Site great-circle
-intersection calculations force a recalculation of these (to
-ensure that they're up to date relative to the current orientation
-correction) and use them directly.

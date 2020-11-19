@@ -1,6 +1,0 @@
-It can be handy to get a close-up view of a single plot
-without editing the main layout. This feature could replace the
-current stand-alone site and suite windows. It would simply
-open up a window containing a single selected plot -- a duplicate
-of one of the ones in the main area, but automatically resized to
-fit the window.

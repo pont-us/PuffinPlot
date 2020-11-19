@@ -1,3 +1,0 @@
-The magnetometer reports everything (I think) in cgs, and currently
-PP plots it as such. It would be useful to be able to convert values
-to SI on the fly and plot them with the appropriate labels.

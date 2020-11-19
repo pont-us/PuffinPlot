@@ -1,4 +1,0 @@
-MS data is transferred to the corresponding demag Datum in
-Sample.addDatum. This would be more appropriately done in Suite, since
-it is more obvious there that the lines are immediately adjacent,
-which is the only clue in a 2G file that they are related.

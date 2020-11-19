@@ -1,6 +1,0 @@
-It seems relatively common to have North on the positive Z axis
-on a Zplot (see e.g. Dunlop 1979, Wilson and Roberts 1999). Dunlop
-recommends making the x axis the intersection between the vertical
-projection plane and the horizontal plane. Nobody's asked for this
-at Otago but it seems common enough that I should implement it
-before wider release.

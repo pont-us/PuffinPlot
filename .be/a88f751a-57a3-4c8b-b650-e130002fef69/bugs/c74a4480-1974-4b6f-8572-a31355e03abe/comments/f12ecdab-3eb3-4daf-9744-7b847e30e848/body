@@ -1,6 +1,0 @@
-After further attempts, closing as "can't reproduce". Without the
-problematic data file and the *exact* steps to reproduce (which I
-haven't been able to obtain), there's not much more that can be done.
-Anyway, it's likely that post-v1.02 changes have fixed whatever was
-causing it. Can always open a new ticket (hopefully with more detail)
-if it rears its head again in 1.03.

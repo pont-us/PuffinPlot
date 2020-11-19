@@ -1,3 +1,0 @@
-Although sites are now allowed in long core suites, attempting
-a "Fisher by site" calculation fails with a message of "Only
-discrete suites can have sites".

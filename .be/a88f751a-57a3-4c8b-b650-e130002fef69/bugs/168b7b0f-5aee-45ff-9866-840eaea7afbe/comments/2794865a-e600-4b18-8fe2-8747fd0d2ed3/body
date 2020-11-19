@@ -1,8 +1,0 @@
-It would be useful to have a system whereby a plot can declare
-which options it wants to read out of the preferences, and 
-PuffinPlot can automatically create GUI elements in the Preferences
-window for the user to modify them. (Number of buckets in NRM
-histogram, line tapering in equal-area plots, etc.) One complication:
-some plot options (such as the aforementioned number-of-buckets)
-would probably be better as suite-level rather than application-level
-preferences. Not a trivial job in any case.

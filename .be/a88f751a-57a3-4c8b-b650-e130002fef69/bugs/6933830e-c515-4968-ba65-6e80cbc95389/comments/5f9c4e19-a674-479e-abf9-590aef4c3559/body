@@ -1,6 +1,0 @@
-If the Zplot is at the bottom or right edge of the main window, and 
-the scroll bar is shown, the PCA lines (if shown) overwrite the scroll
-bar. At present, the PCA lines are explicitly clipped to the ZPlot's
-area. They also need to be clipped to the window's drawing area
-(excluding the scroll bars) in order to avoid messing up the window
-furniture.

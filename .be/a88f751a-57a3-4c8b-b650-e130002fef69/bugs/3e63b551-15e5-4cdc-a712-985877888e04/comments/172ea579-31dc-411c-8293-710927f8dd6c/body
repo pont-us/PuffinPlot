@@ -1,4 +1,0 @@
-Currently, the EA plot joins points using straight lines in 2-space.
-The lines should be projected in the same way as the points: that is,
-they should be segments of the projections of the appropriate great
-circles.

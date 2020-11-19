@@ -1,2 +1,0 @@
-If a file is selected from the `recently opened' list, it is added
-again. It should instead be moved to the end of the list.

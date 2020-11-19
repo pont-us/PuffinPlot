@@ -1,4 +1,0 @@
-Negative magnetic susceptibility values are currently truncated
-to 0 on the demagnetization plot. Not a major problem if (as is
-usual) it's just being used to monitor for alteration, but it's
-wrong and should be fixed.

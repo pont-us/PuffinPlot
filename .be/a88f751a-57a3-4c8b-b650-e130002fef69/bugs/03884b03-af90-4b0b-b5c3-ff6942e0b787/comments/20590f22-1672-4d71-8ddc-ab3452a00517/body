@@ -1,7 +1,0 @@
-Long cores really need to be on a par with discrete suites in terms
-of multiple sample selection. Unfortunately a standard JSlider can't
-do this; there are third-party range sliders available but
-implementing my own is probably the easiest, since I don't actually
-need much functionality. Most intuitive way would probably two
-adjacent vertical strips, one showing the `pointer' (current sample),
-the other the range (if any).

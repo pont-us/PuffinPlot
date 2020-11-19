@@ -1,7 +1,0 @@
-Tray corrections are applied after volume correction -- but since
-tray correction is only available for discrete samples, and since
-for discrete samples volume correction is the same in each axis,
-it makes no difference whether the tray correction is applied before
-or after it. The run number is no longer relevant since we've moved
-to a sequential model of tray corrections, with the tray measurement
-in the same file as the sample measurements.

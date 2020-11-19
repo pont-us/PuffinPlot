@@ -1,3 +1,0 @@
-Most internal representations now converted to SI;
-appropriate conversions implemented for 2G and old Puffin file
-loading. Leaving open until I've checked the mag. sus. units.

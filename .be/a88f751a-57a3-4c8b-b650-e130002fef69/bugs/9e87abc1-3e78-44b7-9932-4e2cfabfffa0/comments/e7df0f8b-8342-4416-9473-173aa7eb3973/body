@@ -1,2 +1,0 @@
-One-line fix: updateDisplay() changed to getMainWindow().suitesChanged()
-in PuffinApp.importAms(). Seems to do the trick.

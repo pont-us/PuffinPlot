@@ -2369,12 +2369,15 @@ Bugs in existing functionality
 are fixed as quickly as possible when they are reported,
 and new features are added as time permits.
 The PuffinPlot project,
-including downloadable packages of all released versions
+including links to downloadable packages of all released versions
 and the complete source code,
 is hosted at http://talvi.net/puffinplot.
 Bug reports, feature suggestions, and feedback of all kinds
 are always very welcome.
 Please send them to puffinplot@gmail.com.
+You can also submit bug reports and feature requests
+via the online issue tracker
+at https://github.com/pont-us/PuffinPlot/issues.
 
 === How to report a bug
 

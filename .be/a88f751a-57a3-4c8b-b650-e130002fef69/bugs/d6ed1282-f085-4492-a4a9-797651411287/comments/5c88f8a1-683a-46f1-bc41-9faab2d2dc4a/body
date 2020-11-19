@@ -1,5 +1,0 @@
-It's now 18 months since the last public update to Java 6 (12 months 
-on Mac OS), and I doubt whether any PuffinPlot users are paying for 
-Oracle extended support, so I've gone ahead and bumped javac.source
-and javac.target to 1.7.
-

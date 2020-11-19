@@ -1,3 +1,0 @@
-Currently plot resizing is non-intuitive (boxes don't appear until you
-drag) and buggy (you can drag graphs "inside-out" at which point resizing
-no longer works).

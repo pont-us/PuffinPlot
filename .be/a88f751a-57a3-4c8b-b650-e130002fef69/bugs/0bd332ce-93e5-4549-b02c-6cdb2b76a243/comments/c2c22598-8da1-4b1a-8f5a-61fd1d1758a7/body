@@ -1,4 +1,0 @@
-Sometimes you can end up with two measurements for the same depth
-(or sample name) and demagnetization level in the same file. It
-would be useful to have a feature whereby these could be combined --
-either by taking the mean value or by discarding one measurement.

@@ -1,4 +1,0 @@
-Such values are now ignored on loading (along with mag. sus. values
-as before). Presumably at some point someone will want to work with
-some of the ignored values within PuffinPlot and I will have to 
-produce a solution, but we can open a new bug for that.

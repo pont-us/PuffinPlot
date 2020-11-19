@@ -1,2 +1,0 @@
-Implemented as specified. Margin sizes are now determined by an
-overrideable method in the Plot class.

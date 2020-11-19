@@ -1,4 +1,0 @@
-This took a moderate amount of work. There are now more Correction
-objects being passed around than before. I have also created a
-PuffinUserException to wrap exceptions raised during e.g. file loading
-and saving for reporting to the user.

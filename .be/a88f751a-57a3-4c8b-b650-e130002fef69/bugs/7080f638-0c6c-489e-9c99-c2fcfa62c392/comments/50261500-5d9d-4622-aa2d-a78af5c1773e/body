@@ -1,8 +1,0 @@
-A problem that Christian described a while ago: if your
-demagnetization steps aren't uniform across the suite, copying
-point selections is a problem since the same sequential set
-of steps won't correspond to the same actual range of treatment
-intensities. So we need an interface for (1) selecting a user-
-specified treatment intensity range or (2) copying the intensity
-range from the current sample and applying it to the selection
-or (3) both.

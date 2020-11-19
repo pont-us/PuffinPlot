@@ -1,4 +1,0 @@
-Implemented as described. Also added a feature whereby smaller plots
-are preferentially selected for dragging when an area of overlap is
-clicked on by the user. This makes it easier e.g. to position the 
-PCA values table atop the Zplot.

@@ -1,3 +1,0 @@
-Fixed long ago; ARM data is loaded correctly. On the demagnetization
-plot, its intensity is plotted vs. ASF field strength. If anyone
-needs is vs. bias field, I'll open another bug for it.

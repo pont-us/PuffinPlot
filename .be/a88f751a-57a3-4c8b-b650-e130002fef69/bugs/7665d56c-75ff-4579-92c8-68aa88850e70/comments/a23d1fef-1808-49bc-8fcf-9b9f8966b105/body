@@ -1,6 +1,0 @@
-Add the ability to calculate Fisher statistics on the directions
-of individual demagnetization steps. Seems odd but has apparently
-been spotted in the literature (awaiting refs from Fabio). This is,
-of course, the very feature that was *removed* for bug
-92d5a588d100232ba50153691028daa186cece86 , after I had concluded 
-that nobody would ever need it.

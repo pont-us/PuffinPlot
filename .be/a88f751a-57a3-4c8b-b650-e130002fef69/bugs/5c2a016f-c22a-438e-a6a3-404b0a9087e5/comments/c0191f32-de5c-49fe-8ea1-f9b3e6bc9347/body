@@ -1,4 +1,0 @@
-I have looked at the PCA table, and it does make me feel that 
-PuffinPlot should export more data -- e.g. number of points and
-range of demagnetization steps for PCA fits. But I need to get
-1.0 released this year, so I'm relegating this to 1.1.

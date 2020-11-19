@@ -1,8 +1,0 @@
-I have tidied things up a little by removing the JAMA source code from
-the PuffinPlot repository and using a jar from Maven Central instead.
-Now that Apache Commons Math is in any case a PuffinPlot dependency, it
-would make sense in the longer term to drop JAMA entirely and use
-Commons Math instead for eigenvectors. Commons Math is more actively
-maintained than JAMA, and its matrix API is explicitly based on JAMA,
-IIRC, so it shouldn't be a big job. But it's by no means urgent.
-

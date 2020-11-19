@@ -1,4 +1,0 @@
-At present, Windows and Linux users wishing to use Puffin would have to 
-download the zip and fish the jar out by hand. Change the build process 
-so that a standalone jar is uploaded along with the zipped Mac 
-application.

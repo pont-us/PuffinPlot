@@ -1,4 +1,0 @@
-Really we need a fully customizable exporter to fit with the
-varied workflows that people have. Selectable fields, units, and
-separators. Shouldn't be too hard to bolt on to the existing framework,
-especially with virtual fields.

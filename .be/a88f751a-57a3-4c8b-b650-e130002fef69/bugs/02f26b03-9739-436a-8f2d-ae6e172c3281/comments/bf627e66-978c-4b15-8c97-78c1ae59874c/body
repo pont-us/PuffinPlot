@@ -1,3 +1,0 @@
-When closing a modified and unsaved file, or quitting PuffinPlot
-with unsaved data, the user should be presented with a standard
-save/discard/cancel dialog.

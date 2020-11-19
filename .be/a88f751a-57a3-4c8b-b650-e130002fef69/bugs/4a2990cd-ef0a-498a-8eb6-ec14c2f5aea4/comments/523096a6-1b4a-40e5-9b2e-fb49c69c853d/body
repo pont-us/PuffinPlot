@@ -1,7 +1,0 @@
-With Batik now bundled, size is less of a concern for JavaHelp,
-and there is a full HTML manual produced using htlatex. The only 
-remaining thing is the work of actually integrating the JavaHelp
-classes, producing the JavaHelp files from the HTML, bundling
-them into the jar, and persuading JavaHelp to load them. JavaHelp
-seems to be fairly old, seldom used, and with limited documentation,
-so I'd estimate this at maybe 8-16 hours of work.

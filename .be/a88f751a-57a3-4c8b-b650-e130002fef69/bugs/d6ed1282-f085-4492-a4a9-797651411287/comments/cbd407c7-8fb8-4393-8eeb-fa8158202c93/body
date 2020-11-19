@@ -1,7 +1,0 @@
-Java 6 is more or less at EOL, and there are some nice improvements
-in 1.7 which will help to clean the code up a bit (try/catch resource
-management etc.). As ever, OS X is the holdout, since pre-10.7 users
-can't easily install Java 7. However, these are down to ~20% of the
-OS X user base now (and falling), so it will soon become reasonable to
-drop support -- especially since those on old Macs can just keep using
-the old PuffinPlot.

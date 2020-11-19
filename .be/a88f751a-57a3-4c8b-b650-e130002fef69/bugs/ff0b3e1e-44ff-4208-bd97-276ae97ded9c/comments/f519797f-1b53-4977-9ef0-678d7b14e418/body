@@ -1,4 +1,0 @@
-The former ‘Fisher data’ window now shows Fisherian parameters
-for both the site Fisher-on-PCA calculation and the great-circle
-intersection. (It can show both at once, though I expect that 
-this will seldom be necessary.)

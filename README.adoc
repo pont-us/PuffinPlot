@@ -27,7 +27,7 @@ unit tests. Some of the tests require a desktop environment to execute,
 and if the build is carried out in a headless environment those tests will
 be skipped.
 
-PuffinPlot is currently developed mainly in
+PuffinPlot has been developed mainly in
 https://netbeans.apache.org/[Apache Netbeans], and the `nbactions.xml`
 file provides some NetBeans-specific Maven actions, but development is not
 tied to any specific IDE. In particular, PuffinPlot's Swing GUI does not
@@ -39,6 +39,8 @@ runtime, but it is not a build-time dependency.
 
 == Bug tracking
 
-PuffinPlot uses the Bugs Everywhere bug-tracking system; the bug
-database lives within the repository itself, in the `.be` folder. Bugs
-Everywhere is available from http://www.bugseverywhere.org/ .
+PuffinPlot uses GitHub Issues for bug tracking.
+The issue tracker can be found
+https://github.com/pont-us/PuffinPlot/issues[here].
+Bug reports and feature requests are always welcome.
+

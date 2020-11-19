@@ -1,4 +1,0 @@
-The suite mean has been expanded to encompass six values:
-overall, upper-hemisphere, and lower-hemisphere for per-site and
-per-sample averages. They are all exported in the suite data
-CSV file.

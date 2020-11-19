@@ -1,3 +1,0 @@
-Implemented as specified, with name 'Clear preferences' and
-action PuffinActions.clearPreferences. Logic is in 
-PuffinApp.clearPreferences() and menu item is on File menu.

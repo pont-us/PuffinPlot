@@ -1,6 +1,0 @@
-Both the anonymous reviewer and Christian report some confusion
-in doing site calculations. Site and suite parameter tables are a
-good start but I need to think about how I can give the user more
-control over and feedback on the calculation process. Would manual
-selection of samples and sites be helpful (as an optional override
-to the current automatic system)?

@@ -1,2 +1,0 @@
-e.g. if you attempt `Fisher on suite' with no files loaded, PuffinPlot
-will crash due to an unchecked null from PuffinApp.getSuite().

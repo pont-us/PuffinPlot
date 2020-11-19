@@ -1,5 +1,0 @@
-Now mostly done. After discussion with Christian, have decided on
-initial implementation whereby the algorithm will be applied to 
-all visible points. Works well in the simple case; less so if one
-had multiple components with different directions. But we can
-deal with that if and when it becomes necessary.

@@ -1,7 +1,0 @@
-Empty-slot corrections need to be rethought and reimplemented,
-and there's no time to do that for version 1.0. The best plan
-is to remove at least the menu items (to avoid confusing users)
-and probably the code too (since it's not currently used, and
-since it would probably need re-writing and testing before
-being useful); it'll be in the repo if I ever need it again 
-anyway.

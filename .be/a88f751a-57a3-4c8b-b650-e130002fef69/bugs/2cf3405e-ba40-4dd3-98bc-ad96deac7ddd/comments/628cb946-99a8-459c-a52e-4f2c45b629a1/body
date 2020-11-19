@@ -1,7 +1,0 @@
-Not entirely sure what this one alluded to (I'm transcribing it from the
-old tdl bug-list) but I'm pretty sure it means "allow scaling of Z-plot
-for whole suite rather than single sample". This allows for easier
-side-by-side comparison of samples. Actually what's needed is scaling
-according to a selected bunch of samples within a suite: you wouldn't be
-publishing the graphs of the whole suite anyway, so you'd want to scale
-according to exactly those samples you were publishing.

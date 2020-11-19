@@ -1,5 +1,0 @@
-KentParams always comes in threes, so we pass around these 
-lists of KentParams objects which always contain exactly three items.
-It would make things clearer and help to enforce immutability if
-we added a new object (KentParamsSet? Something like that) to 
-contain exactly three of the parameters objects.

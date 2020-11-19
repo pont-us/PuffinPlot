@@ -1,5 +1,0 @@
-PuffinPlot's AMS file import was developed for the Safyr 2.6 file
-format. It fails to import Safyr 1.5 and Susar 4.0 files due to
-minor formatting differences. The import function should be improved
-to support these files, and the documentation improved to state the
-file versions with which PuffinPlot has been tested.

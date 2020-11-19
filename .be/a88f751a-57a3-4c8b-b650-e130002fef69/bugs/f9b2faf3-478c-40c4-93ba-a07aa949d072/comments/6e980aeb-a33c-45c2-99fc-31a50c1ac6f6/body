@@ -1,6 +1,0 @@
-A few of the classes in puffinplot.data make reference to PuffinApp.
-This is conceptually messy, and (more pragmatically) requires the
-GUI to be instantiated even for script-driven manipulation of data
-structures. It should be possible to load, manipulate, and save
-data from the exposed APIs without having to instantiate a 
-PuffinApp first.

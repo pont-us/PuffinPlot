@@ -1,3 +1,0 @@
-Site names can now be set in three ways: explicitly and 
-individually per sample; from a substring of the sample's name;
-and (for long core samples) from the depth.

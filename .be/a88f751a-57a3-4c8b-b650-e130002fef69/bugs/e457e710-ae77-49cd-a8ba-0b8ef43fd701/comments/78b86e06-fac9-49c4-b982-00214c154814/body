@@ -1,3 +1,0 @@
-When any file is being saved or exported, there may be an existing
-file with the same name. If this is the case, the user should be 
-asked to confirm before the existing file is overwritten.

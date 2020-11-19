@@ -1,2 +1,0 @@
-A calculation error meant that PuffinPlot was producing 5%
-confidence intervals rather than 95%! Now fixed.

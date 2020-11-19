@@ -1,3 +1,0 @@
-This would be a boon for error reports. java.util.logging.MemoryHandler
-can buffer messages in memory and they can be written out with other
-error information.

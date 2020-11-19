@@ -1,8 +1,0 @@
-At the moment we have SVG export via Batik, and PDF export via
-printing if the OS has a PDF printer driver. It would be good to
-have built-in PDF export (so e.g. Windows users don't have to 
-install a PDF printer driver, and so we get consistent output
-across platforms). The two main options for PDF seem to be iText
-and FreeHEP. FreeHEP also includes SVG (and several other) export
-formats, so if it works well, it could potentially also replace
-Batik.

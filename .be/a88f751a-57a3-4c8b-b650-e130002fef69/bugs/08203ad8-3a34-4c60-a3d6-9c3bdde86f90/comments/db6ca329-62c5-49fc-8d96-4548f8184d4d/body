@@ -1,9 +1,0 @@
-I haven't used frames as such. For figures I've ased the float 
-package with the ruled style, which places rules above and below
-the figure, and above the caption. I haven't done anything for
-tables because they have top and bottom rules anyway so don't
-really blend into the text much. For table 3, which has a large 
-note within the float itself at the bottom, I've added a full-width
-horizontal rule at the bottom. As it turns out, this extra height
-actually kicks the table onto its own page, which solves the 
-problem rather more conclusively than intended...

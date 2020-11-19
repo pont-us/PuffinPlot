@@ -1,7 +1,0 @@
-This would avoid the need to pass around the "use empty correction"
-flag for all operations needing the magnetization vector. The value
-would be stored per-Datum as with current sample properties, to 
-preserve the flat file format. This would also allow different samples
-to have different settings -- e.g. if there are two empty slots in
-a run (though that might involve complicating the interface confusingly
-for little practical benefit).

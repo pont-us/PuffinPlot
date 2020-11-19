@@ -1,4 +1,0 @@
-It should be possible to hide points from the plots, e.g. to avoid
-scaling a Zplot to a flux jump, or to ignore a mismeasurement
-superceded by a repetition at the same demagnetization level.
-Needs a little thought about getting the hidden points back, though.

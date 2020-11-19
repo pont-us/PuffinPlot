@@ -1,3 +1,0 @@
-PuffinActions.fisherBySite now checks for presence of sites
-in current suite, rather than checking whether it is discrete
-or long core.

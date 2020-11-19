@@ -1,7 +1,0 @@
-I've just removed the menu items, but left the underlying code.
-It's unlikely that tray corrections will become an on-the-fly item
-again (with all the complex measurement protocols I've introduced),
-but it's possible that a sensible implementation of the empty-slot
-correction would apply it on-the-fly. In that case, there's no
-reason not to let the user toggle it. So I'm leaving a code skeleton
-to allow that, for now.

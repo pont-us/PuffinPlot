@@ -1,4 +1,0 @@
-Probably the easiest to implement would be a minimal file 
-description language in which importable file format definitions
-could be written. Might even be worth porting the 2G and Zplot 
-importers to this language.

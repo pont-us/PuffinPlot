@@ -1,6 +1,0 @@
-Currently PP uses an imperfect heuristic to work out whether
-the SQUIDs are in their old or new orientations. We should be more
-up-front about this to avoid invisible errors. Add a user preference.
-Needs a little thought now that saving is implemented, since the
-SQUID flipping is done on load. Time to expand the file format beyond
-the 2G template, perhaps?

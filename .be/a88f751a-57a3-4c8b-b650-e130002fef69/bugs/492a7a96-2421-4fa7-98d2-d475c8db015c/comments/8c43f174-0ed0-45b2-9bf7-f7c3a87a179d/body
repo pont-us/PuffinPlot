@@ -1,7 +1,0 @@
-Last comment should have read: *FreeHEP* puts everything in one group
-(and Batik creates bizarre subgroups). Also, on latest test, Batik
-SVG export seems to produce an incorrect page size.
-
-Another note: FreeHEP SVG seems about three times the size of equivalent
-Batik SVG. Looking at source, this may be due to much larger (excessive?)
-number of decimal places used for positions in FreeHEP output.

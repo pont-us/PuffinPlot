@@ -1,4 +1,0 @@
-Fixed the final part of this problem by making the
-suite equal-area plot behave more sensibly. It now shows two
-directions or one direction as appropriate, and falls back
-to using sample PCA directions if no sites are defined.

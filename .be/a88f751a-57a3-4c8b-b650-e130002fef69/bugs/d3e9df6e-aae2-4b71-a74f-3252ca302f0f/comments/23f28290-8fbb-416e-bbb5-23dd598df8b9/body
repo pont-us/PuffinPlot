@@ -1,3 +1,0 @@
-Reported by RB, 2014-12-14:
-Site calculations persist after all fits used are cleared -- requires 
-closing data file and reopening for change to be reflected in site table.

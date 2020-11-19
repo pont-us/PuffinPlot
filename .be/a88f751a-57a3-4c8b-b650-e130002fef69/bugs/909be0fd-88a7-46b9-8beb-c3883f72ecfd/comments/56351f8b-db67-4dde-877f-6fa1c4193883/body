@@ -1,6 +1,0 @@
-Datum is now pretty unambiguous: it provides (get|set)(DiscreteId|Depth)
-and getIdOrDepth which switches on measurement type. `Sample ID' perhaps
-not such a good `ambiguous' designator, since it's used exclusively
-for discrete ID in the 2G file format. But nevertheless Suite is now
-using `samplesById' internally which is probably a good balance of
-conciseness and clarity.

@@ -1,5 +1,0 @@
-Very trivial, but this should be fixed: the line
-String[] headers = whitespace.split(reader.readLine());
-(currently line 357) in Suite.java will break if the file is too short
-and readLine() returns null. Should hardly ever happen but worth trapping
-anyway.

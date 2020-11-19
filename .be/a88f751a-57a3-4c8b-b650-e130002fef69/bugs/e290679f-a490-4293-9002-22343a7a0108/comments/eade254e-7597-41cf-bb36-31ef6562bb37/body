@@ -1,4 +1,0 @@
-The action now checks and reports an error if it's attempted on a non-
-discrete suite; Suite and Sample will also now throw informative
-UnsupportedOperationExceptions if the relevant methods are called
-on a non-discrete suite or sample.

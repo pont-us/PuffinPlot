@@ -1,3 +1,0 @@
-Interpreting long core files requires knowledge of the effective
-sensor lengths, so this will have to be moved to a configuration
-option.

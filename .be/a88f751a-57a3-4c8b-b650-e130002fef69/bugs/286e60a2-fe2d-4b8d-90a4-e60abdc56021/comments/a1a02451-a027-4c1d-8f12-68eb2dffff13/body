@@ -1,6 +1,0 @@
-JMG writes:
-It would be a great advantage to be able to save and display
-multiple line and GC fits performed on a single sample (and to
-specify which one is included in site mean). Although it does
-seem to be able to associate both a line and GC fit on one sample
-it only records one with the site parameter file.

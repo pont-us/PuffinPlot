@@ -1,6 +1,0 @@
-There's no perfect fix for this -- the conversion factor to
-S.I. can't be inferred from the data file. I've added a feature to
-let the user rescale the magnetic susceptibility data by a 
-specified value, which is probably the best that can be done.
-(Actually, if there's AMS data, that might be used to derive a scaling
-factor -- I will open this as a feature request.)

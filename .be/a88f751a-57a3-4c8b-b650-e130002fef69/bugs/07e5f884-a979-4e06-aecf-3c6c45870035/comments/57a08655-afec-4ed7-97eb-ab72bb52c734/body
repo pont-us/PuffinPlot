@@ -1,7 +1,0 @@
-Anonymous Reviewer said:
-‘One comment on the AMS data would be to provide a way to determine a
-paleocurrent direction and to save those (this could be very useful in a
-stratigraphic context).’
-A simple implementation of this wouldn't actually be very hard --
-just pull out the declination of the major AMS axis and add it to
-the sample data export.

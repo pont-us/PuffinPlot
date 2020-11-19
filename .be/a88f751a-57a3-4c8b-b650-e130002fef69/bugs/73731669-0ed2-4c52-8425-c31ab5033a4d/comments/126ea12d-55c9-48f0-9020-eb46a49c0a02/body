@@ -1,3 +1,0 @@
-I think Swing applications should theoretically always be started from
-the event dispatch thread -- if startup is initiated through main(),
-you need to to a callback. Check if this is so, and do it if necessary.

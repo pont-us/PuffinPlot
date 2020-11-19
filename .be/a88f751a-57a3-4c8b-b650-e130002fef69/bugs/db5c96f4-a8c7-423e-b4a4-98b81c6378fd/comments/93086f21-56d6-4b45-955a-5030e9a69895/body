@@ -1,2 +1,0 @@
-No longer necessary: long core depths are now handled as Sample ID strings,
-so there is no special behaviour which justifies subclassing.

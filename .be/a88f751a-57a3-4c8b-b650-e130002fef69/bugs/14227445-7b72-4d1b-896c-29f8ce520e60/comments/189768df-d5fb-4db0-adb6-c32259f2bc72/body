@@ -1,4 +1,0 @@
-If there is imported AMS data, it should include a bulk susceptibility
-measurement in S.I. units. This could be used to scale the Bartington
-loop measurements. Perhaps just add a "guess from AMS" button on the
-"rescale mag. sus." dialog.

@@ -1,9 +1,0 @@
-Requested by Christian after experiences on the JOIDES. Fundamentally,
-all that's needed for analysis is a series of 3-dimensional vectors,
-so it's a shame that Puffin is tied to the extremely specific OPRF/2G
-input format (complete with misspelling of `Azimuth'). Puffin should
-accept another, stripped-down format which could be as simple as x/y/z 
-but should also have room for e.g. sample code and demag level. This
-would also force me to think about what fields are actually necessary in
-the full 2G files, allowing malformed files to be rejected on loading
-rather than causing a crash at the display stage.

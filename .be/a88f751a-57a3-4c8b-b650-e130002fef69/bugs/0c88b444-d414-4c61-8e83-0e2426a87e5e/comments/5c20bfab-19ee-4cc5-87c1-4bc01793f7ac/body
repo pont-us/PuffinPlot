@@ -1,6 +1,0 @@
-At present I employ a complex and unreliable hack to simulate
-superscripts on Mac OS X, because when I last tested it, it had
-terrible bugs in superscript rendering. Now that Java 6 has finally
-been released for OS X, I should check whether ‘proper’ superscript
-rendering works there. If I'm dropping support for Java 5 anyway,
-I could dispense with the hack entirely.

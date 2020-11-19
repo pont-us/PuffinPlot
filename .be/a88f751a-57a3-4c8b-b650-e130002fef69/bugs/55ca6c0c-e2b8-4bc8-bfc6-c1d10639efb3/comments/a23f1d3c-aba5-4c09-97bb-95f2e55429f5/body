@@ -1,4 +1,0 @@
-Many of the classes in the window subpackage use 
-PuffinApp.getInstance() to find the PuffinPlot application.
-It would probably be cleaner to have the PuffinApp instance
-supplied to their constructors.

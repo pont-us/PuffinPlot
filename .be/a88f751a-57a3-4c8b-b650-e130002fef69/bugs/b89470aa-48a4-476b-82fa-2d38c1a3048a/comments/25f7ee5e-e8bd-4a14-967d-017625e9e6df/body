@@ -1,2 +1,0 @@
-If the empty slot correction is applied when no empty slot has
-been set, Puffin bombs out with a NullPointerException.

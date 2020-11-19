@@ -1,1 +1,0 @@
-PP now starts via a java.awt.EventQueue.invokeLater.

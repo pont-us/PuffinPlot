@@ -1,3 +1,0 @@
-Both sub-bugs fixed: build.xml modified to output date more reliably,
-and PuffinApp.java modified to deal gracefully with missing and
-malformed build dates.

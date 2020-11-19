@@ -1,3 +1,0 @@
-The manual could also do with better automatic versioning.
-At the moment it just pulls the datestamp off the tip of the
-Mercurial repository.

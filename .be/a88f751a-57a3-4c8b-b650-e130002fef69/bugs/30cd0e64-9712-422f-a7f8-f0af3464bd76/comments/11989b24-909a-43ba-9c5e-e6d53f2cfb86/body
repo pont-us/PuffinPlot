@@ -1,9 +1,0 @@
-Despite my earlier comment, I can't reproduce this now. I'm 
-beginning to suspect that it's actually an artefact of the way 
-equator-crossing small circles project on an EA plot: if (say)
-the centre of the circle is a little below the equator, the 
-upper half will plot as a relatively straight line, which looks
-odd but does actually conform to the projection. Next steps on
-this one: contact JMG for an example file. If he supplied one,
-check PuffinPlot's plot vs. any other implementations I can
-find of EA plots -- PmagPy might be a good start.

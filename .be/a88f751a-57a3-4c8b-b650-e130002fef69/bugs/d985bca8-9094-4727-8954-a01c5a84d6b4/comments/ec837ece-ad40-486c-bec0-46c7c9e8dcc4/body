@@ -1,4 +1,0 @@
-AMS import now tested and working with SAFYR 2.6, SAFYR 1.5, and
-SUSAR 4.0 files. The AMS loader class is also better documented,
-and performs more explicit checks on the data to catch invalid files
-before they have a chance to cause an error.

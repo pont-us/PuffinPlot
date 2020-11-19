@@ -1,8 +1,0 @@
-The units for PuffinPlot's internal data representation are at present
-implicitly defined as `whatever comes out of the 2G software'. They
-should be well-defined as the appropriate SI units, and converted on
-loading from whichever file format is being imported.
-(Original description was:
-These need to be explicitly represented at some point, to allow for
-cgs/si conversions in PuffinPlot, loading from datafiles with different
-conventions, etc.)

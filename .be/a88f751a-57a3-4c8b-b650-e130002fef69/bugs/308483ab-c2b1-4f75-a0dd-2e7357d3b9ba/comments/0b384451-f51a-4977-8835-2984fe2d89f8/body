@@ -1,4 +1,0 @@
-I could partially address Reveiwer 2's problem with post-editing
-of PCA fit lines by adding a configuration option: something like
-"long/short/none", where "short" is truncated roughly to the fitted
-points rather than to the entire plot area.

@@ -1,3 +1,0 @@
-Perhaps the answer is a listener architecture, where other classes
-register with PuffinPrefs and are called back to save their preferences
-at the appropriate time.

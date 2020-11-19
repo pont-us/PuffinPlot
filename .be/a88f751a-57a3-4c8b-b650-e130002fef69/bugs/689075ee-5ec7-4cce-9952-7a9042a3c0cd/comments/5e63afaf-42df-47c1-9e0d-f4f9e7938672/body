@@ -1,2 +1,0 @@
-If the user selects ‘Run Python script...’, then clicks on
-‘Cancel’ rather than choosing a file, PuffinPlot will crash.

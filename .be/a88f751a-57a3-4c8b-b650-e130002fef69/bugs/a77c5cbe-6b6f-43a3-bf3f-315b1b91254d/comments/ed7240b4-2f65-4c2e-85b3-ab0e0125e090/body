@@ -1,4 +1,0 @@
-Most of the plots plot slightly outside their margins (mainly
-axis labels and suchlike). They should have their own internal margins
-to make sure that the plot as a whole stays inside its official
-bounding box.

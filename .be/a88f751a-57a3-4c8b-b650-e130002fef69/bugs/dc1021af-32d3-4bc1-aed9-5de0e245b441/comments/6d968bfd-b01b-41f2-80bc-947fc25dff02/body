@@ -1,5 +1,0 @@
-2G file loader is the right place to have things like
-sensor lengths and measurement protocol. Christian also wants it
-to be able to recalculate the moments from the ind/dec/int data,
-since the file doesn't (I believe) store the sensor-length-corrected
-cartesian components of the moment.

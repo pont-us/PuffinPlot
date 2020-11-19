@@ -1,5 +1,0 @@
-PuffinPlot can now export and import settings to XML files,
-which provides the requested functionality. But perhaps there
-should be a neater, more specialized interface specifically 
-for switching between plot layouts -- so rather than closing this
-I'm going to defer it to a later release.

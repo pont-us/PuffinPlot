@@ -1,3 +1,0 @@
-It would be pretty easy to have the "catch-all" exception handler
-report errors directly back to talvi.net with an HTTP POST and a CGI
-script server-side.

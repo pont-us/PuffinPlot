@@ -1,5 +1,0 @@
-Problem encountered on Windows XP: Batik SVG file is malformed
-and will not open in Firefox or Inkscape. Reason appears to be
-that, although the encoding is declared as UTF-8, the single
-non-ASCII character in the file (the degree symbol in the 
-demagnetization plot x-axis label) is encoded as ISO-8859-1.

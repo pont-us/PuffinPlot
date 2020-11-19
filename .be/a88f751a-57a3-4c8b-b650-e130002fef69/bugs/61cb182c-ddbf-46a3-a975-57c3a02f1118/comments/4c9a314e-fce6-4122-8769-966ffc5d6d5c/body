@@ -1,5 +1,0 @@
-I assume that "sample best fits" refers to PCA directions.
-These are now displayed using a diamond on the site plot, 
-distinguishing them from demagnetization steps (squares), great circle
-poles (triangles), and site means (circles). Not yet documented --
-will open another bug for this.

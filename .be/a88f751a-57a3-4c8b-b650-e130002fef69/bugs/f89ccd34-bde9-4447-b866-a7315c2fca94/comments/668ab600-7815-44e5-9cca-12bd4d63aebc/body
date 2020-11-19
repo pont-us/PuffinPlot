@@ -1,5 +1,0 @@
-Mini-bug which came up while investigating this:
-Start Puffin, open new 2G file, open Calcs menu.
-‘Use anchoring’ item is unchecked, yet clicking ‘Calculate PCA’
-will do an anchored calculation. Workarounds: check and uncheck the
-item, or switch to another sample and back again.

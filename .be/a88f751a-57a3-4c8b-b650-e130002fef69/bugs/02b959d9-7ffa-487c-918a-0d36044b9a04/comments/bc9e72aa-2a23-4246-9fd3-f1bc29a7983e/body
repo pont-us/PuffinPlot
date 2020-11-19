@@ -1,5 +1,0 @@
-If an imported file doesn't contain enough data to construct a
-vector for each demagnetization step, PuffinPlot will just quietly
-work with what it has, even if it's all defaulting to zero. It should
-warn the user that the imported data is incomplete, in case they 
-have made a mistake in specifying the import fields.

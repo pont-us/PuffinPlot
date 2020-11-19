@@ -1,4 +1,0 @@
-ZplotLegend needs to be drawn after its enclosing Zplot, since
-it has to read the axis data. Currently this is dependent on
-the iteration order of a HashMap, which happens to work on
-OS X and Linux, but crashes on Windows!

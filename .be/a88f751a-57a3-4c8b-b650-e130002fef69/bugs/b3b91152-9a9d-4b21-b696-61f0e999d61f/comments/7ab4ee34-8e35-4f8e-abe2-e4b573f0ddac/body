@@ -1,2 +1,0 @@
-PuffinPlot now sets measurement type to Continuous if a file contains
-a Position field but no Sample ID field.

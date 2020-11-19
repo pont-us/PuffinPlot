@@ -1,2 +1,0 @@
-Fixed. Needed a call to TableWindow from PuffinApp's updateDisplay()
-and a TableModelListener handler in the data table's model.

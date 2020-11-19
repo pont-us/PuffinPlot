@@ -1,3 +1,0 @@
-If there is no calculated data to be saved, it should be automatically
-calculated; if this is not possible, the error should come up before
-the user has selected the file path!

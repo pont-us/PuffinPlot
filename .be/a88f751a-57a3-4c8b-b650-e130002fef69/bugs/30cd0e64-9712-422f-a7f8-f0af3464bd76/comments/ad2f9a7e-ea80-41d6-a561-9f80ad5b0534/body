@@ -1,5 +1,0 @@
-I think I've just accidentally reproduced this, or something like
-it. Create a site direction with an a95 region that crosses the 
-equator -- it just gets cut off straight rather than having the
-"other" part correctly projected! "Straight" here meaning a 
-straight line on-screen rather than on the sphere.

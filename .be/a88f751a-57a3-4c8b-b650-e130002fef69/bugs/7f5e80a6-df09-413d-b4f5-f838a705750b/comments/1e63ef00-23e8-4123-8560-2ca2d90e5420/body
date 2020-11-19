@@ -1,7 +1,0 @@
-Actually explicit representation would be overkill; Puffin's internal
-representation just needs to be well-defined. In a sense it is already
-well-defined as "whatever comes out of the 2G software" but it would
-be neater to convert these to standard SI units upon loading. As soon
-as Puffin grows the ability to import other data formats, using the
-fairly arbitrary 2G units (CGS, implicit orders of magnitude, etc.)
-for internal representation becomes a little ridiculous.

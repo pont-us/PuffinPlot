@@ -1,3 +1,0 @@
-Worked around, with an unpleasant but unavoidable hack which is
-thoroughly documented in a code comment. Tested on Corelyser, seems
-to work fine (at least until the next Apple Java update).

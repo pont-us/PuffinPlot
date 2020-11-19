@@ -1,8 +1,0 @@
-PuffinPlot can crash while shutting down if a it tries to save
-a large number of files to the ‘recent files’ list: the length of
-the string exceeds the maximum allowed by AbstractPreferences.put.
-Solution should be simple: currently the full path of each file is
-written separately; this could be shortened hugely by writing it
-as parent directory followed by leafnames. For even better compression,
-we could extract the longest common prefix and suffix, but it's
-unlikely to be necessary.

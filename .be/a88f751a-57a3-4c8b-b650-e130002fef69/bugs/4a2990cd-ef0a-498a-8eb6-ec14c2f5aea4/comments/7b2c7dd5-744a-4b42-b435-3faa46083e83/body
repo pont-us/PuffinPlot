@@ -1,4 +1,0 @@
-JavaHelp looks a little heavyweight -- even the jhbasic jar is ~400kB,
-around twice the size of PuffinPlot! What about writing docs in
-AsciiDoc or similar, putting HTML version online, and providing
-HTML and PDF versions for download?

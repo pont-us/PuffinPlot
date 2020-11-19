@@ -1,5 +1,0 @@
-ALL plot elements (line widths, data-point sizes, axis ticks, etc.)
-need to be explicitly scaled to current resolution, so that e.g.
-high-resolution printouts don't get tiny data-points. Shouldn't be
-too hard now that the underlying graphics system makes less use of
-AffineTransforms.

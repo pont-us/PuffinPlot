@@ -1,7 +1,0 @@
-The code for printing, PDF export, and SVG export has grown in
-a somewhat ad-hoc fashion and probably needs a little tidying up
-and refactoring. Among other things, it's not clear that double
-buffering is disabled in all the vector export routines. So far I've
-never come across any evidence of accidental double-buffering (e.g.
-a huge bitmapped PDF export) but it's probably worth doing the due
-diligence.

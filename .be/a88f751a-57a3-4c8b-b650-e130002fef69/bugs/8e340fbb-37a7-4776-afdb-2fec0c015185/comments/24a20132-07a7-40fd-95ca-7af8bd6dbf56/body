@@ -1,5 +1,0 @@
-It seems that all the preferences except maybe plot layout would
-be more sensibly housed in the Suite than in PuffinPlot. This would
-finally force a file format evolution, since they need to be saved,
-and could be usefully combined with bumping various other things,
-like sample ID or magnetic deviation, up from Datum to Sample or Suite.

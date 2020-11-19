@@ -1,4 +1,0 @@
-Fixed: list is now made unmodifiable by KentParams on creation,
-so don't need to rewrap it in Suite. Also opened a bug (#194)
-to refactor KentParams so as to make it less prone to this kind
-of problem.

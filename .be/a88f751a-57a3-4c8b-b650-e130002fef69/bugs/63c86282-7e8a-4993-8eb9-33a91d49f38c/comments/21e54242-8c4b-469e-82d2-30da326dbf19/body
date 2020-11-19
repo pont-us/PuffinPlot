@@ -1,8 +1,0 @@
-Currently site codes are set purely by inference from
-the sample name, assuming Otago naming conventions. If
-PuffinPlot's going to be any use to anyone else, we need
-the capability to set them explicitly! Should be pretty
-simple. As well as a straight ‘set this site code for the
-selected samples’ features, it would be good to have a
-‘use this character range (from the sample name) as the
-site code’ function.

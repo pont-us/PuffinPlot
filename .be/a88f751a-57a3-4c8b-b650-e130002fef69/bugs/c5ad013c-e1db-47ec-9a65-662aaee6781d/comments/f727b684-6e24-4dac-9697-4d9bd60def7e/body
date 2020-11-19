@@ -1,8 +1,0 @@
-Looks as though this was fixed some time ago -- values are now displayed
-inscientific notation and no overall OOM scaling is applied. Unsure
-how to interpret C's last sentence there, but it seems to be a vague
-notion rather than a definite feature request, so I'm closing this now
-on the assumption that if he really wants a "self correcting feature"
-he'll ask for it again, at which point I can ask him what he means.
-(Asking him now, over email to the JOIDES Resolution, what he meant
-5+ months ago would probably not be worthwhile.)

@@ -1,4 +1,0 @@
-This bug consists of two sub-bugs: (1) the build.hg.date in
-build.properties is sometimes blank. (2) PuffinPlot does not
-ignore this blank field as it should, but attempts to parse it
-as a Long and crashes on startup.

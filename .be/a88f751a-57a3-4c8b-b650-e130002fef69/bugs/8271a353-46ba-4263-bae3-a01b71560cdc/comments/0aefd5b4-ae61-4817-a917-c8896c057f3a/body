@@ -1,3 +1,0 @@
-In the 1.0 release, version numbers and copyright dates are
-hardcoded! Version number should be specified in a properties file
-or similar and read by PuffinPlot at runtime.

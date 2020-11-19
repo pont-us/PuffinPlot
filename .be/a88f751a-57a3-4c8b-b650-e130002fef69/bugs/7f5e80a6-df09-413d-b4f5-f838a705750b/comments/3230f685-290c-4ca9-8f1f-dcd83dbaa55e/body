@@ -1,5 +1,0 @@
-Magnetic susceptibility units can't be S.I.-ified automatically since
-the scaling factor can vary between sensors. I've added a facility
-to let the user scale the mag. sus. by a specified factor. Since 
-the magnetic moment measurements have already been S.I.-ified, I 
-am calling this bug fixed now.

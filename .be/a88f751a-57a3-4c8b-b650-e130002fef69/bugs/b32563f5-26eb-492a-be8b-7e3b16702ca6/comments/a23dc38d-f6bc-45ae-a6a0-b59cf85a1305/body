@@ -1,6 +1,0 @@
-We don't have a version number as such, but build date now goes
-into the error file, along with crash date and various system
-properties.
-
-Tempting to throw in the current file too, but that starts risking
-an error in the error handler, which would be bad.
