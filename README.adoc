@@ -18,8 +18,8 @@ PuffinPlot is structured as a Maven project, and can be built by running
 `mvn package` in the root directory. This will produce the zip package
 `puffinplot-<version>-bin.zip` in the `target` subdirectory. Other than
 the JDK and Maven itself, all dependencies are automatically downloaded
-and cached locally by Maven during the build process. As of 2020-04-24,
-cloning and building PuffinPlot requires around 700 MB of disk space, not
+and cached locally by Maven during the build process. As of November 2020,
+cloning and building PuffinPlot requires around 500 MB of disk space, not
 including the space required for the JDK.
 
 The PuffinPlot build process includes the execution of several hundred
