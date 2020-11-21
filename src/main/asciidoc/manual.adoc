@@ -2329,36 +2329,47 @@ processing, and compression.
 
 === Other software
 
-PuffinPlot was created with the assistance of a cornucopia of free and
-open source software; among the more significant tools are the Java
-language and platform (along with many third-party Java libraries),
-NetBeans, Ant, Ivy, Emacs, LaTeX (plus many LaTeX packages), TeX4ht, the
-Gimp, and the Ubuntu operating system. I thank all who contributed to
-these projects.
+PuffinPlot was created with the assistance
+of a cornucopia of free and open source software;
+among the more significant tools
+are the Java language and platform
+(along with many third-party Java libraries),
+NetBeans, Ant, Ivy, Emacs, LaTeX (plus many LaTeX packages),
+TeX4ht, the Gimp, Inkscape, Maven, IntelliJ IDEA, Asciidoctor,
+and the Ubuntu operating system.
+I thank all who contributed to these projects.
 
 === People
 
-PuffinPlot was initially developed at the Otago Palaeomagnetic Research
-Facility at the University of Otago, Dunedin, New Zealand. Several
-colleagues provided valuable testing and feedback during PuffinPlot's
-early development; in particular I thank Christian Ohneiser, Faye Nelson,
-Claudio Tapia, and Bethany Fox for their time and effort. Further
-improvements were made during revision of the PuffinPlot paper, in
-response to thoughtful suggestions from Gary Acton and an anonymous
-reviewer. Since its initial release, PuffinPlot has benefited from bug
-reports and suggestions from Bill Phillips, Jonathan M. Glen, Fabio
-Florindo, Eric Horsman, Terence Day, Yoichi Usui, Adrian Muxworthy, Russ
-Burmester, Andrei Kosterov, Luca Lanci, Radchagrit Supakulopas, Cyril
-Okpoli, Bugra Cavdar, Jay Shah, Kuo-Hang Chen, Ashleigh Murszewski, Robert
-Coe, Ana Paula de Martini de Souza, Sébastien Wouters, Gillian Turner, and
-many others.
+PuffinPlot was initially developed
+at the Otago Palaeomagnetic Research Facility
+at the University of Otago, Dunedin, New Zealand.
+Several colleagues provided valuable testing and feedback
+during PuffinPlot's early development;
+in particular I thank
+Christian Ohneiser, Faye Nelson, Claudio Tapia, and Bethany Fox
+for their time and effort.
+Further improvements were made
+during revision of the first PuffinPlot paper,
+in response to thoughtful suggestions
+from Gary Acton and an anonymous reviewer.
+Since its initial release,
+PuffinPlot has benefited from bug reports and suggestions from
+Bill Phillips, Jonathan M. Glen, Fabio Florindo, Eric Horsman,
+Terence Day, Yoichi Usui, Adrian Muxworthy, Russ Burmester,
+Andrei Kosterov, Luca Lanci, Radchagrit Supakulopas, Cyril Okpoli,
+Bugra Cavdar, Jay Shah, Kuo-Hang Chen, Ashleigh Murszewski,
+Robert Coe, Ana Paula de Martini de Souza, Sébastien Wouters,
+Gillian Turner, Agathe Lise-Pronovost,
+and many others.
 
 === Icon
 
-PuffinPlot's icon, and the frontispiece for this manual, are from an
-illustration by the Finnish artist Wilhelm von Wright (1810–1887),
-published in _Svenska fåglar, efter naturen och på sten ritade_ (2nd
-ed., 1929).
+PuffinPlot's icon, and the frontispiece for this manual,
+are from an illustration
+by the Finnish artist Wilhelm von Wright (1810–1887),
+published in _Svenska fåglar, efter naturen och på sten ritade_
+(2nd ed., 1929).
 
 == Future development and bug reporting
 
