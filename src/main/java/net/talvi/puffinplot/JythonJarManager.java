@@ -38,17 +38,18 @@ import java.security.NoSuchAlgorithmException;
  */
 public class JythonJarManager {
 
-    private static final long CORRECT_SIZE = 41135585;
+    private static final long CORRECT_SIZE = 43056592;
     private static final String CORRECT_SHA1 =
-            "942C3294840DC9DFB3528D775F4D02A6D57C421F";
+            "15592C29538ABD36D15570EDA9FA055ED1A618BA";
 
     /**
      * A string representation of the URL from which the jython jar is
      * downloaded.
      */
     public static final String SOURCE_URL_STRING =
-            "http://central.maven.org/maven2/org/python/jython-standalone/" +
-            "2.7.1/jython-standalone-2.7.1.jar";
+            "https://repo.maven.apache.org/maven2/" +
+                    "org/python/jython-standalone/2.7.2/" +
+                    "jython-standalone-2.7.2.jar";
 
     /**
      * Returns the local path for the Jython jar file with the application data

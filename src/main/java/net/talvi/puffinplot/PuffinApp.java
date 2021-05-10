@@ -1640,7 +1640,8 @@ public class PuffinApp {
                     + "around %d MB. Do you wish to proceed with this "
                     + "download now?</p>";
             final long downloadSizeInMB =
-                    JythonJarManager.getExpectedDownloadSize() / 1_000_000;
+                    Math.round(JythonJarManager.getExpectedDownloadSize()
+                               / 1_000_000.0 + 0.5);
             final int choice = JOptionPane.showOptionDialog(getMainWindow(),
                     String.format(message, downloadSizeInMB),
                     "Jython download required",
@@ -1649,7 +1650,7 @@ public class PuffinApp {
                     null,        // no custom icon
                     buttons,
                     buttons[0]); // default option
-            if (choice==1) {     // "Cancel" chosen
+            if (choice == 1) {     // "Cancel" chosen
                 return;
             }
             

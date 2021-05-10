@@ -19,6 +19,9 @@
 * Update ‘how to cite’ information in the program and documentation
   with the 2019 paper.
 
+* Update the Jython version to 2.7.2 and update the location from which Jython
+  is downloaded (closes #330 and #403).
+
 * Switch from Bugs Everywhere to GitHub for issue tracking.
 
 * Update documentation.
