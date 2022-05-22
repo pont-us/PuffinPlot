@@ -1,15 +1,16 @@
 = PuffinPlot User Manual
 Pontus Lurcock <pont@talvi.net>
-include::version.adoc[]
+ifndef::imagesdir[:imagesdir: images]
+:title-logo-image: image::Fratercula_arctica.jpeg[width=300,align=center]
 :numbered:
 :xrefstyle: short
-:title-logo-image: image::Fratercula_arctica.jpeg[width=300,align=center]
 :doctype: book
 :encoding: utf-8
 :lang: en
 :bibtex-file: manual.bib
 :bibtex-order: alphabetical
 :bibtex-style: apa
+include::version.adoc[]
 
 == Introduction
 
