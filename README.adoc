@@ -22,6 +22,16 @@ and cached locally by Maven during the build process. As of November 2020,
 cloning and building PuffinPlot requires around 500 MB of disk space, not
 including the space required for the JDK.
 
+While the PuffinPlot jar will run with any Java SDK from 8 onward, Java
+8 (and no higher) is currently required to build. If the system default
+Java is not version 8, another JDK can be specific using the `JAVA_HOME`
+variable, e.g.
+
+[source,bash]
+----
+JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/ mvn package
+----
+
 The PuffinPlot build process includes the execution of several hundred
 unit tests. Some of the tests require a desktop environment to execute,
 and if the build is carried out in a headless environment those tests will
@@ -42,5 +52,5 @@ runtime, but it is not a build-time dependency.
 PuffinPlot uses GitHub Issues for bug tracking.
 The issue tracker can be found
 https://github.com/pont-us/PuffinPlot/issues[here].
-Bug reports and feature requests are always welcome.
-
+Bug reports and feature requests are always welcome,
+but unfortunately I cannot guarantee a timely response.
