@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.net.URI;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -476,13 +477,12 @@ public class Util {
                 }
             } while (count != -1);
         }
-        /*
-         * printHexBinary seems to return upper case in practice, but I can't
-         * find this officially guaranteed anywhere, so safest to ensure it with
-         * a toUpperCase().
-         */
-        return javax.xml.bind.DatatypeConverter.
-                printHexBinary(digest.digest()).toUpperCase();
+
+        final String hex_digits =
+                new BigInteger(1, digest.digest()).toString(16).toUpperCase();
+        return String.format(
+                "%" + digest.getDigestLength() * 2 + "s", hex_digits).
+                replace(" ", "0");
     }
     
     /**
