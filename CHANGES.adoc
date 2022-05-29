@@ -29,6 +29,9 @@
 * Various internal improvements in error handling, data validity checking,
   and code formatting.
 
+* Bug fix: PuffinPlot no longer crashes if the y axis label is set to an empty
+  string.
+
 == PuffinPlot 1.4.1 release notes
 
 This is a minor release which fixes some bugs in version 1.4 and adds

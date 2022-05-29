@@ -27,6 +27,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.text.AttributedCharacterIterator.Attribute;
 import java.text.AttributedString;
+import java.text.CharacterIterator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -283,8 +284,13 @@ public abstract class Plot
      * attributes
      */
     public void applyTextAttributes(AttributedString as) {
-        for (Map.Entry<? extends Attribute, ?> a : attributeMap.entrySet()) {
-            as.addAttribute(a.getKey(), a.getValue());
+        final CharacterIterator iterator = as.getIterator();
+        if (iterator.getBeginIndex() < iterator.getEndIndex()) {
+            // Don't apply to empty strings
+            for (Map.Entry<? extends Attribute, ?> a :
+                    attributeMap.entrySet()) {
+                as.addAttribute(a.getKey(), a.getValue());
+            }
         }
     }
 
@@ -482,7 +488,12 @@ public abstract class Plot
      */
     public void putText(Graphics2D graphics, AttributedString text, double x,
             double y, Direction dir, double θ, double padding) {
-        AffineTransform initialTransform = graphics.getTransform();
+        final CharacterIterator iterator = text.getIterator();
+        if (iterator.getBeginIndex() >= iterator.getEndIndex()) {
+            return;  // skip empty strings
+        }
+
+        final AffineTransform initialTransform = graphics.getTransform();
         applyTextAttributes(text);
 
         /*
