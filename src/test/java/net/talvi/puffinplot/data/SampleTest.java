@@ -89,7 +89,7 @@ public class SampleTest {
     @Test
     public void testSetAmsFromTensor() {
         final Random rnd = new Random(13);
-        for (int test=0; test<10; test++) {
+        for (int test=0; test<50; test++) {
             final Sample sample = new Sample("test", null);
             final double sampAz = rnd.nextDouble()*2*Math.PI;
             final double sampDip = rnd.nextDouble()*2*Math.PI-Math.PI;
@@ -107,9 +107,12 @@ public class SampleTest {
                     new Matrix(Vec3.getSampleCorrectionMatrix(sampAz, sampDip)),
                     new Matrix(Vec3.getFormationCorrectionMatrix(
                             formAz, formDip)));
-            for (int axisIndex=0; axisIndex<3; axisIndex++) {
+            for (int axisIndex = 0; axisIndex < 3; axisIndex++) {
                 assertTrue(expected.getAxis(axisIndex).equals(
-                        actual.getAxis(axisIndex), 1e-6));
+                        actual.getAxis(axisIndex), 1e-6)
+                        || expected.getAxis(axisIndex).invert().equals(
+                        actual.getAxis(axisIndex), 1e-6)
+                );
             }
         }
     }
