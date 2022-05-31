@@ -1038,11 +1038,20 @@ file; the RPI estimate can also be shown in the RPI plot.
 This menu allows you to open or close auxiliary windows.
 
 Window → Data table::
-opens (or closes) a window showing all the demagnetization data for the
-current sample as a table. This table is far more extensive than the
-brief table displayed in the main window, and allows data to be selected
-and copied to the clipboard so that it can be pasted into a spreadsheet
-or text editor.
+opens (or closes) a window
+showing all the demagnetization data for the current sample
+as a table.
+This table is far more extensive
+than the brief table displayed in the main window,
+and allows data to be selected
+and copied to the clipboard
+so that it can be pasted into a spreadsheet or text editor.
+Right-clicking on a row in the table
+selects or deselects the corresponding treatment step
+for analysis,
+much like clicking on a line
+in the treatment step table
+in the main window.
 
 Window → Site equal-area plot::
 opens (or closes) a window

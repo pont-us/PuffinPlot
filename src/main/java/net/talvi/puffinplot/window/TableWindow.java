@@ -16,9 +16,11 @@
  */
 package net.talvi.puffinplot.window;
 
+import net.talvi.puffinplot.PuffinApp;
 import net.talvi.puffinplot.plots.PlotParams;
-import java.awt.Dimension;
-import java.awt.GridLayout;
+
+import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JFrame;
@@ -28,6 +30,7 @@ import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 
 import net.talvi.puffinplot.data.TreatmentStep;
 import net.talvi.puffinplot.data.TreatmentParameter;
@@ -47,8 +50,8 @@ public class TableWindow extends JFrame {
      * 
      * @param params plot parameters (to control the currently displayed data)
      */
-    public TableWindow(PlotParams params) {
-        TablePanel newContentPane = new TablePanel(params);
+    public TableWindow(PuffinApp app) {
+        final TablePanel newContentPane = new TablePanel(app);
         newContentPane.setOpaque(true); //content panes must be opaque
         setContentPane(newContentPane);
         newContentPane.setVisible(true);
@@ -58,12 +61,45 @@ public class TableWindow extends JFrame {
     private class TablePanel extends JPanel {
         private static final long serialVersionUID = 1L;
 
-        public TablePanel(PlotParams params) {
+        public TablePanel(PuffinApp app) {
             super(new GridLayout(1, 0));
+            final PlotParams params = app.getPlotParams();
             table = new JTable(tableModel = new DataTableModel(params));
             table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
             table.setPreferredScrollableViewportSize(new Dimension(500, 70));
-            JScrollPane scrollPane = new JScrollPane(table);
+            table.addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent event) {
+                    if (event.getButton() == MouseEvent.BUTTON3) {
+                        final int row = table.rowAtPoint(event.getPoint());
+                        params.getSample().getTreatmentSteps().get(row).
+                                toggleSelected();
+                        table.repaint();
+                        app.updateDisplay();
+                    }
+                }
+            });
+            table.setDefaultRenderer(
+                    Object.class, new DefaultTableCellRenderer() {
+                @Override
+                public Component getTableCellRendererComponent(
+                        JTable table, Object value, boolean isSelected,
+                        boolean hasFocus, int row, int column) {
+                    final Component component =
+                            super.getTableCellRendererComponent(
+                                    table, value, isSelected, hasFocus,
+                                    row, column);
+                    final boolean selectedForAnalysis =
+                            params.getSample().getTreatmentSteps().
+                                    get(row).isSelected();
+                    // component.setForeground(selectedForAnalysis ? Color.RED : Color.BLACK);
+                    if (selectedForAnalysis) {
+                        component.setFont(component.getFont().deriveFont(Font.BOLD));
+                    }
+                    return component;
+                }
+            });
+            final JScrollPane scrollPane = new JScrollPane(table);
             add(scrollPane);
         }
     }
@@ -72,11 +108,11 @@ public class TableWindow extends JFrame {
         private static final long serialVersionUID = 1L;
         private final List<TableModelListener> listeners = new LinkedList<>();
         private final PlotParams params;
-        
+
         public DataTableModel(PlotParams params) {
             this.params = params;
         }
-        
+
         @Override
         public void addTableModelListener(TableModelListener listener) {
             listeners.add(listener);
@@ -127,6 +163,7 @@ public class TableWindow extends JFrame {
                 throw new RuntimeException("row " + row + " col " + col, e);
             }
         }
+
     }
 
     /**

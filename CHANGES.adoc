@@ -32,6 +32,8 @@
 * Bug fix: PuffinPlot no longer crashes if the y axis label is set to an empty
   string.
 
+* Data table window now allows treatment steps to be selected and deselected.
+
 == PuffinPlot 1.4.1 release notes
 
 This is a minor release which fixes some bugs in version 1.4 and adds

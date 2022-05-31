@@ -262,7 +262,7 @@ public class PuffinApp {
             
         };
 
-        tableWindow = new TableWindow(plotParams);
+        tableWindow = new TableWindow(this);
         suiteEqAreaWindow = new SuiteEqAreaWindow(this);
         siteEqAreaWindow = new SiteMeanWindow(plotParams);
         /*
