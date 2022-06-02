@@ -90,7 +90,6 @@ public final class MainWindow extends JFrame {
     }
     
     private void addComponents() {
-    
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override public void windowClosing(WindowEvent e) {

@@ -39,11 +39,7 @@ import net.talvi.puffinplot.data.Sample;
 import net.talvi.puffinplot.data.Suite;
 import net.talvi.puffinplot.data.TreatmentType;
 import net.talvi.puffinplot.data.TreatmentParameter;
-import net.talvi.puffinplot.window.AlignDeclinationsDialog;
-import net.talvi.puffinplot.window.CiteWindow;
-import net.talvi.puffinplot.window.EditSampleParametersWindow;
-import net.talvi.puffinplot.window.RemoveByDepthRangeDialog;
-import net.talvi.puffinplot.window.TreatmentWindow;
+import net.talvi.puffinplot.window.*;
 
 /**
  * A container class for individual instances of {@link PuffinAction}
@@ -1171,6 +1167,26 @@ public class PuffinActions {
             removeByDepthRangeDialog.showOverMainWindow();
         }
     };
+
+    /**
+     * Operates on specifies ranges of treatment steps.
+     */
+    public final Action operateOnTreatmentStepRange =
+            new PuffinAction("Treatment step ranges…",
+                    "Manipulate treatment steps in specified ranges of levels.",
+                    null, false, KeyEvent.VK_R) {
+                private static final long serialVersionUID = 1L;
+                private TreatmentRangesDialog treatmentRangesDialog;
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (treatmentRangesDialog == null) {
+                        treatmentRangesDialog =
+                                new TreatmentRangesDialog(app);
+                    }
+                    treatmentRangesDialog.showOverMainWindow();
+                }
+            };
+
 
     /**
      * Removes samples with a particular treatment type.

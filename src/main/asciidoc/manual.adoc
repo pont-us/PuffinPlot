@@ -736,6 +736,15 @@ is calculated as the arithmetic mean of the moments of the duplicate
 steps. Other treatment step data, such as magnetic susceptibility, is
 taken from the first step in each group of duplicates.
 
+Edit → Treatment steps → Treatment step ranges…::
+lets you type in one or more ranges of treatment levels
+and perform an operation (e.g. selection or hiding)
+on all the levels in these ranges
+in all the selected samples.
+You can specify a range using a hyphen
+and multiple ranges with commas,
+e.g. 1-10,50-100 or 10-20,30-40,50-60.
+
 Edit → Samples::
 is a submenu containing editing functions related to whole samples.
 

@@ -1422,7 +1422,13 @@ public class Sample {
         firstSample.mergeDuplicateTreatmentSteps();
         firstSample.treatmentSteps.sort(new TreatmentLevelComparator());
     }
-    
+
+    public List<TreatmentStep> getStepsInRanges(MultiRange multirange) {
+        return getTreatmentSteps().stream()
+                .filter(ts -> multirange.contains(ts.getTreatmentLevel()))
+                .collect(Collectors.toList());
+    }
+
     private static class TreatmentTypeAndLevel {
         private final TreatmentType treatmentType;
         private final Double treatmentLevel;
