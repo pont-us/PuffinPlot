@@ -34,6 +34,9 @@
 
 * Data table window now allows treatment steps to be selected and deselected.
 
+* Add ‘Treatment step ranges…’ dialog to allow operations on treatment steps
+  specified by treatment level range.
+
 == PuffinPlot 1.4.1 release notes
 
 This is a minor release which fixes some bugs in version 1.4 and adds
