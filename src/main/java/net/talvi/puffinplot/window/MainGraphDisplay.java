@@ -18,6 +18,7 @@ package net.talvi.puffinplot.window;
 
 import net.talvi.puffinplot.plots.PlotParams;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -63,10 +64,19 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
      * @param app the application for which to create the display
      */
     public MainGraphDisplay(final PuffinApp app) {
-        super();
+        super(getSizePreference(app));
         this.app = app;
         params = app.getPlotParams();
         createPlots();
+    }
+
+    private static Dimension getSizePreference(PuffinApp app) {
+        final String sizeString =
+                app.getPrefs().getPrefs()
+                        .get("display.mainDisplaySize", "1200,800");
+        final String[] parts = sizeString.split(",");
+        return new Dimension(Integer.parseInt(parts[0]),
+                Integer.parseInt(parts[1]));
     }
 
     /**

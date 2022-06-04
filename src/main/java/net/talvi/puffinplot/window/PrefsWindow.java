@@ -232,6 +232,8 @@ public class PrefsWindow extends JFrame {
                 new String[] {"Dip azimuth/Dip", "Strike/Dip"},
                 "Azimuth/Dip",
                 "The parameters used to represent formation orientation"));
+        miscPanel.add(makeLabelledPrefTextField("Main display size",
+                "display.mainDisplaySize", "1200,800"));
         miscPanel.add(Box.createVerticalGlue());
 
         tp.addTab("2G import", null, loadingPanel,

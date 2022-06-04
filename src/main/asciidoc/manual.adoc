@@ -1805,6 +1805,15 @@ controls how formation orientation is displayed at the top of the main
 window: it can be shown either as dip azimuth and dip angle, or as
 strike and dip angle.
 
+Main display size::
+sets the size of the display area
+in the main PuffinPlot window in pixels.
+It is given as a width and a height separated by a comma,
+e.g. `1200,800`.
+PuffinPlot must be restarted
+in order for changes in the display size
+to take effect.
+
 === Annotations [[sec:annotations]]
 
 Annotations are a feature allowing short, categorized notes to be added

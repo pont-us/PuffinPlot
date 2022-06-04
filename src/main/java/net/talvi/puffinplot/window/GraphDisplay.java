@@ -92,9 +92,13 @@ public abstract class GraphDisplay extends JPanel implements Printable {
             AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .8f);
     private final List<CurrentTreatmentStepListener>
             currentTreatmentStepListeners = new LinkedList<>();
-         
+
     GraphDisplay() {
-        setPreferredSize(new Dimension(1200, 800));
+        this(new Dimension(1200, 800));
+    }
+
+    GraphDisplay(Dimension size) {
+        setPreferredSize(size);
         setMaximumSize(getPreferredSize());
         zoomTransform = AffineTransform.getScaleInstance(1.0, 1.0);
         setLayout(null);
