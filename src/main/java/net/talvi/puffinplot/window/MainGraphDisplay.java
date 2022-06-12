@@ -74,9 +74,19 @@ public class MainGraphDisplay extends GraphDisplay implements Printable {
         final String sizeString =
                 app.getPrefs().getPrefs()
                         .get("display.mainDisplaySize", "1200,800");
-        final String[] parts = sizeString.split(",");
-        return new Dimension(Integer.parseInt(parts[0]),
-                Integer.parseInt(parts[1]));
+        final String[] parts = sizeString.split("\\D+");
+        return parts.length >= 2
+                ? new Dimension(parseIntSafe(parts[0], 1200, 100),
+                                parseIntSafe(parts[1], 800, 100))
+                : new Dimension(1200, 800);
+    }
+
+    private static int parseIntSafe(String string, int fallback, int minimum) {
+        try {
+            return Math.max(Integer.parseInt(string), minimum);
+        } catch (NumberFormatException e) {
+            return fallback;
+        }
     }
 
     /**
