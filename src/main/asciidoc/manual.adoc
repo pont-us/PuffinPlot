@@ -616,12 +616,21 @@ File menu. The difference is that this function will append the data to
 the current suite, rather than creating a new suite for it.
 
 File → Import data → Import site locations…::
-imports co-ordinates (latitude and longitude) for sites in the suite.
-These co-ordinates are used to calculate virtual geomagnetic poles from
-site directions. The location file should be in CSV (comma-separated
-value) format with no header line. Column 1 contains the site name,
-column 2 the latitude (degrees north from equator, negative for southern
-hemisphere), and column 3 the longitude (degrees east of Greenwich).
+imports co-ordinates (latitude and longitude)
+for sites in the suite.
+These co-ordinates are used
+to calculate virtual geomagnetic poles (VGPs)
+from site directions.
+Once a location has been imported for a site,
+a VGP is automatically calculated
+whenever a site direction is calculated
+using Fisher statistics or a great-circle analysis.
+The location file should be in CSV (comma-separated value) format
+with no header line.
+Column 1 contains the site name,
+column 2 the latitude
+(degrees north from equator, negative for southern hemisphere),
+and column 3 the longitude (degrees east of Greenwich).
 
 File → Import data → Import AMS…::
 imports AMS data from a file and adds it to the current suite. The file
@@ -905,8 +914,10 @@ unanchored allows analysis of a non-final component, provided that it is
 sufficiently well separated from other components.
 
 Calculations → Fisher by site::
-calculates a Fisherian mean direction for each selected site using the
-PCA directions of its samples.
+calculates a Fisherian mean direction for each selected site
+using the PCA directions of its samples.
+For any site for which a location has been set,
+the VGP is also calculated.
 
 Calculations → Fisher on sample::
 calculates a direction for each selected sample using the Fisherian mean
@@ -980,6 +991,8 @@ The great-circle fit is shown
 both in the Equal-area (site) plot in the main window
 (if this plot has been activated in the preferences),
 and in a separate window which is opened automatically.
+For any site for which a location has been set,
+the VGP is also calculated.
 
 Calculations → Clear site calculations::
 clears the results of any calculations associated with the selected
@@ -2388,7 +2401,7 @@ Terence Day, Yoichi Usui, Adrian Muxworthy, Russ Burmester,
 Andrei Kosterov, Luca Lanci, Radchagrit Supakulopas, Cyril Okpoli,
 Bugra Cavdar, Jay Shah, Kuo-Hang Chen, Ashleigh Murszewski,
 Robert Coe, Ana Paula de Martini de Souza, Sébastien Wouters,
-Gillian Turner, Agathe Lise-Pronovost,
+Gillian Turner, Agathe Lise-Pronovost, Jess Robbins,
 and many others.
 
 === Icon
